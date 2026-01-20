@@ -1,6 +1,6 @@
 <div align="center">
 
-  <img src="https://via.placeholder.com/220x80/22c55e/ffffff?text=AutoRA.be" alt="AutoRA.be" width="220" />
+  <img src="https://via.placeholder.com/220x80/22c55e/ffffff?text=Autora.be" alt="AutoRA.be" width="220" />
 
   <h1>AutoRA.be</h1>
   <h3>La nouvelle façon de trouver sa prochaine voiture en Belgique</h3>
