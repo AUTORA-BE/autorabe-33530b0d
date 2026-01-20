@@ -20,17 +20,31 @@ const SEOHead = ({
 }: SEOHeadProps) => {
   const { language } = useLanguage();
 
-  const defaultTitle = language === "nl" 
-    ? "AutoRa | Vind uw volgende auto in België"
-    : "AutoRa | Trouvez votre prochaine voiture en Belgique";
+  const defaultTitles: Record<string, string> = {
+    fr: "AutoRa | Trouvez votre prochaine voiture en Belgique",
+    nl: "AutoRa | Vind uw volgende auto in België",
+    de: "AutoRa | Finden Sie Ihr nächstes Auto in Belgien",
+    en: "AutoRa | Find your next car in Belgium",
+  };
 
-  const defaultDescription = language === "nl"
-    ? "AutoRa - De betrouwbare Belgische automarkt. Vind duizenden geverifieerde voertuigen met Car-Pass en gegarandeerde LEZ-compatibiliteit."
-    : "AutoRa - La marketplace automobile belge de confiance. Trouvez des milliers de véhicules vérifiés avec Car-Pass et compatibilité LEZ garantie.";
+  const defaultDescriptions: Record<string, string> = {
+    fr: "AutoRa - La marketplace automobile belge de confiance. Trouvez des milliers de véhicules vérifiés avec Car-Pass et compatibilité LEZ garantie.",
+    nl: "AutoRa - De betrouwbare Belgische automarkt. Vind duizenden geverifieerde voertuigen met Car-Pass en gegarandeerde LEZ-compatibiliteit.",
+    de: "AutoRa - Der vertrauenswürdige belgische Automarktplatz. Finden Sie Tausende verifizierte Fahrzeuge mit Car-Pass und garantierter LEZ-Kompatibilität.",
+    en: "AutoRa - The trusted Belgian car marketplace. Find thousands of verified vehicles with Car-Pass and guaranteed LEZ compatibility.",
+  };
 
-  const fullTitle = title ? `${title} | AutoRa` : defaultTitle;
-  const fullDescription = description || defaultDescription;
+  const locales: Record<string, string> = {
+    fr: "fr_BE",
+    nl: "nl_BE",
+    de: "de_BE",
+    en: "en_GB",
+  };
+
+  const fullTitle = title ? `${title} | AutoRa` : defaultTitles[language] || defaultTitles.fr;
+  const fullDescription = description || defaultDescriptions[language] || defaultDescriptions.fr;
   const canonicalUrl = url || "https://autora.be";
+  const locale = locales[language] || "fr_BE";
 
   return (
     <Helmet>
@@ -46,7 +60,7 @@ const SEOHead = ({
       <meta property="og:image" content={image} />
       <meta property="og:url" content={canonicalUrl} />
       <meta property="og:site_name" content="AutoRa" />
-      <meta property="og:locale" content={language === "nl" ? "nl_BE" : "fr_BE"} />
+      <meta property="og:locale" content={locale} />
       
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
@@ -60,6 +74,8 @@ const SEOHead = ({
       {/* Alternate languages */}
       <link rel="alternate" hrefLang="fr" href={`${canonicalUrl}?lang=fr`} />
       <link rel="alternate" hrefLang="nl" href={`${canonicalUrl}?lang=nl`} />
+      <link rel="alternate" hrefLang="de" href={`${canonicalUrl}?lang=de`} />
+      <link rel="alternate" hrefLang="en" href={`${canonicalUrl}?lang=en`} />
       <link rel="alternate" hrefLang="x-default" href={canonicalUrl} />
     </Helmet>
   );
