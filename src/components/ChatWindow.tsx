@@ -61,7 +61,7 @@ export function ChatWindow({
     messagesEndRef.current?.scrollIntoView({ behavior });
   }, []);
 
-  // Fetch conversation details
+  // Fetch conversation details with profile info
   useEffect(() => {
     const fetchConversationDetails = async () => {
       const { data: conv, error } = await supabase
@@ -77,10 +77,19 @@ export function ChatWindow({
 
       const otherUserId = conv.buyer_id === currentUserId ? conv.seller_id : conv.buyer_id;
       
-      // For now, we'll use a generic name. In a real app, you'd fetch from a profiles table
+      // Fetch profile for the other user
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('display_name, avatar_url')
+        .eq('user_id', otherUserId)
+        .maybeSingle();
+      
+      const defaultName = conv.buyer_id === currentUserId ? 'Vendeur' : 'Acheteur';
+      
       setConversationDetails({
         otherUserId,
-        otherUserName: conv.buyer_id === currentUserId ? 'Vendeur' : 'Acheteur',
+        otherUserName: profile?.display_name || defaultName,
+        otherUserAvatar: profile?.avatar_url || undefined,
         carBrand: conv.car_brand,
         carModel: conv.car_model,
       });
