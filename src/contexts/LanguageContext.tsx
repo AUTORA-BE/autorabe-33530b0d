@@ -219,6 +219,12 @@ const translations: Record<Language, Record<string, string>> = {
     "messages.noMessage": "Aucun message",
     "messages.selectConversation": "Sélectionnez une conversation",
     "messages.yesterday": "Hier",
+    "messages.today": "Aujourd'hui",
+    "messages.typing": "en train d'écrire",
+    "messages.online": "En ligne",
+    "messages.offline": "Hors ligne",
+    "messages.typeMessage": "Écrivez votre message...",
+    "messages.sendError": "Erreur lors de l'envoi du message",
     
     // Settings
     "settings.title": "Paramètres",
@@ -721,6 +727,12 @@ const translations: Record<Language, Record<string, string>> = {
     "messages.noMessage": "Geen bericht",
     "messages.selectConversation": "Selecteer een gesprek",
     "messages.yesterday": "Gisteren",
+    "messages.today": "Vandaag",
+    "messages.typing": "aan het typen",
+    "messages.online": "Online",
+    "messages.offline": "Offline",
+    "messages.typeMessage": "Schrijf uw bericht...",
+    "messages.sendError": "Fout bij het verzenden van bericht",
     
     // Settings
     "settings.title": "Instellingen",
@@ -1223,6 +1235,12 @@ const translations: Record<Language, Record<string, string>> = {
     "messages.noMessage": "Keine Nachricht",
     "messages.selectConversation": "Wählen Sie ein Gespräch",
     "messages.yesterday": "Gestern",
+    "messages.today": "Heute",
+    "messages.typing": "schreibt",
+    "messages.online": "Online",
+    "messages.offline": "Offline",
+    "messages.typeMessage": "Schreiben Sie Ihre Nachricht...",
+    "messages.sendError": "Fehler beim Senden der Nachricht",
     
     // Settings
     "settings.title": "Einstellungen",
@@ -1725,6 +1743,12 @@ const translations: Record<Language, Record<string, string>> = {
     "messages.noMessage": "No message",
     "messages.selectConversation": "Select a conversation",
     "messages.yesterday": "Yesterday",
+    "messages.today": "Today",
+    "messages.typing": "typing",
+    "messages.online": "Online",
+    "messages.offline": "Offline",
+    "messages.typeMessage": "Type your message...",
+    "messages.sendError": "Error sending message",
     
     // Settings
     "settings.title": "Settings",

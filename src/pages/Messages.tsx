@@ -238,27 +238,12 @@ export default function Messages() {
               {/* Chat window */}
               <div className={`lg:col-span-2 bg-card rounded-xl border border-border overflow-hidden flex flex-col ${!selectedConversation ? 'hidden lg:flex' : ''}`}>
                 {selectedConversation && currentUserId ? (
-                  <>
-                    {/* Mobile back button */}
-                    <div className="lg:hidden p-4 border-b border-border flex items-center gap-3">
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        onClick={() => setSelectedConversation(null)}
-                      >
-                        <ArrowLeft className="h-4 w-4" />
-                      </Button>
-                      <span className="font-medium text-foreground">
-                        {conversations.find(c => c.id === selectedConversation)?.car_brand}{' '}
-                        {conversations.find(c => c.id === selectedConversation)?.car_model}
-                      </span>
-                    </div>
-                    
-                    <ChatWindow 
-                      conversationId={selectedConversation} 
-                      currentUserId={currentUserId} 
-                    />
-                  </>
+                  <ChatWindow 
+                    conversationId={selectedConversation} 
+                    currentUserId={currentUserId}
+                    onBack={() => setSelectedConversation(null)}
+                    showBackButton={true}
+                  />
                 ) : (
                   <div className="flex-1 flex items-center justify-center text-muted-foreground">
                     <div className="text-center">

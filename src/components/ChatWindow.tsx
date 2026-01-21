@@ -1,9 +1,13 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Send } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
+import { ChatHeader } from '@/components/chat/ChatHeader';
+import { MessageBubble } from '@/components/chat/MessageBubble';
+import { MessageInput } from '@/components/chat/MessageInput';
+import { TypingIndicator } from '@/components/chat/TypingIndicator';
+import { useTypingIndicator } from '@/hooks/useTypingIndicator';
+import { useOnlineStatus } from '@/hooks/useOnlineStatus';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Message {
   id: string;
@@ -13,22 +17,79 @@ interface Message {
   is_read: boolean;
 }
 
+interface ConversationDetails {
+  otherUserId: string;
+  otherUserName: string;
+  otherUserAvatar?: string;
+  carBrand?: string;
+  carModel?: string;
+}
+
 interface ChatWindowProps {
   conversationId: string;
   currentUserId: string;
+  onBack?: () => void;
+  showBackButton?: boolean;
 }
 
-export function ChatWindow({ conversationId, currentUserId }: ChatWindowProps) {
+export function ChatWindow({ 
+  conversationId, 
+  currentUserId, 
+  onBack,
+  showBackButton = false 
+}: ChatWindowProps) {
+  const { t } = useLanguage();
   const [messages, setMessages] = useState<Message[]>([]);
-  const [newMessage, setNewMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
+  const [conversationDetails, setConversationDetails] = useState<ConversationDetails | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  const { isOtherTyping, handleTyping, stopTyping } = useTypingIndicator(
+    conversationId, 
+    currentUserId
+  );
 
+  const isOnline = useOnlineStatus(
+    conversationId, 
+    currentUserId, 
+    conversationDetails?.otherUserId || ''
+  );
+
+  const scrollToBottom = useCallback((behavior: ScrollBehavior = 'smooth') => {
+    messagesEndRef.current?.scrollIntoView({ behavior });
+  }, []);
+
+  // Fetch conversation details
+  useEffect(() => {
+    const fetchConversationDetails = async () => {
+      const { data: conv, error } = await supabase
+        .from('conversations')
+        .select('*')
+        .eq('id', conversationId)
+        .single();
+
+      if (error) {
+        console.error('Error fetching conversation:', error);
+        return;
+      }
+
+      const otherUserId = conv.buyer_id === currentUserId ? conv.seller_id : conv.buyer_id;
+      
+      // For now, we'll use a generic name. In a real app, you'd fetch from a profiles table
+      setConversationDetails({
+        otherUserId,
+        otherUserName: conv.buyer_id === currentUserId ? 'Vendeur' : 'Acheteur',
+        carBrand: conv.car_brand,
+        carModel: conv.car_model,
+      });
+    };
+
+    fetchConversationDetails();
+  }, [conversationId, currentUserId]);
+
+  // Fetch messages
   useEffect(() => {
     const fetchMessages = async () => {
       const { data, error } = await supabase
@@ -80,6 +141,20 @@ export function ChatWindow({ conversationId, currentUserId }: ChatWindowProps) {
           }
         }
       )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'messages',
+          filter: `conversation_id=eq.${conversationId}`
+        },
+        (payload) => {
+          setMessages(prev => 
+            prev.map(m => m.id === (payload.new as Message).id ? payload.new as Message : m)
+          );
+        }
+      )
       .subscribe();
 
     return () => {
@@ -87,17 +162,29 @@ export function ChatWindow({ conversationId, currentUserId }: ChatWindowProps) {
     };
   }, [conversationId, currentUserId]);
 
+  // Scroll to bottom on new messages or when loading completes
+  useEffect(() => {
+    if (!isLoading) {
+      scrollToBottom('instant');
+    }
+  }, [isLoading, scrollToBottom]);
+
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages.length, scrollToBottom]);
 
-  const sendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!newMessage.trim() || isSending) return;
+  // Scroll when typing indicator appears
+  useEffect(() => {
+    if (isOtherTyping) {
+      scrollToBottom();
+    }
+  }, [isOtherTyping, scrollToBottom]);
+
+  const sendMessage = async (content: string) => {
+    if (isSending) return;
 
     setIsSending(true);
-    const messageContent = newMessage.trim();
+    stopTyping();
     
     try {
       const { error } = await supabase
@@ -105,7 +192,7 @@ export function ChatWindow({ conversationId, currentUserId }: ChatWindowProps) {
         .insert({
           conversation_id: conversationId,
           sender_id: currentUserId,
-          content: messageContent
+          content
         });
 
       if (error) throw error;
@@ -116,39 +203,32 @@ export function ChatWindow({ conversationId, currentUserId }: ChatWindowProps) {
         .update({ last_message_at: new Date().toISOString() })
         .eq('id', conversationId);
 
-      setNewMessage('');
-
       // Send email notification to seller (fire and forget)
       supabase.functions.invoke('notify-seller', {
         body: {
           conversationId,
-          messageContent
+          messageContent: content
         }
       }).catch(err => console.log('Email notification error (non-blocking):', err));
       
     } catch (error) {
       console.error('Error sending message:', error);
-      toast.error("Erreur lors de l'envoi du message");
+      toast.error(t("messages.sendError"));
     } finally {
       setIsSending(false);
     }
   };
 
-  const formatTime = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' });
-  };
-
-  const formatDate = (dateString: string) => {
+  const formatDateSeparator = (dateString: string) => {
     const date = new Date(dateString);
     const today = new Date();
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
 
     if (date.toDateString() === today.toDateString()) {
-      return "Aujourd'hui";
+      return t("messages.today");
     } else if (date.toDateString() === yesterday.toDateString()) {
-      return "Hier";
+      return t("messages.yesterday");
     } else {
       return date.toLocaleDateString('fr-BE', { day: 'numeric', month: 'long' });
     }
@@ -158,7 +238,9 @@ export function ChatWindow({ conversationId, currentUserId }: ChatWindowProps) {
   const groupedMessages: { date: string; messages: Message[] }[] = [];
   messages.forEach(message => {
     const dateStr = new Date(message.created_at).toDateString();
-    const existingGroup = groupedMessages.find(g => new Date(g.messages[0].created_at).toDateString() === dateStr);
+    const existingGroup = groupedMessages.find(g => 
+      new Date(g.messages[0].created_at).toDateString() === dateStr
+    );
     
     if (existingGroup) {
       existingGroup.messages.push(message);
@@ -177,63 +259,59 @@ export function ChatWindow({ conversationId, currentUserId }: ChatWindowProps) {
 
   return (
     <div className="flex flex-col h-full">
+      {/* Chat header with avatar and status */}
+      <ChatHeader
+        otherUserName={conversationDetails?.otherUserName || 'Utilisateur'}
+        otherUserAvatar={conversationDetails?.otherUserAvatar}
+        isOnline={isOnline}
+        isTyping={isOtherTyping}
+        carBrand={conversationDetails?.carBrand}
+        carModel={conversationDetails?.carModel}
+        onBack={onBack}
+        showBackButton={showBackButton}
+      />
+
       {/* Messages area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div 
+        ref={messagesContainerRef}
+        className="flex-1 overflow-y-auto p-4 space-y-4"
+      >
         {groupedMessages.map((group, groupIndex) => (
           <div key={groupIndex}>
             {/* Date separator */}
             <div className="flex items-center justify-center my-4">
               <span className="px-3 py-1 rounded-full bg-secondary text-xs text-muted-foreground">
-                {formatDate(group.messages[0].created_at)}
+                {formatDateSeparator(group.messages[0].created_at)}
               </span>
             </div>
             
             {/* Messages */}
             <div className="space-y-2">
-              {group.messages.map((message) => {
-                const isMine = message.sender_id === currentUserId;
-                
-                return (
-                  <div
-                    key={message.id}
-                    className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}
-                  >
-                    <div
-                      className={`max-w-[75%] rounded-2xl px-4 py-2 ${
-                        isMine
-                          ? 'bg-primary text-primary-foreground rounded-br-md'
-                          : 'bg-secondary text-foreground rounded-bl-md'
-                      }`}
-                    >
-                      <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
-                      <p className={`text-xs mt-1 ${isMine ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
-                        {formatTime(message.created_at)}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
+              {group.messages.map((message) => (
+                <MessageBubble
+                  key={message.id}
+                  content={message.content}
+                  timestamp={message.created_at}
+                  isMine={message.sender_id === currentUserId}
+                  isRead={message.is_read}
+                />
+              ))}
             </div>
           </div>
         ))}
+        
+        {/* Typing indicator */}
+        {isOtherTyping && <TypingIndicator />}
+        
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input area */}
-      <form onSubmit={sendMessage} className="p-4 border-t border-border bg-card">
-        <div className="flex gap-2">
-          <Input
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            placeholder="Écrivez votre message..."
-            className="flex-1"
-            disabled={isSending}
-          />
-          <Button type="submit" disabled={!newMessage.trim() || isSending}>
-            <Send className="h-4 w-4" />
-          </Button>
-        </div>
-      </form>
+      {/* Message input */}
+      <MessageInput
+        onSend={sendMessage}
+        onTyping={handleTyping}
+        disabled={isSending}
+      />
     </div>
   );
 }
