@@ -15,6 +15,7 @@ interface Message {
   content: string;
   created_at: string;
   is_read: boolean;
+  image_url?: string;
 }
 
 interface ConversationDetails {
@@ -189,8 +190,9 @@ export function ChatWindow({
     }
   }, [isOtherTyping, scrollToBottom]);
 
-  const sendMessage = async (content: string) => {
+  const sendMessage = async (content: string, imageUrl?: string) => {
     if (isSending) return;
+    if (!content.trim() && !imageUrl) return;
 
     setIsSending(true);
     stopTyping();
@@ -201,7 +203,8 @@ export function ChatWindow({
         .insert({
           conversation_id: conversationId,
           sender_id: currentUserId,
-          content
+          content: content || '',
+          image_url: imageUrl
         });
 
       if (error) throw error;
@@ -216,7 +219,7 @@ export function ChatWindow({
       supabase.functions.invoke('notify-seller', {
         body: {
           conversationId,
-          messageContent: content
+          messageContent: content || (imageUrl ? '[Image]' : '')
         }
       }).catch(err => console.log('Email notification error (non-blocking):', err));
       
@@ -303,6 +306,7 @@ export function ChatWindow({
                   timestamp={message.created_at}
                   isMine={message.sender_id === currentUserId}
                   isRead={message.is_read}
+                  imageUrl={message.image_url}
                 />
               ))}
             </div>
@@ -320,6 +324,7 @@ export function ChatWindow({
         onSend={sendMessage}
         onTyping={handleTyping}
         disabled={isSending}
+        currentUserId={currentUserId}
       />
     </div>
   );

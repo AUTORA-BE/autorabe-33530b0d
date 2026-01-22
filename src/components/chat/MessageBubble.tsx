@@ -1,5 +1,10 @@
+import { useState } from 'react';
 import { Check, CheckCheck } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import {
+  Dialog,
+  DialogContent,
+} from '@/components/ui/dialog';
 
 interface MessageBubbleProps {
   content: string;
@@ -7,6 +12,7 @@ interface MessageBubbleProps {
   isMine: boolean;
   isRead: boolean;
   showReadStatus?: boolean;
+  imageUrl?: string;
 }
 
 export function MessageBubble({ 
@@ -14,9 +20,11 @@ export function MessageBubble({
   timestamp, 
   isMine, 
   isRead,
-  showReadStatus = true 
+  showReadStatus = true,
+  imageUrl
 }: MessageBubbleProps) {
   const { language } = useLanguage();
+  const [isImageOpen, setIsImageOpen] = useState(false);
 
   const getLocale = () => {
     switch (language) {
@@ -78,32 +86,61 @@ export function MessageBubble({
   };
 
   return (
-    <div className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
-      <div
-        className={`max-w-[80%] sm:max-w-[70%] rounded-2xl px-4 py-2.5 ${
-          isMine
-            ? 'bg-primary text-primary-foreground rounded-br-md'
-            : 'bg-secondary text-foreground rounded-bl-md'
-        }`}
-      >
-        <p className="text-sm whitespace-pre-wrap break-words leading-relaxed">
-          {content}
-        </p>
-        <div className={`flex items-center justify-end gap-1 mt-1 ${
-          isMine ? 'text-primary-foreground/70' : 'text-muted-foreground'
-        }`}>
-          <span className="text-xs">
-            {formatRelativeTime(timestamp)}
-          </span>
-          {isMine && showReadStatus && (
-            isRead ? (
-              <CheckCheck className="h-3.5 w-3.5 text-blue-400" />
-            ) : (
-              <Check className="h-3.5 w-3.5" />
-            )
+    <>
+      <div className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
+        <div
+          className={`max-w-[80%] sm:max-w-[70%] rounded-2xl px-4 py-2.5 ${
+            isMine
+              ? 'bg-primary text-primary-foreground rounded-br-md'
+              : 'bg-secondary text-foreground rounded-bl-md'
+          }`}
+        >
+          {/* Image */}
+          {imageUrl && (
+            <div className="mb-2">
+              <img 
+                src={imageUrl} 
+                alt="Image partagée" 
+                className="rounded-lg max-w-full cursor-pointer hover:opacity-90 transition-opacity"
+                onClick={() => setIsImageOpen(true)}
+              />
+            </div>
           )}
+          
+          {/* Text content */}
+          {content && (
+            <p className="text-sm whitespace-pre-wrap break-words leading-relaxed">
+              {content}
+            </p>
+          )}
+          
+          <div className={`flex items-center justify-end gap-1 mt-1 ${
+            isMine ? 'text-primary-foreground/70' : 'text-muted-foreground'
+          }`}>
+            <span className="text-xs">
+              {formatRelativeTime(timestamp)}
+            </span>
+            {isMine && showReadStatus && (
+              isRead ? (
+                <CheckCheck className="h-3.5 w-3.5 text-blue-400" />
+              ) : (
+                <Check className="h-3.5 w-3.5" />
+              )
+            )}
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* Fullscreen image dialog */}
+      <Dialog open={isImageOpen} onOpenChange={setIsImageOpen}>
+        <DialogContent className="max-w-4xl p-0 bg-transparent border-none">
+          <img 
+            src={imageUrl} 
+            alt="Image partagée" 
+            className="w-full h-auto rounded-lg"
+          />
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
