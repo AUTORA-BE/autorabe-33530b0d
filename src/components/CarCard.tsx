@@ -1,10 +1,10 @@
-import { forwardRef } from "react";
+import { forwardRef, memo } from "react";
 import { motion } from "framer-motion";
 import { Fuel, Calendar, Gauge, Shield, MapPin, Heart, GitCompareArrows } from "lucide-react";
 import { useCompareContext } from "@/contexts/CompareContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useHapticFeedback } from "@/hooks/useHapticFeedback";
 import { toast } from "sonner";
-
 export interface Car {
   id: string;
   brand: string;
@@ -48,9 +48,10 @@ const getLezBadgeText = (euroNorm: string, fuelType: string) => {
   return null;
 };
 
-const CarCard = forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = false, onToggleFavorite, onClick }, ref) => {
+const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = false, onToggleFavorite, onClick }, ref) => {
   const { addToCompare, removeFromCompare, isInCompare, canAddMore } = useCompareContext();
   const { t, language } = useLanguage();
+  const { impactLight, notificationSuccess, selectionChanged } = useHapticFeedback();
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat(language === "nl" ? "nl-BE" : language === "en" ? "en-BE" : "fr-BE", {
@@ -65,6 +66,7 @@ const CarCard = forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = false
   };
 
   const handleClick = () => {
+    impactLight();
     if (onClick) {
       onClick(car.id);
     }
@@ -72,6 +74,7 @@ const CarCard = forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = false
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+    selectionChanged();
     if (onToggleFavorite) {
       onToggleFavorite(car.id);
     }
@@ -83,9 +86,11 @@ const CarCard = forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = false
     e.stopPropagation();
     if (inCompare) {
       removeFromCompare(car.id);
+      selectionChanged();
       toast.info(t("car.removedCompare"));
     } else if (canAddMore) {
       addToCompare(car);
+      notificationSuccess();
       toast.success(t("car.addedCompare"));
     } else {
       toast.warning(t("car.maxCompare"));
@@ -97,9 +102,10 @@ const CarCard = forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = false
   return (
     <motion.article
       ref={ref as React.Ref<HTMLElement>}
-      whileHover={{ y: -8, scale: 1.02 }}
-      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      className="rounded-2xl overflow-hidden bg-card border border-border/50 group cursor-pointer shadow-sm hover:shadow-lg"
+      whileHover={{ y: -6, scale: 1.01 }}
+      whileTap={{ scale: 0.98 }}
+      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+      className="rounded-2xl overflow-hidden bg-card border border-border/50 group cursor-pointer shadow-sm hover:shadow-xl active:shadow-lg touch-target"
       onClick={handleClick}
     >
       {/* Image Container */}
@@ -112,27 +118,38 @@ const CarCard = forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = false
 
         {/* Action Buttons */}
         <div className="absolute top-3 right-3 flex flex-col gap-2">
-          <button
+          <motion.button
             onClick={handleFavoriteClick}
-            className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all shadow-sm hover:shadow-lg ${
+            whileTap={{ scale: 0.85 }}
+            transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-all shadow-sm hover:shadow-lg touch-target focus-ring ${
               isFavorite
                 ? "bg-red-500 text-white"
-                : "bg-background/80 backdrop-blur-sm text-muted-foreground hover:text-red-500"
+                : "bg-background/90 backdrop-blur-sm text-muted-foreground hover:text-red-500"
             }`}
+            aria-label={isFavorite ? t("car.removeFromFavorites") : t("car.addToFavorites")}
           >
-            <Heart className={`w-5 h-5 ${isFavorite ? "fill-current" : ""}`} />
-          </button>
-          <button
+            <motion.div
+              animate={isFavorite ? { scale: [1, 1.3, 1] } : { scale: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Heart className={`w-5 h-5 ${isFavorite ? "fill-current" : ""}`} />
+            </motion.div>
+          </motion.button>
+          <motion.button
             onClick={handleCompareClick}
-            className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all shadow-sm hover:shadow-lg ${
+            whileTap={{ scale: 0.85 }}
+            transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-all shadow-sm hover:shadow-lg touch-target focus-ring ${
               inCompare
                 ? "bg-primary text-primary-foreground"
-                : "bg-background/80 backdrop-blur-sm text-muted-foreground hover:text-primary"
+                : "bg-background/90 backdrop-blur-sm text-muted-foreground hover:text-primary"
             }`}
             title={inCompare ? t("car.removeCompare") : t("car.addCompare")}
+            aria-label={inCompare ? t("car.removeCompare") : t("car.addCompare")}
           >
             <GitCompareArrows className="w-5 h-5" />
-          </button>
+          </motion.button>
         </div>
 
         {/* Badges */}
@@ -190,7 +207,7 @@ const CarCard = forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = false
       </div>
     </motion.article>
   );
-});
+}));
 
 CarCard.displayName = "CarCard";
 
