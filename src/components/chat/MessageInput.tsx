@@ -1,9 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
 import { Send, Image, X, Loader2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { EmojiPicker } from './EmojiPicker';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useHapticFeedback } from '@/hooks/useHapticFeedback';
+import { sanitizeMultilineInput } from '@/lib/security';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -19,14 +22,17 @@ export function MessageInput({ onSend, onTyping, disabled = false, currentUserId
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { t } = useLanguage();
+  const { impactLight, notificationSuccess, notificationError } = useHapticFeedback();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if ((!message.trim() && !selectedImage) || disabled || isUploading) return;
 
+    impactLight();
     let imageUrl: string | undefined;
 
     // Upload image if selected
@@ -49,6 +55,7 @@ export function MessageInput({ onSend, onTyping, disabled = false, currentUserId
         imageUrl = publicUrl;
       } catch (error) {
         console.error('Error uploading image:', error);
+        notificationError();
         toast.error("Erreur lors de l'envoi de l'image");
         setIsUploading(false);
         return;
@@ -56,7 +63,11 @@ export function MessageInput({ onSend, onTyping, disabled = false, currentUserId
       setIsUploading(false);
     }
 
-    onSend(message.trim(), imageUrl);
+    // Sanitize message content
+    const sanitizedMessage = sanitizeMultilineInput(message, 2000);
+    
+    onSend(sanitizedMessage, imageUrl);
+    notificationSuccess();
     setMessage('');
     setSelectedImage(null);
     setImagePreview(null);
@@ -125,41 +136,48 @@ export function MessageInput({ onSend, onTyping, disabled = false, currentUserId
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 border-t border-border bg-card">
+    <form onSubmit={handleSubmit} className="p-4 border-t border-border bg-card safe-bottom">
       {/* Image preview */}
-      {imagePreview && (
-        <div className="mb-3 relative inline-block">
-          <img 
-            src={imagePreview} 
-            alt="Preview" 
-            className="max-h-24 rounded-lg object-cover"
-          />
-          <Button
-            type="button"
-            size="icon"
-            variant="destructive"
-            className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
-            onClick={removeSelectedImage}
+      <AnimatePresence>
+        {imagePreview && (
+          <motion.div 
+            initial={{ opacity: 0, y: 10, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.9 }}
+            className="mb-3 relative inline-block"
           >
-            <X className="h-3 w-3" />
-          </Button>
-        </div>
-      )}
+            <img 
+              src={imagePreview} 
+              alt="Preview" 
+              className="max-h-24 rounded-lg object-cover shadow-md"
+            />
+            <motion.button
+              type="button"
+              whileTap={{ scale: 0.85 }}
+              className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center shadow-lg"
+              onClick={removeSelectedImage}
+            >
+              <X className="h-3 w-3" />
+            </motion.button>
+          </motion.div>
+        )}
+      </AnimatePresence>
       
-      <div className="flex items-end gap-2">
+      <div className={`flex items-end gap-2 rounded-2xl p-1 transition-all duration-200 ${
+        isFocused ? 'ring-2 ring-primary/20 bg-secondary/30' : ''
+      }`}>
         <EmojiPicker onEmojiSelect={handleEmojiSelect} />
         
         {/* Image upload button */}
-        <Button
+        <motion.button
           type="button"
-          size="icon"
-          variant="ghost"
-          className="h-11 w-11 shrink-0"
+          whileTap={{ scale: 0.9 }}
+          className="h-11 w-11 shrink-0 flex items-center justify-center rounded-xl hover:bg-secondary transition-colors touch-target"
           onClick={() => fileInputRef.current?.click()}
           disabled={disabled || isUploading}
         >
           <Image className="h-5 w-5 text-muted-foreground" />
-        </Button>
+        </motion.button>
         <input
           ref={fileInputRef}
           type="file"
@@ -173,24 +191,30 @@ export function MessageInput({ onSend, onTyping, disabled = false, currentUserId
           value={message}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
           placeholder={t("messages.typeMessage")}
-          className="flex-1 min-h-[44px] max-h-[120px] resize-none py-3 px-4"
+          className="flex-1 min-h-[44px] max-h-[120px] resize-none py-3 px-4 border-0 bg-transparent focus-visible:ring-0"
           disabled={disabled || isUploading}
           rows={1}
         />
         
-        <Button 
-          type="submit" 
-          size="icon"
-          className="h-11 w-11 shrink-0"
+        <motion.button
+          type="submit"
+          whileTap={{ scale: 0.9 }}
           disabled={(!message.trim() && !selectedImage) || disabled || isUploading}
+          className={`h-11 w-11 shrink-0 flex items-center justify-center rounded-xl transition-all touch-target ${
+            (!message.trim() && !selectedImage) || disabled || isUploading
+              ? 'bg-muted text-muted-foreground'
+              : 'bg-primary text-primary-foreground shadow-lg shadow-primary/25'
+          }`}
         >
           {isUploading ? (
             <Loader2 className="h-5 w-5 animate-spin" />
           ) : (
             <Send className="h-5 w-5" />
           )}
-        </Button>
+        </motion.button>
       </div>
     </form>
   );
