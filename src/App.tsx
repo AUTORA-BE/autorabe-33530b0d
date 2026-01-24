@@ -9,6 +9,7 @@ import Analytics from "./components/Analytics";
 import ScrollToTop from "./components/ScrollToTop";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 import ScrollProgressBar from "./components/ScrollProgressBar";
+import { FaviconBadge } from "./components/FaviconBadge";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import CarDetail from "./pages/CarDetail";
@@ -43,6 +44,7 @@ const App = () => (
             <ScrollProgressBar />
             <ScrollToTop />
             <Analytics />
+            <FaviconBadge />
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
