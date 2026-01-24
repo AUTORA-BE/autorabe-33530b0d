@@ -9,9 +9,10 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ArrowLeft, Bell, Loader2, Cookie, Shield, BarChart3, Sparkles, User, Camera } from "lucide-react";
+import { ArrowLeft, Bell, Loader2, Cookie, Shield, BarChart3, Sparkles, User, Camera, Smartphone } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
 
 interface CookiePreferences {
   essential: boolean;
@@ -125,6 +126,86 @@ function CookiePreferencesCard() {
             La page sera rechargée pour afficher la bannière de consentement
           </p>
         </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function PushNotificationsCard() {
+  const { t } = useLanguage();
+  const { 
+    isSupported, 
+    isSubscribed, 
+    isLoading, 
+    permission, 
+    subscribe, 
+    unsubscribe 
+  } = usePushNotifications();
+
+  if (!isSupported) {
+    return (
+      <Card className="mt-6">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Smartphone className="h-5 w-5" />
+            Notifications push
+          </CardTitle>
+          <CardDescription>
+            Les notifications push ne sont pas supportées par votre navigateur
+          </CardDescription>
+        </CardHeader>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="mt-6">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Smartphone className="h-5 w-5" />
+          Notifications push
+        </CardTitle>
+        <CardDescription>
+          Recevez des notifications instantanées pour les nouveaux messages
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="space-y-0.5">
+            <Label className="text-base">
+              Notifications push
+            </Label>
+            <p className="text-sm text-muted-foreground">
+              {isSubscribed 
+                ? "Vous recevrez des notifications sur cet appareil" 
+                : "Activez pour recevoir des notifications en temps réel"}
+            </p>
+          </div>
+          <Switch
+            checked={isSubscribed}
+            onCheckedChange={(checked) => {
+              if (checked) {
+                subscribe();
+              } else {
+                unsubscribe();
+              }
+            }}
+            disabled={isLoading}
+          />
+        </div>
+
+        {permission === 'denied' && (
+          <div className="p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
+            Les notifications sont bloquées. Veuillez les autoriser dans les paramètres de votre navigateur.
+          </div>
+        )}
+
+        {isSubscribed && (
+          <div className="p-3 rounded-lg bg-primary/10 text-primary text-sm flex items-center gap-2">
+            <Bell className="h-4 w-4" />
+            Notifications actives sur cet appareil
+          </div>
+        )}
       </CardContent>
     </Card>
   );
@@ -431,6 +512,9 @@ export default function Settings() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Push Notifications Card */}
+        <PushNotificationsCard />
 
         <Card className="mt-6">
           <CardHeader>

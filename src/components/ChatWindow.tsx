@@ -222,6 +222,20 @@ export function ChatWindow({
           messageContent: content || (imageUrl ? '[Image]' : '')
         }
       }).catch(err => console.log('Email notification error (non-blocking):', err));
+
+      // Send push notification to the other user (fire and forget)
+      const recipientId = conversationDetails?.otherUserId;
+      if (recipientId) {
+        supabase.functions.invoke('send-push-notification', {
+          body: {
+            userId: recipientId,
+            title: 'Nouveau message',
+            body: content ? (content.length > 50 ? content.substring(0, 50) + '...' : content) : '📷 Image',
+            tag: `chat-${conversationId}`,
+            data: { url: '/messages' }
+          }
+        }).catch(err => console.log('Push notification error (non-blocking):', err));
+      }
       
     } catch (error) {
       console.error('Error sending message:', error);
