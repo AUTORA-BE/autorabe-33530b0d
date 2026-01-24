@@ -8,6 +8,7 @@ import { TypingIndicator } from '@/components/chat/TypingIndicator';
 import { useTypingIndicator } from '@/hooks/useTypingIndicator';
 import { useOnlineStatus } from '@/hooks/useOnlineStatus';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useNotificationSound } from '@/hooks/useNotificationSound';
 
 interface Message {
   id: string;
@@ -46,6 +47,8 @@ export function ChatWindow({
   const [conversationDetails, setConversationDetails] = useState<ConversationDetails | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
+
+  const { playNotificationSound } = useNotificationSound();
 
   const { isOtherTyping, handleTyping, stopTyping } = useTypingIndicator(
     conversationId, 
@@ -140,14 +143,18 @@ export function ChatWindow({
           filter: `conversation_id=eq.${conversationId}`
         },
         (payload) => {
-          setMessages(prev => [...prev, payload.new as Message]);
+          const newMessage = payload.new as Message;
+          setMessages(prev => [...prev, newMessage]);
           
-          // Mark as read if we're the recipient
-          if ((payload.new as Message).sender_id !== currentUserId) {
+          // Play notification sound if we're the recipient
+          if (newMessage.sender_id !== currentUserId) {
+            playNotificationSound();
+            
+            // Mark as read
             supabase
               .from('messages')
               .update({ is_read: true })
-              .eq('id', (payload.new as Message).id);
+              .eq('id', newMessage.id);
           }
         }
       )
