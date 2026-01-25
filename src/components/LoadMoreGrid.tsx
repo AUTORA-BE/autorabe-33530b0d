@@ -2,7 +2,7 @@ import { useEffect, useRef, useCallback } from "react";
 import CarCard, { Car } from "./CarCard";
 import { SlidersHorizontal, ChevronDown, Loader2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Button } from "./ui/button";
+import { Skeleton } from "./ui/skeleton";
 
 interface LoadMoreGridProps {
   cars: Car[];
@@ -19,6 +19,36 @@ interface LoadMoreGridProps {
   onLoadMore: () => void;
   totalCount: number;
 }
+
+// Skeleton component for car cards
+const CarCardSkeleton = () => (
+  <div className="bg-card rounded-2xl overflow-hidden border border-border shadow-sm">
+    {/* Image skeleton */}
+    <Skeleton className="aspect-[4/3] w-full" />
+    
+    {/* Content skeleton */}
+    <div className="p-4 space-y-3">
+      {/* Brand and model */}
+      <div className="space-y-2">
+        <Skeleton className="h-5 w-3/4" />
+        <Skeleton className="h-4 w-1/2" />
+      </div>
+      
+      {/* Tags row */}
+      <div className="flex gap-2">
+        <Skeleton className="h-6 w-16 rounded-full" />
+        <Skeleton className="h-6 w-20 rounded-full" />
+        <Skeleton className="h-6 w-14 rounded-full" />
+      </div>
+      
+      {/* Price and location */}
+      <div className="flex items-center justify-between pt-2">
+        <Skeleton className="h-6 w-24" />
+        <Skeleton className="h-4 w-20" />
+      </div>
+    </div>
+  </div>
+);
 
 const LoadMoreGrid = ({
   cars,
@@ -168,16 +198,21 @@ const LoadMoreGrid = ({
                 />
               </div>
             ))}
+            
+            {/* Skeleton loaders while loading more */}
+            {isLoadingMore && (
+              <>
+                {[1, 2, 3].map((i) => (
+                  <div key={`skeleton-${i}`} className="animate-fade-in">
+                    <CarCardSkeleton />
+                  </div>
+                ))}
+              </>
+            )}
           </div>
 
           {/* Infinite Scroll Trigger - Auto load on scroll */}
-          <div ref={loadMoreRef} className="mt-8 flex justify-center min-h-[60px]">
-            {isLoadingMore && (
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Loader2 className="w-5 h-5 animate-spin" />
-                <span>{texts.loading}</span>
-              </div>
-            )}
+          <div ref={loadMoreRef} className="mt-8 flex justify-center min-h-[40px]">
             {!hasMore && cars.length > 0 && (
               <p className="text-muted-foreground text-sm">
                 {language === "nl" 
