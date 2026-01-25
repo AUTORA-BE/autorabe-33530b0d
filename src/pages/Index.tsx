@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
@@ -10,8 +10,7 @@ import Footer from "@/components/Footer";
 import CarChatbot from "@/components/CarChatbot";
 import SEOHead from "@/components/SEOHead";
 import SellCarBanner from "@/components/SellCarBanner";
-import { useInfiniteCarListings } from "@/hooks/useInfiniteCarListings";
-import { useCarFilters } from "@/hooks/useCarFilters";
+import { useFilteredInfiniteCarListings } from "@/hooks/useFilteredInfiniteCarListings";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -26,18 +25,14 @@ const Index = () => {
     isLoadingMore, 
     hasMore, 
     loadMore, 
-    totalCount 
-  } = useInfiniteCarListings();
-
-  const {
+    totalCount,
     filters,
     updateFilter,
     resetFilters,
-    filteredCars,
     sortBy,
     setSortBy,
     activeFiltersCount,
-  } = useCarFilters(cars);
+  } = useFilteredInfiniteCarListings();
 
   const { isFavorite, toggleFavorite } = useFavorites();
 
@@ -96,10 +91,10 @@ const Index = () => {
               filters={filters}
               onFilterChange={updateFilter}
               onReset={resetFilters}
-              resultsCount={filteredCars.length}
+              resultsCount={totalCount}
             />
             <LoadMoreGrid
-              cars={filteredCars}
+              cars={cars}
               onOpenFilters={() => setFiltersOpen(true)}
               sortBy={sortBy}
               onSortChange={setSortBy}

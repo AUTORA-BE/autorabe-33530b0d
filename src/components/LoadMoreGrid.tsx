@@ -170,28 +170,19 @@ const LoadMoreGrid = ({
             ))}
           </div>
 
-          {/* Load More / Infinite Scroll Trigger */}
-          <div ref={loadMoreRef} className="mt-8 flex justify-center">
+          {/* Infinite Scroll Trigger - Auto load on scroll */}
+          <div ref={loadMoreRef} className="mt-8 flex justify-center min-h-[60px]">
             {isLoadingMore && (
               <div className="flex items-center gap-2 text-muted-foreground">
                 <Loader2 className="w-5 h-5 animate-spin" />
                 <span>{texts.loading}</span>
               </div>
             )}
-            {hasMore && !isLoadingMore && (
-              <Button
-                onClick={onLoadMore}
-                variant="outline"
-                className="rounded-2xl px-8"
-              >
-                {texts.loadMore}
-              </Button>
-            )}
             {!hasMore && cars.length > 0 && (
               <p className="text-muted-foreground text-sm">
                 {language === "nl" 
-                  ? `${cars.length} voertuigen weergegeven`
-                  : `${cars.length} véhicules affichés`
+                  ? `Alle ${cars.length} voertuigen weergegeven`
+                  : `Tous les ${cars.length} véhicules affichés`
                 }
               </p>
             )}
