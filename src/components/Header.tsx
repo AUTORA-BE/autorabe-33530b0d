@@ -17,10 +17,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [user, setUser] = useState<SupabaseUser | null>(null);
+  const [userProfile, setUserProfile] = useState<{ avatar_url: string | null; display_name: string | null } | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -52,6 +54,26 @@ const Header = () => {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // Fetch user profile when user changes
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!user) {
+        setUserProfile(null);
+        return;
+      }
+
+      const { data } = await supabase
+        .from('profiles')
+        .select('avatar_url, display_name')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      setUserProfile(data);
+    };
+
+    fetchProfile();
+  }, [user]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -174,9 +196,14 @@ const Header = () => {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="rounded-2xl gap-2 shadow-sm hover:shadow-lg transition-shadow">
-                    <User className="w-4 h-4" />
-                    {user.email?.split("@")[0]}
+                  <Button variant="outline" size="sm" className="rounded-2xl gap-2 shadow-sm hover:shadow-lg transition-shadow pl-1.5">
+                    <Avatar className="h-6 w-6">
+                      <AvatarImage src={userProfile?.avatar_url || undefined} alt={userProfile?.display_name || user.email || ''} />
+                      <AvatarFallback className="bg-primary/10 text-primary text-xs font-medium">
+                        {(userProfile?.display_name || user.email || 'U').slice(0, 2).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    {userProfile?.display_name || user.email?.split("@")[0]}
                     <ChevronDown className="w-3 h-3" />
                   </Button>
                 </DropdownMenuTrigger>
