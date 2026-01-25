@@ -114,18 +114,20 @@ export function MessageBubble({
             </p>
           )}
           
-          <div className={`flex items-center justify-end gap-1 mt-1 ${
+          <div className={`flex items-center justify-end gap-1.5 mt-1 ${
             isMine ? 'text-primary-foreground/70' : 'text-muted-foreground'
           }`}>
             <span className="text-xs">
               {formatRelativeTime(timestamp)}
             </span>
             {isMine && showReadStatus && (
-              isRead ? (
-                <CheckCheck className="h-3.5 w-3.5 text-blue-400" />
-              ) : (
-                <Check className="h-3.5 w-3.5" />
-              )
+              <span className="transition-all duration-300">
+                {isRead ? (
+                  <CheckCheck className="h-4 w-4 text-sky-400" />
+                ) : (
+                  <Check className="h-4 w-4 opacity-70" />
+                )}
+              </span>
             )}
           </div>
         </div>
