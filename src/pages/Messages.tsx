@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MessageCircle, ArrowLeft, Car } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
@@ -7,6 +7,7 @@ import Footer from '@/components/Footer';
 import { ChatWindow } from '@/components/ChatWindow';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useMultipleOnlineStatus } from '@/hooks/useMultipleOnlineStatus';
 
 interface Conversation {
   id: string;
@@ -20,6 +21,7 @@ interface Conversation {
   created_at: string;
   unread_count?: number;
   last_message?: string;
+  other_user_id?: string;
 }
 
 export default function Messages() {
@@ -82,10 +84,13 @@ export default function Messages() {
             .limit(1)
             .maybeSingle();
 
+          const otherUserId = conv.buyer_id === currentUserId ? conv.seller_id : conv.buyer_id;
+          
           return {
             ...conv,
             unread_count: count || 0,
-            last_message: lastMsgData?.content || ''
+            last_message: lastMsgData?.content || '',
+            other_user_id: otherUserId
           };
         })
       );
@@ -127,6 +132,15 @@ export default function Messages() {
       supabase.removeChannel(channel);
     };
   }, [currentUserId]);
+
+  // Get all other user IDs for online status tracking
+  const otherUserIds = useMemo(() => {
+    return conversations
+      .map(conv => conv.other_user_id)
+      .filter((id): id is string => !!id);
+  }, [conversations]);
+
+  const { isUserOnline } = useMultipleOnlineStatus(currentUserId, otherUserIds);
 
   const getLocale = () => {
     return language === "nl" ? "nl-BE" : language === "en" ? "en-GB" : "fr-BE";
@@ -188,50 +202,58 @@ export default function Messages() {
                   <h2 className="font-semibold text-foreground">{t("messages.conversations")}</h2>
                 </div>
                 <div className="overflow-y-auto h-full">
-                  {conversations.map((conv) => (
-                    <button
-                      key={conv.id}
-                      onClick={() => setSelectedConversation(conv.id)}
-                      className={`w-full p-4 flex gap-3 hover:bg-secondary/50 transition-colors border-b border-border/50 ${
-                        selectedConversation === conv.id ? 'bg-secondary' : ''
-                      }`}
-                    >
-                      {/* Car image */}
-                      <div className="w-14 h-14 rounded-lg overflow-hidden bg-secondary flex-shrink-0">
-                        {conv.car_image ? (
-                          <img 
-                            src={conv.car_image} 
-                            alt={`${conv.car_brand} ${conv.car_model}`}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <Car className="h-6 w-6 text-muted-foreground" />
-                          </div>
-                        )}
-                      </div>
-                      
-                      {/* Content */}
-                      <div className="flex-1 text-left min-w-0">
-                        <div className="flex items-center justify-between gap-2">
-                          <span className="font-medium text-foreground truncate">
-                            {conv.car_brand} {conv.car_model}
-                          </span>
-                          <span className="text-xs text-muted-foreground flex-shrink-0">
-                            {formatDate(conv.last_message_at)}
-                          </span>
+                  {conversations.map((conv) => {
+                    const isOnline = conv.other_user_id ? isUserOnline(conv.other_user_id) : false;
+                    
+                    return (
+                      <button
+                        key={conv.id}
+                        onClick={() => setSelectedConversation(conv.id)}
+                        className={`w-full p-4 flex gap-3 hover:bg-secondary/50 transition-colors border-b border-border/50 ${
+                          selectedConversation === conv.id ? 'bg-secondary' : ''
+                        }`}
+                      >
+                        {/* Car image with online indicator */}
+                        <div className="relative w-14 h-14 rounded-lg overflow-hidden bg-secondary flex-shrink-0">
+                          {conv.car_image ? (
+                            <img 
+                              src={conv.car_image} 
+                              alt={`${conv.car_brand} ${conv.car_model}`}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <Car className="h-6 w-6 text-muted-foreground" />
+                            </div>
+                          )}
+                          {/* Online indicator */}
+                          {isOnline && (
+                            <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-card" />
+                          )}
                         </div>
-                        <p className="text-sm text-muted-foreground truncate mt-1">
-                          {conv.last_message || t("messages.noMessage")}
-                        </p>
-                        {(conv.unread_count ?? 0) > 0 && (
-                          <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-primary text-primary-foreground text-xs font-medium mt-1">
-                            {conv.unread_count}
-                          </span>
-                        )}
-                      </div>
-                    </button>
-                  ))}
+                        
+                        {/* Content */}
+                        <div className="flex-1 text-left min-w-0">
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="font-medium text-foreground truncate">
+                              {conv.car_brand} {conv.car_model}
+                            </span>
+                            <span className="text-xs text-muted-foreground flex-shrink-0">
+                              {formatDate(conv.last_message_at)}
+                            </span>
+                          </div>
+                          <p className="text-sm text-muted-foreground truncate mt-1">
+                            {conv.last_message || t("messages.noMessage")}
+                          </p>
+                          {(conv.unread_count ?? 0) > 0 && (
+                            <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-primary text-primary-foreground text-xs font-medium mt-1">
+                              {conv.unread_count}
+                            </span>
+                          )}
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
