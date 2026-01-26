@@ -17,6 +17,7 @@ interface Message {
   created_at: string;
   is_read: boolean;
   image_url?: string;
+  reply_to_id?: string | null;
 }
 
 interface ConversationDetails {
@@ -45,6 +46,7 @@ export function ChatWindow({
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
   const [conversationDetails, setConversationDetails] = useState<ConversationDetails | null>(null);
+  const [replyTo, setReplyTo] = useState<Message | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
@@ -197,7 +199,7 @@ export function ChatWindow({
     }
   }, [isOtherTyping, scrollToBottom]);
 
-  const sendMessage = async (content: string, imageUrl?: string) => {
+  const sendMessage = async (content: string, imageUrl?: string, replyToId?: string) => {
     if (isSending) return;
     if (!content.trim() && !imageUrl) return;
 
@@ -211,10 +213,14 @@ export function ChatWindow({
           conversation_id: conversationId,
           sender_id: currentUserId,
           content: content || '',
-          image_url: imageUrl
+          image_url: imageUrl,
+          reply_to_id: replyToId || null
         });
 
       if (error) throw error;
+      
+      // Clear reply state
+      setReplyTo(null);
 
       // Update conversation last_message_at
       await supabase
@@ -320,16 +326,30 @@ export function ChatWindow({
             
             {/* Messages */}
             <div className="space-y-2">
-              {group.messages.map((message) => (
-                <MessageBubble
-                  key={message.id}
-                  content={message.content}
-                  timestamp={message.created_at}
-                  isMine={message.sender_id === currentUserId}
-                  isRead={message.is_read}
-                  imageUrl={message.image_url}
-                />
-              ))}
+              {group.messages.map((message) => {
+                const replyToMessage = message.reply_to_id 
+                  ? messages.find(m => m.id === message.reply_to_id) 
+                  : null;
+                const replyToSenderName = replyToMessage
+                  ? replyToMessage.sender_id === currentUserId 
+                    ? 'Vous' 
+                    : conversationDetails?.otherUserName || 'Message'
+                  : undefined;
+                  
+                return (
+                  <MessageBubble
+                    key={message.id}
+                    content={message.content}
+                    timestamp={message.created_at}
+                    isMine={message.sender_id === currentUserId}
+                    isRead={message.is_read}
+                    imageUrl={message.image_url}
+                    replyTo={replyToMessage}
+                    replyToSenderName={replyToSenderName}
+                    onReply={() => setReplyTo(message)}
+                  />
+                );
+              })}
             </div>
           </div>
         ))}
@@ -346,6 +366,8 @@ export function ChatWindow({
         onTyping={handleTyping}
         disabled={isSending}
         currentUserId={currentUserId}
+        replyTo={replyTo}
+        onCancelReply={() => setReplyTo(null)}
       />
     </div>
   );
