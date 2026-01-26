@@ -1,23 +1,32 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { Send, Image, X, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { EmojiPicker } from './EmojiPicker';
+import { ReplyPreview } from './ReplyPreview';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useHapticFeedback } from '@/hooks/useHapticFeedback';
 import { sanitizeMultilineInput } from '@/lib/security';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
+interface ReplyToMessage {
+  id: string;
+  content: string;
+  sender_id: string;
+}
+
 interface MessageInputProps {
-  onSend: (message: string, imageUrl?: string) => void;
+  onSend: (message: string, imageUrl?: string, replyToId?: string) => void;
   onTyping: () => void;
   disabled?: boolean;
   currentUserId: string;
+  replyTo?: ReplyToMessage | null;
+  onCancelReply?: () => void;
 }
 
-export function MessageInput({ onSend, onTyping, disabled = false, currentUserId }: MessageInputProps) {
+export function MessageInput({ onSend, onTyping, disabled = false, currentUserId, replyTo, onCancelReply }: MessageInputProps) {
   const [message, setMessage] = useState('');
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -66,11 +75,12 @@ export function MessageInput({ onSend, onTyping, disabled = false, currentUserId
     // Sanitize message content
     const sanitizedMessage = sanitizeMultilineInput(message, 2000);
     
-    onSend(sanitizedMessage, imageUrl);
+    onSend(sanitizedMessage, imageUrl, replyTo?.id);
     notificationSuccess();
     setMessage('');
     setSelectedImage(null);
     setImagePreview(null);
+    onCancelReply?.();
     
     // Reset textarea height
     if (textareaRef.current) {
@@ -136,7 +146,19 @@ export function MessageInput({ onSend, onTyping, disabled = false, currentUserId
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 border-t border-border bg-card safe-bottom">
+    <form onSubmit={handleSubmit} className="border-t border-border bg-card safe-bottom">
+      {/* Reply preview */}
+      <AnimatePresence>
+        {replyTo && (
+          <ReplyPreview
+            replyToMessage={replyTo}
+            currentUserId={currentUserId}
+            onCancel={() => onCancelReply?.()}
+          />
+        )}
+      </AnimatePresence>
+      
+      <div className="p-4 pt-2">
       {/* Image preview */}
       <AnimatePresence>
         {imagePreview && (
@@ -215,6 +237,7 @@ export function MessageInput({ onSend, onTyping, disabled = false, currentUserId
             <Send className="h-5 w-5" />
           )}
         </motion.button>
+      </div>
       </div>
     </form>
   );

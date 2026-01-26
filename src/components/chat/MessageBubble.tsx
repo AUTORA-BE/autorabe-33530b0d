@@ -1,10 +1,18 @@
 import { useState } from 'react';
-import { Check, CheckCheck } from 'lucide-react';
+import { Check, CheckCheck, Reply } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useLanguage } from '@/contexts/LanguageContext';
 import {
   Dialog,
   DialogContent,
 } from '@/components/ui/dialog';
+import { QuotedMessage } from './QuotedMessage';
+
+interface ReplyToMessage {
+  id: string;
+  content: string;
+  sender_id: string;
+}
 
 interface MessageBubbleProps {
   content: string;
@@ -13,6 +21,9 @@ interface MessageBubbleProps {
   isRead: boolean;
   showReadStatus?: boolean;
   imageUrl?: string;
+  replyTo?: ReplyToMessage | null;
+  replyToSenderName?: string;
+  onReply?: () => void;
 }
 
 export function MessageBubble({ 
@@ -21,7 +32,10 @@ export function MessageBubble({
   isMine, 
   isRead,
   showReadStatus = true,
-  imageUrl
+  imageUrl,
+  replyTo,
+  replyToSenderName,
+  onReply
 }: MessageBubbleProps) {
   const { language } = useLanguage();
   const [isImageOpen, setIsImageOpen] = useState(false);
@@ -87,7 +101,18 @@ export function MessageBubble({
 
   return (
     <>
-      <div className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
+      <div className={`group flex ${isMine ? 'justify-end' : 'justify-start'}`}>
+        {/* Reply button for received messages */}
+        {!isMine && onReply && (
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={onReply}
+            className="self-center mr-1 opacity-0 group-hover:opacity-100 transition-opacity h-7 w-7 rounded-full flex items-center justify-center hover:bg-secondary"
+          >
+            <Reply className="h-4 w-4 text-muted-foreground" />
+          </motion.button>
+        )}
+        
         <div
           className={`max-w-[80%] sm:max-w-[70%] rounded-2xl px-4 py-2.5 ${
             isMine
@@ -95,6 +120,15 @@ export function MessageBubble({
               : 'bg-secondary text-foreground rounded-bl-md'
           }`}
         >
+          {/* Quoted message */}
+          {replyTo && (
+            <QuotedMessage 
+              content={replyTo.content}
+              senderName={replyToSenderName || (replyTo.sender_id === (isMine ? '' : replyTo.sender_id) ? 'Vous' : 'Message')}
+              isMine={isMine}
+            />
+          )}
+          
           {/* Image */}
           {imageUrl && (
             <div className="mb-2">
@@ -131,6 +165,16 @@ export function MessageBubble({
             )}
           </div>
         </div>
+        {/* Reply button for sent messages */}
+        {isMine && onReply && (
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={onReply}
+            className="self-center ml-1 opacity-0 group-hover:opacity-100 transition-opacity h-7 w-7 rounded-full flex items-center justify-center hover:bg-secondary"
+          >
+            <Reply className="h-4 w-4 text-muted-foreground" />
+          </motion.button>
+        )}
       </div>
 
       {/* Fullscreen image dialog */}
