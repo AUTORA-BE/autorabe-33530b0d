@@ -86,7 +86,7 @@ const Header = () => {
   const NavLink = ({ to, children, badge }: { to: string; children: React.ReactNode; badge?: number }) => (
     <Link 
       to={to} 
-      className={`relative font-medium transition-colors ${
+      className={`relative font-medium transition-all duration-200 hover:scale-105 ${
         location.pathname === to 
           ? "text-primary" 
           : "text-muted-foreground hover:text-foreground"
@@ -94,10 +94,10 @@ const Header = () => {
     >
       {children}
       {location.pathname === to && (
-        <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full" />
+        <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full animate-scale-in" />
       )}
       {badge !== undefined && badge > 0 && (
-        <span className="absolute -top-2 -right-3 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold px-1">
+        <span className="absolute -top-2 -right-3 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold px-1 animate-scale-in">
           {badge > 9 ? '9+' : badge}
         </span>
       )}
@@ -119,11 +119,11 @@ const Header = () => {
             <img 
               src={autoraLogo} 
               alt="Autora Logo" 
-              className={`rounded-2xl object-cover transition-all duration-300 group-hover:scale-105 ${
+              className={`rounded-2xl object-cover transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 group-active:scale-95 ${
                 scrolled ? "w-8 h-8" : "w-10 h-10"
               }`}
             />
-            <span className={`font-display font-bold text-primary transition-all duration-300 ${
+            <span className={`font-display font-bold text-primary transition-all duration-300 group-hover:tracking-wide ${
               scrolled ? "text-lg" : "text-xl"
             }`}>
               Autora
