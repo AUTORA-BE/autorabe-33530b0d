@@ -91,6 +91,7 @@
   html {
     @apply bg-background;
     color-scheme: light dark;
+    scroll-behavior: smooth;
   }
 
   html,
@@ -110,16 +111,37 @@
     font-family: 'Inter', sans-serif;
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
+    overflow-x: hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Space Grotesk', sans-serif;
   }
 
+  /* Smooth text rendering */
+  p, span, a, li {
+    text-rendering: optimizeLegibility;
+  }
+
   /* Improve touch targets on mobile */
   @media (max-width: 768px) {
     button, a, select, input {
       min-height: 44px;
+    }
+  }
+
+  /* Reduce motion for accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+
+    html {
+      scroll-behavior: auto;
     }
   }
 }
@@ -136,11 +158,17 @@
     background: hsl(var(--card));
     border-color: hsl(var(--glass-border));
     box-shadow: 0 4px 20px -4px hsl(var(--foreground) / 0.06);
+    will-change: transform, box-shadow;
   }
 
   .glass-card:hover {
     box-shadow: 0 12px 32px -8px hsl(var(--foreground) / 0.12);
     transform: translateY(-4px);
+  }
+
+  .glass-card:active {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px -6px hsl(var(--foreground) / 0.1);
   }
 
   .gradient-text {
@@ -157,8 +185,13 @@
   }
 
   .btn-primary-gradient:hover {
-    transform: translateY(-2px);
+    transform: translateY(-2px) scale(1.02);
     box-shadow: 0 8px 24px -4px hsl(var(--primary) / 0.5);
+  }
+
+  .btn-primary-gradient:active {
+    transform: translateY(0) scale(0.98);
+    box-shadow: 0 2px 8px -2px hsl(var(--primary) / 0.4);
   }
 
   .lez-badge {
@@ -377,10 +410,41 @@
     background: linear-gradient(
       90deg,
       hsl(var(--muted)) 0%,
-      hsl(var(--muted-foreground) / 0.1) 50%,
+      hsl(var(--muted-foreground) / 0.15) 50%,
       hsl(var(--muted)) 100%
     );
     background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
+    animation: shimmer 1.5s ease-in-out infinite;
   }
+
+  /* Interactive link underline animation */
+  .link-hover {
+    @apply relative;
+  }
+
+  .link-hover::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-full h-0.5 bg-primary scale-x-0 origin-right transition-transform duration-300;
+  }
+
+  .link-hover:hover::after {
+    @apply scale-x-100 origin-left;
+  }
+
+  /* Card press effect */
+  .card-press {
+    @apply transition-transform duration-150;
+  }
+
+  .card-press:active {
+    @apply scale-[0.98];
+  }
+
+  /* Stagger animation delays */
+  .stagger-1 { animation-delay: 0.05s; }
+  .stagger-2 { animation-delay: 0.1s; }
+  .stagger-3 { animation-delay: 0.15s; }
+  .stagger-4 { animation-delay: 0.2s; }
+  .stagger-5 { animation-delay: 0.25s; }
+  .stagger-6 { animation-delay: 0.3s; }
 }

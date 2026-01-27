@@ -2,7 +2,6 @@ import { useEffect, useRef, useCallback } from "react";
 import CarCard, { Car } from "./CarCard";
 import { SlidersHorizontal, ChevronDown } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Skeleton } from "./ui/skeleton";
 import ErrorState from "./ErrorState";
 
 interface LoadMoreGridProps {
@@ -23,31 +22,31 @@ interface LoadMoreGridProps {
   onRetry?: () => void;
 }
 
-// Skeleton component for car cards
+// Skeleton component for car cards with shimmer effect
 const CarCardSkeleton = () => (
-  <div className="bg-card rounded-2xl overflow-hidden border border-border shadow-sm">
-    {/* Image skeleton */}
-    <Skeleton className="aspect-[4/3] w-full" />
+  <div className="bg-card rounded-2xl overflow-hidden border border-border shadow-sm animate-fade-in">
+    {/* Image skeleton with shimmer */}
+    <div className="aspect-[4/3] w-full skeleton-shimmer" />
     
     {/* Content skeleton */}
     <div className="p-4 space-y-3">
       {/* Brand and model */}
       <div className="space-y-2">
-        <Skeleton className="h-5 w-3/4" />
-        <Skeleton className="h-4 w-1/2" />
+        <div className="h-5 w-3/4 rounded-lg skeleton-shimmer" />
+        <div className="h-4 w-1/2 rounded-lg skeleton-shimmer" />
       </div>
       
       {/* Tags row */}
       <div className="flex gap-2">
-        <Skeleton className="h-6 w-16 rounded-full" />
-        <Skeleton className="h-6 w-20 rounded-full" />
-        <Skeleton className="h-6 w-14 rounded-full" />
+        <div className="h-6 w-16 rounded-full skeleton-shimmer" />
+        <div className="h-6 w-20 rounded-full skeleton-shimmer" />
+        <div className="h-6 w-14 rounded-full skeleton-shimmer" />
       </div>
       
       {/* Price and location */}
       <div className="flex items-center justify-between pt-2">
-        <Skeleton className="h-6 w-24" />
-        <Skeleton className="h-4 w-20" />
+        <div className="h-6 w-24 rounded-lg skeleton-shimmer" />
+        <div className="h-4 w-20 rounded-lg skeleton-shimmer" />
       </div>
     </div>
   </div>
@@ -201,8 +200,11 @@ const LoadMoreGrid = ({
             {cars.map((car, index) => (
               <div
                 key={car.id}
-                className="animate-fade-up"
-                style={{ animationDelay: `${Math.min(index * 0.03, 0.3)}s` }}
+                className="animate-fade-up card-press"
+                style={{ 
+                  animationDelay: `${Math.min(index * 0.05, 0.4)}s`,
+                  animationFillMode: 'backwards'
+                }}
               >
                 <CarCard
                   car={car}
@@ -217,7 +219,11 @@ const LoadMoreGrid = ({
             {isLoadingMore && (
               <>
                 {[1, 2, 3].map((i) => (
-                  <div key={`skeleton-${i}`} className="animate-fade-in">
+                  <div 
+                    key={`skeleton-${i}`} 
+                    className="animate-fade-up"
+                    style={{ animationDelay: `${i * 0.1}s` }}
+                  >
                     <CarCardSkeleton />
                   </div>
                 ))}
