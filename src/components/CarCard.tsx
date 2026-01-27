@@ -53,6 +53,23 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
   const { t, language } = useLanguage();
   const { impactLight, notificationSuccess, selectionChanged } = useHapticFeedback();
 
+  // Generate multilingual alt text for SEO
+  const getAltText = () => {
+    const yearText = car.year;
+    const mileageFormatted = new Intl.NumberFormat(language === "nl" ? "nl-BE" : "fr-BE").format(car.mileage);
+    
+    switch (language) {
+      case "nl":
+        return `${car.brand} ${car.model} ${yearText} - ${mileageFormatted} km - ${car.fuelType} - Te koop in ${car.location}`;
+      case "de":
+        return `${car.brand} ${car.model} ${yearText} - ${mileageFormatted} km - ${car.fuelType} - Zu verkaufen in ${car.location}`;
+      case "en":
+        return `${car.brand} ${car.model} ${yearText} - ${mileageFormatted} km - ${car.fuelType} - For sale in ${car.location}`;
+      default:
+        return `${car.brand} ${car.model} ${yearText} - ${mileageFormatted} km - ${car.fuelType} - À vendre à ${car.location}`;
+    }
+  };
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat(language === "nl" ? "nl-BE" : language === "en" ? "en-BE" : "fr-BE", {
       style: "currency",
@@ -108,11 +125,11 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
       className="rounded-2xl overflow-hidden bg-card border border-border/50 group cursor-pointer shadow-sm hover:shadow-xl active:shadow-lg touch-target"
       onClick={handleClick}
     >
-      {/* Image Container */}
       <div className="relative h-48 md:h-56 overflow-hidden">
         <img
           src={car.image}
-          alt={`${car.brand} ${car.model} ${car.year}`}
+          alt={getAltText()}
+          loading="lazy"
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
 

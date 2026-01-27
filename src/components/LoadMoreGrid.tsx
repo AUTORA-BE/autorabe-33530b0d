@@ -1,8 +1,9 @@
 import { useEffect, useRef, useCallback } from "react";
 import CarCard, { Car } from "./CarCard";
-import { SlidersHorizontal, ChevronDown, Loader2 } from "lucide-react";
+import { SlidersHorizontal, ChevronDown } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Skeleton } from "./ui/skeleton";
+import ErrorState from "./ErrorState";
 
 interface LoadMoreGridProps {
   cars: Car[];
@@ -18,6 +19,8 @@ interface LoadMoreGridProps {
   hasMore: boolean;
   onLoadMore: () => void;
   totalCount: number;
+  error?: string | null;
+  onRetry?: () => void;
 }
 
 // Skeleton component for car cards
@@ -64,6 +67,8 @@ const LoadMoreGrid = ({
   hasMore,
   onLoadMore,
   totalCount,
+  error,
+  onRetry,
 }: LoadMoreGridProps) => {
   const { language } = useLanguage();
   const observerRef = useRef<IntersectionObserver | null>(null);
@@ -117,6 +122,15 @@ const LoadMoreGrid = ({
     loadMore: language === "nl" ? "Meer laden" : "Charger plus",
     loading: language === "nl" ? "Laden..." : "Chargement...",
   };
+
+  // Error state
+  if (error && !isLoading) {
+    return (
+      <div className="flex-1 min-w-0">
+        <ErrorState error={error} onRetry={onRetry} />
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (

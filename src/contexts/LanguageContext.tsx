@@ -210,6 +210,11 @@ const translations: Record<Language, Record<string, string>> = {
     "footer.gdprTitle": "Protection des données (RGPD)",
     "footer.gdprText": "Vos données personnelles sont traitées conformément au règlement européen RGPD. Vous disposez d'un droit d'accès, de rectification et de suppression de vos données. Contactez-nous à contact@autora.be pour toute demande.",
     
+    // Error States
+    "error.loadingFailed": "Erreur de chargement",
+    "error.tryAgain": "Une erreur s'est produite lors du chargement des annonces. Veuillez réessayer.",
+    "error.retry": "Réessayer",
+    
     // Messages
     "messages.title": "Messages",
     "messages.noMessages": "Aucun message",
@@ -717,6 +722,11 @@ const translations: Record<Language, Record<string, string>> = {
     "footer.warningText": "Autora is een advertentieplatform. Wij zijn niet verantwoordelijk voor de transactie of de staat van het voertuig. Betaal nooit een voorschot zonder de verkoper persoonlijk te hebben ontmoet en het voertuig te hebben gecontroleerd.",
     "footer.gdprTitle": "Privacy (GDPR)",
     "footer.gdprText": "Uw persoonlijke gegevens worden verwerkt in overeenstemming met de Europese GDPR-wetgeving. U heeft recht op toegang, rectificatie en verwijdering van uw gegevens. Neem contact met ons op via contact@autora.be voor elke aanvraag.",
+    
+    // Error States
+    "error.loadingFailed": "Laadfout",
+    "error.tryAgain": "Er is een fout opgetreden bij het laden van de advertenties. Probeer het opnieuw.",
+    "error.retry": "Opnieuw proberen",
     
     // Messages
     "messages.title": "Berichten",
@@ -1226,6 +1236,11 @@ const translations: Record<Language, Record<string, string>> = {
     "footer.gdprTitle": "Datenschutz (DSGVO)",
     "footer.gdprText": "Ihre persönlichen Daten werden gemäß der europäischen DSGVO-Verordnung verarbeitet. Sie haben das Recht auf Zugang, Berichtigung und Löschung Ihrer Daten. Kontaktieren Sie uns unter contact@autora.be für jede Anfrage.",
     
+    // Error States
+    "error.loadingFailed": "Ladefehler",
+    "error.tryAgain": "Beim Laden der Anzeigen ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+    "error.retry": "Erneut versuchen",
+    
     // Messages
     "messages.title": "Nachrichten",
     "messages.noMessages": "Keine Nachrichten",
@@ -1733,6 +1748,11 @@ const translations: Record<Language, Record<string, string>> = {
     "footer.warningText": "Autora is a listing platform. We are not responsible for the transaction or the condition of the vehicle. Never pay a deposit without meeting the seller in person and checking the vehicle.",
     "footer.gdprTitle": "Data Protection (GDPR)",
     "footer.gdprText": "Your personal data is processed in accordance with the European GDPR regulation. You have the right to access, rectify and delete your data. Contact us at contact@autora.be for any request.",
+    
+    // Error States
+    "error.loadingFailed": "Loading failed",
+    "error.tryAgain": "An error occurred while loading listings. Please try again.",
+    "error.retry": "Try again",
     
     // Messages
     "messages.title": "Messages",
