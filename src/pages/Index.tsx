@@ -32,6 +32,8 @@ const Index = () => {
     sortBy,
     setSortBy,
     activeFiltersCount,
+    error,
+    refresh,
   } = useFilteredInfiniteCarListings();
 
   const { isFavorite, toggleFavorite } = useFavorites();
@@ -107,6 +109,8 @@ const Index = () => {
               hasMore={hasMore}
               onLoadMore={loadMore}
               totalCount={totalCount}
+              error={error}
+              onRetry={refresh}
             />
           </div>
         </section>
