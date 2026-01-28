@@ -5,26 +5,22 @@ import { useCompareContext } from "@/contexts/CompareContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useHapticFeedback } from "@/hooks/useHapticFeedback";
 import { toast } from "sonner";
-export interface Car {
-  id: string;
-  brand: string;
-  model: string;
-  year: number;
-  price: number;
-  mileage: number;
-  fuelType: string;
-  transmission: string;
-  euroNorm: string;
-  location: string;
-  image: string;
-  isLezCompatible: boolean;
-  hasCarPass: boolean;
-}
+import type { Vehicle } from "@/features/listings/types/vehicle.types";
+
+/**
+ * Car interface for backward compatibility
+ * @deprecated Use Vehicle from features/listings/types instead
+ */
+export interface Car extends Vehicle {}
 
 interface CarCardProps {
+  /** Vehicle data to display */
   car: Car;
+  /** Whether this car is in user's favorites */
   isFavorite?: boolean;
+  /** Callback when favorite button is clicked */
   onToggleFavorite?: (carId: string) => void;
+  /** Callback when card is clicked */
   onClick?: (carId: string) => void;
 }
 

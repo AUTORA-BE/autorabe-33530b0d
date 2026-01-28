@@ -2,6 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CompareProvider } from "@/contexts/CompareContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
@@ -31,7 +32,23 @@ import Contact from "./pages/Contact";
 import AdminReports from "./pages/AdminReports";
 import CookieConsent from "./components/CookieConsent";
 
-const queryClient = new QueryClient();
+/**
+ * React Query client configuration
+ * - staleTime: How long data is considered fresh (5 min)
+ * - gcTime: How long unused data stays in cache (10 min)
+ * - refetchOnWindowFocus: Disabled for better UX
+ * - retry: Single retry on failure
+ */
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -72,6 +89,8 @@ const App = () => (
         </CompareProvider>
       </LanguageProvider>
     </TooltipProvider>
+    {/* React Query DevTools - only visible in development */}
+    {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
   </QueryClientProvider>
 );
 
