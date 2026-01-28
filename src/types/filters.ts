@@ -1,31 +1,12 @@
-export interface CarFilters {
-  searchQuery: string;
-  brand: string;
-  model: string;
-  minPrice: number;
-  maxPrice: number;
-  fuelTypes: string[];
-  transmission: string;
-  euroNorm: string;
-  yearMin: number;
-  yearMax: number;
-  kmMin: number;
-  kmMax: number;
-  lezOnly: boolean;
-}
+/**
+ * Car filters interface
+ * @deprecated Use VehicleFilters from features/listings/types instead
+ */
+import { 
+  VehicleFilters, 
+  defaultVehicleFilters 
+} from "@/features/listings/types/vehicle.types";
 
-export const defaultFilters: CarFilters = {
-  searchQuery: "",
-  brand: "",
-  model: "",
-  minPrice: 0,
-  maxPrice: 200000,
-  fuelTypes: [],
-  transmission: "",
-  euroNorm: "",
-  yearMin: 2010,
-  yearMax: 2026,
-  kmMin: 0,
-  kmMax: 200000,
-  lezOnly: false,
-};
+export interface CarFilters extends VehicleFilters {}
+
+export const defaultFilters: CarFilters = defaultVehicleFilters;

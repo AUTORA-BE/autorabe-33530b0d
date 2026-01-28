@@ -1,28 +1,16 @@
+/**
+ * Hook for fetching car listings
+ * @deprecated Use usePopularVehicles or useVehicleSearch from features/listings instead
+ */
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Car } from '@/components/CarCard';
+import { mapListingToVehicle } from '@/features/listings/api/vehicleQueries';
+import type { VehicleListingRow } from '@/features/listings/types/vehicle.types';
 
-// Map database listing to Car interface
-const mapListingToCar = (listing: any): Car => {
-  // Determine LEZ compatibility based on Euro norm
-  const lezCompatibleNorms = ['Euro 6d', 'Euro 6c', 'Euro 6b', 'Euro 6'];
-  const isLezCompatible = lezCompatibleNorms.includes(listing.euro_norm || '');
-
-  return {
-    id: listing.id,
-    brand: listing.brand,
-    model: listing.model,
-    year: listing.year,
-    price: listing.price,
-    mileage: listing.mileage,
-    fuelType: listing.fuel_type,
-    transmission: listing.transmission,
-    euroNorm: listing.euro_norm || 'Non spécifié',
-    location: listing.location || 'Belgique',
-    image: listing.photos?.[0] || 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800&h=600&fit=crop',
-    isLezCompatible,
-    hasCarPass: listing.car_pass_verified || false,
-  };
+// Re-export Vehicle mapping for backward compatibility
+const mapListingToCar = (listing: VehicleListingRow): Car => {
+  return mapListingToVehicle(listing);
 };
 
 export function useCarListings() {
