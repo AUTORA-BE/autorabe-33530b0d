@@ -1,10 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
-import HeroSection from "@/components/HeroSection";
-import BrandSlider from "@/components/BrandSlider";
+import { HeroSearch, BrandCarousel, FilterPanel } from "@/features/search";
 import { PopularVehicles } from "@/features/listings";
-import FiltersSidebar from "@/components/FiltersSidebar";
 import LoadMoreGrid from "@/components/LoadMoreGrid";
 import Footer from "@/components/Footer";
 import CarChatbot from "@/components/CarChatbot";
@@ -68,10 +66,10 @@ const Index = () => {
       <Header />
       <main className="pt-20">
         <SellCarBanner />
-        <HeroSection onSearch={handleSearch} />
+        <HeroSearch onSearch={handleSearch} />
 
         {/* Brand Slider Section */}
-        <BrandSlider 
+        <BrandCarousel 
           onBrandFilter={(brand) => updateFilter("brand", brand)} 
           selectedBrand={filters.brand} 
         />
@@ -86,7 +84,7 @@ const Index = () => {
         {/* All Listings Section */}
         <section id="results-section" className="container mx-auto px-4 sm:px-6 pb-16 sm:pb-20">
           <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
-            <FiltersSidebar
+            <FilterPanel
               isOpen={filtersOpen}
               onClose={() => setFiltersOpen(false)}
               filters={filters}
