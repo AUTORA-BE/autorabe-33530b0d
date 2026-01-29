@@ -20,6 +20,10 @@ export type {
 
 export { defaultVehicleFilters } from './types/vehicle.types';
 
+// Components
+export { VehicleCard, VehicleGrid, PopularVehicles } from './components';
+export type { VehicleCardProps, VehicleGridProps, PopularVehiclesProps } from './components';
+
 // API
 export { vehicleQueries, mapListingToVehicle, mapListingToVehicleDetail, PAGE_SIZE } from './api/vehicleQueries';
 
