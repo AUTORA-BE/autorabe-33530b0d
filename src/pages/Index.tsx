@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import HeroSection from "@/components/HeroSection";
 import BrandSlider from "@/components/BrandSlider";
-import PopularCars from "@/components/PopularCars";
+import { PopularVehicles } from "@/features/listings";
 import FiltersSidebar from "@/components/FiltersSidebar";
 import LoadMoreGrid from "@/components/LoadMoreGrid";
 import Footer from "@/components/Footer";
@@ -13,7 +13,6 @@ import SellCarBanner from "@/components/SellCarBanner";
 import { useFilteredInfiniteCarListings } from "@/hooks/useFilteredInfiniteCarListings";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useLanguage } from "@/contexts/LanguageContext";
-
 const Index = () => {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const navigate = useNavigate();
@@ -78,10 +77,10 @@ const Index = () => {
         />
 
         {/* Popular Cars Section */}
-        <PopularCars
+        <PopularVehicles
           isFavorite={isFavorite}
           onToggleFavorite={toggleFavorite}
-          onCarClick={handleCarClick}
+          onVehicleClick={handleCarClick}
         />
 
         {/* All Listings Section */}
