@@ -1,3 +1,9 @@
+/**
+ * Authentication Page
+ * Handles login, signup, and password reset flows
+ * @module pages/Auth
+ */
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,16 +12,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth, usePasswordValidation } from "@/features/auth";
 import { z } from "zod";
 
+/**
+ * Authentication page component
+ * Provides login, signup, password reset, and Google OAuth
+ */
 const Auth = () => {
+  // Form state
   const [isLogin, setIsLogin] = useState(true);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [resetEmailSent, setResetEmailSent] = useState(false);
   const [verificationEmailSent, setVerificationEmailSent] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
@@ -26,37 +37,28 @@ const Auth = () => {
   const { toast } = useToast();
   const { t } = useLanguage();
 
+  // Use auth hooks from features/auth
+  const { user, isLoading: authLoading, signIn, signUp, signInWithGoogle, resetPassword } = useAuth();
+  const passwordValidation = usePasswordValidation(password);
+
+  // Validation schemas
   const emailSchema = z.string().email(t("auth.invalidEmail"));
-  const passwordSchema = z.string()
-    .min(8, t("auth.passwordMinStrong"))
-    .regex(/[A-Z]/, t("auth.passwordUppercase"))
-    .regex(/[a-z]/, t("auth.passwordLowercase"))
-    .regex(/[0-9]/, t("auth.passwordNumber"))
-    .regex(/[^A-Za-z0-9]/, t("auth.passwordSpecial"));
   const nameSchema = z.string().min(2, t("auth.nameMin"));
 
+  // Redirect authenticated users
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        if (session?.user) {
-          // Redirect to dashboard after successful login
-          navigate("/dashboard");
-        }
-      }
-    );
+    if (user) {
+      navigate("/dashboard");
+    }
+  }, [user, navigate]);
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        navigate("/dashboard");
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
-
+  /**
+   * Validate form fields
+   */
   const validateForm = () => {
     const newErrors: { email?: string; password?: string; name?: string } = {};
     
+    // Validate email
     try {
       emailSchema.parse(email);
     } catch (e) {
@@ -65,14 +67,24 @@ const Auth = () => {
       }
     }
 
-    try {
-      passwordSchema.parse(password);
-    } catch (e) {
-      if (e instanceof z.ZodError) {
-        newErrors.password = e.errors[0].message;
+    // Validate password using hook
+    if (!isLogin && !passwordValidation.isValid) {
+      if (!passwordValidation.minLength) {
+        newErrors.password = t("auth.passwordMinStrong");
+      } else if (!passwordValidation.hasUppercase) {
+        newErrors.password = t("auth.passwordUppercase");
+      } else if (!passwordValidation.hasLowercase) {
+        newErrors.password = t("auth.passwordLowercase");
+      } else if (!passwordValidation.hasNumber) {
+        newErrors.password = t("auth.passwordNumber");
+      } else if (!passwordValidation.hasSpecial) {
+        newErrors.password = t("auth.passwordSpecial");
       }
+    } else if (isLogin && password.length < 1) {
+      newErrors.password = t("auth.passwordRequired");
     }
 
+    // Validate name for signup
     if (!isLogin) {
       try {
         nameSchema.parse(fullName);
@@ -87,85 +99,67 @@ const Auth = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  /**
+   * Handle email authentication (login/signup)
+   */
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!validateForm()) return;
-    
-    setLoading(true);
 
-    try {
-      if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
-        if (error) {
-          if (error.message.includes("Invalid login credentials")) {
-            toast({
-              title: t("auth.errorLogin"),
-              description: t("auth.errorCredentials"),
-              variant: "destructive",
-            });
-          } else {
-            toast({
-              title: t("auth.error"),
-              description: error.message,
-              variant: "destructive",
-            });
-          }
+    if (isLogin) {
+      const result = await signIn({ email, password });
+      
+      if (!result.success && result.error) {
+        if (result.error.type === 'invalid_credentials') {
+          toast({
+            title: t("auth.errorLogin"),
+            description: t("auth.errorCredentials"),
+            variant: "destructive",
+          });
         } else {
           toast({
-            title: t("auth.welcome"),
-            description: t("auth.loginSuccess"),
+            title: t("auth.error"),
+            description: result.error.message,
+            variant: "destructive",
           });
         }
       } else {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/`,
-            data: {
-              full_name: fullName,
-            },
-          },
+        toast({
+          title: t("auth.welcome"),
+          description: t("auth.loginSuccess"),
         });
-
-        if (error) {
-          if (error.message.includes("User already registered")) {
-            toast({
-              title: t("auth.accountExists"),
-              description: t("auth.accountExistsDesc"),
-              variant: "destructive",
-            });
-          } else {
-            toast({
-              title: t("auth.error"),
-              description: error.message,
-              variant: "destructive",
-            });
-          }
-        } else {
-          setVerificationEmailSent(true);
+      }
+    } else {
+      const result = await signUp({ email, password, fullName });
+      
+      if (!result.success && result.error) {
+        if (result.error.type === 'user_exists') {
           toast({
-            title: t("auth.verificationEmailSent"),
-            description: t("auth.verificationEmailSentDesc"),
+            title: t("auth.accountExists"),
+            description: t("auth.accountExistsDesc"),
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: t("auth.error"),
+            description: result.error.message,
+            variant: "destructive",
           });
         }
+      } else {
+        setVerificationEmailSent(true);
+        toast({
+          title: t("auth.verificationEmailSent"),
+          description: t("auth.verificationEmailSentDesc"),
+        });
       }
-    } catch (error) {
-      toast({
-        title: t("auth.error"),
-        description: t("auth.unexpectedError"),
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
     }
   };
 
+  /**
+   * Handle forgot password flow
+   */
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -183,14 +177,49 @@ const Auth = () => {
       setErrors(newErrors);
       return;
     }
-    
-    setLoading(true);
 
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
+    const result = await resetPassword(email);
+
+    if (!result.success && result.error) {
+      toast({
+        title: t("auth.error"),
+        description: result.error.message,
+        variant: "destructive",
       });
+    } else {
+      setResetEmailSent(true);
+      toast({
+        title: t("auth.resetEmailSent"),
+        description: t("auth.resetEmailSentDesc"),
+      });
+    }
+  };
 
+  /**
+   * Handle Google OAuth
+   */
+  const handleGoogleAuth = async () => {
+    const result = await signInWithGoogle();
+
+    if (!result.success && result.error) {
+      toast({
+        title: t("auth.error"),
+        description: result.error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  /**
+   * Resend verification email
+   */
+  const handleResendVerification = async () => {
+    setResendLoading(true);
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: email,
+      });
       if (error) {
         toast({
           title: t("auth.error"),
@@ -198,11 +227,21 @@ const Auth = () => {
           variant: "destructive",
         });
       } else {
-        setResetEmailSent(true);
         toast({
-          title: t("auth.resetEmailSent"),
-          description: t("auth.resetEmailSentDesc"),
+          title: t("auth.resendSuccess"),
+          description: t("auth.resendSuccessDesc"),
         });
+        // Start 60 second cooldown
+        setResendCooldown(60);
+        const interval = setInterval(() => {
+          setResendCooldown((prev) => {
+            if (prev <= 1) {
+              clearInterval(interval);
+              return 0;
+            }
+            return prev - 1;
+          });
+        }, 1000);
       }
     } catch (error) {
       toast({
@@ -211,35 +250,7 @@ const Auth = () => {
         variant: "destructive",
       });
     } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleGoogleAuth = async () => {
-    setLoading(true);
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: `${window.location.origin}/`,
-        },
-      });
-
-      if (error) {
-        toast({
-          title: t("auth.error"),
-          description: error.message,
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      toast({
-        title: t("auth.error"),
-        description: t("auth.unexpectedError"),
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
+      setResendLoading(false);
     }
   };
 
@@ -321,46 +332,7 @@ const Auth = () => {
                 </p>
                 <div className="space-y-3">
                   <Button
-                    onClick={async () => {
-                      setResendLoading(true);
-                      try {
-                        const { error } = await supabase.auth.resend({
-                          type: 'signup',
-                          email: email,
-                        });
-                        if (error) {
-                          toast({
-                            title: t("auth.error"),
-                            description: error.message,
-                            variant: "destructive",
-                          });
-                        } else {
-                          toast({
-                            title: t("auth.resendSuccess"),
-                            description: t("auth.resendSuccessDesc"),
-                          });
-                          // Start 60 second cooldown
-                          setResendCooldown(60);
-                          const interval = setInterval(() => {
-                            setResendCooldown((prev) => {
-                              if (prev <= 1) {
-                                clearInterval(interval);
-                                return 0;
-                              }
-                              return prev - 1;
-                            });
-                          }, 1000);
-                        }
-                      } catch (error) {
-                        toast({
-                          title: t("auth.error"),
-                          description: t("auth.unexpectedError"),
-                          variant: "destructive",
-                        });
-                      } finally {
-                        setResendLoading(false);
-                      }
-                    }}
+                    onClick={handleResendVerification}
                     className="w-full h-12 btn-primary-gradient"
                     disabled={resendLoading || resendCooldown > 0}
                   >
@@ -436,9 +408,9 @@ const Auth = () => {
                   <Button
                     type="submit"
                     className="w-full h-12 btn-primary-gradient"
-                    disabled={loading}
+                    disabled={authLoading}
                   >
-                    {loading ? t("auth.loading") : t("auth.sendResetLink")}
+                    {authLoading ? t("auth.loading") : t("auth.sendResetLink")}
                   </Button>
                 </form>
 
@@ -471,7 +443,7 @@ const Auth = () => {
                   variant="outline"
                   className="w-full h-12 mb-6 bg-secondary/50 border-border/50 hover:bg-secondary text-foreground"
                   onClick={handleGoogleAuth}
-                  disabled={loading}
+                  disabled={authLoading}
                 >
                   <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
                     <path
@@ -558,6 +530,32 @@ const Auth = () => {
                     {errors.password && (
                       <p className="text-destructive text-sm mt-1">{errors.password}</p>
                     )}
+                    
+                    {/* Password strength indicator for signup */}
+                    {!isLogin && password.length > 0 && (
+                      <div className="mt-2 space-y-1 text-xs">
+                        <div className={`flex items-center gap-1 ${passwordValidation.minLength ? 'text-green-500' : 'text-muted-foreground'}`}>
+                          <CheckCircle className="w-3 h-3" />
+                          <span>{t("auth.passwordMinStrong")}</span>
+                        </div>
+                        <div className={`flex items-center gap-1 ${passwordValidation.hasUppercase ? 'text-green-500' : 'text-muted-foreground'}`}>
+                          <CheckCircle className="w-3 h-3" />
+                          <span>{t("auth.passwordUppercase")}</span>
+                        </div>
+                        <div className={`flex items-center gap-1 ${passwordValidation.hasLowercase ? 'text-green-500' : 'text-muted-foreground'}`}>
+                          <CheckCircle className="w-3 h-3" />
+                          <span>{t("auth.passwordLowercase")}</span>
+                        </div>
+                        <div className={`flex items-center gap-1 ${passwordValidation.hasNumber ? 'text-green-500' : 'text-muted-foreground'}`}>
+                          <CheckCircle className="w-3 h-3" />
+                          <span>{t("auth.passwordNumber")}</span>
+                        </div>
+                        <div className={`flex items-center gap-1 ${passwordValidation.hasSpecial ? 'text-green-500' : 'text-muted-foreground'}`}>
+                          <CheckCircle className="w-3 h-3" />
+                          <span>{t("auth.passwordSpecial")}</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {isLogin && (
@@ -578,9 +576,9 @@ const Auth = () => {
                   <Button
                     type="submit"
                     className="w-full h-12 btn-primary-gradient"
-                    disabled={loading}
+                    disabled={authLoading}
                   >
-                    {loading ? t("auth.loading") : isLogin ? t("auth.submit") : t("auth.submitSignup")}
+                    {authLoading ? t("auth.loading") : isLogin ? t("auth.submit") : t("auth.submitSignup")}
                   </Button>
                 </form>
 
