@@ -5,10 +5,14 @@ import { ChatHeader } from '@/components/chat/ChatHeader';
 import { MessageBubble } from '@/components/chat/MessageBubble';
 import { MessageInput } from '@/components/chat/MessageInput';
 import { TypingIndicator } from '@/components/chat/TypingIndicator';
-import { useTypingIndicator } from '@/hooks/useTypingIndicator';
-import { useOnlineStatus } from '@/hooks/useOnlineStatus';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNotificationSound } from '@/hooks/useNotificationSound';
+import { 
+  useTypingIndicator, 
+  useOnlineStatus,
+  type ConversationDetails,
+  type ReplyToMessage,
+} from '@/features/messaging';
 
 interface Message {
   id: string;
@@ -18,14 +22,6 @@ interface Message {
   is_read: boolean;
   image_url?: string;
   reply_to_id?: string | null;
-}
-
-interface ConversationDetails {
-  otherUserId: string;
-  otherUserName: string;
-  otherUserAvatar?: string;
-  carBrand?: string;
-  carModel?: string;
 }
 
 interface ChatWindowProps {
