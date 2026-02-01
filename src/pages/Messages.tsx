@@ -1,142 +1,37 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MessageCircle, ArrowLeft, Car } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { MessageCircle, Car } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { ChatWindow } from '@/components/ChatWindow';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useMultipleOnlineStatus } from '@/hooks/useMultipleOnlineStatus';
-
-interface Conversation {
-  id: string;
-  car_listing_id: string | null;
-  buyer_id: string;
-  seller_id: string;
-  car_brand: string | null;
-  car_model: string | null;
-  car_image: string | null;
-  last_message_at: string;
-  created_at: string;
-  unread_count?: number;
-  last_message?: string;
-  other_user_id?: string;
-}
+import { useConversations } from '@/features/messaging';
+import { useAuth } from '@/features/auth';
 
 export default function Messages() {
   const navigate = useNavigate();
   const { t, language } = useLanguage();
-  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const { user, isLoading: authLoading } = useAuth();
+  const currentUserId = user?.id || null;
+  
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
 
+  // Use the modular useConversations hook
+  const { conversations, isLoading: conversationsLoading } = useConversations(currentUserId ?? undefined);
+
+  // Redirect to auth if not logged in
   useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        navigate('/auth');
-        return;
-      }
-      
-      setCurrentUserId(session.user.id);
-    };
-    
-    checkAuth();
-  }, [navigate]);
-
-  useEffect(() => {
-    if (!currentUserId) return;
-
-    const fetchConversations = async () => {
-      // Fetch conversations
-      const { data: convos, error } = await supabase
-        .from('conversations')
-        .select('*')
-        .or(`buyer_id.eq.${currentUserId},seller_id.eq.${currentUserId}`)
-        .order('last_message_at', { ascending: false });
-
-      if (error) {
-        console.error('Error fetching conversations:', error);
-        setIsLoading(false);
-        return;
-      }
-
-      // For each conversation, get unread count and last message
-      const conversationsWithDetails = await Promise.all(
-        (convos || []).map(async (conv) => {
-          // Get unread count
-          const { count } = await supabase
-            .from('messages')
-            .select('*', { count: 'exact', head: true })
-            .eq('conversation_id', conv.id)
-            .eq('is_read', false)
-            .neq('sender_id', currentUserId);
-
-          // Get last message
-          const { data: lastMsgData } = await supabase
-            .from('messages')
-            .select('content')
-            .eq('conversation_id', conv.id)
-            .order('created_at', { ascending: false })
-            .limit(1)
-            .maybeSingle();
-
-          const otherUserId = conv.buyer_id === currentUserId ? conv.seller_id : conv.buyer_id;
-          
-          return {
-            ...conv,
-            unread_count: count || 0,
-            last_message: lastMsgData?.content || '',
-            other_user_id: otherUserId
-          };
-        })
-      );
-
-      setConversations(conversationsWithDetails);
-      setIsLoading(false);
-    };
-
-    fetchConversations();
-
-    // Subscribe to conversation updates
-    const channel = supabase
-      .channel('conversations-updates')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'conversations'
-        },
-        () => {
-          fetchConversations();
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'messages'
-        },
-        () => {
-          fetchConversations();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [currentUserId]);
+    if (!authLoading && !user) {
+      navigate('/auth');
+    }
+  }, [authLoading, user, navigate]);
 
   // Get all other user IDs for online status tracking
   const otherUserIds = useMemo(() => {
     return conversations
-      .map(conv => conv.other_user_id)
+      .map(conv => conv.otherUserId)
       .filter((id): id is string => !!id);
   }, [conversations]);
 
@@ -162,6 +57,8 @@ export default function Messages() {
       return date.toLocaleDateString(getLocale(), { day: 'numeric', month: 'short' });
     }
   };
+
+  const isLoading = authLoading || conversationsLoading;
 
   if (isLoading) {
     return (
@@ -203,7 +100,7 @@ export default function Messages() {
                 </div>
                 <div className="overflow-y-auto h-full">
                   {conversations.map((conv) => {
-                    const isOnline = conv.other_user_id ? isUserOnline(conv.other_user_id) : false;
+                    const isOnline = conv.otherUserId ? isUserOnline(conv.otherUserId) : false;
                     
                     return (
                       <button
@@ -215,10 +112,10 @@ export default function Messages() {
                       >
                         {/* Car image with online indicator */}
                         <div className="relative w-14 h-14 rounded-lg overflow-hidden bg-secondary flex-shrink-0">
-                          {conv.car_image ? (
+                          {conv.carImage ? (
                             <img 
-                              src={conv.car_image} 
-                              alt={`${conv.car_brand} ${conv.car_model}`}
+                              src={conv.carImage} 
+                              alt={`${conv.carBrand} ${conv.carModel}`}
                               className="w-full h-full object-cover"
                             />
                           ) : (
@@ -236,18 +133,18 @@ export default function Messages() {
                         <div className="flex-1 text-left min-w-0">
                           <div className="flex items-center justify-between gap-2">
                             <span className="font-medium text-foreground truncate">
-                              {conv.car_brand} {conv.car_model}
+                              {conv.carBrand} {conv.carModel}
                             </span>
                             <span className="text-xs text-muted-foreground flex-shrink-0">
-                              {formatDate(conv.last_message_at)}
+                              {formatDate(conv.lastMessageAt)}
                             </span>
                           </div>
                           <p className="text-sm text-muted-foreground truncate mt-1">
-                            {conv.last_message || t("messages.noMessage")}
+                            {conv.lastMessage || t("messages.noMessage")}
                           </p>
-                          {(conv.unread_count ?? 0) > 0 && (
+                          {(conv.unreadCount ?? 0) > 0 && (
                             <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-primary text-primary-foreground text-xs font-medium mt-1">
-                              {conv.unread_count}
+                              {conv.unreadCount}
                             </span>
                           )}
                         </div>
