@@ -6,7 +6,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import { useToast } from "@/hooks/use-toast";
-import { useUnreadMessages } from "@/hooks/useUnreadMessages";
+import { useUnreadMessages } from "@/features/messaging";
 import { useCompareContext } from "@/contexts/CompareContext";
 import { useLanguage, getLanguageLabel } from "@/contexts/LanguageContext";
 import { useTheme } from "next-themes";

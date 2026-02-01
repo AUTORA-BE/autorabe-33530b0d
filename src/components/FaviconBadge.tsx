@@ -1,4 +1,4 @@
-import { useUnreadMessages } from '@/hooks/useUnreadMessages';
+import { useUnreadMessages } from '@/features/messaging';
 import { useFaviconBadge } from '@/hooks/useFaviconBadge';
 
 export function FaviconBadge() {
