@@ -1,5 +1,4 @@
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import { Header, Footer } from "@/shared/components";
 import SEOHead from "@/components/SEOHead";
 import { Users, Shield, Car, Award, MapPin, Heart } from "lucide-react";
 

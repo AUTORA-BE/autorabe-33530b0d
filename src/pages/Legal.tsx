@@ -1,5 +1,4 @@
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import { Header, Footer } from "@/shared/components";
 import { Building2, User, Globe, Server, FileText, Scale, Camera, Mail } from "lucide-react";
 
 const Legal = () => {

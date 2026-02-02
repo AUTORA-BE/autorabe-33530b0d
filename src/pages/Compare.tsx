@@ -1,5 +1,4 @@
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import { Header, Footer } from "@/shared/components";
 import { useCompareContext } from "@/contexts/CompareContext";
 import { Link } from "react-router-dom";
 import { 
