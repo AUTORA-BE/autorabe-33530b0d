@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import { Header, Footer } from "@/shared/components";
 import CarCard from "@/components/CarCard";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useCarListings } from "@/hooks/useCarListings";

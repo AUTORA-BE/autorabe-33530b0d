@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Header from "@/components/Header";
+import { Header, Footer } from "@/shared/components";
 import { HeroSearch, BrandCarousel, FilterPanel } from "@/features/search";
 import { PopularVehicles } from "@/features/listings";
 import LoadMoreGrid from "@/components/LoadMoreGrid";
-import Footer from "@/components/Footer";
 import CarChatbot from "@/components/CarChatbot";
 import SEOHead from "@/components/SEOHead";
 import SellCarBanner from "@/components/SellCarBanner";

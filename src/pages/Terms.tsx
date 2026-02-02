@@ -1,5 +1,4 @@
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import { Header, Footer } from "@/shared/components";
 import { FileText, Scale, AlertTriangle, Users, CreditCard, Shield, Mail } from "lucide-react";
 
 const Terms = () => {

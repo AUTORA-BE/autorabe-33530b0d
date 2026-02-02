@@ -1,10 +1,18 @@
+/**
+ * Footer component with navigation, legal links, and contact info
+ * @module shared/components
+ */
+
 import { Link } from "react-router-dom";
 import autoraLogo from "@/assets/autora-logo.png";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Shield, FileCheck, Car, Mail, Phone, MapPin } from "lucide-react";
+import { Shield, FileCheck, Mail, MapPin } from "lucide-react";
 
+/**
+ * Main footer component with Belgian legal compliance
+ */
 const Footer = () => {
-  const { t, language, setLanguage } = useLanguage();
+  const { language, setLanguage } = useLanguage();
 
   const currentYear = new Date().getFullYear();
 

@@ -1,6 +1,11 @@
+/**
+ * Header component with navigation, user menu, and language selector
+ * @module shared/components
+ */
+
 import { Menu, User, LogOut, Heart, MessageCircle, HelpCircle, GitCompareArrows, LayoutDashboard, Settings, ChevronDown, Globe, Sun, Moon } from "lucide-react";
 import autoraLogo from "@/assets/autora-logo.png";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -19,6 +24,43 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
+/**
+ * Navigation link component with active state and optional badge
+ */
+interface NavLinkProps {
+  to: string;
+  children: React.ReactNode;
+  badge?: number;
+}
+
+const NavLink = ({ to, children, badge }: NavLinkProps) => {
+  const location = useLocation();
+  
+  return (
+    <Link 
+      to={to} 
+      className={`relative font-medium transition-all duration-200 hover:scale-105 ${
+        location.pathname === to 
+          ? "text-primary" 
+          : "text-muted-foreground hover:text-foreground"
+      }`}
+    >
+      {children}
+      {location.pathname === to && (
+        <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full animate-scale-in" />
+      )}
+      {badge !== undefined && badge > 0 && (
+        <span className="absolute -top-2 -right-3 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold px-1 animate-scale-in">
+          {badge > 9 ? '9+' : badge}
+        </span>
+      )}
+    </Link>
+  );
+};
+
+/**
+ * Main header component with responsive navigation
+ */
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [user, setUser] = useState<SupabaseUser | null>(null);
@@ -82,27 +124,6 @@ const Header = () => {
       description: t("logout.description"),
     });
   };
-
-  const NavLink = ({ to, children, badge }: { to: string; children: React.ReactNode; badge?: number }) => (
-    <Link 
-      to={to} 
-      className={`relative font-medium transition-all duration-200 hover:scale-105 ${
-        location.pathname === to 
-          ? "text-primary" 
-          : "text-muted-foreground hover:text-foreground"
-      }`}
-    >
-      {children}
-      {location.pathname === to && (
-        <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full animate-scale-in" />
-      )}
-      {badge !== undefined && badge > 0 && (
-        <span className="absolute -top-2 -right-3 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold px-1 animate-scale-in">
-          {badge > 9 ? '9+' : badge}
-        </span>
-      )}
-    </Link>
-  );
 
   return (
     <header 

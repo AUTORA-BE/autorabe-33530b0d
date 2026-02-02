@@ -17,8 +17,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import { Header, Footer } from "@/shared/components";
 import CarCard, { Car } from "@/components/CarCard";
 import { Button } from "@/components/ui/button";
 import { getCarByIdFromDb, getRelatedCarsFromList, formatPrice, formatMileage, getSellerContact } from "@/utils/carUtils";
