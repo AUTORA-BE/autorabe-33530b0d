@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Car } from "@/components/CarCard";
+import type { Car } from "@/features/listings";
 import { CarFilters, defaultFilters } from "@/types/filters";
 
 export const useCarFilters = (cars: Car[]) => {

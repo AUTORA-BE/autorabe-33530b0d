@@ -1,6 +1,6 @@
 import { useRef } from "react";
-import { ChevronLeft, ChevronRight, TrendingUp, Car } from "lucide-react";
-import CarCard from "./CarCard";
+import { ChevronLeft, ChevronRight, TrendingUp, Car as CarIcon } from "lucide-react";
+import { CarCard } from "@/features/listings";
 import { useCarListings } from "@/hooks/useCarListings";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
@@ -46,7 +46,7 @@ const PopularCars = ({ isFavorite, onToggleFavorite, onCarClick }: PopularCarsPr
         <div className="container mx-auto px-4 sm:px-6">
           <div className="text-center py-10 sm:py-12">
             <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center">
-              <Car className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
+              <CarIcon className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
             </div>
             <h2 className="font-display text-xl sm:text-2xl md:text-3xl font-bold text-foreground mb-4">
               {texts.noListings}

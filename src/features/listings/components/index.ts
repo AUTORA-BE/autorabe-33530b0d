@@ -3,6 +3,9 @@
  * @module features/listings/components
  */
 
+export { default as CarCard } from './CarCard';
+export type { CarCardProps } from './CarCard';
+
 export { default as VehicleCard } from './VehicleCard';
 export type { VehicleCardProps } from './VehicleCard';
 

@@ -4,10 +4,9 @@
  */
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Car } from '@/components/CarCard';
 import { CarFilters, defaultFilters } from '@/types/filters';
 import { mapListingToVehicle, PAGE_SIZE } from '@/features/listings/api/vehicleQueries';
-import type { VehicleListingRow } from '@/features/listings/types/vehicle.types';
+import type { Car, VehicleListingRow } from '@/features/listings/types/vehicle.types';
 
 // Re-export for backward compatibility
 const mapListingToCar = (listing: VehicleListingRow): Car => {

@@ -1,4 +1,4 @@
-import CarCard, { Car } from "./CarCard";
+import { CarCard, type Car } from "@/features/listings";
 import { SlidersHorizontal, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 

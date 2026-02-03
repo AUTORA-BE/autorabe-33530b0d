@@ -52,6 +52,12 @@ export interface Vehicle {
 }
 
 /**
+ * Backward compatibility alias for Vehicle
+ * @deprecated Use Vehicle instead
+ */
+export type Car = Vehicle;
+
+/**
  * Extended vehicle interface with full details
  * Used on detail pages and for seller dashboard
  */

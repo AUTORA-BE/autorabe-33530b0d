@@ -5,17 +5,14 @@ import { useCompareContext } from "@/contexts/CompareContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useHapticFeedback } from "@/hooks/useHapticFeedback";
 import { toast } from "sonner";
-import type { Vehicle } from "@/features/listings/types/vehicle.types";
+import type { Vehicle } from "../types/vehicle.types";
 
 /**
- * Car interface for backward compatibility
- * @deprecated Use Vehicle from features/listings/types instead
+ * Props for the CarCard component
  */
-export interface Car extends Vehicle {}
-
-interface CarCardProps {
+export interface CarCardProps {
   /** Vehicle data to display */
-  car: Car;
+  car: Vehicle;
   /** Whether this car is in user's favorites */
   isFavorite?: boolean;
   /** Callback when favorite button is clicked */
@@ -24,7 +21,9 @@ interface CarCardProps {
   onClick?: (carId: string) => void;
 }
 
-// LEZ Badge logic
+/**
+ * Get LEZ badge configuration based on Euro norm and fuel type
+ */
 const getLezBadgeText = (euroNorm: string, fuelType: string) => {
   const norm = euroNorm?.toLowerCase() || "";
   const fuel = fuelType?.toLowerCase() || "";
@@ -44,6 +43,10 @@ const getLezBadgeText = (euroNorm: string, fuelType: string) => {
   return null;
 };
 
+/**
+ * Card component for displaying a vehicle in a grid or list
+ * Includes favorite toggle, compare functionality, and LEZ badges
+ */
 const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = false, onToggleFavorite, onClick }, ref) => {
   const { addToCompare, removeFromCompare, isInCompare, canAddMore } = useCompareContext();
   const { t, language } = useLanguage();
