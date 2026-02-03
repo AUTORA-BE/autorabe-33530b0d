@@ -1,4 +1,4 @@
-import { Car } from "@/components/CarCard";
+import type { Car } from "@/features/listings";
 
 export const mockCars: Car[] = [
   // Tesla

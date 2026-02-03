@@ -1,6 +1,6 @@
 import React, { createContext, useContext, ReactNode } from "react";
 import { useCompare } from "@/hooks/useCompare";
-import { Car } from "@/components/CarCard";
+import type { Car } from "@/features/listings";
 
 interface CompareContextType {
   compareList: Car[];

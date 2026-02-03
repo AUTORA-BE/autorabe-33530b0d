@@ -16,13 +16,14 @@ export type {
   EuroNorm,
   BodyType,
   SellerType,
+  Car,
 } from './types/vehicle.types';
 
 export { defaultVehicleFilters } from './types/vehicle.types';
 
 // Components
-export { VehicleCard, VehicleGrid, PopularVehicles } from './components';
-export type { VehicleCardProps, VehicleGridProps, PopularVehiclesProps } from './components';
+export { CarCard, VehicleCard, VehicleGrid, PopularVehicles } from './components';
+export type { CarCardProps, VehicleCardProps, VehicleGridProps, PopularVehiclesProps } from './components';
 
 // API
 export { vehicleQueries, mapListingToVehicle, mapListingToVehicleDetail, PAGE_SIZE } from './api/vehicleQueries';

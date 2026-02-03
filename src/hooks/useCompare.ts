@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { Car } from "@/components/CarCard";
+import type { Car } from "@/features/listings";
 
 const MAX_COMPARE_ITEMS = 3;
 const STORAGE_KEY = "autora-compare";

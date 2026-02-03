@@ -2,10 +2,9 @@
  * Utility functions for car/vehicle operations
  * @deprecated Use vehicleQueries from features/listings/api instead
  */
-import { Car } from "@/components/CarCard";
 import { supabase } from "@/integrations/supabase/client";
 import { mapListingToVehicle } from "@/features/listings/api/vehicleQueries";
-import type { VehicleListingRow } from "@/features/listings/types/vehicle.types";
+import type { Car, VehicleListingRow } from "@/features/listings/types/vehicle.types";
 
 // Re-export for backward compatibility
 const mapListingToCar = (listing: VehicleListingRow): Car => {
