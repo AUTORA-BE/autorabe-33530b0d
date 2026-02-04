@@ -1,17 +1,26 @@
 /**
  * Hook for infinite scroll car listings
- * @deprecated Use useVehicleSearch from features/listings instead
+ * Provides paginated loading with load more functionality
+ * @module features/listings/hooks/useInfiniteCarListings
  */
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { mapListingToVehicle, PAGE_SIZE } from '@/features/listings/api/vehicleQueries';
-import type { Car, VehicleListingRow } from '@/features/listings/types/vehicle.types';
+import { mapListingToVehicle, PAGE_SIZE } from '../api/vehicleQueries';
+import type { Car, VehicleListingRow } from '../types/vehicle.types';
 
-// Re-export Vehicle mapping for backward compatibility
+/**
+ * Map database listing to Car type
+ * @param listing - Raw database row
+ * @returns Mapped Car object
+ */
 const mapListingToCar = (listing: VehicleListingRow): Car => {
   return mapListingToVehicle(listing);
 };
 
+/**
+ * Hook for infinite scroll pagination of car listings
+ * @returns Object containing cars, loading states, pagination controls
+ */
 export function useInfiniteCarListings() {
   const [cars, setCars] = useState<Car[]>([]);
   const [isLoading, setIsLoading] = useState(true);

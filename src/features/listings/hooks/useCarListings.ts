@@ -1,17 +1,26 @@
 /**
  * Hook for fetching car listings
- * @deprecated Use usePopularVehicles or useVehicleSearch from features/listings instead
+ * Provides real-time updates from Supabase
+ * @module features/listings/hooks/useCarListings
  */
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { mapListingToVehicle } from '@/features/listings/api/vehicleQueries';
-import type { Car, VehicleListingRow } from '@/features/listings/types/vehicle.types';
+import { mapListingToVehicle } from '../api/vehicleQueries';
+import type { Car, VehicleListingRow } from '../types/vehicle.types';
 
-// Re-export Vehicle mapping for backward compatibility
+/**
+ * Map database listing to Car type
+ * @param listing - Raw database row
+ * @returns Mapped Car object
+ */
 const mapListingToCar = (listing: VehicleListingRow): Car => {
   return mapListingToVehicle(listing);
 };
 
+/**
+ * Hook to fetch and subscribe to car listings
+ * @returns Object containing cars array, loading state, and error
+ */
 export function useCarListings() {
   const [cars, setCars] = useState<Car[]>([]);
   const [isLoading, setIsLoading] = useState(true);

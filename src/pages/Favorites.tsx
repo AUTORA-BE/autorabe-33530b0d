@@ -1,8 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Header, Footer } from "@/shared/components";
-import { CarCard } from "@/features/listings";
+import { CarCard, useCarListings } from "@/features/listings";
 import { useFavorites } from "@/hooks/useFavorites";
-import { useCarListings } from "@/hooks/useCarListings";
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
