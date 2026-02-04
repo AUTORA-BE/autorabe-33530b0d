@@ -21,7 +21,7 @@ import { Header, Footer } from "@/shared/components";
 import { CarCard, type Car } from "@/features/listings";
 import { Button } from "@/components/ui/button";
 import { getCarByIdFromDb, getRelatedCarsFromList, formatPrice, formatMileage, getSellerContact } from "@/utils/carUtils";
-import { useCarListings } from "@/hooks/useCarListings";
+import { useCarListings } from "@/features/listings";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useToast } from "@/hooks/use-toast";
 import { useTrackView } from "@/hooks/useTrackView";

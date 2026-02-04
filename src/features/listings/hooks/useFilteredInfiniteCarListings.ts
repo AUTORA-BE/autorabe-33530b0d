@@ -1,18 +1,27 @@
 /**
  * Hook that combines filtering with infinite scroll
- * @deprecated Use useVehicleSearch from features/listings instead
+ * Provides comprehensive filtering capabilities for vehicle listings
+ * @module features/listings/hooks/useFilteredInfiniteCarListings
  */
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { CarFilters, defaultFilters } from '@/types/filters';
-import { mapListingToVehicle, PAGE_SIZE } from '@/features/listings/api/vehicleQueries';
-import type { Car, VehicleListingRow } from '@/features/listings/types/vehicle.types';
+import { mapListingToVehicle, PAGE_SIZE } from '../api/vehicleQueries';
+import type { Car, VehicleListingRow } from '../types/vehicle.types';
 
-// Re-export for backward compatibility
+/**
+ * Map database listing to Car type
+ * @param listing - Raw database row
+ * @returns Mapped Car object
+ */
 const mapListingToCar = (listing: VehicleListingRow): Car => {
   return mapListingToVehicle(listing);
 };
 
+/**
+ * Hook for filtered infinite scroll vehicle listings
+ * @returns Object containing cars, filters, pagination controls
+ */
 export function useFilteredInfiniteCarListings() {
   const [cars, setCars] = useState<Car[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -27,6 +36,7 @@ export function useFilteredInfiniteCarListings() {
   const [sortBy, setSortBy] = useState<string>("recent");
 
   // Build query with filters
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const buildQuery = useCallback((baseQuery: any) => {
     let query = baseQuery;
 
