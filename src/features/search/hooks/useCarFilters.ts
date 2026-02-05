@@ -1,48 +1,58 @@
+/**
+ * Hook for client-side vehicle filtering and sorting
+ * Used for in-memory filtering of already-fetched vehicles
+ * @module features/search/hooks/useCarFilters
+ */
 import { useState, useMemo } from "react";
-import type { Car } from "@/features/listings";
+import type { Vehicle } from "@/features/listings/types/vehicle.types";
 import { CarFilters, defaultFilters } from "@/types/filters";
 
-export const useCarFilters = (cars: Car[]) => {
+/**
+ * Hook for filtering and sorting an array of vehicles client-side
+ * @param vehicles - Array of vehicles to filter
+ * @returns Filtered vehicles, filter state, and update functions
+ */
+export const useCarFilters = (vehicles: Vehicle[]) => {
   const [filters, setFilters] = useState<CarFilters>(defaultFilters);
   const [sortBy, setSortBy] = useState<string>("recent");
 
-  const filteredCars = useMemo(() => {
-    let result = [...cars];
+  const filteredVehicles = useMemo(() => {
+    let result = [...vehicles];
 
     // Search query filter (brand + model)
     if (filters.searchQuery) {
       const query = filters.searchQuery.toLowerCase();
       result = result.filter(
-        (car) =>
-          car.brand.toLowerCase().includes(query) ||
-          car.model.toLowerCase().includes(query) ||
-          `${car.brand} ${car.model}`.toLowerCase().includes(query)
+        (vehicle) =>
+          vehicle.brand.toLowerCase().includes(query) ||
+          vehicle.model.toLowerCase().includes(query) ||
+          `${vehicle.brand} ${vehicle.model}`.toLowerCase().includes(query)
       );
     }
 
     // Brand filter
     if (filters.brand) {
       result = result.filter(
-        (car) => car.brand.toLowerCase() === filters.brand.toLowerCase()
+        (vehicle) => vehicle.brand.toLowerCase() === filters.brand.toLowerCase()
       );
     }
 
     // Model filter
     if (filters.model) {
       result = result.filter(
-        (car) => car.model.toLowerCase() === filters.model.toLowerCase()
+        (vehicle) => vehicle.model.toLowerCase() === filters.model.toLowerCase()
       );
     }
 
     // Price filter
     result = result.filter(
-      (car) => car.price >= filters.minPrice && car.price <= filters.maxPrice
+      (vehicle) => vehicle.price >= filters.minPrice && vehicle.price <= filters.maxPrice
     );
 
     // Fuel type filter
     if (filters.fuelTypes.length > 0) {
-      result = result.filter((car) => {
-        const fuelType = car.fuelType.toLowerCase();
+      result = result.filter((vehicle) => {
+        const fuelType = vehicle.fuelType.toLowerCase();
         return filters.fuelTypes.some((f) => {
           if (f === "essence") return fuelType === "essence";
           if (f === "diesel") return fuelType === "diesel";
@@ -56,29 +66,29 @@ export const useCarFilters = (cars: Car[]) => {
     // Transmission filter
     if (filters.transmission) {
       result = result.filter(
-        (car) =>
-          car.transmission.toLowerCase() === filters.transmission.toLowerCase()
+        (vehicle) =>
+          vehicle.transmission.toLowerCase() === filters.transmission.toLowerCase()
       );
     }
 
     // Euro norm filter
     if (filters.euroNorm) {
-      result = result.filter((car) => car.euroNorm === filters.euroNorm);
+      result = result.filter((vehicle) => vehicle.euroNorm === filters.euroNorm);
     }
 
     // Year filter
     result = result.filter(
-      (car) => car.year >= filters.yearMin && car.year <= filters.yearMax
+      (vehicle) => vehicle.year >= filters.yearMin && vehicle.year <= filters.yearMax
     );
 
     // Kilometer filter
     result = result.filter(
-      (car) => car.mileage >= filters.kmMin && car.mileage <= filters.kmMax
+      (vehicle) => vehicle.mileage >= filters.kmMin && vehicle.mileage <= filters.kmMax
     );
 
     // LEZ filter
     if (filters.lezOnly) {
-      result = result.filter((car) => car.isLezCompatible);
+      result = result.filter((vehicle) => vehicle.isLezCompatible);
     }
 
     // Sorting
@@ -103,12 +113,15 @@ export const useCarFilters = (cars: Car[]) => {
         break;
       default:
         // Recent = by ID desc (newest first)
-        result.sort((a, b) => parseInt(b.id) - parseInt(a.id));
+        result.sort((a, b) => a.id.localeCompare(b.id));
     }
 
     return result;
-  }, [cars, filters, sortBy]);
+  }, [vehicles, filters, sortBy]);
 
+  /**
+   * Update a single filter value
+   */
   const updateFilter = <K extends keyof CarFilters>(
     key: K,
     value: CarFilters[K]
@@ -116,6 +129,9 @@ export const useCarFilters = (cars: Car[]) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
+  /**
+   * Reset all filters to default values
+   */
   const resetFilters = () => {
     setFilters(defaultFilters);
   };
@@ -140,7 +156,7 @@ export const useCarFilters = (cars: Car[]) => {
     setFilters,
     updateFilter,
     resetFilters,
-    filteredCars,
+    filteredVehicles,
     sortBy,
     setSortBy,
     activeFiltersCount,

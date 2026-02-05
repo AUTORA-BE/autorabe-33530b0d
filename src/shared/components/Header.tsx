@@ -12,7 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import { useToast } from "@/hooks/use-toast";
 import { useUnreadMessages } from "@/features/messaging";
-import { useCompareContext } from "@/contexts/CompareContext";
+import { useCompareContext } from "@/features/compare";
 import { useLanguage, getLanguageLabel } from "@/contexts/LanguageContext";
 import { useTheme } from "next-themes";
 import {

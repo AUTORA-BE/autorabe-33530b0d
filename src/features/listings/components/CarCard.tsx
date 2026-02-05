@@ -1,7 +1,7 @@
 import { forwardRef, memo } from "react";
 import { motion } from "framer-motion";
 import { Fuel, Calendar, Gauge, Shield, MapPin, Heart, GitCompareArrows } from "lucide-react";
-import { useCompareContext } from "@/contexts/CompareContext";
+import { useCompareContext } from "@/features/compare";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useHapticFeedback } from "@/hooks/useHapticFeedback";
 import { toast } from "sonner";

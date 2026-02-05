@@ -1,5 +1,5 @@
 import { Header, Footer } from "@/shared/components";
-import { useCompareContext } from "@/contexts/CompareContext";
+import { useCompareContext } from "@/features/compare";
 import { Link } from "react-router-dom";
 import { 
   GitCompareArrows, 
