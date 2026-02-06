@@ -1,8 +1,8 @@
 import { useEffect, useRef, useCallback } from "react";
 import { CarCard, type Car } from "@/features/listings";
-import { SlidersHorizontal, ChevronDown } from "lucide-react";
+import { SlidersHorizontal, ChevronDown, AlertCircle, RefreshCw } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import ErrorState from "./ErrorState";
+import { Button } from "@/components/ui/button";
 
 interface LoadMoreGridProps {
   cars: Car[];
@@ -122,11 +122,25 @@ const LoadMoreGrid = ({
     loading: language === "nl" ? "Laden..." : "Chargement...",
   };
 
-  // Error state
+  // Error state - inline since ErrorState component was removed
   if (error && !isLoading) {
     return (
       <div className="flex-1 min-w-0">
-        <ErrorState error={error} onRetry={onRetry} />
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mb-4">
+            <AlertCircle className="w-8 h-8 text-destructive" />
+          </div>
+          <h3 className="font-display text-lg font-bold text-foreground mb-2">
+            {language === "nl" ? "Er is een fout opgetreden" : "Une erreur s'est produite"}
+          </h3>
+          <p className="text-muted-foreground mb-6 max-w-md">{error}</p>
+          {onRetry && (
+            <Button onClick={onRetry} variant="outline" className="gap-2">
+              <RefreshCw className="w-4 h-4" />
+              {language === "nl" ? "Opnieuw proberen" : "Réessayer"}
+            </Button>
+          )}
+        </div>
       </div>
     );
   }

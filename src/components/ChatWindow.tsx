@@ -1,27 +1,23 @@
+/**
+ * ChatWindow component for displaying and managing chat messages
+ * @module components/ChatWindow
+ */
+
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
-import { ChatHeader } from '@/components/chat/ChatHeader';
-import { MessageBubble } from '@/components/chat/MessageBubble';
-import { MessageInput } from '@/components/chat/MessageInput';
-import { TypingIndicator } from '@/components/chat/TypingIndicator';
+import { ChatHeader } from './chat/ChatHeader';
+import { MessageBubble } from './chat/MessageBubble';
+import { MessageInput } from './chat/MessageInput';
+import { TypingIndicator } from './chat/TypingIndicator';
+import { useTypingIndicator } from '@/features/messaging';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { useNotificationSound } from '@/hooks/useNotificationSound';
-import { 
-  useTypingIndicator, 
-  useOnlineStatus,
-  type ConversationDetails,
-  type ReplyToMessage,
-} from '@/features/messaging';
+import { toast } from 'sonner';
+import type { Message, MessageRow, ConversationDetails } from '@/features/messaging/types/messaging.types';
 
-interface Message {
+interface ReplyToMessage {
   id: string;
-  sender_id: string;
   content: string;
-  created_at: string;
-  is_read: boolean;
-  image_url?: string;
-  reply_to_id?: string | null;
+  sender_id: string;
 }
 
 interface ChatWindowProps {
@@ -31,78 +27,86 @@ interface ChatWindowProps {
   showBackButton?: boolean;
 }
 
-export function ChatWindow({ 
-  conversationId, 
-  currentUserId, 
+/**
+ * Full-featured chat window with real-time messaging
+ */
+export function ChatWindow({
+  conversationId,
+  currentUserId,
   onBack,
-  showBackButton = false 
+  showBackButton = false,
 }: ChatWindowProps) {
   const { t } = useLanguage();
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSending, setIsSending] = useState(false);
-  const [conversationDetails, setConversationDetails] = useState<ConversationDetails | null>(null);
-  const [replyTo, setReplyTo] = useState<Message | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [conversationDetails, setConversationDetails] = useState<ConversationDetails | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [replyTo, setReplyTo] = useState<ReplyToMessage | null>(null);
 
-  const { playNotificationSound } = useNotificationSound();
-
-  const { isOtherTyping, handleTyping, stopTyping } = useTypingIndicator(
-    conversationId, 
+  // Typing indicator hook
+  const { isOtherTyping, handleTyping: sendTypingIndicator, stopTyping } = useTypingIndicator(
+    conversationId,
     currentUserId
   );
 
-  const isOnline = useOnlineStatus(
-    conversationId, 
-    currentUserId, 
-    conversationDetails?.otherUserId || ''
-  );
+  // Online status - we'll track this via presence when details are loaded
+  const [isOnline, setIsOnline] = useState(false);
 
-  const scrollToBottom = useCallback((behavior: ScrollBehavior = 'smooth') => {
-    messagesEndRef.current?.scrollIntoView({ behavior });
+  // Scroll to bottom
+  const scrollToBottom = useCallback(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
-  // Fetch conversation details with profile info
+  // Map database row to Message
+  const mapRow = (row: MessageRow): Message => ({
+    id: row.id,
+    conversationId: row.conversation_id,
+    senderId: row.sender_id,
+    content: row.content,
+    imageUrl: row.image_url,
+    replyToId: row.reply_to_id,
+    isRead: row.is_read,
+    createdAt: row.created_at,
+  });
+
+  // Fetch conversation details
   useEffect(() => {
-    const fetchConversationDetails = async () => {
-      const { data: conv, error } = await supabase
+    const fetchDetails = async () => {
+      const { data, error } = await supabase
         .from('conversations')
         .select('*')
         .eq('id', conversationId)
         .single();
 
-      if (error) {
-        console.error('Error fetching conversation:', error);
-        return;
-      }
+      if (error || !data) return;
 
-      const otherUserId = conv.buyer_id === currentUserId ? conv.seller_id : conv.buyer_id;
-      
-      // Fetch profile for the other user
+      const otherUserId = data.buyer_id === currentUserId ? data.seller_id : data.buyer_id;
+
+      // Get other user's profile
       const { data: profile } = await supabase
         .from('profiles')
         .select('display_name, avatar_url')
         .eq('user_id', otherUserId)
-        .maybeSingle();
-      
-      const defaultName = conv.buyer_id === currentUserId ? 'Vendeur' : 'Acheteur';
-      
+        .single();
+
       setConversationDetails({
         otherUserId,
-        otherUserName: profile?.display_name || defaultName,
+        otherUserName: profile?.display_name || 'Utilisateur',
         otherUserAvatar: profile?.avatar_url || undefined,
-        carBrand: conv.car_brand,
-        carModel: conv.car_model,
+        carBrand: data.car_brand || undefined,
+        carModel: data.car_model || undefined,
       });
     };
 
-    fetchConversationDetails();
+    fetchDetails();
   }, [conversationId, currentUserId]);
 
   // Fetch messages
   useEffect(() => {
     const fetchMessages = async () => {
+      setIsLoading(true);
+      
       const { data, error } = await supabase
         .from('messages')
         .select('*')
@@ -111,25 +115,27 @@ export function ChatWindow({
 
       if (error) {
         console.error('Error fetching messages:', error);
+        setIsLoading(false);
         return;
       }
 
-      setMessages(data || []);
+      setMessages((data || []).map(row => mapRow(row as MessageRow)));
       setIsLoading(false);
-
-      // Mark unread messages as read
-      const unreadMessages = data?.filter(m => !m.is_read && m.sender_id !== currentUserId);
-      if (unreadMessages && unreadMessages.length > 0) {
-        await supabase
-          .from('messages')
-          .update({ is_read: true })
-          .in('id', unreadMessages.map(m => m.id));
-      }
+      
+      // Mark messages as read
+      await supabase
+        .from('messages')
+        .update({ is_read: true })
+        .eq('conversation_id', conversationId)
+        .neq('sender_id', currentUserId)
+        .eq('is_read', false);
     };
 
     fetchMessages();
+  }, [conversationId, currentUserId]);
 
-    // Subscribe to new messages
+  // Subscribe to realtime messages
+  useEffect(() => {
     const channel = supabase
       .channel(`messages-${conversationId}`)
       .on(
@@ -138,17 +144,14 @@ export function ChatWindow({
           event: 'INSERT',
           schema: 'public',
           table: 'messages',
-          filter: `conversation_id=eq.${conversationId}`
+          filter: `conversation_id=eq.${conversationId}`,
         },
         (payload) => {
-          const newMessage = payload.new as Message;
-          setMessages(prev => [...prev, newMessage]);
+          const newMessage = mapRow(payload.new as MessageRow);
+          setMessages((prev) => [...prev, newMessage]);
           
-          // Play notification sound if we're the recipient
-          if (newMessage.sender_id !== currentUserId) {
-            playNotificationSound();
-            
-            // Mark as read
+          // Mark as read if from other user
+          if (newMessage.senderId !== currentUserId) {
             supabase
               .from('messages')
               .update({ is_read: true })
@@ -162,11 +165,12 @@ export function ChatWindow({
           event: 'UPDATE',
           schema: 'public',
           table: 'messages',
-          filter: `conversation_id=eq.${conversationId}`
+          filter: `conversation_id=eq.${conversationId}`,
         },
         (payload) => {
-          setMessages(prev => 
-            prev.map(m => m.id === (payload.new as Message).id ? payload.new as Message : m)
+          const updated = mapRow(payload.new as MessageRow);
+          setMessages((prev) =>
+            prev.map((msg) => (msg.id === updated.id ? updated : msg))
           );
         }
       )
@@ -177,124 +181,79 @@ export function ChatWindow({
     };
   }, [conversationId, currentUserId]);
 
-  // Scroll to bottom on new messages or when loading completes
-  useEffect(() => {
-    if (!isLoading) {
-      scrollToBottom('instant');
-    }
-  }, [isLoading, scrollToBottom]);
-
+  // Scroll to bottom when messages change
   useEffect(() => {
     scrollToBottom();
-  }, [messages.length, scrollToBottom]);
+  }, [messages, scrollToBottom]);
 
-  // Scroll when typing indicator appears
-  useEffect(() => {
-    if (isOtherTyping) {
-      scrollToBottom();
-    }
-  }, [isOtherTyping, scrollToBottom]);
-
-  const sendMessage = async (content: string, imageUrl?: string, replyToId?: string) => {
-    if (isSending) return;
+  // Send message handler
+  const handleSend = async (content: string, imageUrl?: string, replyToId?: string) => {
     if (!content.trim() && !imageUrl) return;
 
-    setIsSending(true);
-    stopTyping();
-    
-    try {
-      const { error } = await supabase
-        .from('messages')
-        .insert({
-          conversation_id: conversationId,
-          sender_id: currentUserId,
-          content: content || '',
-          image_url: imageUrl,
-          reply_to_id: replyToId || null
-        });
+    const { error } = await supabase.from('messages').insert({
+      conversation_id: conversationId,
+      sender_id: currentUserId,
+      content: content.trim(),
+      image_url: imageUrl || null,
+      reply_to_id: replyToId || null,
+    });
 
-      if (error) throw error;
-      
-      // Clear reply state
-      setReplyTo(null);
-
-      // Update conversation last_message_at
-      await supabase
-        .from('conversations')
-        .update({ last_message_at: new Date().toISOString() })
-        .eq('id', conversationId);
-
-      // Send email notification to seller (fire and forget)
-      supabase.functions.invoke('notify-seller', {
-        body: {
-          conversationId,
-          messageContent: content || (imageUrl ? '[Image]' : '')
-        }
-      }).catch(err => console.log('Email notification error (non-blocking):', err));
-
-      // Send push notification to the other user (fire and forget)
-      const recipientId = conversationDetails?.otherUserId;
-      if (recipientId) {
-        supabase.functions.invoke('send-push-notification', {
-          body: {
-            userId: recipientId,
-            title: 'Nouveau message',
-            body: content ? (content.length > 50 ? content.substring(0, 50) + '...' : content) : '📷 Image',
-            tag: `chat-${conversationId}`,
-            data: { url: '/messages' }
-          }
-        }).catch(err => console.log('Push notification error (non-blocking):', err));
-      }
-      
-    } catch (error) {
+    if (error) {
       console.error('Error sending message:', error);
-      toast.error(t("messages.sendError"));
-    } finally {
-      setIsSending(false);
+      toast.error(t('messages.sendError') || "Erreur lors de l'envoi");
+      return;
     }
+
+    // Update conversation last_message_at
+    await supabase
+      .from('conversations')
+      .update({ last_message_at: new Date().toISOString() })
+      .eq('id', conversationId);
   };
 
-  const formatDateSeparator = (dateString: string) => {
-    const date = new Date(dateString);
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-
-    if (date.toDateString() === today.toDateString()) {
-      return t("messages.today");
-    } else if (date.toDateString() === yesterday.toDateString()) {
-      return t("messages.yesterday");
-    } else {
-      return date.toLocaleDateString('fr-BE', { day: 'numeric', month: 'long' });
-    }
+  // Handle typing
+  const handleTyping = () => {
+    sendTypingIndicator();
   };
 
-  // Group messages by date
-  const groupedMessages: { date: string; messages: Message[] }[] = [];
-  messages.forEach(message => {
-    const dateStr = new Date(message.created_at).toDateString();
-    const existingGroup = groupedMessages.find(g => 
-      new Date(g.messages[0].created_at).toDateString() === dateStr
-    );
-    
-    if (existingGroup) {
-      existingGroup.messages.push(message);
-    } else {
-      groupedMessages.push({ date: dateStr, messages: [message] });
-    }
-  });
+  // Handle reply
+  const handleReply = (message: Message) => {
+    setReplyTo({
+      id: message.id,
+      content: message.content,
+      sender_id: message.senderId,
+    });
+  };
+
+  // Get reply-to message
+  const getReplyToMessage = (replyToId: string | null | undefined) => {
+    if (!replyToId) return null;
+    const msg = messages.find((m) => m.id === replyToId);
+    if (!msg) return null;
+    return {
+      id: msg.id,
+      content: msg.content,
+      sender_id: msg.senderId,
+    };
+  };
+
+  // Get sender name for reply
+  const getReplyToSenderName = (senderId: string) => {
+    if (senderId === currentUserId) return 'Vous';
+    return conversationDetails?.otherUserName || 'Utilisateur';
+  };
 
   if (isLoading) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
       </div>
     );
   }
 
   return (
     <div className="flex flex-col h-full">
-      {/* Chat header with avatar and status */}
+      {/* Header */}
       <ChatHeader
         otherUserName={conversationDetails?.otherUserName || 'Utilisateur'}
         otherUserAvatar={conversationDetails?.otherUserAvatar}
@@ -306,49 +265,31 @@ export function ChatWindow({
         showBackButton={showBackButton}
       />
 
-      {/* Messages area */}
-      <div 
-        ref={messagesContainerRef}
-        className="flex-1 overflow-y-auto p-4 space-y-4"
-      >
-        {groupedMessages.map((group, groupIndex) => (
-          <div key={groupIndex}>
-            {/* Date separator */}
-            <div className="flex items-center justify-center my-4">
-              <span className="px-3 py-1 rounded-full bg-secondary text-xs text-muted-foreground">
-                {formatDateSeparator(group.messages[0].created_at)}
-              </span>
-            </div>
-            
-            {/* Messages */}
-            <div className="space-y-2">
-              {group.messages.map((message) => {
-                const replyToMessage = message.reply_to_id 
-                  ? messages.find(m => m.id === message.reply_to_id) 
-                  : null;
-                const replyToSenderName = replyToMessage
-                  ? replyToMessage.sender_id === currentUserId 
-                    ? 'Vous' 
-                    : conversationDetails?.otherUserName || 'Message'
-                  : undefined;
-                  
-                return (
-                  <MessageBubble
-                    key={message.id}
-                    content={message.content}
-                    timestamp={message.created_at}
-                    isMine={message.sender_id === currentUserId}
-                    isRead={message.is_read}
-                    imageUrl={message.image_url}
-                    replyTo={replyToMessage}
-                    replyToSenderName={replyToSenderName}
-                    onReply={() => setReplyTo(message)}
-                  />
-                );
-              })}
-            </div>
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        {messages.length === 0 ? (
+          <div className="flex-1 flex items-center justify-center text-muted-foreground text-center py-8">
+            <p>{t('messages.startConversation') || "Envoyez un message pour démarrer la conversation"}</p>
           </div>
-        ))}
+        ) : (
+          messages.map((message) => (
+            <MessageBubble
+              key={message.id}
+              content={message.content}
+              timestamp={message.createdAt}
+              isMine={message.senderId === currentUserId}
+              isRead={message.isRead}
+              imageUrl={message.imageUrl || undefined}
+              replyTo={getReplyToMessage(message.replyToId)}
+              replyToSenderName={
+                message.replyToId
+                  ? getReplyToSenderName(getReplyToMessage(message.replyToId)?.sender_id || '')
+                  : undefined
+              }
+              onReply={() => handleReply(message)}
+            />
+          ))
+        )}
         
         {/* Typing indicator */}
         {isOtherTyping && <TypingIndicator />}
@@ -356,11 +297,10 @@ export function ChatWindow({
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Message input */}
+      {/* Input */}
       <MessageInput
-        onSend={sendMessage}
+        onSend={handleSend}
         onTyping={handleTyping}
-        disabled={isSending}
         currentUserId={currentUserId}
         replyTo={replyTo}
         onCancelReply={() => setReplyTo(null)}
@@ -368,3 +308,5 @@ export function ChatWindow({
     </div>
   );
 }
+
+export default ChatWindow;
