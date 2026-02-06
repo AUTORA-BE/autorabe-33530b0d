@@ -6,11 +6,6 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CompareProvider } from "@/features/compare";
 import { LanguageProvider } from "@/contexts/LanguageContext";
-import Analytics from "./components/Analytics";
-import ScrollToTop from "./components/ScrollToTop";
-import ScrollToTopButton from "./components/ScrollToTopButton";
-import ScrollProgressBar from "./components/ScrollProgressBar";
-import { FaviconBadge } from "./components/FaviconBadge";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import CarDetail from "./pages/CarDetail";
@@ -30,7 +25,6 @@ import Privacy from "./pages/Privacy";
 import Legal from "./pages/Legal";
 import Contact from "./pages/Contact";
 import AdminReports from "./pages/AdminReports";
-import CookieConsent from "./components/CookieConsent";
 
 /**
  * React Query client configuration
@@ -58,10 +52,6 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <ScrollProgressBar />
-            <ScrollToTop />
-            <Analytics />
-            <FaviconBadge />
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
@@ -83,8 +73,6 @@ const App = () => (
               <Route path="/contact" element={<Contact />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
-            <CookieConsent />
-            <ScrollToTopButton />
           </BrowserRouter>
         </CompareProvider>
       </LanguageProvider>
