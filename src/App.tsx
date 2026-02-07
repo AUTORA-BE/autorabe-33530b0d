@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -6,25 +7,38 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { CompareProvider } from "@/features/compare";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+
+// Eagerly loaded — critical path
 import Index from "./pages/Index";
-import Auth from "./pages/Auth";
-import CarDetail from "./pages/CarDetail";
-import Favorites from "./pages/Favorites";
-import SellCar from "./pages/SellCar";
-import Messages from "./pages/Messages";
-import About from "./pages/About";
-import FAQ from "./pages/FAQ";
-import Compare from "./pages/Compare";
-import SellerDashboard from "./pages/SellerDashboard";
-import SellerStats from "./pages/SellerStats";
-import Settings from "./pages/Settings";
-import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
-import Terms from "./pages/Terms";
-import Privacy from "./pages/Privacy";
-import Legal from "./pages/Legal";
-import Contact from "./pages/Contact";
-import AdminReports from "./pages/AdminReports";
+
+// Lazy-loaded pages for reduced initial bundle size
+const Auth = lazy(() => import("./pages/Auth"));
+const CarDetail = lazy(() => import("./pages/CarDetail"));
+const Favorites = lazy(() => import("./pages/Favorites"));
+const SellCar = lazy(() => import("./pages/SellCar"));
+const Messages = lazy(() => import("./pages/Messages"));
+const About = lazy(() => import("./pages/About"));
+const FAQ = lazy(() => import("./pages/FAQ"));
+const Compare = lazy(() => import("./pages/Compare"));
+const SellerDashboard = lazy(() => import("./pages/SellerDashboard"));
+const SellerStats = lazy(() => import("./pages/SellerStats"));
+const Settings = lazy(() => import("./pages/Settings"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const Terms = lazy(() => import("./pages/Terms"));
+const Privacy = lazy(() => import("./pages/Privacy"));
+const Legal = lazy(() => import("./pages/Legal"));
+const Contact = lazy(() => import("./pages/Contact"));
+const AdminReports = lazy(() => import("./pages/AdminReports"));
+
+/** Minimal loading fallback shown while lazy chunks load */
+function PageLoader() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+    </div>
+  );
+}
 
 /**
  * React Query client configuration
@@ -36,8 +50,8 @@ import AdminReports from "./pages/AdminReports";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      gcTime: 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
+      staleTime: 5 * 60 * 1000,
+      gcTime: 10 * 60 * 1000,
       refetchOnWindowFocus: false,
       retry: 1,
     },
@@ -52,32 +66,33 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/car/:id" element={<CarDetail />} />
-              <Route path="/favorites" element={<Favorites />} />
-              <Route path="/sell" element={<SellCar />} />
-              <Route path="/messages" element={<Messages />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/faq" element={<FAQ />} />
-              <Route path="/compare" element={<Compare />} />
-              <Route path="/dashboard" element={<SellerDashboard />} />
-              <Route path="/dashboard/stats" element={<SellerStats />} />
-              <Route path="/admin/reports" element={<AdminReports />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/terms" element={<Terms />} />
-              <Route path="/privacy" element={<Privacy />} />
-              <Route path="/legal" element={<Legal />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <Suspense fallback={<PageLoader />}>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/car/:id" element={<CarDetail />} />
+                <Route path="/favorites" element={<Favorites />} />
+                <Route path="/sell" element={<SellCar />} />
+                <Route path="/messages" element={<Messages />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/faq" element={<FAQ />} />
+                <Route path="/compare" element={<Compare />} />
+                <Route path="/dashboard" element={<SellerDashboard />} />
+                <Route path="/dashboard/stats" element={<SellerStats />} />
+                <Route path="/admin/reports" element={<AdminReports />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/privacy" element={<Privacy />} />
+                <Route path="/legal" element={<Legal />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
           </BrowserRouter>
         </CompareProvider>
       </LanguageProvider>
     </TooltipProvider>
-    {/* React Query DevTools - only visible in development */}
     {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
   </QueryClientProvider>
 );
