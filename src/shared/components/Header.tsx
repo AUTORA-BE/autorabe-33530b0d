@@ -6,8 +6,9 @@
 import { Menu, User, LogOut, Heart, MessageCircle, HelpCircle, GitCompareArrows, LayoutDashboard, Settings, ChevronDown, Globe, Sun, Moon } from "lucide-react";
 import autoraLogo from "@/assets/autora-logo.png";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { prefetchRoute } from "@/utils/prefetchRoutes";
 import { supabase } from "@/integrations/supabase/client";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import { useToast } from "@/hooks/use-toast";
@@ -35,10 +36,13 @@ interface NavLinkProps {
 
 const NavLink = ({ to, children, badge }: NavLinkProps) => {
   const location = useLocation();
+  const handlePrefetch = useCallback(() => prefetchRoute(to), [to]);
   
   return (
     <Link 
-      to={to} 
+      to={to}
+      onMouseEnter={handlePrefetch}
+      onFocus={handlePrefetch}
       className={`relative font-medium transition-all duration-200 hover:scale-105 ${
         location.pathname === to 
           ? "text-primary" 
@@ -293,14 +297,16 @@ const Header = () => {
                 {t("nav.buy")}
               </Link>
               <Link 
-                to="/sell" 
+                to="/sell"
+                onMouseEnter={() => prefetchRoute("/sell")}
                 className="text-foreground font-medium py-3 px-4 rounded-2xl hover:bg-secondary/50 transition-colors" 
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {t("nav.sell")}
               </Link>
               <Link 
-                to="/favorites" 
+                to="/favorites"
+                onMouseEnter={() => prefetchRoute("/favorites")}
                 className="text-foreground font-medium py-3 px-4 rounded-2xl hover:bg-secondary/50 transition-colors flex items-center gap-3" 
                 onClick={() => setMobileMenuOpen(false)}
               >
@@ -308,7 +314,8 @@ const Header = () => {
                 {t("nav.favorites")}
               </Link>
               <Link 
-                to="/compare" 
+                to="/compare"
+                onMouseEnter={() => prefetchRoute("/compare")}
                 className="text-foreground font-medium py-3 px-4 rounded-2xl hover:bg-secondary/50 transition-colors flex items-center gap-3" 
                 onClick={() => setMobileMenuOpen(false)}
               >
@@ -321,7 +328,8 @@ const Header = () => {
                 )}
               </Link>
               <Link 
-                to="/faq" 
+                to="/faq"
+                onMouseEnter={() => prefetchRoute("/faq")}
                 className="text-foreground font-medium py-3 px-4 rounded-2xl hover:bg-secondary/50 transition-colors flex items-center gap-3" 
                 onClick={() => setMobileMenuOpen(false)}
               >
@@ -330,7 +338,8 @@ const Header = () => {
               </Link>
               {user && (
                 <Link 
-                  to="/messages" 
+                  to="/messages"
+                  onMouseEnter={() => prefetchRoute("/messages")}
                   className="text-foreground font-medium py-3 px-4 rounded-2xl hover:bg-secondary/50 transition-colors flex items-center gap-3" 
                   onClick={() => setMobileMenuOpen(false)}
                 >
@@ -371,7 +380,8 @@ const Header = () => {
               {user ? (
                 <>
                   <Link 
-                    to="/dashboard" 
+                    to="/dashboard"
+                    onMouseEnter={() => prefetchRoute("/dashboard")}
                     className="text-foreground font-medium py-3 px-4 rounded-2xl hover:bg-secondary/50 transition-colors flex items-center gap-3" 
                     onClick={() => setMobileMenuOpen(false)}
                   >
@@ -379,7 +389,8 @@ const Header = () => {
                     {t("nav.dashboard")}
                   </Link>
                   <Link 
-                    to="/settings" 
+                    to="/settings"
+                    onMouseEnter={() => prefetchRoute("/settings")}
                     className="text-foreground font-medium py-3 px-4 rounded-2xl hover:bg-secondary/50 transition-colors flex items-center gap-3" 
                     onClick={() => setMobileMenuOpen(false)}
                   >
