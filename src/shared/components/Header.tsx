@@ -24,6 +24,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import MobileMenu from "./MobileMenu";
 
 /**
  * Navigation link component with active state and optional badge
@@ -71,7 +72,6 @@ const Header = () => {
   const [userProfile, setUserProfile] = useState<{ avatar_url: string | null; display_name: string | null } | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
   const { toast } = useToast();
   const { unreadCount, hasUnread } = useUnreadMessages();
   const { compareCount } = useCompareContext();
@@ -202,7 +202,7 @@ const Header = () => {
                   <ChevronDown className="w-3 h-3" />
                 </Button>
               </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="min-w-[120px] rounded-2xl bg-popover border border-border">
+              <DropdownMenuContent align="end" className="min-w-[120px] rounded-2xl bg-popover border border-border">
                 <DropdownMenuItem onClick={() => setLanguage("fr")} className={`rounded-xl cursor-pointer ${language === "fr" ? "font-medium bg-accent" : ""}`}>
                   🇫🇷 Français
                 </DropdownMenuItem>
@@ -246,7 +246,7 @@ const Header = () => {
                     {t("nav.faq")}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-500 focus:text-red-500 rounded-xl">
+                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive focus:text-destructive rounded-xl">
                     <LogOut className="w-4 h-4 mr-2" />
                     {t("nav.logout")}
                   </DropdownMenuItem>
@@ -262,7 +262,6 @@ const Header = () => {
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center gap-2">
-            {/* Theme Toggle Mobile */}
             <Button
               variant="ghost"
               size="icon"
@@ -283,147 +282,19 @@ const Header = () => {
         </div>
 
         {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div 
-            className="md:hidden fixed inset-0 top-[60px] bg-background/95 backdrop-blur-xl z-50 overflow-y-auto"
-            style={{ height: 'calc(100vh - 60px)' }}
-          >
-            <nav className="flex flex-col p-6 gap-1">
-              <Link 
-                to="/" 
-                className="text-foreground font-medium py-3 px-4 rounded-2xl hover:bg-secondary/50 transition-colors" 
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {t("nav.buy")}
-              </Link>
-              <Link 
-                to="/sell"
-                onMouseEnter={() => prefetchRoute("/sell")}
-                className="text-foreground font-medium py-3 px-4 rounded-2xl hover:bg-secondary/50 transition-colors" 
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {t("nav.sell")}
-              </Link>
-              <Link 
-                to="/favorites"
-                onMouseEnter={() => prefetchRoute("/favorites")}
-                className="text-foreground font-medium py-3 px-4 rounded-2xl hover:bg-secondary/50 transition-colors flex items-center gap-3" 
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <Heart className="w-5 h-5" />
-                {t("nav.favorites")}
-              </Link>
-              <Link 
-                to="/compare"
-                onMouseEnter={() => prefetchRoute("/compare")}
-                className="text-foreground font-medium py-3 px-4 rounded-2xl hover:bg-secondary/50 transition-colors flex items-center gap-3" 
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <GitCompareArrows className="w-5 h-5" />
-                {t("nav.compare")}
-                {compareCount > 0 && (
-                  <span className="min-w-[24px] h-6 flex items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-bold px-2">
-                    {compareCount}
-                  </span>
-                )}
-              </Link>
-              <Link 
-                to="/faq"
-                onMouseEnter={() => prefetchRoute("/faq")}
-                className="text-foreground font-medium py-3 px-4 rounded-2xl hover:bg-secondary/50 transition-colors flex items-center gap-3" 
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <HelpCircle className="w-5 h-5" />
-                {t("nav.faq")}
-              </Link>
-              {user && (
-                <Link 
-                  to="/messages"
-                  onMouseEnter={() => prefetchRoute("/messages")}
-                  className="text-foreground font-medium py-3 px-4 rounded-2xl hover:bg-secondary/50 transition-colors flex items-center gap-3" 
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <MessageCircle className="w-5 h-5" />
-                  {t("nav.messages")}
-                  {hasUnread && (
-                    <span className="min-w-[24px] h-6 flex items-center justify-center rounded-full bg-red-500 text-white text-xs font-bold px-2">
-                      {unreadCount > 9 ? '9+' : unreadCount}
-                    </span>
-                  )}
-                </Link>
-              )}
-
-              <div className="h-px bg-border my-4" />
-
-              {/* Language Selector Mobile */}
-              <div className="px-4 py-2">
-                <p className="text-sm text-muted-foreground mb-3">{t("nav.language") || "Langue"}</p>
-                <div className="grid grid-cols-4 gap-2">
-                  {(["fr", "nl", "de", "en"] as const).map((lang) => (
-                    <button
-                      key={lang}
-                      onClick={() => setLanguage(lang)}
-                      className={`py-2 px-3 rounded-2xl text-sm font-medium transition-colors ${
-                        language === lang 
-                          ? "bg-primary text-primary-foreground" 
-                          : "bg-secondary text-foreground hover:bg-secondary/80"
-                      }`}
-                    >
-                      {lang.toUpperCase()}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="h-px bg-border my-4" />
-              
-              {user ? (
-                <>
-                  <Link 
-                    to="/dashboard"
-                    onMouseEnter={() => prefetchRoute("/dashboard")}
-                    className="text-foreground font-medium py-3 px-4 rounded-2xl hover:bg-secondary/50 transition-colors flex items-center gap-3" 
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <LayoutDashboard className="w-5 h-5" />
-                    {t("nav.dashboard")}
-                  </Link>
-                  <Link 
-                    to="/settings"
-                    onMouseEnter={() => prefetchRoute("/settings")}
-                    className="text-foreground font-medium py-3 px-4 rounded-2xl hover:bg-secondary/50 transition-colors flex items-center gap-3" 
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <Settings className="w-5 h-5" />
-                    {t("nav.settings")}
-                  </Link>
-                  <Button 
-                    variant="outline" 
-                    className="w-full rounded-2xl mt-4 h-12" 
-                    onClick={() => {
-                      handleLogout();
-                      setMobileMenuOpen(false);
-                    }}
-                  >
-                    <LogOut className="w-5 h-5 mr-2" />
-                    {t("nav.logout")}
-                  </Button>
-                </>
-              ) : (
-                <Button 
-                  className="w-full rounded-2xl mt-4 h-12" 
-                  onClick={() => {
-                    navigate("/auth");
-                    setMobileMenuOpen(false);
-                  }}
-                >
-                  <User className="w-5 h-5 mr-2" />
-                  {t("nav.login")}
-                </Button>
-              )}
-            </nav>
-          </div>
-        )}
+        <MobileMenu
+          isOpen={mobileMenuOpen}
+          onClose={() => setMobileMenuOpen(false)}
+          user={user}
+          compareCount={compareCount}
+          hasUnread={hasUnread}
+          unreadCount={unreadCount}
+          language={language}
+          setLanguage={setLanguage}
+          onLogout={handleLogout}
+          onNavigate={navigate}
+          t={t}
+        />
       </div>
     </header>
   );
