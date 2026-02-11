@@ -17,16 +17,16 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
 
 // Import official brand logos
-import volkswagenLogo from "@/assets/brands/volkswagen.svg";
-import bmwLogo from "@/assets/brands/bmw.svg";
-import audiLogo from "@/assets/brands/audi.svg";
-import mercedesLogo from "@/assets/brands/mercedes.svg";
-import peugeotLogo from "@/assets/brands/peugeot.svg";
-import renaultLogo from "@/assets/brands/renault.svg";
-import citroenLogo from "@/assets/brands/citroen.svg";
-import toyotaLogo from "@/assets/brands/toyota.svg";
-import fordLogo from "@/assets/brands/ford.svg";
-import opelLogo from "@/assets/brands/opel.svg";
+import volkswagenLogo from "@/assets/brands/volkswagen.png";
+import bmwLogo from "@/assets/brands/bmw.png";
+import audiLogo from "@/assets/brands/audi.png";
+import mercedesLogo from "@/assets/brands/mercedes.png";
+import peugeotLogo from "@/assets/brands/peugeot.png";
+import renaultLogo from "@/assets/brands/renault.png";
+import citroenLogo from "@/assets/brands/citroen.png";
+import toyotaLogo from "@/assets/brands/toyota.png";
+import fordLogo from "@/assets/brands/ford.png";
+import opelLogo from "@/assets/brands/opel.png";
 
 import type { BrandConfig } from "../types/search.types";
 
