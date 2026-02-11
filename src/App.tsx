@@ -4,9 +4,11 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { CompareProvider } from "@/features/compare";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { AnimatePresence } from "framer-motion";
+import PageTransition from "@/components/PageTransition";
 
 // Eagerly loaded — critical path
 import Index from "./pages/Index";
@@ -42,10 +44,6 @@ function PageLoader() {
 
 /**
  * React Query client configuration
- * - staleTime: How long data is considered fresh (5 min)
- * - gcTime: How long unused data stays in cache (10 min)
- * - refetchOnWindowFocus: Disabled for better UX
- * - retry: Single retry on failure
  */
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -58,6 +56,37 @@ const queryClient = new QueryClient({
   },
 });
 
+/** Animated routes wrapper using framer-motion AnimatePresence */
+function AnimatedRoutes() {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<PageTransition><Index /></PageTransition>} />
+        <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
+        <Route path="/car/:id" element={<PageTransition><CarDetail /></PageTransition>} />
+        <Route path="/favorites" element={<PageTransition><Favorites /></PageTransition>} />
+        <Route path="/sell" element={<PageTransition><SellCar /></PageTransition>} />
+        <Route path="/messages" element={<PageTransition><Messages /></PageTransition>} />
+        <Route path="/about" element={<PageTransition><About /></PageTransition>} />
+        <Route path="/faq" element={<PageTransition><FAQ /></PageTransition>} />
+        <Route path="/compare" element={<PageTransition><Compare /></PageTransition>} />
+        <Route path="/dashboard" element={<PageTransition><SellerDashboard /></PageTransition>} />
+        <Route path="/dashboard/stats" element={<PageTransition><SellerStats /></PageTransition>} />
+        <Route path="/admin/reports" element={<PageTransition><AdminReports /></PageTransition>} />
+        <Route path="/settings" element={<PageTransition><Settings /></PageTransition>} />
+        <Route path="/reset-password" element={<PageTransition><ResetPassword /></PageTransition>} />
+        <Route path="/terms" element={<PageTransition><Terms /></PageTransition>} />
+        <Route path="/privacy" element={<PageTransition><Privacy /></PageTransition>} />
+        <Route path="/legal" element={<PageTransition><Legal /></PageTransition>} />
+        <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
+        <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
+      </Routes>
+    </AnimatePresence>
+  );
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -67,27 +96,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Suspense fallback={<PageLoader />}>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/car/:id" element={<CarDetail />} />
-                <Route path="/favorites" element={<Favorites />} />
-                <Route path="/sell" element={<SellCar />} />
-                <Route path="/messages" element={<Messages />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/faq" element={<FAQ />} />
-                <Route path="/compare" element={<Compare />} />
-                <Route path="/dashboard" element={<SellerDashboard />} />
-                <Route path="/dashboard/stats" element={<SellerStats />} />
-                <Route path="/admin/reports" element={<AdminReports />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="/reset-password" element={<ResetPassword />} />
-                <Route path="/terms" element={<Terms />} />
-                <Route path="/privacy" element={<Privacy />} />
-                <Route path="/legal" element={<Legal />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
+              <AnimatedRoutes />
             </Suspense>
           </BrowserRouter>
         </CompareProvider>
