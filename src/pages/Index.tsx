@@ -7,29 +7,20 @@ import LoadMoreGrid from "@/components/LoadMoreGrid";
 import CarChatbot from "@/components/CarChatbot";
 import SEOHead from "@/components/SEOHead";
 import SellCarBanner from "@/components/SellCarBanner";
+import ScrollReveal from "@/components/ScrollReveal";
 import { useFilteredInfiniteCarListings } from "@/features/listings";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useLanguage } from "@/contexts/LanguageContext";
+
 const Index = () => {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const navigate = useNavigate();
   const { language } = useLanguage();
 
   const { 
-    cars, 
-    isLoading, 
-    isLoadingMore, 
-    hasMore, 
-    loadMore, 
-    totalCount,
-    filters,
-    updateFilter,
-    resetFilters,
-    sortBy,
-    setSortBy,
-    activeFiltersCount,
-    error,
-    refresh,
+    cars, isLoading, isLoadingMore, hasMore, loadMore, totalCount,
+    filters, updateFilter, resetFilters, sortBy, setSortBy,
+    activeFiltersCount, error, refresh,
   } = useFilteredInfiniteCarListings();
 
   const { isFavorite, toggleFavorite } = useFavorites();
@@ -38,8 +29,6 @@ const Index = () => {
     updateFilter("brand", brand);
     updateFilter("searchQuery", model);
     updateFilter("maxPrice", maxPrice);
-    
-    // Scroll to results
     setTimeout(() => {
       const resultsSection = document.getElementById("results-section");
       if (resultsSection) {
@@ -64,52 +53,60 @@ const Index = () => {
       />
       <Header />
       <main className="pt-20">
-        <SellCarBanner />
-        <HeroSearch onSearch={handleSearch} />
+        <ScrollReveal>
+          <SellCarBanner />
+        </ScrollReveal>
 
-        {/* Brand Slider Section */}
-        <BrandCarousel 
-          onBrandFilter={(brand) => updateFilter("brand", brand)} 
-          selectedBrand={filters.brand} 
-        />
+        <ScrollReveal delay={0.1}>
+          <HeroSearch onSearch={handleSearch} />
+        </ScrollReveal>
 
-        {/* Popular Cars Section */}
-        <PopularVehicles
-          isFavorite={isFavorite}
-          onToggleFavorite={toggleFavorite}
-          onVehicleClick={handleCarClick}
-        />
+        <ScrollReveal delay={0.05} direction="left">
+          <BrandCarousel 
+            onBrandFilter={(brand) => updateFilter("brand", brand)} 
+            selectedBrand={filters.brand} 
+          />
+        </ScrollReveal>
 
-        {/* All Listings Section */}
-        <section id="results-section" className="container mx-auto px-4 sm:px-6 pb-16 sm:pb-20">
-          <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
-            <FilterPanel
-              isOpen={filtersOpen}
-              onClose={() => setFiltersOpen(false)}
-              filters={filters}
-              onFilterChange={updateFilter}
-              onReset={resetFilters}
-              resultsCount={totalCount}
-            />
-            <LoadMoreGrid
-              cars={cars}
-              onOpenFilters={() => setFiltersOpen(true)}
-              sortBy={sortBy}
-              onSortChange={setSortBy}
-              isFavorite={isFavorite}
-              onToggleFavorite={toggleFavorite}
-              onCarClick={handleCarClick}
-              activeFiltersCount={activeFiltersCount}
-              isLoading={isLoading}
-              isLoadingMore={isLoadingMore}
-              hasMore={hasMore}
-              onLoadMore={loadMore}
-              totalCount={totalCount}
-              error={error}
-              onRetry={refresh}
-            />
-          </div>
-        </section>
+        <ScrollReveal delay={0.1}>
+          <PopularVehicles
+            isFavorite={isFavorite}
+            onToggleFavorite={toggleFavorite}
+            onVehicleClick={handleCarClick}
+          />
+        </ScrollReveal>
+
+        <ScrollReveal>
+          <section id="results-section" className="container mx-auto px-4 sm:px-6 pb-16 sm:pb-20">
+            <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
+              <FilterPanel
+                isOpen={filtersOpen}
+                onClose={() => setFiltersOpen(false)}
+                filters={filters}
+                onFilterChange={updateFilter}
+                onReset={resetFilters}
+                resultsCount={totalCount}
+              />
+              <LoadMoreGrid
+                cars={cars}
+                onOpenFilters={() => setFiltersOpen(true)}
+                sortBy={sortBy}
+                onSortChange={setSortBy}
+                isFavorite={isFavorite}
+                onToggleFavorite={toggleFavorite}
+                onCarClick={handleCarClick}
+                activeFiltersCount={activeFiltersCount}
+                isLoading={isLoading}
+                isLoadingMore={isLoadingMore}
+                hasMore={hasMore}
+                onLoadMore={loadMore}
+                totalCount={totalCount}
+                error={error}
+                onRetry={refresh}
+              />
+            </div>
+          </section>
+        </ScrollReveal>
       </main>
       <Footer />
       <CarChatbot />
