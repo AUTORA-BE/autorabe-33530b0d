@@ -3,13 +3,35 @@
  * @module features/search/components
  */
 
-import { memo, useState, useEffect, useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { memo, useState, useEffect, useRef, useCallback } from "react";
+import { motion, useScroll, useTransform, useInView, useSpring, useMotionValue } from "framer-motion";
 import { Search, ChevronDown } from "lucide-react";
 import { getAllBrands, getModelsByBrand } from "@/utils/carUtils";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { BUDGET_OPTIONS } from "../types/search.types";
 import type { QuickSearchParams } from "../types/search.types";
+
+/** Animated counter that increments when visible in viewport */
+function AnimatedCounter({ target, suffix = "", duration = 2 }: { target: number; suffix?: string; duration?: number }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-50px" });
+  const [display, setDisplay] = useState(0);
+
+  useEffect(() => {
+    if (!inView) return;
+    let start = 0;
+    const startTime = performance.now();
+    const step = (now: number) => {
+      const progress = Math.min((now - startTime) / (duration * 1000), 1);
+      const eased = 1 - Math.pow(1 - progress, 3); // easeOutCubic
+      setDisplay(Math.round(eased * target));
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [inView, target, duration]);
+
+  return <span ref={ref}>{display}{suffix}</span>;
+}
 
 /**
  * Props for the HeroSearch component
@@ -201,19 +223,19 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
           >
             <div className="text-center">
               <div className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
-                150+
+                <AnimatedCounter target={150} suffix="+" />
               </div>
               <div className="text-muted-foreground text-xs sm:text-sm">{t("hero.vehicles")}</div>
             </div>
             <div className="text-center">
               <div className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
-                98%
+                <AnimatedCounter target={98} suffix="%" />
               </div>
               <div className="text-muted-foreground text-xs sm:text-sm">{t("hero.verified")}</div>
             </div>
             <div className="text-center">
               <div className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
-                50+
+                <AnimatedCounter target={50} suffix="+" />
               </div>
               <div className="text-muted-foreground text-xs sm:text-sm">{t("hero.brands")}</div>
             </div>
