@@ -3,7 +3,8 @@
  * @module features/search/components
  */
 
-import { memo, useState, useEffect } from "react";
+import { memo, useState, useEffect, useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { Search, ChevronDown } from "lucide-react";
 import { getAllBrands, getModelsByBrand } from "@/utils/carUtils";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -60,19 +61,34 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
     }
   };
 
-  return (
-    <section className="relative min-h-[70vh] sm:min-h-[85vh] flex items-center justify-center pt-20 sm:pt-24 pb-12 sm:pb-16 overflow-hidden">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-secondary/30" />
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end start"],
+  });
 
-      {/* Decorative elements - hidden on mobile for performance */}
-      <div className="hidden sm:block absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float" />
-      <div
+  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const decorY1 = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+  const decorY2 = useTransform(scrollYProgress, [0, 1], ["0%", "40%"]);
+  const contentY = useTransform(scrollYProgress, [0, 1], [0, 60]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+
+  return (
+    <section ref={sectionRef} className="relative min-h-[70vh] sm:min-h-[85vh] flex items-center justify-center pt-20 sm:pt-24 pb-12 sm:pb-16 overflow-hidden">
+      {/* Background gradient with parallax */}
+      <motion.div className="absolute inset-0 bg-gradient-to-b from-background via-background to-secondary/30" style={{ y: bgY }} />
+
+      {/* Decorative elements with parallax */}
+      <motion.div
+        className="hidden sm:block absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float"
+        style={{ y: decorY1 }}
+      />
+      <motion.div
         className="hidden sm:block absolute bottom-1/4 right-1/4 w-80 h-80 bg-primary/5 rounded-full blur-3xl animate-float"
-        style={{ animationDelay: "-3s" }}
+        style={{ y: decorY2, animationDelay: "-3s" }}
       />
 
-      <div className="container mx-auto px-4 sm:px-6 relative z-10">
+      <motion.div className="container mx-auto px-4 sm:px-6 relative z-10" style={{ y: contentY, opacity: contentOpacity }}>
         <div className="max-w-4xl mx-auto text-center">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-primary/10 text-primary text-xs sm:text-sm font-medium mb-6 sm:mb-8 animate-fade-up">
@@ -203,7 +219,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 });
