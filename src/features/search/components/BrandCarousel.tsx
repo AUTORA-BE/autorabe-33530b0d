@@ -27,6 +27,11 @@ import citroenLogo from "@/assets/brands/citroen.png";
 import toyotaLogo from "@/assets/brands/toyota.png";
 import fordLogo from "@/assets/brands/ford.png";
 import opelLogo from "@/assets/brands/opel.png";
+import hyundaiLogo from "@/assets/brands/hyundai.png";
+import kiaLogo from "@/assets/brands/kia.png";
+import fiatLogo from "@/assets/brands/fiat.png";
+import volvoLogo from "@/assets/brands/volvo.png";
+import skodaLogo from "@/assets/brands/skoda.png";
 
 import type { BrandConfig } from "../types/search.types";
 
@@ -44,6 +49,11 @@ const BRANDS: BrandConfig[] = [
   { name: "Toyota", logo: toyotaLogo, color: "#EB0A1E" },
   { name: "Ford", logo: fordLogo, color: "#003478" },
   { name: "Opel", logo: opelLogo, color: "#FFD700" },
+  { name: "Hyundai", logo: hyundaiLogo, color: "#002C5F" },
+  { name: "Kia", logo: kiaLogo, color: "#05141F" },
+  { name: "Fiat", logo: fiatLogo, color: "#8B0000" },
+  { name: "Volvo", logo: volvoLogo, color: "#003057" },
+  { name: "Škoda", logo: skodaLogo, color: "#4BA82E" },
 ];
 
 /**
