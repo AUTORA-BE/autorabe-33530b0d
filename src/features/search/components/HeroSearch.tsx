@@ -138,7 +138,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
 
           {/* Search Box */}
           <div
-            className="glass-panel p-2 sm:p-3 md:p-4 max-w-3xl mx-auto animate-fade-up"
+            className="glass-panel p-3 sm:p-4 md:p-5 max-w-3xl mx-auto animate-fade-up ring-1 ring-white/10"
             style={{ animationDelay: "0.3s" }}
             role="search"
             aria-label="Recherche rapide de véhicules"
