@@ -4,6 +4,7 @@
  */
 
 import { useState, useEffect, useCallback, memo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Autoplay from "embla-carousel-autoplay";
 import {
   Carousel,
@@ -141,41 +142,65 @@ const BrandCarousel = memo(function BrandCarousel({
                 key={brand.name}
                 className="pl-2 sm:pl-4 basis-1/4 sm:basis-1/4 md:basis-1/5"
               >
-                <button
+                <motion.button
                   onClick={() => handleBrandClick(brand.name)}
                   className="group cursor-pointer w-full"
                   aria-label={`Filtrer par ${brand.name}`}
                   aria-pressed={selectedBrand === brand.name}
+                  whileTap={{ scale: 0.92 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
-                  <div className={cn(
-                    "relative flex flex-col items-center justify-center p-2 sm:p-4 md:p-6 rounded-lg sm:rounded-xl transition-all duration-300 hover:-translate-y-1",
-                    selectedBrand === brand.name
-                      ? "bg-primary/10 border-2 border-primary shadow-lg shadow-primary/20 ring-2 ring-primary/30"
-                      : "bg-card border border-border/50 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10"
-                  )}>
-                    {/* Selection badge with pulse effect */}
-                    {selectedBrand === brand.name && (
-                      <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-4 h-4 sm:w-5 sm:h-5 bg-primary rounded-full flex items-center justify-center">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
-                        <svg 
-                          className="relative w-2 h-2 sm:w-3 sm:h-3 text-primary-foreground" 
-                          fill="none" 
-                          viewBox="0 0 24 24" 
-                          stroke="currentColor"
-                          aria-hidden="true"
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
+                  <motion.div
+                    className={cn(
+                      "relative flex flex-col items-center justify-center p-2 sm:p-4 md:p-6 rounded-lg sm:rounded-xl",
+                      selectedBrand === brand.name
+                        ? "bg-primary/10 border-2 border-primary shadow-lg shadow-primary/20 ring-2 ring-primary/30"
+                        : "bg-card border border-border/50 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10"
                     )}
+                    animate={selectedBrand === brand.name
+                      ? { y: -4, transition: { type: "spring", stiffness: 300, damping: 20 } }
+                      : { y: 0, transition: { type: "spring", stiffness: 300, damping: 20 } }
+                    }
+                    whileHover={selectedBrand !== brand.name ? { y: -4, scale: 1.02 } : {}}
+                  >
+                    {/* Selection badge with pulse effect */}
+                    <AnimatePresence>
+                      {selectedBrand === brand.name && (
+                        <motion.div
+                          className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-4 h-4 sm:w-5 sm:h-5 bg-primary rounded-full flex items-center justify-center"
+                          initial={{ scale: 0, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          exit={{ scale: 0, opacity: 0 }}
+                          transition={{ type: "spring", stiffness: 500, damping: 25 }}
+                        >
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                          <svg 
+                            className="relative w-2 h-2 sm:w-3 sm:h-3 text-primary-foreground" 
+                            fill="none" 
+                            viewBox="0 0 24 24" 
+                            stroke="currentColor"
+                            aria-hidden="true"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                          </svg>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                     
                     {/* Brand logo container */}
-                    <div className={cn(
-                      "w-10 h-10 sm:w-16 sm:h-16 md:w-20 md:h-20 flex items-center justify-center mb-1.5 sm:mb-3 transition-all duration-300 rounded-md sm:rounded-lg p-1 sm:p-2",
-                      selectedBrand === brand.name
-                        ? "scale-110 bg-white dark:bg-white/10"
-                        : "group-hover:scale-105 bg-white/80 dark:bg-white/5"
-                    )}>
+                    <motion.div
+                      className={cn(
+                        "w-10 h-10 sm:w-16 sm:h-16 md:w-20 md:h-20 flex items-center justify-center mb-1.5 sm:mb-3 rounded-md sm:rounded-lg p-1 sm:p-2",
+                        selectedBrand === brand.name
+                          ? "bg-white dark:bg-white/10"
+                          : "bg-white/80 dark:bg-white/5"
+                      )}
+                      animate={selectedBrand === brand.name
+                        ? { scale: 1.1 }
+                        : { scale: 1 }
+                      }
+                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    >
                       <img 
                         src={brand.logo} 
                         alt={`${brand.name} logo officiel`}
@@ -183,7 +208,7 @@ const BrandCarousel = memo(function BrandCarousel({
                         loading="lazy"
                         draggable="false"
                       />
-                    </div>
+                    </motion.div>
                     
                     {/* Brand name */}
                     <span className={cn(
@@ -194,8 +219,8 @@ const BrandCarousel = memo(function BrandCarousel({
                     )}>
                       {brand.name}
                     </span>
-                  </div>
-                </button>
+                  </motion.div>
+                </motion.button>
               </CarouselItem>
             ))}
           </CarouselContent>
