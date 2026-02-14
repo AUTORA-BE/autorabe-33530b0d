@@ -1,13 +1,12 @@
 /**
- * Card component displaying a single user alert with toggle and delete
+ * Card component displaying a single user alert — mobile-optimised
  * @module features/alerts/components
  */
 import { memo } from "react";
-import { Card, CardContent } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Edit, Trash2, Bell, BellOff, Zap, Calendar } from "lucide-react";
+import { Trash2, Bell, BellOff } from "lucide-react";
 import { useToggleAlert, useDeleteAlert } from "../hooks/useUserAlerts";
 import type { UserAlert } from "../hooks/useUserAlerts";
 
@@ -20,81 +19,94 @@ const AlertCard = memo(({ alert }: AlertCardProps) => {
   const deleteAlert = useDeleteAlert();
 
   const filters = alert.filters;
-  const criteriaText = [
+  const criteria = [
     filters.brand && `${filters.brand}${filters.model ? ` ${filters.model}` : ""}`,
-    filters.max_price && `max ${filters.max_price.toLocaleString("fr-BE")}€`,
+    filters.max_price && `≤ ${filters.max_price.toLocaleString("fr-BE")}€`,
     filters.min_year && `${filters.min_year}+`,
-    filters.max_km && `max ${filters.max_km.toLocaleString("fr-BE")} km`,
+    filters.max_km && `≤ ${filters.max_km.toLocaleString("fr-BE")} km`,
     filters.fuel_types?.length && filters.fuel_types.join(", "),
-    filters.lez_compatible && "LEZ OK",
+    filters.lez_compatible && "LEZ",
     filters.carpass_verified && "Car-Pass",
-  ]
-    .filter(Boolean)
-    .join(" • ");
+  ].filter(Boolean) as string[];
 
-  const frequencyLabel = {
+  const frequencyLabel: Record<string, string> = {
     instant: "⚡ Instantané",
     daily: "📅 Quotidien",
     weekly: "📅 Hebdomadaire",
-  }[alert.frequency];
+  };
 
   return (
-    <Card className={`transition-all duration-200 ${!alert.active ? "opacity-60" : ""}`}>
-      <CardContent className="p-5">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap mb-2">
-              <h3 className="font-display text-base font-bold text-foreground truncate">
-                {alert.name}
-              </h3>
-              <Badge
-                variant={alert.active ? "default" : "secondary"}
-                className={`text-xs ${alert.active ? "bg-primary/15 text-primary" : ""}`}
-              >
-                {alert.active ? (
-                  <><Bell className="w-3 h-3 mr-1" />Active</>
-                ) : (
-                  <><BellOff className="w-3 h-3 mr-1" />Pause</>
-                )}
-              </Badge>
-              <Badge variant="outline" className="text-xs">
-                {frequencyLabel}
-              </Badge>
-            </div>
-
-            <p className="text-sm text-muted-foreground mb-3">{criteriaText || "Tous les véhicules"}</p>
-
-            <div className="flex items-center gap-4 text-xs text-muted-foreground">
-              <span>{alert.match_count} notification{alert.match_count !== 1 ? "s" : ""}</span>
-              {alert.last_sent_at && (
-                <span>
-                  Dernière : {new Date(alert.last_sent_at).toLocaleDateString("fr-BE")}
-                </span>
-              )}
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 shrink-0">
-            <Switch
-              checked={alert.active}
-              onCheckedChange={(checked) => toggleAlert.mutate({ id: alert.id, active: checked })}
-            />
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-destructive hover:text-destructive hover:bg-destructive/10 rounded-xl"
-              onClick={() => {
-                if (confirm("Supprimer cette alerte ?")) {
-                  deleteAlert.mutate(alert.id);
-                }
-              }}
-            >
-              <Trash2 className="w-4 h-4" />
-            </Button>
-          </div>
+    <div
+      className={`rounded-2xl border border-border bg-card p-4 transition-opacity duration-200 ${
+        !alert.active ? "opacity-60" : ""
+      }`}
+    >
+      {/* Row 1: name + toggle */}
+      <div className="flex items-center justify-between gap-3 mb-2">
+        <h3 className="font-semibold text-foreground text-sm sm:text-base truncate min-w-0">
+          {alert.name}
+        </h3>
+        <div className="flex items-center gap-2 shrink-0">
+          <Switch
+            checked={alert.active}
+            onCheckedChange={(checked) =>
+              toggleAlert.mutate({ id: alert.id, active: checked })
+            }
+          />
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10 rounded-xl"
+            onClick={() => {
+              if (confirm("Supprimer cette alerte ?")) {
+                deleteAlert.mutate(alert.id);
+              }
+            }}
+          >
+            <Trash2 className="w-4 h-4" />
+          </Button>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+
+      {/* Row 2: badges */}
+      <div className="flex flex-wrap gap-1.5 mb-2.5">
+        <Badge
+          variant={alert.active ? "default" : "secondary"}
+          className={`text-[11px] px-2 py-0.5 ${alert.active ? "bg-primary/15 text-primary border-primary/20" : ""}`}
+        >
+          {alert.active ? (
+            <><Bell className="w-3 h-3 mr-1" />Active</>
+          ) : (
+            <><BellOff className="w-3 h-3 mr-1" />Pause</>
+          )}
+        </Badge>
+        <Badge variant="outline" className="text-[11px] px-2 py-0.5">
+          {frequencyLabel[alert.frequency] || alert.frequency}
+        </Badge>
+      </div>
+
+      {/* Row 3: criteria chips */}
+      {criteria.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 mb-2.5">
+          {criteria.map((c, i) => (
+            <span
+              key={i}
+              className="inline-block text-[11px] px-2 py-0.5 rounded-full bg-secondary text-secondary-foreground"
+            >
+              {c}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* Row 4: meta */}
+      <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
+        <span>{alert.match_count} notification{alert.match_count !== 1 ? "s" : ""}</span>
+        {alert.last_sent_at && (
+          <span>Dernière : {new Date(alert.last_sent_at).toLocaleDateString("fr-BE")}</span>
+        )}
+      </div>
+    </div>
   );
 });
 
