@@ -5,6 +5,8 @@ import { useCompareContext } from "@/features/compare";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useHapticFeedback } from "@/hooks/useHapticFeedback";
 import { toast } from "sonner";
+import { calculerStatutLEZ } from "@/lib/lezData";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { Vehicle } from "../types/vehicle.types";
 
 /**
@@ -22,25 +24,42 @@ export interface CarCardProps {
 }
 
 /**
- * Get LEZ badge configuration based on Euro norm and fuel type
+ * Get LEZ badge configuration using centralized LEZ calendar
  */
-const getLezBadgeText = (euroNorm: string, fuelType: string) => {
-  const norm = euroNorm?.toLowerCase() || "";
-  const fuel = fuelType?.toLowerCase() || "";
-  
-  if (fuel.includes("electrique") || fuel.includes("électrique") || fuel === "electric") {
-    return { text: "Accès LEZ illimité", color: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" };
+const getLezBadgeInfo = (euroNorm: string, fuelType: string) => {
+  if (!euroNorm || !fuelType) return null;
+
+  const result = calculerStatutLEZ(fuelType, euroNorm);
+  const s = result.global;
+
+  switch (s.statut) {
+    case "autorise":
+      return {
+        text: "LEZ OK",
+        color: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
+        details: result.details,
+      };
+    case "alerte":
+      return {
+        text: `LEZ ${s.anneeInterdiction}`,
+        color: "bg-amber-500/15 text-amber-600 dark:text-amber-400",
+        details: result.details,
+      };
+    case "derogation_requise":
+      return {
+        text: "Dérogation",
+        color: "bg-amber-500/15 text-amber-600 dark:text-amber-400",
+        details: result.details,
+      };
+    case "interdit":
+      return {
+        text: "LEZ Interdit",
+        color: "bg-red-500/15 text-red-600 dark:text-red-400",
+        details: result.details,
+      };
+    default:
+      return null;
   }
-  
-  if (norm.includes("euro 6") || norm === "euro 6d") {
-    return { text: "Accès LEZ illimité", color: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" };
-  }
-  
-  if (norm.includes("euro 5") && fuel.includes("diesel")) {
-    return { text: "Accès LEZ limité", color: "bg-amber-500/15 text-amber-600 dark:text-amber-400" };
-  }
-  
-  return null;
 };
 
 /**
@@ -113,7 +132,7 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
     }
   };
 
-  const lezBadge = getLezBadgeText(car.euroNorm, car.fuelType);
+  const lezBadge = getLezBadgeInfo(car.euroNorm, car.fuelType);
 
   return (
     <motion.article
@@ -186,10 +205,32 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-wrap gap-2">
           {lezBadge && (
-            <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-semibold ${lezBadge.color}`}>
-              <Shield className="w-3 h-3" />
-              {lezBadge.text}
-            </span>
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-semibold cursor-help ${lezBadge.color}`}>
+                    <Shield className="w-3 h-3" />
+                    {lezBadge.text}
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="max-w-xs p-3">
+                  <p className="font-semibold text-xs mb-2">Compatibilité LEZ :</p>
+                  <div className="space-y-1.5">
+                    {lezBadge.details.map((d) => (
+                      <div key={d.ville} className="flex items-center gap-2 text-xs">
+                        <span className={`w-2 h-2 rounded-full shrink-0 ${
+                          d.couleur === "green" ? "bg-emerald-500" :
+                          d.couleur === "orange" ? "bg-amber-500" :
+                          d.couleur === "red" ? "bg-red-500" : "bg-muted-foreground"
+                        }`} />
+                        <span className="capitalize font-medium">{d.ville}</span>
+                        <span className="text-muted-foreground">{d.message}</span>
+                      </div>
+                    ))}
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
           {car.hasCarPass && (
             <span className="inline-flex items-center gap-1 px-2 py-1 rounded-xl text-xs font-semibold bg-background/90 backdrop-blur-sm text-foreground shadow-sm">
