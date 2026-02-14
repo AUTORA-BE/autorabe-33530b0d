@@ -38,6 +38,7 @@ const MesAlertes = lazy(() => import("./pages/MesAlertes"));
 const CreerAlerte = lazy(() => import("./pages/CreerAlerte"));
 const Pricing = lazy(() => import("./pages/Pricing"));
 const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
+const PaymentCanceled = lazy(() => import("./pages/PaymentCanceled"));
 
 /** Minimal loading fallback shown while lazy chunks load */
 function PageLoader() {
@@ -98,6 +99,7 @@ function AppRoutes() {
       <Route path="/mes-alertes/creer" element={<PageTransition><CreerAlerte /></PageTransition>} />
       <Route path="/pricing" element={<PageTransition><Pricing /></PageTransition>} />
       <Route path="/payment-success" element={<PageTransition><PaymentSuccess /></PageTransition>} />
+      <Route path="/payment-canceled" element={<PageTransition><PaymentCanceled /></PageTransition>} />
       <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
     </Routes>
   );
