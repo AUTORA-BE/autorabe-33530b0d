@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, forwardRef } from "react";
 import { MessageCircle, X, Send, Bot, User, Loader2, Car, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,7 +11,7 @@ interface Message {
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/car-chat`;
 
-const CarChatbot = () => {
+const CarChatbot = forwardRef<HTMLDivElement>(function CarChatbot(_props, ref) {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -142,7 +142,7 @@ const CarChatbot = () => {
   ];
 
   return (
-    <>
+    <div ref={ref}>
       {/* Chat Button */}
       <button
         onClick={() => setIsOpen(true)}
@@ -260,8 +260,8 @@ const CarChatbot = () => {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
-};
+});
 
 export default CarChatbot;
