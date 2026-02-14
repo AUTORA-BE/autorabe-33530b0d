@@ -28,8 +28,8 @@ export const SUBSCRIPTION_TIERS: Record<string, SubscriptionTier> = {
     maxListings: null,
     category: 'particulier',
     features: [
-      'Annonces illimitées',
-      'Gratuit jusqu\'à 3 annonces',
+      'Annonces simultanées illimitées',
+      'Gratuit jusqu\'à 3 annonces simultanées',
       'Idéal pour les vendeurs occasionnels',
     ],
   },
@@ -42,7 +42,7 @@ export const SUBSCRIPTION_TIERS: Record<string, SubscriptionTier> = {
     maxListings: 5,
     category: 'professionnel',
     features: [
-      'Jusqu\'à 5 annonces actives',
+      '5 annonces simultanées',
       'Badge "Vendeur Pro"',
       'Statistiques de base',
       'Support par email',
@@ -58,7 +58,7 @@ export const SUBSCRIPTION_TIERS: Record<string, SubscriptionTier> = {
     popular: true,
     category: 'professionnel',
     features: [
-      'Jusqu\'à 20 annonces actives',
+      '20 annonces simultanées',
       'Badge "Vendeur Pro"',
       'Statistiques avancées',
       'Support prioritaire',
@@ -74,7 +74,7 @@ export const SUBSCRIPTION_TIERS: Record<string, SubscriptionTier> = {
     maxListings: null,
     category: 'professionnel',
     features: [
-      'Annonces illimitées',
+      'Annonces simultanées illimitées',
       'Badge "Vendeur Pro Premium"',
       'Statistiques complètes + export',
       'Support VIP dédié',
