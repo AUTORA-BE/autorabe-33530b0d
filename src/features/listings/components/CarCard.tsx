@@ -36,7 +36,7 @@ const getLezBadgeInfo = (euroNorm: string, fuelType: string) => {
     case "autorise":
       return {
         text: "LEZ OK",
-        color: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400",
+        color: "bg-primary/15 text-primary",
         details: result.details,
       };
     case "alerte":
@@ -219,7 +219,7 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
                     {lezBadge.details.map((d) => (
                       <div key={d.ville} className="flex items-center gap-2 text-xs">
                         <span className={`w-2 h-2 rounded-full shrink-0 ${
-                          d.couleur === "green" ? "bg-emerald-500" :
+                          d.couleur === "green" ? "bg-primary" :
                           d.couleur === "orange" ? "bg-amber-500" :
                           d.couleur === "red" ? "bg-red-500" : "bg-muted-foreground"
                         }`} />

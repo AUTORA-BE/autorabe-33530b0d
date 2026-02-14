@@ -58,7 +58,7 @@ export function ChatHeader({
         {/* Online status indicator */}
         <span 
           className={`absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-card ${
-            isOnline ? 'bg-green-500' : 'bg-muted'
+            isOnline ? 'bg-primary' : 'bg-muted'
           }`}
         />
       </div>

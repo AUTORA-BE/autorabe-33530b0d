@@ -67,9 +67,9 @@ const SellerBadge = ({
               TVA : {tvaNumber}
             </p>
           )}
-          <div className="flex items-start gap-2 p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
-            <Shield className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
-            <p className="text-sm text-emerald-600 dark:text-emerald-400 font-medium">
+          <div className="flex items-start gap-2 p-3 rounded-2xl bg-primary/10 border border-primary/20">
+            <Shield className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+            <p className="text-sm text-primary font-medium">
               Garantie légale 12 mois incluse
             </p>
           </div>

@@ -45,7 +45,7 @@ const Footer = () => {
             {/* Trust badges */}
             <div className="flex items-center gap-4 pt-2">
               <div className="flex items-center gap-1 text-xs text-gray-400">
-                <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-green-500" />
+                <Shield className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />
                 <span>Car-Pass</span>
               </div>
               <div className="flex items-center gap-1 text-xs text-gray-400">
