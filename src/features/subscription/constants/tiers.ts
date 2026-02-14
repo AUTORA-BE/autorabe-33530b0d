@@ -12,9 +12,27 @@ export interface SubscriptionTier {
   maxListings: number | null;
   features: string[];
   popular?: boolean;
+  category: 'particulier' | 'professionnel';
 }
 
+/** Free tier limit for particuliers without subscription */
+export const FREE_PARTICULIER_LIMIT = 3;
+
 export const SUBSCRIPTION_TIERS: Record<string, SubscriptionTier> = {
+  particulier_plus: {
+    name: 'Particulier+',
+    slug: 'particulier_plus',
+    price_id: 'price_1T0sAAFyYvJx8HZKWIhs6B3E',
+    product_id: 'prod_TyppYB90qqa337',
+    price: 9.99,
+    maxListings: null,
+    category: 'particulier',
+    features: [
+      'Annonces illimitées',
+      'Gratuit jusqu\'à 3 annonces',
+      'Idéal pour les vendeurs occasionnels',
+    ],
+  },
   starter: {
     name: 'Starter',
     slug: 'starter',
@@ -22,6 +40,7 @@ export const SUBSCRIPTION_TIERS: Record<string, SubscriptionTier> = {
     product_id: 'prod_Typl0ZWwei0dEk',
     price: 19.90,
     maxListings: 5,
+    category: 'professionnel',
     features: [
       'Jusqu\'à 5 annonces actives',
       'Badge "Vendeur Pro"',
@@ -37,6 +56,7 @@ export const SUBSCRIPTION_TIERS: Record<string, SubscriptionTier> = {
     price: 39.90,
     maxListings: 20,
     popular: true,
+    category: 'professionnel',
     features: [
       'Jusqu\'à 20 annonces actives',
       'Badge "Vendeur Pro"',
@@ -52,6 +72,7 @@ export const SUBSCRIPTION_TIERS: Record<string, SubscriptionTier> = {
     product_id: 'prod_Typm0YXFdLkYZE',
     price: 69.90,
     maxListings: null,
+    category: 'professionnel',
     features: [
       'Annonces illimitées',
       'Badge "Vendeur Pro Premium"',

@@ -5,21 +5,25 @@
 
 import { useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Check, Crown, Zap, Rocket, Settings } from 'lucide-react';
+import { Check, Crown, Zap, Rocket, Settings, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Header, Footer } from '@/shared/components';
-import { useSubscription, SUBSCRIPTION_TIERS } from '@/features/subscription';
+import { useSubscription, SUBSCRIPTION_TIERS, FREE_PARTICULIER_LIMIT } from '@/features/subscription';
 import { useAuth } from '@/features/auth';
 import { useToast } from '@/hooks/use-toast';
 import SEOHead from '@/components/SEOHead';
 
 const tierIcons: Record<string, React.ReactNode> = {
+  particulier_plus: <User className="h-6 w-6" />,
   starter: <Zap className="h-6 w-6" />,
   pro: <Rocket className="h-6 w-6" />,
   premium: <Crown className="h-6 w-6" />,
 };
+
+const particulierTiers = Object.entries(SUBSCRIPTION_TIERS).filter(([, t]) => t.category === 'particulier');
+const proTiers = Object.entries(SUBSCRIPTION_TIERS).filter(([, t]) => t.category === 'professionnel');
 
 export default function Pricing() {
   const [searchParams] = useSearchParams();
@@ -78,12 +82,12 @@ export default function Pricing() {
         <div className="container mx-auto px-4">
           {/* Hero */}
           <div className="text-center max-w-2xl mx-auto mb-12">
-            <Badge variant="secondary" className="mb-4">Vendeurs Professionnels</Badge>
+            <Badge variant="secondary" className="mb-4">Tarifs</Badge>
             <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Développez votre activité sur AutoRa
+              Vendez sur AutoRa, simplement
             </h1>
             <p className="text-muted-foreground text-lg">
-              Choisissez le plan qui correspond à vos besoins et commencez à vendre comme un pro.
+              Gratuit pour les particuliers jusqu'à {FREE_PARTICULIER_LIMIT} annonces. Des plans Pro pour les professionnels.
             </p>
           </div>
 
@@ -104,9 +108,77 @@ export default function Pricing() {
             </div>
           )}
 
-          {/* Pricing cards */}
+          {/* Particulier section */}
+          <div className="max-w-lg mx-auto mb-16">
+            <h2 className="text-xl font-semibold text-foreground mb-2 text-center">Particulier</h2>
+            <p className="text-muted-foreground text-center text-sm mb-6">
+              Gratuit jusqu'à {FREE_PARTICULIER_LIMIT} annonces actives, sans engagement.
+            </p>
+
+            <Card className="border-border">
+              <CardHeader className="text-center pb-2">
+                <div className="mx-auto mb-3 h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                  <User className="h-6 w-6" />
+                </div>
+                <CardTitle className="text-xl">Gratuit</CardTitle>
+                <CardDescription>Jusqu'à {FREE_PARTICULIER_LIMIT} annonces actives</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center mb-6">
+                  <span className="text-4xl font-bold text-foreground">0€</span>
+                  <span className="text-muted-foreground">/mois</span>
+                </div>
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-2 text-sm">
+                    <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                    <span className="text-foreground">Jusqu'à {FREE_PARTICULIER_LIMIT} annonces actives gratuitement</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-sm">
+                    <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                    <span className="text-foreground">Messagerie intégrée</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-sm">
+                    <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                    <span className="text-foreground">Aucun engagement</span>
+                  </li>
+                </ul>
+
+                <div className="mt-6 pt-4 border-t border-border">
+                  <p className="text-sm text-muted-foreground text-center mb-3">
+                    Besoin de plus de {FREE_PARTICULIER_LIMIT} annonces ?
+                  </p>
+                  {particulierTiers.map(([key, tier]) => {
+                    const isCurrentPlan = currentTier?.slug === tier.slug;
+                    return (
+                      <div key={key} className="text-center">
+                        <p className="text-lg font-semibold text-foreground mb-2">
+                          {tier.price.toFixed(2).replace('.', ',')}€<span className="text-sm text-muted-foreground font-normal">/mois</span>
+                        </p>
+                        {isCurrentPlan ? (
+                          <Button variant="outline" className="w-full" onClick={handleManage}>Gérer</Button>
+                        ) : (
+                          <Button variant="outline" className="w-full" onClick={() => handleSubscribe(tier.price_id)} disabled={isLoading}>
+                            {isLoading ? 'Chargement...' : 'Passer à Particulier+'}
+                          </Button>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Pro section */}
+          <div className="mb-10">
+            <h2 className="text-xl font-semibold text-foreground mb-2 text-center">Vendeurs Professionnels</h2>
+            <p className="text-muted-foreground text-center text-sm mb-6">
+              Badge Pro, statistiques avancées et visibilité maximale.
+            </p>
+          </div>
+
           <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {Object.entries(SUBSCRIPTION_TIERS).map(([key, tier]) => {
+            {proTiers.map(([key, tier]) => {
               const isCurrentPlan = currentTier?.slug === tier.slug;
               return (
                 <Card
@@ -157,8 +229,8 @@ export default function Pricing() {
                       </Button>
                     ) : (
                       <Button
-                        className={`w-full ${tier.popular ? '' : 'variant-outline'}`}
                         variant={tier.popular ? 'default' : 'outline'}
+                        className="w-full"
                         onClick={() => handleSubscribe(tier.price_id)}
                         disabled={isLoading}
                       >
