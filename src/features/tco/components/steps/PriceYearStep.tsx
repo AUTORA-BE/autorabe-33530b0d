@@ -1,6 +1,8 @@
 /** Step 2: Price & Year */
 
+import { useState } from 'react';
 import { Slider } from '@/components/ui/slider';
+import { Input } from '@/components/ui/input';
 import { ENTRETIEN_BASE } from '../../constants/belgianData';
 import type { TcoFormData } from '../../types/tco.types';
 
@@ -9,9 +11,14 @@ interface Props {
   updateField: <K extends keyof TcoFormData>(key: K, val: TcoFormData[K]) => void;
 }
 
+const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
+
 const PriceYearStep = ({ formData, updateField }: Props) => {
   const age = 2026 - formData.year;
   const entretienEstime = Math.round(ENTRETIEN_BASE[formData.fuelType] * (1 + age * 0.05));
+
+  const [priceInput, setPriceInput] = useState(String(formData.price));
+  const [yearInput, setYearInput] = useState(String(formData.year));
 
   return (
     <div>
@@ -22,14 +29,25 @@ const PriceYearStep = ({ formData, updateField }: Props) => {
         {/* Price */}
         <div>
           <label className="text-sm font-medium text-foreground block mb-4">Prix d'achat</label>
-          <div className="text-center mb-4">
-            <span className="text-4xl font-bold text-foreground tabular-nums">
-              {formData.price.toLocaleString('fr-BE')} €
-            </span>
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <Input
+              type="number"
+              value={priceInput}
+              onChange={e => setPriceInput(e.target.value)}
+              onBlur={() => {
+                const v = clamp(Number(priceInput) || 1000, 1000, 500000);
+                updateField('price', v);
+                setPriceInput(String(v));
+              }}
+              min={1000}
+              max={500000}
+              className="w-36 text-center text-2xl font-bold tabular-nums h-12"
+            />
+            <span className="text-lg text-muted-foreground">€</span>
           </div>
           <Slider
             value={[formData.price]}
-            onValueChange={([v]) => updateField('price', v)}
+            onValueChange={([v]) => { updateField('price', v); setPriceInput(String(v)); }}
             min={1000}
             max={500000}
             step={500}
@@ -44,12 +62,24 @@ const PriceYearStep = ({ formData, updateField }: Props) => {
         {/* Year */}
         <div>
           <label className="text-sm font-medium text-foreground block mb-4">Année</label>
-          <div className="text-center mb-4">
-            <span className="text-4xl font-bold text-foreground tabular-nums">{formData.year}</span>
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <Input
+              type="number"
+              value={yearInput}
+              onChange={e => setYearInput(e.target.value)}
+              onBlur={() => {
+                const v = clamp(Number(yearInput) || 2022, 2010, 2026);
+                updateField('year', v);
+                setYearInput(String(v));
+              }}
+              min={2010}
+              max={2026}
+              className="w-28 text-center text-2xl font-bold tabular-nums h-12"
+            />
           </div>
           <Slider
             value={[formData.year]}
-            onValueChange={([v]) => updateField('year', v)}
+            onValueChange={([v]) => { updateField('year', v); setYearInput(String(v)); }}
             min={2010}
             max={2026}
             step={1}

@@ -1,6 +1,8 @@
 /** Step 6: Technical details */
 
+import { useState } from 'react';
 import { Slider } from '@/components/ui/slider';
+import { Input } from '@/components/ui/input';
 import { DEFAULT_CONSUMPTION, EURO_NORMS } from '../../constants/belgianData';
 import type { TcoFormData, EuroNorm } from '../../types/tco.types';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -11,9 +13,15 @@ interface Props {
   updateField: <K extends keyof TcoFormData>(key: K, val: TcoFormData[K]) => void;
 }
 
+const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
+
 const TechnicalStep = ({ formData, updateField }: Props) => {
   const isElectric = formData.fuelType === 'electric';
   const consoUnit = isElectric ? 'kWh/100km' : 'L/100km';
+
+  const [fpInput, setFpInput] = useState(String(formData.fiscalPower));
+  const [hpInput, setHpInput] = useState(String(formData.horsepower));
+  const [consoInput, setConsoInput] = useState(String(formData.consumption));
 
   return (
     <div>
@@ -36,13 +44,25 @@ const TechnicalStep = ({ formData, updateField }: Props) => {
               <TooltipContent>Indiquée sur votre carte grise (CV fiscaux)</TooltipContent>
             </Tooltip>
           </div>
-          <div className="text-center mb-3">
-            <span className="text-3xl font-bold text-foreground tabular-nums">{formData.fiscalPower}</span>
-            <span className="text-sm text-muted-foreground ml-1">CV</span>
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <Input
+              type="number"
+              value={fpInput}
+              onChange={e => setFpInput(e.target.value)}
+              onBlur={() => {
+                const v = clamp(Math.round(Number(fpInput) || 7), 4, 20);
+                updateField('fiscalPower', v);
+                setFpInput(String(v));
+              }}
+              min={4}
+              max={20}
+              className="w-20 text-center text-2xl font-bold tabular-nums h-12"
+            />
+            <span className="text-sm text-muted-foreground">CV</span>
           </div>
           <Slider
             value={[formData.fiscalPower]}
-            onValueChange={([v]) => updateField('fiscalPower', v)}
+            onValueChange={([v]) => { updateField('fiscalPower', v); setFpInput(String(v)); }}
             min={4}
             max={20}
             step={1}
@@ -61,16 +81,28 @@ const TechnicalStep = ({ formData, updateField }: Props) => {
               <TooltipContent>Puissance du moteur en chevaux (ch/HP)</TooltipContent>
             </Tooltip>
           </div>
-          <div className="text-center mb-3">
-            <span className="text-3xl font-bold text-foreground tabular-nums">{formData.horsepower}</span>
-            <span className="text-sm text-muted-foreground ml-1">ch</span>
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <Input
+              type="number"
+              value={hpInput}
+              onChange={e => setHpInput(e.target.value)}
+              onBlur={() => {
+                const v = clamp(Math.round(Number(hpInput) || 150), 50, 800);
+                updateField('horsepower', v);
+                setHpInput(String(v));
+              }}
+              min={50}
+              max={800}
+              className="w-24 text-center text-2xl font-bold tabular-nums h-12"
+            />
+            <span className="text-sm text-muted-foreground">ch</span>
           </div>
           <Slider
             value={[formData.horsepower]}
-            onValueChange={([v]) => updateField('horsepower', v)}
+            onValueChange={([v]) => { updateField('horsepower', v); setHpInput(String(v)); }}
             min={50}
             max={800}
-            step={10}
+            step={1}
             className="[&_[role=slider]]:border-primary [&_[role=slider]]:bg-background [&_span:first-child>span]:bg-primary"
           />
         </div>
@@ -86,13 +118,28 @@ const TechnicalStep = ({ formData, updateField }: Props) => {
               <TooltipContent>Consommation officielle WLTP du constructeur</TooltipContent>
             </Tooltip>
           </div>
-          <div className="text-center mb-3">
-            <span className="text-3xl font-bold text-foreground tabular-nums">{formData.consumption}</span>
-            <span className="text-sm text-muted-foreground ml-1">{consoUnit}</span>
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <Input
+              type="number"
+              value={consoInput}
+              onChange={e => setConsoInput(e.target.value)}
+              onBlur={() => {
+                const min = isElectric ? 10 : 2;
+                const max = isElectric ? 30 : 20;
+                const v = clamp(Math.round((Number(consoInput) || 6.5) * 10) / 10, min, max);
+                updateField('consumption', v);
+                setConsoInput(String(v));
+              }}
+              min={isElectric ? 10 : 2}
+              max={isElectric ? 30 : 20}
+              step={0.1}
+              className="w-24 text-center text-2xl font-bold tabular-nums h-12"
+            />
+            <span className="text-sm text-muted-foreground">{consoUnit}</span>
           </div>
           <Slider
             value={[formData.consumption * 10]}
-            onValueChange={([v]) => updateField('consumption', v / 10)}
+            onValueChange={([v]) => { const val = v / 10; updateField('consumption', val); setConsoInput(String(val)); }}
             min={isElectric ? 100 : 20}
             max={isElectric ? 300 : 200}
             step={1}
