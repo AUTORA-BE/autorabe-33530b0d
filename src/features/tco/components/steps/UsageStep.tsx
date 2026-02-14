@@ -1,6 +1,8 @@
 /** Step 3: Usage & KM */
 
+import { useState } from 'react';
 import { Slider } from '@/components/ui/slider';
+import { Input } from '@/components/ui/input';
 import { FACTEUR_REALITE } from '../../constants/belgianData';
 import type { TcoFormData, UsageType } from '../../types/tco.types';
 
@@ -8,6 +10,8 @@ interface Props {
   formData: TcoFormData;
   updateField: <K extends keyof TcoFormData>(key: K, val: TcoFormData[K]) => void;
 }
+
+const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
 
 const usageOptions: { value: UsageType; icon: string; label: string }[] = [
   { value: 'ville', icon: '🏙️', label: 'Ville' },
@@ -21,6 +25,8 @@ const UsageStep = ({ formData, updateField }: Props) => {
   const surplus = Math.round((facteur - 1) * 100);
 
   const kmColor = formData.kmPerYear < 10000 ? 'text-primary' : formData.kmPerYear < 25000 ? 'text-yellow-500' : 'text-red-500';
+
+  const [kmInput, setKmInput] = useState(String(formData.kmPerYear));
 
   return (
     <div>
@@ -58,18 +64,28 @@ const UsageStep = ({ formData, updateField }: Props) => {
         {/* KM per year */}
         <div>
           <label className="text-sm font-medium text-foreground block mb-4">Km par an</label>
-          <div className="text-center mb-4">
-            <span className={`text-4xl font-bold tabular-nums ${kmColor}`}>
-              {formData.kmPerYear.toLocaleString('fr-BE')}
-            </span>
-            <span className="text-lg text-muted-foreground ml-2">km/an</span>
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <Input
+              type="number"
+              value={kmInput}
+              onChange={e => setKmInput(e.target.value)}
+              onBlur={() => {
+                const v = clamp(Math.round(Number(kmInput) || 15000), 5000, 50000);
+                updateField('kmPerYear', v);
+                setKmInput(String(v));
+              }}
+              min={5000}
+              max={50000}
+              className={`w-32 text-center text-2xl font-bold tabular-nums h-12 ${kmColor}`}
+            />
+            <span className="text-lg text-muted-foreground">km/an</span>
           </div>
           <Slider
             value={[formData.kmPerYear]}
-            onValueChange={([v]) => updateField('kmPerYear', v)}
+            onValueChange={([v]) => { updateField('kmPerYear', v); setKmInput(String(v)); }}
             min={5000}
             max={50000}
-            step={1000}
+            step={500}
             className="[&_[role=slider]]:border-primary [&_[role=slider]]:bg-background [&_span:first-child>span]:bg-primary"
           />
           <div className="flex justify-between text-xs text-muted-foreground mt-2">
