@@ -91,7 +91,7 @@ export default function Messages() {
               </Button>
             </div>
           ) : (
-            <div className="grid lg:grid-cols-3 gap-6 h-[calc(100vh-250px)] min-h-[500px]">
+            <div className="grid lg:grid-cols-3 gap-6 h-[calc(100vh-250px)] min-h-[500px] max-h-[calc(100dvh-200px)]">
               {/* Conversations list */}
               <div className={`lg:col-span-1 bg-card rounded-xl border border-border overflow-hidden ${selectedConversation ? 'hidden lg:block' : ''}`}>
                 <div className="p-4 border-b border-border">
@@ -154,7 +154,7 @@ export default function Messages() {
               </div>
 
               {/* Chat window */}
-              <div className={`lg:col-span-2 bg-card rounded-xl border border-border overflow-hidden flex flex-col ${!selectedConversation ? 'hidden lg:flex' : ''}`}>
+              <div className={`lg:col-span-2 bg-card rounded-xl border border-border overflow-hidden flex flex-col min-h-0 ${!selectedConversation ? 'hidden lg:flex' : ''}`}>
                 {selectedConversation && currentUserId ? (
                   <ChatWindow 
                     conversationId={selectedConversation} 
