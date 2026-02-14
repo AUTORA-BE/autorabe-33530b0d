@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { useNavigate } from 'react-router-dom';
 import { MessageCircle, Car } from 'lucide-react';
 import { Header, Footer } from '@/shared/components';
@@ -15,6 +16,7 @@ export default function Messages() {
   const { user, isLoading: authLoading } = useAuth();
   const currentUserId = user?.id || null;
   
+  const isMobile = useIsMobile();
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
 
   // Use the modular useConversations hook
@@ -71,6 +73,20 @@ export default function Messages() {
     );
   }
 
+  // On mobile, when a conversation is selected, render full-screen chat
+  if (selectedConversation && currentUserId && isMobile) {
+    return (
+      <div className="h-[100dvh] bg-background flex flex-col">
+        <ChatWindow 
+          conversationId={selectedConversation} 
+          currentUserId={currentUserId}
+          onBack={() => setSelectedConversation(null)}
+          showBackButton={true}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -91,9 +107,9 @@ export default function Messages() {
               </Button>
             </div>
           ) : (
-            <div className="grid lg:grid-cols-3 gap-6 h-[calc(100vh-250px)] min-h-[500px] max-h-[calc(100dvh-200px)]">
+            <div className="grid lg:grid-cols-3 gap-6 h-[calc(100vh-250px)] min-h-[500px]">
               {/* Conversations list */}
-              <div className={`lg:col-span-1 bg-card rounded-xl border border-border overflow-hidden ${selectedConversation ? 'hidden lg:block' : ''}`}>
+              <div className="lg:col-span-1 bg-card rounded-xl border border-border overflow-hidden">
                 <div className="p-4 border-b border-border">
                   <h2 className="font-semibold text-foreground">{t("messages.conversations")}</h2>
                 </div>
@@ -153,14 +169,14 @@ export default function Messages() {
                 </div>
               </div>
 
-              {/* Chat window */}
-              <div className={`lg:col-span-2 bg-card rounded-xl border border-border overflow-hidden flex flex-col min-h-0 ${!selectedConversation ? 'hidden lg:flex' : ''}`}>
+              {/* Chat window - desktop only */}
+              <div className={`lg:col-span-2 bg-card rounded-xl border border-border overflow-hidden flex flex-col min-h-0 hidden lg:flex`}>
                 {selectedConversation && currentUserId ? (
                   <ChatWindow 
                     conversationId={selectedConversation} 
                     currentUserId={currentUserId}
                     onBack={() => setSelectedConversation(null)}
-                    showBackButton={true}
+                    showBackButton={false}
                   />
                 ) : (
                   <div className="flex-1 flex items-center justify-center text-muted-foreground">
