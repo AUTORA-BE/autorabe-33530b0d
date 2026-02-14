@@ -136,11 +136,11 @@ const BrandCarousel = memo(function BrandCarousel({
           ]}
           className="w-full max-w-6xl mx-auto px-10 md:px-14"
         >
-          <CarouselContent className="-ml-3 sm:-ml-4">
+          <CarouselContent className="-ml-3 sm:-ml-4 overflow-visible">
             {BRANDS.map((brand) => (
               <CarouselItem
                 key={brand.name}
-                className="pl-3 sm:pl-4 basis-1/3 sm:basis-1/4 md:basis-1/5"
+                className="pl-3 sm:pl-4 basis-1/3 sm:basis-1/4 md:basis-1/5 overflow-visible pt-3"
               >
                 <motion.button
                   onClick={() => handleBrandClick(brand.name)}
