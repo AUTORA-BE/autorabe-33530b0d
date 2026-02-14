@@ -14,3 +14,6 @@ verify_jwt = false
 
 [functions.match-new-vehicle]
 verify_jwt = false
+
+[functions.notify-listing-status]
+verify_jwt = false
