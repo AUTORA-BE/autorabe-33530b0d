@@ -99,18 +99,7 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
   return (
     <article
       ref={ref as React.Ref<HTMLElement>}
-      className="rounded-2xl overflow-hidden bg-card border border-border/50 group cursor-pointer touch-target transition-all duration-300 hover:-translate-y-2 active:scale-[0.97]"
-      style={{
-        boxShadow: "var(--shadow-card)",
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.boxShadow = "var(--shadow-elevated)";
-        e.currentTarget.style.borderColor = "hsl(var(--primary) / 0.2)";
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.boxShadow = "var(--shadow-card)";
-        e.currentTarget.style.borderColor = "";
-      }}
+      className="rounded-2xl overflow-hidden bg-card border border-border/50 group cursor-pointer touch-target transition-all duration-300 hover:-translate-y-2 active:scale-[0.97] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] hover:border-primary/20"
       onClick={handleClick}
     >
       <div className="relative h-48 md:h-56 overflow-hidden">

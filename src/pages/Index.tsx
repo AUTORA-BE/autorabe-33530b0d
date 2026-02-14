@@ -70,47 +70,51 @@ const Index = () => {
         </ScrollReveal>
 
         <Suspense fallback={<div className="min-h-[300px]" />}>
-          <ScrollReveal delay={0.1}>
-            <PopularVehicles
-              isFavorite={isFavorite}
-              onToggleFavorite={toggleFavorite}
-              onVehicleClick={handleCarClick}
-            />
-          </ScrollReveal>
+          <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 400px" }}>
+            <ScrollReveal delay={0.1}>
+              <PopularVehicles
+                isFavorite={isFavorite}
+                onToggleFavorite={toggleFavorite}
+                onVehicleClick={handleCarClick}
+              />
+            </ScrollReveal>
+          </div>
         </Suspense>
 
         <Suspense fallback={<div className="min-h-[400px]" />}>
-        <ScrollReveal>
-          <section id="results-section" className="container mx-auto px-4 sm:px-6 pb-16 sm:pb-20">
-            <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
-              <FilterPanel
-                isOpen={filtersOpen}
-                onClose={() => setFiltersOpen(false)}
-                filters={filters}
-                onFilterChange={updateFilter}
-                onReset={resetFilters}
-                resultsCount={totalCount}
-              />
-              <LoadMoreGrid
-                cars={cars}
-                onOpenFilters={() => setFiltersOpen(true)}
-                sortBy={sortBy}
-                onSortChange={setSortBy}
-                isFavorite={isFavorite}
-                onToggleFavorite={toggleFavorite}
-                onCarClick={handleCarClick}
-                activeFiltersCount={activeFiltersCount}
-                isLoading={isLoading}
-                isLoadingMore={isLoadingMore}
-                hasMore={hasMore}
-                onLoadMore={loadMore}
-                totalCount={totalCount}
-                error={error}
-                onRetry={refresh}
-              />
-            </div>
-          </section>
-        </ScrollReveal>
+        <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 800px" }}>
+          <ScrollReveal>
+            <section id="results-section" className="container mx-auto px-4 sm:px-6 pb-16 sm:pb-20">
+              <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
+                <FilterPanel
+                  isOpen={filtersOpen}
+                  onClose={() => setFiltersOpen(false)}
+                  filters={filters}
+                  onFilterChange={updateFilter}
+                  onReset={resetFilters}
+                  resultsCount={totalCount}
+                />
+                <LoadMoreGrid
+                  cars={cars}
+                  onOpenFilters={() => setFiltersOpen(true)}
+                  sortBy={sortBy}
+                  onSortChange={setSortBy}
+                  isFavorite={isFavorite}
+                  onToggleFavorite={toggleFavorite}
+                  onCarClick={handleCarClick}
+                  activeFiltersCount={activeFiltersCount}
+                  isLoading={isLoading}
+                  isLoadingMore={isLoadingMore}
+                  hasMore={hasMore}
+                  onLoadMore={loadMore}
+                  totalCount={totalCount}
+                  error={error}
+                  onRetry={refresh}
+                />
+              </div>
+            </section>
+          </ScrollReveal>
+        </div>
         </Suspense>
       </main>
       <Footer />
