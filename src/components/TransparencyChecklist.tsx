@@ -37,7 +37,7 @@ const TransparencyChecklist = ({
             <div
               key={index}
               className={`w-2 h-2 rounded-full ${
-                item.checked ? "bg-emerald-500" : "bg-muted"
+                item.checked ? "bg-primary" : "bg-muted"
               }`}
             />
           ))}
@@ -52,8 +52,8 @@ const TransparencyChecklist = ({
   return (
     <div className="glass-card p-6">
       <div className="flex items-center gap-3 mb-6">
-        <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center">
-          <FileCheck className="w-6 h-6 text-emerald-500" />
+        <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+          <FileCheck className="w-6 h-6 text-primary" />
         </div>
         <div>
           <h2 className="font-display text-xl font-bold text-foreground">
@@ -75,20 +75,20 @@ const TransparencyChecklist = ({
               key={index}
               className={`flex items-center gap-3 p-3 rounded-xl transition-all ${
                 isChecked
-                  ? "bg-emerald-500/10"
+                  ? "bg-primary/10"
                   : "bg-muted/50"
               }`}
             >
               <div
                 className={`w-10 h-10 rounded-lg flex items-center justify-center ${
                   isChecked
-                    ? "bg-emerald-500/20"
+                    ? "bg-primary/20"
                     : "bg-muted"
                 }`}
               >
                 <Icon
                   className={`w-5 h-5 ${
-                    isChecked ? "text-emerald-500" : "text-muted-foreground/50"
+                    isChecked ? "text-primary" : "text-muted-foreground/50"
                   }`}
                 />
               </div>
@@ -102,7 +102,7 @@ const TransparencyChecklist = ({
                 {item.label}
               </span>
               {isChecked ? (
-                <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center">
+                <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
                   <Check className="w-4 h-4 text-white" />
                 </div>
               ) : (

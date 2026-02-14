@@ -141,7 +141,7 @@ export default function Messages() {
                           )}
                           {/* Online indicator */}
                           {isOnline && (
-                            <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-card" />
+                            <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-primary rounded-full border-2 border-card" />
                           )}
                         </div>
                         

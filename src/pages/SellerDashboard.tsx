@@ -346,7 +346,7 @@ const SellerDashboard = () => {
 
   const getStatusBadge = (status: string) => {
     const styles: Record<string, string> = {
-      approved: "bg-green-500/10 text-green-500",
+      approved: "bg-primary/10 text-primary",
       pending: "bg-yellow-500/10 text-yellow-500",
       rejected: "bg-red-500/10 text-red-500",
     };
@@ -518,7 +518,7 @@ const SellerDashboard = () => {
                   <CardTitle className="text-sm font-medium text-muted-foreground">
                     {t("dashboard.messages")}
                   </CardTitle>
-                  <MessageCircle className="w-4 h-4 text-green-500" />
+                  <MessageCircle className="w-4 h-4 text-primary" />
                 </CardHeader>
                 <CardContent>
                   {loading ? (
@@ -619,9 +619,9 @@ const SellerDashboard = () => {
                         type="monotone"
                         dataKey="messages"
                         name={t("dashboard.messages")}
-                        stroke="#22c55e"
+                        stroke="hsl(160, 84%, 39%)"
                         strokeWidth={2}
-                        dot={{ r: 3, fill: "#22c55e" }}
+                        dot={{ r: 3, fill: "hsl(160, 84%, 39%)" }}
                         activeDot={{ r: 5 }}
                       />
                       <Line
@@ -718,7 +718,7 @@ const SellerDashboard = () => {
                             <span className="text-xs text-muted-foreground">{t("dashboard.views")}</span>
                           </div>
                           <div className="text-center hidden sm:block">
-                            <div className="flex items-center gap-1 text-green-500">
+                            <div className="flex items-center gap-1 text-primary">
                               <MessageCircle className="w-4 h-4" />
                               <span className="font-semibold">{listing.messages}</span>
                             </div>

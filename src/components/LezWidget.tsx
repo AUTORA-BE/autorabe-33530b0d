@@ -30,10 +30,10 @@ const statusIcon = (statut: string) => {
 
 const statusColors = {
   green: {
-    bg: "bg-emerald-500/10",
-    border: "border-emerald-500/30",
-    text: "text-emerald-600 dark:text-emerald-400",
-    icon: "text-emerald-500",
+    bg: "bg-primary/10",
+    border: "border-primary/30",
+    text: "text-primary",
+    icon: "text-primary",
   },
   orange: {
     bg: "bg-amber-500/10",
@@ -155,11 +155,11 @@ function LezGlobalAlert({ result }: { result: LezResultat }) {
 
   if (global.statut === "autorise") {
     return (
-      <div className="p-4 rounded-xl mb-6 bg-emerald-500/10 border border-emerald-500/30">
-        <p className="text-base font-semibold text-emerald-700 dark:text-emerald-400">
+      <div className="p-4 rounded-xl mb-6 bg-primary/10 border border-primary/30">
+        <p className="text-base font-semibold text-primary">
           ✅ Véhicule autorisé dans toutes les zones LEZ belges
         </p>
-        <p className="text-sm text-emerald-600 dark:text-emerald-500 mt-1">
+        <p className="text-sm text-primary/80 mt-1">
           Aucune restriction prévue. Circulation libre.
         </p>
       </div>
@@ -237,19 +237,19 @@ const LezWidget = ({ euroNorm, fuelType, compact = false }: LezWidgetProps) => {
 
                 <div>Euro 3</div>
                 <div className="text-red-600">❌ Interdit</div>
-                <div className="text-emerald-600">✅ Autorisé</div>
+                <div className="text-primary">✅ Autorisé</div>
 
                 <div>Euro 4-5</div>
                 <div className="text-red-600">❌ Interdit</div>
-                <div className="text-emerald-600">✅ Autorisé</div>
+                <div className="text-primary">✅ Autorisé</div>
 
                 <div className="font-medium">Euro 6</div>
                 <div className="text-amber-600">⚠️ Jusqu'en 2031</div>
-                <div className="text-emerald-600">✅ Autorisé</div>
+                <div className="text-primary">✅ Autorisé</div>
 
                 <div>Euro 6d</div>
                 <div className="text-emerald-600">✅ Autorisé</div>
-                <div className="text-emerald-600">✅ Autorisé</div>
+                <div className="text-primary">✅ Autorisé</div>
               </div>
             </div>
 
@@ -263,15 +263,15 @@ const LezWidget = ({ euroNorm, fuelType, compact = false }: LezWidgetProps) => {
 
                 <div>Euro 0-3</div>
                 <div className="text-amber-600">⚠️ Dérogation</div>
-                <div className="text-emerald-600">✅ Autorisé</div>
+                <div className="text-primary">✅ Autorisé</div>
 
                 <div>Euro 4+</div>
                 <div className="text-emerald-600">✅ Autorisé</div>
-                <div className="text-emerald-600">✅ Autorisé</div>
+                <div className="text-primary">✅ Autorisé</div>
               </div>
             </div>
 
-            <div className="p-3 rounded-xl bg-emerald-500/10 text-xs text-emerald-700 dark:text-emerald-400">
+            <div className="p-3 rounded-xl bg-primary/10 text-xs text-primary">
               <strong>🔌 Électrique & Hybride :</strong> Toujours autorisé dans toutes les zones.
             </div>
 

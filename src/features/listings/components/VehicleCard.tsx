@@ -44,7 +44,7 @@ const formatMileage = (km: number): string => {
 };
 
 const lezBadgeConfig = {
-  autorise: { text: "LEZ OK", className: "bg-emerald-500/90 hover:bg-emerald-500 text-white border-0", Icon: Leaf },
+  autorise: { text: "LEZ OK", className: "bg-primary/90 hover:bg-primary text-primary-foreground border-0", Icon: Leaf },
   alerte: { text: "LEZ", className: "bg-amber-500/90 hover:bg-amber-500 text-white border-0", Icon: AlertTriangle },
   derogation_requise: { text: "Dérogation", className: "bg-amber-500/90 hover:bg-amber-500 text-white border-0", Icon: AlertTriangle },
   interdit: { text: "Interdit", className: "bg-red-500/90 hover:bg-red-500 text-white border-0", Icon: Ban },
@@ -145,7 +145,7 @@ const VehicleCard = memo(function VehicleCard({
                   {lezResult.details.map((d) => (
                     <div key={d.ville} className="flex items-center gap-2 text-xs">
                       <span className={`w-2 h-2 rounded-full flex-shrink-0 ${
-                        d.couleur === "green" ? "bg-emerald-500" :
+                        d.couleur === "green" ? "bg-primary" :
                         d.couleur === "orange" ? "bg-amber-500" :
                         d.couleur === "red" ? "bg-red-500" : "bg-muted-foreground"
                       }`} />

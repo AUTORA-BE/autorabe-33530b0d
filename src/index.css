@@ -210,13 +210,13 @@ input[type="number"] {
 
   .lez-badge {
     @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold;
-    background: hsl(142 76% 45% / 0.15);
-    color: hsl(142 76% 36%);
+    background: hsl(var(--primary) / 0.15);
+    color: hsl(var(--primary));
   }
 
   .dark .lez-badge {
-    background: hsl(142 76% 45% / 0.2);
-    color: hsl(142 70% 55%);
+    background: hsl(var(--primary) / 0.2);
+    color: hsl(var(--primary));
   }
 
   .filter-chip {
@@ -253,13 +253,13 @@ input[type="number"] {
   /* Transparency badge styles */
   .transparency-verified {
     @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold;
-    background: hsl(142 76% 45% / 0.12);
-    color: hsl(142 76% 36%);
+    background: hsl(var(--primary) / 0.12);
+    color: hsl(var(--primary));
   }
 
   .dark .transparency-verified {
-    background: hsl(142 76% 45% / 0.18);
-    color: hsl(142 70% 55%);
+    background: hsl(var(--primary) / 0.18);
+    color: hsl(var(--primary));
   }
 }
 

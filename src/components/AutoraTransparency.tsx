@@ -23,7 +23,7 @@ const AutoraTransparency = ({ carPassVerified, ctValid }: AutoraTransparencyProp
         {/* Car-Pass */}
         <div className="flex items-center gap-3 p-2 rounded-xl bg-background/50">
           {carPassVerified ? (
-            <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+            <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
           ) : (
             <AlertTriangle className="w-5 h-5 text-muted-foreground flex-shrink-0" />
           )}
@@ -40,7 +40,7 @@ const AutoraTransparency = ({ carPassVerified, ctValid }: AutoraTransparencyProp
         {/* Contrôle Technique */}
         <div className="flex items-center gap-3 p-2 rounded-xl bg-background/50">
           {ctValid ? (
-            <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+            <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
           ) : (
             <AlertTriangle className="w-5 h-5 text-muted-foreground flex-shrink-0" />
           )}
