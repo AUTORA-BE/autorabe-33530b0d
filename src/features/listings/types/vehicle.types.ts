@@ -125,6 +125,8 @@ export interface VehicleFilters {
   lezOnly: boolean;
   /** Filter by seller type */
   sellerTypeFilter: string;
+  /** Filter by body type */
+  bodyType: string;
 }
 /**
  * Default filter values
@@ -144,6 +146,7 @@ export const defaultVehicleFilters: VehicleFilters = {
   kmMax: 200000,
   lezOnly: false,
   sellerTypeFilter: "",
+  bodyType: "",
 };
 
 /**

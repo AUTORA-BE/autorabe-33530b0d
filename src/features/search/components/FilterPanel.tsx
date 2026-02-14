@@ -233,6 +233,29 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
         {/* Divider */}
         <div className="h-px w-full" style={{ background: "hsl(var(--border) / 0.5)" }} />
 
+        {/* Body Type */}
+        <FilterSection icon={<Car className="w-4 h-4 text-primary" aria-hidden="true" />} title="Carrosserie">
+          <div className="grid grid-cols-2 gap-2">
+            {["Berline", "SUV", "Citadine", "Compacte", "Break", "Coupé", "Cabriolet", "Monospace"].map((type) => (
+              <button
+                key={type}
+                onClick={() =>
+                  onFilterChange("bodyType", filters.bodyType === type ? "" : type)
+                }
+                aria-pressed={filters.bodyType === type}
+                className={`px-3 py-2.5 rounded-xl text-sm font-medium text-center transition-all duration-200 ${
+                  filters.bodyType === type
+                    ? "bg-primary text-primary-foreground shadow-md"
+                    : "bg-secondary/60 text-muted-foreground hover:bg-secondary hover:text-foreground"
+                }`}
+                style={filters.bodyType === type ? { boxShadow: "0 4px 12px -2px hsl(var(--primary) / 0.4)" } : undefined}
+              >
+                {type}
+              </button>
+            ))}
+          </div>
+        </FilterSection>
+
         {/* Fuel Type */}
         <FilterSection icon={<Fuel className="w-4 h-4 text-primary" aria-hidden="true" />} title={t("filters.fuel")}>
           <div className="grid grid-cols-2 gap-2">
