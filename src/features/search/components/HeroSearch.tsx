@@ -115,7 +115,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
 
           {/* Headline */}
           <h1
-            className="font-display text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-4 sm:mb-6 animate-fade-up leading-tight"
+            className="font-display text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-4 sm:mb-6 leading-tight"
           >
             {t("hero.title1")}
             <br />
