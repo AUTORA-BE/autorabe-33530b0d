@@ -82,6 +82,11 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
+                <Link to="/calculateur-tco" className="text-gray-400 hover:text-white transition-colors text-sm">
+                  {language === "nl" ? "TCO Calculator" : "Calculateur TCO"}
+                </Link>
+              </li>
+              <li>
                 <Link to="/faq" className="text-gray-400 hover:text-white transition-colors text-sm">
                   FAQ
                 </Link>
