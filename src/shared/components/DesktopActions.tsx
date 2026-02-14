@@ -3,7 +3,7 @@
  * @module shared/components
  */
 
-import { User, LogOut, HelpCircle, LayoutDashboard, Settings, ChevronDown, Globe, Sun, Moon } from "lucide-react";
+import { User, LogOut, HelpCircle, LayoutDashboard, Settings, ChevronDown, Globe, Sun, Moon, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "next-themes";
@@ -23,9 +23,10 @@ interface DesktopActionsProps {
   userProfile: { avatar_url: string | null; display_name: string | null } | null;
   onLogout: () => void;
   t: (key: string) => string;
+  isAdmin?: boolean;
 }
 
-const DesktopActions = ({ user, userProfile, onLogout, t }: DesktopActionsProps) => {
+const DesktopActions = ({ user, userProfile, onLogout, t, isAdmin }: DesktopActionsProps) => {
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
   const { language, setLanguage } = useLanguage();
@@ -86,6 +87,12 @@ const DesktopActions = ({ user, userProfile, onLogout, t }: DesktopActionsProps)
               <LayoutDashboard className="w-4 h-4 mr-2" />
               {t("nav.dashboard")}
             </DropdownMenuItem>
+            {isAdmin && (
+              <DropdownMenuItem onClick={() => navigate("/admin/reports")} className="cursor-pointer rounded-xl">
+                <ShieldCheck className="w-4 h-4 mr-2" />
+                Admin
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem onClick={() => navigate("/settings")} className="cursor-pointer rounded-xl">
               <Settings className="w-4 h-4 mr-2" />
               {t("nav.settings")}
