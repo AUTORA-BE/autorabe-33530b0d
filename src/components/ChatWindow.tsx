@@ -38,6 +38,7 @@ export function ChatWindow({
 }: ChatWindowProps) {
   const { t } = useLanguage();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   
   const [messages, setMessages] = useState<Message[]>([]);
   const [conversationDetails, setConversationDetails] = useState<ConversationDetails | null>(null);
@@ -55,7 +56,9 @@ export function ChatWindow({
 
   // Scroll to bottom
   const scrollToBottom = useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
   }, []);
 
   // Map database row to Message
@@ -266,7 +269,7 @@ export function ChatWindow({
       />
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto min-h-0 p-4 space-y-3">
+      <div ref={messagesContainerRef} className="flex-1 overflow-y-auto min-h-0 p-4 space-y-3">
         {messages.length === 0 ? (
           <div className="flex-1 flex items-center justify-center text-muted-foreground text-center py-8">
             <p>{t('messages.startConversation') || "Envoyez un message pour démarrer la conversation"}</p>
