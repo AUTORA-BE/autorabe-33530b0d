@@ -108,7 +108,7 @@ const handler = async (req: Request): Promise<Response> => {
               
               <p>Connectez-vous à votre compte AutoRa pour répondre à ce message.</p>
               
-              <a href="${Deno.env.get("SUPABASE_URL")?.replace('.supabase.co', '.lovable.app') || 'https://autora.lovable.app'}/messages" 
+              <a href="https://autora.be/messages" 
                  style="display: inline-block; background: #3b82f6; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: 500; margin-top: 10px;">
                 Voir mes messages
               </a>

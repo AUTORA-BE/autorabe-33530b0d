@@ -57,7 +57,7 @@ const handler = async (req: Request): Promise<Response> => {
       <p>Vous pouvez modifier votre annonce et la soumettre à nouveau depuis votre tableau de bord.</p>
     `;
 
-    const appUrl = "https://auto-belgium.lovable.app";
+    const appUrl = "https://autora.be";
 
     const emailResponse = await resend.emails.send({
       from: "AutoRa <noreply@autora.be>",
