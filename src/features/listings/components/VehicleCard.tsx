@@ -4,7 +4,7 @@
  */
 
 import { memo } from "react";
-import { Heart, MapPin, Fuel, Calendar, Gauge, Shield, CheckCircle, AlertTriangle, Ban, Leaf, Info } from "lucide-react";
+import { Heart, MapPin, Fuel, Calendar, Gauge, Shield, CheckCircle, AlertTriangle, Ban, Leaf, Info, Building2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -176,9 +176,17 @@ const VehicleCard = memo(function VehicleCard({
       {/* Content */}
       <div className="p-4">
         {/* Title */}
-        <h3 className="font-display text-lg font-bold text-foreground mb-2 line-clamp-1 group-hover:text-primary transition-colors">
-          {vehicle.brand} {vehicle.model}
-        </h3>
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="font-display text-lg font-bold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
+            {vehicle.brand} {vehicle.model}
+          </h3>
+          {vehicle.sellerType === "professionnel" && (
+            <Badge className="bg-primary/10 text-primary border-0 shrink-0 ml-2">
+              <Building2 className="w-3 h-3 mr-1" />
+              Pro
+            </Badge>
+          )}
+        </div>
 
         {/* Location */}
         {vehicle.location && (

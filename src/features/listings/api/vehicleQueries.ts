@@ -48,6 +48,7 @@ export function mapListingToVehicle(listing: VehicleListingRow): Vehicle {
     image: listing.photos?.[0] || DEFAULT_VEHICLE_IMAGE,
     isLezCompatible,
     hasCarPass: listing.car_pass_verified || false,
+    sellerType: listing.seller_type || 'particulier',
   };
 }
 
