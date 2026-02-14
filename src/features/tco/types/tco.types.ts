@@ -19,6 +19,7 @@ export interface TcoFormData {
   region: Region;
   insuranceType: InsuranceType;
   fiscalPower: number;
+  horsepower: number;
   consumption: number;
   euroNorm: EuroNorm;
 }

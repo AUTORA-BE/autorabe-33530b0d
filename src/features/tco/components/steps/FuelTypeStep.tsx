@@ -27,15 +27,15 @@ const FuelTypeStep = ({ value, onChange }: FuelTypeStepProps) => (
             onClick={() => onChange(opt.value)}
             className={`relative p-4 rounded-2xl border-2 text-left transition-all duration-200 hover:scale-[1.03] hover:shadow-md ${
               selected
-                ? 'border-green-500 bg-green-500/10 shadow-lg shadow-green-500/10'
-                : 'border-border/50 bg-secondary/30 hover:border-green-500/50'
+                ? 'border-primary bg-primary/10 shadow-lg shadow-primary/10'
+                : 'border-border/50 bg-secondary/30 hover:border-primary/50'
             }`}
           >
             {selected && (
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                className="absolute top-2 right-2 w-5 h-5 rounded-full bg-green-500 flex items-center justify-center"
+                className="absolute top-2 right-2 w-5 h-5 rounded-full bg-primary flex items-center justify-center"
               >
                 <Check className="w-3 h-3 text-white" />
               </motion.div>

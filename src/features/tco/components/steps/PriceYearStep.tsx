@@ -33,7 +33,7 @@ const PriceYearStep = ({ formData, updateField }: Props) => {
             min={1000}
             max={100000}
             step={500}
-            className="[&_[role=slider]]:border-green-500 [&_[role=slider]]:bg-background [&_span:first-child>span]:bg-green-500"
+            className="[&_[role=slider]]:border-primary [&_[role=slider]]:bg-background [&_span:first-child>span]:bg-primary"
           />
           <div className="flex justify-between text-xs text-muted-foreground mt-2">
             <span>1 000 €</span>
@@ -53,7 +53,7 @@ const PriceYearStep = ({ formData, updateField }: Props) => {
             min={2010}
             max={2026}
             step={1}
-            className="[&_[role=slider]]:border-green-500 [&_[role=slider]]:bg-background [&_span:first-child>span]:bg-green-500"
+            className="[&_[role=slider]]:border-primary [&_[role=slider]]:bg-background [&_span:first-child>span]:bg-primary"
           />
           <div className="flex justify-between text-xs text-muted-foreground mt-2">
             <span>2010</span>
@@ -62,8 +62,8 @@ const PriceYearStep = ({ formData, updateField }: Props) => {
         </div>
 
         {/* Dynamic hint */}
-        <div className="p-4 rounded-2xl bg-green-500/10 border border-green-500/20">
-          <p className="text-sm text-green-600 dark:text-green-400">
+        <div className="p-4 rounded-2xl bg-primary/10 border border-primary/20">
+          <p className="text-sm text-primary">
             💡 Véhicule de <strong>{age} an{age > 1 ? 's' : ''}</strong> — Entretien estimé ~<strong>{entretienEstime} €/an</strong>
           </p>
         </div>

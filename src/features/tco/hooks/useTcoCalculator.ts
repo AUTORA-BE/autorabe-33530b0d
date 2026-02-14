@@ -19,6 +19,7 @@ const DEFAULT_FORM: TcoFormData = {
   region: 'bruxelles',
   insuranceType: 'mini_omnium',
   fiscalPower: 7,
+  horsepower: 150,
   consumption: 6.5,
   euroNorm: 'euro6',
 };

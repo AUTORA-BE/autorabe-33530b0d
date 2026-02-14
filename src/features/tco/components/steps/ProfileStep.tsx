@@ -38,8 +38,8 @@ const ProfileStep = ({ formData, updateField }: Props) => {
                 onClick={() => updateField('ageProfile', opt.value)}
                 className={`p-4 rounded-2xl border-2 text-center transition-all ${
                   sel
-                    ? 'border-green-500 bg-green-500/10'
-                    : 'border-border/50 bg-secondary/30 hover:border-green-500/50'
+                    ? 'border-primary bg-primary/10'
+                    : 'border-border/50 bg-secondary/30 hover:border-primary/50'
                 }`}
               >
                 <div className="text-2xl mb-1">{opt.icon}</div>
@@ -59,16 +59,16 @@ const ProfileStep = ({ formData, updateField }: Props) => {
             min={0}
             max={5}
             step={1}
-            className="[&_[role=slider]]:border-green-500 [&_[role=slider]]:bg-background [&_span:first-child>span]:bg-green-500"
+            className="[&_[role=slider]]:border-primary [&_[role=slider]]:bg-background [&_span:first-child>span]:bg-primary"
           />
           <div className="flex justify-between text-xs text-muted-foreground mt-2">
-            <span className="text-green-500">Bonus -3</span>
+            <span className="text-primary">Bonus -3</span>
             <span>Neutre</span>
             <span className="text-red-500">Malus +2</span>
           </div>
           <div className="mt-4 text-center p-3 rounded-xl bg-secondary/50">
             <p className="text-sm text-muted-foreground">
-              {reductionPct > 0 && <span className="text-green-500 font-semibold">Réduction {reductionPct}%</span>}
+              {reductionPct > 0 && <span className="text-primary font-semibold">Réduction {reductionPct}%</span>}
               {reductionPct === 0 && <span className="text-foreground font-semibold">Tarif neutre</span>}
               {reductionPct < 0 && <span className="text-red-500 font-semibold">Surcharge {Math.abs(reductionPct)}%</span>}
             </p>

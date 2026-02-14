@@ -5,7 +5,7 @@ import type { FuelType, UsageType, AgeProfile, BonusMalus, Region, InsuranceType
 export const PRIX_CARBURANT: Record<string, number> = {
   diesel: 1.689,
   essence95: 1.649,
-  essence98: 1.789,
+  essence98: 1.809,
   electric_domicile: 0.35,
   electric_public: 0.55,
   gpl: 0.749,
@@ -84,15 +84,15 @@ export const DEPRECIATION: Record<string, number> = {
 };
 
 export const PRIMES: Record<Region, Partial<Record<FuelType, number>>> = {
-  bruxelles: { electric: 3000, hybridePHEV: 1500 },
-  flandre: { electric: 3500, hybridePHEV: 1500 },
-  wallonie: { electric: 4000, hybridePHEV: 1800 },
+  bruxelles: {},
+  flandre: {},
+  wallonie: {},
 };
 
 export const FUEL_OPTIONS: { value: FuelType; label: string; icon: string; price: string; badge: string; badgeColor: string }[] = [
   { value: 'diesel', label: 'Diesel', icon: '🛢️', price: '1.69€/L', badge: 'Plus cher', badgeColor: 'bg-orange-500/20 text-orange-400' },
   { value: 'essence95', label: 'Essence 95', icon: '⛽', price: '1.65€/L', badge: 'Économique', badgeColor: 'bg-green-500/20 text-green-400' },
-  { value: 'essence98', label: 'Essence 98', icon: '⛽', price: '1.79€/L', badge: 'Premium', badgeColor: 'bg-blue-500/20 text-blue-400' },
+  { value: 'essence98', label: 'Essence 98', icon: '⛽', price: '1.81€/L', badge: 'Premium', badgeColor: 'bg-blue-500/20 text-blue-400' },
   { value: 'electric', label: 'Électrique', icon: '🔋', price: '0.35€/kWh', badge: 'Futur', badgeColor: 'bg-emerald-500/20 text-emerald-400' },
   { value: 'hybridePHEV', label: 'Hybride PHEV', icon: '🔌', price: 'Mix', badge: 'Polyvalent', badgeColor: 'bg-violet-500/20 text-violet-400' },
   { value: 'hybride', label: 'Hybride HEV', icon: '⚡', price: 'Mix', badge: 'Simple', badgeColor: 'bg-purple-500/20 text-purple-400' },

@@ -72,7 +72,7 @@ const TcoStepper = ({
         </div>
         <div className="h-1 w-full rounded-full bg-secondary overflow-hidden mb-8">
           <motion.div
-            className="h-full bg-green-500 rounded-full"
+            className="h-full bg-primary rounded-full"
             initial={false}
             animate={{ width: `${progress}%` }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
@@ -109,7 +109,7 @@ const TcoStepper = ({
             {step !== 0 && (
               <Button
                 onClick={nextStep}
-                className="h-12 px-8 rounded-2xl bg-green-500 hover:bg-green-600 text-white font-semibold shadow-lg shadow-green-500/20"
+                className="h-12 px-8 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-lg shadow-primary/20"
               >
                 {step === 5 ? '🧮 Voir mon coût total →' : 'Continuer →'}
               </Button>
