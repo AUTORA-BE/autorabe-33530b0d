@@ -9,6 +9,8 @@ import { CompareProvider } from "@/features/compare";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { AnimatePresence } from "framer-motion";
 import PageTransition from "@/components/PageTransition";
+import CarChatbot from "@/components/CarChatbot";
+import ScrollToTop from "@/components/ScrollToTop";
 
 // Eagerly loaded — critical path
 import Index from "./pages/Index";
@@ -104,6 +106,8 @@ const App = () => (
             <Suspense fallback={<PageLoader />}>
               <AnimatedRoutes />
             </Suspense>
+            <ScrollToTop />
+            <CarChatbot />
           </BrowserRouter>
         </CompareProvider>
       </LanguageProvider>
