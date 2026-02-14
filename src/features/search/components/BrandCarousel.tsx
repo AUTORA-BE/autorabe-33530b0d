@@ -4,7 +4,6 @@
  */
 
 import { useState, useEffect, useCallback, memo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import Autoplay from "embla-carousel-autoplay";
 import {
   Carousel,
@@ -36,9 +35,6 @@ import skodaLogo from "@/assets/brands/skoda.png";
 
 import type { BrandConfig } from "../types/search.types";
 
-/**
- * Brand configuration with official logos
- */
 const BRANDS: BrandConfig[] = [
   { name: "Volkswagen", logo: volkswagenLogo, color: "#001E50" },
   { name: "BMW", logo: bmwLogo, color: "#0066B1" },
@@ -57,20 +53,11 @@ const BRANDS: BrandConfig[] = [
   { name: "Škoda", logo: skodaLogo, color: "#4BA82E" },
 ];
 
-/**
- * Props for the BrandCarousel component
- */
 export interface BrandCarouselProps {
-  /** Callback when a brand is selected/deselected */
   onBrandFilter?: (brand: string) => void;
-  /** Currently selected brand */
   selectedBrand?: string;
 }
 
-/**
- * BrandCarousel displays an auto-playing carousel of car brand logos
- * Clicking a brand filters the vehicle listings
- */
 const BrandCarousel = memo(function BrandCarousel({ 
   onBrandFilter, 
   selectedBrand 
@@ -82,10 +69,8 @@ const BrandCarousel = memo(function BrandCarousel({
 
   useEffect(() => {
     if (!api) return;
-
     setCount(api.scrollSnapList().length);
     setCurrent(api.selectedScrollSnap());
-
     api.on("select", () => {
       setCurrent(api.selectedScrollSnap());
     });
@@ -102,7 +87,6 @@ const BrandCarousel = memo(function BrandCarousel({
     if (onBrandFilter) {
       onBrandFilter(selectedBrand === brandName ? "" : brandName);
     }
-    
     const resultsSection = document.getElementById("results-section");
     if (resultsSection) {
       resultsSection.scrollIntoView({ behavior: "smooth" });
@@ -161,28 +145,22 @@ const BrandCarousel = memo(function BrandCarousel({
                       <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out bg-gradient-to-r from-transparent via-white/25 to-transparent" />
                     </span>
                     {/* Selection badge */}
-                    <AnimatePresence>
-                      {selectedBrand === brand.name && (
-                        <motion.div
-                          className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-4 h-4 sm:w-5 sm:h-5 bg-primary rounded-full flex items-center justify-center"
-                          initial={{ scale: 0, opacity: 0 }}
-                          animate={{ scale: 1, opacity: 1 }}
-                          exit={{ scale: 0, opacity: 0 }}
-                          transition={{ type: "spring", stiffness: 500, damping: 25 }}
+                    {selectedBrand === brand.name && (
+                      <div
+                        className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-4 h-4 sm:w-5 sm:h-5 bg-primary rounded-full flex items-center justify-center animate-scale-in"
+                      >
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                        <svg 
+                          className="relative w-2 h-2 sm:w-3 sm:h-3 text-primary-foreground" 
+                          fill="none" 
+                          viewBox="0 0 24 24" 
+                          stroke="currentColor"
+                          aria-hidden="true"
                         >
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
-                          <svg 
-                            className="relative w-2 h-2 sm:w-3 sm:h-3 text-primary-foreground" 
-                            fill="none" 
-                            viewBox="0 0 24 24" 
-                            stroke="currentColor"
-                            aria-hidden="true"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                          </svg>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                        </svg>
+                      </div>
+                    )}
                     
                     {/* Brand logo container */}
                     <div

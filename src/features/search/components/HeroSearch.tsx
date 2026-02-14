@@ -4,7 +4,6 @@
  */
 
 import { memo, useState, useEffect, useRef, useCallback } from "react";
-import { motion, useScroll, useTransform, useInView, useSpring, useMotionValue } from "framer-motion";
 import { Search, ChevronDown } from "lucide-react";
 import { getAllBrands, getModelsByBrand } from "@/utils/carUtils";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -14,21 +13,31 @@ import type { QuickSearchParams } from "../types/search.types";
 /** Animated counter that increments when visible in viewport */
 function AnimatedCounter({ target, suffix = "", duration = 2 }: { target: number; suffix?: string; duration?: number }) {
   const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-50px" });
   const [display, setDisplay] = useState(0);
+  const triggered = useRef(false);
 
   useEffect(() => {
-    if (!inView) return;
-    let start = 0;
-    const startTime = performance.now();
-    const step = (now: number) => {
-      const progress = Math.min((now - startTime) / (duration * 1000), 1);
-      const eased = 1 - Math.pow(1 - progress, 3); // easeOutCubic
-      setDisplay(Math.round(eased * target));
-      if (progress < 1) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-  }, [inView, target, duration]);
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !triggered.current) {
+          triggered.current = true;
+          const startTime = performance.now();
+          const step = (now: number) => {
+            const progress = Math.min((now - startTime) / (duration * 1000), 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            setDisplay(Math.round(eased * target));
+            if (progress < 1) requestAnimationFrame(step);
+          };
+          requestAnimationFrame(step);
+        }
+      },
+      { rootMargin: "-50px" }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [target, duration]);
 
   return <span ref={ref}>{display}{suffix}</span>;
 }
@@ -58,11 +67,10 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
     setBrands(getAllBrands());
   }, []);
 
-  // Fetch models when brand changes
   useEffect(() => {
     if (selectedBrand) {
       setLoadingModels(true);
-      setModel(""); // Reset model when brand changes
+      setModel("");
       getModelsByBrand(selectedBrand).then((fetchedModels) => {
         setModels(fetchedModels);
         setLoadingModels(false);
@@ -83,34 +91,21 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
     }
   };
 
-  const sectionRef = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end start"],
-  });
-
-  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
-  const decorY1 = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
-  const decorY2 = useTransform(scrollYProgress, [0, 1], ["0%", "40%"]);
-  const contentY = useTransform(scrollYProgress, [0, 1], [0, 60]);
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
-
   return (
-    <section ref={sectionRef} className="relative min-h-[70vh] sm:min-h-[85vh] flex items-center justify-center pt-20 sm:pt-24 pb-12 sm:pb-16 overflow-hidden">
-      {/* Background gradient with parallax */}
-      <motion.div className="absolute inset-0 bg-gradient-to-b from-background via-background to-secondary/30" style={{ y: bgY }} />
+    <section className="relative min-h-[70vh] sm:min-h-[85vh] flex items-center justify-center pt-20 sm:pt-24 pb-12 sm:pb-16 overflow-hidden">
+      {/* Background gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-secondary/30" />
 
-      {/* Decorative elements with parallax */}
-      <motion.div
+      {/* Decorative elements */}
+      <div
         className="hidden sm:block absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float"
-        style={{ y: decorY1 }}
       />
-      <motion.div
+      <div
         className="hidden sm:block absolute bottom-1/4 right-1/4 w-80 h-80 bg-primary/5 rounded-full blur-3xl animate-float"
-        style={{ y: decorY2, animationDelay: "-3s" }}
+        style={{ animationDelay: "-3s" }}
       />
 
-      <motion.div className="container mx-auto px-4 sm:px-6 relative z-10" style={{ y: contentY, opacity: contentOpacity }}>
+      <div className="container mx-auto px-4 sm:px-6 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-primary/10 text-primary text-xs sm:text-sm font-medium mb-6 sm:mb-8 animate-fade-up">
@@ -163,7 +158,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
                 <ChevronDown className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground pointer-events-none" />
               </div>
 
-              {/* Model Select - Dynamic based on brand */}
+              {/* Model Select */}
               <div className="relative">
                 <select
                   value={model}
@@ -241,7 +236,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
             </div>
           </div>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 });
