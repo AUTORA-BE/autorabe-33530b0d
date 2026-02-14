@@ -131,12 +131,41 @@ export function useFilteredInfiniteCarListings() {
     return query;
   }, [filters, sortBy]);
 
+  // Check if current filters are default (no filters applied)
+  const isDefaultFilters = useCallback(() => {
+    return !filters.searchQuery && !filters.brand && !filters.model &&
+      filters.minPrice === 0 && filters.maxPrice >= 200000 &&
+      filters.fuelTypes.length === 0 && !filters.transmission &&
+      !filters.euroNorm && filters.yearMin <= 2010 && filters.yearMax >= 2026 &&
+      filters.kmMin === 0 && filters.kmMax >= 200000 && !filters.lezOnly &&
+      sortBy === 'recent';
+  }, [filters, sortBy]);
+
   const fetchListings = useCallback(async (pageNum: number, append: boolean = false) => {
     try {
       if (append) {
         setIsLoadingMore(true);
       } else {
         setIsLoading(true);
+      }
+
+      // Try prefetched data for initial default load (breaks critical request chain)
+      const prefetched = (window as any).__prefetchedListings;
+      if (prefetched && pageNum === 0 && !append && isDefaultFilters()) {
+        (window as any).__prefetchedListings = null;
+        const result = await prefetched;
+        if (result && result.data) {
+          const mappedCars = result.data.map(mapListingToCar);
+          setCars(mappedCars);
+          // Parse content-range header for total count
+          if (result.count) {
+            const match = result.count.match(/\/(\d+)/);
+            if (match) setTotalCount(parseInt(match[1], 10));
+          }
+          setHasMore(result.data.length === PAGE_SIZE);
+          setIsLoading(false);
+          return;
+        }
       }
 
       // Get total count with filters
