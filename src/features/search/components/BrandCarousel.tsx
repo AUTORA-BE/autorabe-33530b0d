@@ -152,16 +152,17 @@ const BrandCarousel = memo(function BrandCarousel({
                 >
                   <motion.div
                     className={cn(
-                      "relative flex flex-col items-center justify-center p-3 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl",
+                      "relative flex flex-col items-center justify-center p-3 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl transition-shadow duration-300",
                       selectedBrand === brand.name
                         ? "bg-primary/10 border-2 border-primary shadow-lg shadow-primary/20 ring-2 ring-primary/30"
-                        : "bg-card border border-border/50 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10"
+                        : "bg-card border border-border/50 hover:border-primary/60 hover:shadow-xl hover:shadow-primary/15"
                     )}
                     animate={selectedBrand === brand.name
-                      ? { y: -4, transition: { type: "spring", stiffness: 300, damping: 20 } }
+                      ? { y: -6, transition: { type: "spring", stiffness: 300, damping: 20 } }
                       : { y: 0, transition: { type: "spring", stiffness: 300, damping: 20 } }
                     }
-                    whileHover={selectedBrand !== brand.name ? { y: -4, scale: 1.02 } : {}}
+                    whileHover={selectedBrand !== brand.name ? { y: -8, scale: 1.06 } : {}}
+                    whileTap={{ scale: 0.95 }}
                   >
                     {/* Selection badge with pulse effect */}
                     <AnimatePresence>
@@ -193,18 +194,19 @@ const BrandCarousel = memo(function BrandCarousel({
                         "w-14 h-14 sm:w-18 sm:h-18 md:w-22 md:h-22 flex items-center justify-center mb-2 sm:mb-3 rounded-lg sm:rounded-xl p-1.5 sm:p-2",
                         selectedBrand === brand.name
                           ? "bg-white dark:bg-white/10"
-                          : "bg-white/80 dark:bg-white/5"
+                          : "bg-white/80 dark:bg-white/5 group-hover:bg-white dark:group-hover:bg-white/10"
                       )}
                       animate={selectedBrand === brand.name
-                        ? { scale: 1.1 }
-                        : { scale: 1 }
+                        ? { scale: 1.1, rotate: 0 }
+                        : { scale: 1, rotate: 0 }
                       }
+                      whileHover={{ scale: 1.15 }}
                       transition={{ type: "spring", stiffness: 300, damping: 20 }}
                     >
                       <img 
                         src={brand.logo} 
                         alt={`${brand.name} logo officiel`}
-                        className="w-full h-full object-contain drop-shadow-sm"
+                        className="w-full h-full object-contain drop-shadow-sm group-hover:drop-shadow-md transition-all duration-300"
                         loading="lazy"
                         draggable="false"
                       />
@@ -212,10 +214,10 @@ const BrandCarousel = memo(function BrandCarousel({
                     
                     {/* Brand name */}
                     <span className={cn(
-                      "text-[10px] sm:text-xs md:text-sm font-medium transition-colors duration-300 text-center leading-tight truncate w-full",
+                      "text-[10px] sm:text-xs md:text-sm font-medium transition-all duration-300 text-center leading-tight truncate w-full",
                       selectedBrand === brand.name
                         ? "text-primary font-semibold"
-                        : "text-muted-foreground group-hover:text-foreground"
+                        : "text-muted-foreground group-hover:text-foreground group-hover:font-semibold"
                     )}>
                       {brand.name}
                     </span>
