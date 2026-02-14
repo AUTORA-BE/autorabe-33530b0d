@@ -14,6 +14,58 @@ export type Database = {
   }
   public: {
     Tables: {
+      alert_notifications: {
+        Row: {
+          alert_id: string
+          car_listing_id: string
+          clicked_at: string | null
+          id: string
+          match_score: number
+          opened_at: string | null
+          sent_at: string
+        }
+        Insert: {
+          alert_id: string
+          car_listing_id: string
+          clicked_at?: string | null
+          id?: string
+          match_score: number
+          opened_at?: string | null
+          sent_at?: string
+        }
+        Update: {
+          alert_id?: string
+          car_listing_id?: string
+          clicked_at?: string | null
+          id?: string
+          match_score?: number
+          opened_at?: string | null
+          sent_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alert_notifications_alert_id_fkey"
+            columns: ["alert_id"]
+            isOneToOne: false
+            referencedRelation: "user_alerts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "alert_notifications_car_listing_id_fkey"
+            columns: ["car_listing_id"]
+            isOneToOne: false
+            referencedRelation: "car_listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "alert_notifications_car_listing_id_fkey"
+            columns: ["car_listing_id"]
+            isOneToOne: false
+            referencedRelation: "car_listings_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       car_listings: {
         Row: {
           body_type: string
@@ -439,6 +491,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_alerts: {
+        Row: {
+          active: boolean
+          created_at: string
+          filters: Json
+          frequency: string
+          id: string
+          last_sent_at: string | null
+          match_count: number
+          name: string
+          notify_email: boolean
+          notify_push: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          filters?: Json
+          frequency?: string
+          id?: string
+          last_sent_at?: string | null
+          match_count?: number
+          name: string
+          notify_email?: boolean
+          notify_push?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          filters?: Json
+          frequency?: string
+          id?: string
+          last_sent_at?: string | null
+          match_count?: number
+          name?: string
+          notify_email?: boolean
+          notify_push?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       user_preferences: {
         Row: {

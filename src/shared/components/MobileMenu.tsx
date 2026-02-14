@@ -4,7 +4,7 @@
  */
 
 import { Link } from "react-router-dom";
-import { Heart, MessageCircle, HelpCircle, GitCompareArrows, LayoutDashboard, Settings, LogOut, User, Calculator, Mail } from "lucide-react";
+import { Heart, MessageCircle, HelpCircle, GitCompareArrows, LayoutDashboard, Settings, LogOut, User, Calculator, Mail, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { prefetchRoute } from "@/utils/prefetchRoutes";
 import { User as SupabaseUser } from "@supabase/supabase-js";
@@ -112,20 +112,31 @@ const MobileMenu = ({
           Contact
         </Link>
         {user && (
-          <Link
-            to="/messages"
-            onMouseEnter={() => prefetchRoute("/messages")}
-            className="text-foreground font-medium py-3 px-4 rounded-2xl hover:bg-secondary/50 transition-colors flex items-center gap-3"
-            onClick={handleLink}
-          >
-            <MessageCircle className="w-5 h-5" />
-            {t("nav.messages")}
-            {hasUnread && (
-              <span className="min-w-[24px] h-6 flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-xs font-bold px-2">
-                {unreadCount > 9 ? "9+" : unreadCount}
-              </span>
-            )}
-          </Link>
+          <>
+            <Link
+              to="/mes-alertes"
+              onMouseEnter={() => prefetchRoute("/mes-alertes")}
+              className="text-foreground font-medium py-3 px-4 rounded-2xl hover:bg-secondary/50 transition-colors flex items-center gap-3"
+              onClick={handleLink}
+            >
+              <Bell className="w-5 h-5" />
+              Mes alertes
+            </Link>
+            <Link
+              to="/messages"
+              onMouseEnter={() => prefetchRoute("/messages")}
+              className="text-foreground font-medium py-3 px-4 rounded-2xl hover:bg-secondary/50 transition-colors flex items-center gap-3"
+              onClick={handleLink}
+            >
+              <MessageCircle className="w-5 h-5" />
+              {t("nav.messages")}
+              {hasUnread && (
+                <span className="min-w-[24px] h-6 flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-xs font-bold px-2">
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </span>
+              )}
+            </Link>
+          </>
         )}
 
         <div className="h-px bg-border my-4" />

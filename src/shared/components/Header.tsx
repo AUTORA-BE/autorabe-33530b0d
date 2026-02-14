@@ -3,7 +3,7 @@
  * @module shared/components
  */
 
-import { Menu, Heart, MessageCircle, GitCompareArrows, Sun, Moon, Calculator } from "lucide-react";
+import { Menu, Heart, MessageCircle, GitCompareArrows, Sun, Moon, Calculator, Bell } from "lucide-react";
 import autoraLogo from "@/assets/autora-logo.png";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
@@ -115,12 +115,20 @@ const Header = () => {
               </span>
             </NavLink>
             {user && (
-              <NavLink to="/messages" badge={hasUnread ? unreadCount : undefined}>
-                <span className="flex items-center gap-1.5">
-                  <MessageCircle className="w-4 h-4" />
-                  {t("nav.messages")}
-                </span>
-              </NavLink>
+              <>
+                <NavLink to="/mes-alertes">
+                  <span className="flex items-center gap-1.5">
+                    <Bell className="w-4 h-4" />
+                    Alertes
+                  </span>
+                </NavLink>
+                <NavLink to="/messages" badge={hasUnread ? unreadCount : undefined}>
+                  <span className="flex items-center gap-1.5">
+                    <MessageCircle className="w-4 h-4" />
+                    {t("nav.messages")}
+                  </span>
+                </NavLink>
+              </>
             )}
           </nav>
 
