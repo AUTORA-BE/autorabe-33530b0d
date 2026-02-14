@@ -7,10 +7,9 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { CompareProvider } from "@/features/compare";
 import { LanguageProvider } from "@/contexts/LanguageContext";
-import { AnimatePresence } from "framer-motion";
 import PageTransition from "@/components/PageTransition";
-const CarChatbot = lazy(() => import("@/components/CarChatbot"));
 import ScrollToTop from "@/components/ScrollToTop";
+const CarChatbot = lazy(() => import("@/components/CarChatbot"));
 
 // Eagerly loaded — critical path
 import Index from "./pages/Index";
@@ -70,37 +69,33 @@ function ScrollToTopOnNavigate() {
   return null;
 }
 
-/** Animated routes wrapper using framer-motion AnimatePresence */
-function AnimatedRoutes() {
-  const location = useLocation();
-
+/** Routes wrapper — no AnimatePresence to reduce style/layout cost */
+function AppRoutes() {
   return (
-    <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<PageTransition><Index /></PageTransition>} />
-        <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
-        <Route path="/car/:id" element={<PageTransition><CarDetail /></PageTransition>} />
-        <Route path="/favorites" element={<PageTransition><Favorites /></PageTransition>} />
-        <Route path="/sell" element={<PageTransition><SellCar /></PageTransition>} />
-        <Route path="/messages" element={<PageTransition><Messages /></PageTransition>} />
-        <Route path="/about" element={<PageTransition><About /></PageTransition>} />
-        <Route path="/faq" element={<PageTransition><FAQ /></PageTransition>} />
-        <Route path="/compare" element={<PageTransition><Compare /></PageTransition>} />
-        <Route path="/dashboard" element={<PageTransition><SellerDashboard /></PageTransition>} />
-        <Route path="/dashboard/stats" element={<PageTransition><SellerStats /></PageTransition>} />
-        <Route path="/admin/reports" element={<PageTransition><AdminReports /></PageTransition>} />
-        <Route path="/settings" element={<PageTransition><Settings /></PageTransition>} />
-        <Route path="/reset-password" element={<PageTransition><ResetPassword /></PageTransition>} />
-        <Route path="/terms" element={<PageTransition><Terms /></PageTransition>} />
-        <Route path="/privacy" element={<PageTransition><Privacy /></PageTransition>} />
-        <Route path="/legal" element={<PageTransition><Legal /></PageTransition>} />
-        <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
-        <Route path="/calculateur-tco" element={<PageTransition><CalculateurTCO /></PageTransition>} />
-        <Route path="/mes-alertes" element={<PageTransition><MesAlertes /></PageTransition>} />
-        <Route path="/mes-alertes/creer" element={<PageTransition><CreerAlerte /></PageTransition>} />
-        <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
-      </Routes>
-    </AnimatePresence>
+    <Routes>
+      <Route path="/" element={<PageTransition><Index /></PageTransition>} />
+      <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
+      <Route path="/car/:id" element={<PageTransition><CarDetail /></PageTransition>} />
+      <Route path="/favorites" element={<PageTransition><Favorites /></PageTransition>} />
+      <Route path="/sell" element={<PageTransition><SellCar /></PageTransition>} />
+      <Route path="/messages" element={<PageTransition><Messages /></PageTransition>} />
+      <Route path="/about" element={<PageTransition><About /></PageTransition>} />
+      <Route path="/faq" element={<PageTransition><FAQ /></PageTransition>} />
+      <Route path="/compare" element={<PageTransition><Compare /></PageTransition>} />
+      <Route path="/dashboard" element={<PageTransition><SellerDashboard /></PageTransition>} />
+      <Route path="/dashboard/stats" element={<PageTransition><SellerStats /></PageTransition>} />
+      <Route path="/admin/reports" element={<PageTransition><AdminReports /></PageTransition>} />
+      <Route path="/settings" element={<PageTransition><Settings /></PageTransition>} />
+      <Route path="/reset-password" element={<PageTransition><ResetPassword /></PageTransition>} />
+      <Route path="/terms" element={<PageTransition><Terms /></PageTransition>} />
+      <Route path="/privacy" element={<PageTransition><Privacy /></PageTransition>} />
+      <Route path="/legal" element={<PageTransition><Legal /></PageTransition>} />
+      <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
+      <Route path="/calculateur-tco" element={<PageTransition><CalculateurTCO /></PageTransition>} />
+      <Route path="/mes-alertes" element={<PageTransition><MesAlertes /></PageTransition>} />
+      <Route path="/mes-alertes/creer" element={<PageTransition><CreerAlerte /></PageTransition>} />
+      <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
+    </Routes>
   );
 }
 
@@ -114,7 +109,7 @@ const App = () => (
           <BrowserRouter>
             <Suspense fallback={<PageLoader />}>
               <ScrollToTopOnNavigate />
-              <AnimatedRoutes />
+              <AppRoutes />
             </Suspense>
             <ScrollToTop />
             <Suspense fallback={null}><CarChatbot /></Suspense>
