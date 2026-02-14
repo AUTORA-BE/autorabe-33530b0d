@@ -4,9 +4,11 @@
  */
 
 import { memo } from "react";
-import { Heart, MapPin, Fuel, Calendar, Gauge, Shield, CheckCircle } from "lucide-react";
+import { Heart, MapPin, Fuel, Calendar, Gauge, Shield, CheckCircle, AlertTriangle, Ban, Leaf, Info } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { calculerStatutLEZ } from "@/lib/lezData";
 import type { Vehicle } from "../types/vehicle.types";
 
 /**
@@ -41,6 +43,14 @@ const formatMileage = (km: number): string => {
   return new Intl.NumberFormat("fr-BE").format(km);
 };
 
+const lezBadgeConfig = {
+  autorise: { text: "LEZ OK", className: "bg-emerald-500/90 hover:bg-emerald-500 text-white border-0", Icon: Leaf },
+  alerte: { text: "LEZ", className: "bg-amber-500/90 hover:bg-amber-500 text-white border-0", Icon: AlertTriangle },
+  derogation_requise: { text: "Dérogation", className: "bg-amber-500/90 hover:bg-amber-500 text-white border-0", Icon: AlertTriangle },
+  interdit: { text: "Interdit", className: "bg-red-500/90 hover:bg-red-500 text-white border-0", Icon: Ban },
+  inconnu: { text: "LEZ ?", className: "bg-muted text-muted-foreground border-0", Icon: Info },
+} as const;
+
 /**
  * VehicleCard displays a single vehicle listing in a card format
  * Includes image, price, specs, and LEZ/CarPass badges
@@ -52,6 +62,8 @@ const VehicleCard = memo(function VehicleCard({
   onClick,
 }: VehicleCardProps) {
   const { language } = useLanguage();
+  const lezResult = calculerStatutLEZ(vehicle.fuelType, vehicle.euroNorm);
+  const lezConfig = lezBadgeConfig[lezResult.global.statut];
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -69,12 +81,14 @@ const VehicleCard = memo(function VehicleCard({
     }
   };
 
-  // Localized labels
   const labels = {
-    lez: language === "nl" ? "LEZ OK" : "LEZ OK",
-    carPass: language === "nl" ? "Car-Pass" : "Car-Pass",
+    carPass: "Car-Pass",
     km: "km",
   };
+
+  const badgeText = lezResult.global.statut === "alerte"
+    ? `LEZ ${lezResult.global.anneeInterdiction}`
+    : lezConfig.text;
 
   return (
     <article
@@ -115,12 +129,34 @@ const VehicleCard = memo(function VehicleCard({
 
         {/* LEZ & CarPass Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-2 z-10">
-          {vehicle.isLezCompatible && (
-            <Badge className="bg-emerald-500/90 hover:bg-emerald-500 text-white border-0 backdrop-blur-sm shadow-lg">
-              <Shield className="w-3 h-3 mr-1" />
-              {labels.lez}
-            </Badge>
-          )}
+          <TooltipProvider delayDuration={300}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div>
+                  <Badge className={`${lezConfig.className} backdrop-blur-sm shadow-lg cursor-help`}>
+                    <lezConfig.Icon className="w-3 h-3 mr-1" />
+                    {badgeText}
+                  </Badge>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="right" className="max-w-xs p-3">
+                <p className="font-semibold text-sm mb-2">Compatibilité LEZ</p>
+                <div className="space-y-1.5">
+                  {lezResult.details.map((d) => (
+                    <div key={d.ville} className="flex items-center gap-2 text-xs">
+                      <span className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                        d.couleur === "green" ? "bg-emerald-500" :
+                        d.couleur === "orange" ? "bg-amber-500" :
+                        d.couleur === "red" ? "bg-red-500" : "bg-muted-foreground"
+                      }`} />
+                      <span className="font-medium capitalize">{d.ville}</span>
+                      <span className="text-muted-foreground ml-auto">{d.message}</span>
+                    </div>
+                  ))}
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           {vehicle.hasCarPass && (
             <Badge className="bg-primary/90 hover:bg-primary text-primary-foreground border-0 backdrop-blur-sm shadow-lg">
               <CheckCircle className="w-3 h-3 mr-1" />
