@@ -146,9 +146,10 @@ const CarChatbot = () => {
       {/* Chat Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center transition-all hover:scale-110 ${
+        className={`fixed bottom-6 right-6 z-[60] w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-xl shadow-primary/30 flex items-center justify-center transition-all hover:scale-110 active:scale-95 ${
           isOpen ? "hidden" : ""
         }`}
+        aria-label="Ouvrir l'assistant AutoRa"
       >
         <MessageCircle className="w-6 h-6" />
       </button>
