@@ -31,13 +31,13 @@ const PriceYearStep = ({ formData, updateField }: Props) => {
             value={[formData.price]}
             onValueChange={([v]) => updateField('price', v)}
             min={1000}
-            max={100000}
+            max={500000}
             step={500}
             className="[&_[role=slider]]:border-primary [&_[role=slider]]:bg-background [&_span:first-child>span]:bg-primary"
           />
           <div className="flex justify-between text-xs text-muted-foreground mt-2">
             <span>1 000 €</span>
-            <span>100 000 €</span>
+            <span>500 000 €</span>
           </div>
         </div>
 
