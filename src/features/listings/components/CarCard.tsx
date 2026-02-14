@@ -1,5 +1,4 @@
 import { forwardRef, memo } from "react";
-import { motion } from "framer-motion";
 import { Fuel, Calendar, Gauge, MapPin, Heart, GitCompareArrows, Leaf, AlertTriangle, Ban, Info, CheckCircle } from "lucide-react";
 import { useCompareContext } from "@/features/compare";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -10,23 +9,13 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Badge } from "@/components/ui/badge";
 import type { Vehicle } from "../types/vehicle.types";
 
-/**
- * Props for the CarCard component
- */
 export interface CarCardProps {
-  /** Vehicle data to display */
   car: Vehicle;
-  /** Whether this car is in user's favorites */
   isFavorite?: boolean;
-  /** Callback when favorite button is clicked */
   onToggleFavorite?: (carId: string) => void;
-  /** Callback when card is clicked */
   onClick?: (carId: string) => void;
 }
 
-/**
- * Get LEZ badge configuration using centralized LEZ calendar
- */
 const lezBadgeConfig = {
   autorise: { text: "LEZ OK", className: "bg-primary/90 hover:bg-primary text-primary-foreground border-0", Icon: Leaf },
   alerte: { text: "LEZ", className: "bg-amber-500/90 hover:bg-amber-500 text-white border-0", Icon: AlertTriangle },
@@ -45,20 +34,14 @@ const getLezBadgeInfo = (euroNorm: string, fuelType: string) => {
   return { config, badgeText, details: result.details };
 };
 
-/**
- * Card component for displaying a vehicle in a grid or list
- * Includes favorite toggle, compare functionality, and LEZ badges
- */
 const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = false, onToggleFavorite, onClick }, ref) => {
   const { addToCompare, removeFromCompare, isInCompare, canAddMore } = useCompareContext();
   const { t, language } = useLanguage();
   const { impactLight, notificationSuccess, selectionChanged } = useHapticFeedback();
 
-  // Generate multilingual alt text for SEO
   const getAltText = () => {
     const yearText = car.year;
     const mileageFormatted = new Intl.NumberFormat(language === "nl" ? "nl-BE" : "fr-BE").format(car.mileage);
-    
     switch (language) {
       case "nl":
         return `${car.brand} ${car.model} ${yearText} - ${mileageFormatted} km - ${car.fuelType} - Te koop in ${car.location}`;
@@ -85,17 +68,13 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
 
   const handleClick = () => {
     impactLight();
-    if (onClick) {
-      onClick(car.id);
-    }
+    if (onClick) onClick(car.id);
   };
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     selectionChanged();
-    if (onToggleFavorite) {
-      onToggleFavorite(car.id);
-    }
+    if (onToggleFavorite) onToggleFavorite(car.id);
   };
 
   const inCompare = isInCompare(car.id);
@@ -118,12 +97,9 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
   const lezBadge = getLezBadgeInfo(car.euroNorm, car.fuelType);
 
   return (
-    <motion.article
+    <article
       ref={ref as React.Ref<HTMLElement>}
-      whileHover={{ y: -8 }}
-      whileTap={{ scale: 0.97 }}
-      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      className="rounded-2xl overflow-hidden bg-card border border-border/50 group cursor-pointer touch-target"
+      className="rounded-2xl overflow-hidden bg-card border border-border/50 group cursor-pointer touch-target transition-all duration-300 hover:-translate-y-2 active:scale-[0.97]"
       style={{
         boxShadow: "var(--shadow-card)",
       }}
@@ -138,42 +114,31 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
       onClick={handleClick}
     >
       <div className="relative h-48 md:h-56 overflow-hidden">
-        <motion.img
+        <img
           src={car.image}
           alt={getAltText()}
           loading="lazy"
-          className="w-full h-full object-cover"
-          whileHover={{ scale: 1.08 }}
-          transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="w-full h-full object-cover transition-transform duration-600 ease-out group-hover:scale-[1.08]"
         />
         {/* Gradient overlay on hover */}
         <div className="absolute inset-0 bg-gradient-to-t from-foreground/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
         {/* Action Buttons */}
         <div className="absolute top-3 right-3 flex flex-col gap-2">
-          <motion.button
+          <button
             onClick={handleFavoriteClick}
-            whileTap={{ scale: 0.85 }}
-            transition={{ type: "spring", stiffness: 400, damping: 17 }}
-            className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-all shadow-sm hover:shadow-lg touch-target focus-ring ${
+            className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-all shadow-sm hover:shadow-lg touch-target focus-ring active:scale-[0.85] ${
               isFavorite
                 ? "bg-red-500 text-white"
                 : "bg-background/90 backdrop-blur-sm text-muted-foreground hover:text-red-500"
             }`}
             aria-label={isFavorite ? t("car.removeFromFavorites") : t("car.addToFavorites")}
           >
-            <motion.div
-              animate={isFavorite ? { scale: [1, 1.3, 1] } : { scale: 1 }}
-              transition={{ duration: 0.3 }}
-            >
-              <Heart className={`w-5 h-5 ${isFavorite ? "fill-current" : ""}`} />
-            </motion.div>
-          </motion.button>
-          <motion.button
+            <Heart className={`w-5 h-5 ${isFavorite ? "fill-current" : ""}`} />
+          </button>
+          <button
             onClick={handleCompareClick}
-            whileTap={{ scale: 0.85 }}
-            transition={{ type: "spring", stiffness: 400, damping: 17 }}
-            className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-all shadow-sm hover:shadow-lg touch-target focus-ring ${
+            className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-all shadow-sm hover:shadow-lg touch-target focus-ring active:scale-[0.85] ${
               inCompare
                 ? "bg-primary text-primary-foreground"
                 : "bg-background/90 backdrop-blur-sm text-muted-foreground hover:text-primary"
@@ -182,7 +147,7 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
             aria-label={inCompare ? t("car.removeCompare") : t("car.addCompare")}
           >
             <GitCompareArrows className="w-5 h-5" />
-          </motion.button>
+          </button>
         </div>
 
         {/* Badges */}
@@ -227,31 +192,24 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
 
         {/* Price Badge */}
         <div className="absolute bottom-3 right-3">
-          <motion.span
-            className="inline-block px-3 py-2 rounded-2xl bg-background/95 backdrop-blur-sm font-display text-lg font-bold text-foreground"
+          <span
+            className="inline-block px-3 py-2 rounded-2xl bg-background/95 backdrop-blur-sm font-display text-lg font-bold text-foreground transition-transform duration-200 hover:scale-105"
             style={{ boxShadow: "0 2px 12px -2px hsl(var(--foreground) / 0.1)" }}
-            whileHover={{ scale: 1.05 }}
-            transition={{ type: "spring", stiffness: 400, damping: 20 }}
           >
             {formatPrice(car.price)}
-          </motion.span>
+          </span>
         </div>
       </div>
 
       {/* Content */}
       <div className="p-5">
-        {/* Title */}
         <h3 className="font-display text-lg font-bold text-foreground mb-1 group-hover:text-primary transition-colors duration-300">
           {car.brand} {car.model}
         </h3>
-
-        {/* Location */}
         <p className="flex items-center gap-1 text-sm text-muted-foreground mb-4">
           <MapPin className="w-3 h-3" />
           {car.location}
         </p>
-
-        {/* Tags */}
         <div className="flex flex-wrap gap-2">
           <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-2xl bg-secondary text-sm text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-colors duration-300">
             <Calendar className="w-3.5 h-3.5" />
@@ -267,7 +225,7 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
           </span>
         </div>
       </div>
-    </motion.article>
+    </article>
   );
 }));
 
