@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -61,6 +61,15 @@ const queryClient = new QueryClient({
   },
 });
 
+/** Scroll to top on route change */
+function ScrollToTopOnNavigate() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+}
+
 /** Animated routes wrapper using framer-motion AnimatePresence */
 function AnimatedRoutes() {
   const location = useLocation();
@@ -104,6 +113,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Suspense fallback={<PageLoader />}>
+              <ScrollToTopOnNavigate />
               <AnimatedRoutes />
             </Suspense>
             <ScrollToTop />
