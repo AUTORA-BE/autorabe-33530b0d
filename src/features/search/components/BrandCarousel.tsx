@@ -134,7 +134,7 @@ const BrandCarousel = memo(function BrandCarousel({
               stopOnMouseEnter: true,
             }),
           ]}
-          className="w-full max-w-5xl mx-auto"
+          className="w-full max-w-5xl mx-auto px-10 md:px-14"
         >
           <CarouselContent className="-ml-2 sm:-ml-4">
             {BRANDS.map((brand) => (
@@ -225,11 +225,11 @@ const BrandCarousel = memo(function BrandCarousel({
             ))}
           </CarouselContent>
           <CarouselPrevious 
-            className="hidden md:flex -left-12 bg-card border-border hover:bg-primary hover:text-primary-foreground hover:border-primary" 
+            className="-left-2 md:-left-5 bg-card border-border hover:bg-primary hover:text-primary-foreground hover:border-primary h-8 w-8 sm:h-9 sm:w-9" 
             aria-label="Marques précédentes"
           />
           <CarouselNext 
-            className="hidden md:flex -right-12 bg-card border-border hover:bg-primary hover:text-primary-foreground hover:border-primary" 
+            className="-right-2 md:-right-5 bg-card border-border hover:bg-primary hover:text-primary-foreground hover:border-primary h-8 w-8 sm:h-9 sm:w-9" 
             aria-label="Marques suivantes"
           />
         </Carousel>
