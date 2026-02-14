@@ -235,7 +235,7 @@ const BrandCarousel = memo(function BrandCarousel({
         </Carousel>
         
         {/* Dot indicators */}
-        <div className="flex justify-center gap-[3px] mt-2" role="tablist">
+        <div className="flex justify-center items-center gap-[3px] mt-1 h-3" role="tablist">
           {Array.from({ length: count }).map((_, index) => (
             <button
               key={index}
@@ -243,7 +243,7 @@ const BrandCarousel = memo(function BrandCarousel({
               role="tab"
               aria-selected={current === index}
               className={cn(
-                "h-[3px] rounded-full transition-all duration-300",
+                "h-[3px] min-h-0 p-0 rounded-full transition-all duration-300",
                 current === index
                   ? "bg-primary w-2.5"
                   : "w-[3px] bg-muted-foreground/20 hover:bg-muted-foreground/35"
