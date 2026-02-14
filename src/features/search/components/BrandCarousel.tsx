@@ -111,7 +111,7 @@ const BrandCarousel = memo(function BrandCarousel({
 
   return (
     <section 
-      className="py-8 sm:py-12 bg-gradient-to-b from-muted/30 to-background"
+      className="py-4 sm:py-8 bg-gradient-to-b from-muted/30 to-background"
       aria-labelledby="brands-title"
     >
       <div className="container mx-auto px-4 sm:px-6">
