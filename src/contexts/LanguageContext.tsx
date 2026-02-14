@@ -278,6 +278,7 @@ const translations: Record<Language, Record<string, string>> = {
     "dashboard.createdAt": "Date de création",
     "dashboard.total": "TOTAL",
     "dashboard.viewStats": "Voir les statistiques",
+    "dashboard.all": "Toutes",
 
     // Stats
     "stats.analytics": "Analytiques",
@@ -791,6 +792,7 @@ const translations: Record<Language, Record<string, string>> = {
     "dashboard.createdAt": "Aanmaakdatum",
     "dashboard.total": "TOTAAL",
     "dashboard.viewStats": "Bekijk statistieken",
+    "dashboard.all": "Alle",
 
     // Stats
     "stats.analytics": "Analytics",
@@ -1304,6 +1306,7 @@ const translations: Record<Language, Record<string, string>> = {
     "dashboard.createdAt": "Erstellt am",
     "dashboard.total": "GESAMT",
     "dashboard.viewStats": "Statistiken anzeigen",
+    "dashboard.all": "Alle",
 
     // Stats
     "stats.analytics": "Analysen",
@@ -1817,6 +1820,7 @@ const translations: Record<Language, Record<string, string>> = {
     "dashboard.createdAt": "Created at",
     "dashboard.total": "TOTAL",
     "dashboard.viewStats": "View statistics",
+    "dashboard.all": "All",
 
     // Stats
     "stats.analytics": "Analytics",
