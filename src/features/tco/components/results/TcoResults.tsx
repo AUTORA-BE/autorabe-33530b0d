@@ -61,9 +61,9 @@ const TcoResults = ({ formData, breakdown, alternatives, onReset, onBack }: Prop
             initial={{ scale: 0, rotate: -180 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ delay: 0.2, type: 'spring' }}
-            className="mx-auto mb-6 w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center"
+            className="mx-auto mb-6 w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center"
           >
-            <CheckCircle className="w-8 h-8 text-green-500" />
+            <CheckCircle className="w-8 h-8 text-primary" />
           </motion.div>
 
           <p className="text-sm text-muted-foreground mb-2">Coût total sur 5 ans</p>
@@ -148,16 +148,16 @@ const TcoResults = ({ formData, breakdown, alternatives, onReset, onBack }: Prop
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.1 }}
-              className="rounded-2xl border border-green-500/30 bg-green-500/10 p-5"
+              className="rounded-2xl border border-primary/30 bg-primary/10 p-5"
             >
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-9 h-9 rounded-xl bg-green-500/20 flex items-center justify-center">
-                  <Gift className="w-4 h-4 text-green-500" />
+                <div className="w-9 h-9 rounded-xl bg-primary/20 flex items-center justify-center">
+                  <Gift className="w-4 h-4 text-primary" />
                 </div>
-                <p className="text-sm font-semibold text-green-600 dark:text-green-400">Prime régionale</p>
+                <p className="text-sm font-semibold text-primary">Prime régionale</p>
               </div>
-              <p className="text-2xl font-bold text-green-600 dark:text-green-400">-{breakdown.prime.toLocaleString('fr-BE')} €</p>
-              <p className="text-xs text-green-600/70 dark:text-green-400/70 mt-1">⚠️ Sous conditions de revenus</p>
+              <p className="text-2xl font-bold text-primary">-{breakdown.prime.toLocaleString('fr-BE')} €</p>
+              <p className="text-xs text-primary/70 mt-1">⚠️ Sous conditions de revenus</p>
             </motion.div>
           )}
         </div>
@@ -178,7 +178,7 @@ const TcoResults = ({ formData, breakdown, alternatives, onReset, onBack }: Prop
                   <p className="text-2xl font-bold text-foreground">{alt.breakdown.total.toLocaleString('fr-BE')} €</p>
                   <p className="text-sm mt-1">
                     {alt.economie > 0 ? (
-                      <span className="text-green-500 font-semibold">Économie de {alt.economie.toLocaleString('fr-BE')} €</span>
+                      <span className="text-primary font-semibold">Économie de {alt.economie.toLocaleString('fr-BE')} €</span>
                     ) : (
                       <span className="text-red-500 font-semibold">Surcoût de {Math.abs(alt.economie).toLocaleString('fr-BE')} €</span>
                     )}
@@ -207,19 +207,19 @@ const TcoResults = ({ formData, breakdown, alternatives, onReset, onBack }: Prop
                 <p><strong>Taxes :</strong> Calculs officiels par région (Bruxelles, Flandre, Wallonie).</p>
                 <p><strong>Dépréciation :</strong> AutoScout24 BE, 50k+ ventes analysées.</p>
                 <p><strong>Primes :</strong> Sites régionaux officiels, conditions exactes applicables.</p>
-                <p><strong>Marge d'erreur :</strong> ±5% taxes, ±15% entretien, ±30% assurance.</p>
+                <p><strong>Marge d'erreur :</strong> ±10% taxes, ±15% entretien, ±30% assurance.</p>
               </AccordionContent>
             </AccordionItem>
           </Accordion>
 
           <p className="mt-4 text-xs text-muted-foreground italic">
-            ⚠️ Ces résultats sont des estimations. Vos coûts réels peuvent varier de ±5% à ±20% selon votre profil exact, votre historique de conduite et les fluctuations de prix.
+            ⚠️ Ces résultats sont des estimations avec une précision de ~90%. Vos coûts réels peuvent varier de ±10% à ±20% selon votre profil exact, votre historique de conduite et les fluctuations de prix.
           </p>
         </motion.div>
 
         {/* CTAs */}
         <div className="flex flex-wrap items-center justify-center gap-3">
-          <Button asChild className="h-12 px-6 rounded-2xl bg-green-500 hover:bg-green-600 text-white font-semibold">
+          <Button asChild className="h-12 px-6 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
             <Link to="/">
               <Car className="w-4 h-4 mr-2" />
               Voir véhicules correspondants

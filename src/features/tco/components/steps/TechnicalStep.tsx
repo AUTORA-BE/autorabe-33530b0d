@@ -18,8 +18,8 @@ const TechnicalStep = ({ formData, updateField }: Props) => {
   return (
     <div>
       <h2 className="text-2xl font-display font-bold text-foreground mb-2">Détails techniques</h2>
-      <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 mb-8">
-        <p className="text-sm text-blue-600 dark:text-blue-400">
+      <div className="p-3 rounded-xl bg-primary/10 border border-primary/20 mb-8">
+        <p className="text-sm text-primary">
           ℹ️ Valeurs pré-remplies selon votre véhicule. Ajustez si nécessaire.
         </p>
       </div>
@@ -46,7 +46,32 @@ const TechnicalStep = ({ formData, updateField }: Props) => {
             min={4}
             max={20}
             step={1}
-            className="[&_[role=slider]]:border-green-500 [&_[role=slider]]:bg-background [&_span:first-child>span]:bg-green-500"
+            className="[&_[role=slider]]:border-primary [&_[role=slider]]:bg-background [&_span:first-child>span]:bg-primary"
+          />
+        </div>
+
+        {/* Horsepower */}
+        <div>
+          <div className="flex items-center gap-2 mb-4">
+            <label className="text-sm font-medium text-foreground">Puissance (chevaux)</label>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <HelpCircle className="w-3.5 h-3.5 text-muted-foreground cursor-help" />
+              </TooltipTrigger>
+              <TooltipContent>Puissance du moteur en chevaux (ch/HP)</TooltipContent>
+            </Tooltip>
+          </div>
+          <div className="text-center mb-3">
+            <span className="text-3xl font-bold text-foreground tabular-nums">{formData.horsepower}</span>
+            <span className="text-sm text-muted-foreground ml-1">ch</span>
+          </div>
+          <Slider
+            value={[formData.horsepower]}
+            onValueChange={([v]) => updateField('horsepower', v)}
+            min={50}
+            max={800}
+            step={10}
+            className="[&_[role=slider]]:border-primary [&_[role=slider]]:bg-background [&_span:first-child>span]:bg-primary"
           />
         </div>
 
@@ -71,7 +96,7 @@ const TechnicalStep = ({ formData, updateField }: Props) => {
             min={isElectric ? 100 : 20}
             max={isElectric ? 300 : 200}
             step={1}
-            className="[&_[role=slider]]:border-green-500 [&_[role=slider]]:bg-background [&_span:first-child>span]:bg-green-500"
+            className="[&_[role=slider]]:border-primary [&_[role=slider]]:bg-background [&_span:first-child>span]:bg-primary"
           />
         </div>
 
@@ -87,8 +112,8 @@ const TechnicalStep = ({ formData, updateField }: Props) => {
                   onClick={() => updateField('euroNorm', opt.value)}
                   className={`p-3 rounded-xl border text-sm text-center transition-all ${
                     sel
-                      ? 'border-green-500 bg-green-500/10 font-semibold text-foreground'
-                      : 'border-border/50 bg-secondary/30 text-muted-foreground hover:border-green-500/50'
+                      ? 'border-primary bg-primary/10 font-semibold text-foreground'
+                      : 'border-border/50 bg-secondary/30 text-muted-foreground hover:border-primary/50'
                   }`}
                 >
                   {opt.label}

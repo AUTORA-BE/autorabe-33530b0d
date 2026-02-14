@@ -20,7 +20,7 @@ const UsageStep = ({ formData, updateField }: Props) => {
   const facteur = FACTEUR_REALITE[formData.usage][fuelCat] || 1.1;
   const surplus = Math.round((facteur - 1) * 100);
 
-  const kmColor = formData.kmPerYear < 10000 ? 'text-green-500' : formData.kmPerYear < 25000 ? 'text-yellow-500' : 'text-red-500';
+  const kmColor = formData.kmPerYear < 10000 ? 'text-primary' : formData.kmPerYear < 25000 ? 'text-yellow-500' : 'text-red-500';
 
   return (
     <div>
@@ -38,8 +38,8 @@ const UsageStep = ({ formData, updateField }: Props) => {
                 onClick={() => updateField('usage', opt.value)}
                 className={`p-4 rounded-2xl border-2 text-center transition-all ${
                   sel
-                    ? 'border-green-500 bg-green-500/10'
-                    : 'border-border/50 bg-secondary/30 hover:border-green-500/50'
+                    ? 'border-primary bg-primary/10'
+                    : 'border-border/50 bg-secondary/30 hover:border-primary/50'
                 }`}
               >
                 <div className="text-2xl mb-1">{opt.icon}</div>
@@ -70,7 +70,7 @@ const UsageStep = ({ formData, updateField }: Props) => {
             min={5000}
             max={50000}
             step={1000}
-            className="[&_[role=slider]]:border-green-500 [&_[role=slider]]:bg-background [&_span:first-child>span]:bg-green-500"
+            className="[&_[role=slider]]:border-primary [&_[role=slider]]:bg-background [&_span:first-child>span]:bg-primary"
           />
           <div className="flex justify-between text-xs text-muted-foreground mt-2">
             <span>5 000 km</span>

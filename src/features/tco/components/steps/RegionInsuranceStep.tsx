@@ -10,8 +10,8 @@ interface Props {
 
 const regionOptions: { value: Region; label: string; desc: string }[] = [
   { value: 'bruxelles', label: '🏙️ Bruxelles', desc: 'Taxes élevées • LEZ strict' },
-  { value: 'flandre', label: '🌾 Flandre', desc: 'Taxes moyennes • Primes 3 500€' },
-  { value: 'wallonie', label: '🌲 Wallonie', desc: 'Taxes basses • Primes 4 000€' },
+  { value: 'flandre', label: '🌾 Flandre', desc: 'Taxes moyennes • LEZ strict Anvers & Gand' },
+  { value: 'wallonie', label: '🌲 Wallonie', desc: 'Taxes basses' },
 ];
 
 const insuranceOptions: { value: InsuranceType; label: string; price: string; rec?: boolean; color: string }[] = [
@@ -40,8 +40,8 @@ const RegionInsuranceStep = ({ formData, updateField }: Props) => {
                 onClick={() => updateField('region', opt.value)}
                 className={`p-4 rounded-2xl border-2 text-center transition-all ${
                   sel
-                    ? 'border-green-500 bg-green-500/10'
-                    : 'border-border/50 bg-secondary/30 hover:border-green-500/50'
+                    ? 'border-primary bg-primary/10'
+                    : 'border-border/50 bg-secondary/30 hover:border-primary/50'
                 }`}
               >
                 <div className="text-lg font-semibold text-foreground">{opt.label}</div>
@@ -52,17 +52,11 @@ const RegionInsuranceStep = ({ formData, updateField }: Props) => {
         </div>
 
         {/* Dynamic info */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3">
           <div className="p-3 rounded-xl bg-secondary/50 text-center">
             <p className="text-xs text-muted-foreground">Taxe circulation</p>
             <p className="text-lg font-bold text-foreground">{taxe} €/an</p>
           </div>
-          {prime > 0 && (
-            <div className="p-3 rounded-xl bg-green-500/10 border border-green-500/20 text-center">
-              <p className="text-xs text-green-600 dark:text-green-400">Prime disponible</p>
-              <p className="text-lg font-bold text-green-600 dark:text-green-400">{prime.toLocaleString('fr-BE')} €</p>
-            </div>
-          )}
         </div>
 
         {/* Insurance */}
@@ -76,9 +70,9 @@ const RegionInsuranceStep = ({ formData, updateField }: Props) => {
                   key={opt.value}
                   onClick={() => updateField('insuranceType', opt.value)}
                   className={`relative p-4 rounded-2xl border-2 text-center transition-all ${
-                    sel
-                      ? 'border-green-500 bg-green-500/10'
-                      : 'border-border/50 bg-secondary/30 hover:border-green-500/50'
+                  sel
+                    ? 'border-primary bg-primary/10'
+                    : 'border-border/50 bg-secondary/30 hover:border-primary/50'
                   }`}
                 >
                   {opt.rec && (
