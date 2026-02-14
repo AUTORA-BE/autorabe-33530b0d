@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Upload, X, Car, Info, User, Camera, FileCheck, Building2, AlertTriangle, Leaf } from 'lucide-react';
+import { Upload, X, Car, Info, User, Camera, FileCheck, Building2, AlertTriangle, Leaf, CreditCard } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useListingLimit } from '@/features/subscription';
 
 const sellCarSchema = z.object({
   brand: z.string().min(1, "Required"),
@@ -66,6 +67,7 @@ export function SellCarForm({ editId }: SellCarFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(!!editId);
   const isEditMode = !!editId;
+  const { canPublish, activeCount, maxAllowed, isLoading: limitLoading } = useListingLimit();
 
   // Translated options
   const fuelTypes = [
@@ -244,6 +246,12 @@ export function SellCarForm({ editId }: SellCarFormProps) {
   };
 
   const onSubmit = async (data: SellCarFormData) => {
+    // Block new listings if limit reached (edits are always allowed)
+    if (!isEditMode && !canPublish) {
+      toast.error(`Vous avez atteint la limite de ${maxAllowed} annonces simultanées. Passez à un plan supérieur pour publier davantage.`);
+      return;
+    }
+
     setIsSubmitting(true);
     
     try {
@@ -407,8 +415,38 @@ export function SellCarForm({ editId }: SellCarFormProps) {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+    <>
+      {/* Listing limit banner */}
+      {!isEditMode && !canPublish && !limitLoading && (
+        <Card className="border-destructive bg-destructive/5 mb-6">
+          <CardContent className="flex flex-col sm:flex-row items-center gap-4 py-4">
+            <AlertTriangle className="h-6 w-6 text-destructive shrink-0" />
+            <div className="flex-1 text-center sm:text-left">
+              <p className="font-semibold text-foreground">
+                Limite atteinte ({activeCount}/{maxAllowed} annonces simultanées)
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Supprimez une annonce existante ou passez à un plan supérieur pour continuer.
+              </p>
+            </div>
+            <Link to="/pricing">
+              <Button size="sm" className="shrink-0">
+                <CreditCard className="h-4 w-4 mr-2" />
+                Voir les plans
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+      )}
+
+      {!isEditMode && canPublish && !limitLoading && maxAllowed !== null && (
+        <div className="mb-6 text-sm text-muted-foreground text-center">
+          {activeCount}/{maxAllowed} annonces simultanées utilisées
+        </div>
+      )}
+
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         {/* Photos Section */}
         <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
           <CardHeader>
@@ -1035,5 +1073,6 @@ export function SellCarForm({ editId }: SellCarFormProps) {
         </div>
       </form>
     </Form>
+    </>
   );
 }
