@@ -80,7 +80,7 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("Sending email to seller:", sellerEmail);
 
     const emailResponse = await resend.emails.send({
-      from: "AutoRa <onboarding@resend.dev>",
+      from: "AutoRa <noreply@autora.be>",
       to: [sellerEmail],
       subject: `Nouveau message concernant ${vehicleName}`,
       html: `

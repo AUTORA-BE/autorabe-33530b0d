@@ -60,7 +60,7 @@ const handler = async (req: Request): Promise<Response> => {
     const appUrl = "https://auto-belgium.lovable.app";
 
     const emailResponse = await resend.emails.send({
-      from: "AutoRa <onboarding@resend.dev>",
+      from: "AutoRa <noreply@autora.be>",
       to: [sellerEmail],
       subject,
       html: `
