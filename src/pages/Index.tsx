@@ -1,11 +1,12 @@
 import { useState, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header, Footer } from "@/shared/components";
-import { HeroSearch, BrandCarousel } from "@/features/search";
+import { HeroSearch } from "@/features/search";
 import SEOHead from "@/components/SEOHead";
-import SellCarBanner from "@/components/SellCarBanner";
 import ScrollReveal from "@/components/ScrollReveal";
 
+const SellCarBanner = lazy(() => import("@/components/SellCarBanner"));
+const BrandCarousel = lazy(() => import("@/features/search/components/BrandCarousel"));
 const FilterPanel = lazy(() => import("@/features/search/components/FilterPanel"));
 const PopularVehicles = lazy(() => import("@/features/listings/components/PopularVehicles"));
 const LoadMoreGrid = lazy(() => import("@/components/LoadMoreGrid"));
@@ -54,20 +55,24 @@ const Index = () => {
       />
       <Header />
       <main className="pt-20">
-        <ScrollReveal>
-          <SellCarBanner />
-        </ScrollReveal>
+        <Suspense fallback={<div className="h-[72px]" />}>
+          <ScrollReveal>
+            <SellCarBanner />
+          </ScrollReveal>
+        </Suspense>
 
         <ScrollReveal delay={0.1}>
           <HeroSearch onSearch={handleSearch} />
         </ScrollReveal>
 
-        <ScrollReveal delay={0.05} direction="left">
-          <BrandCarousel 
-            onBrandFilter={(brand) => updateFilter("brand", brand)} 
-            selectedBrand={filters.brand} 
-          />
-        </ScrollReveal>
+        <Suspense fallback={<div className="min-h-[180px]" />}>
+          <ScrollReveal delay={0.05} direction="left">
+            <BrandCarousel 
+              onBrandFilter={(brand) => updateFilter("brand", brand)} 
+              selectedBrand={filters.brand} 
+            />
+          </ScrollReveal>
+        </Suspense>
 
         <Suspense fallback={<div className="min-h-[300px]" />}>
           <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 400px" }}>
