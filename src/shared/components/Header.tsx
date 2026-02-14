@@ -18,6 +18,7 @@ import { useTheme } from "next-themes";
 import NavLink from "./NavLink";
 import DesktopActions from "./DesktopActions";
 import MobileMenu from "./MobileMenu";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 
 /**
  * Main header component with responsive navigation
@@ -33,6 +34,7 @@ const Header = () => {
   const { compareCount } = useCompareContext();
   const { theme, setTheme } = useTheme();
   const { language, setLanguage, t } = useLanguage();
+  const isAdmin = useIsAdmin(user?.id);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -133,7 +135,7 @@ const Header = () => {
           </nav>
 
           {/* Desktop Actions */}
-          <DesktopActions user={user} userProfile={userProfile} onLogout={handleLogout} t={t} />
+          <DesktopActions user={user} userProfile={userProfile} onLogout={handleLogout} t={t} isAdmin={isAdmin} />
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center gap-2">
@@ -168,6 +170,7 @@ const Header = () => {
           onLogout={handleLogout}
           onNavigate={navigate}
           t={t}
+          isAdmin={isAdmin}
         />
       </div>
     </header>
