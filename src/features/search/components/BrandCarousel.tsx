@@ -152,7 +152,7 @@ const BrandCarousel = memo(function BrandCarousel({
                 >
                   <motion.div
                     className={cn(
-                      "relative flex flex-col items-center justify-center p-3 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl transition-shadow duration-300 overflow-hidden",
+                      "relative flex flex-col items-center justify-center p-3 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl transition-shadow duration-300",
                       selectedBrand === brand.name
                         ? "bg-primary/10 border-2 border-primary shadow-lg shadow-primary/20 ring-2 ring-primary/30"
                         : "bg-card border border-border/50 hover:border-primary/60 hover:shadow-xl hover:shadow-primary/15"
@@ -165,7 +165,7 @@ const BrandCarousel = memo(function BrandCarousel({
                     whileTap={{ scale: 0.95 }}
                   >
                     {/* Shine effect overlay */}
-                    <span className="pointer-events-none absolute inset-0 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <span className="pointer-events-none absolute inset-0 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 overflow-hidden rounded-xl sm:rounded-2xl">
                       <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out bg-gradient-to-r from-transparent via-white/25 to-transparent" />
                     </span>
                     {/* Selection badge with pulse effect */}
