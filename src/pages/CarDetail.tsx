@@ -16,6 +16,7 @@ import {
   MessageCircle,
   ChevronLeft,
   ChevronRight,
+  Trash2,
 } from "lucide-react";
 import { Header, Footer } from "@/shared/components";
 import { CarCard, type Car } from "@/features/listings";
@@ -34,6 +35,7 @@ import BentoSpecs from "@/components/BentoSpecs";
 import AutoraTransparency from "@/components/AutoraTransparency";
 import SEOHead from "@/components/SEOHead";
 import ReportAdModal from "@/components/ReportAdModal";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 
 const CarDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -51,6 +53,32 @@ const CarDetail = () => {
   } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { cars: allCars } = useCarListings();
+  const [currentUser, setCurrentUser] = useState<string | undefined>(undefined);
+  const isAdmin = useIsAdmin(currentUser);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setCurrentUser(session?.user?.id);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
+      setCurrentUser(session?.user?.id);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleAdminDelete = async () => {
+    if (!id || !isAdmin) return;
+    const confirmed = window.confirm("⚠️ Supprimer définitivement cette annonce ? Cette action est irréversible.");
+    if (!confirmed) return;
+
+    const { error } = await supabase.from("car_listings").delete().eq("id", id);
+    if (error) {
+      toast({ title: "Erreur", description: "Impossible de supprimer l'annonce", variant: "destructive" });
+    } else {
+      toast({ title: "Annonce supprimée", description: "L'annonce a été supprimée avec succès" });
+      navigate("/");
+    }
+  };
 
   // Track view when page loads
   useTrackView(id);
@@ -449,6 +477,18 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                   sellerName={sellerName}
                   tvaNumber={dbListing?.tva_number}
                 />
+
+                {/* Admin Delete Button - Mobile */}
+                {isAdmin && (
+                  <Button
+                    onClick={handleAdminDelete}
+                    variant="destructive"
+                    className="w-full h-11 mt-2"
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Supprimer (Admin)
+                  </Button>
+                )}
               </div>
 
               {/* Bento Specifications */}
@@ -588,6 +628,20 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                     carModel={car.model}
                   />
                 </div>
+
+                {/* Admin Delete Button - Desktop */}
+                {isAdmin && (
+                  <div className="mt-3 pt-3 border-t border-border">
+                    <Button
+                      onClick={handleAdminDelete}
+                      variant="destructive"
+                      className="w-full h-10"
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Supprimer cette annonce (Admin)
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
