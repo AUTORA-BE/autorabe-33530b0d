@@ -1,5 +1,5 @@
 /**
- * Create alert page with multi-criteria form
+ * Create alert page — mobile-first layout
  * @module pages
  */
 import { useEffect, useState } from "react";
@@ -12,7 +12,6 @@ import { User } from "@supabase/supabase-js";
 import { Header, Footer } from "@/shared/components";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -105,235 +104,215 @@ export default function CreerAlerte() {
       <SEOHead title="Créer une alerte | AutoRA" description="Définissez vos critères et soyez notifié des nouvelles annonces" />
       <Header />
       <main className="min-h-screen bg-background pt-24 pb-16">
-        <div className="container mx-auto px-6 max-w-2xl">
+        <div className="container mx-auto px-4 sm:px-6 max-w-2xl">
+          {/* Back */}
           <Button
             variant="ghost"
-            className="mb-6 gap-2 rounded-xl"
+            size="sm"
+            className="mb-4 gap-1.5 rounded-xl -ml-2"
             onClick={() => navigate("/mes-alertes")}
           >
             <ArrowLeft className="w-4 h-4" />
-            Retour aux alertes
+            Retour
           </Button>
 
-          <h1 className="font-display text-3xl font-bold text-foreground mb-2">
+          <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground mb-1">
             Créer une alerte
           </h1>
-          <p className="text-muted-foreground mb-8">
-            Définissez vos critères et soyez notifié des nouvelles annonces
+          <p className="text-sm text-muted-foreground mb-6">
+            Définissez vos critères et soyez notifié automatiquement
           </p>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             {/* Alert name */}
-            <Card className="rounded-2xl">
-              <CardContent className="p-6">
-                <Label htmlFor="name" className="text-sm font-semibold mb-2 block">
-                  Nom de l'alerte
-                </Label>
-                <Input
-                  id="name"
-                  placeholder="Ex : Golf diesel pas chère"
-                  className="rounded-xl"
-                  {...register("name")}
-                />
-                {errors.name && (
-                  <p className="text-destructive text-xs mt-1">{errors.name.message}</p>
-                )}
-              </CardContent>
-            </Card>
+            <div className="rounded-2xl border border-border bg-card p-4">
+              <Label htmlFor="name" className="text-sm font-semibold mb-2 block">
+                Nom de l'alerte
+              </Label>
+              <Input
+                id="name"
+                placeholder="Ex : Golf diesel pas chère"
+                className="rounded-xl"
+                {...register("name")}
+              />
+              {errors.name && (
+                <p className="text-destructive text-xs mt-1">{errors.name.message}</p>
+              )}
+            </div>
 
             {/* Vehicle criteria */}
-            <Card className="rounded-2xl">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg">🚗 Critères du véhicule</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label className="text-sm mb-1.5 block">Marque</Label>
-                    <Controller
-                      name="brand"
-                      control={control}
-                      render={({ field }) => (
-                        <Select onValueChange={field.onChange} value={field.value}>
-                          <SelectTrigger className="rounded-xl">
-                            <SelectValue placeholder="Toutes marques" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {BRANDS.map((b) => (
-                              <SelectItem key={b} value={b.toLowerCase()}>
-                                {b}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-sm mb-1.5 block">Prix maximum</Label>
-                    <Input
-                      type="number"
-                      placeholder="Ex : 25000"
-                      className="rounded-xl"
-                      {...register("max_price", { valueAsNumber: true })}
-                    />
-                  </div>
-                </div>
+            <div className="rounded-2xl border border-border bg-card p-4 space-y-4">
+              <p className="font-semibold text-sm text-foreground">🚗 Critères du véhicule</p>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label className="text-sm mb-1.5 block">Année minimum</Label>
-                    <Input
-                      type="number"
-                      placeholder="Ex : 2018"
-                      className="rounded-xl"
-                      {...register("min_year", { valueAsNumber: true })}
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-sm mb-1.5 block">Km maximum</Label>
-                    <Input
-                      type="number"
-                      placeholder="Ex : 100000"
-                      className="rounded-xl"
-                      {...register("max_km", { valueAsNumber: true })}
-                    />
-                  </div>
-                </div>
-
-                {/* Fuel types */}
+              {/* Brand + Price */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <Label className="text-sm mb-2 block">Types de carburant</Label>
-                  <div className="flex flex-wrap gap-3">
-                    {FUEL_TYPES.map((fuel) => (
-                      <label
-                        key={fuel.value}
-                        className="flex items-center gap-2 cursor-pointer"
-                      >
-                        <Checkbox
-                          checked={fuelTypes.includes(fuel.value)}
-                          onCheckedChange={(checked) => {
-                            const current = fuelTypes;
-                            setValue(
-                              "fuel_types",
-                              checked
-                                ? [...current, fuel.value]
-                                : current.filter((f) => f !== fuel.value)
-                            );
-                          }}
-                        />
-                        <span className="text-sm">{fuel.label}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Options */}
-                <div className="flex flex-col gap-3 pt-2">
+                  <Label className="text-xs mb-1.5 block text-muted-foreground">Marque</Label>
                   <Controller
-                    name="lez_compatible"
+                    name="brand"
                     control={control}
                     render={({ field }) => (
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <Checkbox
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                        <span className="text-sm">🏙️ Compatible LEZ uniquement</span>
-                      </label>
-                    )}
-                  />
-                  <Controller
-                    name="carpass_verified"
-                    control={control}
-                    render={({ field }) => (
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <Checkbox
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                        <span className="text-sm">✅ Car-Pass vérifié uniquement</span>
-                      </label>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <SelectTrigger className="rounded-xl h-10">
+                          <SelectValue placeholder="Toutes marques" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {BRANDS.map((b) => (
+                            <SelectItem key={b} value={b.toLowerCase()}>
+                              {b}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     )}
                   />
                 </div>
-              </CardContent>
-            </Card>
+                <div>
+                  <Label className="text-xs mb-1.5 block text-muted-foreground">Prix maximum</Label>
+                  <Input
+                    type="number"
+                    placeholder="25 000 €"
+                    className="rounded-xl h-10"
+                    {...register("max_price", { valueAsNumber: true })}
+                  />
+                </div>
+              </div>
 
-            {/* Notification frequency */}
-            <Card className="rounded-2xl">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg">🔔 Fréquence des notifications</CardTitle>
-              </CardHeader>
-              <CardContent>
+              {/* Year + Km */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label className="text-xs mb-1.5 block text-muted-foreground">Année min.</Label>
+                  <Input
+                    type="number"
+                    placeholder="2018"
+                    className="rounded-xl h-10"
+                    {...register("min_year", { valueAsNumber: true })}
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs mb-1.5 block text-muted-foreground">Km max.</Label>
+                  <Input
+                    type="number"
+                    placeholder="100 000"
+                    className="rounded-xl h-10"
+                    {...register("max_km", { valueAsNumber: true })}
+                  />
+                </div>
+              </div>
+
+              {/* Fuel types */}
+              <div>
+                <Label className="text-xs mb-2 block text-muted-foreground">Carburant</Label>
+                <div className="flex flex-wrap gap-2">
+                  {FUEL_TYPES.map((fuel) => (
+                    <label
+                      key={fuel.value}
+                      className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full border cursor-pointer transition-colors ${
+                        fuelTypes.includes(fuel.value)
+                          ? "border-primary bg-primary/10 text-primary"
+                          : "border-border text-muted-foreground hover:border-primary/30"
+                      }`}
+                    >
+                      <Checkbox
+                        className="hidden"
+                        checked={fuelTypes.includes(fuel.value)}
+                        onCheckedChange={(checked) => {
+                          const current = fuelTypes;
+                          setValue(
+                            "fuel_types",
+                            checked
+                              ? [...current, fuel.value]
+                              : current.filter((f) => f !== fuel.value)
+                          );
+                        }}
+                      />
+                      {fuel.label}
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Options */}
+              <div className="flex flex-wrap gap-4 pt-1">
                 <Controller
-                  name="frequency"
+                  name="lez_compatible"
                   control={control}
                   render={({ field }) => (
-                    <RadioGroup
-                      value={field.value}
-                      onValueChange={field.onChange}
-                      className="space-y-3"
-                    >
-                      {[
-                        {
-                          value: "instant",
-                          icon: Zap,
-                          title: "Instantané (recommandé)",
-                          desc: "Recevez un email dès qu'une annonce correspond",
-                        },
-                        {
-                          value: "daily",
-                          icon: Calendar,
-                          title: "Quotidien",
-                          desc: "Un résumé par jour",
-                        },
-                        {
-                          value: "weekly",
-                          icon: Calendar,
-                          title: "Hebdomadaire",
-                          desc: "Un résumé par semaine",
-                        },
-                      ].map(({ value, icon: Icon, title, desc }) => (
-                        <label
-                          key={value}
-                          className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-colors ${
-                            field.value === value
-                              ? "border-primary bg-primary/5"
-                              : "border-border hover:border-primary/30"
-                          }`}
-                        >
-                          <RadioGroupItem value={value} className="mt-0.5" />
-                          <div className="flex-1">
-                            <p className="font-medium text-sm flex items-center gap-1.5">
-                              <Icon className="w-4 h-4 text-primary" />
-                              {title}
-                            </p>
-                            <p className="text-xs text-muted-foreground mt-0.5">
-                              {desc}
-                            </p>
-                          </div>
-                        </label>
-                      ))}
-                    </RadioGroup>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                      <span className="text-xs">🏙️ LEZ uniquement</span>
+                    </label>
                   )}
                 />
-              </CardContent>
-            </Card>
+                <Controller
+                  name="carpass_verified"
+                  control={control}
+                  render={({ field }) => (
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                      <span className="text-xs">✅ Car-Pass vérifié</span>
+                    </label>
+                  )}
+                />
+              </div>
+            </div>
 
-            {/* Actions */}
-            <div className="flex gap-3">
+            {/* Notification frequency */}
+            <div className="rounded-2xl border border-border bg-card p-4">
+              <p className="font-semibold text-sm text-foreground mb-3">🔔 Fréquence</p>
+              <Controller
+                name="frequency"
+                control={control}
+                render={({ field }) => (
+                  <RadioGroup
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    className="space-y-2"
+                  >
+                    {[
+                      { value: "instant", icon: Zap, title: "Instantané", desc: "Dès qu'une annonce correspond", recommended: true },
+                      { value: "daily", icon: Calendar, title: "Quotidien", desc: "Un résumé par jour" },
+                      { value: "weekly", icon: Calendar, title: "Hebdomadaire", desc: "Un résumé par semaine" },
+                    ].map(({ value, icon: Icon, title, desc, recommended }) => (
+                      <label
+                        key={value}
+                        className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${
+                          field.value === value
+                            ? "border-primary bg-primary/5"
+                            : "border-border hover:border-primary/30"
+                        }`}
+                      >
+                        <RadioGroupItem value={value} className="shrink-0" />
+                        <Icon className="w-4 h-4 text-primary shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-sm text-foreground">
+                            {title}
+                            {recommended && (
+                              <span className="ml-1.5 text-[10px] text-primary font-normal">recommandé</span>
+                            )}
+                          </p>
+                          <p className="text-[11px] text-muted-foreground">{desc}</p>
+                        </div>
+                      </label>
+                    ))}
+                  </RadioGroup>
+                )}
+              />
+            </div>
+
+            {/* Actions — full width on mobile */}
+            <div className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 pt-2 pb-4">
               <Button
                 type="button"
                 variant="outline"
-                className="flex-1 rounded-2xl"
+                className="sm:flex-1 rounded-2xl"
                 onClick={() => navigate("/mes-alertes")}
               >
                 Annuler
               </Button>
               <Button
                 type="submit"
-                className="flex-1 bg-primary hover:bg-primary/90 rounded-2xl gap-2"
+                className="sm:flex-1 rounded-2xl gap-2"
                 disabled={createAlert.isPending}
               >
                 <Bell className="w-4 h-4" />
