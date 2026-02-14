@@ -87,7 +87,7 @@ export default function Pricing() {
               Vendez sur AutoRa, simplement
             </h1>
             <p className="text-muted-foreground text-lg">
-              Gratuit pour les particuliers jusqu'à {FREE_PARTICULIER_LIMIT} annonces. Des plans Pro pour les professionnels.
+              Gratuit pour les particuliers jusqu'à {FREE_PARTICULIER_LIMIT} annonces simultanées. Des plans Pro pour les professionnels.
             </p>
           </div>
 
@@ -112,7 +112,7 @@ export default function Pricing() {
           <div className="max-w-lg mx-auto mb-16">
             <h2 className="text-xl font-semibold text-foreground mb-2 text-center">Particulier</h2>
             <p className="text-muted-foreground text-center text-sm mb-6">
-              Gratuit jusqu'à {FREE_PARTICULIER_LIMIT} annonces actives, sans engagement.
+              Gratuit jusqu'à {FREE_PARTICULIER_LIMIT} annonces simultanées, sans engagement.
             </p>
 
             <Card className="border-border">
@@ -121,7 +121,7 @@ export default function Pricing() {
                   <User className="h-6 w-6" />
                 </div>
                 <CardTitle className="text-xl">Gratuit</CardTitle>
-                <CardDescription>Jusqu'à {FREE_PARTICULIER_LIMIT} annonces actives</CardDescription>
+                <CardDescription>Jusqu'à {FREE_PARTICULIER_LIMIT} annonces simultanées</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="text-center mb-6">
@@ -131,7 +131,7 @@ export default function Pricing() {
                 <ul className="space-y-3">
                   <li className="flex items-start gap-2 text-sm">
                     <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                    <span className="text-foreground">Jusqu'à {FREE_PARTICULIER_LIMIT} annonces actives gratuitement</span>
+                    <span className="text-foreground">Jusqu'à {FREE_PARTICULIER_LIMIT} annonces simultanées gratuitement</span>
                   </li>
                   <li className="flex items-start gap-2 text-sm">
                     <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
@@ -203,7 +203,7 @@ export default function Pricing() {
                     </div>
                     <CardTitle className="text-xl">{tier.name}</CardTitle>
                     <CardDescription>
-                      {tier.maxListings ? `Jusqu'à ${tier.maxListings} annonces` : 'Annonces illimitées'}
+                      {tier.maxListings ? `${tier.maxListings} annonces simultanées` : 'Annonces simultanées illimitées'}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="flex-1">
