@@ -8,6 +8,7 @@ import CarChatbot from "@/components/CarChatbot";
 import SEOHead from "@/components/SEOHead";
 import SellCarBanner from "@/components/SellCarBanner";
 import ScrollReveal from "@/components/ScrollReveal";
+import ScrollToTop from "@/components/ScrollToTop";
 import { useFilteredInfiniteCarListings } from "@/features/listings";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -109,6 +110,7 @@ const Index = () => {
         </ScrollReveal>
       </main>
       <Footer />
+      <ScrollToTop />
       <CarChatbot />
     </div>
   );
