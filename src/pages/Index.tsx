@@ -61,9 +61,7 @@ const Index = () => {
           </ScrollReveal>
         </Suspense>
 
-        <ScrollReveal delay={0.1}>
-          <HeroSearch onSearch={handleSearch} />
-        </ScrollReveal>
+        <HeroSearch onSearch={handleSearch} />
 
         <Suspense fallback={<div className="min-h-[180px]" />}>
           <ScrollReveal delay={0.05} direction="left">
