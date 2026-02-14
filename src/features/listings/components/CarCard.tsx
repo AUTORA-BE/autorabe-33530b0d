@@ -1,12 +1,13 @@
 import { forwardRef, memo } from "react";
 import { motion } from "framer-motion";
-import { Fuel, Calendar, Gauge, Shield, MapPin, Heart, GitCompareArrows } from "lucide-react";
+import { Fuel, Calendar, Gauge, MapPin, Heart, GitCompareArrows, Leaf, AlertTriangle, Ban, Info, CheckCircle } from "lucide-react";
 import { useCompareContext } from "@/features/compare";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useHapticFeedback } from "@/hooks/useHapticFeedback";
 import { toast } from "sonner";
 import { calculerStatutLEZ } from "@/lib/lezData";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
 import type { Vehicle } from "../types/vehicle.types";
 
 /**
@@ -26,40 +27,22 @@ export interface CarCardProps {
 /**
  * Get LEZ badge configuration using centralized LEZ calendar
  */
+const lezBadgeConfig = {
+  autorise: { text: "LEZ OK", className: "bg-primary/90 hover:bg-primary text-primary-foreground border-0", Icon: Leaf },
+  alerte: { text: "LEZ", className: "bg-amber-500/90 hover:bg-amber-500 text-white border-0", Icon: AlertTriangle },
+  derogation_requise: { text: "Dérogation", className: "bg-amber-500/90 hover:bg-amber-500 text-white border-0", Icon: AlertTriangle },
+  interdit: { text: "Interdit", className: "bg-red-500/90 hover:bg-red-500 text-white border-0", Icon: Ban },
+  inconnu: { text: "LEZ ?", className: "bg-muted text-muted-foreground border-0", Icon: Info },
+} as const;
+
 const getLezBadgeInfo = (euroNorm: string, fuelType: string) => {
   if (!euroNorm || !fuelType) return null;
-
   const result = calculerStatutLEZ(fuelType, euroNorm);
-  const s = result.global;
-
-  switch (s.statut) {
-    case "autorise":
-      return {
-        text: "LEZ OK",
-        color: "bg-primary/15 text-primary",
-        details: result.details,
-      };
-    case "alerte":
-      return {
-        text: `LEZ ${s.anneeInterdiction}`,
-        color: "bg-amber-500/15 text-amber-600 dark:text-amber-400",
-        details: result.details,
-      };
-    case "derogation_requise":
-      return {
-        text: "Dérogation",
-        color: "bg-amber-500/15 text-amber-600 dark:text-amber-400",
-        details: result.details,
-      };
-    case "interdit":
-      return {
-        text: "LEZ Interdit",
-        color: "bg-red-500/15 text-red-600 dark:text-red-400",
-        details: result.details,
-      };
-    default:
-      return null;
-  }
+  const config = lezBadgeConfig[result.global.statut];
+  const badgeText = result.global.statut === "alerte"
+    ? `LEZ ${result.global.anneeInterdiction}`
+    : config.text;
+  return { config, badgeText, details: result.details };
 };
 
 /**
@@ -203,15 +186,17 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
         </div>
 
         {/* Badges */}
-        <div className="absolute top-3 left-3 flex flex-wrap gap-2">
+        <div className="absolute top-3 left-3 flex flex-col gap-2 z-10">
           {lezBadge && (
             <TooltipProvider delayDuration={200}>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-xs font-semibold cursor-help ${lezBadge.color}`}>
-                    <Shield className="w-3 h-3" />
-                    {lezBadge.text}
-                  </span>
+                  <div>
+                    <Badge className={`${lezBadge.config.className} backdrop-blur-sm shadow-lg cursor-help`}>
+                      <lezBadge.config.Icon className="w-3 h-3 mr-1" />
+                      {lezBadge.badgeText}
+                    </Badge>
+                  </div>
                 </TooltipTrigger>
                 <TooltipContent side="bottom" className="max-w-xs p-3">
                   <p className="font-semibold text-xs mb-2">Compatibilité LEZ :</p>
@@ -233,10 +218,10 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
             </TooltipProvider>
           )}
           {car.hasCarPass && (
-            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-xl text-xs font-semibold bg-background/90 backdrop-blur-sm text-foreground shadow-sm">
-              <Shield className="w-3 h-3 text-primary" />
+            <Badge className="bg-primary/90 hover:bg-primary text-primary-foreground border-0 backdrop-blur-sm shadow-lg">
+              <CheckCircle className="w-3 h-3 mr-1" />
               Car-Pass
-            </span>
+            </Badge>
           )}
         </div>
 
