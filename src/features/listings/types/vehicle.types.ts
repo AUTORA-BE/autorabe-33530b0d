@@ -49,6 +49,8 @@ export interface Vehicle {
   isLezCompatible: boolean;
   /** Car-Pass verification status (mandatory in Belgium) */
   hasCarPass: boolean;
+  /** Seller type (private/professional) */
+  sellerType: string;
 }
 
 /**
