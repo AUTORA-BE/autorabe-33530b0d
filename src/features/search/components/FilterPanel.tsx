@@ -3,7 +3,7 @@
  * @module features/search/components
  */
 
-import React, { useState, useEffect, memo } from "react";
+import React, { useState, useEffect, memo, forwardRef } from "react";
 import { Fuel, Calendar, Gauge, Settings2, Leaf, X, ChevronDown, Euro, Car, MapPin } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -45,14 +45,14 @@ function FilterSection({ icon, title, children }: { icon: React.ReactNode; title
  * FilterPanel provides a comprehensive set of filters for vehicle search
  * including brand, model, price, year, mileage, fuel type, and more
  */
-const FilterPanel = memo(function FilterPanel({
+const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function FilterPanel({
   isOpen,
   onClose,
   filters,
   onFilterChange,
   onReset,
   resultsCount,
-}: FilterPanelProps) {
+}, ref) {
   const brands = getAllBrands();
   const { t } = useLanguage();
   const [models, setModels] = useState<string[]>([]);
@@ -123,8 +123,8 @@ const FilterPanel = memo(function FilterPanel({
         />
       )}
 
-      {/* Sidebar */}
       <aside
+        ref={ref}
         className={`
           fixed lg:sticky top-0 left-0 z-50 lg:z-auto lg:top-20
           w-full sm:w-80 h-dvh lg:h-[calc(100vh-5rem)] overflow-y-auto scrollbar-thin
@@ -394,6 +394,6 @@ const FilterPanel = memo(function FilterPanel({
       </aside>
     </>
   );
-});
+}));
 
 export default FilterPanel;
