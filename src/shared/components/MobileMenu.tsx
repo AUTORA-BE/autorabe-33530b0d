@@ -4,7 +4,7 @@
  */
 
 import { Link } from "react-router-dom";
-import { Heart, MessageCircle, HelpCircle, GitCompareArrows, LayoutDashboard, Settings, LogOut, User, Calculator, Mail, Bell, ShieldCheck } from "lucide-react";
+import { Heart, MessageCircle, HelpCircle, GitCompareArrows, LayoutDashboard, Settings, LogOut, User, Calculator, Mail, Bell, ShieldCheck, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { prefetchRoute } from "@/utils/prefetchRoutes";
 import { User as SupabaseUser } from "@supabase/supabase-js";
@@ -103,6 +103,15 @@ const MobileMenu = ({
         >
           <Calculator className="w-5 h-5" />
           Calculateur TCO
+        </Link>
+        <Link
+          to="/pricing"
+          onMouseEnter={() => prefetchRoute("/pricing")}
+          className="text-foreground font-medium py-3 px-4 rounded-2xl hover:bg-secondary/50 transition-colors flex items-center gap-3"
+          onClick={handleLink}
+        >
+          <CreditCard className="w-5 h-5" />
+          Tarifs
         </Link>
         <Link
           to="/contact"
