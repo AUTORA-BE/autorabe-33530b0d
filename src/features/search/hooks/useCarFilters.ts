@@ -91,6 +91,11 @@ export const useCarFilters = (vehicles: Vehicle[]) => {
       result = result.filter((vehicle) => vehicle.isLezCompatible);
     }
 
+    // Seller type filter
+    if (filters.sellerTypeFilter) {
+      result = result.filter((vehicle) => vehicle.sellerType === filters.sellerTypeFilter);
+    }
+
     // Sorting
     switch (sortBy) {
       case "price-asc":
@@ -148,6 +153,7 @@ export const useCarFilters = (vehicles: Vehicle[]) => {
     if (filters.yearMin > 2010 || filters.yearMax < 2026) count++;
     if (filters.kmMin > 0 || filters.kmMax < 200000) count++;
     if (filters.lezOnly) count++;
+    if (filters.sellerTypeFilter) count++;
     return count;
   }, [filters]);
 

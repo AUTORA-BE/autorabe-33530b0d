@@ -171,6 +171,11 @@ function applyFilters<T>(query: T, filters: VehicleFilters): T {
     q = q.or('euro_norm.in.(Euro 6,Euro 6b,Euro 6c,Euro 6d),fuel_type.ilike.%lectrique%');
   }
 
+  // Seller type filter
+  if (filters.sellerTypeFilter) {
+    q = q.eq('seller_type', filters.sellerTypeFilter);
+  }
+
   return q as T;
 }
 
