@@ -252,7 +252,7 @@ export function ChatWindow({
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full overflow-hidden">
       {/* Header */}
       <ChatHeader
         otherUserName={conversationDetails?.otherUserName || 'Utilisateur'}
@@ -266,7 +266,7 @@ export function ChatWindow({
       />
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+      <div className="flex-1 overflow-y-auto min-h-0 p-4 space-y-3">
         {messages.length === 0 ? (
           <div className="flex-1 flex items-center justify-center text-muted-foreground text-center py-8">
             <p>{t('messages.startConversation') || "Envoyez un message pour démarrer la conversation"}</p>

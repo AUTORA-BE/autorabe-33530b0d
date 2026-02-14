@@ -70,7 +70,7 @@ const TcoStepper = ({
           <span>Étape {step + 1}/7</span>
           <span className="truncate ml-2">{stepTitles[step]}</span>
         </div>
-        <div className="h-1 w-full rounded-full bg-secondary overflow-hidden mb-6 sm:mb-8">
+        <div className="h-1 sm:h-1.5 w-full rounded-full bg-secondary overflow-hidden mb-6 sm:mb-8">
           <motion.div
             className="h-full bg-primary rounded-full"
             initial={false}
