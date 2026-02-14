@@ -36,6 +36,7 @@ const AdminReports = lazy(() => import("./pages/AdminReports"));
 const CalculateurTCO = lazy(() => import("./pages/CalculateurTCO"));
 const MesAlertes = lazy(() => import("./pages/MesAlertes"));
 const CreerAlerte = lazy(() => import("./pages/CreerAlerte"));
+const Pricing = lazy(() => import("./pages/Pricing"));
 
 /** Minimal loading fallback shown while lazy chunks load */
 function PageLoader() {
@@ -94,6 +95,7 @@ function AppRoutes() {
       <Route path="/calculateur-tco" element={<PageTransition><CalculateurTCO /></PageTransition>} />
       <Route path="/mes-alertes" element={<PageTransition><MesAlertes /></PageTransition>} />
       <Route path="/mes-alertes/creer" element={<PageTransition><CreerAlerte /></PageTransition>} />
+      <Route path="/pricing" element={<PageTransition><Pricing /></PageTransition>} />
       <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
     </Routes>
   );
