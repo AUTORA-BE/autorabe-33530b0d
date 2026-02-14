@@ -14,6 +14,20 @@
       body{font-family:system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
       #root{min-height:100vh}
     </style>
+    <script>
+      // Prefetch critical API data in parallel with JS bundle to break request chain
+      (function(){
+        var base='https://jbdsjqoonpieusfvkhyo.supabase.co/rest/v1/car_listings_public';
+        var key='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpiZHNqcW9vbnBpZXVzZnZraHlvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU2MTY2MzIsImV4cCI6MjA4MTE5MjYzMn0.O9oo6YjMyI6gjpGcSRCnk6GcDBBXj8PbUslDRV4jB0o';
+        var h={'apikey':key,'Authorization':'Bearer '+key,'Accept':'application/json'};
+        window.__prefetchedPopular=fetch(base+'?select=*&order=created_at.desc&limit=8',{headers:h}).then(function(r){return r.json()}).catch(function(){return null});
+        var h2={'apikey':key,'Authorization':'Bearer '+key,'Accept':'application/json','Prefer':'count=exact','Range':'0-19'};
+        window.__prefetchedListings=fetch(base+'?select=*&order=created_at.desc',{headers:h2}).then(function(r){
+          var cr=r.headers.get('content-range');
+          return r.json().then(function(d){return{data:d,count:cr}});
+        }).catch(function(){return null});
+      })();
+    </script>
     <title>AutoRa | Trouvez votre prochaine voiture en Belgique</title>
     <meta name="description" content="AutoRa - La marketplace automobile belge de confiance. Trouvez des milliers de véhicules vérifiés avec Car-Pass et compatibilité LEZ garantie.">
     <meta name="author" content="AutoRa" />
