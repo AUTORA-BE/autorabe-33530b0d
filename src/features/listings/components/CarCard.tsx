@@ -118,19 +118,34 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
   return (
     <motion.article
       ref={ref as React.Ref<HTMLElement>}
-      whileHover={{ y: -6, scale: 1.01 }}
-      whileTap={{ scale: 0.98 }}
-      transition={{ type: "spring", stiffness: 400, damping: 25 }}
-      className="rounded-2xl overflow-hidden bg-card border border-border/50 group cursor-pointer shadow-sm hover:shadow-xl active:shadow-lg touch-target"
+      whileHover={{ y: -8 }}
+      whileTap={{ scale: 0.97 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      className="rounded-2xl overflow-hidden bg-card border border-border/50 group cursor-pointer touch-target"
+      style={{
+        boxShadow: "var(--shadow-card)",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.boxShadow = "var(--shadow-elevated)";
+        e.currentTarget.style.borderColor = "hsl(var(--primary) / 0.2)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.boxShadow = "var(--shadow-card)";
+        e.currentTarget.style.borderColor = "";
+      }}
       onClick={handleClick}
     >
       <div className="relative h-48 md:h-56 overflow-hidden">
-        <img
+        <motion.img
           src={car.image}
           alt={getAltText()}
           loading="lazy"
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          className="w-full h-full object-cover"
+          whileHover={{ scale: 1.08 }}
+          transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
         />
+        {/* Gradient overlay on hover */}
+        <div className="absolute inset-0 bg-gradient-to-t from-foreground/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
         {/* Action Buttons */}
         <div className="absolute top-3 right-3 flex flex-col gap-2">
@@ -186,16 +201,21 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
 
         {/* Price Badge */}
         <div className="absolute bottom-3 right-3">
-          <span className="px-3 py-2 rounded-2xl bg-background/95 backdrop-blur-sm font-display text-lg font-bold text-foreground shadow-sm">
+          <motion.span
+            className="inline-block px-3 py-2 rounded-2xl bg-background/95 backdrop-blur-sm font-display text-lg font-bold text-foreground"
+            style={{ boxShadow: "0 2px 12px -2px hsl(var(--foreground) / 0.1)" }}
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: "spring", stiffness: 400, damping: 20 }}
+          >
             {formatPrice(car.price)}
-          </span>
+          </motion.span>
         </div>
       </div>
 
       {/* Content */}
       <div className="p-5">
         {/* Title */}
-        <h3 className="font-display text-lg font-bold text-foreground mb-1 group-hover:text-primary transition-colors">
+        <h3 className="font-display text-lg font-bold text-foreground mb-1 group-hover:text-primary transition-colors duration-300">
           {car.brand} {car.model}
         </h3>
 
@@ -207,15 +227,15 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
 
         {/* Tags */}
         <div className="flex flex-wrap gap-2">
-          <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-2xl bg-secondary text-sm text-muted-foreground">
+          <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-2xl bg-secondary text-sm text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-colors duration-300">
             <Calendar className="w-3.5 h-3.5" />
             {car.year}
           </span>
-          <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-2xl bg-secondary text-sm text-muted-foreground">
+          <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-2xl bg-secondary text-sm text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-colors duration-300">
             <Gauge className="w-3.5 h-3.5" />
             {formatMileage(car.mileage)}
           </span>
-          <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-2xl bg-secondary text-sm text-muted-foreground">
+          <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-2xl bg-secondary text-sm text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-colors duration-300">
             <Fuel className="w-3.5 h-3.5" />
             {car.fuelType}
           </span>
