@@ -186,6 +186,31 @@ export function useAuth() {
   }, []);
 
   /**
+   * Sign in with Apple OAuth
+   */
+  const signInWithApple = useCallback(async (): Promise<AuthResult> => {
+    try {
+      const result = await lovable.auth.signInWithOAuth('apple', {
+        redirect_uri: window.location.origin,
+      });
+
+      if (result.error) {
+        return {
+          success: false,
+          error: { type: 'unknown', message: result.error.message }
+        };
+      }
+
+      return { success: true };
+    } catch (error) {
+      return {
+        success: false,
+        error: { type: 'network_error', message: 'Network error occurred' }
+      };
+    }
+  }, []);
+
+  /**
    * Resend verification email
    */
   const resendVerificationEmail = useCallback(async (email: string): Promise<AuthResult> => {
@@ -225,6 +250,7 @@ export function useAuth() {
     signOut,
     resetPassword,
     signInWithGoogle,
+    signInWithApple,
     resendVerificationEmail,
   };
 }
