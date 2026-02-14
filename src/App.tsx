@@ -9,7 +9,7 @@ import { CompareProvider } from "@/features/compare";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { AnimatePresence } from "framer-motion";
 import PageTransition from "@/components/PageTransition";
-import CarChatbot from "@/components/CarChatbot";
+const CarChatbot = lazy(() => import("@/components/CarChatbot"));
 import ScrollToTop from "@/components/ScrollToTop";
 
 // Eagerly loaded — critical path
@@ -117,7 +117,7 @@ const App = () => (
               <AnimatedRoutes />
             </Suspense>
             <ScrollToTop />
-            <CarChatbot />
+            <Suspense fallback={null}><CarChatbot /></Suspense>
           </BrowserRouter>
         </CompareProvider>
       </LanguageProvider>
