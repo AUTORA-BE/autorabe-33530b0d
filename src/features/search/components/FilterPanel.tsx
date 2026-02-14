@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect, memo, forwardRef } from "react";
-import { Fuel, Calendar, Gauge, Settings2, Leaf, X, ChevronDown, Euro, Car, MapPin, Building2 } from "lucide-react";
+import { Fuel, Calendar, Gauge, Settings2, Leaf, X, ChevronDown, Euro, Car, MapPin, Building2, CarFront, Truck, CircleDot, RectangleHorizontal, Waypoints, Sparkles, Sun, Users } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getAllBrands, getModelsByBrand } from "@/utils/carUtils";
@@ -236,21 +236,31 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
         {/* Body Type */}
         <FilterSection icon={<Car className="w-4 h-4 text-primary" aria-hidden="true" />} title="Carrosserie">
           <div className="grid grid-cols-2 gap-2">
-            {["Berline", "SUV", "Citadine", "Compacte", "Break", "Coupé", "Cabriolet", "Monospace"].map((type) => (
+            {[
+              { id: "Berline", label: "Berline", Icon: CarFront },
+              { id: "SUV", label: "SUV", Icon: Truck },
+              { id: "Citadine", label: "Citadine", Icon: CircleDot },
+              { id: "Compacte", label: "Compacte", Icon: Car },
+              { id: "Break", label: "Break", Icon: RectangleHorizontal },
+              { id: "Coupé", label: "Coupé", Icon: Sparkles },
+              { id: "Cabriolet", label: "Cabriolet", Icon: Sun },
+              { id: "Monospace", label: "Monospace", Icon: Users },
+            ].map(({ id, label, Icon }) => (
               <button
-                key={type}
+                key={id}
                 onClick={() =>
-                  onFilterChange("bodyType", filters.bodyType === type ? "" : type)
+                  onFilterChange("bodyType", filters.bodyType === id ? "" : id)
                 }
-                aria-pressed={filters.bodyType === type}
-                className={`px-3 py-2.5 rounded-xl text-sm font-medium text-center transition-all duration-200 ${
-                  filters.bodyType === type
+                aria-pressed={filters.bodyType === id}
+                className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+                  filters.bodyType === id
                     ? "bg-primary text-primary-foreground shadow-md"
                     : "bg-secondary/60 text-muted-foreground hover:bg-secondary hover:text-foreground"
                 }`}
-                style={filters.bodyType === type ? { boxShadow: "0 4px 12px -2px hsl(var(--primary) / 0.4)" } : undefined}
+                style={filters.bodyType === id ? { boxShadow: "0 4px 12px -2px hsl(var(--primary) / 0.4)" } : undefined}
               >
-                {type}
+                <Icon className="w-4 h-4 shrink-0" />
+                {label}
               </button>
             ))}
           </div>
