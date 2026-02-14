@@ -45,7 +45,7 @@ const ScrollReveal = ({ children, className, delay = 0, direction = "up" }: Scro
         opacity: isVisible ? 1 : 0,
         transform: isVisible ? "translate(0, 0)" : directionTransform[direction],
         transition: `opacity 0.5s cubic-bezier(0.25,0.1,0.25,1) ${delay}s, transform 0.5s cubic-bezier(0.25,0.1,0.25,1) ${delay}s`,
-        willChange: isVisible ? "auto" : "opacity, transform",
+        willChange: "auto",
       }}
     >
       {children}
