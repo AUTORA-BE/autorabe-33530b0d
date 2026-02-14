@@ -111,13 +111,13 @@ const BrandCarousel = memo(function BrandCarousel({
 
   return (
     <section 
-      className="py-2 sm:py-4 bg-gradient-to-b from-muted/30 to-background"
+      className="py-6 sm:py-10 bg-gradient-to-b from-muted/30 to-background"
       aria-labelledby="brands-title"
     >
       <div className="container mx-auto px-4 sm:px-6">
         <h2 
           id="brands-title"
-          className="text-lg sm:text-xl md:text-2xl font-display font-bold text-center mb-3 sm:mb-4 text-foreground"
+          className="text-xl sm:text-2xl md:text-3xl font-display font-bold text-center mb-5 sm:mb-8 text-foreground"
         >
           {t("brands.title")}
         </h2>
@@ -134,13 +134,13 @@ const BrandCarousel = memo(function BrandCarousel({
               stopOnMouseEnter: true,
             }),
           ]}
-          className="w-full max-w-5xl mx-auto px-10 md:px-14"
+          className="w-full max-w-6xl mx-auto px-10 md:px-14"
         >
-          <CarouselContent className="-ml-2 sm:-ml-4">
+          <CarouselContent className="-ml-3 sm:-ml-4">
             {BRANDS.map((brand) => (
               <CarouselItem
                 key={brand.name}
-                className="pl-2 sm:pl-4 basis-1/4 sm:basis-1/4 md:basis-1/5"
+                className="pl-3 sm:pl-4 basis-1/3 sm:basis-1/4 md:basis-1/5"
               >
                 <motion.button
                   onClick={() => handleBrandClick(brand.name)}
@@ -152,7 +152,7 @@ const BrandCarousel = memo(function BrandCarousel({
                 >
                   <motion.div
                     className={cn(
-                      "relative flex flex-col items-center justify-center p-2 sm:p-4 md:p-6 rounded-lg sm:rounded-xl",
+                      "relative flex flex-col items-center justify-center p-3 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl",
                       selectedBrand === brand.name
                         ? "bg-primary/10 border-2 border-primary shadow-lg shadow-primary/20 ring-2 ring-primary/30"
                         : "bg-card border border-border/50 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10"
@@ -190,7 +190,7 @@ const BrandCarousel = memo(function BrandCarousel({
                     {/* Brand logo container */}
                     <motion.div
                       className={cn(
-                        "w-10 h-10 sm:w-16 sm:h-16 md:w-20 md:h-20 flex items-center justify-center mb-1.5 sm:mb-3 rounded-md sm:rounded-lg p-1 sm:p-2",
+                        "w-14 h-14 sm:w-18 sm:h-18 md:w-22 md:h-22 flex items-center justify-center mb-2 sm:mb-3 rounded-lg sm:rounded-xl p-1.5 sm:p-2",
                         selectedBrand === brand.name
                           ? "bg-white dark:bg-white/10"
                           : "bg-white/80 dark:bg-white/5"
