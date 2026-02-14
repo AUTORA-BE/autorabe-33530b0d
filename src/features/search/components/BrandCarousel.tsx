@@ -142,33 +142,25 @@ const BrandCarousel = memo(function BrandCarousel({
                 key={brand.name}
                 className="pl-3 sm:pl-4 basis-1/3 sm:basis-1/4 md:basis-1/5 overflow-visible pt-3"
               >
-                <motion.button
+                <button
                   onClick={() => handleBrandClick(brand.name)}
-                  className="group cursor-pointer w-full"
+                  className="group cursor-pointer w-full active:scale-[0.92] transition-transform duration-150"
                   aria-label={`Filtrer par ${brand.name}`}
                   aria-pressed={selectedBrand === brand.name}
-                  whileTap={{ scale: 0.92 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
-                  <motion.div
+                  <div
                     className={cn(
-                      "relative flex flex-col items-center justify-center p-3 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl transition-shadow duration-300",
+                      "relative flex flex-col items-center justify-center p-3 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl transition-all duration-300",
                       selectedBrand === brand.name
-                        ? "bg-primary/10 border-2 border-primary shadow-lg shadow-primary/20 ring-2 ring-primary/30"
-                        : "bg-card border border-border/50 hover:border-primary/60 hover:shadow-xl hover:shadow-primary/15"
+                        ? "bg-primary/10 border-2 border-primary shadow-lg shadow-primary/20 ring-2 ring-primary/30 -translate-y-1.5"
+                        : "bg-card border border-border/50 hover:border-primary/60 hover:shadow-xl hover:shadow-primary/15 hover:-translate-y-2 hover:scale-[1.06]"
                     )}
-                    animate={selectedBrand === brand.name
-                      ? { y: -6, transition: { type: "spring", stiffness: 300, damping: 20 } }
-                      : { y: 0, transition: { type: "spring", stiffness: 300, damping: 20 } }
-                    }
-                    whileHover={selectedBrand !== brand.name ? { y: -8, scale: 1.06 } : {}}
-                    whileTap={{ scale: 0.95 }}
                   >
                     {/* Shine effect overlay */}
                     <span className="pointer-events-none absolute inset-0 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 overflow-hidden rounded-xl sm:rounded-2xl">
                       <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out bg-gradient-to-r from-transparent via-white/25 to-transparent" />
                     </span>
-                    {/* Selection badge with pulse effect */}
+                    {/* Selection badge */}
                     <AnimatePresence>
                       {selectedBrand === brand.name && (
                         <motion.div
@@ -193,19 +185,13 @@ const BrandCarousel = memo(function BrandCarousel({
                     </AnimatePresence>
                     
                     {/* Brand logo container */}
-                    <motion.div
+                    <div
                       className={cn(
-                        "w-14 h-14 sm:w-18 sm:h-18 md:w-22 md:h-22 flex items-center justify-center mb-2 sm:mb-3 rounded-lg sm:rounded-xl p-1.5 sm:p-2",
+                        "w-14 h-14 sm:w-18 sm:h-18 md:w-22 md:h-22 flex items-center justify-center mb-2 sm:mb-3 rounded-lg sm:rounded-xl p-1.5 sm:p-2 transition-all duration-300",
                         selectedBrand === brand.name
-                          ? "bg-white dark:bg-white/10"
-                          : "bg-white/80 dark:bg-white/5 group-hover:bg-white dark:group-hover:bg-white/10"
+                          ? "bg-white dark:bg-white/10 scale-110"
+                          : "bg-white/80 dark:bg-white/5 group-hover:bg-white dark:group-hover:bg-white/10 group-hover:scale-[1.15]"
                       )}
-                      animate={selectedBrand === brand.name
-                        ? { scale: 1.1, rotate: 0 }
-                        : { scale: 1, rotate: 0 }
-                      }
-                      whileHover={{ scale: 1.15 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
                     >
                       <img 
                         src={brand.logo} 
@@ -214,7 +200,7 @@ const BrandCarousel = memo(function BrandCarousel({
                         loading="lazy"
                         draggable="false"
                       />
-                    </motion.div>
+                    </div>
                     
                     {/* Brand name */}
                     <span className={cn(
@@ -225,8 +211,8 @@ const BrandCarousel = memo(function BrandCarousel({
                     )}>
                       {brand.name}
                     </span>
-                  </motion.div>
-                </motion.button>
+                  </div>
+                </button>
               </CarouselItem>
             ))}
           </CarouselContent>
