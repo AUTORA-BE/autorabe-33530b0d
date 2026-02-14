@@ -177,7 +177,10 @@ const LoadMoreGrid = ({
         <div className="flex items-center gap-3 w-full sm:w-auto">
           {/* Mobile filter button */}
           <button
-            onClick={onOpenFilters}
+            onClick={() => {
+              window.scrollTo({ top: 0, behavior: "smooth" });
+              onOpenFilters();
+            }}
             className="lg:hidden flex items-center gap-2 px-4 py-2.5 rounded-xl bg-secondary text-foreground font-medium relative touch-manipulation"
           >
             <SlidersHorizontal className="w-4 h-4" />
