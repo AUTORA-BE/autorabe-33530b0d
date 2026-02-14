@@ -120,9 +120,27 @@ const AdminReports = () => {
     }
   };
 
+  const sendStatusNotification = async (listing: PendingListing, status: "approved" | "rejected") => {
+    try {
+      await supabase.functions.invoke("notify-listing-status", {
+        body: {
+          sellerEmail: listing.contact_email,
+          sellerName: listing.contact_name,
+          brand: listing.brand,
+          model: listing.model,
+          year: listing.year,
+          status,
+        },
+      });
+    } catch (err) {
+      console.error("Failed to send status notification email:", err);
+    }
+  };
+
   const handleApproveListing = async (id: string) => {
     setActionLoading(true);
     try {
+      const listing = pendingListings.find(l => l.id === id);
       const { error } = await supabase
         .from("car_listings")
         .update({ status: "approved" })
@@ -130,6 +148,7 @@ const AdminReports = () => {
       if (error) throw error;
       setPendingListings(prev => prev.filter(l => l.id !== id));
       toast.success("Annonce approuvée ✓");
+      if (listing) sendStatusNotification(listing, "approved");
     } catch (error) {
       console.error("Error approving listing:", error);
       toast.error("Erreur lors de l'approbation");
@@ -141,6 +160,7 @@ const AdminReports = () => {
   const handleRejectListing = async (id: string) => {
     setActionLoading(true);
     try {
+      const listing = pendingListings.find(l => l.id === id);
       const { error } = await supabase
         .from("car_listings")
         .update({ status: "rejected" })
@@ -148,6 +168,7 @@ const AdminReports = () => {
       if (error) throw error;
       setPendingListings(prev => prev.filter(l => l.id !== id));
       toast.success("Annonce refusée");
+      if (listing) sendStatusNotification(listing, "rejected");
     } catch (error) {
       console.error("Error rejecting listing:", error);
       toast.error("Erreur lors du refus");
