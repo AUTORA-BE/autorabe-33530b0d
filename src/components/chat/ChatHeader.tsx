@@ -1,6 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface ChatHeaderProps {
@@ -36,45 +35,42 @@ export function ChatHeader({
   };
 
   return (
-    <div className="p-4 border-b border-border bg-card flex items-center gap-3">
+    <div className="px-3 py-2.5 border-b border-border bg-card flex items-center gap-2.5 safe-top">
       {showBackButton && onBack && (
-        <Button 
-          variant="ghost" 
-          size="icon"
+        <button
           onClick={onBack}
-          className="shrink-0"
+          className="shrink-0 h-9 w-9 flex items-center justify-center rounded-full hover:bg-secondary transition-colors active:scale-95"
         >
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
+          <ArrowLeft className="h-5 w-5 text-foreground" />
+        </button>
       )}
       
       <div className="relative">
-        <Avatar className="h-10 w-10">
+        <Avatar className="h-9 w-9">
           <AvatarImage src={otherUserAvatar} alt={otherUserName} />
-          <AvatarFallback className="bg-primary/10 text-primary font-medium">
+          <AvatarFallback className="bg-primary/10 text-primary text-xs font-medium">
             {getInitials(otherUserName || 'U')}
           </AvatarFallback>
         </Avatar>
-        {/* Online status indicator */}
         <span 
-          className={`absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-card ${
+          className={`absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-card ${
             isOnline ? 'bg-primary' : 'bg-muted'
           }`}
         />
       </div>
       
       <div className="flex-1 min-w-0">
-        <h3 className="font-semibold text-foreground truncate">
+        <h3 className="text-sm font-semibold text-foreground truncate leading-tight">
           {otherUserName || 'Utilisateur'}
         </h3>
-        <p className="text-sm text-muted-foreground truncate">
+        <p className="text-xs text-muted-foreground truncate leading-tight">
           {isTyping ? (
-            <span className="text-primary flex items-center gap-1">
+            <span className="text-primary">
               {t("messages.typing")}
-              <span className="flex gap-0.5">
-                <span className="animate-bounce" style={{ animationDelay: '0ms' }}>.</span>
-                <span className="animate-bounce" style={{ animationDelay: '150ms' }}>.</span>
-                <span className="animate-bounce" style={{ animationDelay: '300ms' }}>.</span>
+              <span className="inline-flex gap-px ml-0.5">
+                <span className="animate-bounce inline-block" style={{ animationDelay: '0ms' }}>.</span>
+                <span className="animate-bounce inline-block" style={{ animationDelay: '150ms' }}>.</span>
+                <span className="animate-bounce inline-block" style={{ animationDelay: '300ms' }}>.</span>
               </span>
             </span>
           ) : isOnline ? (
