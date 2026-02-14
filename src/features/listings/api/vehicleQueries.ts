@@ -176,6 +176,11 @@ function applyFilters<T>(query: T, filters: VehicleFilters): T {
     q = q.eq('seller_type', filters.sellerTypeFilter);
   }
 
+  // Body type filter
+  if (filters.bodyType) {
+    q = q.ilike('body_type', filters.bodyType);
+  }
+
   return q as T;
 }
 

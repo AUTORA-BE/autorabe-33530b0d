@@ -96,6 +96,9 @@ export const useCarFilters = (vehicles: Vehicle[]) => {
       result = result.filter((vehicle) => vehicle.sellerType === filters.sellerTypeFilter);
     }
 
+    // Body type filter — note: Vehicle base type doesn't have bodyType, 
+    // so this filter only works server-side via vehicleQueries
+
     // Sorting
     switch (sortBy) {
       case "price-asc":
@@ -154,6 +157,7 @@ export const useCarFilters = (vehicles: Vehicle[]) => {
     if (filters.kmMin > 0 || filters.kmMax < 200000) count++;
     if (filters.lezOnly) count++;
     if (filters.sellerTypeFilter) count++;
+    if (filters.bodyType) count++;
     return count;
   }, [filters]);
 
