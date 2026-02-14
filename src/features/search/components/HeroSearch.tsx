@@ -108,7 +108,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
       <div className="container mx-auto px-4 sm:px-6 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-primary/10 text-primary text-xs sm:text-sm font-medium mb-6 sm:mb-8 animate-fade-up">
+          <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-primary/10 text-primary text-xs sm:text-sm font-medium mb-6 sm:mb-8">
             <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-primary animate-pulse" />
             {t("hero.badge")}
           </div>
@@ -124,16 +124,14 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
 
           {/* Subheadline */}
           <p
-            className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 sm:mb-12 animate-fade-up px-2"
-            style={{ animationDelay: "0.2s" }}
+            className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 sm:mb-12 px-2"
           >
             {t("hero.subtitle")}
           </p>
 
           {/* Search Box */}
           <div
-            className="glass-panel p-3 sm:p-4 md:p-5 max-w-3xl mx-auto animate-fade-up ring-1 ring-white/10"
-            style={{ animationDelay: "0.3s" }}
+            className="glass-panel p-3 sm:p-4 md:p-5 max-w-3xl mx-auto ring-1 ring-white/10"
             role="search"
             aria-label="Recherche rapide de véhicules"
           >
@@ -212,8 +210,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
 
           {/* Stats */}
           <div
-            className="flex flex-wrap justify-center gap-6 sm:gap-8 md:gap-16 mt-8 sm:mt-12 animate-fade-up"
-            style={{ animationDelay: "0.4s" }}
+            className="flex flex-wrap justify-center gap-6 sm:gap-8 md:gap-16 mt-8 sm:mt-12"
           >
             <div className="text-center">
               <div className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
