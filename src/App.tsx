@@ -33,6 +33,8 @@ const Legal = lazy(() => import("./pages/Legal"));
 const Contact = lazy(() => import("./pages/Contact"));
 const AdminReports = lazy(() => import("./pages/AdminReports"));
 const CalculateurTCO = lazy(() => import("./pages/CalculateurTCO"));
+const MesAlertes = lazy(() => import("./pages/MesAlertes"));
+const CreerAlerte = lazy(() => import("./pages/CreerAlerte"));
 
 /** Minimal loading fallback shown while lazy chunks load */
 function PageLoader() {
@@ -83,6 +85,8 @@ function AnimatedRoutes() {
         <Route path="/legal" element={<PageTransition><Legal /></PageTransition>} />
         <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
         <Route path="/calculateur-tco" element={<PageTransition><CalculateurTCO /></PageTransition>} />
+        <Route path="/mes-alertes" element={<PageTransition><MesAlertes /></PageTransition>} />
+        <Route path="/mes-alertes/creer" element={<PageTransition><CreerAlerte /></PageTransition>} />
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
       </Routes>
     </AnimatePresence>
