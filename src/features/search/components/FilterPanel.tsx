@@ -126,9 +126,9 @@ const FilterPanel = memo(function FilterPanel({
       {/* Sidebar */}
       <aside
         className={`
-          fixed lg:sticky top-20 left-0 z-50 lg:z-auto
-          w-80 h-[calc(100vh-5rem)] overflow-y-auto scrollbar-thin
-          p-5 space-y-5 rounded-2xl
+          fixed lg:sticky top-0 left-0 z-50 lg:z-auto lg:top-20
+          w-full sm:w-80 h-dvh lg:h-[calc(100vh-5rem)] overflow-y-auto scrollbar-thin
+          p-5 space-y-5 lg:rounded-2xl
           backdrop-blur-2xl border
           transform transition-transform duration-300 lg:transform-none
           ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
