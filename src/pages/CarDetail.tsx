@@ -309,8 +309,8 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
           </button>
         </div>
 
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
             {/* Left Column - Images & Details */}
             <div className="lg:col-span-2 space-y-6">
               {/* Main Image Gallery */}
@@ -389,6 +389,68 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                 )}
               </div>
 
+              {/* Mobile-only: Title, Price & CTA */}
+              <div className="lg:hidden glass-card p-5 space-y-4">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h1 className="font-display text-xl font-bold text-foreground">
+                      {car.brand} {car.model}
+                    </h1>
+                    <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
+                      <MapPin className="w-3.5 h-3.5" />
+                      {car.location}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => toggleFavorite(car.id)}
+                      className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
+                        isFavorite(car.id)
+                          ? "bg-destructive text-destructive-foreground"
+                          : "bg-secondary text-muted-foreground"
+                      }`}
+                    >
+                      <Heart className={`w-4 h-4 ${isFavorite(car.id) ? "fill-current" : ""}`} />
+                    </button>
+                    <button
+                      onClick={handleShare}
+                      className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center text-muted-foreground"
+                    >
+                      <Share2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="text-3xl font-display font-bold text-foreground">
+                  {formatPrice(car.price)}
+                </div>
+
+                <div className="space-y-2.5">
+                  {dbListing && (
+                    <Button onClick={() => handleContact("Message")} className="w-full h-11 btn-primary-gradient">
+                      <MessageCircle className="w-4 h-4 mr-2" />
+                      Envoyer un message
+                    </Button>
+                  )}
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button onClick={() => handleContact("Appeler")} variant="outline" className="h-11">
+                      <Phone className="w-4 h-4 mr-1" />
+                      Appeler
+                    </Button>
+                    <Button onClick={() => handleContact("WhatsApp")} variant="outline" className="h-11">
+                      <MessageCircle className="w-4 h-4 mr-1" />
+                      WhatsApp
+                    </Button>
+                  </div>
+                </div>
+
+                <SellerBadge
+                  sellerType={dbListing?.seller_type}
+                  sellerName={sellerName}
+                  tvaNumber={dbListing?.tva_number}
+                />
+              </div>
+
               {/* Bento Specifications */}
               <BentoSpecs
                 year={car.year}
@@ -430,8 +492,8 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
               />
             </div>
 
-            {/* Right Column - Price & Contact */}
-            <div className="space-y-6">
+            {/* Right Column - Price & Contact (desktop only) */}
+            <div className="hidden lg:block space-y-6">
               {/* Price Card */}
               <div className="glass-card p-6 sticky top-24">
                 <div className="flex items-start justify-between mb-4">

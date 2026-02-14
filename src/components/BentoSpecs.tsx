@@ -134,8 +134,8 @@ const BentoSpecs = ({
                   <Icon className="w-5 h-5 text-primary" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xs text-muted-foreground truncate">{spec.label}</p>
-                  <p className="font-semibold text-foreground text-sm md:text-base truncate">
+                  <p className="text-xs text-muted-foreground">{spec.label}</p>
+                  <p className="font-semibold text-foreground text-sm md:text-base break-words">
                     {spec.value}
                   </p>
                 </div>
