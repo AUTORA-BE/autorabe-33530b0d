@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect, memo, forwardRef } from "react";
-import { Fuel, Calendar, Gauge, Settings2, Leaf, X, ChevronDown, Euro, Car, MapPin } from "lucide-react";
+import { Fuel, Calendar, Gauge, Settings2, Leaf, X, ChevronDown, Euro, Car, MapPin, Building2 } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getAllBrands, getModelsByBrand } from "@/utils/carUtils";
@@ -322,6 +322,35 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
 
         {/* Divider */}
         <div className="h-px w-full" style={{ background: "hsl(var(--border) / 0.5)" }} />
+
+        {/* Seller Type */}
+        <FilterSection icon={<Building2 className="w-4 h-4 text-primary" aria-hidden="true" />} title="Type de vendeur">
+          <div className="flex gap-2">
+            {[
+              { id: "particulier", label: "Particulier" },
+              { id: "professionnel", label: "Pro" },
+            ].map((type) => (
+              <button
+                key={type.id}
+                onClick={() =>
+                  onFilterChange(
+                    "sellerTypeFilter",
+                    filters.sellerTypeFilter === type.id ? "" : type.id
+                  )
+                }
+                aria-pressed={filters.sellerTypeFilter === type.id}
+                className={`flex-1 px-3 py-2.5 rounded-xl text-sm font-medium text-center transition-all duration-200 ${
+                  filters.sellerTypeFilter === type.id
+                    ? "bg-primary text-primary-foreground shadow-md"
+                    : "bg-secondary/60 text-muted-foreground hover:bg-secondary hover:text-foreground"
+                }`}
+                style={filters.sellerTypeFilter === type.id ? { boxShadow: "0 4px 12px -2px hsl(var(--primary) / 0.4)" } : undefined}
+              >
+                {type.label}
+              </button>
+            ))}
+          </div>
+        </FilterSection>
 
         {/* Transmission */}
         <FilterSection icon={<Settings2 className="w-4 h-4 text-primary" aria-hidden="true" />} title={t("filters.transmission")}>

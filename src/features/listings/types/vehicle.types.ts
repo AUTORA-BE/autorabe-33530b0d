@@ -123,8 +123,9 @@ export interface VehicleFilters {
   kmMax: number;
   /** Only show LEZ-compatible vehicles */
   lezOnly: boolean;
+  /** Filter by seller type */
+  sellerTypeFilter: string;
 }
-
 /**
  * Default filter values
  */
@@ -142,6 +143,7 @@ export const defaultVehicleFilters: VehicleFilters = {
   kmMin: 0,
   kmMax: 200000,
   lezOnly: false,
+  sellerTypeFilter: "",
 };
 
 /**
