@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header, Footer } from "@/shared/components";
-import { HeroSearch, BrandCarousel, FilterPanel } from "@/features/search";
-import { PopularVehicles } from "@/features/listings";
-import LoadMoreGrid from "@/components/LoadMoreGrid";
+import { HeroSearch, BrandCarousel } from "@/features/search";
 import SEOHead from "@/components/SEOHead";
 import SellCarBanner from "@/components/SellCarBanner";
 import ScrollReveal from "@/components/ScrollReveal";
+
+const FilterPanel = lazy(() => import("@/features/search/components/FilterPanel"));
+const PopularVehicles = lazy(() => import("@/features/listings/components/PopularVehicles"));
+const LoadMoreGrid = lazy(() => import("@/components/LoadMoreGrid"));
 import { useFilteredInfiniteCarListings } from "@/features/listings";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -67,14 +69,17 @@ const Index = () => {
           />
         </ScrollReveal>
 
-        <ScrollReveal delay={0.1}>
-          <PopularVehicles
-            isFavorite={isFavorite}
-            onToggleFavorite={toggleFavorite}
-            onVehicleClick={handleCarClick}
-          />
-        </ScrollReveal>
+        <Suspense fallback={<div className="min-h-[300px]" />}>
+          <ScrollReveal delay={0.1}>
+            <PopularVehicles
+              isFavorite={isFavorite}
+              onToggleFavorite={toggleFavorite}
+              onVehicleClick={handleCarClick}
+            />
+          </ScrollReveal>
+        </Suspense>
 
+        <Suspense fallback={<div className="min-h-[400px]" />}>
         <ScrollReveal>
           <section id="results-section" className="container mx-auto px-4 sm:px-6 pb-16 sm:pb-20">
             <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
@@ -106,6 +111,7 @@ const Index = () => {
             </div>
           </section>
         </ScrollReveal>
+        </Suspense>
       </main>
       <Footer />
     </div>
