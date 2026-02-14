@@ -6,32 +6,23 @@ const Legal = () => {
     {
       icon: Building2,
       title: "1. Éditeur du site",
-      content: `AutoRa SPRL
-Numéro d'entreprise : BE 0123.456.789
-Siège social : Rue de la Loi 1, 1000 Bruxelles, Belgique
+      content: `AutoRa
+Projet en cours de constitution
 
-Capital social : 50.000 €
-Téléphone : +32 2 123 45 67
 Email : contact@autora.be`
     },
     {
       icon: User,
       title: "2. Directeur de la publication",
-      content: `Directeur de la publication : [Nom du directeur]
-Fonction : Gérant
-
-Le directeur de la publication est responsable du contenu éditorial publié sur le site AutoRa.`
+      content: `Le directeur de la publication est le créateur et responsable éditorial du site AutoRa.`
     },
     {
       icon: Server,
       title: "3. Hébergement",
-      content: `Le site AutoRa est hébergé par :
-
-Lovable Technologies
-Adresse : [Adresse de l'hébergeur]
+      content: `Le site AutoRa est hébergé par Lovable Technologies.
 Site web : https://lovable.dev
 
-Pour toute question technique relative à l'hébergement, veuillez contacter notre équipe technique à l'adresse : tech@autora.be`
+Pour toute question, contactez-nous à : contact@autora.be`
     },
     {
       icon: Globe,
@@ -69,24 +60,16 @@ L'utilisateur reconnaît utiliser ces informations sous sa responsabilité exclu
       title: "7. Données personnelles et RGPD",
       content: `Conformément au Règlement Général sur la Protection des Données (RGPD) et à la loi belge du 30 juillet 2018 relative à la protection des personnes physiques à l'égard des traitements de données à caractère personnel, vous disposez d'un droit d'accès, de rectification, de suppression et d'opposition aux données personnelles vous concernant.
 
-Délégué à la Protection des Données (DPO) :
-Email : dpo@autora.be
-Adresse : AutoRa SPRL, Rue de la Loi 1, 1000 Bruxelles
+Pour exercer vos droits ou pour toute question sur le traitement de vos données, vous pouvez nous contacter à : contact@autora.be
 
-Pour exercer vos droits ou pour toute question sur le traitement de vos données, vous pouvez nous contacter à l'adresse ci-dessus ou consulter notre Politique de Confidentialité.`
+Pour plus de détails, consultez notre Politique de Confidentialité.`
     },
     {
       icon: Mail,
       title: "8. Contact",
-      content: `Pour toute question ou réclamation concernant le site AutoRa, vous pouvez nous contacter :
+      content: `Pour toute question ou réclamation concernant le site AutoRa, vous pouvez nous contacter par email :
 
-Par email : contact@autora.be
-Par téléphone : +32 2 123 45 67
-Par courrier : AutoRa SPRL, Rue de la Loi 1, 1000 Bruxelles, Belgique
-
-Horaires d'ouverture du service client :
-Lundi - Vendredi : 9h00 - 18h00
-Samedi : 10h00 - 16h00`
+contact@autora.be`
     }
   ];
 
