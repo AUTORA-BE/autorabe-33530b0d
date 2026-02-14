@@ -74,7 +74,8 @@ export default function Messages() {
   }
 
   // On mobile, when a conversation is selected, render full-screen chat
-  if (selectedConversation && currentUserId && isMobile) {
+  const isMobileChatView = selectedConversation && currentUserId && (isMobile || (typeof window !== 'undefined' && window.innerWidth < 1024));
+  if (isMobileChatView) {
     return (
       <div className="h-[100dvh] bg-background flex flex-col">
         <ChatWindow 
