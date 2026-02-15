@@ -441,8 +441,8 @@ export default function VehicleTcoSection({ price, fuelType, year, mileage, powe
                   )}
                   <Tooltip formatter={(value: number) => eur(value)} contentStyle={{ borderRadius: 8, fontSize: 12, border: "1px solid hsl(var(--border))", background: "hsl(var(--background))" }} />
                   <Legend wrapperStyle={{ fontSize: 11 }} />
-                  <Bar dataKey="actuel" name={fuelLabel} fill="hsl(var(--primary))" radius={isMobile ? [0, 4, 4, 0] : [4, 4, 0, 0]} />
-                  <Bar dataKey="alt" name={altLabel} fill="hsl(var(--muted-foreground))" radius={isMobile ? [0, 4, 4, 0] : [4, 4, 0, 0]} />
+                  <Bar dataKey="actuel" name={fuelLabel} fill="hsl(var(--primary))" radius={isMobile ? [0, 4, 4, 0] : [4, 4, 0, 0]} animationDuration={800} animationEasing="ease-out" />
+                  <Bar dataKey="alt" name={altLabel} fill="hsl(var(--muted-foreground))" radius={isMobile ? [0, 4, 4, 0] : [4, 4, 0, 0]} animationDuration={800} animationBegin={300} animationEasing="ease-out" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
