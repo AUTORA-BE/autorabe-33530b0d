@@ -414,7 +414,7 @@ export default function VehicleTcoSection({ price, fuelType, year, mileage, powe
 
             {/* Bar chart comparison */}
             <div className="pt-2">
-              <ResponsiveContainer width="100%" height={220}>
+              <ResponsiveContainer width="100%" height={isMobile ? 300 : 220}>
                 <BarChart
                   data={[
                     { name: "Achat", actuel: result.prixAchat, alt: altResult.prixAchat },
@@ -424,15 +424,25 @@ export default function VehicleTcoSection({ price, fuelType, year, mileage, powe
                     { name: "Taxe", actuel: result.taxe, alt: altResult.taxe },
                     { name: "Dépréciation", actuel: result.depreciation, alt: altResult.depreciation },
                   ]}
-                  margin={{ top: 5, right: 10, left: 0, bottom: 5 }}
+                  layout={isMobile ? "vertical" : "horizontal"}
+                  margin={isMobile ? { top: 5, right: 10, left: 5, bottom: 5 } : { top: 5, right: 10, left: 0, bottom: 5 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  <XAxis dataKey="name" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} />
-                  <YAxis tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`} width={40} />
+                  {isMobile ? (
+                    <>
+                      <XAxis type="number" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`} />
+                      <YAxis type="category" dataKey="name" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} width={75} />
+                    </>
+                  ) : (
+                    <>
+                      <XAxis dataKey="name" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} />
+                      <YAxis tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`} width={40} />
+                    </>
+                  )}
                   <Tooltip formatter={(value: number) => eur(value)} contentStyle={{ borderRadius: 8, fontSize: 12, border: "1px solid hsl(var(--border))", background: "hsl(var(--background))" }} />
-                  <Legend wrapperStyle={{ fontSize: 12 }} />
-                  <Bar dataKey="actuel" name={fuelLabel} fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="alt" name={altLabel} fill="hsl(var(--muted-foreground))" radius={[4, 4, 0, 0]} />
+                  <Legend wrapperStyle={{ fontSize: 11 }} />
+                  <Bar dataKey="actuel" name={fuelLabel} fill="hsl(var(--primary))" radius={isMobile ? [0, 4, 4, 0] : [4, 4, 0, 0]} />
+                  <Bar dataKey="alt" name={altLabel} fill="hsl(var(--muted-foreground))" radius={isMobile ? [0, 4, 4, 0] : [4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
