@@ -1,13 +1,13 @@
 /**
  * Hook that combines filtering with infinite scroll
- * Provides comprehensive filtering capabilities for vehicle listings
+ * Uses centralized applyFilters/applySorting from vehicleQueries
  * @module features/listings/hooks/useFilteredInfiniteCarListings
  */
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { CarFilters, defaultFilters } from '@/types/filters';
-import { mapListingToVehicle, PAGE_SIZE } from '../api/vehicleQueries';
-import type { Car, VehicleListingRow } from '../types/vehicle.types';
+import { mapListingToVehicle, applyFilters, applySorting, PAGE_SIZE } from '../api/vehicleQueries';
+import type { Car, VehicleListingRow, VehicleSortOption } from '../types/vehicle.types';
 
 /**
  * Map database listing to Car type
@@ -33,114 +33,7 @@ export function useFilteredInfiniteCarListings() {
   
   // Filters state
   const [filters, setFilters] = useState<CarFilters>(defaultFilters);
-  const [sortBy, setSortBy] = useState<string>("recent");
-
-  // Build query with filters
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const buildQuery = useCallback((baseQuery: any) => {
-    let query = baseQuery;
-
-    // Search query filter (brand + model)
-    if (filters.searchQuery) {
-      const searchTerm = `%${filters.searchQuery}%`;
-      query = query.or(`brand.ilike.${searchTerm},model.ilike.${searchTerm}`);
-    }
-
-    // Brand filter
-    if (filters.brand) {
-      query = query.ilike('brand', filters.brand);
-    }
-
-    // Model filter
-    if (filters.model) {
-      query = query.ilike('model', filters.model);
-    }
-
-    // Price filter
-    if (filters.minPrice > 0) {
-      query = query.gte('price', filters.minPrice);
-    }
-    if (filters.maxPrice < 200000) {
-      query = query.lte('price', filters.maxPrice);
-    }
-
-    // Fuel type filter
-    if (filters.fuelTypes.length > 0) {
-      const fuelConditions = filters.fuelTypes.map(f => {
-        if (f === 'electrique') return `fuel_type.ilike.%lectrique%`;
-        return `fuel_type.ilike.${f}`;
-      }).join(',');
-      query = query.or(fuelConditions);
-    }
-
-    // Transmission filter
-    if (filters.transmission) {
-      query = query.ilike('transmission', filters.transmission);
-    }
-
-    // Euro norm filter
-    if (filters.euroNorm) {
-      query = query.eq('euro_norm', filters.euroNorm);
-    }
-
-    // Year filter
-    if (filters.yearMin > 2010) {
-      query = query.gte('year', filters.yearMin);
-    }
-    if (filters.yearMax < 2026) {
-      query = query.lte('year', filters.yearMax);
-    }
-
-    // Kilometer filter
-    if (filters.kmMin > 0) {
-      query = query.gte('mileage', filters.kmMin);
-    }
-    if (filters.kmMax < 200000) {
-      query = query.lte('mileage', filters.kmMax);
-    }
-
-    // LEZ filter - Euro 6+ or electric
-    if (filters.lezOnly) {
-      query = query.or('euro_norm.in.(Euro 6,Euro 6b,Euro 6c,Euro 6d),fuel_type.ilike.%lectrique%');
-    }
-
-    // Seller type filter
-    if (filters.sellerTypeFilter) {
-      query = query.eq('seller_type', filters.sellerTypeFilter);
-    }
-
-    // Body type filter
-    if (filters.bodyType) {
-      query = query.ilike('body_type', filters.bodyType);
-    }
-
-    // Sorting
-    switch (sortBy) {
-      case "price-asc":
-        query = query.order('price', { ascending: true });
-        break;
-      case "price-desc":
-        query = query.order('price', { ascending: false });
-        break;
-      case "year-desc":
-        query = query.order('year', { ascending: false });
-        break;
-      case "year-asc":
-        query = query.order('year', { ascending: true });
-        break;
-      case "km-asc":
-        query = query.order('mileage', { ascending: true });
-        break;
-      case "km-desc":
-        query = query.order('mileage', { ascending: false });
-        break;
-      default:
-        query = query.order('created_at', { ascending: false });
-    }
-
-    return query;
-  }, [filters, sortBy]);
-
+  const [sortBy, setSortBy] = useState<VehicleSortOption>("recent");
 
   const fetchListings = useCallback(async (pageNum: number, append: boolean = false) => {
     try {
@@ -155,19 +48,20 @@ export function useFilteredInfiniteCarListings() {
         .from('car_listings_public')
         .select('*', { count: 'exact', head: true });
       
-      countQuery = buildQuery(countQuery);
+      countQuery = applyFilters(countQuery, filters);
       const { count } = await countQuery;
 
       if (count !== null) {
         setTotalCount(count);
       }
 
-      // Fetch paginated data with filters
+      // Fetch paginated data with filters + sorting
       let dataQuery = supabase
         .from('car_listings_public')
         .select('*');
       
-      dataQuery = buildQuery(dataQuery);
+      dataQuery = applyFilters(dataQuery, filters);
+      dataQuery = applySorting(dataQuery, sortBy);
       dataQuery = dataQuery.range(pageNum * PAGE_SIZE, (pageNum + 1) * PAGE_SIZE - 1);
 
       const { data, error: fetchError } = await dataQuery;
@@ -197,7 +91,7 @@ export function useFilteredInfiniteCarListings() {
       setIsLoading(false);
       setIsLoadingMore(false);
     }
-  }, [buildQuery]);
+  }, [filters, sortBy]);
 
   // Reset and refetch when filters or sort change
   useEffect(() => {
@@ -205,7 +99,7 @@ export function useFilteredInfiniteCarListings() {
     setCars([]);
     setHasMore(true);
     fetchListings(0, false);
-  }, [filters, sortBy, fetchListings]);
+  }, [fetchListings]);
 
   const loadMore = useCallback(() => {
     if (!isLoadingMore && hasMore && !isLoading) {

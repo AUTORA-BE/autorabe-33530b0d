@@ -80,7 +80,7 @@ export function mapListingToVehicleDetail(listing: VehicleListingRow): VehicleDe
 /**
  * Applies sort order to a Supabase query
  */
-function applySorting<T>(query: T, sortBy: VehicleSortOption): T {
+export function applySorting<T>(query: T, sortBy: VehicleSortOption): T {
   const queryWithOrder = query as any;
   
   switch (sortBy) {
@@ -104,7 +104,7 @@ function applySorting<T>(query: T, sortBy: VehicleSortOption): T {
 /**
  * Applies filters to a Supabase query
  */
-function applyFilters<T>(query: T, filters: VehicleFilters): T {
+export function applyFilters<T>(query: T, filters: VehicleFilters): T {
   let q = query as any;
 
   // Search query filter (brand + model)

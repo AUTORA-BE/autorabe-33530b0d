@@ -101,7 +101,7 @@ const Index = () => {
                   cars={cars}
                   onOpenFilters={() => setFiltersOpen(true)}
                   sortBy={sortBy}
-                  onSortChange={setSortBy}
+                  onSortChange={(sort: string) => setSortBy(sort as import('@/features/listings/types/vehicle.types').VehicleSortOption)}
                   isFavorite={isFavorite}
                   onToggleFavorite={toggleFavorite}
                   onCarClick={handleCarClick}
