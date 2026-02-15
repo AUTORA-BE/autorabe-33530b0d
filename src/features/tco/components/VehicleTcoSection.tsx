@@ -6,6 +6,7 @@
 
 import { useState, useMemo, useCallback } from "react";
 import { Calculator, ChevronDown, ChevronUp, Fuel, Wrench, Shield, FileText, TrendingDown, Info } from "lucide-react";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { cn } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -152,14 +153,18 @@ export default function VehicleTcoSection({ price, fuelType, year, mileage, powe
 
   const result = useMemo(() => computeTco(price, fuel, year, inputs), [price, fuel, year, inputs]);
 
+  const DONUT_COLORS = ["#3b82f6", "#f59e0b", "#f97316", "#10b981", "#8b5cf6", "#ef4444"];
+
   const breakdownItems = [
-    { label: "Prix d'achat", value: result.prixAchat, icon: FileText, color: "text-blue-500" },
-    { label: "Carburant (5 ans)", value: result.carburant, icon: Fuel, color: "text-amber-500" },
-    { label: "Entretien (5 ans)", value: result.entretien, icon: Wrench, color: "text-orange-500" },
-    { label: "Assurance (5 ans)", value: result.assurance, icon: Shield, color: "text-emerald-500" },
-    { label: "Taxe circulation (5 ans)", value: result.taxe, icon: FileText, color: "text-purple-500" },
-    { label: "Dépréciation estimée", value: result.depreciation, icon: TrendingDown, color: "text-red-500" },
+    { label: "Prix d'achat", value: result.prixAchat, icon: FileText, color: "text-blue-500", fill: DONUT_COLORS[0] },
+    { label: "Carburant (5 ans)", value: result.carburant, icon: Fuel, color: "text-amber-500", fill: DONUT_COLORS[1] },
+    { label: "Entretien (5 ans)", value: result.entretien, icon: Wrench, color: "text-orange-500", fill: DONUT_COLORS[2] },
+    { label: "Assurance (5 ans)", value: result.assurance, icon: Shield, color: "text-emerald-500", fill: DONUT_COLORS[3] },
+    { label: "Taxe circulation (5 ans)", value: result.taxe, icon: FileText, color: "text-purple-500", fill: DONUT_COLORS[4] },
+    { label: "Dépréciation estimée", value: result.depreciation, icon: TrendingDown, color: "text-red-500", fill: DONUT_COLORS[5] },
   ];
+
+  const donutData = breakdownItems.map(item => ({ name: item.label, value: item.value, fill: item.fill }));
 
   const fuelLabel = {
     diesel: "Diesel", essence95: "Essence", essence98: "Essence 98",
@@ -269,7 +274,7 @@ export default function VehicleTcoSection({ price, fuelType, year, mileage, powe
           </div>
 
           {/* Results */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {/* Total card */}
             <div className="rounded-lg bg-primary/5 border border-primary/20 p-4 text-center space-y-1">
               <p className="text-sm text-muted-foreground">Coût total sur 5 ans</p>
@@ -279,13 +284,39 @@ export default function VehicleTcoSection({ price, fuelType, year, mileage, powe
               </p>
             </div>
 
+            {/* Donut chart */}
+            <div className="flex items-center justify-center">
+              <ResponsiveContainer width={180} height={180}>
+                <PieChart>
+                  <Pie
+                    data={donutData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={50}
+                    outerRadius={80}
+                    paddingAngle={2}
+                    dataKey="value"
+                    stroke="none"
+                  >
+                    {donutData.map((entry, i) => (
+                      <Cell key={i} fill={entry.fill} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    formatter={(value: number) => eur(value)}
+                    contentStyle={{ borderRadius: 8, fontSize: 12, border: "1px solid hsl(var(--border))", background: "hsl(var(--background))" }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+
             {/* Breakdown */}
             <div className="space-y-2">
               {breakdownItems.map((item) => {
                 const pct = (item.value / result.total) * 100;
                 return (
                   <div key={item.label} className="flex items-center gap-2 text-sm">
-                    <item.icon className={cn("w-4 h-4 flex-shrink-0", item.color)} />
+                    <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.fill }} />
                     <span className="flex-1 text-muted-foreground truncate">{item.label}</span>
                     <span className="font-medium text-foreground tabular-nums">{eur(item.value)}</span>
                     <span className="text-xs text-muted-foreground w-10 text-right tabular-nums">
