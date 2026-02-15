@@ -5,7 +5,7 @@
  */
 
 import { useState, useMemo, useCallback } from "react";
-import { Calculator, ChevronDown, ChevronUp, Fuel, Wrench, Shield, FileText, TrendingDown, Info } from "lucide-react";
+import { Calculator, ChevronDown, ChevronUp, Fuel, Wrench, Shield, FileText, TrendingDown, Info, ArrowLeftRight, Zap, Car } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { cn } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
@@ -153,6 +153,17 @@ export default function VehicleTcoSection({ price, fuelType, year, mileage, powe
 
   const result = useMemo(() => computeTco(price, fuel, year, inputs), [price, fuel, year, inputs]);
 
+  // Alternative fuel for comparison
+  const altFuel: TcoFuelType = fuel === "electric" ? "essence95" : "electric";
+  const altLabel = altFuel === "electric" ? "Électrique" : "Essence";
+  const AltIcon = altFuel === "electric" ? Zap : Car;
+  // Estimate alternative price: electric cars ~30% more, thermal ~25% less than electric
+  const altPrice = useMemo(() => {
+    if (fuel === "electric") return Math.round(price * 0.75); // thermal equivalent cheaper
+    return Math.round(price * 1.3); // electric equivalent pricier
+  }, [price, fuel]);
+  const altResult = useMemo(() => computeTco(altPrice, altFuel, year, inputs), [altPrice, altFuel, year, inputs]);
+  const savings = result.total - altResult.total;
   const DONUT_COLORS = ["#3b82f6", "#f59e0b", "#f97316", "#10b981", "#8b5cf6", "#ef4444"];
 
   const breakdownItems = [
@@ -326,6 +337,56 @@ export default function VehicleTcoSection({ price, fuelType, year, mileage, powe
                 );
               })}
             </div>
+          </div>
+
+          {/* Comparison */}
+          <div className="rounded-lg border border-border bg-background p-4 space-y-3">
+            <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+              <ArrowLeftRight className="w-4 h-4 text-primary" />
+              Comparaison : et si c'était {altFuel === "electric" ? "un véhicule électrique" : "un véhicule essence"} ?
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              {/* Current vehicle */}
+              <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 text-center space-y-1">
+                <div className="flex items-center justify-center gap-1.5 text-xs font-medium text-primary">
+                  <Fuel className="w-3.5 h-3.5" />
+                  {fuelLabel} (actuel)
+                </div>
+                <p className="text-lg font-bold text-foreground tabular-nums">{eur(result.total)}</p>
+                <p className="text-xs text-muted-foreground">{eur(result.mensuel)}/mois</p>
+              </div>
+
+              {/* Alternative */}
+              <div className="rounded-lg border border-border bg-muted/30 p-3 text-center space-y-1">
+                <div className="flex items-center justify-center gap-1.5 text-xs font-medium text-muted-foreground">
+                  <AltIcon className="w-3.5 h-3.5" />
+                  {altLabel} (estimé)
+                </div>
+                <p className="text-lg font-bold text-foreground tabular-nums">{eur(altResult.total)}</p>
+                <p className="text-xs text-muted-foreground">{eur(altResult.mensuel)}/mois</p>
+              </div>
+            </div>
+
+            {/* Savings banner */}
+            <div className={cn(
+              "rounded-md px-3 py-2 text-center text-sm font-medium",
+              savings > 0
+                ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
+                : savings < 0
+                  ? "bg-red-500/10 text-red-700 dark:text-red-400"
+                  : "bg-muted text-muted-foreground"
+            )}>
+              {savings > 0
+                ? `💡 Vous économiseriez ${eur(savings)} sur 5 ans en passant à l'${altLabel.toLowerCase()}`
+                : savings < 0
+                  ? `Ce véhicule est déjà ${eur(Math.abs(savings))} moins cher sur 5 ans qu'un équivalent ${altLabel.toLowerCase()}`
+                  : "Coût équivalent sur 5 ans"}
+            </div>
+
+            <p className="text-xs text-muted-foreground">
+              * Prix d'achat {altLabel.toLowerCase()} estimé à {eur(altPrice)}. Comparaison indicative.
+            </p>
           </div>
 
           {/* Disclaimer */}
