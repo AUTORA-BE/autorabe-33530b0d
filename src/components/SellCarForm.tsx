@@ -16,25 +16,33 @@ import { toast } from 'sonner';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useListingLimit } from '@/features/subscription';
 
+const MAX_PHOTOS = 10;
+const MAX_PHOTO_SIZE_MB = 5;
+const MAX_PHOTO_SIZE_BYTES = MAX_PHOTO_SIZE_MB * 1024 * 1024;
+
 const sellCarSchema = z.object({
-  brand: z.string().min(1, "Required"),
-  model: z.string().min(1, "Required"),
-  year: z.number().min(1900).max(new Date().getFullYear() + 1),
-  price: z.number().min(1, "Required"),
-  mileage: z.number().min(0, "Required"),
-  fuel_type: z.string().min(1, "Required"),
-  transmission: z.string().min(1, "Required"),
-  body_type: z.string().min(1, "Required"),
-  color: z.string().min(1, "Required"),
+  brand: z.string().min(1, "La marque est obligatoire"),
+  model: z.string().min(1, "Le modèle est obligatoire"),
+  year: z.number()
+    .min(1900, "L'année doit être supérieure à 1900")
+    .max(new Date().getFullYear() + 1, `L'année ne peut pas dépasser ${new Date().getFullYear() + 1}`),
+  price: z.number()
+    .min(1, "Le prix est obligatoire")
+    .max(1_000_000, "Le prix ne peut pas dépasser 1 000 000 €"),
+  mileage: z.number().min(0, "Le kilométrage est obligatoire"),
+  fuel_type: z.string().min(1, "Le carburant est obligatoire"),
+  transmission: z.string().min(1, "La transmission est obligatoire"),
+  body_type: z.string().min(1, "Le type de carrosserie est obligatoire"),
+  color: z.string().min(1, "La couleur est obligatoire"),
   power: z.number().optional(),
   doors: z.number().optional(),
   euro_norm: z.string().optional(),
   vin: z.string().optional(),
   first_registration: z.string().optional(),
   description: z.string().optional(),
-  contact_name: z.string().min(1, "Required"),
+  contact_name: z.string().min(1, "Le nom de contact est obligatoire"),
   contact_phone: z.string().optional(),
-  contact_email: z.string().email("Invalid email"),
+  contact_email: z.string().email("Adresse email invalide"),
   location: z.string().optional(),
   car_pass_verified: z.boolean().optional(),
   ct_valid: z.boolean().optional(),
@@ -197,11 +205,17 @@ export function SellCarForm({ editId }: SellCarFormProps) {
     const files = e.target.files;
     if (!files) return;
 
-    const newPhotos = Array.from(files).slice(0, 10 - photos.length);
+    const totalPhotos = photos.length + existingPhotos.length;
+    if (totalPhotos >= MAX_PHOTOS) {
+      toast.error(`Vous ne pouvez pas ajouter plus de ${MAX_PHOTOS} photos.`);
+      return;
+    }
+
+    const newPhotos = Array.from(files).slice(0, MAX_PHOTOS - totalPhotos);
     
     newPhotos.forEach(file => {
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error(`${file.name} ${t('sellForm.photoTooLarge')}`);
+      if (file.size > MAX_PHOTO_SIZE_BYTES) {
+        toast.error(`${file.name} dépasse la taille maximale de ${MAX_PHOTO_SIZE_MB} Mo.`);
         return;
       }
       

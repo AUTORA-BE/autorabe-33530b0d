@@ -200,6 +200,7 @@ const VehicleGrid = memo(function VehicleGrid({
                 isFavorite={isFavorite(vehicle.id)}
                 onToggleFavorite={onToggleFavorite}
                 onClick={onVehicleClick}
+                eager={index < 3}
               />
             </div>
           ))}

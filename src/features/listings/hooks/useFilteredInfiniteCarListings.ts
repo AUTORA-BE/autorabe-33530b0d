@@ -205,7 +205,7 @@ export function useFilteredInfiniteCarListings() {
     setCars([]);
     setHasMore(true);
     fetchListings(0, false);
-  }, [filters, sortBy]);
+  }, [filters, sortBy, fetchListings]);
 
   const loadMore = useCallback(() => {
     if (!isLoadingMore && hasMore && !isLoading) {

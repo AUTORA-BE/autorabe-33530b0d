@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Mail, Phone, MapPin, Send, Clock, CheckCircle, MessageSquare } from "lucide-react";
+import { Mail, Send, Clock, CheckCircle, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -34,10 +34,13 @@ const contactSchema = z.object({
 
 type ContactFormData = z.infer<typeof contactSchema>;
 
+const RATE_LIMIT_MS = 60_000;
+
 const Contact = () => {
   const { t } = useLanguage();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [lastSubmitTime, setLastSubmitTime] = useState(0);
 
   const form = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
@@ -50,7 +53,14 @@ const Contact = () => {
   });
 
   const onSubmit = async (data: ContactFormData) => {
+    const now = Date.now();
+    if (now - lastSubmitTime < RATE_LIMIT_MS) {
+      toast.error("Veuillez attendre 60 secondes entre chaque envoi.");
+      return;
+    }
+
     setIsSubmitting(true);
+    setLastSubmitTime(now);
     try {
       const { error } = await supabase.functions.invoke("send-contact-email", {
         body: data,
@@ -77,21 +87,9 @@ const Contact = () => {
       href: "mailto:contact@autora.be",
     },
     {
-      icon: Phone,
-      title: "Téléphone",
-      value: "+32 2 123 45 67",
-      href: "tel:+3221234567",
-    },
-    {
-      icon: MapPin,
-      title: "Adresse",
-      value: "Rue de la Loi 1, 1000 Bruxelles",
-      href: null,
-    },
-    {
       icon: Clock,
       title: "Horaires",
-      value: "Lun-Ven: 9h-18h | Sam: 10h-16h",
+      value: "Lun-Ven: 9h-18h",
       href: null,
     },
   ];
@@ -304,38 +302,6 @@ const Contact = () => {
                 </CardContent>
               </Card>
             </div>
-          </div>
-        </section>
-
-        {/* Google Maps */}
-        <section className="container mx-auto px-6 pb-16">
-          <div className="max-w-6xl mx-auto">
-            <Card className="glass-card animate-fade-up overflow-hidden" style={{ animationDelay: "0.3s" }}>
-              <CardHeader>
-                <CardTitle className="font-display text-xl flex items-center gap-2">
-                  <MapPin className="w-5 h-5 text-primary" />
-                  Notre emplacement
-                </CardTitle>
-                <CardDescription>
-                  Rue de la Loi 1, 1000 Bruxelles, Belgique
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-0">
-                <div className="relative w-full h-[400px]">
-                  <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2519.2566461379!2d4.364354676934267!3d50.84656315923898!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c3c38c8534f9fd%3A0x9e0c7a6a95b3cd3e!2sRue%20de%20la%20Loi%201%2C%201000%20Bruxelles%2C%20Belgium!5e0!3m2!1sfr!2sfr!4v1704067200000!5m2!1sfr!2sfr"
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0 }}
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                    title="Localisation AutoRa - Bruxelles"
-                    className="absolute inset-0"
-                  />
-                </div>
-              </CardContent>
-            </Card>
           </div>
         </section>
 
