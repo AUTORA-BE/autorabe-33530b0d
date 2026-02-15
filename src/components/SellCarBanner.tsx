@@ -31,7 +31,7 @@ const SellCarBanner = () => {
 
   return (
     <section
-      className="relative overflow-hidden transition-all duration-300 ease-out"
+      className="relative overflow-hidden transition-[opacity,transform,max-height] duration-300 ease-out"
       style={{
         opacity: isExiting ? 0 : 1,
         transform: isExiting ? 'translateY(-20px)' : 'translateY(0)',

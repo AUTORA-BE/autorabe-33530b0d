@@ -144,7 +144,7 @@ const BrandCarousel = memo(function BrandCarousel({
                 >
                   <div
                     className={cn(
-                      "relative flex flex-col items-center justify-center p-3 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl transition-all duration-300",
+                      "relative flex flex-col items-center justify-center p-3 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl transition-[border-color,box-shadow,transform] duration-300",
                       selectedBrand === brand.name
                         ? "bg-primary/10 border-2 border-primary shadow-lg shadow-primary/20 ring-2 ring-primary/30 -translate-y-1.5"
                         : "bg-card border border-border/50 hover:border-primary/60 hover:shadow-xl hover:shadow-primary/15 hover:-translate-y-2 hover:scale-[1.06]"

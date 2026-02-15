@@ -101,7 +101,7 @@ const VehicleCard = memo(function VehicleCard({
       role="button"
       tabIndex={0}
       aria-label={`${vehicle.brand} ${vehicle.model} - ${formatPrice(vehicle.price)}`}
-      className="group relative bg-card rounded-2xl overflow-hidden border border-border/50 hover:border-primary/30 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+      className="group relative bg-card rounded-2xl overflow-hidden border border-border/50 hover:border-primary/30 transition-[border-color,box-shadow] duration-300 hover:shadow-xl hover:shadow-primary/5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
     >
       {/* Image Container */}
       <div className="relative aspect-[4/3] overflow-hidden bg-muted">

@@ -217,12 +217,12 @@ const LoadMoreGrid = ({
             {cars.map((car, index) => (
               <div
                 key={car.id}
-                className="animate-fade-up card-press"
-                style={{ 
-                  animationDelay: `${Math.min(index * 0.05, 0.4)}s`,
+                className={index < 6 ? "animate-fade-up card-press" : "card-press"}
+                style={index < 6 ? { 
+                  animationDelay: `${index * 0.05}s`,
                   animationFillMode: 'backwards',
                   contain: 'layout style',
-                }}
+                } : { contain: 'layout style' }}
               >
                 <CarCard
                   car={car}
