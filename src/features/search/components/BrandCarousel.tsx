@@ -69,11 +69,20 @@ const BrandCarousel = memo(function BrandCarousel({
 
   useEffect(() => {
     if (!api) return;
-    setCount(api.scrollSnapList().length);
-    setCurrent(api.selectedScrollSnap());
-    api.on("select", () => {
+    // Defer layout-triggering reads to avoid forced reflow during render
+    requestAnimationFrame(() => {
+      setCount(api.scrollSnapList().length);
       setCurrent(api.selectedScrollSnap());
     });
+    const onSelect = () => {
+      requestAnimationFrame(() => {
+        setCurrent(api.selectedScrollSnap());
+      });
+    };
+    api.on("select", onSelect);
+    return () => {
+      api.off("select", onSelect);
+    };
   }, [api]);
 
   const scrollTo = useCallback(
@@ -97,6 +106,7 @@ const BrandCarousel = memo(function BrandCarousel({
     <section 
       className="py-6 sm:py-10 bg-gradient-to-b from-muted/30 to-background"
       aria-labelledby="brands-title"
+      style={{ contain: "layout style" }}
     >
       <div className="container mx-auto px-4 sm:px-6">
         <h2 

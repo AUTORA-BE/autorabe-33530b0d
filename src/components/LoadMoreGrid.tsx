@@ -220,7 +220,8 @@ const LoadMoreGrid = ({
                 className="animate-fade-up card-press"
                 style={{ 
                   animationDelay: `${Math.min(index * 0.05, 0.4)}s`,
-                  animationFillMode: 'backwards'
+                  animationFillMode: 'backwards',
+                  contain: 'layout style',
                 }}
               >
                 <CarCard
