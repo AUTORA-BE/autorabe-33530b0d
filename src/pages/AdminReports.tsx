@@ -35,6 +35,8 @@ interface Report {
   updated_at: string;
   car_brand?: string;
   car_model?: string;
+  reporter_name?: string;
+  reporter_email?: string;
 }
 
 interface PendingListing {
@@ -199,13 +201,22 @@ const AdminReports = () => {
       const { data, error } = await supabase.from("reports").select("*").order("created_at", { ascending: false });
       if (error) throw error;
 
-      const reportsWithCars = await Promise.all(
+      const reportsWithDetails = await Promise.all(
         (data || []).map(async (report) => {
-          const { data: carData } = await supabase.from("car_listings_public").select("brand, model").eq("id", report.car_listing_id).maybeSingle();
-          return { ...report, car_brand: carData?.brand || "Unknown", car_model: carData?.model || "Unknown" };
+          const [{ data: carData }, { data: profileData }] = await Promise.all([
+            supabase.from("car_listings_public").select("brand, model").eq("id", report.car_listing_id).maybeSingle(),
+            supabase.from("profiles").select("display_name").eq("user_id", report.user_id).maybeSingle(),
+          ]);
+          return {
+            ...report,
+            car_brand: carData?.brand || "Unknown",
+            car_model: carData?.model || "Unknown",
+            reporter_name: profileData?.display_name || null,
+            reporter_email: report.user_id,
+          };
         })
       );
-      setReports(reportsWithCars);
+      setReports(reportsWithDetails);
     } catch (error) {
       console.error("Error fetching reports:", error);
       toast.error(t("admin.fetchError"));
@@ -553,6 +564,7 @@ const AdminReports = () => {
                             <TableRow>
                               <TableHead>{t("admin.date")}</TableHead>
                               <TableHead>{t("admin.vehicle")}</TableHead>
+                              <TableHead>Signalé par</TableHead>
                               <TableHead>{t("admin.reason")}</TableHead>
                               <TableHead>{t("admin.status")}</TableHead>
                               <TableHead className="text-right">{t("admin.actions")}</TableHead>
@@ -569,6 +581,10 @@ const AdminReports = () => {
                                   <Button variant="link" size="sm" className="h-auto p-0 text-xs text-muted-foreground" onClick={() => window.open(`/car/${report.car_listing_id}`, "_blank")}>
                                     {t("admin.viewListing")} <ExternalLink className="w-3 h-3 ml-1" />
                                   </Button>
+                                </TableCell>
+                                <TableCell>
+                                  <div className="text-sm">{report.reporter_name || "Utilisateur"}</div>
+                                  <span className="text-xs text-muted-foreground font-mono truncate max-w-[120px] block">{report.reporter_email?.slice(0, 8)}…</span>
                                 </TableCell>
                                 <TableCell><Badge variant="secondary" className="text-xs">{getReasonLabel(report.reason)}</Badge></TableCell>
                                 <TableCell>{getStatusBadge(report.status)}</TableCell>
@@ -608,6 +624,11 @@ const AdminReports = () => {
 
           {selectedReport && (
             <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium text-muted-foreground">Signalé par</label>
+                <p className="mt-1 text-sm">{selectedReport.reporter_name || "Utilisateur inconnu"}</p>
+                <p className="text-xs text-muted-foreground font-mono">{selectedReport.reporter_email}</p>
+              </div>
               <div>
                 <label className="text-sm font-medium text-muted-foreground">{t("admin.reason")}</label>
                 <p className="mt-1">{getReasonLabel(selectedReport.reason)}</p>
