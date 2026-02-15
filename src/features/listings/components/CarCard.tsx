@@ -99,7 +99,8 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
   return (
     <article
       ref={ref as React.Ref<HTMLElement>}
-      className="rounded-2xl overflow-hidden bg-card border border-border/50 group cursor-pointer touch-target transition-all duration-300 hover:-translate-y-2 active:scale-[0.97] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] hover:border-primary/20"
+      className="rounded-2xl overflow-hidden bg-card border border-border/50 group cursor-pointer touch-target transition-shadow duration-300 hover:-translate-y-2 active:scale-[0.97] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] hover:border-primary/20"
+      style={{ contain: "layout style paint" }}
       onClick={handleClick}
     >
       <div className="relative h-48 md:h-56 overflow-hidden">
@@ -116,10 +117,10 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
         <div className="absolute top-3 right-3 flex flex-col gap-2">
           <button
             onClick={handleFavoriteClick}
-            className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-all shadow-sm hover:shadow-lg touch-target focus-ring active:scale-[0.85] ${
+            className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-colors shadow-sm hover:shadow-lg touch-target focus-ring active:scale-[0.85] ${
               isFavorite
                 ? "bg-red-500 text-white"
-                : "bg-background/90 backdrop-blur-sm text-muted-foreground hover:text-red-500"
+                : "bg-background/90 text-muted-foreground hover:text-red-500"
             }`}
             aria-label={isFavorite ? t("car.removeFromFavorites") : t("car.addToFavorites")}
           >
@@ -127,10 +128,10 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
           </button>
           <button
             onClick={handleCompareClick}
-            className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-all shadow-sm hover:shadow-lg touch-target focus-ring active:scale-[0.85] ${
+            className={`w-11 h-11 rounded-2xl flex items-center justify-center transition-colors shadow-sm hover:shadow-lg touch-target focus-ring active:scale-[0.85] ${
               inCompare
                 ? "bg-primary text-primary-foreground"
-                : "bg-background/90 backdrop-blur-sm text-muted-foreground hover:text-primary"
+                : "bg-background/90 text-muted-foreground hover:text-primary"
             }`}
             title={inCompare ? t("car.removeCompare") : t("car.addCompare")}
             aria-label={inCompare ? t("car.removeCompare") : t("car.addCompare")}
@@ -146,7 +147,7 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div>
-                    <Badge className={`${lezBadge.config.className} backdrop-blur-sm shadow-lg cursor-help`}>
+                    <Badge className={`${lezBadge.config.className} shadow-lg cursor-help`}>
                       <lezBadge.config.Icon className="w-3 h-3 mr-1" />
                       {lezBadge.badgeText}
                     </Badge>
@@ -172,7 +173,7 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
             </TooltipProvider>
           )}
           {car.hasCarPass && (
-            <Badge className="bg-primary/90 hover:bg-primary text-primary-foreground border-0 backdrop-blur-sm shadow-lg">
+            <Badge className="bg-primary/90 hover:bg-primary text-primary-foreground border-0 shadow-lg">
               <CheckCircle className="w-3 h-3 mr-1" />
               Car-Pass
             </Badge>
@@ -182,7 +183,7 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
         {/* Price Badge */}
         <div className="absolute bottom-3 right-3">
           <span
-            className="inline-block px-3 py-2 rounded-2xl bg-background/95 backdrop-blur-sm font-display text-lg font-bold text-foreground transition-transform duration-200 hover:scale-105"
+            className="inline-block px-3 py-2 rounded-2xl bg-background/95 font-display text-lg font-bold text-foreground"
             style={{ boxShadow: "0 2px 12px -2px hsl(var(--foreground) / 0.1)" }}
           >
             {formatPrice(car.price)}

@@ -161,16 +161,16 @@ input[type="number"] {
   }
 
   .glass-card {
-    @apply backdrop-blur-md border rounded-3xl transition-all duration-300;
+    @apply backdrop-blur-md border rounded-3xl;
     background: hsl(var(--card));
     border-color: hsl(var(--glass-border));
     box-shadow: 0 4px 20px -4px hsl(var(--foreground) / 0.06);
-    will-change: transform, box-shadow;
   }
 
   .glass-card:hover {
     box-shadow: 0 12px 32px -8px hsl(var(--foreground) / 0.12);
     transform: translateY(-4px);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
   }
 
   .glass-card:active {
