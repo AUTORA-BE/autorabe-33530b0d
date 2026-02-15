@@ -5,8 +5,8 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
-import { vehicleQueries, mapListingToVehicle } from '../api/vehicleQueries';
-import type { Vehicle, VehicleListingRow } from '../types/vehicle.types';
+import { vehicleQueries } from '../api/vehicleQueries';
+import type { Vehicle } from '../types/vehicle.types';
 
 /** Query key for popular vehicles */
 const POPULAR_VEHICLES_KEY = 'popularVehicles';
@@ -57,13 +57,6 @@ export function usePopularVehicles(
   } = useQuery({
     queryKey: [POPULAR_VEHICLES_KEY, limit],
     queryFn: async () => {
-      // Use prefetched data if available (breaks critical request chain)
-      const prefetched = (window as any).__prefetchedPopular;
-      if (prefetched && limit === 8) {
-        (window as any).__prefetchedPopular = null;
-        const result = await prefetched;
-        if (result) return (result as VehicleListingRow[]).map(row => mapListingToVehicle(row));
-      }
       return vehicleQueries.getPopular(limit);
     },
     staleTime: 10 * 60 * 1000,

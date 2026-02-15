@@ -28,8 +28,8 @@ const Footer = () => {
                 alt="Autora Logo - Marketplace automobile belge" 
                 className="w-8 h-8 sm:w-10 sm:h-10 rounded-2xl object-cover"
               />
-              <span className="font-display text-lg sm:text-xl font-bold text-white">
-                Autora
+              <span className="font-display text-lg sm:text-xl font-bold">
+                <span className="text-white">Auto</span><span className="text-primary">RA</span>
               </span>
             </Link>
             <p className="text-primary font-semibold text-xs sm:text-sm">
