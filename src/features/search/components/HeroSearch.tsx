@@ -98,11 +98,10 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
 
       {/* Decorative elements */}
       <div
-        className="hidden sm:block absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl animate-float"
+        className="hidden sm:block absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl"
       />
       <div
-        className="hidden sm:block absolute bottom-1/4 right-1/4 w-80 h-80 bg-primary/5 rounded-full blur-3xl animate-float"
-        style={{ animationDelay: "-3s" }}
+        className="hidden sm:block absolute bottom-1/4 right-1/4 w-80 h-80 bg-primary/5 rounded-full blur-3xl"
       />
 
       <div className="container mx-auto px-4 sm:px-6 relative z-10">
