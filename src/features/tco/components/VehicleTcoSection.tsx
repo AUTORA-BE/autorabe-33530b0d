@@ -6,7 +6,7 @@
 
 import { useState, useMemo, useCallback } from "react";
 import { Calculator, ChevronDown, ChevronUp, Fuel, Wrench, Shield, FileText, TrendingDown, Info, ArrowLeftRight, Zap, Car } from "lucide-react";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from "recharts";
 import { cn } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -410,6 +410,31 @@ export default function VehicleTcoSection({ price, fuelType, year, mileage, powe
                 : savings < 0
                   ? `Ce véhicule est déjà ${eur(Math.abs(savings))} moins cher sur 5 ans qu'un équivalent ${altLabel.toLowerCase()}`
                   : "Coût équivalent sur 5 ans"}
+            </div>
+
+            {/* Bar chart comparison */}
+            <div className="pt-2">
+              <ResponsiveContainer width="100%" height={220}>
+                <BarChart
+                  data={[
+                    { name: "Achat", actuel: result.prixAchat, alt: altResult.prixAchat },
+                    { name: "Carburant", actuel: result.carburant, alt: altResult.carburant },
+                    { name: "Entretien", actuel: result.entretien, alt: altResult.entretien },
+                    { name: "Assurance", actuel: result.assurance, alt: altResult.assurance },
+                    { name: "Taxe", actuel: result.taxe, alt: altResult.taxe },
+                    { name: "Dépréciation", actuel: result.depreciation, alt: altResult.depreciation },
+                  ]}
+                  margin={{ top: 5, right: 10, left: 0, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+                  <XAxis dataKey="name" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} />
+                  <YAxis tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`} width={40} />
+                  <Tooltip formatter={(value: number) => eur(value)} contentStyle={{ borderRadius: 8, fontSize: 12, border: "1px solid hsl(var(--border))", background: "hsl(var(--background))" }} />
+                  <Legend wrapperStyle={{ fontSize: 12 }} />
+                  <Bar dataKey="actuel" name={fuelLabel} fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="alt" name={altLabel} fill="hsl(var(--muted-foreground))" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
 
             <p className="text-xs text-muted-foreground">
