@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import type { Tables } from "@/integrations/supabase/types";
 import {
   ArrowLeft,
   Heart,
@@ -44,7 +45,7 @@ const CarDetail = () => {
   const { isFavorite, toggleFavorite } = useFavorites();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [car, setCar] = useState<Car | null>(null);
-  const [dbListing, setDbListing] = useState<any>(null);
+  const [dbListing, setDbListing] = useState<Tables<"car_listings_public"> | null>(null);
   const [sellerContact, setSellerContact] = useState<{
     contact_name: string;
     contact_phone: string | null;
@@ -475,7 +476,7 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                 <SellerBadge
                   sellerType={dbListing?.seller_type}
                   sellerName={sellerName}
-                  tvaNumber={dbListing?.tva_number}
+                  tvaNumber={undefined}
                 />
 
                 {/* Admin Delete Button - Mobile */}
@@ -612,7 +613,7 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                 <SellerBadge
                   sellerType={dbListing?.seller_type}
                   sellerName={sellerName}
-                  tvaNumber={dbListing?.tva_number}
+                  tvaNumber={undefined}
                 />
 
                 {/* Disclaimer */}

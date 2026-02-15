@@ -5,6 +5,7 @@
 
 import { memo } from "react";
 import { Heart, MapPin, Fuel, Calendar, Gauge, Shield, CheckCircle, AlertTriangle, Ban, Leaf, Info, Building2 } from "lucide-react";
+import CarImage from "@/components/cars/CarImage";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -23,6 +24,8 @@ export interface VehicleCardProps {
   onToggleFavorite?: (vehicleId: string) => void;
   /** Callback when the card is clicked */
   onClick?: (vehicleId: string) => void;
+  /** Whether to eager-load the image (for LCP) */
+  eager?: boolean;
 }
 
 /**
@@ -60,6 +63,7 @@ const VehicleCard = memo(function VehicleCard({
   isFavorite = false,
   onToggleFavorite,
   onClick,
+  eager = false,
 }: VehicleCardProps) {
   const { language } = useLanguage();
   const lezResult = calculerStatutLEZ(vehicle.fuelType, vehicle.euroNorm);
@@ -101,11 +105,12 @@ const VehicleCard = memo(function VehicleCard({
     >
       {/* Image Container */}
       <div className="relative aspect-[4/3] overflow-hidden bg-muted">
-        <img
+        <CarImage
           src={vehicle.image || "/placeholder.svg"}
           alt={`${vehicle.brand} ${vehicle.model} ${vehicle.year}`}
-          loading="lazy"
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          aspectRatio="4/3"
+          eager={eager}
+          className="transition-transform duration-500 group-hover:scale-105"
         />
 
         {/* Gradient Overlay */}
