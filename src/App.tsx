@@ -11,9 +11,9 @@ import PageTransition from "@/components/PageTransition";
 import ScrollToTop from "@/components/ScrollToTop";
 const CarChatbot = lazy(() => import("@/components/CarChatbot"));
 
-// Eagerly loaded — critical path
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
+// Lazy-loaded — reduces main bundle unused JS
+const Index = lazy(() => import("./pages/Index"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Lazy-loaded pages for reduced initial bundle size
 const Auth = lazy(() => import("./pages/Auth"));
