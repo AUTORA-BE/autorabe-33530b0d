@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { lazy, Suspense } from "react";
 import { useState, useEffect } from "react";
 import type { Tables } from "@/integrations/supabase/types";
 import {
@@ -37,6 +38,7 @@ import AutoraTransparency from "@/components/AutoraTransparency";
 import SEOHead from "@/components/SEOHead";
 import ReportAdModal from "@/components/ReportAdModal";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+const VehicleTcoSection = lazy(() => import("@/features/tco/components/VehicleTcoSection"));
 
 const CarDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -491,6 +493,17 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                   </Button>
                 )}
               </div>
+
+              {/* TCO Calculator */}
+              <Suspense fallback={<div className="h-20 rounded-xl bg-muted animate-pulse" />}>
+                <VehicleTcoSection
+                  price={car.price}
+                  fuelType={car.fuelType}
+                  year={car.year}
+                  mileage={car.mileage}
+                  power={dbListing?.power}
+                />
+              </Suspense>
 
               {/* Bento Specifications */}
               <BentoSpecs

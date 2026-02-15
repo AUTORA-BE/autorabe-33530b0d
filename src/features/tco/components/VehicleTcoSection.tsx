@@ -1,0 +1,312 @@
+/**
+ * Inline TCO calculator for vehicle detail pages
+ * Pre-fills data from the vehicle listing and lets the user tweak inputs
+ * @module features/tco/components
+ */
+
+import { useState, useMemo, useCallback } from "react";
+import { Calculator, ChevronDown, ChevronUp, Fuel, Wrench, Shield, FileText, TrendingDown, Info } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Slider } from "@/components/ui/slider";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useIsMobile } from "@/hooks/use-mobile";
+import {
+  PRIX_CARBURANT, FACTEUR_REALITE, ENTRETIEN_BASE,
+  ASSURANCE_RC, COEFF_BONUS, MULT_COUVERTURE,
+  TAXE_REGION, DEPRECIATION,
+} from "../constants/belgianData";
+import type { FuelType as TcoFuelType, Region } from "../types/tco.types";
+
+/* ─── helpers ─── */
+
+/** Map listing fuel string → TCO FuelType */
+function mapFuelType(fuelType: string): TcoFuelType {
+  const lower = fuelType.toLowerCase();
+  if (lower.includes("diesel")) return "diesel";
+  if (lower.includes("électrique") || lower.includes("electric")) return "electric";
+  if (lower.includes("hybride rechargeable") || lower.includes("phev")) return "hybridePHEV";
+  if (lower.includes("hybride") || lower.includes("hybrid")) return "hybride";
+  return "essence95";
+}
+
+/** Default consumption L/100km (or kWh for electric) */
+function defaultConsumption(fuel: TcoFuelType): number {
+  const map: Record<TcoFuelType, number> = {
+    diesel: 6.0, essence95: 7.5, essence98: 7.5,
+    electric: 18, hybridePHEV: 2.5, hybride: 5.5,
+  };
+  return map[fuel] ?? 7.5;
+}
+
+/** Maintenance cost by vehicle age */
+function maintenanceCost(age: number): number {
+  if (age < 3) return 300;
+  if (age <= 7) return 600;
+  if (age <= 12) return 900;
+  return 1200;
+}
+
+/** Format EUR */
+function eur(n: number): string {
+  return new Intl.NumberFormat("fr-BE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(n);
+}
+
+/* ─── types ─── */
+
+interface VehicleTcoProps {
+  price: number;
+  fuelType: string;
+  year: number;
+  mileage: number;
+  power?: number | null;
+}
+
+interface TcoInputs {
+  kmPerYear: number;
+  region: Region;
+  insuranceAnnual: number;
+}
+
+interface TcoResult {
+  prixAchat: number;
+  carburant: number;
+  entretien: number;
+  assurance: number;
+  taxe: number;
+  depreciation: number;
+  total: number;
+  mensuel: number;
+  carburantAnnuel: number;
+}
+
+/* ─── calculation ─── */
+
+function computeTco(
+  price: number,
+  fuel: TcoFuelType,
+  year: number,
+  inputs: TcoInputs,
+): TcoResult {
+  const age = 2026 - year;
+  const totalKm = inputs.kmPerYear * 5;
+
+  // Fuel cost
+  let carburant: number;
+  const fuelCat = fuel === "electric" ? "electric" : fuel.startsWith("essence") ? "essence" : "diesel";
+  const facteur = FACTEUR_REALITE.mixte[fuelCat] ?? 1.1;
+  const conso = defaultConsumption(fuel) * facteur;
+
+  if (fuel === "electric") {
+    const coutKwh = 0.30; // charge domicile
+    carburant = (totalKm / 100) * conso * coutKwh;
+  } else {
+    const prixL = fuel === "hybridePHEV" ? PRIX_CARBURANT.essence95 : (PRIX_CARBURANT[fuel] ?? 1.75);
+    carburant = (totalKm / 100) * conso * prixL;
+  }
+
+  // Maintenance
+  const entretienAn = maintenanceCost(age);
+  const entretien = entretienAn * 5;
+
+  // Insurance
+  const assurance = inputs.insuranceAnnual * 5;
+
+  // Tax
+  const taxeAn = TAXE_REGION[inputs.region]?.[fuel] ?? 200;
+  const taxe = taxeAn * 5;
+
+  // Depreciation
+  const deprec = price * (DEPRECIATION[fuel] ?? 0.45);
+
+  const total = price + carburant + entretien + assurance + taxe + deprec;
+
+  return {
+    prixAchat: price,
+    carburant: Math.round(carburant),
+    entretien: Math.round(entretien),
+    assurance: Math.round(assurance),
+    taxe: Math.round(taxe),
+    depreciation: Math.round(deprec),
+    total: Math.round(total),
+    mensuel: Math.round(total / 60),
+    carburantAnnuel: Math.round(carburant / 5),
+  };
+}
+
+/* ─── component ─── */
+
+export default function VehicleTcoSection({ price, fuelType, year, mileage, power }: VehicleTcoProps) {
+  const isMobile = useIsMobile();
+  const [isOpen, setIsOpen] = useState(!isMobile);
+  const fuel = useMemo(() => mapFuelType(fuelType), [fuelType]);
+
+  const [inputs, setInputs] = useState<TcoInputs>({
+    kmPerYear: 15000,
+    region: "bruxelles",
+    insuranceAnnual: 800,
+  });
+
+  const updateInput = useCallback(<K extends keyof TcoInputs>(key: K, val: TcoInputs[K]) => {
+    setInputs(prev => ({ ...prev, [key]: val }));
+  }, []);
+
+  const result = useMemo(() => computeTco(price, fuel, year, inputs), [price, fuel, year, inputs]);
+
+  const breakdownItems = [
+    { label: "Prix d'achat", value: result.prixAchat, icon: FileText, color: "text-blue-500" },
+    { label: "Carburant (5 ans)", value: result.carburant, icon: Fuel, color: "text-amber-500" },
+    { label: "Entretien (5 ans)", value: result.entretien, icon: Wrench, color: "text-orange-500" },
+    { label: "Assurance (5 ans)", value: result.assurance, icon: Shield, color: "text-emerald-500" },
+    { label: "Taxe circulation (5 ans)", value: result.taxe, icon: FileText, color: "text-purple-500" },
+    { label: "Dépréciation estimée", value: result.depreciation, icon: TrendingDown, color: "text-red-500" },
+  ];
+
+  const fuelLabel = {
+    diesel: "Diesel", essence95: "Essence", essence98: "Essence 98",
+    electric: "Électrique", hybridePHEV: "Hybride PHEV", hybride: "Hybride",
+  }[fuel] ?? fuelType;
+
+  return (
+    <section className="rounded-xl border border-border bg-gradient-to-br from-muted/40 to-muted/20 shadow-lg overflow-hidden">
+      {/* Header — always visible */}
+      <button
+        onClick={() => setIsOpen(o => !o)}
+        className="w-full flex items-center justify-between p-4 sm:p-6 text-left"
+      >
+        <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10">
+            <Calculator className="w-5 h-5 text-primary" />
+          </div>
+          <div>
+            <h2 className="font-display text-lg font-bold text-foreground">
+              💰 Coût total sur 5 ans
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Calculez le véritable coût de cette voiture (achat + utilisation)
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          {/* Quick summary when collapsed */}
+          {!isOpen && (
+            <span className="hidden sm:inline text-lg font-bold text-foreground">
+              {eur(result.total)}
+            </span>
+          )}
+          {isOpen ? (
+            <ChevronUp className="w-5 h-5 text-muted-foreground" />
+          ) : (
+            <ChevronDown className="w-5 h-5 text-muted-foreground" />
+          )}
+        </div>
+      </button>
+
+      {/* Body */}
+      {isOpen && (
+        <div className="px-4 sm:px-6 pb-6 space-y-6">
+          {/* Pre-filled info */}
+          <div className="flex flex-wrap gap-2 text-sm">
+            <span className="px-3 py-1 rounded-full bg-primary/10 text-primary font-medium">
+              {fuelLabel}
+            </span>
+            <span className="px-3 py-1 rounded-full bg-muted text-muted-foreground">
+              {year}
+            </span>
+            <span className="px-3 py-1 rounded-full bg-muted text-muted-foreground">
+              {new Intl.NumberFormat("fr-BE").format(mileage)} km
+            </span>
+            {power && (
+              <span className="px-3 py-1 rounded-full bg-muted text-muted-foreground">
+                {power} ch
+              </span>
+            )}
+          </div>
+
+          {/* User inputs */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {/* km/year */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">
+                Km/an : {new Intl.NumberFormat("fr-BE").format(inputs.kmPerYear)}
+              </label>
+              <Slider
+                value={[inputs.kmPerYear]}
+                onValueChange={([v]) => updateInput("kmPerYear", v)}
+                min={5000}
+                max={50000}
+                step={1000}
+              />
+            </div>
+
+            {/* Region */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">Région</label>
+              <Select value={inputs.region} onValueChange={(v) => updateInput("region", v as Region)}>
+                <SelectTrigger className="h-9">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="bruxelles">Bruxelles</SelectItem>
+                  <SelectItem value="flandre">Flandre</SelectItem>
+                  <SelectItem value="wallonie">Wallonie</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Insurance */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">
+                Assurance/an : {eur(inputs.insuranceAnnual)}
+              </label>
+              <Slider
+                value={[inputs.insuranceAnnual]}
+                onValueChange={([v]) => updateInput("insuranceAnnual", v)}
+                min={300}
+                max={2500}
+                step={50}
+              />
+            </div>
+          </div>
+
+          {/* Results */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Total card */}
+            <div className="rounded-lg bg-primary/5 border border-primary/20 p-4 text-center space-y-1">
+              <p className="text-sm text-muted-foreground">Coût total sur 5 ans</p>
+              <p className="text-3xl font-display font-bold text-foreground">{eur(result.total)}</p>
+              <p className="text-sm text-primary font-medium">
+                soit {eur(result.mensuel)}/mois
+              </p>
+            </div>
+
+            {/* Breakdown */}
+            <div className="space-y-2">
+              {breakdownItems.map((item) => {
+                const pct = (item.value / result.total) * 100;
+                return (
+                  <div key={item.label} className="flex items-center gap-2 text-sm">
+                    <item.icon className={cn("w-4 h-4 flex-shrink-0", item.color)} />
+                    <span className="flex-1 text-muted-foreground truncate">{item.label}</span>
+                    <span className="font-medium text-foreground tabular-nums">{eur(item.value)}</span>
+                    <span className="text-xs text-muted-foreground w-10 text-right tabular-nums">
+                      {pct.toFixed(0)}%
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Disclaimer */}
+          <div className="flex items-start gap-2 text-xs text-muted-foreground">
+            <Info className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
+            <p>
+              Estimation indicative basée sur les données moyennes du marché belge 2026.
+              Le coût réel peut varier selon votre profil, la couverture d'assurance et l'entretien effectif.
+            </p>
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
