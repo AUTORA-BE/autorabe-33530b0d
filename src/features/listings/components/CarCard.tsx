@@ -1,5 +1,5 @@
 import { forwardRef, memo } from "react";
-import { Fuel, Calendar, Gauge, MapPin, Heart, GitCompareArrows, Leaf, AlertTriangle, Ban, Info, CheckCircle, Building2 } from "lucide-react";
+import { Calendar, Gauge, MapPin, Heart, GitCompareArrows, Leaf, AlertTriangle, Ban, Info, CheckCircle, Building2 } from "lucide-react";
 import { useCompareContext } from "@/features/compare";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useHapticFeedback } from "@/hooks/useHapticFeedback";
@@ -216,10 +216,6 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
           <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-2xl bg-secondary text-sm text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-colors duration-300">
             <Gauge className="w-3.5 h-3.5" />
             {formatMileage(car.mileage)}
-          </span>
-          <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-2xl bg-secondary text-sm text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-colors duration-300">
-            <Fuel className="w-3.5 h-3.5" />
-            {car.fuelType}
           </span>
         </div>
       </div>
