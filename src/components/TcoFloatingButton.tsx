@@ -1,0 +1,21 @@
+import { Calculator } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+
+const TcoFloatingButton = () => {
+  const navigate = useNavigate();
+
+  return (
+    <button
+      onClick={() => navigate("/calculateur-tco")}
+      className="fixed bottom-6 left-6 z-[60] w-14 h-14 rounded-full bg-gradient-to-br from-accent to-primary text-primary-foreground shadow-xl shadow-primary/25 flex items-center justify-center transition-all hover:scale-110 active:scale-95 group"
+      aria-label="Calculateur TCO"
+    >
+      <Calculator className="w-6 h-6 transition-transform group-hover:rotate-12" />
+      <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-[9px] font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-sm">
+        TCO
+      </span>
+    </button>
+  );
+};
+
+export default TcoFloatingButton;
