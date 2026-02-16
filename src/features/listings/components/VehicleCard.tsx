@@ -4,7 +4,7 @@
  */
 
 import { memo } from "react";
-import { Heart, MapPin, Fuel, Calendar, Gauge, Shield, CheckCircle, AlertTriangle, Ban, Leaf, Info, Building2 } from "lucide-react";
+import { Heart, MapPin, Calendar, Gauge, Shield, CheckCircle, AlertTriangle, Ban, Leaf, Info, Building2 } from "lucide-react";
 import CarImage from "@/components/cars/CarImage";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
@@ -202,7 +202,7 @@ const VehicleCard = memo(function VehicleCard({
         )}
 
         {/* Specs Grid */}
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 gap-2">
           <div className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
             <Calendar className="w-3.5 h-3.5 flex-shrink-0 text-primary/70" />
             <span>{vehicle.year}</span>
@@ -210,10 +210,6 @@ const VehicleCard = memo(function VehicleCard({
           <div className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
             <Gauge className="w-3.5 h-3.5 flex-shrink-0 text-primary/70" />
             <span className="truncate">{formatMileage(vehicle.mileage)} {labels.km}</span>
-          </div>
-          <div className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
-            <Fuel className="w-3.5 h-3.5 flex-shrink-0 text-primary/70" />
-            <span className="truncate capitalize">{vehicle.fuelType}</span>
           </div>
         </div>
       </div>
