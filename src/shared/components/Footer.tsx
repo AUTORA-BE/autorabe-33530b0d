@@ -145,7 +145,7 @@ const Footer = () => {
               </li>
               <li className="text-gray-400 text-sm flex items-center gap-2">
                 <Mail className="w-4 h-4" />
-                contact@autora.be
+                autoracontact@gmail.com
               </li>
               <li className="text-gray-400 text-sm flex items-center gap-2">
                 <MapPin className="w-4 h-4" />

@@ -45,7 +45,7 @@ async function generateVAPIDHeaders(
   const payload = {
     aud: audience,
     exp: expiration,
-    sub: "mailto:contact@autora.be",
+    sub: "mailto:autoracontact@gmail.com",
   };
   
   // Base64url encode header and payload
