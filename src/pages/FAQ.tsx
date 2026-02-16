@@ -384,7 +384,7 @@ const FAQ = () => {
                 {t("faq.notFoundDesc")}
               </p>
               <a 
-                href="mailto:contact@autora.be" 
+                href="mailto:autoracontact@gmail.com" 
                 className="btn-primary-gradient inline-flex items-center gap-2"
               >
                 {t("faq.contactUs")}

@@ -83,8 +83,8 @@ const Contact = () => {
     {
       icon: Mail,
       title: "Email",
-      value: "contact@autora.be",
-      href: "mailto:contact@autora.be",
+      value: "autoracontact@gmail.com",
+      href: "mailto:autoracontact@gmail.com",
     },
     {
       icon: Clock,

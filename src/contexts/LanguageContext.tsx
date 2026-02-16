@@ -183,7 +183,7 @@ const translations: Record<Language, Record<string, string>> = {
     "faq.for": "pour",
     "faq.in": "dans",
     "faq.notFound": "Vous n'avez pas trouvé votre réponse ?",
-    "faq.notFoundDesc": "Notre équipe est là pour vous aider. Contactez-nous par email à contact@autora.be",
+    "faq.notFoundDesc": "Notre équipe est là pour vous aider. Contactez-nous par email à autoracontact@gmail.com",
     "faq.contactUs": "Nous contacter",
     "faq.linkCopied": "Lien copié !",
     
@@ -209,7 +209,7 @@ const translations: Record<Language, Record<string, string>> = {
     "footer.warning": "Attention",
     "footer.warningText": "Autora est une plateforme d'annonces. Nous ne sommes pas responsables de la transaction ou de l'état du véhicule. Ne versez jamais d'acompte sans avoir vu le vendeur en personne et vérifié le véhicule.",
     "footer.gdprTitle": "Protection des données (RGPD)",
-    "footer.gdprText": "Vos données personnelles sont traitées conformément au règlement européen RGPD. Vous disposez d'un droit d'accès, de rectification et de suppression de vos données. Contactez-nous à contact@autora.be pour toute demande.",
+    "footer.gdprText": "Vos données personnelles sont traitées conformément au règlement européen RGPD. Vous disposez d'un droit d'accès, de rectification et de suppression de vos données. Contactez-nous à autoracontact@gmail.com pour toute demande.",
     
     // Error States
     "error.loadingFailed": "Erreur de chargement",
@@ -698,7 +698,7 @@ const translations: Record<Language, Record<string, string>> = {
     "faq.for": "voor",
     "faq.in": "in",
     "faq.notFound": "Uw antwoord niet gevonden?",
-    "faq.notFoundDesc": "Ons team staat voor u klaar. Neem contact met ons op via contact@autora.be",
+    "faq.notFoundDesc": "Ons team staat voor u klaar. Neem contact met ons op via autoracontact@gmail.com",
     "faq.contactUs": "Neem contact op",
     "faq.linkCopied": "Link gekopieerd!",
     
@@ -724,7 +724,7 @@ const translations: Record<Language, Record<string, string>> = {
     "footer.warning": "Opgelet",
     "footer.warningText": "Autora is een advertentieplatform. Wij zijn niet verantwoordelijk voor de transactie of de staat van het voertuig. Betaal nooit een voorschot zonder de verkoper persoonlijk te hebben ontmoet en het voertuig te hebben gecontroleerd.",
     "footer.gdprTitle": "Privacy (GDPR)",
-    "footer.gdprText": "Uw persoonlijke gegevens worden verwerkt in overeenstemming met de Europese GDPR-wetgeving. U heeft recht op toegang, rectificatie en verwijdering van uw gegevens. Neem contact met ons op via contact@autora.be voor elke aanvraag.",
+    "footer.gdprText": "Uw persoonlijke gegevens worden verwerkt in overeenstemming met de Europese GDPR-wetgeving. U heeft recht op toegang, rectificatie en verwijdering van uw gegevens. Neem contact met ons op via autoracontact@gmail.com voor elke aanvraag.",
     
     // Error States
     "error.loadingFailed": "Laadfout",
@@ -1213,7 +1213,7 @@ const translations: Record<Language, Record<string, string>> = {
     "faq.for": "für",
     "faq.in": "in",
     "faq.notFound": "Ihre Antwort nicht gefunden?",
-    "faq.notFoundDesc": "Unser Team ist für Sie da. Kontaktieren Sie uns per E-Mail unter contact@autora.be",
+    "faq.notFoundDesc": "Unser Team ist für Sie da. Kontaktieren Sie uns per E-Mail unter autoracontact@gmail.com",
     "faq.contactUs": "Kontaktieren Sie uns",
     "faq.linkCopied": "Link kopiert!",
     
@@ -1239,7 +1239,7 @@ const translations: Record<Language, Record<string, string>> = {
     "footer.warning": "Achtung",
     "footer.warningText": "Autora ist eine Anzeigenplattform. Wir sind nicht verantwortlich für die Transaktion oder den Zustand des Fahrzeugs. Zahlen Sie niemals eine Anzahlung, ohne den Verkäufer persönlich getroffen und das Fahrzeug überprüft zu haben.",
     "footer.gdprTitle": "Datenschutz (DSGVO)",
-    "footer.gdprText": "Ihre persönlichen Daten werden gemäß der europäischen DSGVO-Verordnung verarbeitet. Sie haben das Recht auf Zugang, Berichtigung und Löschung Ihrer Daten. Kontaktieren Sie uns unter contact@autora.be für jede Anfrage.",
+    "footer.gdprText": "Ihre persönlichen Daten werden gemäß der europäischen DSGVO-Verordnung verarbeitet. Sie haben das Recht auf Zugang, Berichtigung und Löschung Ihrer Daten. Kontaktieren Sie uns unter autoracontact@gmail.com für jede Anfrage.",
     
     // Error States
     "error.loadingFailed": "Ladefehler",
@@ -1728,7 +1728,7 @@ const translations: Record<Language, Record<string, string>> = {
     "faq.for": "for",
     "faq.in": "in",
     "faq.notFound": "Didn't find your answer?",
-    "faq.notFoundDesc": "Our team is here to help. Contact us by email at contact@autora.be",
+    "faq.notFoundDesc": "Our team is here to help. Contact us by email at autoracontact@gmail.com",
     "faq.contactUs": "Contact us",
     "faq.linkCopied": "Link copied!",
     
@@ -1754,7 +1754,7 @@ const translations: Record<Language, Record<string, string>> = {
     "footer.warning": "Warning",
     "footer.warningText": "Autora is a listing platform. We are not responsible for the transaction or the condition of the vehicle. Never pay a deposit without meeting the seller in person and checking the vehicle.",
     "footer.gdprTitle": "Data Protection (GDPR)",
-    "footer.gdprText": "Your personal data is processed in accordance with the European GDPR regulation. You have the right to access, rectify and delete your data. Contact us at contact@autora.be for any request.",
+    "footer.gdprText": "Your personal data is processed in accordance with the European GDPR regulation. You have the right to access, rectify and delete your data. Contact us at autoracontact@gmail.com for any request.",
     
     // Error States
     "error.loadingFailed": "Loading failed",

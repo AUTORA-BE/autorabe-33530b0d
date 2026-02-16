@@ -9,7 +9,7 @@ const Legal = () => {
       content: `AutoRa
 Projet en cours de constitution
 
-Email : contact@autora.be`
+Email : autoracontact@gmail.com`
     },
     {
       icon: User,
@@ -22,7 +22,7 @@ Email : contact@autora.be`
       content: `Le site AutoRa est hébergé par Lovable Technologies.
 Site web : https://lovable.dev
 
-Pour toute question, contactez-nous à : contact@autora.be`
+Pour toute question, contactez-nous à : autoracontact@gmail.com`
     },
     {
       icon: Globe,
@@ -60,7 +60,7 @@ L'utilisateur reconnaît utiliser ces informations sous sa responsabilité exclu
       title: "7. Données personnelles et RGPD",
       content: `Conformément au Règlement Général sur la Protection des Données (RGPD) et à la loi belge du 30 juillet 2018 relative à la protection des personnes physiques à l'égard des traitements de données à caractère personnel, vous disposez d'un droit d'accès, de rectification, de suppression et d'opposition aux données personnelles vous concernant.
 
-Pour exercer vos droits ou pour toute question sur le traitement de vos données, vous pouvez nous contacter à : contact@autora.be
+Pour exercer vos droits ou pour toute question sur le traitement de vos données, vous pouvez nous contacter à : autoracontact@gmail.com
 
 Pour plus de détails, consultez notre Politique de Confidentialité.`
     },
@@ -69,7 +69,7 @@ Pour plus de détails, consultez notre Politique de Confidentialité.`
       title: "8. Contact",
       content: `Pour toute question ou réclamation concernant le site AutoRa, vous pouvez nous contacter par email :
 
-contact@autora.be`
+autoracontact@gmail.com`
     }
   ];
 

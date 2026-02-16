@@ -133,7 +133,7 @@ const handler = async (req: Request): Promise<Response> => {
     `;
 
     await sendEmail(
-      ["contact@autora.be"],
+      ["autoracontact@gmail.com"],
       `[Contact AutoRa] ${safeSubject}`,
       notificationHtml,
       email
