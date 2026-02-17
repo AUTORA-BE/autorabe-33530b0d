@@ -5,12 +5,13 @@
  */
 
 import { useState, useMemo, useCallback } from "react";
-import { Calculator, ChevronDown, ChevronUp, Fuel, Wrench, Shield, FileText, TrendingDown, Info, ArrowLeftRight, Zap, Car } from "lucide-react";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from "recharts";
-import { cn } from "@/lib/utils";
+import { Calculator, ChevronDown, ChevronUp, Fuel, Wrench, Shield, FileText, TrendingDown, Info } from "lucide-react";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { cn } from "@/lib/utils";
+
 import {
   PRIX_CARBURANT, FACTEUR_REALITE, ENTRETIEN_BASE,
   ASSURANCE_RC, COEFF_BONUS, MULT_COUVERTURE,
@@ -137,8 +138,7 @@ function computeTco(
 /* ─── component ─── */
 
 export default function VehicleTcoSection({ price, fuelType, year, mileage, power }: VehicleTcoProps) {
-  const isMobile = useIsMobile();
-  const [isOpen, setIsOpen] = useState(!isMobile);
+  const [isOpen, setIsOpen] = useState(false);
   const fuel = useMemo(() => mapFuelType(fuelType), [fuelType]);
 
   const [inputs, setInputs] = useState<TcoInputs>({
@@ -153,33 +153,6 @@ export default function VehicleTcoSection({ price, fuelType, year, mileage, powe
 
   const result = useMemo(() => computeTco(price, fuel, year, inputs), [price, fuel, year, inputs]);
 
-  // All fuel options for comparison (exclude current)
-  const FUEL_OPTIONS: { value: TcoFuelType; label: string }[] = [
-    { value: "essence95", label: "Essence" },
-    { value: "diesel", label: "Diesel" },
-    { value: "electric", label: "Électrique" },
-    { value: "hybride", label: "Hybride" },
-    { value: "hybridePHEV", label: "Hybride PHEV" },
-  ];
-  const availableAlts = useMemo(() => FUEL_OPTIONS.filter(o => o.value !== fuel), [fuel]);
-  const defaultAlt = fuel === "electric" ? "essence95" : "electric";
-  const [selectedAltFuel, setSelectedAltFuel] = useState<TcoFuelType>(defaultAlt);
-  // Reset if fuel changes
-  const altFuel = availableAlts.find(o => o.value === selectedAltFuel) ? selectedAltFuel : availableAlts[0].value;
-  const altLabel = FUEL_OPTIONS.find(o => o.value === altFuel)?.label ?? "Alternative";
-
-  // Estimate alternative purchase price by fuel type
-  const ALT_PRICE_FACTOR: Record<TcoFuelType, number> = {
-    electric: 1.3, essence95: 0.75, essence98: 0.75, diesel: 0.8, hybride: 1.1, hybridePHEV: 1.2,
-  };
-  const altPrice = useMemo(() => {
-    // Normalize current price to "base" then apply alt factor
-    const currentFactor = ALT_PRICE_FACTOR[fuel] ?? 1;
-    const basePrice = price / currentFactor;
-    return Math.round(basePrice * (ALT_PRICE_FACTOR[altFuel] ?? 1));
-  }, [price, fuel, altFuel]);
-  const altResult = useMemo(() => computeTco(altPrice, altFuel, year, inputs), [altPrice, altFuel, year, inputs]);
-  const savings = result.total - altResult.total;
   const DONUT_COLORS = ["#3b82f6", "#f59e0b", "#f97316", "#10b981", "#8b5cf6", "#ef4444"];
 
   const breakdownItems = [
@@ -353,103 +326,6 @@ export default function VehicleTcoSection({ price, fuelType, year, mileage, powe
                 );
               })}
             </div>
-          </div>
-
-          {/* Comparison */}
-          <div className="rounded-lg border border-border bg-background p-4 space-y-3">
-            <div className="flex items-center justify-between gap-2 flex-wrap">
-              <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-                <ArrowLeftRight className="w-4 h-4 text-primary" />
-                Comparer avec :
-              </div>
-              <Select value={altFuel} onValueChange={(v) => setSelectedAltFuel(v as TcoFuelType)}>
-                <SelectTrigger className="h-8 w-44 text-xs">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableAlts.map(o => (
-                    <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              {/* Current vehicle */}
-              <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 text-center space-y-1">
-                <div className="flex items-center justify-center gap-1.5 text-xs font-medium text-primary">
-                  <Fuel className="w-3.5 h-3.5" />
-                  {fuelLabel} (actuel)
-                </div>
-                <p className="text-lg font-bold text-foreground tabular-nums">{eur(result.total)}</p>
-                <p className="text-xs text-muted-foreground">{eur(result.mensuel)}/mois</p>
-              </div>
-
-              {/* Alternative */}
-              <div className="rounded-lg border border-border bg-muted/30 p-3 text-center space-y-1">
-                <div className="flex items-center justify-center gap-1.5 text-xs font-medium text-muted-foreground">
-                  {altFuel === "electric" ? <Zap className="w-3.5 h-3.5" /> : <Car className="w-3.5 h-3.5" />}
-                  {altLabel} (estimé)
-                </div>
-                <p className="text-lg font-bold text-foreground tabular-nums">{eur(altResult.total)}</p>
-                <p className="text-xs text-muted-foreground">{eur(altResult.mensuel)}/mois</p>
-              </div>
-            </div>
-
-            {/* Savings banner */}
-            <div className={cn(
-              "rounded-md px-3 py-2 text-center text-sm font-medium",
-              savings > 0
-                ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
-                : savings < 0
-                  ? "bg-red-500/10 text-red-700 dark:text-red-400"
-                  : "bg-muted text-muted-foreground"
-            )}>
-              {savings > 0
-                ? `💡 Vous économiseriez ${eur(savings)} sur 5 ans en passant au ${altLabel.toLowerCase()}`
-                : savings < 0
-                  ? `Ce véhicule est déjà ${eur(Math.abs(savings))} moins cher sur 5 ans qu'un équivalent ${altLabel.toLowerCase()}`
-                  : "Coût équivalent sur 5 ans"}
-            </div>
-
-            {/* Bar chart comparison */}
-            <div className="pt-2">
-              <ResponsiveContainer width="100%" height={isMobile ? 300 : 220}>
-                <BarChart
-                  data={[
-                    { name: "Achat", actuel: result.prixAchat, alt: altResult.prixAchat },
-                    { name: "Carburant", actuel: result.carburant, alt: altResult.carburant },
-                    { name: "Entretien", actuel: result.entretien, alt: altResult.entretien },
-                    { name: "Assurance", actuel: result.assurance, alt: altResult.assurance },
-                    { name: "Taxe", actuel: result.taxe, alt: altResult.taxe },
-                    { name: "Dépréciation", actuel: result.depreciation, alt: altResult.depreciation },
-                  ]}
-                  layout={isMobile ? "vertical" : "horizontal"}
-                  margin={isMobile ? { top: 5, right: 10, left: 5, bottom: 5 } : { top: 5, right: 10, left: 0, bottom: 5 }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  {isMobile ? (
-                    <>
-                      <XAxis type="number" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`} />
-                      <YAxis type="category" dataKey="name" tick={{ fontSize: 10, fill: "hsl(var(--muted-foreground))" }} width={75} />
-                    </>
-                  ) : (
-                    <>
-                      <XAxis dataKey="name" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} />
-                      <YAxis tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} tickFormatter={(v: number) => `${(v / 1000).toFixed(0)}k`} width={40} />
-                    </>
-                  )}
-                  <Tooltip formatter={(value: number) => eur(value)} contentStyle={{ borderRadius: 8, fontSize: 12, border: "1px solid hsl(var(--border))", background: "hsl(var(--background))" }} />
-                  <Legend wrapperStyle={{ fontSize: 11 }} />
-                  <Bar dataKey="actuel" name={fuelLabel} fill="hsl(var(--primary))" radius={isMobile ? [0, 4, 4, 0] : [4, 4, 0, 0]} animationDuration={800} animationEasing="ease-out" />
-                  <Bar dataKey="alt" name={altLabel} fill="hsl(var(--muted-foreground))" radius={isMobile ? [0, 4, 4, 0] : [4, 4, 0, 0]} animationDuration={800} animationBegin={300} animationEasing="ease-out" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-
-            <p className="text-xs text-muted-foreground">
-              * Prix d'achat {altLabel.toLowerCase()} estimé à {eur(altPrice)}. Comparaison indicative.
-            </p>
           </div>
 
           {/* Disclaimer */}
