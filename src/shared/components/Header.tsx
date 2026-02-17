@@ -3,7 +3,7 @@
  * @module shared/components
  */
 
-import { Menu, Heart, MessageCircle, GitCompareArrows, Sun, Moon, Bell, CreditCard } from "lucide-react";
+import { Menu, Heart, MessageCircle, GitCompareArrows, Sun, Moon, Bell } from "lucide-react";
 import autoraLogo from "@/assets/autora-logo.png";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
@@ -98,12 +98,6 @@ const Header = () => {
           <nav className="hidden md:flex items-center gap-6">
             <NavLink to="/">{t("nav.buy")}</NavLink>
             <NavLink to="/sell">{t("nav.sell")}</NavLink>
-            <NavLink to="/pricing">
-              <span className="flex items-center gap-1.5">
-                <CreditCard className="w-4 h-4" />
-                Tarifs
-              </span>
-            </NavLink>
             <NavLink to="/favorites">
               <span className="flex items-center gap-1.5">
                 <Heart className="w-4 h-4" />

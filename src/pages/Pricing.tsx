@@ -5,25 +5,39 @@
 
 import { useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Check, Crown, Zap, Rocket, Settings, User } from 'lucide-react';
+import { Check, Crown, Rocket, Settings, User, Star, Sparkles, ArrowRight, Shield, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Header, Footer } from '@/shared/components';
 import { useSubscription, SUBSCRIPTION_TIERS, FREE_PARTICULIER_LIMIT } from '@/features/subscription';
 import { useAuth } from '@/features/auth';
 import { useToast } from '@/hooks/use-toast';
 import SEOHead from '@/components/SEOHead';
+import { motion } from 'framer-motion';
 
 const tierIcons: Record<string, React.ReactNode> = {
   particulier_plus: <User className="h-6 w-6" />,
-  starter: <Zap className="h-6 w-6" />,
   pro: <Rocket className="h-6 w-6" />,
   premium: <Crown className="h-6 w-6" />,
 };
 
-const particulierTiers = Object.entries(SUBSCRIPTION_TIERS).filter(([, t]) => t.category === 'particulier');
-const proTiers = Object.entries(SUBSCRIPTION_TIERS).filter(([, t]) => t.category === 'professionnel');
+const tierAccents: Record<string, string> = {
+  particulier_plus: 'border-border',
+  pro: 'border-primary ring-2 ring-primary/20',
+  premium: 'border-amber-400 ring-2 ring-amber-400/20',
+};
+
+const tierGradients: Record<string, string> = {
+  particulier_plus: 'from-muted/50 to-muted/30',
+  pro: 'from-primary/10 to-primary/5',
+  premium: 'from-amber-500/10 to-amber-400/5',
+};
+
+const tierBtnVariants: Record<string, 'default' | 'outline'> = {
+  particulier_plus: 'outline',
+  pro: 'default',
+  premium: 'outline',
+};
 
 export default function Pricing() {
   const [searchParams] = useSearchParams();
@@ -40,10 +54,9 @@ export default function Pricing() {
     checkSubscription,
   } = useSubscription();
 
-  // Handle Stripe redirect
   useEffect(() => {
     if (searchParams.get('success') === 'true') {
-      toast({ title: 'Abonnement activé !', description: 'Votre abonnement Pro est maintenant actif.' });
+      toast({ title: 'Abonnement activé !', description: 'Votre abonnement est maintenant actif.' });
       checkSubscription();
     }
     if (searchParams.get('canceled') === 'true') {
@@ -52,202 +65,227 @@ export default function Pricing() {
   }, [searchParams, toast, checkSubscription]);
 
   const handleSubscribe = async (priceId: string) => {
-    if (!isAuthenticated) {
-      navigate('/auth');
-      return;
-    }
-    try {
-      await createCheckout(priceId);
-    } catch {
+    if (!isAuthenticated) { navigate('/auth'); return; }
+    try { await createCheckout(priceId); } catch {
       toast({ title: 'Erreur', description: 'Impossible de lancer le paiement.', variant: 'destructive' });
     }
   };
 
   const handleManage = async () => {
-    try {
-      await openCustomerPortal();
-    } catch {
+    try { await openCustomerPortal(); } catch {
       toast({ title: 'Erreur', description: 'Impossible d\'ouvrir le portail.', variant: 'destructive' });
     }
   };
 
+  const paidTiers = Object.entries(SUBSCRIPTION_TIERS);
+
   return (
     <>
       <SEOHead
-        title="Abonnements Vendeurs Pro | AutoRa"
-        description="Choisissez votre abonnement vendeur professionnel AutoRa. Publiez vos annonces, obtenez le badge Pro et des statistiques avancées."
+        title="Abonnements Vendeurs | AutoRa"
+        description="Choisissez votre abonnement vendeur AutoRa. Publiez vos annonces, obtenez le badge Pro et des statistiques avancées."
       />
       <Header />
-      <main className="min-h-screen bg-background pt-24 pb-16">
+      <main className="min-h-screen bg-background pt-28 pb-20">
         <div className="container mx-auto px-4">
+
           {/* Hero */}
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <Badge variant="secondary" className="mb-4">Tarifs</Badge>
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Vendez sur AutoRa, simplement
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-center max-w-3xl mx-auto mb-16"
+          >
+            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-semibold mb-6">
+              <Sparkles className="h-4 w-4" />
+              Tarifs simples, sans surprise
+            </div>
+            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-5 leading-tight">
+              Vendez plus,<br />
+              <span className="text-primary">vendez mieux.</span>
             </h1>
-            <p className="text-muted-foreground text-lg">
-              Gratuit pour les particuliers jusqu'à {FREE_PARTICULIER_LIMIT} annonces simultanées. Des plans Pro pour les professionnels.
+            <p className="text-muted-foreground text-lg max-w-xl mx-auto">
+              Commencez gratuitement avec {FREE_PARTICULIER_LIMIT} annonces. Passez Pro quand votre activité décolle.
             </p>
-          </div>
+          </motion.div>
 
           {/* Active subscription banner */}
           {subscribed && currentTier && (
-            <div className="max-w-md mx-auto mb-10 p-4 rounded-xl border-2 border-primary bg-primary/5 text-center">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="max-w-md mx-auto mb-12 p-5 rounded-2xl border-2 border-primary bg-primary/5 text-center"
+            >
               <p className="text-sm text-muted-foreground mb-1">Votre abonnement actuel</p>
-              <p className="text-xl font-bold text-foreground">{currentTier.name}</p>
+              <p className="text-2xl font-bold text-foreground">{currentTier.name}</p>
               {subscriptionEnd && (
                 <p className="text-xs text-muted-foreground mt-1">
                   Renouvellement le {new Date(subscriptionEnd).toLocaleDateString('fr-BE')}
                 </p>
               )}
-              <Button variant="outline" size="sm" className="mt-3" onClick={handleManage}>
+              <Button variant="outline" size="sm" className="mt-3 rounded-xl" onClick={handleManage}>
                 <Settings className="h-4 w-4 mr-2" />
                 Gérer mon abonnement
               </Button>
-            </div>
+            </motion.div>
           )}
 
-          {/* Particulier section */}
-          <div className="max-w-lg mx-auto mb-16">
-            <h2 className="text-xl font-semibold text-foreground mb-2 text-center">Particulier</h2>
-            <p className="text-muted-foreground text-center text-sm mb-6">
-              Gratuit jusqu'à {FREE_PARTICULIER_LIMIT} annonces simultanées, sans engagement.
-            </p>
-
-            <Card className="border-border">
-              <CardHeader className="text-center pb-2">
-                <div className="mx-auto mb-3 h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                  <User className="h-6 w-6" />
+          {/* Free tier card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.5 }}
+            className="max-w-3xl mx-auto mb-16"
+          >
+            <div className="rounded-2xl border border-border bg-card p-8 md:p-10 flex flex-col md:flex-row items-center gap-8">
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="h-10 w-10 rounded-xl bg-muted flex items-center justify-center">
+                    <User className="h-5 w-5 text-muted-foreground" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-foreground">Gratuit</h2>
+                    <p className="text-sm text-muted-foreground">Pour les particuliers</p>
+                  </div>
                 </div>
-                <CardTitle className="text-xl">Gratuit</CardTitle>
-                <CardDescription>Jusqu'à {FREE_PARTICULIER_LIMIT} annonces simultanées</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center mb-6">
-                  <span className="text-4xl font-bold text-foreground">0€</span>
-                  <span className="text-muted-foreground">/mois</span>
-                </div>
-                <ul className="space-y-3">
-                  <li className="flex items-start gap-2 text-sm">
-                    <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                    <span className="text-foreground">Jusqu'à {FREE_PARTICULIER_LIMIT} annonces simultanées gratuitement</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-sm">
-                    <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                    <span className="text-foreground">Messagerie intégrée</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-sm">
-                    <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                    <span className="text-foreground">Aucun engagement</span>
-                  </li>
+                <ul className="space-y-2 mt-4">
+                  {[
+                    `Jusqu'à ${FREE_PARTICULIER_LIMIT} annonces simultanées`,
+                    'Messagerie intégrée',
+                    'Aucun engagement, aucune carte requise',
+                  ].map((f) => (
+                    <li key={f} className="flex items-center gap-2 text-sm text-foreground">
+                      <Check className="h-4 w-4 text-primary shrink-0" />
+                      {f}
+                    </li>
+                  ))}
                 </ul>
-
-                <div className="mt-6 pt-4 border-t border-border">
-                  <p className="text-sm text-muted-foreground text-center mb-3">
-                    Besoin de plus de {FREE_PARTICULIER_LIMIT} annonces ?
-                  </p>
-                  {particulierTiers.map(([key, tier]) => {
-                    const isCurrentPlan = currentTier?.slug === tier.slug;
-                    return (
-                      <div key={key} className="text-center">
-                        <p className="text-lg font-semibold text-foreground mb-2">
-                          {tier.price.toFixed(2).replace('.', ',')}€<span className="text-sm text-muted-foreground font-normal">/mois</span>
-                        </p>
-                        {isCurrentPlan ? (
-                          <Button variant="outline" className="w-full" onClick={handleManage}>Gérer</Button>
-                        ) : (
-                          <Button variant="outline" className="w-full" onClick={() => handleSubscribe(tier.price_id)} disabled={isLoading}>
-                            {isLoading ? 'Chargement...' : 'Passer à Particulier+'}
-                          </Button>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Pro section */}
-          <div className="mb-10">
-            <h2 className="text-xl font-semibold text-foreground mb-2 text-center">Vendeurs Professionnels</h2>
-            <p className="text-muted-foreground text-center text-sm mb-6">
-              Badge Pro, statistiques avancées et visibilité maximale.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {proTiers.map(([key, tier]) => {
-              const isCurrentPlan = currentTier?.slug === tier.slug;
-              return (
-                <Card
-                  key={key}
-                  className={`relative flex flex-col transition-all duration-200 hover:shadow-lg ${
-                    tier.popular ? 'border-primary shadow-md scale-[1.02]' : 'border-border'
-                  } ${isCurrentPlan ? 'ring-2 ring-primary' : ''}`}
+              </div>
+              <div className="text-center md:text-right">
+                <p className="text-5xl font-extrabold text-foreground">0€</p>
+                <p className="text-muted-foreground text-sm mt-1">pour toujours</p>
+                <Button
+                  variant="outline"
+                  className="mt-4 rounded-xl"
+                  onClick={() => navigate('/sell')}
                 >
-                  {tier.popular && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                      <Badge className="bg-primary text-primary-foreground">Le plus populaire</Badge>
-                    </div>
-                  )}
-                  {isCurrentPlan && (
-                    <div className="absolute -top-3 right-4">
-                      <Badge variant="secondary">Votre plan</Badge>
-                    </div>
-                  )}
-                  <CardHeader className="text-center pb-2">
-                    <div className="mx-auto mb-3 h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                  Commencer gratuitement
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Paid tiers */}
+          <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+            {paidTiers.map(([key, tier], idx) => {
+              const isCurrentPlan = currentTier?.slug === tier.slug;
+              const isPremium = key === 'premium';
+              return (
+                <motion.div
+                  key={key}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.15 + idx * 0.1, duration: 0.5 }}
+                  className={`relative rounded-2xl border bg-card overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${tierAccents[key]} ${isCurrentPlan ? 'ring-2 ring-primary' : ''}`}
+                >
+                  {/* Gradient header */}
+                  <div className={`bg-gradient-to-br ${tierGradients[key]} px-6 pt-8 pb-6`}>
+                    {tier.popular && (
+                      <div className="absolute top-4 right-4">
+                        <Badge className="bg-primary text-primary-foreground gap-1">
+                          <Star className="h-3 w-3" /> Populaire
+                        </Badge>
+                      </div>
+                    )}
+                    {isPremium && (
+                      <div className="absolute top-4 right-4">
+                        <Badge className="bg-amber-500 text-white border-0 gap-1">
+                          <Zap className="h-3 w-3" /> Performance max
+                        </Badge>
+                      </div>
+                    )}
+                    {isCurrentPlan && (
+                      <div className="absolute top-4 left-4">
+                        <Badge variant="secondary">Votre plan</Badge>
+                      </div>
+                    )}
+
+                    <div className={`h-12 w-12 rounded-xl flex items-center justify-center mb-4 ${isPremium ? 'bg-amber-500/20 text-amber-500' : 'bg-primary/10 text-primary'}`}>
                       {tierIcons[key]}
                     </div>
-                    <CardTitle className="text-xl">{tier.name}</CardTitle>
-                    <CardDescription>
-                      {tier.maxListings ? `${tier.maxListings} annonces simultanées` : 'Annonces simultanées illimitées'}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="flex-1">
-                    <div className="text-center mb-6">
-                      <span className="text-4xl font-bold text-foreground">
-                        {tier.price.toFixed(2).replace('.', ',')}€
+                    <h3 className="text-2xl font-bold text-foreground">{tier.name}</h3>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {tier.maxListings ? `${tier.maxListings} annonces simultanées` : 'Annonces illimitées'}
+                    </p>
+
+                    <div className="mt-5">
+                      <span className="text-5xl font-extrabold text-foreground">
+                        {tier.price % 1 === 0 ? tier.price : tier.price.toFixed(2).replace('.', ',')}€
                       </span>
-                      <span className="text-muted-foreground">/mois</span>
+                      <span className="text-muted-foreground text-sm ml-1">/mois</span>
                     </div>
+                    {tier.price >= 50 && (
+                      <p className="text-xs text-muted-foreground mt-1">HTVA · TVA belge 21% applicable</p>
+                    )}
+                  </div>
+
+                  {/* Features */}
+                  <div className="px-6 py-6 flex-1">
                     <ul className="space-y-3">
                       {tier.features.map((feature) => (
-                        <li key={feature} className="flex items-start gap-2 text-sm">
-                          <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+                        <li key={feature} className="flex items-start gap-2.5 text-sm">
+                          <Check className={`h-4 w-4 mt-0.5 shrink-0 ${isPremium ? 'text-amber-500' : 'text-primary'}`} />
                           <span className="text-foreground">{feature}</span>
                         </li>
                       ))}
                     </ul>
-                  </CardContent>
-                  <CardFooter>
+                  </div>
+
+                  {/* CTA */}
+                  <div className="px-6 pb-6">
                     {isCurrentPlan ? (
-                      <Button variant="outline" className="w-full" onClick={handleManage}>
+                      <Button variant="outline" className="w-full rounded-xl h-12" onClick={handleManage}>
+                        <Settings className="h-4 w-4 mr-2" />
                         Gérer
                       </Button>
                     ) : (
                       <Button
-                        variant={tier.popular ? 'default' : 'outline'}
-                        className="w-full"
+                        variant={isPremium ? 'outline' : tierBtnVariants[key]}
+                        className={`w-full rounded-xl h-12 font-semibold ${isPremium ? 'border-amber-500 text-amber-600 hover:bg-amber-500/10 dark:text-amber-400' : ''}`}
                         onClick={() => handleSubscribe(tier.price_id)}
                         disabled={isLoading}
                       >
                         {isLoading ? 'Chargement...' : 'Choisir ce plan'}
+                        {!isLoading && <ArrowRight className="h-4 w-4 ml-2" />}
                       </Button>
                     )}
-                  </CardFooter>
-                </Card>
+                  </div>
+                </motion.div>
               );
             })}
           </div>
 
-          {/* FAQ / trust */}
-          <div className="text-center mt-16 text-muted-foreground text-sm max-w-lg mx-auto">
-            <p>Paiement sécurisé par Stripe. Annulez à tout moment depuis votre espace de gestion.</p>
-            <p className="mt-2">Tous les prix sont HTVA. La TVA belge de 21% sera appliquée.</p>
-          </div>
+          {/* Trust indicators */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6 }}
+            className="flex flex-wrap justify-center gap-8 mt-16 text-muted-foreground text-sm"
+          >
+            <div className="flex items-center gap-2">
+              <Shield className="h-4 w-4" />
+              Paiement sécurisé par Stripe
+            </div>
+            <div className="flex items-center gap-2">
+              <Check className="h-4 w-4" />
+              Annulez à tout moment
+            </div>
+            <div className="flex items-center gap-2">
+              <Zap className="h-4 w-4" />
+              Activation instantanée
+            </div>
+          </motion.div>
         </div>
       </main>
       <Footer />
