@@ -10,6 +10,7 @@ const BrandCarousel = lazy(() => import("@/features/search/components/BrandCarou
 const FilterPanel = lazy(() => import("@/features/search/components/FilterPanel"));
 const PopularVehicles = lazy(() => import("@/features/listings/components/PopularVehicles"));
 const LoadMoreGrid = lazy(() => import("@/components/LoadMoreGrid"));
+const PricingCTA = lazy(() => import("@/components/PricingCTA"));
 import { useFilteredInfiniteCarListings } from "@/features/listings";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -82,6 +83,12 @@ const Index = () => {
               />
             </ScrollReveal>
           </div>
+        </Suspense>
+
+        <Suspense fallback={null}>
+          <ScrollReveal delay={0.1}>
+            <PricingCTA />
+          </ScrollReveal>
         </Suspense>
 
         <Suspense fallback={<div className="min-h-[400px]" />}>
