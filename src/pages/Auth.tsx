@@ -285,7 +285,7 @@ const Auth = () => {
             <span className="font-display text-2xl font-bold text-foreground">AutoRa</span>
           </div>
           
-          <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-6">
+          <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-6 tracking-tight leading-tight">
             {t("hero.title1")}
             <br />
             <span className="gradient-text">{t("auth.findIdealCar")}</span>
@@ -445,7 +445,7 @@ const Auth = () => {
             ) : (
               // Login/Signup form
               <>
-                <h2 className="font-display text-2xl font-bold text-foreground mb-2">
+                <h2 className="font-display text-3xl font-bold text-foreground mb-2 tracking-tight">
                   {isLogin ? t("auth.login") : t("auth.signup")}
                 </h2>
                 <p className="text-muted-foreground mb-8">
@@ -514,7 +514,7 @@ const Auth = () => {
                           placeholder={t("auth.fullName")}
                           value={fullName}
                           onChange={(e) => setFullName(e.target.value)}
-                          className="pl-10 h-12 bg-secondary/50 border-border/50 focus:border-primary"
+                          className="pl-10 h-12 bg-secondary/50 border-border/50 focus:border-primary focus:ring-primary/30 transition-colors"
                         />
                       </div>
                       {errors.name && (
@@ -531,7 +531,7 @@ const Auth = () => {
                         placeholder={t("auth.email")}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="pl-10 h-12 bg-secondary/50 border-border/50 focus:border-primary"
+                        className="pl-10 h-12 bg-secondary/50 border-border/50 focus:border-primary focus:ring-primary/30 transition-colors"
                       />
                     </div>
                     {errors.email && (
@@ -547,7 +547,7 @@ const Auth = () => {
                         placeholder={t("auth.password")}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="pl-10 pr-10 h-12 bg-secondary/50 border-border/50 focus:border-primary"
+                        className="pl-10 pr-10 h-12 bg-secondary/50 border-border/50 focus:border-primary focus:ring-primary/30 transition-colors"
                       />
                       <button
                         type="button"
