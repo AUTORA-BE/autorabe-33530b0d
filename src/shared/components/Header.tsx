@@ -87,10 +87,10 @@ const Header = () => {
                 scrolled ? "w-8 h-8" : "w-10 h-10"
               }`}
             />
-            <span className={`font-display font-bold transition-all duration-300 group-hover:tracking-wide ${
+            <span className={`font-display font-bold tracking-wider transition-all duration-300 group-hover:tracking-[0.2em] ${
               scrolled ? "text-lg" : "text-xl"
             }`}>
-              <span className="text-foreground">Auto</span><span className="text-primary">RA</span>
+              <span className="text-white dark:text-white text-foreground">Auto</span><span className="text-primary">RA</span>
             </span>
           </Link>
 

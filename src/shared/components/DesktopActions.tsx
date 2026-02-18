@@ -68,6 +68,15 @@ const DesktopActions = ({ user, userProfile, onLogout, t, isAdmin }: DesktopActi
         </DropdownMenuContent>
       </DropdownMenu>
 
+      {/* Sell CTA */}
+      <Button
+        onClick={() => navigate("/sell")}
+        className="rounded-full bg-primary text-primary-foreground font-semibold px-5 shadow-md hover:shadow-xl hover:brightness-110 transition-all duration-300"
+        size="sm"
+      >
+        Vendre ma voiture
+      </Button>
+
       {user ? (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

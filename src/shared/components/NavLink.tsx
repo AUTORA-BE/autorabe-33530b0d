@@ -22,7 +22,7 @@ const NavLink = ({ to, children, badge }: NavLinkProps) => {
       to={to}
       onMouseEnter={handlePrefetch}
       onFocus={handlePrefetch}
-      className={`relative font-medium transition-all duration-200 hover:scale-105 ${
+      className={`relative font-medium transition-all duration-200 hover:scale-105 link-hover ${
         location.pathname === to
           ? "text-primary"
           : "text-muted-foreground hover:text-foreground"
