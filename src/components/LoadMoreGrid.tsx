@@ -3,6 +3,7 @@ import { CarCard, type Car } from "@/features/listings";
 import { SlidersHorizontal, ChevronDown, AlertCircle, RefreshCw } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
+import ScrollReveal from "@/components/ScrollReveal";
 
 interface LoadMoreGridProps {
   cars: Car[];
@@ -215,14 +216,10 @@ const LoadMoreGrid = ({
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
             {cars.map((car, index) => (
-              <div
+              <ScrollReveal
                 key={car.id}
-                className={index < 6 ? "animate-fade-up card-press" : "card-press"}
-                style={index < 6 ? { 
-                  animationDelay: `${index * 0.05}s`,
-                  animationFillMode: 'backwards',
-                  contain: 'layout style',
-                } : { contain: 'layout style' }}
+                delay={Math.min((index % 6) * 0.08, 0.4)}
+                direction="up"
               >
                 <CarCard
                   car={car}
@@ -230,7 +227,7 @@ const LoadMoreGrid = ({
                   onToggleFavorite={onToggleFavorite}
                   onClick={onCarClick}
                 />
-              </div>
+              </ScrollReveal>
             ))}
             
             {/* Skeleton loaders while loading more */}
