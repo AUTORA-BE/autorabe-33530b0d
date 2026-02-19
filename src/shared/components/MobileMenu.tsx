@@ -58,10 +58,10 @@ const MobileMenu = ({
         <Link
           to="/sell"
           onMouseEnter={() => prefetchRoute("/sell")}
-          className="text-foreground font-medium py-3 px-4 rounded-2xl hover:bg-secondary/50 transition-colors"
+          className="flex items-center justify-center gap-2 py-3 px-6 rounded-full bg-primary text-primary-foreground font-semibold shadow-md hover:shadow-lg hover:brightness-110 transition-all active:scale-95"
           onClick={handleLink}
         >
-          {t("nav.sell")}
+          🚗 {t("nav.sell")}
         </Link>
         <Link
           to="/favorites"

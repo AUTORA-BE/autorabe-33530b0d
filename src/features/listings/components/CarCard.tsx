@@ -1,5 +1,6 @@
 import { forwardRef, memo } from "react";
 import { Calendar, Gauge, MapPin, Heart, GitCompareArrows, Leaf, AlertTriangle, Ban, Info, CheckCircle, Building2 } from "lucide-react";
+import { motion } from "framer-motion";
 import { useCompareContext } from "@/features/compare";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useHapticFeedback } from "@/hooks/useHapticFeedback";
@@ -97,18 +98,26 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
   const lezBadge = getLezBadgeInfo(car.euroNorm, car.fuelType);
 
   return (
-    <article
+    <motion.article
       ref={ref as React.Ref<HTMLElement>}
-      className="rounded-2xl overflow-hidden bg-card border border-border/50 group cursor-pointer touch-target transition-shadow duration-300 hover:-translate-y-2 active:scale-[0.97] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] hover:border-primary/20"
+      className="rounded-2xl overflow-hidden bg-card border border-border/50 group cursor-pointer touch-target shadow-[var(--shadow-card)] hover:border-primary/20 relative"
       style={{ contain: "layout style paint" }}
       onClick={handleClick}
+      whileHover={{ y: -6, boxShadow: "0 20px 40px -12px hsl(var(--primary) / 0.12), 0 8px 20px -8px hsl(var(--foreground) / 0.08)" }}
+      whileTap={{ scale: 0.98 }}
+      transition={{ type: "spring", stiffness: 300, damping: 25 }}
     >
+      {/* Shine effect on hover */}
+      <div className="absolute inset-0 z-20 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.06] to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
+      </div>
+
       <div className="relative h-48 md:h-56 overflow-hidden">
         <img
           src={car.image}
           alt={getAltText()}
           loading="lazy"
-          className="w-full h-full object-cover transition-transform duration-600 ease-out group-hover:scale-[1.08]"
+          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.08]"
         />
         {/* Gradient overlay on hover */}
         <div className="absolute inset-0 bg-gradient-to-t from-foreground/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -180,11 +189,11 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
           )}
         </div>
 
-        {/* Price Badge */}
+        {/* Price Badge — glassmorphism */}
         <div className="absolute bottom-3 right-3">
           <span
-            className="inline-block px-3 py-2 rounded-2xl bg-background/95 font-display text-lg font-bold text-foreground"
-            style={{ boxShadow: "0 2px 12px -2px hsl(var(--foreground) / 0.1)" }}
+            className="inline-block px-3 py-2 rounded-2xl bg-background/80 backdrop-blur-md font-display text-lg font-bold text-foreground border border-white/10"
+            style={{ boxShadow: "0 4px 16px -4px hsl(var(--foreground) / 0.15)" }}
           >
             {formatPrice(car.price)}
           </span>
@@ -219,7 +228,7 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
           </span>
         </div>
       </div>
-    </article>
+    </motion.article>
   );
 }));
 

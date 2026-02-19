@@ -97,7 +97,6 @@ const Header = () => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
             <NavLink to="/">{t("nav.buy")}</NavLink>
-            <NavLink to="/sell">{t("nav.sell")}</NavLink>
             <NavLink to="/favorites">
               <span className="flex items-center gap-1.5">
                 <Heart className="w-4 h-4" />
