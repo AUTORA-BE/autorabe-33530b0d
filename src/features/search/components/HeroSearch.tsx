@@ -1,10 +1,11 @@
 /**
- * HeroSearch component - main hero section with quick search form
+ * HeroSearch component - immersive hero with parallax and staggered entrance
  * @module features/search/components
  */
 
-import { memo, useState, useEffect, useRef, useCallback } from "react";
+import { memo, useState, useEffect, useRef } from "react";
 import { Search, ChevronDown } from "lucide-react";
+import { motion } from "framer-motion";
 import { getAllBrands, getModelsByBrand } from "@/utils/carUtils";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { BUDGET_OPTIONS } from "../types/search.types";
@@ -42,18 +43,38 @@ function AnimatedCounter({ target, suffix = "", duration = 2 }: { target: number
   return <span ref={ref}>{display}{suffix}</span>;
 }
 
-/**
- * Props for the HeroSearch component
- */
 export interface HeroSearchProps {
-  /** Callback when search is submitted */
   onSearch: (brand: string, model: string, maxPrice: number) => void;
 }
 
-/**
- * HeroSearch displays the main hero section with headline, stats,
- * and a quick search form for brand, model, and budget
- */
+/** Parallax hook — moves element based on scroll */
+function useParallax(speed = 0.3) {
+  const [offset, setOffset] = useState(0);
+
+  useEffect(() => {
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(() => {
+          setOffset(window.scrollY * speed);
+          ticking = false;
+        });
+      }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [speed]);
+
+  return offset;
+}
+
+const fadeUp = (delay: number) => ({
+  initial: { opacity: 0, y: 24 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.6, delay, ease: [0.25, 0.1, 0.25, 1] as const },
+});
+
 const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
   const [selectedBrand, setSelectedBrand] = useState("");
   const [selectedBudget, setSelectedBudget] = useState<number>(0);
@@ -62,6 +83,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
   const [models, setModels] = useState<string[]>([]);
   const [loadingModels, setLoadingModels] = useState(false);
   const { t } = useLanguage();
+  const parallaxOffset = useParallax(0.25);
 
   useEffect(() => {
     setBrands(getAllBrands());
@@ -86,50 +108,70 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleSearch();
-    }
+    if (e.key === "Enter") handleSearch();
   };
 
   return (
-    <section className="relative min-h-[70vh] sm:min-h-[85vh] flex items-center justify-center pt-20 sm:pt-24 pb-12 sm:pb-16 overflow-hidden" style={{ contain: "layout style" }}>
+    <section
+      className="relative min-h-[70vh] sm:min-h-[85vh] flex items-center justify-center pt-20 sm:pt-24 pb-12 sm:pb-16 overflow-hidden"
+      style={{ contain: "layout style" }}
+    >
       {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-secondary/30" />
 
-      {/* Decorative elements */}
+      {/* Parallax decorative orbs */}
       <div
-        className="hidden sm:block absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl"
+        className="hidden sm:block absolute top-1/4 left-[15%] w-[28rem] h-[28rem] bg-primary/[0.08] rounded-full blur-[100px]"
+        style={{ transform: `translateY(${parallaxOffset * 0.6}px)` }}
       />
       <div
-        className="hidden sm:block absolute bottom-1/4 right-1/4 w-80 h-80 bg-primary/5 rounded-full blur-3xl"
+        className="hidden sm:block absolute bottom-[10%] right-[10%] w-96 h-96 bg-primary/[0.05] rounded-full blur-[80px]"
+        style={{ transform: `translateY(${-parallaxOffset * 0.4}px)` }}
+      />
+      <div
+        className="hidden md:block absolute top-[15%] right-[20%] w-64 h-64 bg-primary/[0.04] rounded-full blur-[60px]"
+        style={{ transform: `translateY(${parallaxOffset * 0.8}px)` }}
+      />
+
+      {/* Subtle grid pattern */}
+      <div
+        className="absolute inset-0 opacity-[0.015]"
+        style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, hsl(var(--foreground)) 1px, transparent 0)`,
+          backgroundSize: "40px 40px",
+          transform: `translateY(${parallaxOffset * 0.1}px)`,
+        }}
       />
 
       <div className="container mx-auto px-4 sm:px-6 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-primary/10 text-primary text-xs sm:text-sm font-medium mb-6 sm:mb-8">
+          <motion.div {...fadeUp(0)} className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-primary/10 text-primary text-xs sm:text-sm font-medium mb-6 sm:mb-8">
             <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-primary animate-pulse" />
             {t("hero.badge")}
-          </div>
+          </motion.div>
 
           {/* Headline */}
-          <h1
+          <motion.h1
+            {...fadeUp(0.1)}
             className="font-display text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-4 sm:mb-6 leading-tight"
           >
             {t("hero.title1")}
             <br />
             <span className="gradient-text">{t("hero.title2")}</span>
-          </h1>
+          </motion.h1>
 
           {/* Subheadline */}
-          <p
+          <motion.p
+            {...fadeUp(0.2)}
             className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 sm:mb-12 px-2"
           >
             {t("hero.subtitle")}
-          </p>
+          </motion.p>
 
           {/* Search Box */}
-          <div
+          <motion.div
+            {...fadeUp(0.35)}
             className="glass-panel p-3 sm:p-4 md:p-5 max-w-3xl mx-auto ring-1 ring-white/10"
             role="search"
             aria-label="Recherche rapide de véhicules"
@@ -146,9 +188,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
                 >
                   <option value="">{t("filters.brand")}</option>
                   {brands.map((brand) => (
-                    <option key={brand} value={brand}>
-                      {brand}
-                    </option>
+                    <option key={brand} value={brand}>{brand}</option>
                   ))}
                 </select>
                 <ChevronDown className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground pointer-events-none" />
@@ -168,9 +208,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
                     {selectedBrand ? t("filters.allModels") : t("filters.model")}
                   </option>
                   {models.map((m) => (
-                    <option key={m} value={m}>
-                      {m}
-                    </option>
+                    <option key={m} value={m}>{m}</option>
                   ))}
                 </select>
                 <ChevronDown className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground pointer-events-none" />
@@ -187,9 +225,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
                 >
                   <option value={0}>{t("filters.budget")}</option>
                   {BUDGET_OPTIONS.map((budget) => (
-                    <option key={budget.value} value={budget.value}>
-                      {budget.label}
-                    </option>
+                    <option key={budget.value} value={budget.value}>{budget.label}</option>
                   ))}
                 </select>
                 <ChevronDown className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground pointer-events-none" />
@@ -205,10 +241,11 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
                 <span className="font-semibold text-sm sm:text-base">{t("hero.search")}</span>
               </button>
             </div>
-          </div>
+          </motion.div>
 
           {/* Stats */}
-          <div
+          <motion.div
+            {...fadeUp(0.5)}
             className="flex flex-wrap justify-center gap-6 sm:gap-8 md:gap-16 mt-8 sm:mt-12"
           >
             <div className="text-center">
@@ -229,7 +266,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
               </div>
               <div className="text-muted-foreground text-xs sm:text-sm">{t("hero.brands")}</div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
