@@ -8,7 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ArrowLeft, Bell, Loader2, Cookie, Shield, BarChart3, Sparkles, User, Camera, Smartphone } from "lucide-react";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { ArrowLeft, Bell, Loader2, Cookie, Shield, BarChart3, Sparkles, User, Camera, Smartphone, Download, Trash2, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
@@ -522,10 +523,108 @@ export default function Settings() {
               {t("settings.accountDesc")}
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
             <div className="space-y-2">
               <p className="text-sm text-muted-foreground">{t("settings.email")}</p>
               <p className="font-medium">{user?.email}</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* RGPD / Data Privacy Card */}
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5" />
+              Données personnelles (RGPD)
+            </CardTitle>
+            <CardDescription>
+              Conformément au RGPD, vous pouvez exporter ou supprimer vos données à tout moment.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Export Data */}
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label className="text-base flex items-center gap-2">
+                  <Download className="h-4 w-4" />
+                  Exporter mes données
+                </Label>
+                <p className="text-sm text-muted-foreground">
+                  Téléchargez une copie de toutes vos données personnelles (JSON)
+                </p>
+              </div>
+              <Button
+                variant="outline"
+                onClick={async () => {
+                  try {
+                    toast.info("Préparation de l'export...");
+                    const { data, error } = await supabase.functions.invoke("export-user-data");
+                    if (error) throw error;
+                    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = `autora-export-${new Date().toISOString().split("T")[0]}.json`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    toast.success("Export téléchargé");
+                  } catch {
+                    toast.error("Erreur lors de l'export");
+                  }
+                }}
+              >
+                Exporter
+              </Button>
+            </div>
+
+            <div className="border-t border-border pt-4">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label className="text-base flex items-center gap-2 text-destructive">
+                    <Trash2 className="h-4 w-4" />
+                    Supprimer mon compte
+                  </Label>
+                  <p className="text-sm text-muted-foreground">
+                    Supprime définitivement votre compte et toutes vos données. Cette action est irréversible.
+                  </p>
+                </div>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive">Supprimer</Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Supprimer définitivement votre compte ?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Cette action est irréversible. Toutes vos données seront supprimées :
+                        annonces, messages, favoris, alertes et profil. Vous ne pourrez plus
+                        récupérer ces informations.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Annuler</AlertDialogCancel>
+                      <AlertDialogAction
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        onClick={async () => {
+                          try {
+                            toast.info("Suppression en cours...");
+                            const { error } = await supabase.functions.invoke("delete-account");
+                            if (error) throw error;
+                            toast.success("Compte supprimé. Au revoir !");
+                            await supabase.auth.signOut();
+                            navigate("/");
+                          } catch {
+                            toast.error("Erreur lors de la suppression du compte");
+                          }
+                        }}
+                      >
+                        Oui, supprimer mon compte
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
             </div>
           </CardContent>
         </Card>

@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_actions: {
+        Row: {
+          action_type: string
+          admin_id: string
+          created_at: string
+          id: string
+          metadata: Json | null
+          reason: string | null
+          target_id: string
+          target_type: string
+        }
+        Insert: {
+          action_type: string
+          admin_id: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          reason?: string | null
+          target_id: string
+          target_type: string
+        }
+        Update: {
+          action_type?: string
+          admin_id?: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          reason?: string | null
+          target_id?: string
+          target_type?: string
+        }
+        Relationships: []
+      }
       alert_notifications: {
         Row: {
           alert_id: string
@@ -65,6 +98,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      audit_log: {
+        Row: {
+          action: string
+          created_at: string
+          details: Json | null
+          id: string
+          ip_hash: string | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_hash?: string | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_hash?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       car_listings: {
         Row: {
@@ -348,6 +408,8 @@ export type Database = {
           created_at: string
           display_name: string | null
           id: string
+          suspended_at: string | null
+          suspended_reason: string | null
           updated_at: string
           user_id: string
         }
@@ -356,6 +418,8 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          suspended_at?: string | null
+          suspended_reason?: string | null
           updated_at?: string
           user_id: string
         }
@@ -364,6 +428,8 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          suspended_at?: string | null
+          suspended_reason?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -689,6 +755,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_user_suspended: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"

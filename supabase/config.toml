@@ -26,3 +26,15 @@ verify_jwt = false
 
 [functions.customer-portal]
 verify_jwt = false
+
+[functions.delete-account]
+verify_jwt = false
+
+[functions.export-user-data]
+verify_jwt = false
+
+[functions.stripe-webhook]
+verify_jwt = false
+
+[functions.send-contact-email]
+verify_jwt = false
