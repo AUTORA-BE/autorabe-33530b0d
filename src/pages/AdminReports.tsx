@@ -303,6 +303,9 @@ const AdminReports = () => {
       if (error) throw error;
       setReports(prev => prev.map(r => r.id === reportId ? { ...r, status: newStatus } : r));
       toast.success(t("admin.statusUpdated"));
+      const statusActionMap: Record<string, string> = { resolved: "resolve_report", dismissed: "dismiss_report", reviewed: "review_report" };
+      const actionType = statusActionMap[newStatus] || `update_report_${newStatus}`;
+      await logAdminAction(actionType, "report", reportId, undefined, { new_status: newStatus } as unknown as Record<string, unknown>);
       setSelectedReport(null);
     } catch (error) {
       console.error("Error updating status:", error);
