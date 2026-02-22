@@ -17,9 +17,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
 import {
   AlertTriangle, CheckCircle, Clock, Eye, ExternalLink, Filter, Loader2,
-  Shield, Trash2, XCircle, Car, Check, X, ImageIcon,
+  Shield, Trash2, XCircle, Car, Check, X, ImageIcon, History, CalendarIcon,
 } from "lucide-react";
 import { format } from "date-fns";
 import { fr, nl, de, enUS } from "date-fns/locale";
@@ -37,6 +38,18 @@ interface Report {
   car_model?: string;
   reporter_name?: string;
   reporter_email?: string;
+}
+
+interface AdminAction {
+  id: string;
+  admin_id: string;
+  action_type: string;
+  target_type: string;
+  target_id: string;
+  reason: string | null;
+  metadata: Record<string, unknown> | null;
+  created_at: string;
+  admin_name?: string;
 }
 
 interface PendingListing {
@@ -76,6 +89,13 @@ const AdminReports = () => {
   const [pendingLoading, setPendingLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("pending");
 
+  // Admin actions history state
+  const [adminActions, setAdminActions] = useState<AdminAction[]>([]);
+  const [actionsLoading, setActionsLoading] = useState(false);
+  const [actionTypeFilter, setActionTypeFilter] = useState<string>("all");
+  const [actionDateFrom, setActionDateFrom] = useState<string>("");
+  const [actionDateTo, setActionDateTo] = useState<string>("");
+
   const dateLocale = language === "fr" ? fr : language === "nl" ? nl : language === "de" ? de : enUS;
 
   useEffect(() => { checkAdminAndFetch(); }, []);
@@ -95,7 +115,7 @@ const AdminReports = () => {
       }
 
       setIsAdmin(true);
-      await Promise.all([fetchReports(), fetchPendingListings()]);
+      await Promise.all([fetchReports(), fetchPendingListings(), fetchAdminActions()]);
     } catch (error) {
       console.error("Error checking admin status:", error);
       navigate("/");
@@ -121,6 +141,38 @@ const AdminReports = () => {
       setPendingLoading(false);
     }
   };
+
+  const fetchAdminActions = async () => {
+    setActionsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from("admin_actions")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+
+      const actionsWithNames = await Promise.all(
+        (data || []).map(async (action) => {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("display_name")
+            .eq("user_id", action.admin_id)
+            .maybeSingle();
+          return {
+            ...action,
+            metadata: action.metadata as Record<string, unknown> | null,
+            admin_name: profile?.display_name || "Admin",
+          };
+        })
+      );
+      setAdminActions(actionsWithNames);
+    } catch (error) {
+      console.error("Error fetching admin actions:", error);
+    } finally {
+      setActionsLoading(false);
+    }
+  };
+
 
   const sendStatusNotification = async (listing: PendingListing, status: "approved" | "rejected") => {
     try {
@@ -291,6 +343,32 @@ const AdminReports = () => {
 
   const formatPrice = (p: number) => new Intl.NumberFormat("fr-BE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(p);
 
+  const actionTypeLabels: Record<string, string> = {
+    approve_listing: "Approbation annonce",
+    reject_listing: "Refus annonce",
+    delete_listing: "Suppression annonce",
+    suspend_user: "Suspension utilisateur",
+    unsuspend_user: "Réactivation utilisateur",
+    resolve_report: "Résolution signalement",
+    dismiss_report: "Rejet signalement",
+  };
+
+  const uniqueActionTypes = [...new Set(adminActions.map(a => a.action_type))];
+
+  const filteredActions = adminActions.filter(action => {
+    if (actionTypeFilter !== "all" && action.action_type !== actionTypeFilter) return false;
+    if (actionDateFrom) {
+      const from = new Date(actionDateFrom);
+      if (new Date(action.created_at) < from) return false;
+    }
+    if (actionDateTo) {
+      const to = new Date(actionDateTo);
+      to.setHours(23, 59, 59, 999);
+      if (new Date(action.created_at) > to) return false;
+    }
+    return true;
+  });
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -339,6 +417,10 @@ const AdminReports = () => {
                       {reportStats.pending}
                     </span>
                   )}
+                </TabsTrigger>
+                <TabsTrigger value="history" className="rounded-lg text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2">
+                  <History className="w-4 h-4" />
+                  Historique
                 </TabsTrigger>
               </TabsList>
 
@@ -597,6 +679,126 @@ const AdminReports = () => {
                                       <Trash2 className="w-3.5 h-3.5" />
                                     </Button>
                                   </div>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* ═══════════════════════════════════════════════ */}
+              {/* TAB: Admin Actions History                      */}
+              {/* ═══════════════════════════════════════════════ */}
+              <TabsContent value="history" className="mt-0 space-y-6">
+                {/* Filters */}
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-sm flex items-center gap-2">
+                      <Filter className="w-4 h-4" />
+                      Filtres
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex flex-wrap gap-3">
+                      <div className="w-full sm:w-48">
+                        <Select value={actionTypeFilter} onValueChange={setActionTypeFilter}>
+                          <SelectTrigger className="rounded-lg">
+                            <SelectValue placeholder="Type d'action" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">Tous les types</SelectItem>
+                            {uniqueActionTypes.map(type => (
+                              <SelectItem key={type} value={type}>
+                                {actionTypeLabels[type] || type}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="w-full sm:w-auto">
+                        <Input
+                          type="date"
+                          value={actionDateFrom}
+                          onChange={(e) => setActionDateFrom(e.target.value)}
+                          placeholder="Du"
+                          className="rounded-lg w-full sm:w-40"
+                        />
+                      </div>
+                      <div className="w-full sm:w-auto">
+                        <Input
+                          type="date"
+                          value={actionDateTo}
+                          onChange={(e) => setActionDateTo(e.target.value)}
+                          placeholder="Au"
+                          className="rounded-lg w-full sm:w-40"
+                        />
+                      </div>
+                      {(actionTypeFilter !== "all" || actionDateFrom || actionDateTo) && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="rounded-lg"
+                          onClick={() => { setActionTypeFilter("all"); setActionDateFrom(""); setActionDateTo(""); }}
+                        >
+                          <X className="w-3 h-3 mr-1" /> Réinitialiser
+                        </Button>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Actions Table */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-sm">Historique des actions</CardTitle>
+                    <CardDescription>{filteredActions.length} action{filteredActions.length !== 1 ? "s" : ""}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {actionsLoading ? (
+                      <div className="space-y-3">
+                        {[1, 2, 3].map(i => (
+                          <div key={i} className="h-12 rounded-xl bg-muted animate-pulse" />
+                        ))}
+                      </div>
+                    ) : filteredActions.length === 0 ? (
+                      <div className="text-center py-12 text-muted-foreground">
+                        <History className="w-10 h-10 mx-auto mb-3 opacity-40" />
+                        <p className="text-sm">Aucune action trouvée</p>
+                      </div>
+                    ) : (
+                      <div className="overflow-x-auto">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>Date</TableHead>
+                              <TableHead>Admin</TableHead>
+                              <TableHead>Action</TableHead>
+                              <TableHead>Cible</TableHead>
+                              <TableHead>Raison</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {filteredActions.map((action) => (
+                              <TableRow key={action.id}>
+                                <TableCell className="whitespace-nowrap text-sm">
+                                  {format(new Date(action.created_at), "dd MMM yyyy HH:mm", { locale: dateLocale })}
+                                </TableCell>
+                                <TableCell className="text-sm">{action.admin_name}</TableCell>
+                                <TableCell>
+                                  <Badge variant="secondary" className="text-xs">
+                                    {actionTypeLabels[action.action_type] || action.action_type}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell className="text-sm">
+                                  <span className="text-muted-foreground text-xs">{action.target_type}:</span>{" "}
+                                  <span className="font-mono text-xs">{action.target_id.slice(0, 8)}…</span>
+                                </TableCell>
+                                <TableCell className="text-sm text-muted-foreground max-w-[200px] truncate">
+                                  {action.reason || "—"}
                                 </TableCell>
                               </TableRow>
                             ))}
