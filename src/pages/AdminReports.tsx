@@ -5,6 +5,7 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import type { Json } from "@/integrations/supabase/types";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -173,6 +174,22 @@ const AdminReports = () => {
     }
   };
 
+  const logAdminAction = async (actionType: string, targetType: string, targetId: string, reason?: string, metadata?: Record<string, unknown>) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      await supabase.from("admin_actions").insert([{
+        admin_id: user.id,
+        action_type: actionType,
+        target_type: targetType,
+        target_id: targetId,
+        reason: reason || null,
+        metadata: (metadata || {}) as Json,
+      }]);
+    } catch (err) {
+      console.error("Failed to log admin action:", err);
+    }
+  };
 
   const sendStatusNotification = async (listing: PendingListing, status: "approved" | "rejected") => {
     try {
@@ -202,6 +219,7 @@ const AdminReports = () => {
       if (error) throw error;
       setPendingListings(prev => prev.filter(l => l.id !== id));
       toast.success("Annonce approuvée ✓");
+      await logAdminAction("approve_listing", "car_listing", id, undefined, listing ? { brand: listing.brand, model: listing.model } : {});
       if (listing) sendStatusNotification(listing, "approved");
     } catch (error) {
       console.error("Error approving listing:", error);
@@ -222,6 +240,7 @@ const AdminReports = () => {
       if (error) throw error;
       setPendingListings(prev => prev.filter(l => l.id !== id));
       toast.success("Annonce refusée");
+      await logAdminAction("reject_listing", "car_listing", id, undefined, listing ? { brand: listing.brand, model: listing.model } : {});
       if (listing) sendStatusNotification(listing, "rejected");
     } catch (error) {
       console.error("Error rejecting listing:", error);
@@ -235,10 +254,12 @@ const AdminReports = () => {
     if (!window.confirm("Supprimer définitivement cette annonce ?")) return;
     setActionLoading(true);
     try {
+      const listing = pendingListings.find(l => l.id === id);
       const { error } = await supabase.from("car_listings").delete().eq("id", id);
       if (error) throw error;
       setPendingListings(prev => prev.filter(l => l.id !== id));
       toast.success("Annonce supprimée");
+      await logAdminAction("delete_listing", "car_listing", id, undefined, listing ? { brand: listing.brand, model: listing.model } : {});
     } catch (error) {
       console.error("Error deleting listing:", error);
       toast.error("Erreur lors de la suppression");
