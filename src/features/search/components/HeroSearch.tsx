@@ -113,32 +113,32 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
 
   return (
     <section
-      className="relative min-h-[70vh] sm:min-h-[85vh] flex items-center justify-center pt-20 sm:pt-24 pb-12 sm:pb-16 overflow-hidden"
+      className="relative min-h-[75vh] sm:min-h-[88vh] flex items-center justify-center pt-16 sm:pt-20 pb-14 sm:pb-20 overflow-hidden"
       style={{ contain: "layout style" }}
     >
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-secondary/30" />
+      {/* Background gradient — richer */}
+      <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-secondary/40" />
 
-      {/* Parallax decorative orbs */}
+      {/* Parallax decorative orbs — more prominent */}
       <div
-        className="hidden sm:block absolute top-1/4 left-[15%] w-[28rem] h-[28rem] bg-primary/[0.08] rounded-full blur-[100px]"
+        className="hidden sm:block absolute top-1/4 left-[10%] w-[32rem] h-[32rem] bg-primary/[0.10] rounded-full blur-[120px]"
         style={{ transform: `translateY(${parallaxOffset * 0.6}px)` }}
       />
       <div
-        className="hidden sm:block absolute bottom-[10%] right-[10%] w-96 h-96 bg-primary/[0.05] rounded-full blur-[80px]"
+        className="hidden sm:block absolute bottom-[5%] right-[8%] w-[26rem] h-[26rem] bg-primary/[0.06] rounded-full blur-[100px]"
         style={{ transform: `translateY(${-parallaxOffset * 0.4}px)` }}
       />
       <div
-        className="hidden md:block absolute top-[15%] right-[20%] w-64 h-64 bg-primary/[0.04] rounded-full blur-[60px]"
+        className="hidden md:block absolute top-[10%] right-[18%] w-72 h-72 bg-primary/[0.05] rounded-full blur-[80px]"
         style={{ transform: `translateY(${parallaxOffset * 0.8}px)` }}
       />
 
       {/* Subtle grid pattern */}
       <div
-        className="absolute inset-0 opacity-[0.015]"
+        className="absolute inset-0 opacity-[0.02]"
         style={{
           backgroundImage: `radial-gradient(circle at 1px 1px, hsl(var(--foreground)) 1px, transparent 0)`,
-          backgroundSize: "40px 40px",
+          backgroundSize: "48px 48px",
           transform: `translateY(${parallaxOffset * 0.1}px)`,
         }}
       />
@@ -154,7 +154,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
           {/* Headline */}
           <motion.h1
             {...fadeUp(0.1)}
-            className="font-display text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-4 sm:mb-6 leading-tight"
+            className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-[5rem] font-extrabold text-foreground mb-5 sm:mb-7 leading-[1.1] tracking-tight"
           >
             {t("hero.title1")}
             <br />
@@ -164,7 +164,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
           {/* Subheadline */}
           <motion.p
             {...fadeUp(0.2)}
-            className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 sm:mb-12 px-2"
+            className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 sm:mb-14 px-2 leading-relaxed"
           >
             {t("hero.subtitle")}
           </motion.p>
@@ -246,7 +246,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
           {/* Stats */}
           <motion.div
             {...fadeUp(0.5)}
-            className="flex flex-wrap justify-center gap-6 sm:gap-8 md:gap-16 mt-8 sm:mt-12"
+            className="flex flex-wrap justify-center gap-8 sm:gap-10 md:gap-20 mt-10 sm:mt-14"
           >
             <div className="text-center">
               <div className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
