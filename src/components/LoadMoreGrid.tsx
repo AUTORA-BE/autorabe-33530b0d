@@ -150,12 +150,14 @@ const LoadMoreGrid = ({
     return (
       <div className="flex-1 min-w-0">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-          <div className="h-8 w-48 bg-secondary/50 rounded-xl animate-pulse" />
-          <div className="h-10 w-32 bg-secondary/50 rounded-xl animate-pulse" />
+          <div className="h-8 w-48 rounded-xl skeleton-shimmer" />
+          <div className="h-10 w-32 rounded-xl skeleton-shimmer" />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
           {[1, 2, 3, 4, 5, 6].map((i) => (
-            <div key={i} className="h-[400px] bg-secondary/50 rounded-2xl animate-pulse" />
+            <div key={i} className="animate-fade-up" style={{ animationDelay: `${i * 0.08}s` }}>
+              <CarCardSkeleton />
+            </div>
           ))}
         </div>
       </div>

@@ -11,6 +11,8 @@ const FilterPanel = lazy(() => import("@/features/search/components/FilterPanel"
 const PopularVehicles = lazy(() => import("@/features/listings/components/PopularVehicles"));
 const LoadMoreGrid = lazy(() => import("@/components/LoadMoreGrid"));
 const PricingCTA = lazy(() => import("@/components/PricingCTA"));
+const WhyAutoRa = lazy(() => import("@/components/WhyAutoRa"));
+const StatsStrip = lazy(() => import("@/components/StatsStrip"));
 import { useFilteredInfiniteCarListings } from "@/features/listings";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -56,14 +58,22 @@ const Index = () => {
       />
       <Header />
       <main className="pt-20">
+        {/* Sell banner */}
         <Suspense fallback={<div className="h-[72px]" />}>
           <ScrollReveal>
             <SellCarBanner />
           </ScrollReveal>
         </Suspense>
 
+        {/* Hero */}
         <HeroSearch onSearch={handleSearch} />
 
+        {/* Stats strip — social proof between hero and content */}
+        <Suspense fallback={<div className="h-[88px]" />}>
+          <StatsStrip />
+        </Suspense>
+
+        {/* Brand carousel */}
         <Suspense fallback={<div className="min-h-[180px]" />}>
           <ScrollReveal delay={0.05} direction="left">
             <BrandCarousel 
@@ -73,6 +83,7 @@ const Index = () => {
           </ScrollReveal>
         </Suspense>
 
+        {/* Popular vehicles */}
         <Suspense fallback={<div className="min-h-[300px]" />}>
           <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 400px" }}>
             <ScrollReveal delay={0.1}>
@@ -85,16 +96,23 @@ const Index = () => {
           </div>
         </Suspense>
 
+        {/* Why AutoRa — trust section */}
+        <Suspense fallback={<div className="min-h-[300px]" />}>
+          <WhyAutoRa />
+        </Suspense>
+
+        {/* Pricing CTA */}
         <Suspense fallback={null}>
           <ScrollReveal delay={0.1}>
             <PricingCTA />
           </ScrollReveal>
         </Suspense>
 
+        {/* Results grid */}
         <Suspense fallback={<div className="min-h-[400px]" />}>
         <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 800px" }}>
           <ScrollReveal>
-            <section id="results-section" className="container mx-auto px-4 sm:px-6 pb-16 sm:pb-20">
+            <section id="results-section" className="container mx-auto px-4 sm:px-6 pb-16 sm:pb-24">
               <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
                 <FilterPanel
                   isOpen={filtersOpen}
