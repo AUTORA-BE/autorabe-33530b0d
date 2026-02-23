@@ -20,6 +20,7 @@ import {
   ChevronRight,
   Trash2,
 } from "lucide-react";
+import { motion } from "framer-motion";
 import { Header, Footer } from "@/shared/components";
 import { CarCard, type Car } from "@/features/listings";
 import { Button } from "@/components/ui/button";
@@ -37,8 +38,16 @@ import BentoSpecs from "@/components/BentoSpecs";
 import AutoraTransparency from "@/components/AutoraTransparency";
 import SEOHead from "@/components/SEOHead";
 import ReportAdModal from "@/components/ReportAdModal";
+import ScrollReveal from "@/components/ScrollReveal";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 const VehicleTcoSection = lazy(() => import("@/features/tco/components/VehicleTcoSection"));
+
+/** Stagger variants for sections */
+const fadeUp = (delay: number) => ({
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.5, delay, ease: [0.25, 0.1, 0.25, 1] as const },
+});
 
 const CarDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -83,7 +92,6 @@ const CarDetail = () => {
     }
   };
 
-  // Track view when page loads
   useTrackView(id);
 
   useEffect(() => {
@@ -93,12 +101,10 @@ const CarDetail = () => {
         return;
       }
 
-      // Fetch car from secure public view
       const dbCar = await getCarByIdFromDb(id);
       if (dbCar) {
         setCar(dbCar);
         
-        // Fetch additional public listing data (without sensitive fields)
         const { data } = await supabase
           .from('car_listings_public')
           .select('*')
@@ -109,7 +115,6 @@ const CarDetail = () => {
           setDbListing(data);
         }
 
-        // Fetch seller contact info securely (only if user is authenticated)
         const contact = await getSellerContact(id);
         if (contact) {
           setSellerContact(contact);
@@ -128,8 +133,23 @@ const CarDetail = () => {
     return (
       <div className="min-h-screen bg-background">
         <Header />
-        <main className="container mx-auto px-6 py-32 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <main className="container mx-auto px-6 py-32">
+          {/* Skeleton loading state */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+            <div className="lg:col-span-2 space-y-6">
+              <div className="aspect-video rounded-3xl skeleton-shimmer" />
+              <div className="grid grid-cols-4 gap-3">
+                {[1,2,3,4].map(i => <div key={i} className="h-16 rounded-xl skeleton-shimmer" />)}
+              </div>
+              <div className="h-48 rounded-2xl skeleton-shimmer" />
+            </div>
+            <div className="hidden lg:block space-y-4">
+              <div className="h-8 w-3/4 rounded-lg skeleton-shimmer" />
+              <div className="h-12 w-1/2 rounded-lg skeleton-shimmer" />
+              <div className="h-12 rounded-xl skeleton-shimmer" />
+              <div className="h-12 rounded-xl skeleton-shimmer" />
+            </div>
+          </div>
         </main>
         <Footer />
       </div>
@@ -141,22 +161,23 @@ const CarDetail = () => {
       <div className="min-h-screen bg-background">
         <Header />
         <main className="container mx-auto px-6 py-32 text-center">
-          <h1 className="font-display text-3xl font-bold text-foreground mb-4">
-            Véhicule non trouvé
-          </h1>
-          <p className="text-muted-foreground mb-8">
-            Ce véhicule n'existe pas ou a été retiré de la vente.
-          </p>
-          <Button onClick={() => navigate("/")} className="btn-primary-gradient">
-            Retour aux annonces
-          </Button>
+          <motion.div {...fadeUp(0)}>
+            <h1 className="font-display text-3xl font-bold text-foreground mb-4">
+              Véhicule non trouvé
+            </h1>
+            <p className="text-muted-foreground mb-8">
+              Ce véhicule n'existe pas ou a été retiré de la vente.
+            </p>
+            <Button onClick={() => navigate("/")} className="btn-primary-gradient">
+              Retour aux annonces
+            </Button>
+          </motion.div>
         </main>
         <Footer />
       </div>
     );
   }
 
-  // Use photos from DB listing if available, otherwise mock images
   const images = dbListing?.photos?.length > 0 
     ? dbListing.photos 
     : [
@@ -183,7 +204,6 @@ const CarDetail = () => {
   };
 
   const handleContact = async (method: string) => {
-    // Use secure seller contact data (only available to authenticated users)
     if (sellerContact) {
       if (method === "Email" && sellerContact.contact_email) {
         window.location.href = `mailto:${sellerContact.contact_email}?subject=Intéressé par votre ${car.brand} ${car.model}`;
@@ -203,12 +223,10 @@ const CarDetail = () => {
         return;
       }
     } else if (method === "Message" && dbListing) {
-      // Message button requires authentication but we can still start the flow
       await startConversation();
       return;
     }
     
-    // User not authenticated - prompt them to login
     toast({
       title: "Connexion requise",
       description: "Connectez-vous pour accéder aux coordonnées du vendeur",
@@ -238,7 +256,6 @@ const CarDetail = () => {
 
     const currentUserId = session.user.id;
 
-    // Fetch seller contact to get user_id securely
     const contact = await getSellerContact(id!);
     if (!contact) {
       toast({
@@ -249,7 +266,6 @@ const CarDetail = () => {
       return;
     }
 
-    // Can't message yourself
     if (currentUserId === contact.user_id) {
       toast({
         title: "Action impossible",
@@ -259,7 +275,6 @@ const CarDetail = () => {
     }
 
     try {
-      // Check if conversation already exists
       const { data: existingConvo } = await supabase
         .from('conversations')
         .select('id')
@@ -273,7 +288,6 @@ const CarDetail = () => {
         return;
       }
 
-      // Create new conversation using secure seller_id from contact
       const { error } = await supabase
         .from('conversations')
         .insert({
@@ -303,19 +317,9 @@ const CarDetail = () => {
     }
   };
 
-  const specs = [
-    { icon: Calendar, label: "Année", value: car.year.toString() },
-    { icon: Gauge, label: "Kilométrage", value: formatMileage(car.mileage) },
-    { icon: Fuel, label: "Carburant", value: car.fuelType },
-    { icon: Settings2, label: "Transmission", value: car.transmission },
-    { icon: Leaf, label: "Norme Euro", value: car.euroNorm },
-    { icon: MapPin, label: "Localisation", value: car.location },
-  ];
-
   const description = dbListing?.description || `Superbe ${car.brand} ${car.model} de ${car.year} en excellent état.
 Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fonctionne au ${car.fuelType.toLowerCase()}. Avec seulement ${formatMileage(car.mileage)} au compteur, cette voiture est idéale pour les trajets quotidiens comme pour les longs voyages. Norme ${car.euroNorm}, compatible avec toutes les zones à faibles émissions de Belgique.`;
 
-  // Use seller contact name if available (authenticated), otherwise show placeholder
   const sellerName = sellerContact?.contact_name || "Vendeur vérifié";
 
   return (
@@ -330,30 +334,34 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
       <Header />
       <main className="pt-24 pb-20">
         {/* Breadcrumb */}
-        <div className="container mx-auto px-6 mb-6">
+        <motion.div {...fadeUp(0)} className="container mx-auto px-4 sm:px-6 mb-6">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+            className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors group"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
             Retour aux résultats
           </button>
-        </div>
+        </motion.div>
 
         <div className="container mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
             {/* Left Column - Images & Details */}
             <div className="lg:col-span-2 space-y-6">
               {/* Main Image Gallery */}
-              <div className="glass-card overflow-hidden">
-                <div className="relative aspect-video">
-                  <img
+              <motion.div {...fadeUp(0.05)} className="glass-card overflow-hidden">
+                <div className="relative aspect-[16/10] sm:aspect-video">
+                  <motion.img
+                    key={currentImageIndex}
                     src={images[currentImageIndex]}
                     alt={`${car.brand} ${car.model}`}
                     className="w-full h-full object-cover"
+                    initial={{ opacity: 0, scale: 1.02 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.4 }}
                   />
 
-                  {/* Navigation arrows */}
+                  {/* Navigation arrows — larger, more visible */}
                   {images.length > 1 && (
                     <>
                       <button
@@ -362,7 +370,7 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                             prev === 0 ? images.length - 1 : prev - 1
                           )
                         }
-                        className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors"
+                        className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-2xl bg-background/80 backdrop-blur-md flex items-center justify-center hover:bg-background transition-all shadow-lg hover:scale-105 active:scale-95"
                       >
                         <ChevronLeft className="w-5 h-5" />
                       </button>
@@ -372,23 +380,30 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                             prev === images.length - 1 ? 0 : prev + 1
                           )
                         }
-                        className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors"
+                        className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-2xl bg-background/80 backdrop-blur-md flex items-center justify-center hover:bg-background transition-all shadow-lg hover:scale-105 active:scale-95"
                       >
                         <ChevronRight className="w-5 h-5" />
                       </button>
                     </>
                   )}
 
+                  {/* Image counter pill */}
+                  {images.length > 1 && (
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-full bg-background/70 backdrop-blur-md text-xs font-medium text-foreground">
+                      {currentImageIndex + 1} / {images.length}
+                    </div>
+                  )}
+
                   {/* Badges */}
-                  <div className="absolute top-4 left-4 flex gap-2">
+                  <div className="absolute top-3 sm:top-4 left-3 sm:left-4 flex gap-2">
                     {car.isLezCompatible && (
-                      <span className="lez-badge">
+                      <span className="lez-badge shadow-lg">
                         <Shield className="w-3 h-3" />
                         LEZ OK
                       </span>
                     )}
                     {car.hasCarPass && (
-                      <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-semibold bg-background/90 backdrop-blur-sm text-foreground">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-semibold bg-background/90 backdrop-blur-md text-foreground shadow-lg">
                         <Shield className="w-4 h-4 text-primary" />
                         Car-Pass
                       </span>
@@ -396,38 +411,39 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                   </div>
                 </div>
 
-                {/* Thumbnail strip */}
+                {/* Thumbnail strip — improved with better borders and transitions */}
                 {images.length > 1 && (
-                  <div className="p-4 flex gap-3 overflow-x-auto">
+                  <div className="p-3 sm:p-4 flex gap-2 sm:gap-3 overflow-x-auto scrollbar-hide">
                     {images.map((img: string, index: number) => (
                       <button
                         key={index}
                         onClick={() => setCurrentImageIndex(index)}
-                        className={`flex-shrink-0 w-20 h-16 rounded-lg overflow-hidden border-2 transition-colors ${
+                        className={`flex-shrink-0 w-20 h-16 sm:w-24 sm:h-[72px] rounded-xl overflow-hidden border-2 transition-all duration-200 ${
                           index === currentImageIndex
-                            ? "border-primary"
-                            : "border-transparent opacity-60 hover:opacity-100"
+                            ? "border-primary ring-2 ring-primary/20 scale-[1.02]"
+                            : "border-transparent opacity-60 hover:opacity-100 hover:border-border"
                         }`}
                       >
                         <img
                           src={img}
                           alt={`Vue ${index + 1}`}
                           className="w-full h-full object-cover"
+                          loading="lazy"
                         />
                       </button>
                     ))}
                   </div>
                 )}
-              </div>
+              </motion.div>
 
               {/* Mobile-only: Title, Price & CTA */}
-              <div className="lg:hidden glass-card p-5 space-y-4">
-                <div className="flex items-start justify-between">
+              <motion.div {...fadeUp(0.1)} className="lg:hidden glass-card p-5 sm:p-6 space-y-5">
+                <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h1 className="font-display text-xl font-bold text-foreground">
+                    <h1 className="font-display text-2xl font-bold text-foreground leading-tight">
                       {car.brand} {car.model}
                     </h1>
-                    <p className="text-sm text-muted-foreground flex items-center gap-1 mt-1">
+                    <p className="text-sm text-muted-foreground flex items-center gap-1.5 mt-1.5">
                       <MapPin className="w-3.5 h-3.5" />
                       {car.location}
                     </p>
@@ -435,41 +451,41 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                   <div className="flex gap-2">
                     <button
                       onClick={() => toggleFavorite(car.id)}
-                      className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
+                      className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all active:scale-90 ${
                         isFavorite(car.id)
-                          ? "bg-destructive text-destructive-foreground"
-                          : "bg-secondary text-muted-foreground"
+                          ? "bg-red-500 text-white shadow-lg shadow-red-500/25"
+                          : "bg-secondary text-muted-foreground hover:text-red-500"
                       }`}
                     >
                       <Heart className={`w-4 h-4 ${isFavorite(car.id) ? "fill-current" : ""}`} />
                     </button>
                     <button
                       onClick={handleShare}
-                      className="w-9 h-9 rounded-full bg-secondary flex items-center justify-center text-muted-foreground"
+                      className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors active:scale-90"
                     >
                       <Share2 className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
 
-                <div className="text-3xl font-display font-bold text-foreground">
+                <div className="text-3xl font-display font-extrabold text-foreground">
                   {formatPrice(car.price)}
                 </div>
 
                 <div className="space-y-2.5">
                   {dbListing && (
-                    <Button onClick={() => handleContact("Message")} className="w-full h-11 btn-primary-gradient">
-                      <MessageCircle className="w-4 h-4 mr-2" />
+                    <Button onClick={() => handleContact("Message")} className="w-full h-12 btn-primary-gradient text-base">
+                      <MessageCircle className="w-5 h-5 mr-2" />
                       Envoyer un message
                     </Button>
                   )}
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-2 gap-2.5">
                     <Button onClick={() => handleContact("Appeler")} variant="outline" className="h-11">
-                      <Phone className="w-4 h-4 mr-1" />
+                      <Phone className="w-4 h-4 mr-1.5" />
                       Appeler
                     </Button>
                     <Button onClick={() => handleContact("WhatsApp")} variant="outline" className="h-11">
-                      <MessageCircle className="w-4 h-4 mr-1" />
+                      <MessageCircle className="w-4 h-4 mr-1.5" />
                       WhatsApp
                     </Button>
                   </div>
@@ -481,7 +497,6 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                   tvaNumber={undefined}
                 />
 
-                {/* Admin Delete Button - Mobile */}
                 {isAdmin && (
                   <Button
                     onClick={handleAdminDelete}
@@ -492,70 +507,84 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                     Supprimer (Admin)
                   </Button>
                 )}
-              </div>
+              </motion.div>
 
               {/* TCO Calculator */}
-              <Suspense fallback={<div className="h-20 rounded-xl bg-muted animate-pulse" />}>
-                <VehicleTcoSection
-                  price={car.price}
-                  fuelType={car.fuelType}
-                  year={car.year}
-                  mileage={car.mileage}
-                  power={dbListing?.power}
-                />
-              </Suspense>
+              <ScrollReveal delay={0.05}>
+                <Suspense fallback={<div className="h-20 rounded-2xl skeleton-shimmer" />}>
+                  <VehicleTcoSection
+                    price={car.price}
+                    fuelType={car.fuelType}
+                    year={car.year}
+                    mileage={car.mileage}
+                    power={dbListing?.power}
+                  />
+                </Suspense>
+              </ScrollReveal>
 
               {/* Bento Specifications */}
-              <BentoSpecs
-                year={car.year}
-                mileage={car.mileage}
-                fuelType={car.fuelType}
-                transmission={car.transmission}
-                euroNorm={car.euroNorm}
-                location={car.location}
-                power={dbListing?.power}
-                color={dbListing?.color}
-                bodyType={dbListing?.body_type}
-                doors={dbListing?.doors}
-              />
+              <ScrollReveal delay={0.05}>
+                <BentoSpecs
+                  year={car.year}
+                  mileage={car.mileage}
+                  fuelType={car.fuelType}
+                  transmission={car.transmission}
+                  euroNorm={car.euroNorm}
+                  location={car.location}
+                  power={dbListing?.power}
+                  color={dbListing?.color}
+                  bodyType={dbListing?.body_type}
+                  doors={dbListing?.doors}
+                />
+              </ScrollReveal>
 
               {/* Transparency Checklist */}
-              <TransparencyChecklist
-                carPassVerified={dbListing?.car_pass_verified}
-                ctValid={dbListing?.ct_valid}
-                maintenanceBookComplete={dbListing?.maintenance_book_complete}
-              />
+              <ScrollReveal delay={0.05}>
+                <TransparencyChecklist
+                  carPassVerified={dbListing?.car_pass_verified}
+                  ctValid={dbListing?.ct_valid}
+                  maintenanceBookComplete={dbListing?.maintenance_book_complete}
+                />
+              </ScrollReveal>
 
               {/* LEZ Widget */}
-              <LezWidget euroNorm={car.euroNorm} fuelType={car.fuelType} />
+              <ScrollReveal delay={0.05}>
+                <LezWidget euroNorm={car.euroNorm} fuelType={car.fuelType} />
+              </ScrollReveal>
 
               {/* Description */}
-              <div className="glass-card p-6">
-                <h2 className="font-display text-xl font-bold text-foreground mb-4">
-                  Description
-                </h2>
-                <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
-                  {description}
-                </p>
-              </div>
+              <ScrollReveal delay={0.05}>
+                <div className="glass-card p-6 sm:p-7">
+                  <h2 className="font-display text-xl font-bold text-foreground mb-4">
+                    Description
+                  </h2>
+                  <p className="text-muted-foreground leading-relaxed whitespace-pre-line text-sm sm:text-base">
+                    {description}
+                  </p>
+                </div>
+              </ScrollReveal>
 
               {/* Reviews Section */}
-              <ReviewsSection 
-                carListingId={id!} 
-                sellerId={sellerContact?.user_id}
-              />
+              <ScrollReveal delay={0.05}>
+                <ReviewsSection 
+                  carListingId={id!} 
+                  sellerId={sellerContact?.user_id}
+                />
+              </ScrollReveal>
             </div>
 
             {/* Right Column - Price & Contact (desktop only) */}
-            <div className="hidden lg:block space-y-6">
-              {/* Price Card */}
-              <div className="glass-card p-6 sticky top-24">
-                <div className="flex items-start justify-between mb-4">
+            <div className="hidden lg:block">
+              <motion.div
+                {...fadeUp(0.15)}
+                className="glass-card p-6 sm:p-7 sticky top-24 space-y-5"
+              >
+                <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h1 className="font-display text-2xl font-bold text-foreground">
+                    <h1 className="font-display text-2xl font-bold text-foreground leading-tight">
                       {car.brand} {car.model}
                     </h1>
-                    <p className="text-muted-foreground flex items-center gap-1">
+                    <p className="text-muted-foreground flex items-center gap-1.5 mt-1.5 text-sm">
                       <MapPin className="w-4 h-4" />
                       {car.location}
                     </p>
@@ -563,9 +592,9 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                   <div className="flex gap-2">
                     <button
                       onClick={() => toggleFavorite(car.id)}
-                      className={`w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                      className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all active:scale-90 ${
                         isFavorite(car.id)
-                          ? "bg-red-500 text-white"
+                          ? "bg-red-500 text-white shadow-lg shadow-red-500/25"
                           : "bg-secondary text-muted-foreground hover:text-red-500"
                       }`}
                     >
@@ -575,22 +604,27 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                     </button>
                     <button
                       onClick={handleShare}
-                      className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+                      className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors active:scale-90"
                     >
                       <Share2 className="w-5 h-5" />
                     </button>
                   </div>
                 </div>
 
-                <div className="text-4xl font-display font-bold text-foreground mb-6">
+                {/* Price — larger, bolder */}
+                <div className="text-4xl font-display font-extrabold text-foreground">
                   {formatPrice(car.price)}
                 </div>
 
+                {/* Divider */}
+                <div className="h-px bg-border" />
+
+                {/* Contact buttons */}
                 <div className="space-y-3">
                   {dbListing && (
                     <Button
                       onClick={() => handleContact("Message")}
-                      className="w-full h-12 btn-primary-gradient"
+                      className="w-full h-12 btn-primary-gradient text-base"
                     >
                       <MessageCircle className="w-5 h-5 mr-2" />
                       Envoyer un message
@@ -622,6 +656,9 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                   </Button>
                 </div>
 
+                {/* Divider */}
+                <div className="h-px bg-border" />
+
                 {/* Seller Badge */}
                 <SellerBadge
                   sellerType={dbListing?.seller_type}
@@ -630,12 +667,12 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                 />
 
                 {/* Disclaimer */}
-                <p className="mt-4 text-xs text-muted-foreground text-center">
+                <p className="text-xs text-muted-foreground text-center leading-relaxed">
                   AutoRa n'est pas intermédiaire de paiement. Ne payez jamais avant d'avoir vu le véhicule.
                 </p>
 
-                {/* Report Ad Button */}
-                <div className="mt-4 pt-4 border-t border-border flex justify-center">
+                {/* Report Ad */}
+                <div className="pt-2 border-t border-border flex justify-center">
                   <ReportAdModal
                     carListingId={id!}
                     carBrand={car.brand}
@@ -643,9 +680,9 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                   />
                 </div>
 
-                {/* Admin Delete Button - Desktop */}
+                {/* Admin Delete */}
                 {isAdmin && (
-                  <div className="mt-3 pt-3 border-t border-border">
+                  <div className="pt-2 border-t border-border">
                     <Button
                       onClick={handleAdminDelete}
                       variant="destructive"
@@ -656,28 +693,34 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                     </Button>
                   </div>
                 )}
-              </div>
+              </motion.div>
             </div>
           </div>
 
           {/* Related Cars */}
           {relatedCars.length > 0 && (
-            <section className="mt-16">
-              <h2 className="font-display text-2xl font-bold text-foreground mb-8">
-                Véhicules similaires
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {relatedCars.map((relatedCar) => (
-                  <CarCard
-                    key={relatedCar.id}
-                    car={relatedCar}
-                    isFavorite={isFavorite(relatedCar.id)}
-                    onToggleFavorite={toggleFavorite}
-                    onClick={(id) => navigate(`/car/${id}`)}
-                  />
-                ))}
-              </div>
-            </section>
+            <ScrollReveal delay={0.1}>
+              <section className="mt-16 sm:mt-20">
+                <div className="flex items-center gap-3 mb-8">
+                  <div className="w-1 h-8 rounded-full bg-primary" />
+                  <h2 className="font-display text-2xl font-bold text-foreground">
+                    Véhicules similaires
+                  </h2>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+                  {relatedCars.map((relatedCar, i) => (
+                    <ScrollReveal key={relatedCar.id} delay={i * 0.08}>
+                      <CarCard
+                        car={relatedCar}
+                        isFavorite={isFavorite(relatedCar.id)}
+                        onToggleFavorite={toggleFavorite}
+                        onClick={(id) => navigate(`/car/${id}`)}
+                      />
+                    </ScrollReveal>
+                  ))}
+                </div>
+              </section>
+            </ScrollReveal>
           )}
         </div>
       </main>
