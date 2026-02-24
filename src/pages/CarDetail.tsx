@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { lazy, Suspense } from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import type { Tables } from "@/integrations/supabase/types";
 import {
   ArrowLeft,
@@ -20,7 +20,8 @@ import {
   ChevronRight,
   Trash2,
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence, type PanInfo } from "framer-motion";
+import FullscreenGallery from "@/components/cars/FullscreenGallery";
 import { Header, Footer } from "@/shared/components";
 import { CarCard, type Car } from "@/features/listings";
 import { Button } from "@/components/ui/button";
@@ -55,6 +56,7 @@ const CarDetail = () => {
   const { toast } = useToast();
   const { isFavorite, toggleFavorite } = useFavorites();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [fullscreenOpen, setFullscreenOpen] = useState(false);
   const [car, setCar] = useState<Car | null>(null);
   const [dbListing, setDbListing] = useState<Tables<"car_listings_public"> | null>(null);
   const [sellerContact, setSellerContact] = useState<{
@@ -348,39 +350,52 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
             {/* Left Column - Images & Details */}
             <div className="lg:col-span-2 space-y-6">
-              {/* Main Image Gallery */}
+              {/* Main Image Gallery with swipe */}
               <motion.div {...fadeUp(0.05)} className="glass-card overflow-hidden">
-                <div className="relative aspect-[16/10] sm:aspect-video">
-                  <motion.img
-                    key={currentImageIndex}
-                    src={images[currentImageIndex]}
-                    alt={`${car.brand} ${car.model}`}
-                    className="w-full h-full object-cover"
-                    initial={{ opacity: 0, scale: 1.02 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.4 }}
-                  />
+                <div
+                  className="relative aspect-[16/10] sm:aspect-video cursor-pointer group"
+                  onClick={() => setFullscreenOpen(true)}
+                >
+                  <AnimatePresence initial={false} mode="popLayout">
+                    <motion.img
+                      key={currentImageIndex}
+                      src={images[currentImageIndex]}
+                      alt={`${car.brand} ${car.model}`}
+                      className="absolute inset-0 w-full h-full object-cover"
+                      initial={{ opacity: 0, scale: 1.03 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.35 }}
+                      drag="x"
+                      dragConstraints={{ left: 0, right: 0 }}
+                      dragElastic={0.12}
+                      onDragEnd={(_: unknown, info: PanInfo) => {
+                        if (info.offset.x > 50) setCurrentImageIndex(prev => prev === 0 ? images.length - 1 : prev - 1);
+                        else if (info.offset.x < -50) setCurrentImageIndex(prev => prev === images.length - 1 ? 0 : prev + 1);
+                      }}
+                      onClick={(e) => { e.stopPropagation(); setFullscreenOpen(true); }}
+                    />
+                  </AnimatePresence>
 
-                  {/* Navigation arrows — larger, more visible */}
+                  {/* Fullscreen hint */}
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors pointer-events-none flex items-center justify-center">
+                    <span className="opacity-0 group-hover:opacity-100 transition-opacity text-white text-xs font-medium px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-sm">
+                      Plein écran
+                    </span>
+                  </div>
+
+                  {/* Navigation arrows */}
                   {images.length > 1 && (
                     <>
                       <button
-                        onClick={() =>
-                          setCurrentImageIndex((prev) =>
-                            prev === 0 ? images.length - 1 : prev - 1
-                          )
-                        }
-                        className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-2xl bg-background/80 backdrop-blur-md flex items-center justify-center hover:bg-background transition-all shadow-lg hover:scale-105 active:scale-95"
+                        onClick={(e) => { e.stopPropagation(); setCurrentImageIndex(prev => prev === 0 ? images.length - 1 : prev - 1); }}
+                        className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-2xl bg-background/80 backdrop-blur-md flex items-center justify-center hover:bg-background transition-all shadow-lg hover:scale-105 active:scale-95 opacity-0 group-hover:opacity-100"
                       >
                         <ChevronLeft className="w-5 h-5" />
                       </button>
                       <button
-                        onClick={() =>
-                          setCurrentImageIndex((prev) =>
-                            prev === images.length - 1 ? 0 : prev + 1
-                          )
-                        }
-                        className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-2xl bg-background/80 backdrop-blur-md flex items-center justify-center hover:bg-background transition-all shadow-lg hover:scale-105 active:scale-95"
+                        onClick={(e) => { e.stopPropagation(); setCurrentImageIndex(prev => prev === images.length - 1 ? 0 : prev + 1); }}
+                        className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-2xl bg-background/80 backdrop-blur-md flex items-center justify-center hover:bg-background transition-all shadow-lg hover:scale-105 active:scale-95 opacity-0 group-hover:opacity-100"
                       >
                         <ChevronRight className="w-5 h-5" />
                       </button>
@@ -411,30 +426,37 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                   </div>
                 </div>
 
-                {/* Thumbnail strip — improved with better borders and transitions */}
+                {/* Thumbnail strip */}
                 {images.length > 1 && (
                   <div className="p-3 sm:p-4 flex gap-2 sm:gap-3 overflow-x-auto scrollbar-hide">
-                    {images.map((img: string, index: number) => (
+                    {images.map((img: string, idx: number) => (
                       <button
-                        key={index}
-                        onClick={() => setCurrentImageIndex(index)}
+                        key={idx}
+                        onClick={() => setCurrentImageIndex(idx)}
                         className={`flex-shrink-0 w-20 h-16 sm:w-24 sm:h-[72px] rounded-xl overflow-hidden border-2 transition-all duration-200 ${
-                          index === currentImageIndex
+                          idx === currentImageIndex
                             ? "border-primary ring-2 ring-primary/20 scale-[1.02]"
                             : "border-transparent opacity-60 hover:opacity-100 hover:border-border"
                         }`}
                       >
-                        <img
-                          src={img}
-                          alt={`Vue ${index + 1}`}
-                          className="w-full h-full object-cover"
-                          loading="lazy"
-                        />
+                        <img src={img} alt={`Vue ${idx + 1}`} className="w-full h-full object-cover" loading="lazy" />
                       </button>
                     ))}
                   </div>
                 )}
               </motion.div>
+
+              {/* Fullscreen Gallery Overlay */}
+              <AnimatePresence>
+                {fullscreenOpen && (
+                  <FullscreenGallery
+                    images={images}
+                    initialIndex={currentImageIndex}
+                    alt={`${car.brand} ${car.model}`}
+                    onClose={() => setFullscreenOpen(false)}
+                  />
+                )}
+              </AnimatePresence>
 
               {/* Mobile-only: Title, Price & CTA */}
               <motion.div {...fadeUp(0.1)} className="lg:hidden glass-card p-5 sm:p-6 space-y-5">
