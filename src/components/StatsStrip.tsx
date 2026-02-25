@@ -50,23 +50,24 @@ const StatsStrip = memo(() => {
   ];
 
   return (
-    <section className="py-8 sm:py-10 border-y border-border/50 bg-card/50 backdrop-blur-sm">
+    <section className="py-5 sm:py-10 border-y border-border/50 bg-card/50">
       <div className="container mx-auto px-4 sm:px-6">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+        {/* Mobile: horizontal scroll · Desktop: grid */}
+        <div className="flex sm:grid sm:grid-cols-4 gap-5 sm:gap-8 overflow-x-auto sm:overflow-visible scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory">
           {stats.map((stat, i) => (
-            <div key={i} className="flex items-center gap-3 sm:gap-4 justify-center">
-              <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                <stat.icon className="w-5 h-5 text-primary" />
+            <div key={i} className="flex items-center gap-3 justify-center flex-shrink-0 snap-center min-w-[140px] sm:min-w-0">
+              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                <stat.icon className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
               </div>
               <div>
-                <div className="font-display text-xl sm:text-2xl font-bold text-foreground">
+                <div className="font-display text-lg sm:text-2xl font-bold text-foreground whitespace-nowrap">
                   {stat.value === 4.8 ? (
                     <span>{stat.value}{stat.suffix}</span>
                   ) : (
                     <AnimatedNumber target={stat.value} suffix={stat.suffix} />
                   )}
                 </div>
-                <p className="text-xs sm:text-sm text-muted-foreground">
+                <p className="text-[10px] sm:text-sm text-muted-foreground whitespace-nowrap">
                   {isNl ? stat.labelNl : stat.labelFr}
                 </p>
               </div>

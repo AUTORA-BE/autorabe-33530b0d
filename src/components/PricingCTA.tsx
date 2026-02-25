@@ -14,16 +14,16 @@ const PricingCTA = () => {
   const isNl = language === "nl";
 
   return (
-    <section className="container mx-auto px-4 sm:px-6 py-14 sm:py-20">
+    <section className="container mx-auto px-4 sm:px-6 py-10 sm:py-20">
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-card via-card to-primary/[0.04] border border-border">
         {/* Decorative background */}
         <div className="absolute -top-32 -right-32 w-80 h-80 rounded-full bg-primary/[0.06] blur-3xl pointer-events-none" />
         <div className="absolute -bottom-24 -left-24 w-64 h-64 rounded-full bg-primary/[0.04] blur-3xl pointer-events-none" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-primary/[0.02] blur-3xl pointer-events-none" />
 
-        <div className="relative px-6 py-12 sm:px-12 sm:py-16">
+        <div className="relative px-5 py-8 sm:px-12 sm:py-16">
           {/* Header */}
-          <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
+          <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-14">
             <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-5">
               <Zap className="h-3.5 w-3.5" />
               {isNl ? "Pro plannen" : "Plans professionnels"}
