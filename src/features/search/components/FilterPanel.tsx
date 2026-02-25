@@ -117,7 +117,7 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
       {/* Mobile overlay */}
       {isOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-background/80 backdrop-blur-sm z-40"
+          className="lg:hidden fixed inset-0 bg-foreground/40 backdrop-blur-sm z-40 transition-opacity duration-300"
           onClick={onClose}
           aria-hidden="true"
         />
@@ -126,23 +126,34 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
       <aside
         ref={ref}
         className={`
-          fixed lg:sticky top-0 left-0 z-50 lg:z-auto lg:top-20
-          w-full sm:w-80 h-dvh lg:h-[calc(100vh-5rem)] overflow-y-auto scrollbar-thin
-          p-5 space-y-5 lg:rounded-2xl
-          backdrop-blur-2xl border
-          transform transition-transform duration-300 lg:transform-none
-          ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
+          fixed lg:sticky lg:top-20
+          z-50 lg:z-auto
+          /* Mobile: bottom-sheet drawer */
+          inset-x-0 bottom-0 lg:inset-auto lg:left-auto
+          w-full lg:w-80
+          max-h-[85dvh] lg:max-h-none lg:h-[calc(100vh-5rem)]
+          overflow-hidden lg:overflow-y-auto scrollbar-thin
+          lg:rounded-2xl
+          border-t lg:border border-border
+          bg-card lg:bg-transparent
+          transform transition-transform duration-300 ease-out lg:transform-none
+          ${isOpen ? "translate-y-0" : "translate-y-full lg:translate-y-0"}
+          rounded-t-3xl lg:rounded-t-2xl
         `}
         style={{
-          background: "hsl(var(--glass-bg))",
-          borderColor: "hsl(var(--glass-border))",
-          boxShadow: "0 8px 32px -4px hsl(var(--foreground) / 0.08), inset 0 1px 0 0 hsl(0 0% 100% / 0.1)",
+          background: "hsl(var(--card))",
+          boxShadow: isOpen ? "0 -8px 40px -4px hsl(var(--foreground) / 0.15)" : "0 8px 32px -4px hsl(var(--foreground) / 0.08)",
         }}
         aria-label="Filtres de recherche"
       >
-        {/* Mobile header */}
-        <div className="lg:hidden flex justify-between items-center mb-2">
-          <h2 className="font-display text-xl font-bold text-foreground">{t("filters.title")}</h2>
+        {/* Mobile drag handle */}
+        <div className="lg:hidden flex justify-center pt-3 pb-1 sticky top-0 bg-card z-10">
+          <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
+        </div>
+
+        {/* Mobile header — sticky */}
+        <div className="lg:hidden flex justify-between items-center px-5 pb-3 pt-1 sticky top-5 bg-card z-10 border-b border-border/50">
+          <h2 className="font-display text-lg font-bold text-foreground">{t("filters.title")}</h2>
           <button
             onClick={onClose}
             className="p-2 hover:bg-secondary/80 rounded-xl transition-colors"
@@ -152,9 +163,12 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
           </button>
         </div>
 
+        {/* Scrollable content */}
+        <div className="overflow-y-auto px-5 pt-4 pb-28 lg:pb-5 lg:pt-0 space-y-5 lg:p-5 lg:space-y-5" style={{ maxHeight: "calc(85dvh - 140px)" }}>
+
         {/* Results count */}
         <div
-          className="text-center py-3 px-4 rounded-2xl border"
+          className="text-center py-2.5 px-4 rounded-2xl border"
           style={{
             background: "hsl(var(--primary) / 0.08)",
             borderColor: "hsl(var(--primary) / 0.15)",
@@ -445,14 +459,36 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
           </label>
         </FilterSection>
 
-        {/* Reset Button */}
+        {/* Reset Button — desktop only */}
         <button
           onClick={onReset}
-          className="w-full py-3 text-center text-sm font-medium text-muted-foreground hover:text-foreground rounded-xl border border-border/50 hover:bg-secondary/80 transition-all duration-200"
+          className="hidden lg:block w-full py-3 text-center text-sm font-medium text-muted-foreground hover:text-foreground rounded-xl border border-border/50 hover:bg-secondary/80 transition-all duration-200"
           style={{ boxShadow: "0 1px 3px hsl(var(--foreground) / 0.04)" }}
         >
           {t("filters.reset")}
         </button>
+
+        </div>{/* end scrollable content */}
+
+        {/* Mobile sticky footer CTA */}
+        <div className="lg:hidden fixed bottom-0 inset-x-0 p-4 bg-card border-t border-border/50 safe-bottom z-10"
+          style={{ boxShadow: "0 -4px 20px -4px hsl(var(--foreground) / 0.1)" }}
+        >
+          <div className="flex gap-3">
+            <button
+              onClick={onReset}
+              className="flex-1 py-3 text-center text-sm font-medium text-muted-foreground rounded-xl border border-border/50 hover:bg-secondary/80 transition-all"
+            >
+              {t("filters.reset")}
+            </button>
+            <button
+              onClick={onClose}
+              className="flex-[2] py-3 text-center text-sm font-semibold text-primary-foreground rounded-xl btn-primary-gradient"
+            >
+              {resultsCount} {t("filters.vehicles")}
+            </button>
+          </div>
+        </div>
       </aside>
     </>
   );
