@@ -70,10 +70,10 @@ const PopularVehicles = memo(function PopularVehicles({
   }
 
   return (
-    <section className="py-12 sm:py-16 overflow-hidden" aria-labelledby="popular-vehicles-heading">
+    <section className="py-8 sm:py-16 overflow-hidden" aria-labelledby="popular-vehicles-heading">
       <div className="container mx-auto px-4 sm:px-6">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8 sm:mb-10">
+        <div className="flex items-center justify-between mb-5 sm:mb-10">
           <div className="flex items-center gap-3 sm:gap-4">
             <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
               <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-primary" aria-hidden="true" />

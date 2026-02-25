@@ -113,7 +113,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
 
   return (
     <section
-      className="relative min-h-[75vh] sm:min-h-[88vh] flex items-center justify-center pt-16 sm:pt-20 pb-14 sm:pb-20 overflow-hidden"
+      className="relative min-h-[60vh] sm:min-h-[80vh] flex items-center justify-center pt-10 sm:pt-20 pb-10 sm:pb-20 overflow-hidden"
       style={{ contain: "layout style" }}
     >
       {/* Background gradient — richer */}
@@ -154,7 +154,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
           {/* Headline */}
           <motion.h1
             {...fadeUp(0.1)}
-            className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-[5rem] font-extrabold text-foreground mb-5 sm:mb-7 leading-[1.1] tracking-tight"
+            className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-[5rem] font-extrabold text-foreground mb-4 sm:mb-7 leading-[1.08] tracking-tight"
           >
             {t("hero.title1")}
             <br />
@@ -164,7 +164,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
           {/* Subheadline */}
           <motion.p
             {...fadeUp(0.2)}
-            className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 sm:mb-14 px-2 leading-relaxed"
+            className="text-sm sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 sm:mb-14 px-2 leading-relaxed"
           >
             {t("hero.subtitle")}
           </motion.p>
@@ -246,7 +246,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
           {/* Stats */}
           <motion.div
             {...fadeUp(0.5)}
-            className="flex flex-wrap justify-center gap-8 sm:gap-10 md:gap-20 mt-10 sm:mt-14"
+            className="flex flex-wrap justify-center gap-6 sm:gap-10 md:gap-20 mt-8 sm:mt-14"
           >
             <div className="text-center">
               <div className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">

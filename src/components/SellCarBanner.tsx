@@ -50,40 +50,34 @@ const SellCarBanner = () => {
       />
       
       <div className="relative container mx-auto px-4 sm:px-6">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-4 sm:py-5">
+        <div className="flex items-center justify-between gap-3 py-2.5 sm:py-5">
           {/* Left content */}
-          <div className="flex items-center gap-4">
-            <div className="relative">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="relative shrink-0">
               <div className="absolute inset-0 bg-primary/30 blur-xl rounded-full" />
-              <div className="relative flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-primary/80 shadow-lg">
-                <Car className="w-6 h-6 text-primary-foreground" />
+              <div className="relative flex items-center justify-center w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary to-primary/80 shadow-lg">
+                <Car className="w-4 h-4 sm:w-6 sm:h-6 text-primary-foreground" />
               </div>
             </div>
             
-            <div className="flex flex-col">
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-primary" />
-                <span className="text-sm font-medium text-primary">
-                  {t("sellBanner.badge") || "Gratuit"}
-                </span>
-              </div>
-              <h3 className="text-base sm:text-lg font-bold text-foreground">
+            <div className="flex flex-col min-w-0">
+              <h3 className="text-sm sm:text-lg font-bold text-foreground truncate">
                 {t("sellBanner.title")}
               </h3>
-              <p className="text-sm text-muted-foreground hidden sm:block max-w-md">
+              <p className="text-xs text-muted-foreground hidden sm:block max-w-md">
                 {t("sellBanner.subtitle")}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 shrink-0">
             <Button 
               onClick={() => navigate("/sell")}
-              size="lg"
-              className="btn-primary-gradient group whitespace-nowrap font-semibold px-6 shadow-lg hover:shadow-xl transition-all"
+              size="sm"
+              className="btn-primary-gradient group whitespace-nowrap font-semibold px-4 sm:px-6 text-xs sm:text-sm shadow-lg hover:shadow-xl transition-all h-8 sm:h-10"
             >
               {t("sellBanner.cta")}
-              <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
+              <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 ml-1.5 transition-transform group-hover:translate-x-1" />
             </Button>
             
             <Button

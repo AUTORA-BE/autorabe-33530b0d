@@ -72,11 +72,11 @@ const Header = () => {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "glass-panel border-b border-border/50 shadow-sm backdrop-blur-xl py-2"
-          : "bg-transparent border-b border-transparent py-4"
+          ? "glass-panel border-b border-border/50 shadow-sm backdrop-blur-xl py-1 sm:py-2"
+          : "bg-transparent border-b border-transparent py-2.5 sm:py-4"
       }`}
     >
-      <div className={`container mx-auto px-6 transition-all duration-300 ${scrolled ? "py-2" : "py-0"}`}>
+      <div className={`container mx-auto px-4 sm:px-6 transition-all duration-300 ${scrolled ? "py-1 sm:py-2" : "py-0"}`}>
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
@@ -84,7 +84,7 @@ const Header = () => {
               src={autoraLogo}
               alt="Autora Logo"
               className={`rounded-2xl object-cover transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 group-active:scale-95 ${
-                scrolled ? "w-8 h-8" : "w-10 h-10"
+                scrolled ? "w-7 h-7 sm:w-8 sm:h-8" : "w-8 h-8 sm:w-10 sm:h-10"
               }`}
             />
             <span className={`font-display font-bold tracking-wider transition-all duration-300 group-hover:tracking-[0.2em] ${

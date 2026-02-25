@@ -104,14 +104,14 @@ const BrandCarousel = memo(function BrandCarousel({
 
   return (
     <section 
-      className="py-6 sm:py-10 bg-gradient-to-b from-muted/30 to-background"
+      className="py-4 sm:py-10 bg-gradient-to-b from-muted/30 to-background"
       aria-labelledby="brands-title"
       style={{ contain: "layout style" }}
     >
       <div className="container mx-auto px-4 sm:px-6">
         <h2 
           id="brands-title"
-          className="text-xl sm:text-2xl md:text-3xl font-display font-bold text-center mb-5 sm:mb-8 text-foreground"
+          className="text-base sm:text-2xl md:text-3xl font-display font-bold text-center mb-3 sm:mb-8 text-foreground"
         >
           {t("brands.title")}
         </h2>
@@ -144,7 +144,7 @@ const BrandCarousel = memo(function BrandCarousel({
                 >
                   <div
                     className={cn(
-                      "relative flex flex-col items-center justify-center p-3 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl transition-[border-color,box-shadow,transform] duration-300",
+                      "relative flex flex-col items-center justify-center p-2.5 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl transition-[border-color,box-shadow,transform] duration-300",
                       selectedBrand === brand.name
                         ? "bg-primary/10 border-2 border-primary shadow-lg shadow-primary/20 ring-2 ring-primary/30 -translate-y-1.5"
                         : "bg-card border border-border/50 hover:border-primary/60 hover:shadow-xl hover:shadow-primary/15 hover:-translate-y-2 hover:scale-[1.06]"
@@ -175,7 +175,7 @@ const BrandCarousel = memo(function BrandCarousel({
                     {/* Brand logo container */}
                     <div
                       className={cn(
-                        "w-14 h-14 sm:w-18 sm:h-18 md:w-22 md:h-22 flex items-center justify-center mb-2 sm:mb-3 rounded-lg sm:rounded-xl p-1.5 sm:p-2 transition-all duration-300",
+                        "w-11 h-11 sm:w-18 sm:h-18 md:w-22 md:h-22 flex items-center justify-center mb-1.5 sm:mb-3 rounded-lg sm:rounded-xl p-1 sm:p-2 transition-all duration-300",
                         selectedBrand === brand.name
                           ? "bg-white dark:bg-white/10 scale-110"
                           : "bg-white/80 dark:bg-white/5 group-hover:bg-white dark:group-hover:bg-white/10 group-hover:scale-[1.15]"

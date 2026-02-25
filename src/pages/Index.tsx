@@ -57,9 +57,9 @@ const Index = () => {
         url="https://autora.be"
       />
       <Header />
-      <main className="pt-20">
+      <main className="pt-16 sm:pt-20 space-y-2 sm:space-y-0">
         {/* Sell banner */}
-        <Suspense fallback={<div className="h-[72px]" />}>
+        <Suspense fallback={<div className="h-[60px] sm:h-[72px]" />}>
           <ScrollReveal>
             <SellCarBanner />
           </ScrollReveal>
@@ -69,12 +69,12 @@ const Index = () => {
         <HeroSearch onSearch={handleSearch} />
 
         {/* Stats strip — social proof between hero and content */}
-        <Suspense fallback={<div className="h-[88px]" />}>
+        <Suspense fallback={<div className="h-[72px] sm:h-[88px]" />}>
           <StatsStrip />
         </Suspense>
 
         {/* Brand carousel */}
-        <Suspense fallback={<div className="min-h-[180px]" />}>
+        <Suspense fallback={<div className="min-h-[140px] sm:min-h-[180px]" />}>
           <ScrollReveal delay={0.05} direction="left">
             <BrandCarousel 
               onBrandFilter={(brand) => updateFilter("brand", brand)} 
@@ -84,7 +84,7 @@ const Index = () => {
         </Suspense>
 
         {/* Popular vehicles */}
-        <Suspense fallback={<div className="min-h-[300px]" />}>
+        <Suspense fallback={<div className="min-h-[260px] sm:min-h-[300px]" />}>
           <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 400px" }}>
             <ScrollReveal delay={0.1}>
               <PopularVehicles
@@ -97,7 +97,7 @@ const Index = () => {
         </Suspense>
 
         {/* Why AutoRa — trust section */}
-        <Suspense fallback={<div className="min-h-[300px]" />}>
+        <Suspense fallback={<div className="min-h-[240px] sm:min-h-[300px]" />}>
           <WhyAutoRa />
         </Suspense>
 
@@ -112,7 +112,7 @@ const Index = () => {
         <Suspense fallback={<div className="min-h-[400px]" />}>
         <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 800px" }}>
           <ScrollReveal>
-            <section id="results-section" className="container mx-auto px-4 sm:px-6 pb-16 sm:pb-24">
+            <section id="results-section" className="container mx-auto px-4 sm:px-6 pb-12 sm:pb-24">
               <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
                 <FilterPanel
                   isOpen={filtersOpen}
