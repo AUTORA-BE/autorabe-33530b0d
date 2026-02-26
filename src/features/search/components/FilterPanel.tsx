@@ -87,6 +87,7 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
     if (drawerInternalRef.current) {
       drawerInternalRef.current.style.transition = "transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)";
       if (touchDeltaY.current > 100) {
+        if (navigator.vibrate) navigator.vibrate(8);
         drawerInternalRef.current.style.transition = "transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)";
         drawerInternalRef.current.style.transform = "translateY(100%)";
         setTimeout(onClose, 350);
