@@ -85,10 +85,11 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
     if (touchStartY.current === null) return;
     touchStartY.current = null;
     if (drawerInternalRef.current) {
-      drawerInternalRef.current.style.transition = "transform 0.3s ease-out";
+      drawerInternalRef.current.style.transition = "transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)";
       if (touchDeltaY.current > 100) {
+        drawerInternalRef.current.style.transition = "transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)";
         drawerInternalRef.current.style.transform = "translateY(100%)";
-        setTimeout(onClose, 300);
+        setTimeout(onClose, 350);
       } else {
         drawerInternalRef.current.style.transform = "translateY(0)";
       }
