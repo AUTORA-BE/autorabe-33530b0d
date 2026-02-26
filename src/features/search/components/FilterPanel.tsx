@@ -3,7 +3,7 @@
  * @module features/search/components
  */
 
-import React, { useState, useEffect, memo, forwardRef } from "react";
+import React, { useState, useEffect, useRef, useCallback, memo, forwardRef } from "react";
 import { Fuel, Calendar, Gauge, Settings2, Leaf, X, ChevronDown, Euro, Car, MapPin, Building2, CarFront, Truck, CircleDot, RectangleHorizontal, Waypoints, Sparkles, Sun, Users } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -57,6 +57,44 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
   const { t } = useLanguage();
   const [models, setModels] = useState<string[]>([]);
   const [loadingModels, setLoadingModels] = useState(false);
+
+  // Swipe-down to close
+  const touchStartY = useRef<number | null>(null);
+  const touchDeltaY = useRef(0);
+  const drawerInternalRef = useRef<HTMLElement | null>(null);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    const scrollEl = drawerInternalRef.current?.querySelector("[data-scroll-content]") as HTMLElement | null;
+    if (scrollEl && scrollEl.scrollTop > 0) return;
+    touchStartY.current = e.touches[0].clientY;
+    touchDeltaY.current = 0;
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (touchStartY.current === null) return;
+    const delta = e.touches[0].clientY - touchStartY.current;
+    if (delta < 0) { touchDeltaY.current = 0; return; }
+    touchDeltaY.current = delta;
+    if (drawerInternalRef.current) {
+      drawerInternalRef.current.style.transform = `translateY(${delta}px)`;
+      drawerInternalRef.current.style.transition = "none";
+    }
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    if (touchStartY.current === null) return;
+    touchStartY.current = null;
+    if (drawerInternalRef.current) {
+      drawerInternalRef.current.style.transition = "transform 0.3s ease-out";
+      if (touchDeltaY.current > 100) {
+        drawerInternalRef.current.style.transform = "translateY(100%)";
+        setTimeout(onClose, 300);
+      } else {
+        drawerInternalRef.current.style.transform = "translateY(0)";
+      }
+    }
+    touchDeltaY.current = 0;
+  }, [onClose]);
 
   // Fetch models when brand changes
   useEffect(() => {
@@ -124,7 +162,14 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
       )}
 
       <aside
-        ref={ref}
+        ref={(el) => {
+          drawerInternalRef.current = el;
+          if (typeof ref === "function") ref(el);
+          else if (ref) (ref as React.MutableRefObject<HTMLElement | null>).current = el;
+        }}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
         className={`
           fixed lg:sticky lg:top-20
           z-50 lg:z-auto
@@ -164,7 +209,7 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
         </div>
 
         {/* Scrollable content */}
-        <div className="overflow-y-auto px-5 pt-4 pb-28 lg:pb-5 lg:pt-0 space-y-5 lg:p-5 lg:space-y-5" style={{ maxHeight: "calc(85dvh - 140px)" }}>
+        <div data-scroll-content className="overflow-y-auto px-5 pt-4 pb-28 lg:pb-5 lg:pt-0 space-y-5 lg:p-5 lg:space-y-5" style={{ maxHeight: "calc(85dvh - 140px)" }}>
 
         {/* Results count */}
         <div
