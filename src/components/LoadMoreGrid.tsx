@@ -181,7 +181,6 @@ const LoadMoreGrid = ({
           {/* Mobile filter button */}
           <button
             onClick={() => {
-              window.scrollTo({ top: 0, behavior: "smooth" });
               onOpenFilters();
             }}
             className="lg:hidden flex items-center gap-2 px-4 py-2.5 rounded-xl bg-secondary text-foreground font-medium relative touch-manipulation"
