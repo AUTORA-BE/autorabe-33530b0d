@@ -175,17 +175,16 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
         className={`
           fixed lg:sticky lg:top-20
           z-50 lg:z-auto
-          /* Mobile: bottom-sheet drawer */
           inset-x-0 bottom-0 lg:inset-auto lg:left-auto
           w-full lg:w-80
           max-h-[85dvh] lg:max-h-none lg:h-[calc(100vh-5rem)]
           overflow-hidden lg:overflow-y-auto scrollbar-thin
           lg:rounded-2xl
           border-t lg:border border-border
-          bg-card lg:bg-transparent
+          bg-card
           transform transition-transform duration-300 ease-out lg:transform-none
-          ${isOpen ? "translate-y-0" : "translate-y-full lg:translate-y-0"}
           rounded-t-3xl lg:rounded-t-2xl
+          ${isOpen ? "translate-y-0 visible" : "translate-y-full lg:translate-y-0 invisible lg:visible pointer-events-none lg:pointer-events-auto"}
         `}
         style={{
           background: "hsl(var(--card))",
