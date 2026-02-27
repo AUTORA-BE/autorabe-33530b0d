@@ -1,9 +1,9 @@
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useMemo } from "react";
 import { CarCard, type Car } from "@/features/listings";
 import { SlidersHorizontal, ChevronDown, AlertCircle, RefreshCw } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
-import ScrollReveal from "@/components/ScrollReveal";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface LoadMoreGridProps {
   cars: Car[];
@@ -216,37 +216,53 @@ const LoadMoreGrid = ({
       {/* Grid */}
       {cars.length > 0 ? (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
-            {cars.map((car, index) => (
-              <ScrollReveal
-                key={car.id}
-                delay={Math.min((index % 6) * 0.08, 0.4)}
-                direction="up"
-              >
-                <CarCard
-                  car={car}
-                  isFavorite={isFavorite(car.id)}
-                  onToggleFavorite={onToggleFavorite}
-                  onClick={onCarClick}
-                />
-              </ScrollReveal>
-            ))}
-            
-            {/* Skeleton loaders while loading more */}
-            {isLoadingMore && (
-              <>
-                {[1, 2, 3].map((i) => (
-                  <div 
-                    key={`skeleton-${i}`} 
-                    className="animate-fade-up"
-                    style={{ animationDelay: `${i * 0.1}s` }}
-                  >
-                    <CarCardSkeleton />
-                  </div>
-                ))}
-              </>
-            )}
-          </div>
+          <AnimatePresence mode="popLayout">
+            <motion.div
+              key={cars.map(c => c.id).join(",")}
+              className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6"
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: {},
+                visible: { transition: { staggerChildren: 0.06 } },
+              }}
+            >
+              {cars.map((car) => (
+                <motion.div
+                  key={car.id}
+                  layout
+                  variants={{
+                    hidden: { opacity: 0, y: 16, scale: 0.97 },
+                    visible: { opacity: 1, y: 0, scale: 1 },
+                  }}
+                  transition={{ type: "spring", stiffness: 300, damping: 28 }}
+                >
+                  <CarCard
+                    car={car}
+                    isFavorite={isFavorite(car.id)}
+                    onToggleFavorite={onToggleFavorite}
+                    onClick={onCarClick}
+                  />
+                </motion.div>
+              ))}
+
+              {/* Skeleton loaders while loading more */}
+              {isLoadingMore && (
+                <>
+                  {[1, 2, 3].map((i) => (
+                    <motion.div
+                      key={`skeleton-${i}`}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.08 }}
+                    >
+                      <CarCardSkeleton />
+                    </motion.div>
+                  ))}
+                </>
+              )}
+            </motion.div>
+          </AnimatePresence>
 
           {/* Infinite Scroll Trigger - Auto load on scroll */}
           <div ref={loadMoreRef} className="mt-8 flex justify-center min-h-[40px]">
