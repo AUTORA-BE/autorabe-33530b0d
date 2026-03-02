@@ -8,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { CarFilters, defaultFilters } from '@/types/filters';
 import { mapListingToVehicle, applyFilters, applySorting, PAGE_SIZE } from '../api/vehicleQueries';
 import type { Car, VehicleListingRow, VehicleSortOption } from '../types/vehicle.types';
+import { useFiltersUrlSync } from './useFiltersUrlSync';
 
 /**
  * Map database listing to Car type
@@ -34,6 +35,9 @@ export function useFilteredInfiniteCarListings() {
   // Filters state
   const [filters, setFilters] = useState<CarFilters>(defaultFilters);
   const [sortBy, setSortBy] = useState<VehicleSortOption>("recent");
+
+  // Sync filters ↔ URL query params
+  useFiltersUrlSync(filters, sortBy, setFilters, setSortBy);
 
   const fetchListings = useCallback(async (pageNum: number, append: boolean = false) => {
     try {
