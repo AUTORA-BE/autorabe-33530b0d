@@ -1,9 +1,10 @@
 import { useEffect, useRef, useCallback, useMemo } from "react";
 import { CarCard, type Car } from "@/features/listings";
-import { SlidersHorizontal, ChevronDown, AlertCircle, RefreshCw } from "lucide-react";
+import { SlidersHorizontal, ChevronDown, AlertCircle, RefreshCw, Share2, Check } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 
 interface LoadMoreGridProps {
   cars: Car[];
@@ -177,7 +178,7 @@ const LoadMoreGrid = ({
           </p>
         </div>
 
-        <div className="flex items-center gap-3 w-full sm:w-auto">
+        <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
           {/* Mobile filter button */}
           <button
             onClick={() => {
@@ -194,6 +195,22 @@ const LoadMoreGrid = ({
               </span>
             )}
           </button>
+
+          {/* Copy search link button */}
+          {activeFiltersCount > 0 && (
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(window.location.href);
+                toast.success(language === "nl" ? "Zoeklink gekopieerd!" : "Lien de recherche copié !");
+                if (navigator.vibrate) navigator.vibrate(8);
+              }}
+              className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-secondary text-foreground font-medium text-sm touch-manipulation hover:bg-secondary/80 transition-colors"
+              title={language === "nl" ? "Zoeklink kopiëren" : "Copier le lien de recherche"}
+            >
+              <Share2 className="w-4 h-4" />
+              <span className="hidden sm:inline">{language === "nl" ? "Delen" : "Partager"}</span>
+            </button>
+          )}
 
           {/* Sort dropdown */}
           <div className="relative flex-1 sm:flex-none">
