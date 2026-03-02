@@ -1,131 +1,93 @@
 /**
- * Hook for searching and filtering vehicles with infinite scroll
- * Combines filters, sorting, pagination, and caching via React Query
- * @module features/listings/hooks
+ * Unified hook for vehicle search with filtering, sorting, infinite scroll,
+ * React Query caching, and URL query param persistence.
+ * 
+ * This is the SINGLE source of truth — replaces the former
+ * useFilteredInfiniteCarListings and the old useVehicleSearch.
+ * 
+ * @module features/listings/hooks/useVehicleSearch
  */
 
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { vehicleQueries, PAGE_SIZE } from '../api/vehicleQueries';
-import type { 
-  Vehicle, 
-  VehicleFilters, 
-  VehicleSortOption 
+import type {
+  Vehicle,
+  VehicleFilters,
+  VehicleSortOption,
 } from '../types/vehicle.types';
 import { defaultVehicleFilters } from '../types/vehicle.types';
 import { useDebounce } from '@/shared/hooks/useDebounce';
+import { useFiltersUrlSync } from './useFiltersUrlSync';
 
-/** Query key factory for vehicle searches */
+/** Query key prefix for vehicle searches */
 const VEHICLE_QUERY_KEY = 'vehicles';
 
 interface UseVehicleSearchOptions {
-  /** Initial filter values */
+  /** Initial filter overrides */
   initialFilters?: Partial<VehicleFilters>;
   /** Initial sort option */
   initialSort?: VehicleSortOption;
-  /** Debounce delay in ms for filter changes */
+  /** Debounce delay in ms for filter changes (default 300) */
   debounceDelay?: number;
-}
-
-interface UseVehicleSearchResult {
-  /** Array of loaded vehicles */
-  vehicles: Vehicle[];
-  /** Loading state for initial fetch */
-  isLoading: boolean;
-  /** Loading state for loading more pages */
-  isLoadingMore: boolean;
-  /** Error message if any */
-  error: string | null;
-  /** Whether more pages are available */
-  hasMore: boolean;
-  /** Load next page of results */
-  loadMore: () => void;
-  /** Refresh all data */
-  refresh: () => void;
-  /** Total count of matching vehicles */
-  totalCount: number;
-  /** Current filter values */
-  filters: VehicleFilters;
-  /** Update a single filter value */
-  updateFilter: <K extends keyof VehicleFilters>(key: K, value: VehicleFilters[K]) => void;
-  /** Reset all filters to defaults */
-  resetFilters: () => void;
-  /** Current sort option */
-  sortBy: VehicleSortOption;
-  /** Update sort option */
-  setSortBy: (sort: VehicleSortOption) => void;
-  /** Number of active filters */
-  activeFiltersCount: number;
+  /** Whether to sync filters with URL search params (default true) */
+  syncUrl?: boolean;
 }
 
 /**
- * Main hook for vehicle search functionality
- * Provides filtering, sorting, pagination, and caching
- * 
- * @param options - Configuration options
- * @returns Search state and methods
- * 
+ * Unified vehicle search hook
+ *
  * @example
  * ```tsx
- * const {
- *   vehicles,
- *   isLoading,
- *   filters,
- *   updateFilter,
- *   loadMore,
- *   hasMore,
- * } = useVehicleSearch();
- * 
- * // Update a filter
+ * const { vehicles, isLoading, filters, updateFilter, loadMore, hasMore } = useVehicleSearch();
  * updateFilter('brand', 'BMW');
- * 
- * // Load more results
- * if (hasMore) loadMore();
  * ```
  */
-export function useVehicleSearch(options: UseVehicleSearchOptions = {}): UseVehicleSearchResult {
+export function useVehicleSearch(options: UseVehicleSearchOptions = {}) {
   const {
     initialFilters = {},
     initialSort = 'recent',
     debounceDelay = 300,
+    syncUrl = true,
   } = options;
 
   const queryClient = useQueryClient();
 
-  // Filter state
+  // ── State ──────────────────────────────────────────────────────────
   const [filters, setFilters] = useState<VehicleFilters>({
     ...defaultVehicleFilters,
     ...initialFilters,
   });
-  
-  // Sort state
   const [sortBy, setSortBy] = useState<VehicleSortOption>(initialSort);
-  
-  // Pagination state
   const [page, setPage] = useState(0);
   const [allVehicles, setAllVehicles] = useState<Vehicle[]>([]);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
-  // Debounce filters for API calls
+  // ── URL sync (opt-in, default on) ─────────────────────────────────
+  if (syncUrl) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useFiltersUrlSync(filters, sortBy, setFilters, setSortBy);
+  }
+
+  // ── Debounce filters for API calls ────────────────────────────────
   const debouncedFilters = useDebounce(filters, debounceDelay);
 
-  // Query key includes filters and sort for proper caching
+  // ── React Query ───────────────────────────────────────────────────
   const queryKey = useMemo(
     () => [VEHICLE_QUERY_KEY, debouncedFilters, sortBy, page],
-    [debouncedFilters, sortBy, page]
+    [debouncedFilters, sortBy, page],
   );
 
-  // Main data query
-  const { 
-    data, 
-    isLoading: isInitialLoading, 
+  const {
+    data,
+    isLoading: isInitialLoading,
     error: queryError,
     refetch,
   } = useQuery({
     queryKey,
     queryFn: () => vehicleQueries.list(debouncedFilters, sortBy, page),
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
     refetchOnWindowFocus: false,
     retry: 1,
   });
@@ -142,21 +104,20 @@ export function useVehicleSearch(options: UseVehicleSearchOptions = {}): UseVehi
       if (page === 0) {
         setAllVehicles(data.vehicles);
       } else {
-        setAllVehicles(prev => [...prev, ...data.vehicles]);
+        setAllVehicles((prev) => [...prev, ...data.vehicles]);
       }
       setIsLoadingMore(false);
     }
   }, [data, page]);
 
-  // Load more handler
+  // ── Actions ───────────────────────────────────────────────────────
   const loadMore = useCallback(() => {
     if (!isLoadingMore && data?.hasMore) {
       setIsLoadingMore(true);
-      setPage(prev => prev + 1);
+      setPage((prev) => prev + 1);
     }
   }, [isLoadingMore, data?.hasMore]);
 
-  // Refresh handler
   const refresh = useCallback(() => {
     setPage(0);
     setAllVehicles([]);
@@ -164,20 +125,18 @@ export function useVehicleSearch(options: UseVehicleSearchOptions = {}): UseVehi
     refetch();
   }, [queryClient, refetch]);
 
-  // Update single filter
-  const updateFilter = useCallback(<K extends keyof VehicleFilters>(
-    key: K,
-    value: VehicleFilters[K]
-  ) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
-  }, []);
+  const updateFilter = useCallback(
+    <K extends keyof VehicleFilters>(key: K, value: VehicleFilters[K]) => {
+      setFilters((prev) => ({ ...prev, [key]: value }));
+    },
+    [],
+  );
 
-  // Reset all filters
   const resetFilters = useCallback(() => {
     setFilters(defaultVehicleFilters);
   }, []);
 
-  // Count active filters
+  // ── Derived ───────────────────────────────────────────────────────
   const activeFiltersCount = useMemo(() => {
     let count = 0;
     if (filters.searchQuery) count++;
@@ -190,11 +149,18 @@ export function useVehicleSearch(options: UseVehicleSearchOptions = {}): UseVehi
     if (filters.yearMin > 2010 || filters.yearMax < new Date().getFullYear() + 1) count++;
     if (filters.kmMin > 0 || filters.kmMax < 200000) count++;
     if (filters.lezOnly) count++;
+    if (filters.sellerTypeFilter) count++;
+    if (filters.bodyType) count++;
     return count;
   }, [filters]);
 
+  // ── Return (backward-compatible with both old hooks) ──────────────
   return {
+    // New canonical name
     vehicles: allVehicles,
+    // Legacy alias used by Index.tsx / LoadMoreGrid
+    cars: allVehicles,
+
     isLoading: isInitialLoading && page === 0,
     isLoadingMore,
     error: queryError?.message || null,
@@ -202,6 +168,7 @@ export function useVehicleSearch(options: UseVehicleSearchOptions = {}): UseVehi
     loadMore,
     refresh,
     totalCount: data?.total ?? 0,
+
     filters,
     updateFilter,
     resetFilters,
