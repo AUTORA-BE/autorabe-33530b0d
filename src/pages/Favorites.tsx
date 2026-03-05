@@ -1,16 +1,33 @@
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { Header, Footer } from "@/shared/components";
-import { CarCard, useCarListings } from "@/features/listings";
+import { CarCard, vehicleQueries, type Vehicle } from "@/features/listings";
 import { useFavorites } from "@/hooks/useFavorites";
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { mapListingToVehicle } from "@/features/listings/api/vehicleQueries";
+import type { VehicleListingRow } from "@/features/listings/types/vehicle.types";
 
 const Favorites = () => {
   const navigate = useNavigate();
   const { favorites, isFavorite, toggleFavorite, clearFavorites } = useFavorites();
-  const { cars } = useCarListings();
 
-  const favoriteCars = cars.filter((car) => favorites.includes(car.id));
+  // Fetch only the favorited vehicles by IDs
+  const { data: favoriteCars = [], isLoading } = useQuery({
+    queryKey: ['favorites', favorites],
+    queryFn: async (): Promise<Vehicle[]> => {
+      if (favorites.length === 0) return [];
+      const { data, error } = await supabase
+        .from('car_listings_public')
+        .select('*')
+        .in('id', favorites);
+      if (error) throw new Error(error.message);
+      return (data || []).map(row => mapListingToVehicle(row as VehicleListingRow));
+    },
+    enabled: favorites.length > 0,
+    staleTime: 5 * 60 * 1000,
+  });
 
   return (
     <div className="min-h-screen bg-background">

@@ -98,12 +98,14 @@ export function useFiltersUrlSync(
   sortBy: VehicleSortOption,
   setFilters: (f: VehicleFilters) => void,
   setSortBy: (s: VehicleSortOption) => void,
+  enabled: boolean = true,
 ) {
   const [searchParams, setSearchParams] = useSearchParams();
   const isInitialized = useRef(false);
 
   // On mount: read URL → state (only once)
   useEffect(() => {
+    if (!enabled) return;
     if (isInitialized.current) return;
     isInitialized.current = true;
 
@@ -113,14 +115,14 @@ export function useFiltersUrlSync(
     const { filters: urlFilters, sortBy: urlSort } = parseFiltersFromParams(searchParams);
     setFilters(urlFilters);
     setSortBy(urlSort);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [enabled]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // On filter/sort change: state → URL
   const syncToUrl = useCallback(() => {
-    if (!isInitialized.current) return;
+    if (!enabled || !isInitialized.current) return;
     const newParams = filtersToParams(filters, sortBy);
     setSearchParams(newParams, { replace: true });
-  }, [filters, sortBy, setSearchParams]);
+  }, [enabled, filters, sortBy, setSearchParams]);
 
   useEffect(() => {
     syncToUrl();

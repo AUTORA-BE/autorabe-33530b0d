@@ -64,10 +64,7 @@ export function useVehicleSearch(options: UseVehicleSearchOptions = {}) {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   // ── URL sync (opt-in, default on) ─────────────────────────────────
-  if (syncUrl) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useFiltersUrlSync(filters, sortBy, setFilters, setSortBy);
-  }
+  useFiltersUrlSync(filters, sortBy, setFilters, setSortBy, syncUrl);
 
   // ── Debounce filters for API calls ────────────────────────────────
   const debouncedFilters = useDebounce(filters, debounceDelay);
@@ -92,11 +89,12 @@ export function useVehicleSearch(options: UseVehicleSearchOptions = {}) {
     retry: 1,
   });
 
-  // Reset pagination when filters or sort change
+  // Reset pagination when filters or sort change (use serialized key to avoid reference changes)
+  const debouncedFiltersKey = JSON.stringify(debouncedFilters);
   useEffect(() => {
     setPage(0);
     setAllVehicles([]);
-  }, [debouncedFilters, sortBy]);
+  }, [debouncedFiltersKey, sortBy]);
 
   // Accumulate vehicles for infinite scroll
   useEffect(() => {

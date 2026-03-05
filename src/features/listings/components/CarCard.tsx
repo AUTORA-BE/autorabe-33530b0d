@@ -1,6 +1,5 @@
 import { forwardRef, memo } from "react";
 import { Calendar, Gauge, MapPin, Heart, GitCompareArrows, Leaf, AlertTriangle, Ban, Info, CheckCircle, Building2 } from "lucide-react";
-import { motion } from "framer-motion";
 import { useCompareContext } from "@/features/compare";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useHapticFeedback } from "@/hooks/useHapticFeedback";
@@ -98,14 +97,11 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
   const lezBadge = getLezBadgeInfo(car.euroNorm, car.fuelType);
 
   return (
-    <motion.article
-      ref={ref as React.Ref<HTMLElement>}
-      className="rounded-2xl overflow-hidden bg-card border border-border/50 group cursor-pointer touch-target shadow-[var(--shadow-card)] hover:border-primary/20 relative"
+    <article
+      ref={ref}
+      className="rounded-2xl overflow-hidden bg-card border border-border/50 group cursor-pointer touch-target shadow-[var(--shadow-card)] hover:border-primary/20 relative hover:-translate-y-1.5 hover:shadow-[0_20px_40px_-12px_hsl(var(--primary)/0.12),0_8px_20px_-8px_hsl(var(--foreground)/0.08)] active:scale-[0.98] transition-all duration-300 ease-out"
       style={{ contain: "layout style paint" }}
       onClick={handleClick}
-      whileHover={{ y: -6, boxShadow: "0 20px 40px -12px hsl(var(--primary) / 0.12), 0 8px 20px -8px hsl(var(--foreground) / 0.08)" }}
-      whileTap={{ scale: 0.98 }}
-      transition={{ type: "spring", stiffness: 300, damping: 25 }}
     >
       {/* Shine effect on hover */}
       <div className="absolute inset-0 z-20 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700">
@@ -228,7 +224,7 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
           </span>
         </div>
       </div>
-    </motion.article>
+    </article>
   );
 }));
 

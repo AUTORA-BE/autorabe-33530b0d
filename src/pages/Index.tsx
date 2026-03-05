@@ -13,7 +13,7 @@ const LoadMoreGrid = lazy(() => import("@/components/LoadMoreGrid"));
 const PricingCTA = lazy(() => import("@/components/PricingCTA"));
 const WhyAutoRa = lazy(() => import("@/components/WhyAutoRa"));
 const StatsStrip = lazy(() => import("@/components/StatsStrip"));
-import { useFilteredInfiniteCarListings } from "@/features/listings";
+import { useVehicleSearch } from "@/features/listings";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -26,7 +26,7 @@ const Index = () => {
     cars, isLoading, isLoadingMore, hasMore, loadMore, totalCount,
     filters, updateFilter, resetFilters, sortBy, setSortBy,
     activeFiltersCount, error, refresh,
-  } = useFilteredInfiniteCarListings();
+  } = useVehicleSearch();
 
   const { isFavorite, toggleFavorite } = useFavorites();
 

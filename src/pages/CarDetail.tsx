@@ -23,10 +23,9 @@ import {
 import { motion, AnimatePresence, type PanInfo } from "framer-motion";
 import FullscreenGallery from "@/components/cars/FullscreenGallery";
 import { Header, Footer } from "@/shared/components";
-import { CarCard, type Car } from "@/features/listings";
+import { CarCard, type Car, vehicleQueries } from "@/features/listings";
 import { Button } from "@/components/ui/button";
-import { getCarByIdFromDb, getRelatedCarsFromList, formatPrice, formatMileage, getSellerContact } from "@/utils/carUtils";
-import { useCarListings } from "@/features/listings";
+import { getCarByIdFromDb, formatPrice, formatMileage, getSellerContact } from "@/utils/carUtils";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useToast } from "@/hooks/use-toast";
 import { useTrackView } from "@/hooks/useTrackView";
@@ -66,7 +65,7 @@ const CarDetail = () => {
     user_id: string;
   } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const { cars: allCars } = useCarListings();
+  const [relatedCars, setRelatedCars] = useState<Car[]>([]);
   const [currentUser, setCurrentUser] = useState<string | undefined>(undefined);
   const isAdmin = useIsAdmin(currentUser);
 
@@ -121,6 +120,10 @@ const CarDetail = () => {
         if (contact) {
           setSellerContact(contact);
         }
+
+        // Fetch related vehicles via optimized API query
+        const related = await vehicleQueries.getRelated(dbCar, 4);
+        setRelatedCars(related);
       }
       
       setIsLoading(false);
@@ -129,7 +132,7 @@ const CarDetail = () => {
     fetchCar();
   }, [id]);
 
-  const relatedCars = car ? getRelatedCarsFromList(car, allCars, 4) : [];
+  
 
   if (isLoading) {
     return (

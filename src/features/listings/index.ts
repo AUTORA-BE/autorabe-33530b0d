@@ -32,6 +32,3 @@ export { vehicleQueries, mapListingToVehicle, mapListingToVehicleDetail, PAGE_SI
 export { useVehicleSearch } from './hooks/useVehicleSearch';
 export { usePopularVehicles } from './hooks/usePopularVehicles';
 export { useVehicleDetail } from './hooks/useVehicleDetail';
-export { useCarListings } from './hooks/useCarListings';
-export { useInfiniteCarListings } from './hooks/useInfiniteCarListings';
-export { useFilteredInfiniteCarListings } from './hooks/useFilteredInfiniteCarListings';

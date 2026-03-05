@@ -201,35 +201,22 @@ export const vehicleQueries = {
     sortBy: VehicleSortOption = 'recent',
     page: number = 0
   ): Promise<{ vehicles: Vehicle[]; total: number; hasMore: boolean }> {
-    // Get total count with filters
-    let countQuery = supabase
+    // Single query: fetch data + count in one request
+    let query = supabase
       .from('car_listings_public')
-      .select('*', { count: 'exact', head: true });
+      .select('*', { count: 'exact' });
     
-    countQuery = applyFilters(countQuery, filters);
-    const { count, error: countError } = await countQuery;
+    query = applyFilters(query, filters);
+    query = applySorting(query, sortBy);
+    query = query.range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
 
-    if (countError) {
-      throw new Error(countError.message);
+    const { data, count, error } = await query;
+
+    if (error) {
+      throw new Error(error.message);
     }
 
     const total = count || 0;
-
-    // Fetch paginated data with filters
-    let dataQuery = supabase
-      .from('car_listings_public')
-      .select('*');
-    
-    dataQuery = applyFilters(dataQuery, filters);
-    dataQuery = applySorting(dataQuery, sortBy);
-    dataQuery = dataQuery.range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
-
-    const { data, error: fetchError } = await dataQuery;
-
-    if (fetchError) {
-      throw new Error(fetchError.message);
-    }
-
     const vehicles = (data || []).map(row => mapListingToVehicle(row as VehicleListingRow));
     const hasMore = vehicles.length === PAGE_SIZE && (page + 1) * PAGE_SIZE < total;
 
