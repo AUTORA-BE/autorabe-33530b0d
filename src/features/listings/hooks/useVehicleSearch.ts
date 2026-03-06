@@ -69,10 +69,13 @@ export function useVehicleSearch(options: UseVehicleSearchOptions = {}) {
   // ── Debounce filters for API calls ────────────────────────────────
   const debouncedFilters = useDebounce(filters, debounceDelay);
 
+  // Stable serialized key — prevents refetches on object ref changes
+  const debouncedFiltersKey = JSON.stringify(debouncedFilters);
+
   // ── React Query ───────────────────────────────────────────────────
   const queryKey = useMemo(
-    () => [VEHICLE_QUERY_KEY, debouncedFilters, sortBy, page],
-    [debouncedFilters, sortBy, page],
+    () => [VEHICLE_QUERY_KEY, debouncedFiltersKey, sortBy, page],
+    [debouncedFiltersKey, sortBy, page],
   );
 
   const {
@@ -89,8 +92,7 @@ export function useVehicleSearch(options: UseVehicleSearchOptions = {}) {
     retry: 1,
   });
 
-  // Reset pagination when filters or sort change (use serialized key to avoid reference changes)
-  const debouncedFiltersKey = JSON.stringify(debouncedFilters);
+  // Reset pagination when filters or sort change
   useEffect(() => {
     setPage(0);
     setAllVehicles([]);

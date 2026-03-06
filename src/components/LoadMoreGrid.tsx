@@ -99,8 +99,8 @@ const LoadMoreGrid = ({
     if (!element) return;
 
     observerRef.current = new IntersectionObserver(handleObserver, {
-      threshold: 0.1,
-      rootMargin: "100px",
+      threshold: 0,
+      rootMargin: "400px",
     });
     observerRef.current.observe(element);
 
@@ -110,6 +110,26 @@ const LoadMoreGrid = ({
       }
     };
   }, [handleObserver]);
+
+  // Fallback: check on scroll if observer missed it
+  useEffect(() => {
+    if (!hasMore || isLoadingMore) return;
+    const element = loadMoreRef.current;
+    if (!element) return;
+
+    const checkVisibility = () => {
+      const rect = element.getBoundingClientRect();
+      if (rect.top < window.innerHeight + 400) {
+        onLoadMore();
+      }
+    };
+
+    // Check immediately (element might already be near viewport)
+    checkVisibility();
+
+    window.addEventListener('scroll', checkVisibility, { passive: true });
+    return () => window.removeEventListener('scroll', checkVisibility);
+  }, [hasMore, isLoadingMore, onLoadMore]);
 
   const texts = {
     available: language === "nl" ? "Beschikbare voertuigen" : "Véhicules disponibles",
