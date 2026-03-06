@@ -81,23 +81,24 @@ export function mapListingToVehicleDetail(listing: VehicleListingRow): VehicleDe
  * Applies sort order to a Supabase query
  */
 export function applySorting<T>(query: T, sortBy: VehicleSortOption): T {
-  const queryWithOrder = query as any;
+  const q = query as any;
   
+  // Always add secondary sort by id for deterministic pagination
   switch (sortBy) {
     case 'price-asc':
-      return queryWithOrder.order('price', { ascending: true });
+      return q.order('price', { ascending: true }).order('id', { ascending: true });
     case 'price-desc':
-      return queryWithOrder.order('price', { ascending: false });
+      return q.order('price', { ascending: false }).order('id', { ascending: true });
     case 'year-desc':
-      return queryWithOrder.order('year', { ascending: false });
+      return q.order('year', { ascending: false }).order('id', { ascending: true });
     case 'year-asc':
-      return queryWithOrder.order('year', { ascending: true });
+      return q.order('year', { ascending: true }).order('id', { ascending: true });
     case 'km-asc':
-      return queryWithOrder.order('mileage', { ascending: true });
+      return q.order('mileage', { ascending: true }).order('id', { ascending: true });
     case 'km-desc':
-      return queryWithOrder.order('mileage', { ascending: false });
+      return q.order('mileage', { ascending: false }).order('id', { ascending: true });
     default:
-      return queryWithOrder.order('created_at', { ascending: false });
+      return q.order('created_at', { ascending: false }).order('id', { ascending: true });
   }
 }
 
