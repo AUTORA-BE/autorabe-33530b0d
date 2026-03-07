@@ -8,7 +8,7 @@
  * @module features/listings/hooks/useVehicleSearch
  */
 
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { vehicleQueries, PAGE_SIZE } from '../api/vehicleQueries';
 import type {
@@ -62,6 +62,10 @@ export function useVehicleSearch(options: UseVehicleSearchOptions = {}) {
   const [page, setPage] = useState(0);
   const [allVehicles, setAllVehicles] = useState<Vehicle[]>([]);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  
+  // Stable hasMore tracking — survives queryKey transitions
+  const [hasMoreStable, setHasMoreStable] = useState(false);
+  const totalRef = useRef(0);
 
   // ── URL sync (opt-in, default on) ─────────────────────────────────
   useFiltersUrlSync(filters, sortBy, setFilters, setSortBy, syncUrl);
@@ -96,9 +100,11 @@ export function useVehicleSearch(options: UseVehicleSearchOptions = {}) {
   useEffect(() => {
     setPage(0);
     setAllVehicles([]);
+    setHasMoreStable(false);
+    totalRef.current = 0;
   }, [debouncedFiltersKey, sortBy]);
 
-  // Accumulate vehicles for infinite scroll
+  // Accumulate vehicles for infinite scroll + update stable hasMore
   useEffect(() => {
     if (data?.vehicles) {
       if (page === 0) {
@@ -106,21 +112,24 @@ export function useVehicleSearch(options: UseVehicleSearchOptions = {}) {
       } else {
         setAllVehicles((prev) => [...prev, ...data.vehicles]);
       }
+      setHasMoreStable(data.hasMore);
+      totalRef.current = data.total;
       setIsLoadingMore(false);
     }
   }, [data, page]);
 
   // ── Actions ───────────────────────────────────────────────────────
   const loadMore = useCallback(() => {
-    if (!isLoadingMore && data?.hasMore) {
+    if (!isLoadingMore && hasMoreStable) {
       setIsLoadingMore(true);
       setPage((prev) => prev + 1);
     }
-  }, [isLoadingMore, data?.hasMore]);
+  }, [isLoadingMore, hasMoreStable]);
 
   const refresh = useCallback(() => {
     setPage(0);
     setAllVehicles([]);
+    setHasMoreStable(false);
     queryClient.invalidateQueries({ queryKey: [VEHICLE_QUERY_KEY] });
     refetch();
   }, [queryClient, refetch]);
@@ -164,10 +173,10 @@ export function useVehicleSearch(options: UseVehicleSearchOptions = {}) {
     isLoading: isInitialLoading && page === 0,
     isLoadingMore,
     error: queryError?.message || null,
-    hasMore: data?.hasMore ?? false,
+    hasMore: hasMoreStable,
     loadMore,
     refresh,
-    totalCount: data?.total ?? 0,
+    totalCount: totalRef.current || data?.total || 0,
 
     filters,
     updateFilter,
