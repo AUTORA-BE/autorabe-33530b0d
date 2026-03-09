@@ -1204,7 +1204,7 @@ const translations: Record<Language, Record<string, string>> = {
     "hero.brands": "Marken",
     "hero.titleLine1": "Das perfekte Auto für Ihr",
     "hero.titleLine2": "Leben in Belgien",
-    "hero.subtitleTrust": "Kaufen Sie ohne Bedenken. Der Großteil unserer Fahrzeuge ist bereits zertifiziert — die Zahl sehen Sie unten.",
+    "hero.subtitleTrust": "Der erste belgische Marktplatz, auf dem Transparenz keine Option ist. Car-Pass, LEZ-Konformität, regionale Steuer — alles vor der Veröffentlichung geprüft.",
     "hero.trustBadge": "der Fahrzeuge bereits LEZ & Car-Pass zertifiziert",
     "hero.pill.verified": "Verifizierte Anzeigen",
     "hero.pill.carpass": "Car-Pass geschützt",
