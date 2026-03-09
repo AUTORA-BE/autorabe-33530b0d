@@ -103,7 +103,7 @@ const WhyAutoRa = memo(() => {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 leading-tight tracking-tight"
           >
-            {isNl ? "Koop met vertrouwen" : "Achetez en toute confiance"}
+            {t("why.title")}
           </motion.h2>
 
           <motion.p
