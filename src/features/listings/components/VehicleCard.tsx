@@ -29,6 +29,8 @@ export interface VehicleCardProps {
   onClick?: (vehicleId: string) => void;
   /** Whether to eager-load the image (for LCP) */
   eager?: boolean;
+  /** Profil acheteur pour le TCO Matchmaker (optionnel) */
+  buyerProfile?: BuyerProfile | null;
 }
 
 /**
