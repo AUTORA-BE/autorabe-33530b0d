@@ -51,21 +51,25 @@ export function useAutoSaveDraft(isEditMode: boolean) {
           .eq('user_id', user.id)
           .maybeSingle();
 
-        const payload = {
-          form_data: debouncedValue.formData as unknown as Record<string, unknown>,
-          photo_urls: debouncedValue.photoUrls,
-        };
+        const formDataJson = JSON.parse(JSON.stringify(debouncedValue.formData));
 
         let error;
         if (existing) {
           ({ error } = await supabase
             .from('listing_drafts')
-            .update(payload)
+            .update({
+              form_data: formDataJson,
+              photo_urls: debouncedValue.photoUrls,
+            })
             .eq('user_id', user.id));
         } else {
           ({ error } = await supabase
             .from('listing_drafts')
-            .insert({ user_id: user.id, ...payload }));
+            .insert([{
+              user_id: user.id,
+              form_data: formDataJson,
+              photo_urls: debouncedValue.photoUrls,
+            }]));
         }
 
         if (!error) {
