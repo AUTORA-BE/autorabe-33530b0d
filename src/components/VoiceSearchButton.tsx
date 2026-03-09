@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
-import { Mic, Car, Banknote, Check, Gauge } from "lucide-react";
+import { Mic, Car, Banknote, Check, Gauge, Fuel } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
