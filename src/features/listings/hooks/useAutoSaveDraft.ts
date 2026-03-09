@@ -44,16 +44,29 @@ export function useAutoSaveDraft(isEditMode: boolean) {
 
       setIsSaving(true);
       try {
-        const { error } = await supabase
+        // Vérifier si un brouillon existe déjà
+        const { data: existing } = await supabase
           .from('listing_drafts')
-          .upsert(
-            {
-              user_id: user.id,
-              form_data: debouncedValue.formData as unknown as Record<string, unknown>,
-              photo_urls: debouncedValue.photoUrls,
-            },
-            { onConflict: 'user_id' }
-          );
+          .select('id')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        const payload = {
+          form_data: debouncedValue.formData as unknown as Record<string, unknown>,
+          photo_urls: debouncedValue.photoUrls,
+        };
+
+        let error;
+        if (existing) {
+          ({ error } = await supabase
+            .from('listing_drafts')
+            .update(payload)
+            .eq('user_id', user.id));
+        } else {
+          ({ error } = await supabase
+            .from('listing_drafts')
+            .insert({ user_id: user.id, ...payload }));
+        }
 
         if (!error) {
           setLastSaved(new Date());
