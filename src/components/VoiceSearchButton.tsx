@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { Mic, Car, Banknote, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -105,13 +105,35 @@ export function VoiceSearchButton({ onResult }: VoiceSearchButtonProps) {
   const detectedEntities = useDetectedEntities(transcript);
   const { impactMedium } = useHapticFeedback();
   const previousEntitiesCount = useRef(0);
+  const confirmSoundRef = useRef<AudioContext | null>(null);
+
+  const playConfirmSound = useCallback(() => {
+    try {
+      const ctx = confirmSoundRef.current ?? new AudioContext();
+      confirmSoundRef.current = ctx;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(880, ctx.currentTime);
+      osc.frequency.setValueAtTime(1320, ctx.currentTime + 0.06);
+      gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.15);
+    } catch {
+      // AudioContext not supported
+    }
+  }, []);
 
   useEffect(() => {
     if (detectedEntities.length > previousEntitiesCount.current) {
       impactMedium();
+      playConfirmSound();
     }
     previousEntitiesCount.current = detectedEntities.length;
-  }, [detectedEntities.length, impactMedium]);
+  }, [detectedEntities.length, impactMedium, playConfirmSound]);
 
   useEffect(() => {
     const win = window as unknown as WindowWithSpeech;
