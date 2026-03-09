@@ -109,16 +109,23 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
   return (
     <article
       ref={ref}
-      className="rounded-2xl overflow-hidden bg-card border border-border/50 group cursor-pointer touch-target shadow-[var(--shadow-card)] hover:border-primary/20 relative hover:-translate-y-1.5 hover:shadow-[0_20px_40px_-12px_hsl(var(--primary)/0.12),0_8px_20px_-8px_hsl(var(--foreground)/0.08)] active:scale-[0.98] transition-all duration-300 ease-out"
+      className="rounded-2xl overflow-hidden bg-card border border-border/50 group cursor-pointer touch-target relative hover:-translate-y-1.5 active:scale-[0.98] transition-all duration-300 ease-out"
       style={{ contain: "layout style paint" }}
       onClick={handleClick}
     >
+      {/* Gradient border glow on hover */}
+      <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-primary/20 via-transparent to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-0" />
+      <div className="absolute inset-0 rounded-2xl bg-card z-0" />
+
+      {/* Bottom gradient fusion */}
+      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-primary/[0.03] to-transparent pointer-events-none z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
       {/* Shine effect on hover */}
       <div className="absolute inset-0 z-20 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-700">
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.06] to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
       </div>
 
-      <div className="relative h-44 sm:h-48 md:h-56 overflow-hidden">
+      <div className="relative h-44 sm:h-48 md:h-56 overflow-hidden z-[1]">
         <img
           src={car.image}
           alt={getAltText()}
@@ -207,7 +214,7 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
       </div>
 
       {/* Content */}
-      <div className="p-3.5 sm:p-5">
+      <div className="p-3.5 sm:p-5 relative z-[1]">
         <div className="flex items-center justify-between mb-1">
           <h3 className="font-display text-lg font-bold text-foreground group-hover:text-primary transition-colors duration-300 line-clamp-1">
             {car.brand} {car.model}
