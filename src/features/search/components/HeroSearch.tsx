@@ -108,7 +108,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
     onSearch(selectedBrand, model, selectedBudget || 1000000);
   };
 
-  const handleVoiceResult = (transcript: string) => {
+  const handleVoiceResult = useCallback((transcript: string) => {
     const lowerTranscript = transcript.toLowerCase();
     
     let newBrand = selectedBrand;
