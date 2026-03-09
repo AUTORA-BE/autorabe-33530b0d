@@ -112,6 +112,18 @@ function useDetectedEntities(transcript: string): DetectedEntity[] {
       }
     }
 
+    // Transmission detection
+    const transMap: { keywords: string[]; label: string }[] = [
+      { keywords: ['automatique', 'automatic', 'automatisch', 'auto'], label: 'Automatique' },
+      { keywords: ['manuelle', 'manuel', 'manual', 'manueel'], label: 'Manuelle' },
+    ];
+    for (const trans of transMap) {
+      if (trans.keywords.some(k => lower.includes(k))) {
+        entities.push({ type: 'transmission', value: trans.label });
+        break;
+      }
+    }
+
     return entities;
   }, [transcript, brands]);
 }
