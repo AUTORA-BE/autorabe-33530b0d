@@ -445,6 +445,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
           return;
         }
         toast.success(t('sellForm.successEdit'));
+        toast.success(t('sellForm.successEdit'));
         navigate('/dashboard');
       } else {
         const { error } = await supabase
@@ -460,8 +461,12 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
           toast.error(t('sellForm.error'));
           return;
         }
-        toast.success(t('sellForm.success'));
-        navigate('/dashboard');
+        // Supprimer le brouillon après publication
+        await clearDraft();
+        // Confetti !
+        setShowConfetti(true);
+        toast.success('🎉 ' + t('sellForm.success'));
+        setTimeout(() => navigate('/dashboard'), 2500);
       }
       
     } catch (error) {
