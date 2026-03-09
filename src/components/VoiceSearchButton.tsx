@@ -264,7 +264,9 @@ export function VoiceSearchButton({ onResult }: VoiceSearchButtonProps) {
                                   ? 'bg-muted text-muted-foreground'
                                   : entity.type === 'euroNorm'
                                     ? 'bg-primary/20 text-primary'
-                                    : 'bg-secondary text-secondary-foreground'
+                                    : entity.type === 'color'
+                                      ? 'bg-accent/50 text-accent-foreground'
+                                      : 'bg-secondary text-secondary-foreground'
                         }`}
                       >
                         {entity.type === 'brand' ? (
