@@ -3,7 +3,7 @@
  * @module features/listings/components
  */
 
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import { Heart, MapPin, Calendar, Gauge, Shield, CheckCircle, AlertTriangle, Ban, Leaf, Info, Building2, Sparkles, Scale } from "lucide-react";
 import { useCompareContext } from "@/features/compare";
 import CarImage from "@/components/cars/CarImage";
