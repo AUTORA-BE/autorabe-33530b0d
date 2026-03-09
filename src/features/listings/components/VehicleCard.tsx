@@ -69,6 +69,7 @@ const VehicleCard = memo(function VehicleCard({
   onToggleFavorite,
   onClick,
   eager = false,
+  buyerProfile,
 }: VehicleCardProps) {
   const { addToCompare, removeFromCompare: removeCompare, isInCompare } = useCompareContext();
   const { language } = useLanguage();
