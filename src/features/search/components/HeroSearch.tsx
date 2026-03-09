@@ -186,19 +186,9 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
             {...fadeUp(0.1)}
             className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-[4.5rem] font-extrabold text-foreground mb-4 sm:mb-6 leading-[1.08] tracking-tight"
           >
-            {isNl ? (
-              <>
-                De perfecte auto voor uw
-                <br />
-                <span className="gradient-text">leven in België</span>
-              </>
-            ) : (
-              <>
-                La voiture parfaite pour votre
-                <br />
-                <span className="gradient-text">vie en Belgique</span>
-              </>
-            )}
+            {t("hero.titleLine1")}
+            <br />
+            <span className="gradient-text">{t("hero.titleLine2")}</span>
           </motion.h1>
 
           {/* Subheadline — trust-focused with 90% callout */}
@@ -206,9 +196,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
             {...fadeUp(0.2)}
             className="text-sm sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-3 sm:mb-4 px-2 leading-relaxed"
           >
-            {isNl
-              ? "Geen verrassingen. Elke advertentie is geverifieerd met Car-Pass, LEZ-compatibiliteit en regionale belastingberekening."
-              : "Sans aucune mauvaise surprise. Chaque annonce est vérifiée Car-Pass, conforme LEZ et accompagnée du calcul fiscal régional."}
+            {t("hero.subtitleTrust")}
           </motion.p>
 
           {/* 90% Trust Badge — hero callout */}
