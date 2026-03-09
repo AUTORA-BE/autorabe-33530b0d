@@ -71,11 +71,32 @@ const STEPS = [
   { id: 3, label: 'Documents', icon: FileCheck },
 ];
 
-interface SellCarFormProps {
-  editId?: string;
+/** Données observées en temps réel depuis le formulaire */
+export interface SellCarFormWatchData {
+  brand?: string;
+  model?: string;
+  year?: number;
+  price?: number;
+  mileage?: number;
+  fuel_type?: string;
+  euro_norm?: string;
+  location?: string;
+  seller_type?: string;
+  car_pass_verified?: boolean;
+  description?: string;
+  vin?: string;
+  ct_valid?: boolean;
+  maintenance_book_complete?: boolean;
+  power?: number;
 }
 
-export function SellCarForm({ editId }: SellCarFormProps) {
+interface SellCarFormProps {
+  editId?: string;
+  /** Callback appelé à chaque changement de données pour la live preview */
+  onFormDataChange?: (data: SellCarFormWatchData, photoPreview: string | undefined, photoCount: number) => void;
+}
+
+export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const [currentStep, setCurrentStep] = useState(1);
@@ -438,6 +459,32 @@ export function SellCarForm({ editId }: SellCarFormProps) {
     }
     return { type: 'success' as const, message: t('sellForm.euroNormHint') };
   };
+
+  // ── Live preview data broadcast ─────────────────────────────────
+  const watchedData = form.watch();
+  useEffect(() => {
+    onFormDataChange?.(
+      {
+        brand: watchedData.brand,
+        model: watchedData.model,
+        year: watchedData.year,
+        price: watchedData.price,
+        mileage: watchedData.mileage,
+        fuel_type: watchedData.fuel_type,
+        euro_norm: watchedData.euro_norm,
+        location: watchedData.location,
+        seller_type: watchedData.seller_type,
+        car_pass_verified: watchedData.car_pass_verified,
+        description: watchedData.description,
+        vin: watchedData.vin,
+        ct_valid: watchedData.ct_valid,
+        maintenance_book_complete: watchedData.maintenance_book_complete,
+        power: watchedData.power,
+      },
+      photosPreviews[0],
+      photosPreviews.length,
+    );
+  }, [watchedData, photosPreviews, onFormDataChange]);
 
   const selectedEuroNorm = form.watch('euro_norm');
   const lezWarning = getLezWarning(selectedEuroNorm);
