@@ -609,10 +609,26 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
       )}
 
       {/* Auto-save indicator */}
-      {!isEditMode && (
-        <div className="text-xs text-muted-foreground text-right mb-2">
-          {isSaving ? '💾 Sauvegarde…' : lastSaved ? `✅ Brouillon sauvegardé à ${lastSaved.toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' })}` : ''}
-        </div>
+      {!isEditMode && (lastSaved || isSaving) && (
+        <motion.div
+          initial={{ opacity: 0, y: -4 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center justify-end gap-1.5 text-xs text-muted-foreground mb-2"
+        >
+          {isSaving ? (
+            <>
+              <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+              <span>{t('sellForm.saving') || 'Sauvegarde…'}</span>
+            </>
+          ) : lastSaved ? (
+            <>
+              <div className="w-2 h-2 rounded-full bg-green-500" />
+              <span>
+                {t('sellForm.draftSaved') || 'Brouillon sauvegardé'} · {lastSaved.toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' })}
+              </span>
+            </>
+          ) : null}
+        </motion.div>
       )}
       {/* Listing limit banner */}
       {!isEditMode && !canPublish && !limitLoading && (
