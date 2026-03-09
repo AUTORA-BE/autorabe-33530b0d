@@ -86,9 +86,10 @@ export function mapListingToVehicleDetail(listing: VehicleListingRow): VehicleDe
 export function applySorting<T>(query: T, sortBy: VehicleSortOption): T {
   const q = query as any;
   
-  // Boosted listings always appear first, then apply user sort + deterministic id
+  // Boosted listings first: 'none' is default/last, 'ultra'/'premium'/'standard' come first
+  // Using descending so ultra > premium > standard > none
   const withBoostPriority = q
-    .order('boost_level', { ascending: true, nullsFirst: true });
+    .order('boost_level', { ascending: false, nullsFirst: false });
   
   switch (sortBy) {
     case 'price-asc':
