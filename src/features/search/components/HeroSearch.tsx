@@ -175,41 +175,45 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
       <div className="container mx-auto px-4 sm:px-6 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
           {/* Badge */}
-          <motion.div {...fadeUp(0)} className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-primary/10 text-primary text-xs sm:text-sm font-medium mb-6 sm:mb-8">
-            <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-primary animate-pulse" />
+          <motion.div {...fadeUp(0)} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-xs sm:text-sm font-semibold mb-8 sm:mb-10 tracking-wide uppercase">
+            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
             {t("hero.badge")}
           </motion.div>
 
-          {/* Headline — premium copy */}
+          {/* Headline — short, punchy */}
           <motion.h1
             {...fadeUp(0.1)}
-            className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-[4.5rem] font-extrabold text-foreground mb-4 sm:mb-6 leading-[1.08] tracking-tight"
+            className="font-display text-[2rem] sm:text-5xl md:text-6xl lg:text-7xl font-black text-foreground mb-5 sm:mb-6 leading-[1.1] tracking-tight"
           >
             {t("hero.titleLine1")}
             <br />
             <span className="gradient-text">{t("hero.titleLine2")}</span>
           </motion.h1>
 
-          {/* Subheadline — trust-focused with 90% callout */}
+          {/* Subheadline — 3 pillars */}
           <motion.p
-            {...fadeUp(0.2)}
-            className="text-sm sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-3 sm:mb-4 px-2 leading-relaxed"
+            {...fadeUp(0.18)}
+            className="text-sm sm:text-base md:text-lg text-muted-foreground font-medium tracking-wide mb-6 sm:mb-8"
           >
             {t("hero.subtitleTrust")}
           </motion.p>
 
-          {/* 90% Trust Badge — hero callout */}
+          {/* 90% Trust Badge — premium design */}
           <motion.div
-            {...fadeUp(0.28)}
-            className="inline-flex items-center gap-2.5 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-gradient-to-r from-amber-500/10 via-amber-400/5 to-transparent border border-amber-500/20 mb-8 sm:mb-12"
+            {...fadeUp(0.26)}
+            className="inline-flex flex-col items-center gap-1 px-6 sm:px-8 py-4 sm:py-5 rounded-2xl bg-gradient-to-br from-amber-500/[0.08] via-amber-400/[0.04] to-transparent border border-amber-500/20 backdrop-blur-sm mb-10 sm:mb-14 shadow-[0_8px_32px_-8px_rgba(245,158,11,0.12)]"
           >
-            <Award className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" />
-            <span className="text-xs sm:text-sm font-bold text-foreground">
-              <span className="text-amber-400 text-sm sm:text-base font-extrabold">
-                <AnimatedPercent target={90} /> %
+            <div className="flex items-baseline gap-1">
+              <span className="text-4xl sm:text-5xl md:text-6xl font-black text-amber-400 tabular-nums">
+                <AnimatedPercent target={90} />
               </span>
-              {" "}
+              <span className="text-2xl sm:text-3xl font-bold text-amber-400/80">%</span>
+            </div>
+            <span className="text-xs sm:text-sm font-bold text-foreground uppercase tracking-wider">
               {t("hero.trustBadge")}
+            </span>
+            <span className="text-[10px] sm:text-xs text-muted-foreground">
+              {t("hero.trustBadgeSub")}
             </span>
           </motion.div>
 
