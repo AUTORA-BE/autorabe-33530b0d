@@ -251,6 +251,24 @@ const LoadMoreGrid = ({
             </button>
           )}
 
+          {/* TCO Matchmaker button */}
+          {onOpenBuyerProfile && (
+            <button
+              onClick={onOpenBuyerProfile}
+              className={`flex items-center gap-1.5 px-3 py-2.5 rounded-xl font-medium text-sm touch-manipulation transition-colors ${
+                buyerProfile?.isConfigured
+                  ? "bg-primary/10 text-primary hover:bg-primary/20"
+                  : "bg-secondary text-foreground hover:bg-secondary/80"
+              }`}
+              title="Activer le matching personnalisé"
+            >
+              <Sparkles className="w-4 h-4" />
+              <span className="hidden sm:inline">
+                {buyerProfile?.isConfigured ? "Mon profil" : "Matching"}
+              </span>
+            </button>
+          )}
+
           {/* Sort dropdown */}
           <div className="relative flex-1 sm:flex-none">
             <select
