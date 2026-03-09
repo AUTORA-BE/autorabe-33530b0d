@@ -589,6 +589,21 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                     year={car.year}
                   />
                 </Suspense>
+                {/* Bouton chat fiscal contextuel */}
+                <div className="mt-3 flex justify-center">
+                  <Suspense fallback={null}>
+                    <TaxChatModal
+                      vehicle={{
+                        brand: car.brand,
+                        model: car.model,
+                        year: car.year,
+                        fuelType: car.fuelType,
+                        power: dbListing?.power,
+                        euroNorm: car.euroNorm,
+                      }}
+                    />
+                  </Suspense>
+                </div>
               </ScrollReveal>
 
               {/* Description */}
