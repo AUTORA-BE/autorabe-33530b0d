@@ -202,6 +202,17 @@ export function parseVoiceTranscript(transcript: string, brands?: string[]): Voi
     result.euroNorm = euroMatch[1].toUpperCase();
   }
 
+  // Color detection
+  let colorMatch: { value: string; keyword: string } | undefined;
+  for (const color of COLOR_KEYWORDS) {
+    const found = color.keywords.find(k => lower.includes(k));
+    if (found) {
+      result.color = color.value;
+      colorMatch = { value: color.value, keyword: found };
+      break;
+    }
+  }
+
   // Extract remaining text (potential model name)
   result.remainingText = transcript
     .replace(new RegExp(foundBrand ?? '', 'ig'), '')
