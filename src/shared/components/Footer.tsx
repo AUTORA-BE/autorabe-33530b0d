@@ -128,8 +128,6 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* LEZ Map — premium interactive */}
-        <LEZBelgiumMap />
 
         {/* Warnings */}
         <div className="mt-10 space-y-3">
