@@ -2222,6 +2222,10 @@ const translations: Record<Language, Record<string, string>> = {
     "sellForm.colorBrown": "Brown",
     "sellForm.colorOrange": "Orange",
     "sellForm.colorYellow": "Yellow",
+    "sellForm.draftRestored": "📝 Draft restored",
+    "sellForm.draftRestoredDesc": "Your form has been pre-filled with your previous data.",
+    "sellForm.saving": "Saving…",
+    "sellForm.draftSaved": "Draft saved",
   },
 };
 
