@@ -210,9 +210,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
                 <AnimatedPercent target={90} /> %
               </span>
               {" "}
-              {isNl
-                ? "voertuigen al gecertificeerd LEZ & Car-Pass"
-                : "des véhicules déjà certifiés LEZ & Car-Pass"}
+              {t("hero.trustBadge")}
             </span>
           </motion.div>
 
