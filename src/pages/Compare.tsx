@@ -1,6 +1,7 @@
+import { useEffect, useState } from "react";
 import { Header, Footer } from "@/shared/components";
 import { useCompareContext } from "@/features/compare";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { 
   GitCompareArrows, 
   X, 
@@ -15,7 +16,9 @@ import {
   CheckCircle,
   AlertTriangle,
   Ban,
-  Info
+  Info,
+  Share2,
+  Check
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,9 +31,81 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { calculerStatutLEZ } from "@/lib/lezData";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
+import type { Vehicle } from "@/features/listings/types/vehicle.types";
 
 const Compare = () => {
-  const { compareList, removeFromCompare, clearCompare } = useCompareContext();
+  const { compareList, removeFromCompare, clearCompare, addToCompare } = useCompareContext();
+  const [searchParams] = useSearchParams();
+  const [copied, setCopied] = useState(false);
+  const [loadingShared, setLoadingShared] = useState(false);
+
+  // Load vehicles from shared URL params
+  useEffect(() => {
+    const ids = searchParams.get("ids");
+    if (!ids || compareList.length > 0) return;
+
+    const vehicleIds = ids.split(",").slice(0, 3);
+    setLoadingShared(true);
+
+    const loadSharedVehicles = async () => {
+      const { data } = await supabase
+        .from("car_listings_public")
+        .select("*")
+        .in("id", vehicleIds);
+
+      if (data) {
+        data.forEach((listing) => {
+          const vehicle: Vehicle = {
+            id: listing.id!,
+            brand: listing.brand || "",
+            model: listing.model || "",
+            price: listing.price || 0,
+            year: listing.year || 0,
+            mileage: listing.mileage || 0,
+            fuelType: listing.fuel_type || "",
+            transmission: listing.transmission || "",
+            image: listing.photos?.[0] || "/placeholder.svg",
+            location: listing.location || "",
+            euroNorm: listing.euro_norm || "",
+            hasCarPass: listing.car_pass_verified || false,
+            isLezCompatible: true,
+            bodyType: listing.body_type || "",
+            sellerType: listing.seller_type || undefined,
+            isBoosted: !!(listing.boost_level && listing.boost_expires_at && new Date(listing.boost_expires_at) > new Date()),
+          };
+          addToCompare(vehicle);
+        });
+      }
+      setLoadingShared(false);
+    };
+
+    loadSharedVehicles();
+  }, [searchParams]);
+
+  const handleShare = async () => {
+    const ids = compareList.map((c) => c.id).join(",");
+    const url = `${window.location.origin}/compare?ids=${ids}`;
+
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      toast({ title: "Lien copié !", description: "Partagez ce lien pour montrer votre comparatif." });
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Fallback
+      const input = document.createElement("input");
+      input.value = url;
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand("copy");
+      document.body.removeChild(input);
+      setCopied(true);
+      toast({ title: "Lien copié !" });
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
 
   const formatPrice = (price: number) =>
     new Intl.NumberFormat("fr-BE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(price);
