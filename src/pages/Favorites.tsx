@@ -30,7 +30,7 @@ const Favorites = () => {
   });
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="page-gradient">
       <Header />
       <main className="container mx-auto px-6 pt-32 pb-20">
         <div className="flex items-center justify-between mb-8">

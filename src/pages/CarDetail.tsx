@@ -330,7 +330,7 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
   const sellerName = sellerContact?.contact_name || "Vendeur vérifié";
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="page-gradient">
       <SEOHead 
         title={`${car.brand} ${car.model} ${car.year}`}
         description={`${car.brand} ${car.model} ${car.year} - ${formatPrice(car.price)} - ${formatMileage(car.mileage)} - ${car.fuelType} - ${car.location}`}
