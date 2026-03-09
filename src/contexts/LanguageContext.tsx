@@ -1668,6 +1668,10 @@ const translations: Record<Language, Record<string, string>> = {
     "sellForm.colorBrown": "Braun",
     "sellForm.colorOrange": "Orange",
     "sellForm.colorYellow": "Gelb",
+    "sellForm.draftRestored": "📝 Entwurf wiederhergestellt",
+    "sellForm.draftRestoredDesc": "Ihr Formular wurde mit Ihren vorherigen Daten vorausgefüllt.",
+    "sellForm.saving": "Speichern…",
+    "sellForm.draftSaved": "Entwurf gespeichert",
   },
   en: {
     // Navigation
