@@ -1,10 +1,11 @@
 import { useEffect, useRef, useCallback, useMemo } from "react";
 import { CarCard, type Car } from "@/features/listings";
-import { SlidersHorizontal, ChevronDown, AlertCircle, RefreshCw, Share2, Check } from "lucide-react";
+import { SlidersHorizontal, ChevronDown, AlertCircle, RefreshCw, Share2, Check, Sparkles } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+import type { BuyerProfile } from "@/features/tco/hooks/useBuyerProfile";
 
 interface LoadMoreGridProps {
   cars: Car[];
