@@ -125,7 +125,7 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.06] to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
       </div>
 
-      <div className="relative h-44 sm:h-48 md:h-56 overflow-hidden">
+      <div className="relative h-44 sm:h-48 md:h-56 overflow-hidden z-[1]">
         <img
           src={car.image}
           alt={getAltText()}
