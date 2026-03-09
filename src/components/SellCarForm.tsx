@@ -560,6 +560,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
   const goToNextStep = async () => {
     const valid = await validateStep(currentStep);
     if (valid && currentStep < 3) {
+      setSlideDirection(1);
       setCurrentStep(currentStep + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -567,6 +568,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
 
   const goToPrevStep = () => {
     if (currentStep > 1) {
+      setSlideDirection(-1);
       setCurrentStep(currentStep - 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
