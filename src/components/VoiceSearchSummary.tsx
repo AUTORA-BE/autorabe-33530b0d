@@ -33,6 +33,7 @@ const ICON_MAP: Record<VoiceFilter['type'], React.ElementType> = {
   fuel: Fuel,
   transmission: Settings2,
   euroNorm: Shield,
+  color: Palette,
 };
 
 const COLOR_MAP: Record<VoiceFilter['type'], string> = {
