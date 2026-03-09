@@ -413,6 +413,49 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
           </div>
         </FilterSection>
 
+        {/* Color Filter */}
+        <FilterSection icon={<Palette className="w-4 h-4 text-primary" aria-hidden="true" />} title={t("filters.color") || "Couleur"}>
+          <div className="flex flex-wrap gap-2">
+            {[
+              { id: "Noir", hex: "#1a1a1a" },
+              { id: "Blanc", hex: "#f5f5f5" },
+              { id: "Gris", hex: "#9ca3af" },
+              { id: "Argent", hex: "#c0c0c0" },
+              { id: "Bleu", hex: "#3b82f6" },
+              { id: "Rouge", hex: "#ef4444" },
+              { id: "Vert", hex: "#22c55e" },
+              { id: "Jaune", hex: "#eab308" },
+              { id: "Orange", hex: "#f97316" },
+              { id: "Marron", hex: "#92400e" },
+              { id: "Beige", hex: "#d4b896" },
+            ].map(({ id, hex }) => (
+              <button
+                key={id}
+                onClick={() => onFilterChange("color", filters.color === id ? "" : id)}
+                aria-pressed={filters.color === id}
+                aria-label={id}
+                title={id}
+                className={`w-9 h-9 rounded-full border-2 transition-all duration-200 flex items-center justify-center ${
+                  filters.color === id
+                    ? "border-primary scale-110 shadow-md ring-2 ring-primary/30"
+                    : "border-border/50 hover:border-foreground/30 hover:scale-105"
+                }`}
+              >
+                <span
+                  className="w-6 h-6 rounded-full"
+                  style={{
+                    backgroundColor: hex,
+                    boxShadow: id === "Blanc" ? "inset 0 0 0 1px hsl(var(--border))" : undefined,
+                  }}
+                />
+              </button>
+            ))}
+          </div>
+          {filters.color && (
+            <p className="text-xs text-muted-foreground mt-1">{filters.color}</p>
+          )}
+        </FilterSection>
+
         {/* Divider */}
         <div className="h-px w-full" style={{ background: "hsl(var(--border) / 0.5)" }} />
 
