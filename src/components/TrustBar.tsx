@@ -1,10 +1,9 @@
 /**
- * TrustBar — premium trust strip with hero 90% badge
+ * TrustBar — minimal executive trust strip
  * @module components
  */
 
 import { memo, useRef, useState, useEffect } from "react";
-import { ShieldCheck, FileCheck, Leaf, Headphones, Award } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -42,80 +41,74 @@ function AnimatedNumber({ target, suffix = "", duration = 2000 }: { target: numb
 const TrustBar = memo(() => {
   const { t } = useLanguage();
 
-  const badges = [
-    {
-      icon: ShieldCheck,
-      value: <><AnimatedNumber target={12458} /> {t("trust.listings")}</>,
-      label: t("trust.listingsLabel"),
-    },
-    {
-      icon: FileCheck,
-      value: t("trust.carpass"),
-      label: t("trust.carpassLabel"),
-    },
-    {
-      icon: Leaf,
-      value: t("trust.lezEngine"),
-      label: t("trust.lezLabel"),
-    },
-    {
-      icon: Headphones,
-      value: t("trust.support"),
-      label: t("trust.supportLabel"),
-    },
-  ];
-
   return (
-    <section className="border-y border-border/50 bg-card/60 backdrop-blur-sm">
+    <section className="py-6 sm:py-8">
       <div className="container mx-auto px-4 sm:px-6">
-        {/* Hero 90% badge + regular badges */}
-        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-0 py-4 sm:py-5">
-          {/* 90% Hero Badge */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-            className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500/10 via-amber-400/5 to-transparent border border-amber-500/20 sm:mr-auto shrink-0"
-          >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500/20 to-amber-600/10 flex items-center justify-center ring-1 ring-amber-500/20">
-              <Award className="w-5 h-5 text-amber-400" />
-            </div>
-            <div className="leading-tight">
-              <div className="text-base sm:text-lg font-extrabold text-foreground whitespace-nowrap">
-                <AnimatedNumber target={90} suffix=" %" duration={1800} />
-                <span className="text-amber-400 ml-1 text-xs font-bold">
-                  {t("trust.certified")}
-                </span>
-              </div>
-              <div className="text-[10px] sm:text-xs text-muted-foreground whitespace-nowrap">
-                {t("trust.certifiedSub")}
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Regular badges */}
-          <div className="flex items-center gap-6 sm:gap-8 overflow-x-auto sm:overflow-visible scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
-            {badges.map((badge, i) => (
-              <div
-                key={i}
-                className="flex items-center gap-2.5 flex-shrink-0 min-w-max sm:min-w-0"
-              >
-                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                  <badge.icon className="w-4 h-4 text-primary" />
-                </div>
-                <div className="leading-tight">
-                <div className="text-sm font-bold text-foreground whitespace-nowrap">
-                    {badge.value}
-                  </div>
-                  <div className="text-[10px] sm:text-xs text-muted-foreground whitespace-nowrap">
-                    {badge.label}
-                  </div>
-                </div>
-              </div>
-            ))}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="flex flex-wrap items-center justify-center gap-x-8 sm:gap-x-12 md:gap-x-16 gap-y-4"
+        >
+          {/* 90% certified - highlighted */}
+          <div className="flex items-center gap-2">
+            <span className="text-2xl sm:text-3xl font-black text-primary tabular-nums">
+              <AnimatedNumber target={90} suffix="%" duration={1600} />
+            </span>
+            <span className="text-xs sm:text-sm text-muted-foreground font-medium">
+              {t("trust.certified")}
+            </span>
           </div>
-        </div>
+
+          <div className="hidden sm:block w-px h-6 bg-border" />
+
+          {/* Listings count */}
+          <div className="flex items-center gap-2">
+            <span className="text-lg sm:text-xl font-bold text-foreground tabular-nums">
+              <AnimatedNumber target={12458} duration={2000} />
+            </span>
+            <span className="text-xs sm:text-sm text-muted-foreground font-medium">
+              {t("trust.listings")} {t("trust.listingsLabel")}
+            </span>
+          </div>
+
+          <div className="hidden sm:block w-px h-6 bg-border" />
+
+          {/* Car-Pass */}
+          <div className="flex items-center gap-1.5">
+            <span className="text-sm sm:text-base font-semibold text-foreground">
+              {t("trust.carpass")}
+            </span>
+            <span className="text-xs text-muted-foreground">
+              {t("trust.carpassLabel")}
+            </span>
+          </div>
+
+          <div className="hidden md:block w-px h-6 bg-border" />
+
+          {/* LEZ */}
+          <div className="flex items-center gap-1.5">
+            <span className="text-sm sm:text-base font-semibold text-foreground">
+              LEZ
+            </span>
+            <span className="text-xs text-muted-foreground">
+              {t("trust.lezLabel")}
+            </span>
+          </div>
+
+          <div className="hidden md:block w-px h-6 bg-border" />
+
+          {/* Support */}
+          <div className="flex items-center gap-1.5">
+            <span className="text-sm sm:text-base font-semibold text-foreground">
+              {t("trust.support")}
+            </span>
+            <span className="text-xs text-muted-foreground">
+              {t("trust.supportLabel")}
+            </span>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
