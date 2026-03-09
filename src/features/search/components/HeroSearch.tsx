@@ -274,15 +274,18 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
                 <ChevronDown className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground pointer-events-none" />
               </div>
 
-              {/* Search Button */}
-              <button
-                onClick={handleSearch}
-                className="btn-primary-gradient flex items-center justify-center gap-2 col-span-2 md:col-span-1 py-3 sm:py-4"
-                aria-label="Lancer la recherche"
-              >
-                <Search className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
-                <span className="font-semibold text-sm sm:text-base">{t("hero.search")}</span>
-              </button>
+              {/* Search & Voice Buttons */}
+              <div className="col-span-2 md:col-span-1 flex gap-2">
+                <VoiceSearchButton onResult={handleVoiceResult} />
+                <button
+                  onClick={handleSearch}
+                  className="btn-primary-gradient flex-1 flex items-center justify-center gap-2 py-3 sm:py-4 rounded-md"
+                  aria-label="Lancer la recherche"
+                >
+                  <Search className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
+                  <span className="font-semibold text-sm sm:text-base">{t("hero.search")}</span>
+                </button>
+              </div>
             </div>
           </motion.div>
 
