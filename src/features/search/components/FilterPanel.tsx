@@ -417,24 +417,24 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
         <FilterSection icon={<Palette className="w-4 h-4 text-primary" aria-hidden="true" />} title={t("filters.color") || "Couleur"}>
           <div className="flex flex-wrap gap-2">
             {[
-              { id: "Noir", hex: "#1a1a1a" },
-              { id: "Blanc", hex: "#f5f5f5" },
-              { id: "Gris", hex: "#9ca3af" },
-              { id: "Argent", hex: "#c0c0c0" },
-              { id: "Bleu", hex: "#3b82f6" },
-              { id: "Rouge", hex: "#ef4444" },
-              { id: "Vert", hex: "#22c55e" },
-              { id: "Jaune", hex: "#eab308" },
-              { id: "Orange", hex: "#f97316" },
-              { id: "Marron", hex: "#92400e" },
-              { id: "Beige", hex: "#d4b896" },
-            ].map(({ id, hex }) => (
+              { id: "Noir", hex: "#1a1a1a", key: "filters.colorBlack" },
+              { id: "Blanc", hex: "#f5f5f5", key: "filters.colorWhite" },
+              { id: "Gris", hex: "#9ca3af", key: "filters.colorGrey" },
+              { id: "Argent", hex: "#c0c0c0", key: "filters.colorSilver" },
+              { id: "Bleu", hex: "#3b82f6", key: "filters.colorBlue" },
+              { id: "Rouge", hex: "#ef4444", key: "filters.colorRed" },
+              { id: "Vert", hex: "#22c55e", key: "filters.colorGreen" },
+              { id: "Jaune", hex: "#eab308", key: "filters.colorYellow" },
+              { id: "Orange", hex: "#f97316", key: "filters.colorOrange" },
+              { id: "Marron", hex: "#92400e", key: "filters.colorBrown" },
+              { id: "Beige", hex: "#d4b896", key: "filters.colorBeige" },
+            ].map(({ id, hex, key }) => (
               <button
                 key={id}
                 onClick={() => onFilterChange("color", filters.color === id ? "" : id)}
                 aria-pressed={filters.color === id}
-                aria-label={id}
-                title={id}
+                aria-label={t(key) || id}
+                title={t(key) || id}
                 className={`w-9 h-9 rounded-full border-2 transition-all duration-200 flex items-center justify-center ${
                   filters.color === id
                     ? "border-primary scale-110 shadow-md ring-2 ring-primary/30"
@@ -452,7 +452,9 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
             ))}
           </div>
           {filters.color && (
-            <p className="text-xs text-muted-foreground mt-1">{filters.color}</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              {t(`filters.color${filters.color === "Noir" ? "Black" : filters.color === "Blanc" ? "White" : filters.color === "Gris" ? "Grey" : filters.color === "Argent" ? "Silver" : filters.color === "Bleu" ? "Blue" : filters.color === "Rouge" ? "Red" : filters.color === "Vert" ? "Green" : filters.color === "Jaune" ? "Yellow" : filters.color === "Orange" ? "Orange" : filters.color === "Marron" ? "Brown" : "Beige"}`) || filters.color}
+            </p>
           )}
         </FilterSection>
 
