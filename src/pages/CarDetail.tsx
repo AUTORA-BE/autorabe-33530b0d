@@ -262,7 +262,7 @@ const CarDetail = () => {
 
     const currentUserId = session.user.id;
 
-    const contact = await getSellerContact(id!);
+    const contact = await getSellerContact(id ?? '');
     if (!contact) {
       toast({
         title: "Erreur",
