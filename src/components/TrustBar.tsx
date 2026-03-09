@@ -5,7 +5,7 @@
  */
 
 import { memo, useRef, useState, useEffect } from "react";
-import { ShieldCheck, FileCheck, Leaf, Headphones, Lock } from "lucide-react";
+import { ShieldCheck, FileCheck, Leaf, Headphones } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 function AnimatedNumber({ target, suffix = "" }: { target: number; suffix?: string }) {
@@ -71,13 +71,6 @@ const TrustBar = memo(() => {
       valueNl: "Ondersteuning",
       labelFr: "100 % belge",
       labelNl: "100% Belgisch",
-    },
-    {
-      icon: Lock,
-      valueFr: "Transactions",
-      valueNl: "Transacties",
-      labelFr: "sécurisées",
-      labelNl: "beveiligd",
     },
   ];
 
