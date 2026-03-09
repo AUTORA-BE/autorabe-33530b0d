@@ -34,7 +34,7 @@ const Index = () => {
 
   const { isFavorite, toggleFavorite } = useFavorites();
 
-  const handleSearch = useCallback((brand: string, model: string, maxPrice: number, maxMileage?: number, fuelType?: string, transmission?: string, euroNorm?: string) => {
+  const handleSearch = useCallback((brand: string, model: string, maxPrice: number, maxMileage?: number, fuelType?: string, transmission?: string, euroNorm?: string, color?: string) => {
     const newVoiceFilters: VoiceFilter[] = [];
     
     if (brand) {
