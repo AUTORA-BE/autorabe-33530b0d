@@ -124,7 +124,7 @@ const ResetPassword = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-6">
+    <div className="page-gradient flex items-center justify-center p-6">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="flex items-center gap-3 mb-8 justify-center">

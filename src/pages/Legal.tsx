@@ -74,7 +74,7 @@ autoracontact@gmail.com`
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="page-gradient">
       <Header />
       
       <main className="pt-24">

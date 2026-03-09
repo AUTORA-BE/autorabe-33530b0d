@@ -270,7 +270,7 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex">
+    <div className="page-gradient flex">
       {/* Left Side - Branding */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-secondary" />

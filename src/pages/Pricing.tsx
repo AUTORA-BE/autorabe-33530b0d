@@ -86,7 +86,7 @@ export default function Pricing() {
         description="Choisissez votre abonnement vendeur AutoRa. Publiez vos annonces, obtenez le badge Pro et des statistiques avancées."
       />
       <Header />
-      <main className="min-h-screen bg-background pt-28 pb-20">
+      <main className="min-h-screen pt-28 pb-20">
         <div className="container mx-auto px-4">
 
           {/* Hero */}

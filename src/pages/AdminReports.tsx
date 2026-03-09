@@ -408,7 +408,7 @@ const AdminReports = () => {
       <SEOHead title={`${t("admin.title")} - AutoRa`} description="Admin dashboard" />
       <Header />
 
-      <main className="min-h-screen bg-background pt-24 pb-12">
+      <main className="min-h-screen pt-24 pb-12">
         <div className="container mx-auto px-4 sm:px-6">
           <div className="max-w-6xl mx-auto">
 

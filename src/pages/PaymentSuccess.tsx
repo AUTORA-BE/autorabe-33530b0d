@@ -41,7 +41,7 @@ export default function PaymentSuccess() {
     <>
       <SEOHead title="Paiement confirmé | AutoRa" description="Votre abonnement AutoRa a été activé avec succès." />
       <Header />
-      <main className="min-h-screen bg-background pt-24 pb-16 flex items-center justify-center">
+      <main className="min-h-screen pt-24 pb-16 flex items-center justify-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}

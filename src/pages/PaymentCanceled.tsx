@@ -17,7 +17,7 @@ export default function PaymentCanceled() {
     <>
       <SEOHead title="Paiement annulé | AutoRa" description="Votre paiement a été annulé. Vous pouvez réessayer à tout moment." />
       <Header />
-      <main className="min-h-screen bg-background pt-24 pb-16 flex items-center justify-center">
+      <main className="min-h-screen pt-24 pb-16 flex items-center justify-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}

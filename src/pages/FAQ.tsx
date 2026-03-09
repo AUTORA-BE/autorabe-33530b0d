@@ -213,7 +213,7 @@ const FAQ = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="page-gradient">
       <SEOHead 
         title={seoTitles[language]}
         description={seoDescriptions[language]}
