@@ -10,6 +10,7 @@ import { getAllBrands, getModelsByBrand } from "@/utils/carUtils";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { BUDGET_OPTIONS } from "../types/search.types";
 import { VoiceSearchButton } from "@/components/VoiceSearchButton";
+import { parseVoiceTranscript } from "@/lib/voiceEntityDetection";
 import type { QuickSearchParams } from "../types/search.types";
 
 /** Animated counter that increments when visible in viewport */
@@ -109,80 +110,27 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
   };
 
   const handleVoiceResult = useCallback((transcript: string) => {
-    const lowerTranscript = transcript.toLowerCase();
+    const parsed = parseVoiceTranscript(transcript, brands);
     
-    let newBrand = selectedBrand;
-    let newBudget = selectedBudget;
-    let newMileage: number | undefined;
-    let detectedFuel: string | undefined;
-    let detectedTransmission: string | undefined;
-    
-    const foundBrand = brands.find(b => lowerTranscript.includes(b.toLowerCase()));
-    if (foundBrand) {
-      newBrand = foundBrand;
-      setSelectedBrand(foundBrand);
+    if (parsed.brand) {
+      setSelectedBrand(parsed.brand);
     }
     
-    const numberMatch = lowerTranscript.match(/(\d+[\s.]?\d*)\s*(euro|€|mille)/i);
-    let budget = 0;
-    if (numberMatch) {
-       budget = parseInt(numberMatch[1].replace(/\D/g, ''));
-       if (lowerTranscript.includes("mille")) budget *= 1000;
-       else if (budget < 1000 && budget > 0) budget *= 1000;
-       
-       const option = BUDGET_OPTIONS.find(o => o.value >= budget);
-       if (option) {
-          newBudget = option.value;
-          setSelectedBudget(option.value);
-       } else {
-          newBudget = 1000000;
-          setSelectedBudget(1000000);
-       }
+    if (parsed.maxBudget) {
+      setSelectedBudget(parsed.maxBudget);
     }
-
-    const kmMatch = lowerTranscript.match(/(\d+[\s.]?\d*)\s*(km|kilomètre|kilometer|kilo)/i);
-    if (kmMatch) {
-      newMileage = parseInt(kmMatch[1].replace(/\D/g, ''));
-      if (newMileage < 1000 && newMileage > 0) newMileage *= 1000;
-    }
-
-    // Fuel type detection
-    const fuelMap: { keywords: string[]; value: string }[] = [
-      { keywords: ['électrique', 'electrique', 'electric', 'elektrisch'], value: 'electrique' },
-      { keywords: ['hybride', 'hybrid'], value: 'hybride' },
-      { keywords: ['diesel'], value: 'diesel' },
-      { keywords: ['essence', 'benzine', 'gasoline', 'petrol'], value: 'essence' },
-    ];
-    for (const fuel of fuelMap) {
-      if (fuel.keywords.some(k => lowerTranscript.includes(k))) {
-        detectedFuel = fuel.value;
-        break;
-      }
-    }
-
-    // Transmission detection
-    const transMap: { keywords: string[]; value: string }[] = [
-      { keywords: ['automatique', 'automatic', 'automatisch'], value: 'automatique' },
-      { keywords: ['manuelle', 'manuel', 'manual', 'manueel'], value: 'manuelle' },
-    ];
-    for (const trans of transMap) {
-      if (trans.keywords.some(k => lowerTranscript.includes(k))) {
-        detectedTransmission = trans.value;
-        break;
-      }
-    }
-
-    let potentialModel = transcript
-      .replace(new RegExp(foundBrand || '', 'ig'), '')
-      .replace(new RegExp(numberMatch ? numberMatch[0] : '', 'ig'), '')
-      .replace(new RegExp(kmMatch ? kmMatch[0] : '', 'ig'), '')
-      .replace(/(moins de|budget|euros|€|prix|maximum|max|kilomètres|kilometers|essence|diesel|électrique|electrique|hybride|automatique|manuelle|manuel|boîte)/ig, '')
-      .trim();
-      
-    setModel(potentialModel);
+    
+    setModel(parsed.remainingText);
     
     setTimeout(() => {
-      onSearch(newBrand, potentialModel, newBudget || 1000000, newMileage, detectedFuel, detectedTransmission);
+      onSearch(
+        parsed.brand || selectedBrand,
+        parsed.remainingText,
+        parsed.maxBudget || selectedBudget || 1000000,
+        parsed.maxMileage,
+        parsed.fuelType,
+        parsed.transmission
+      );
     }, 500);
   }, [brands, selectedBrand, selectedBudget, onSearch]);
 
