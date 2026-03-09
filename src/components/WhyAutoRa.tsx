@@ -4,7 +4,7 @@
  */
 
 import { memo, useRef, useState, useEffect } from "react";
-import { Shield, Leaf, FileCheck, HeadphonesIcon, Award } from "lucide-react";
+import { Shield, Leaf, FileCheck, Award } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -50,41 +50,32 @@ function AnimatedCounter({ target }: { target: number }) {
   return <span ref={ref}>{display}</span>;
 }
 
-const features = [
-  {
-    icon: Award,
-    titleFr: "90 % déjà certifiés",
-    titleNl: "90% al gecertificeerd",
-    descFr: "9 véhicules sur 10 sur AutoRA sont certifiés LEZ & Car-Pass vérifié. La sérénité belge, garantie.",
-    descNl: "9 op 10 voertuigen op AutoRA zijn LEZ-gecertificeerd & Car-Pass geverifieerd. Belgische zekerheid, gegarandeerd.",
-    highlight: true,
-  },
-  {
-    icon: Shield,
-    titleFr: "100 % transparence",
-    titleNl: "100% transparantie",
-    descFr: "Chaque annonce est vérifiée manuellement par notre équipe avant publication.",
-    descNl: "Elke advertentie wordt handmatig geverifieerd door ons team vóór publicatie.",
-  },
-  {
-    icon: FileCheck,
-    titleFr: "Car-Pass intégré",
-    titleNl: "Geïntegreerde Car-Pass",
-    descFr: "Historique kilométrique officiel belge directement visible sur chaque fiche.",
-    descNl: "Officiële Belgische kilometergeschiedenis direct zichtbaar op elke fiche.",
-  },
-  {
-    icon: Leaf,
-    titleFr: "Compatibilité LEZ",
-    titleNl: "LEZ-compatibiliteit",
-    descFr: "Vérifiez instantanément si le véhicule est autorisé dans les zones à faibles émissions.",
-    descNl: "Controleer direct of het voertuig is toegelaten in lage-emissiezones.",
-  },
-];
-
 const WhyAutoRa = memo(() => {
-  const { language } = useLanguage();
-  const isNl = language === "nl";
+  const { t } = useLanguage();
+
+  const features = [
+    {
+      icon: Award,
+      title: t("why.card1.title"),
+      desc: t("why.card1.desc"),
+      highlight: true,
+    },
+    {
+      icon: Shield,
+      title: t("why.card2.title"),
+      desc: t("why.card2.desc"),
+    },
+    {
+      icon: FileCheck,
+      title: t("why.card3.title"),
+      desc: t("why.card3.desc"),
+    },
+    {
+      icon: Leaf,
+      title: t("why.card4.title"),
+      desc: t("why.card4.desc"),
+    },
+  ];
 
   return (
     <section className="py-10 sm:py-24 relative overflow-hidden">
@@ -102,7 +93,7 @@ const WhyAutoRa = memo(() => {
             className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-5"
           >
             <Shield className="w-3.5 h-3.5" />
-            {isNl ? "Waarom AutoRa?" : "Pourquoi AutoRa ?"}
+            {t("why.badge")}
           </motion.span>
 
           <motion.h2
@@ -112,7 +103,7 @@ const WhyAutoRa = memo(() => {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 leading-tight tracking-tight"
           >
-            {isNl ? "Koop met vertrouwen" : "Achetez en toute confiance"}
+            {t("why.title")}
           </motion.h2>
 
           <motion.p
@@ -122,9 +113,7 @@ const WhyAutoRa = memo(() => {
             transition={{ duration: 0.5, delay: 0.15 }}
             className="text-muted-foreground text-sm sm:text-base max-w-lg mx-auto"
           >
-            {isNl
-              ? "AutoRa biedt een veilige en betrouwbare marktplaats, speciaal ontworpen voor de Belgische automobielsector."
-              : "AutoRa offre une marketplace sécurisée et fiable, spécialement conçue pour le marché automobile belge."}
+            {t("why.subtitle")}
           </motion.p>
         </div>
 
@@ -166,11 +155,11 @@ const WhyAutoRa = memo(() => {
               )}
 
               <h3 className="font-display text-base sm:text-lg font-bold text-foreground mb-2">
-                {isNl ? feature.titleNl : feature.titleFr}
+                {feature.title}
               </h3>
 
               <p className="text-sm text-muted-foreground leading-relaxed">
-                {isNl ? feature.descNl : feature.descFr}
+                {feature.desc}
               </p>
 
               {/* Bottom accent */}

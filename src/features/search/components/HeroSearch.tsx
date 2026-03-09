@@ -84,9 +84,8 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
   const [brands, setBrands] = useState<string[]>([]);
   const [models, setModels] = useState<string[]>([]);
   const [loadingModels, setLoadingModels] = useState(false);
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const parallaxOffset = useParallax(0.25);
-  const isNl = language === "nl";
 
   useEffect(() => {
     setBrands(getAllBrands());
@@ -136,9 +135,9 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
 
   /** Trust pills below search */
   const trustPills = [
-    { icon: ShieldCheck, labelFr: "Annonces vérifiées", labelNl: "Geverifieerde advertenties" },
-    { icon: FileCheck, labelFr: "Car-Pass protégé", labelNl: "Car-Pass beschermd" },
-    { icon: Leaf, labelFr: "Conformité LEZ garantie", labelNl: "LEZ-compatibiliteit gegarandeerd" },
+    { icon: ShieldCheck, label: t("hero.pill.verified") },
+    { icon: FileCheck, label: t("hero.pill.carpass") },
+    { icon: Leaf, label: t("hero.pill.lez") },
   ];
 
   return (
@@ -186,19 +185,9 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
             {...fadeUp(0.1)}
             className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-[4.5rem] font-extrabold text-foreground mb-4 sm:mb-6 leading-[1.08] tracking-tight"
           >
-            {isNl ? (
-              <>
-                De perfecte auto voor uw
-                <br />
-                <span className="gradient-text">leven in België</span>
-              </>
-            ) : (
-              <>
-                La voiture parfaite pour votre
-                <br />
-                <span className="gradient-text">vie en Belgique</span>
-              </>
-            )}
+            {t("hero.titleLine1")}
+            <br />
+            <span className="gradient-text">{t("hero.titleLine2")}</span>
           </motion.h1>
 
           {/* Subheadline — trust-focused with 90% callout */}
@@ -206,9 +195,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
             {...fadeUp(0.2)}
             className="text-sm sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-3 sm:mb-4 px-2 leading-relaxed"
           >
-            {isNl
-              ? "Geen verrassingen. Elke advertentie is geverifieerd met Car-Pass, LEZ-compatibiliteit en regionale belastingberekening."
-              : "Sans aucune mauvaise surprise. Chaque annonce est vérifiée Car-Pass, conforme LEZ et accompagnée du calcul fiscal régional."}
+            {t("hero.subtitleTrust")}
           </motion.p>
 
           {/* 90% Trust Badge — hero callout */}
@@ -222,9 +209,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
                 <AnimatedPercent target={90} /> %
               </span>
               {" "}
-              {isNl
-                ? "voertuigen al gecertificeerd LEZ & Car-Pass"
-                : "des véhicules déjà certifiés LEZ & Car-Pass"}
+              {t("hero.trustBadge")}
             </span>
           </motion.div>
 
@@ -233,7 +218,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
             {...fadeUp(0.35)}
             className="glass-panel p-3 sm:p-4 md:p-5 max-w-3xl mx-auto ring-1 ring-white/10 overflow-hidden"
             role="search"
-            aria-label={isNl ? "Snel zoeken naar voertuigen" : "Recherche rapide de véhicules"}
+            aria-label={t("hero.search")}
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
               {/* Brand */}
@@ -243,7 +228,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
                   onChange={(e) => setSelectedBrand(e.target.value)}
                   onKeyDown={handleKeyDown}
                   className="search-input w-full appearance-none cursor-pointer pr-8 sm:pr-10 text-sm sm:text-base py-3 sm:py-4 bg-card"
-                  aria-label={isNl ? "Selecteer een merk" : "Sélectionner une marque"}
+                  aria-label={t("filters.brand")}
                 >
                   <option value="">{t("filters.brand")}</option>
                   {brands.map((brand) => (
@@ -261,7 +246,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
                   onKeyDown={handleKeyDown}
                   className="search-input w-full appearance-none cursor-pointer pr-8 sm:pr-10 text-sm sm:text-base py-3 sm:py-4 bg-card"
                   disabled={!selectedBrand}
-                  aria-label={isNl ? "Selecteer een model" : "Sélectionner un modèle"}
+                  aria-label={t("filters.model")}
                 >
                   <option value="">
                     {selectedBrand ? t("filters.allModels") : t("filters.model")}
@@ -280,7 +265,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
                   onChange={(e) => setSelectedBudget(Number(e.target.value))}
                   onKeyDown={handleKeyDown}
                   className="search-input w-full appearance-none cursor-pointer pr-8 sm:pr-10 text-sm sm:text-base py-3 sm:py-4 bg-card"
-                  aria-label={isNl ? "Selecteer een budget" : "Sélectionner un budget"}
+                  aria-label={t("filters.budget")}
                 >
                   <option value={0}>{t("filters.budget")}</option>
                   {BUDGET_OPTIONS.map((budget) => (
@@ -296,7 +281,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
                 <button
                   onClick={handleSearch}
                   className="btn-primary-gradient flex-1 min-w-0 flex items-center justify-center gap-2 py-3 sm:py-4 rounded-md overflow-hidden"
-                  aria-label={isNl ? "Zoeken" : "Lancer la recherche"}
+                  aria-label={t("hero.search")}
                 >
                   <Search className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" aria-hidden="true" />
                   <span className="font-semibold text-sm sm:text-base truncate">{t("hero.search")}</span>
@@ -316,7 +301,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
                 className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground"
               >
                 <pill.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
-                <span>{isNl ? pill.labelNl : pill.labelFr}</span>
+                <span>{pill.label}</span>
               </div>
             ))}
           </motion.div>
