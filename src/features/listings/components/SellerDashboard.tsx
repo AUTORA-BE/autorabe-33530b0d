@@ -436,7 +436,7 @@ export default function SellerDashboard() {
                       key={listing.id}
                       variants={listItemVariants}
                       onClick={() => navigate(`/car/${listing.id}`)}
-                      className={`group flex items-center gap-4 p-3 rounded-xl border-2 bg-card hover:shadow-sm transition-all cursor-pointer ${
+                      className={`group relative flex items-center gap-4 p-3 rounded-xl border-2 bg-card hover:shadow-sm transition-all cursor-pointer ${
                         listing.boostLevel === "ultra" && listing.boostExpiresAt && new Date(listing.boostExpiresAt) > new Date()
                           ? "border-primary shadow-md"
                           : listing.boostLevel === "premium" && listing.boostExpiresAt && new Date(listing.boostExpiresAt) > new Date()
