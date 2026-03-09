@@ -662,6 +662,8 @@ export type Database = {
       car_listings_public: {
         Row: {
           body_type: string | null
+          boost_expires_at: string | null
+          boost_level: string | null
           brand: string | null
           car_pass_verified: boolean | null
           color: string | null
@@ -689,6 +691,8 @@ export type Database = {
         }
         Insert: {
           body_type?: string | null
+          boost_expires_at?: string | null
+          boost_level?: string | null
           brand?: string | null
           car_pass_verified?: boolean | null
           color?: string | null
@@ -716,6 +720,8 @@ export type Database = {
         }
         Update: {
           body_type?: string | null
+          boost_expires_at?: string | null
+          boost_level?: string | null
           brand?: string | null
           car_pass_verified?: boolean | null
           color?: string | null

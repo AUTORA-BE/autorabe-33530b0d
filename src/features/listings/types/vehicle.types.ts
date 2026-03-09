@@ -51,6 +51,10 @@ export interface Vehicle {
   hasCarPass: boolean;
   /** Seller type (private/professional) */
   sellerType: string;
+  /** Boost level (none, standard, premium, ultra) */
+  boostLevel?: string;
+  /** Whether the boost is currently active */
+  isBoosted?: boolean;
 }
 
 /**
@@ -208,4 +212,6 @@ export interface VehicleListingRow {
   status: string | null;
   created_at: string;
   updated_at: string;
+  boost_level?: string | null;
+  boost_expires_at?: string | null;
 }

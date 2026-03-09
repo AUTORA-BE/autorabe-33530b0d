@@ -4,7 +4,7 @@
  */
 
 import { memo } from "react";
-import { Heart, MapPin, Calendar, Gauge, Shield, CheckCircle, AlertTriangle, Ban, Leaf, Info, Building2 } from "lucide-react";
+import { Heart, MapPin, Calendar, Gauge, Shield, CheckCircle, AlertTriangle, Ban, Leaf, Info, Building2, Sparkles } from "lucide-react";
 import CarImage from "@/components/cars/CarImage";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
@@ -94,6 +94,8 @@ const VehicleCard = memo(function VehicleCard({
     ? `LEZ ${lezResult.global.anneeInterdiction}`
     : lezConfig.text;
 
+  const isBoosted = vehicle.isBoosted;
+
   return (
     <article
       onClick={handleCardClick}
@@ -101,8 +103,21 @@ const VehicleCard = memo(function VehicleCard({
       role="button"
       tabIndex={0}
       aria-label={`${vehicle.brand} ${vehicle.model} - ${formatPrice(vehicle.price)}`}
-      className="group relative bg-card rounded-2xl overflow-hidden border border-border/50 hover:border-primary/30 transition-[border-color,box-shadow] duration-300 hover:shadow-xl hover:shadow-primary/5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+      className={`group relative bg-card rounded-2xl overflow-hidden border transition-[border-color,box-shadow] duration-300 hover:shadow-xl cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
+        isBoosted
+          ? "border-amber-400/70 shadow-[0_0_20px_-4px_rgba(251,191,36,0.25)] hover:border-amber-400 hover:shadow-[0_0_30px_-4px_rgba(251,191,36,0.35)]"
+          : "border-border/50 hover:border-primary/30 hover:shadow-primary/5"
+      }`}
     >
+      {/* Sponsored badge */}
+      {isBoosted && (
+        <div className="absolute top-0 right-0 z-20">
+          <div className="bg-gradient-to-l from-amber-500 to-amber-400 text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-bl-xl shadow-lg flex items-center gap-1">
+            <Sparkles className="w-3 h-3" />
+            Sponsorisé
+          </div>
+        </div>
+      )}
       {/* Image Container */}
       <div className="relative aspect-[4/3] overflow-hidden bg-muted">
         <CarImage

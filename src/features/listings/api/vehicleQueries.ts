@@ -49,6 +49,9 @@ export function mapListingToVehicle(listing: VehicleListingRow): Vehicle {
     isLezCompatible,
     hasCarPass: listing.car_pass_verified || false,
     sellerType: listing.seller_type || 'particulier',
+    boostLevel: listing.boost_level || 'none',
+    isBoosted: !!(listing.boost_level && listing.boost_level !== 'none' && 
+      (!listing.boost_expires_at || new Date(listing.boost_expires_at) > new Date())),
   };
 }
 
@@ -83,22 +86,26 @@ export function mapListingToVehicleDetail(listing: VehicleListingRow): VehicleDe
 export function applySorting<T>(query: T, sortBy: VehicleSortOption): T {
   const q = query as any;
   
-  // Always add secondary sort by id for deterministic pagination
+  // Boosted listings first: 'none' is default/last, 'ultra'/'premium'/'standard' come first
+  // Using descending so ultra > premium > standard > none
+  const withBoostPriority = q
+    .order('boost_level', { ascending: false, nullsFirst: false });
+  
   switch (sortBy) {
     case 'price-asc':
-      return q.order('price', { ascending: true }).order('id', { ascending: true });
+      return withBoostPriority.order('price', { ascending: true }).order('id', { ascending: true });
     case 'price-desc':
-      return q.order('price', { ascending: false }).order('id', { ascending: true });
+      return withBoostPriority.order('price', { ascending: false }).order('id', { ascending: true });
     case 'year-desc':
-      return q.order('year', { ascending: false }).order('id', { ascending: true });
+      return withBoostPriority.order('year', { ascending: false }).order('id', { ascending: true });
     case 'year-asc':
-      return q.order('year', { ascending: true }).order('id', { ascending: true });
+      return withBoostPriority.order('year', { ascending: true }).order('id', { ascending: true });
     case 'km-asc':
-      return q.order('mileage', { ascending: true }).order('id', { ascending: true });
+      return withBoostPriority.order('mileage', { ascending: true }).order('id', { ascending: true });
     case 'km-desc':
-      return q.order('mileage', { ascending: false }).order('id', { ascending: true });
+      return withBoostPriority.order('mileage', { ascending: false }).order('id', { ascending: true });
     default:
-      return q.order('created_at', { ascending: false }).order('id', { ascending: true });
+      return withBoostPriority.order('created_at', { ascending: false }).order('id', { ascending: true });
   }
 }
 
