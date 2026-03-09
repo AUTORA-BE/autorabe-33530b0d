@@ -212,4 +212,6 @@ export interface VehicleListingRow {
   status: string | null;
   created_at: string;
   updated_at: string;
+  boost_level?: string | null;
+  boost_expires_at?: string | null;
 }
