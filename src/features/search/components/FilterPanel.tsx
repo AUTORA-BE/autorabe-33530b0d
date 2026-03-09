@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect, useRef, useCallback, memo, forwardRef } from "react";
-import { Fuel, Calendar, Gauge, Settings2, Leaf, X, ChevronDown, Euro, Car, MapPin, Building2, CarFront, Truck, CircleDot, RectangleHorizontal, Waypoints, Sparkles, Sun, Users } from "lucide-react";
+import { Fuel, Calendar, Gauge, Settings2, Leaf, X, ChevronDown, Euro, Car, MapPin, Building2, CarFront, Truck, CircleDot, RectangleHorizontal, Waypoints, Sparkles, Sun, Users, Palette } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getAllBrands, getModelsByBrand } from "@/utils/carUtils";
