@@ -30,6 +30,8 @@ export interface VoiceSearchParams {
   fuelType?: string;
   /** Transmission filter value */
   transmission?: string;
+  /** Euro emission norm */
+  euroNorm?: string;
   /** Remaining text after removing detected entities (potential model) */
   remainingText: string;
 }
