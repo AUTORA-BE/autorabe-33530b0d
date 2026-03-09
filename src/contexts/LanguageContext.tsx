@@ -65,6 +65,17 @@ const translations: Record<Language, Record<string, string>> = {
     "filters.manual": "Manuelle",
     "filters.automatic": "Automatique",
     "filters.color": "Couleur",
+    "filters.colorBlack": "Noir",
+    "filters.colorWhite": "Blanc",
+    "filters.colorGrey": "Gris",
+    "filters.colorSilver": "Argent",
+    "filters.colorBlue": "Bleu",
+    "filters.colorRed": "Rouge",
+    "filters.colorGreen": "Vert",
+    "filters.colorYellow": "Jaune",
+    "filters.colorOrange": "Orange",
+    "filters.colorBrown": "Marron",
+    "filters.colorBeige": "Beige",
     
     // Car Card & Detail
     "car.addCompare": "Ajouter au comparateur",
