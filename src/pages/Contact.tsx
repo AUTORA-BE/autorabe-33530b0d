@@ -96,7 +96,7 @@ const Contact = () => {
 
   if (isSuccess) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="page-gradient">
         <Header />
         <main className="pt-24 pb-16">
           <div className="container mx-auto px-6">
