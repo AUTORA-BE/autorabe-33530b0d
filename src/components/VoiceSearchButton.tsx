@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { getAllBrands } from "@/utils/carUtils";
 import { BUDGET_OPTIONS } from "@/features/search/types/search.types";
+import { useHapticFeedback } from "@/hooks/useHapticFeedback";
 
 // Type definitions for SpeechRecognition API
 interface SpeechRecognitionEvent extends Event {
@@ -102,6 +103,15 @@ export function VoiceSearchButton({ onResult }: VoiceSearchButtonProps) {
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const { language } = useLanguage();
   const detectedEntities = useDetectedEntities(transcript);
+  const { impactMedium } = useHapticFeedback();
+  const previousEntitiesCount = useRef(0);
+
+  useEffect(() => {
+    if (detectedEntities.length > previousEntitiesCount.current) {
+      impactMedium();
+    }
+    previousEntitiesCount.current = detectedEntities.length;
+  }, [detectedEntities.length, impactMedium]);
 
   useEffect(() => {
     const win = window as unknown as WindowWithSpeech;
