@@ -971,11 +971,21 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
                 <p className="text-sm text-muted-foreground mt-4">{t('sellForm.photosHint')}</p>
               </CardContent>
             </Card>
+            </motion.div>
           )}
 
           {/* ===== STEP 3: Documents (VIN, Car-Pass, Belgian specifics) ===== */}
           {currentStep === 3 && (
-            <>
+            <motion.div
+              key="step3"
+              custom={slideDirection}
+              variants={stepVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              className="space-y-8"
+            >
               {/* VIN Field with verified badge */}
               <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
                 <CardHeader>
