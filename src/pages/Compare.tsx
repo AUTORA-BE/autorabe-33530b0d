@@ -71,8 +71,7 @@ const Compare = () => {
             euroNorm: listing.euro_norm || "",
             hasCarPass: listing.car_pass_verified || false,
             isLezCompatible: true,
-            bodyType: listing.body_type || "",
-            sellerType: listing.seller_type || undefined,
+            sellerType: listing.seller_type || "",
             isBoosted: !!(listing.boost_level && listing.boost_expires_at && new Date(listing.boost_expires_at) > new Date()),
           };
           addToCompare(vehicle);
