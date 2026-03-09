@@ -83,6 +83,9 @@ export interface SellCarFormWatchData {
   price?: number;
   mileage?: number;
   fuel_type?: string;
+  transmission?: string;
+  body_type?: string;
+  color?: string;
   euro_norm?: string;
   location?: string;
   seller_type?: string;
@@ -92,6 +95,12 @@ export interface SellCarFormWatchData {
   ct_valid?: boolean;
   maintenance_book_complete?: boolean;
   power?: number;
+  doors?: number;
+  first_registration?: string;
+  contact_name?: string;
+  contact_email?: string;
+  contact_phone?: string;
+  tva_number?: string;
 }
 
 interface SellCarFormProps {
@@ -246,15 +255,25 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
     const load = async () => {
       const draft = await loadDraft();
       if (draft && draft.formData && Object.keys(draft.formData).length > 0) {
-        form.reset({ ...form.getValues(), ...draft.formData });
-        if (draft.photoUrls.length > 0) {
-          setExistingPhotos(draft.photoUrls);
-          setPhotosPreviews(draft.photoUrls);
+        // Check if draft has meaningful data (not just defaults)
+        const { brand, model, price } = draft.formData;
+        const hasMeaningfulData = brand || model || (price && price > 0);
+        if (hasMeaningfulData) {
+          form.reset({ ...form.getValues(), ...draft.formData });
+          if (draft.photoUrls.length > 0) {
+            setExistingPhotos(draft.photoUrls);
+            setPhotosPreviews(draft.photoUrls);
+          }
+          toast.info(t('sellForm.draftRestored') || '📝 Brouillon restauré', {
+            description: t('sellForm.draftRestoredDesc') || 'Votre formulaire a été pré-rempli avec vos données précédentes.',
+            duration: 4000,
+          });
         }
       }
     };
     load();
-  }, [isEditMode, loadDraft, form]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEditMode]);
 
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -489,52 +508,42 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
     return { type: 'success' as const, message: t('sellForm.euroNormHint') };
   };
 
-  // ── Live preview data broadcast ─────────────────────────────────
+  // ── Live preview data broadcast + auto-save ─────────────────────
   const watchedData = form.watch();
   useEffect(() => {
-    onFormDataChange?.(
-      {
-        brand: watchedData.brand,
-        model: watchedData.model,
-        year: watchedData.year,
-        price: watchedData.price,
-        mileage: watchedData.mileage,
-        fuel_type: watchedData.fuel_type,
-        euro_norm: watchedData.euro_norm,
-        location: watchedData.location,
-        seller_type: watchedData.seller_type,
-        car_pass_verified: watchedData.car_pass_verified,
-        description: watchedData.description,
-        vin: watchedData.vin,
-        ct_valid: watchedData.ct_valid,
-        maintenance_book_complete: watchedData.maintenance_book_complete,
-        power: watchedData.power,
-      },
-      photosPreviews[0],
-      photosPreviews.length,
-    );
-    // Auto-save draft
-    updateDraft(
-      {
-        brand: watchedData.brand,
-        model: watchedData.model,
-        year: watchedData.year,
-        price: watchedData.price,
-        mileage: watchedData.mileage,
-        fuel_type: watchedData.fuel_type,
-        euro_norm: watchedData.euro_norm,
-        location: watchedData.location,
-        seller_type: watchedData.seller_type,
-        car_pass_verified: watchedData.car_pass_verified,
-        description: watchedData.description,
-        vin: watchedData.vin,
-        ct_valid: watchedData.ct_valid,
-        maintenance_book_complete: watchedData.maintenance_book_complete,
-        power: watchedData.power,
-      },
-      photosPreviews,
-    );
-  }, [watchedData, photosPreviews, onFormDataChange, updateDraft]);
+    const draftFields: SellCarFormWatchData = {
+      brand: watchedData.brand,
+      model: watchedData.model,
+      year: watchedData.year,
+      price: watchedData.price,
+      mileage: watchedData.mileage,
+      fuel_type: watchedData.fuel_type,
+      transmission: watchedData.transmission,
+      body_type: watchedData.body_type,
+      color: watchedData.color,
+      euro_norm: watchedData.euro_norm,
+      location: watchedData.location,
+      seller_type: watchedData.seller_type,
+      car_pass_verified: watchedData.car_pass_verified,
+      description: watchedData.description,
+      vin: watchedData.vin,
+      ct_valid: watchedData.ct_valid,
+      maintenance_book_complete: watchedData.maintenance_book_complete,
+      power: watchedData.power,
+      doors: watchedData.doors,
+      first_registration: watchedData.first_registration,
+      contact_name: watchedData.contact_name,
+      contact_email: watchedData.contact_email,
+      contact_phone: watchedData.contact_phone,
+      tva_number: watchedData.tva_number,
+    };
+
+    onFormDataChange?.(draftFields, photosPreviews[0], photosPreviews.length);
+
+    // Auto-save draft — only persist actual uploaded URLs, never base64 data URLs
+    const persistablePhotoUrls = existingPhotos.filter(url => url.startsWith('http'));
+    updateDraft(draftFields, persistablePhotoUrls);
+  }, [watchedData, photosPreviews, existingPhotos, onFormDataChange, updateDraft]);
 
   const selectedEuroNorm = form.watch('euro_norm');
   const lezWarning = getLezWarning(selectedEuroNorm);
@@ -600,10 +609,26 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
       )}
 
       {/* Auto-save indicator */}
-      {!isEditMode && (
-        <div className="text-xs text-muted-foreground text-right mb-2">
-          {isSaving ? '💾 Sauvegarde…' : lastSaved ? `✅ Brouillon sauvegardé à ${lastSaved.toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' })}` : ''}
-        </div>
+      {!isEditMode && (lastSaved || isSaving) && (
+        <motion.div
+          initial={{ opacity: 0, y: -4 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center justify-end gap-1.5 text-xs text-muted-foreground mb-2"
+        >
+          {isSaving ? (
+            <>
+              <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+              <span>{t('sellForm.saving') || 'Sauvegarde…'}</span>
+            </>
+          ) : lastSaved ? (
+            <>
+              <div className="w-2 h-2 rounded-full bg-green-500" />
+              <span>
+                {t('sellForm.draftSaved') || 'Brouillon sauvegardé'} · {lastSaved.toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' })}
+              </span>
+            </>
+          ) : null}
+        </motion.div>
       )}
       {/* Listing limit banner */}
       {!isEditMode && !canPublish && !limitLoading && (
