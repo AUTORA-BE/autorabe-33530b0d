@@ -182,7 +182,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
           {/* Search Box */}
           <motion.div
             {...fadeUp(0.35)}
-            className="glass-panel p-3 sm:p-4 md:p-5 max-w-3xl mx-auto ring-1 ring-white/10"
+            className="glass-panel p-3 sm:p-4 md:p-5 max-w-3xl mx-auto ring-1 ring-white/10 overflow-hidden"
             role="search"
             aria-label={isNl ? "Snel zoeken naar voertuigen" : "Recherche rapide de véhicules"}
           >
