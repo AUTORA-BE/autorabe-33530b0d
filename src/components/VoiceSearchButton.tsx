@@ -296,10 +296,10 @@ export function VoiceSearchButton({ onResult }: VoiceSearchButtonProps) {
               <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-popover border-b border-r rotate-45" />
             </motion.div>
 
-            {/* Pulse ring */}
+            {/* Pulse ring — contained, no layout shift */}
             <motion.div
-              initial={{ opacity: 0, scale: 1 }}
-              animate={{ opacity: [0, 0.2, 0], scale: [1, 1.5, 1] }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0, 0.15, 0] }}
               transition={{ repeat: Infinity, duration: 1.5 }}
               className="absolute inset-0 bg-primary rounded-md z-0 pointer-events-none"
             />
