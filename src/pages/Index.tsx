@@ -223,6 +223,13 @@ const Index = () => {
             </Suspense>
           </div>
         </section>
+
+        {/* Hidden BuyerProfileModal trigger */}
+        <BuyerProfileModal
+          profile={buyerProfile}
+          onSave={saveProfile}
+          trigger={<button ref={profileModalRef} className="hidden" />}
+        />
       </main>
       <Footer />
     </div>
