@@ -81,6 +81,21 @@ describe("detectEntities", () => {
     expect(result).toContainEqual({ type: "transmission", value: "Manuelle" });
   });
 
+  it("detects color - blanc", () => {
+    const result = detectEntities("voiture blanche", BRANDS);
+    expect(result).toContainEqual({ type: "color", value: "Blanc" });
+  });
+
+  it("detects color - noir", () => {
+    const result = detectEntities("BMW noir", BRANDS);
+    expect(result).toContainEqual({ type: "color", value: "Noir" });
+  });
+
+  it("detects color - Dutch (rood)", () => {
+    const result = detectEntities("rood auto", BRANDS);
+    expect(result).toContainEqual({ type: "color", value: "Rouge" });
+  });
+
   it("detects euro norm", () => {
     const result = detectEntities("voiture Euro 6", BRANDS);
     expect(result).toContainEqual({ type: "euroNorm", value: "Euro 6" });
@@ -157,6 +172,12 @@ describe("parseVoiceTranscript", () => {
     expect(result.brand).toBe("BMW");
     expect(result.fuelType).toBe("diesel");
     expect(result.remainingText).toContain("série 3");
+  });
+
+  it("parses color", () => {
+    const result = parseVoiceTranscript("BMW grise", BRANDS);
+    expect(result.color).toBe("gris");
+    expect(result.brand).toBe("BMW");
   });
 
   it("parses euro norm", () => {

@@ -127,6 +127,8 @@ export interface VehicleFilters {
   sellerTypeFilter: string;
   /** Filter by body type */
   bodyType: string;
+  /** Filter by vehicle color */
+  color: string;
 }
 /**
  * Default filter values
@@ -147,6 +149,7 @@ export const defaultVehicleFilters: VehicleFilters = {
   lezOnly: false,
   sellerTypeFilter: "",
   bodyType: "",
+  color: "",
 };
 
 /**

@@ -46,7 +46,7 @@ function AnimatedCounter({ target, suffix = "", duration = 2 }: { target: number
 }
 
 export interface HeroSearchProps {
-  onSearch: (brand: string, model: string, maxPrice: number, maxMileage?: number, fuelType?: string, transmission?: string, euroNorm?: string) => void;
+  onSearch: (brand: string, model: string, maxPrice: number, maxMileage?: number, fuelType?: string, transmission?: string, euroNorm?: string, color?: string) => void;
 }
 
 /** Parallax hook — moves element based on scroll */
@@ -130,7 +130,8 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
         parsed.maxMileage,
         parsed.fuelType,
         parsed.transmission,
-        parsed.euroNorm
+        parsed.euroNorm,
+        parsed.color
       );
     }, 500);
   }, [brands, selectedBrand, selectedBudget, onSearch]);

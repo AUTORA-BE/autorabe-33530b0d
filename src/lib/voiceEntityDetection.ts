@@ -8,7 +8,7 @@ import { getAllBrands } from "@/utils/carUtils";
 import { BUDGET_OPTIONS } from "@/features/search/types/search.types";
 
 /** Types of entities that can be detected from voice input */
-export type EntityType = 'brand' | 'budget' | 'mileage' | 'fuel' | 'transmission' | 'euroNorm';
+export type EntityType = 'brand' | 'budget' | 'mileage' | 'fuel' | 'transmission' | 'euroNorm' | 'color';
 
 /** A detected entity from voice transcript */
 export interface DetectedEntity {
@@ -32,6 +32,8 @@ export interface VoiceSearchParams {
   transmission?: string;
   /** Euro emission norm */
   euroNorm?: string;
+  /** Vehicle color */
+  color?: string;
   /** Remaining text after removing detected entities (potential model) */
   remainingText: string;
 }
@@ -53,8 +55,23 @@ const TRANSMISSION_KEYWORDS: { keywords: string[]; label: string; value: string 
 /** Euro norm detection pattern */
 const EURO_NORM_PATTERN = /euro\s*(6d|6|5|4|3|2|1)/i;
 
+/** Keyword mapping for color detection (FR, NL, EN, DE) */
+const COLOR_KEYWORDS: { keywords: string[]; label: string; value: string }[] = [
+  { keywords: ['blanc', 'blanche', 'wit', 'white', 'weiß', 'weiss'], label: 'Blanc', value: 'blanc' },
+  { keywords: ['noir', 'noire', 'zwart', 'black', 'schwarz'], label: 'Noir', value: 'noir' },
+  { keywords: ['gris', 'grise', 'grijs', 'gray', 'grey', 'grau'], label: 'Gris', value: 'gris' },
+  { keywords: ['rouge', 'rood', 'red', 'rot'], label: 'Rouge', value: 'rouge' },
+  { keywords: ['bleu', 'bleue', 'blauw', 'blue', 'blau'], label: 'Bleu', value: 'bleu' },
+  { keywords: ['vert', 'verte', 'groen', 'green', 'grün'], label: 'Vert', value: 'vert' },
+  { keywords: ['jaune', 'geel', 'yellow', 'gelb'], label: 'Jaune', value: 'jaune' },
+  { keywords: ['orange', 'oranje'], label: 'Orange', value: 'orange' },
+  { keywords: ['marron', 'brun', 'bruin', 'brown', 'braun'], label: 'Marron', value: 'marron' },
+  { keywords: ['beige'], label: 'Beige', value: 'beige' },
+  { keywords: ['argent', 'argenté', 'zilver', 'silver', 'silber'], label: 'Argent', value: 'argent' },
+];
+
 /** Words to strip when extracting potential model name */
-const NOISE_WORDS = /(moins de|budget|euros|€|prix|maximum|max|kilomètres|kilometers|essence|diesel|électrique|electrique|hybride|automatique|manuelle|manuel|boîte|auto)/gi;
+const NOISE_WORDS = /(moins de|budget|euros|€|prix|maximum|max|kilomètres|kilometers|essence|diesel|électrique|electrique|hybride|automatique|manuelle|manuel|boîte|auto|blanc|blanche|noir|noire|gris|grise|rouge|bleu|bleue|vert|verte|jaune|orange|marron|brun|beige|argent|argenté|couleur)/gi;
 
 /**
  * Detects entities from a voice transcript for display purposes
@@ -114,6 +131,14 @@ export function detectEntities(transcript: string, brands?: string[]): DetectedE
   const euroMatch = lower.match(EURO_NORM_PATTERN);
   if (euroMatch) {
     entities.push({ type: 'euroNorm', value: `Euro ${euroMatch[1].toUpperCase()}` });
+  }
+
+  // Color detection
+  for (const color of COLOR_KEYWORDS) {
+    if (color.keywords.some(k => lower.includes(k))) {
+      entities.push({ type: 'color', value: color.label });
+      break;
+    }
   }
 
   return entities;
@@ -177,12 +202,24 @@ export function parseVoiceTranscript(transcript: string, brands?: string[]): Voi
     result.euroNorm = euroMatch[1].toUpperCase();
   }
 
+  // Color detection
+  let colorMatch: { value: string; keyword: string } | undefined;
+  for (const color of COLOR_KEYWORDS) {
+    const found = color.keywords.find(k => lower.includes(k));
+    if (found) {
+      result.color = color.value;
+      colorMatch = { value: color.value, keyword: found };
+      break;
+    }
+  }
+
   // Extract remaining text (potential model name)
   result.remainingText = transcript
     .replace(new RegExp(foundBrand ?? '', 'ig'), '')
     .replace(new RegExp(budgetMatch?.[0] ?? '', 'ig'), '')
     .replace(new RegExp(kmMatch?.[0] ?? '', 'ig'), '')
     .replace(new RegExp(euroMatch?.[0] ?? '', 'ig'), '')
+    .replace(new RegExp(colorMatch?.keyword ?? '', 'ig'), '')
     .replace(NOISE_WORDS, '')
     .trim();
 

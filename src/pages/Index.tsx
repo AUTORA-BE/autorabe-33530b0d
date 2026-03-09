@@ -34,7 +34,7 @@ const Index = () => {
 
   const { isFavorite, toggleFavorite } = useFavorites();
 
-  const handleSearch = useCallback((brand: string, model: string, maxPrice: number, maxMileage?: number, fuelType?: string, transmission?: string, euroNorm?: string) => {
+  const handleSearch = useCallback((brand: string, model: string, maxPrice: number, maxMileage?: number, fuelType?: string, transmission?: string, euroNorm?: string, color?: string) => {
     const newVoiceFilters: VoiceFilter[] = [];
     
     if (brand) {
@@ -67,6 +67,11 @@ const Index = () => {
       updateFilter("euroNorm", euroNorm);
       newVoiceFilters.push({ type: 'euroNorm', label: language === 'nl' ? 'Euro norm' : 'Norme Euro', value: `Euro ${euroNorm}` });
     }
+    if (color) {
+      updateFilter("color", color);
+      const colorLabels: Record<string, string> = { blanc: 'Blanc', noir: 'Noir', gris: 'Gris', rouge: 'Rouge', bleu: 'Bleu', vert: 'Vert', jaune: 'Jaune', orange: 'Orange', marron: 'Marron', beige: 'Beige', argent: 'Argent' };
+      newVoiceFilters.push({ type: 'color', label: language === 'nl' ? 'Kleur' : 'Couleur', value: colorLabels[color] || color });
+    }
     
     setVoiceFilters(newVoiceFilters);
     
@@ -90,6 +95,7 @@ const Index = () => {
       case 'fuel': updateFilter("fuelTypes", []); break;
       case 'transmission': updateFilter("transmission", ""); break;
       case 'euroNorm': updateFilter("euroNorm", ""); break;
+      case 'color': updateFilter("color", ""); break;
     }
   }, [updateFilter]);
 

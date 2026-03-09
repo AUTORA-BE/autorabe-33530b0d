@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
-import { Mic, Car, Banknote, Check, Gauge, Fuel, Settings2, Shield } from "lucide-react";
+import { Mic, Car, Banknote, Check, Gauge, Fuel, Settings2, Shield, Palette } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
@@ -264,7 +264,9 @@ export function VoiceSearchButton({ onResult }: VoiceSearchButtonProps) {
                                   ? 'bg-muted text-muted-foreground'
                                   : entity.type === 'euroNorm'
                                     ? 'bg-primary/20 text-primary'
-                                    : 'bg-secondary text-secondary-foreground'
+                                    : entity.type === 'color'
+                                      ? 'bg-accent/50 text-accent-foreground'
+                                      : 'bg-secondary text-secondary-foreground'
                         }`}
                       >
                         {entity.type === 'brand' ? (
@@ -277,6 +279,8 @@ export function VoiceSearchButton({ onResult }: VoiceSearchButtonProps) {
                           <Settings2 className="w-3 h-3" />
                         ) : entity.type === 'euroNorm' ? (
                           <Shield className="w-3 h-3" />
+                        ) : entity.type === 'color' ? (
+                          <Palette className="w-3 h-3" />
                         ) : (
                           <Gauge className="w-3 h-3" />
                         )}
