@@ -128,6 +128,20 @@ const Footer = () => {
           </div>
         </div>
 
+        {/* LEZ reassurance strip */}
+        <div className="mt-10 p-3 sm:p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/10 flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
+          <div className="flex items-center gap-2 shrink-0">
+            <Shield className="w-4 h-4 text-emerald-400" />
+            <span className="text-xs sm:text-sm font-semibold text-emerald-300">
+              LEZ Compliance
+            </span>
+          </div>
+          <p className="text-[10px] sm:text-xs text-emerald-200/60 leading-relaxed text-center sm:text-left">
+            {language === "nl"
+              ? "Elke advertentie op AutoRA vermeldt duidelijk de LEZ-compatibiliteit (Brussel, Antwerpen, Gent). Geen onaangename verrassingen."
+              : "Chaque annonce sur AutoRA indique clairement la compatibilité LEZ (Bruxelles, Anvers, Gand). Zéro mauvaise surprise."}
+          </p>
+        </div>
 
         {/* Warnings */}
         <div className="mt-10 space-y-3">
