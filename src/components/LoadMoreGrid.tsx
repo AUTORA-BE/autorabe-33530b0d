@@ -23,6 +23,10 @@ interface LoadMoreGridProps {
   totalCount: number;
   error?: string | null;
   onRetry?: () => void;
+  /** Profil acheteur pour le TCO Matchmaker */
+  buyerProfile?: BuyerProfile | null;
+  /** Callback pour ouvrir le modal de profil */
+  onOpenBuyerProfile?: () => void;
 }
 
 // Skeleton component for car cards with shimmer effect
