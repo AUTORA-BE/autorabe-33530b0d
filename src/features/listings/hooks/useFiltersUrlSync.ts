@@ -55,6 +55,7 @@ export function parseFiltersFromParams(params: URLSearchParams): {
     lezOnly: params.get(PARAM_KEYS.lezOnly) === '1',
     sellerTypeFilter: params.get(PARAM_KEYS.sellerType) || d.sellerTypeFilter,
     bodyType: params.get(PARAM_KEYS.bodyType) || d.bodyType,
+    color: params.get('color') || d.color,
   };
 
   const sortBy = (params.get(PARAM_KEYS.sort) as VehicleSortOption) || 'recent';
