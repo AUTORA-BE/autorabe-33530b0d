@@ -1,9 +1,10 @@
 /**
- * "Why AutoRa" trust section with staggered entrance
+ * "Why AutoRa" trust section with 90% hero card + staggered entrance
  * @module components
  */
 
-import { Shield, Leaf, FileCheck, HeadphonesIcon } from "lucide-react";
+import { memo, useRef, useState, useEffect } from "react";
+import { Shield, Leaf, FileCheck, HeadphonesIcon, Award } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -17,7 +18,47 @@ const item = {
   show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] as const } },
 };
 
+/** Animated counter for the 90% card */
+function AnimatedCounter({ target }: { target: number }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const [display, setDisplay] = useState(0);
+  const triggered = useRef(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !triggered.current) {
+          triggered.current = true;
+          const startTime = performance.now();
+          const step = (now: number) => {
+            const progress = Math.min((now - startTime) / 1800, 1);
+            const eased = 1 - Math.pow(1 - progress, 4);
+            setDisplay(Math.round(eased * target));
+            if (progress < 1) requestAnimationFrame(step);
+          };
+          requestAnimationFrame(step);
+        }
+      },
+      { rootMargin: "-40px" },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [target]);
+
+  return <span ref={ref}>{display}</span>;
+}
+
 const features = [
+  {
+    icon: Award,
+    titleFr: "90 % déjà certifiés",
+    titleNl: "90% al gecertificeerd",
+    descFr: "9 véhicules sur 10 sur AutoRA sont certifiés LEZ & Car-Pass vérifié. La sérénité belge, garantie.",
+    descNl: "9 op 10 voertuigen op AutoRA zijn LEZ-gecertificeerd & Car-Pass geverifieerd. Belgische zekerheid, gegarandeerd.",
+    highlight: true,
+  },
   {
     icon: Shield,
     titleFr: "100 % transparence",
@@ -39,16 +80,9 @@ const features = [
     descFr: "Vérifiez instantanément si le véhicule est autorisé dans les zones à faibles émissions.",
     descNl: "Controleer direct of het voertuig is toegelaten in lage-emissiezones.",
   },
-  {
-    icon: HeadphonesIcon,
-    titleFr: "Support 7j/7",
-    titleNl: "Ondersteuning 7/7",
-    descFr: "Notre équipe est disponible tous les jours pour vous accompagner.",
-    descNl: "Ons team is elke dag beschikbaar om u te begeleiden.",
-  },
 ];
 
-const WhyAutoRa = () => {
+const WhyAutoRa = memo(() => {
   const { language } = useLanguage();
   const isNl = language === "nl";
 
@@ -106,12 +140,30 @@ const WhyAutoRa = () => {
             <motion.div
               key={i}
               variants={item}
-              className="group relative rounded-2xl border border-border bg-card p-5 sm:p-7 hover:border-primary/20 transition-all duration-300 hover:shadow-[var(--shadow-elevated)] flex-shrink-0 w-[260px] sm:w-auto snap-center"
+              className={`group relative rounded-2xl border p-5 sm:p-7 transition-all duration-300 flex-shrink-0 w-[260px] sm:w-auto snap-center ${
+                feature.highlight
+                  ? "border-amber-500/30 bg-gradient-to-br from-amber-500/[0.06] via-card to-card hover:border-amber-500/40 hover:shadow-[0_8px_32px_-8px_rgba(245,158,11,0.15)]"
+                  : "border-border bg-card hover:border-primary/20 hover:shadow-[var(--shadow-elevated)]"
+              }`}
             >
               {/* Icon */}
-              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary/15 transition-colors">
-                <feature.icon className="w-6 h-6 text-primary" />
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-5 transition-colors ${
+                feature.highlight
+                  ? "bg-gradient-to-br from-amber-500/20 to-amber-600/10 group-hover:from-amber-500/25 group-hover:to-amber-600/15"
+                  : "bg-primary/10 group-hover:bg-primary/15"
+              }`}>
+                <feature.icon className={`w-6 h-6 ${feature.highlight ? "text-amber-400" : "text-primary"}`} />
               </div>
+
+              {/* Counter for the 90% card */}
+              {feature.highlight && (
+                <div className="mb-3">
+                  <span className="text-3xl sm:text-4xl font-extrabold text-amber-400">
+                    <AnimatedCounter target={90} />
+                    <span className="text-xl ml-0.5">%</span>
+                  </span>
+                </div>
+              )}
 
               <h3 className="font-display text-base sm:text-lg font-bold text-foreground mb-2">
                 {isNl ? feature.titleNl : feature.titleFr}
@@ -121,14 +173,18 @@ const WhyAutoRa = () => {
                 {isNl ? feature.descNl : feature.descFr}
               </p>
 
-              {/* Subtle hover accent */}
-              <div className="absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500 rounded-b-2xl" />
+              {/* Bottom accent */}
+              <div className={`absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-transparent to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500 rounded-b-2xl ${
+                feature.highlight ? "via-amber-500/40" : "via-primary/30"
+              }`} />
             </motion.div>
           ))}
         </motion.div>
       </div>
     </section>
   );
-};
+});
+
+WhyAutoRa.displayName = "WhyAutoRa";
 
 export default WhyAutoRa;
