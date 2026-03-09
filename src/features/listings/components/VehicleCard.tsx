@@ -80,6 +80,15 @@ const VehicleCard = memo(function VehicleCard({
     onClick?.(vehicle.id);
   };
 
+  const handleCompareClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isInCompare(vehicle.id)) {
+      removeCompare(vehicle.id);
+    } else {
+      addToCompare(vehicle);
+    }
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
