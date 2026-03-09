@@ -294,13 +294,17 @@ export function VoiceSearchButton({ onResult }: VoiceSearchButtonProps) {
                             ? 'bg-primary/15 text-primary'
                             : entity.type === 'budget'
                               ? 'bg-accent text-accent-foreground'
-                              : 'bg-secondary text-secondary-foreground'
+                              : entity.type === 'fuel'
+                                ? 'bg-primary/10 text-primary'
+                                : 'bg-secondary text-secondary-foreground'
                         }`}
                       >
                         {entity.type === 'brand' ? (
                           <Car className="w-3 h-3" />
                         ) : entity.type === 'budget' ? (
                           <Banknote className="w-3 h-3" />
+                        ) : entity.type === 'fuel' ? (
+                          <Fuel className="w-3 h-3" />
                         ) : (
                           <Gauge className="w-3 h-3" />
                         )}
