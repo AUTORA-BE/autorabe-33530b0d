@@ -175,7 +175,7 @@ const BrandCarousel = memo(function BrandCarousel({
                     {/* Brand logo container */}
                     <div
                       className={cn(
-                        "w-11 h-11 sm:w-18 sm:h-18 md:w-22 md:h-22 flex items-center justify-center mb-1.5 sm:mb-3 rounded-lg sm:rounded-xl p-1 sm:p-2 transition-all duration-300",
+                        "w-14 h-14 sm:w-20 sm:h-20 md:w-24 md:h-24 flex items-center justify-center mb-1.5 sm:mb-3 rounded-lg sm:rounded-xl p-1.5 sm:p-3 transition-all duration-300",
                         selectedBrand === brand.name
                           ? "bg-white dark:bg-white/10 scale-110"
                           : "bg-white/80 dark:bg-white/5 group-hover:bg-white dark:group-hover:bg-white/10 group-hover:scale-[1.15]"
