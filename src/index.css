@@ -597,9 +597,59 @@ input[type="number"] {
     animation-duration: 10s; animation-delay: 5s;
   }
 
+  /* Testimonial floating particles — softer, slower */
+  .testimonial-particle {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, hsl(var(--primary) / 0.18), hsl(var(--primary) / 0.03), transparent);
+    will-change: transform, opacity;
+    animation: particleFloat linear infinite;
+  }
+
+  .testimonial-particle-1 {
+    width: 5px; height: 5px;
+    top: 25%; left: 8%;
+    --dx: 40px; --dy: -60px; --scale-end: 0.5;
+    animation-duration: 12s; animation-delay: 0s;
+  }
+  .testimonial-particle-2 {
+    width: 4px; height: 4px;
+    top: 70%; left: 85%;
+    --dx: -30px; --dy: -80px; --scale-end: 0.4;
+    animation-duration: 14s; animation-delay: 2s;
+    background: radial-gradient(circle, hsl(170 80% 45% / 0.15), transparent);
+  }
+  .testimonial-particle-3 {
+    width: 6px; height: 6px;
+    top: 45%; left: 50%;
+    --dx: 50px; --dy: -40px; --scale-end: 0.6;
+    animation-duration: 11s; animation-delay: 4s;
+  }
+  .testimonial-particle-4 {
+    width: 3px; height: 3px;
+    top: 80%; left: 30%;
+    --dx: 20px; --dy: -90px; --scale-end: 0.3;
+    animation-duration: 13s; animation-delay: 1s;
+    background: radial-gradient(circle, hsl(140 70% 45% / 0.15), transparent);
+  }
+  .testimonial-particle-5 {
+    width: 5px; height: 5px;
+    top: 15%; left: 65%;
+    --dx: -60px; --dy: 30px; --scale-end: 0.5;
+    animation-duration: 10s; animation-delay: 3s;
+  }
+  .testimonial-particle-6 {
+    width: 4px; height: 4px;
+    top: 55%; left: 5%;
+    --dx: 70px; --dy: -50px; --scale-end: 0.4;
+    animation-duration: 15s; animation-delay: 5s;
+    background: radial-gradient(circle, hsl(180 60% 42% / 0.12), transparent);
+  }
+
   /* Respect reduced motion */
   @media (prefers-reduced-motion: reduce) {
-    .hero-particle {
+    .hero-particle,
+    .testimonial-particle {
       animation: none;
       opacity: 0.3;
     }
