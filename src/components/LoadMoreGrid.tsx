@@ -75,6 +75,8 @@ const LoadMoreGrid = ({
   totalCount,
   error,
   onRetry,
+  buyerProfile,
+  onOpenBuyerProfile,
 }: LoadMoreGridProps) => {
   const { language } = useLanguage();
   const observerRef = useRef<IntersectionObserver | null>(null);
