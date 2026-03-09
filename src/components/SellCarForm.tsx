@@ -238,7 +238,23 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
     };
 
     fetchListing();
-  }, [editId, form, navigate, t]);
+
+  // ── Charger le brouillon au montage (mode création uniquement) ───
+  useEffect(() => {
+    if (isEditMode) return;
+    const load = async () => {
+      const draft = await loadDraft();
+      if (draft && draft.formData && Object.keys(draft.formData).length > 0) {
+        form.reset({ ...form.getValues(), ...draft.formData });
+        if (draft.photoUrls.length > 0) {
+          setExistingPhotos(draft.photoUrls);
+          setPhotosPreviews(draft.photoUrls);
+        }
+      }
+    };
+    load();
+  }, [isEditMode, loadDraft, form]);
+
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
