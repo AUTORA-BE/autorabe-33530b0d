@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
-import { Mic, Car, Banknote, Check, Gauge } from "lucide-react";
+import { Mic, Car, Banknote, Check, Gauge, Fuel } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
@@ -63,7 +63,7 @@ interface WindowWithSpeech extends Window {
 }
 
 interface DetectedEntity {
-  type: 'brand' | 'budget' | 'mileage';
+  type: 'brand' | 'budget' | 'mileage' | 'fuel';
   value: string;
 }
 
@@ -96,6 +96,20 @@ function useDetectedEntities(transcript: string): DetectedEntity[] {
       let km = parseInt(kmMatch[1].replace(/\D/g, ''));
       if (km < 1000 && km > 0) km *= 1000;
       entities.push({ type: 'mileage', value: `${km.toLocaleString('fr-BE')} km` });
+    }
+
+    // Fuel type detection
+    const fuelMap: { keywords: string[]; label: string }[] = [
+      { keywords: ['électrique', 'electrique', 'electric', 'elektrisch'], label: 'Électrique' },
+      { keywords: ['hybride', 'hybrid'], label: 'Hybride' },
+      { keywords: ['diesel'], label: 'Diesel' },
+      { keywords: ['essence', 'benzine', 'gasoline', 'petrol'], label: 'Essence' },
+    ];
+    for (const fuel of fuelMap) {
+      if (fuel.keywords.some(k => lower.includes(k))) {
+        entities.push({ type: 'fuel', value: fuel.label });
+        break;
+      }
     }
 
     return entities;
@@ -280,13 +294,17 @@ export function VoiceSearchButton({ onResult }: VoiceSearchButtonProps) {
                             ? 'bg-primary/15 text-primary'
                             : entity.type === 'budget'
                               ? 'bg-accent text-accent-foreground'
-                              : 'bg-secondary text-secondary-foreground'
+                              : entity.type === 'fuel'
+                                ? 'bg-primary/10 text-primary'
+                                : 'bg-secondary text-secondary-foreground'
                         }`}
                       >
                         {entity.type === 'brand' ? (
                           <Car className="w-3 h-3" />
                         ) : entity.type === 'budget' ? (
                           <Banknote className="w-3 h-3" />
+                        ) : entity.type === 'fuel' ? (
+                          <Fuel className="w-3 h-3" />
                         ) : (
                           <Gauge className="w-3 h-3" />
                         )}

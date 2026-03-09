@@ -45,7 +45,7 @@ function AnimatedCounter({ target, suffix = "", duration = 2 }: { target: number
 }
 
 export interface HeroSearchProps {
-  onSearch: (brand: string, model: string, maxPrice: number, maxMileage?: number) => void;
+  onSearch: (brand: string, model: string, maxPrice: number, maxMileage?: number, fuelType?: string) => void;
 }
 
 /** Parallax hook — moves element based on scroll */
@@ -114,6 +114,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
     let newBrand = selectedBrand;
     let newBudget = selectedBudget;
     let newMileage: number | undefined;
+    let detectedFuel: string | undefined;
     
     const foundBrand = brands.find(b => lowerTranscript.includes(b.toLowerCase()));
     if (foundBrand) {
@@ -144,17 +145,31 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
       if (newMileage < 1000 && newMileage > 0) newMileage *= 1000;
     }
 
+    // Fuel type detection
+    const fuelMap: { keywords: string[]; value: string }[] = [
+      { keywords: ['électrique', 'electrique', 'electric', 'elektrisch'], value: 'electrique' },
+      { keywords: ['hybride', 'hybrid'], value: 'hybride' },
+      { keywords: ['diesel'], value: 'diesel' },
+      { keywords: ['essence', 'benzine', 'gasoline', 'petrol'], value: 'essence' },
+    ];
+    for (const fuel of fuelMap) {
+      if (fuel.keywords.some(k => lowerTranscript.includes(k))) {
+        detectedFuel = fuel.value;
+        break;
+      }
+    }
+
     let potentialModel = transcript
       .replace(new RegExp(foundBrand || '', 'ig'), '')
       .replace(new RegExp(numberMatch ? numberMatch[0] : '', 'ig'), '')
       .replace(new RegExp(kmMatch ? kmMatch[0] : '', 'ig'), '')
-      .replace(/(moins de|budget|euros|€|prix|maximum|max|kilomètres|kilometers)/ig, '')
+      .replace(/(moins de|budget|euros|€|prix|maximum|max|kilomètres|kilometers|essence|diesel|électrique|electrique|hybride)/ig, '')
       .trim();
       
     setModel(potentialModel);
     
     setTimeout(() => {
-      onSearch(newBrand, potentialModel, newBudget || 1000000, newMileage);
+      onSearch(newBrand, potentialModel, newBudget || 1000000, newMileage, detectedFuel);
     }, 500);
   }, [brands, selectedBrand, selectedBudget, onSearch]);
 
