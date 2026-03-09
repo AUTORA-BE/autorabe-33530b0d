@@ -302,7 +302,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
                 className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground"
               >
                 <pill.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
-                <span>{isNl ? pill.labelNl : pill.labelFr}</span>
+                <span>{pill.label}</span>
               </div>
             ))}
           </motion.div>
