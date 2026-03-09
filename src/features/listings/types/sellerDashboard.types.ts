@@ -35,6 +35,10 @@ export interface SellerListing {
   carPassVerified: boolean;
   /** Fuel type */
   fuelType: string;
+  /** Boost level */
+  boostLevel: string;
+  /** Boost expiration */
+  boostExpiresAt: string | null;
 }
 
 /**
