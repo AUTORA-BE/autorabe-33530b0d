@@ -30,12 +30,13 @@ const Index = () => {
 
   const { isFavorite, toggleFavorite } = useFavorites();
 
-  const handleSearch = (brand: string, model: string, maxPrice: number, maxMileage?: number, fuelType?: string) => {
+  const handleSearch = (brand: string, model: string, maxPrice: number, maxMileage?: number, fuelType?: string, transmission?: string) => {
     updateFilter("brand", brand);
     updateFilter("searchQuery", model);
     updateFilter("maxPrice", maxPrice);
     if (maxMileage) updateFilter("kmMax", maxMileage);
     if (fuelType) updateFilter("fuelTypes", [fuelType]);
+    if (transmission) updateFilter("transmission", transmission);
     setTimeout(() => {
       const resultsSection = document.getElementById("results-section");
       if (resultsSection) {

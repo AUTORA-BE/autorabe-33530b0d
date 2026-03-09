@@ -308,7 +308,9 @@ export function VoiceSearchButton({ onResult }: VoiceSearchButtonProps) {
                               ? 'bg-accent text-accent-foreground'
                               : entity.type === 'fuel'
                                 ? 'bg-primary/10 text-primary'
-                                : 'bg-secondary text-secondary-foreground'
+                                : entity.type === 'transmission'
+                                  ? 'bg-muted text-muted-foreground'
+                                  : 'bg-secondary text-secondary-foreground'
                         }`}
                       >
                         {entity.type === 'brand' ? (
@@ -317,6 +319,8 @@ export function VoiceSearchButton({ onResult }: VoiceSearchButtonProps) {
                           <Banknote className="w-3 h-3" />
                         ) : entity.type === 'fuel' ? (
                           <Fuel className="w-3 h-3" />
+                        ) : entity.type === 'transmission' ? (
+                          <Settings2 className="w-3 h-3" />
                         ) : (
                           <Gauge className="w-3 h-3" />
                         )}
