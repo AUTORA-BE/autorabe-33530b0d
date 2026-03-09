@@ -158,7 +158,10 @@ const VehicleGrid = memo(function VehicleGrid({
             <SlidersHorizontal className="w-4 h-4" aria-hidden="true" />
             {labels.filters}
             {activeFiltersCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center">
+              <span
+                key={activeFiltersCount}
+                className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center animate-badge-pop"
+              >
                 {activeFiltersCount}
               </span>
             )}
