@@ -8,12 +8,16 @@ import { calculerStatutLEZ } from "@/lib/lezData";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 import type { Vehicle } from "../types/vehicle.types";
+import { computeMatchScore } from "@/features/tco/utils/matchScore";
+import type { BuyerProfile } from "@/features/tco/hooks/useBuyerProfile";
 
 export interface CarCardProps {
   car: Vehicle;
   isFavorite?: boolean;
   onToggleFavorite?: (carId: string) => void;
   onClick?: (carId: string) => void;
+  /** Profil acheteur pour le TCO Matchmaker (optionnel) */
+  buyerProfile?: BuyerProfile | null;
 }
 
 const lezBadgeConfig = {
