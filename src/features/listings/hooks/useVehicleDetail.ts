@@ -5,10 +5,8 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { vehicleQueries } from '../api/vehicleQueries';
+import { vehicleKeys } from '../api/vehicleKeys';
 import type { VehicleDetail } from '../types/vehicle.types';
-
-/** Query key factory for vehicle details */
-const VEHICLE_DETAIL_KEY = 'vehicleDetail';
 
 interface UseVehicleDetailOptions {
   /** Whether to enable the query */
