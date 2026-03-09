@@ -34,6 +34,8 @@ const Index = () => {
   } = useVehicleSearch();
 
   const { isFavorite, toggleFavorite } = useFavorites();
+  const { profile: buyerProfile, saveProfile } = useBuyerProfile();
+  const profileModalRef = useRef<HTMLButtonElement>(null);
 
   const handleSearch = useCallback((brand: string, model: string, maxPrice: number, maxMileage?: number, fuelType?: string, transmission?: string, euroNorm?: string, color?: string) => {
     const newVoiceFilters: VoiceFilter[] = [];
