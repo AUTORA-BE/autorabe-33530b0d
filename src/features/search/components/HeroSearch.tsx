@@ -4,7 +4,7 @@
  */
 
 import { memo, useState, useEffect, useRef, useCallback } from "react";
-import { Search, ChevronDown, ShieldCheck, FileCheck, Leaf, Award } from "lucide-react";
+import { Search, ChevronDown, ShieldCheck, FileCheck, Leaf } from "lucide-react";
 import { motion } from "framer-motion";
 import { getAllBrands, getModelsByBrand } from "@/utils/carUtils";
 import { useLanguage } from "@/contexts/LanguageContext";
