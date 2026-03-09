@@ -1190,8 +1190,9 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
                   )} />
                 </CardContent>
               </Card>
-            </>
+            </motion.div>
           )}
+          </AnimatePresence>
 
           {/* Navigation Buttons */}
           <div className="flex justify-between gap-4">
