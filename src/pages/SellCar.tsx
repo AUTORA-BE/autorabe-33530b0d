@@ -55,7 +55,7 @@ export default function SellCar() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="page-gradient">
       <SEOHead 
         title={editId ? t("sell.editTitle") : t("sell.title")}
         description="Publiez votre annonce automobile en quelques minutes sur AutoRa et touchez des milliers d'acheteurs en Belgique."
