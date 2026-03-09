@@ -3,7 +3,7 @@
  * @module features/search/components
  */
 
-import { memo, useState, useEffect, useRef } from "react";
+import { memo, useState, useEffect, useRef, useCallback } from "react";
 import { Search, ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
 import { getAllBrands, getModelsByBrand } from "@/utils/carUtils";
@@ -108,7 +108,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
     onSearch(selectedBrand, model, selectedBudget || 1000000);
   };
 
-  const handleVoiceResult = (transcript: string) => {
+  const handleVoiceResult = useCallback((transcript: string) => {
     const lowerTranscript = transcript.toLowerCase();
     
     let newBrand = selectedBrand;
@@ -148,7 +148,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
     setTimeout(() => {
       onSearch(newBrand, potentialModel, newBudget || 1000000);
     }, 500);
-  };
+  }, [brands, selectedBrand, selectedBudget, onSearch]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") handleSearch();
