@@ -25,6 +25,7 @@ import {
   Leaf,
   Shield,
   FileCheck,
+  Rocket,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -63,6 +64,7 @@ import { format } from "date-fns";
 import { fr, nl, enGB } from "date-fns/locale";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSellerListings } from "../hooks/useSellerListings";
+import BoostDialog from "./BoostDialog";
 import type { SellerListing, StatusFilter, ChartPeriod } from "../types/sellerDashboard.types";
 
 // Animation variants
@@ -160,6 +162,8 @@ export default function SellerDashboard() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [listingToDelete, setListingToDelete] = useState<SellerListing | null>(null);
+  const [boostDialogOpen, setBoostDialogOpen] = useState(false);
+  const [listingToBoost, setListingToBoost] = useState<SellerListing | null>(null);
 
   const getDateLocale = () => (language === "nl" ? nl : language === "en" ? enGB : fr);
   const getLocaleString = () => (language === "nl" ? "nl-BE" : language === "en" ? "en-GB" : "fr-BE");
@@ -173,6 +177,7 @@ export default function SellerDashboard() {
     deleteListing,
     isDeleting,
     markAsSold,
+    refetch,
   } = useSellerListings(chartPeriod, getDateLocale());
 
   // Status counts
@@ -431,8 +436,28 @@ export default function SellerDashboard() {
                       key={listing.id}
                       variants={listItemVariants}
                       onClick={() => navigate(`/car/${listing.id}`)}
-                      className="group flex items-center gap-4 p-3 rounded-xl border border-border bg-card hover:border-primary/30 hover:shadow-sm transition-all cursor-pointer"
+                      className={`group relative flex items-center gap-4 p-3 rounded-xl border-2 bg-card hover:shadow-sm transition-all cursor-pointer ${
+                        listing.boostLevel === "ultra" && listing.boostExpiresAt && new Date(listing.boostExpiresAt) > new Date()
+                          ? "border-primary shadow-md"
+                          : listing.boostLevel === "premium" && listing.boostExpiresAt && new Date(listing.boostExpiresAt) > new Date()
+                            ? "border-amber-400 shadow-md"
+                            : listing.boostLevel === "standard" && listing.boostExpiresAt && new Date(listing.boostExpiresAt) > new Date()
+                              ? "border-amber-200 dark:border-amber-700"
+                              : "border-border hover:border-primary/30"
+                      }`}
                     >
+                      {/* Sponsored Badge */}
+                      {listing.boostLevel !== "none" && listing.boostExpiresAt && new Date(listing.boostExpiresAt) > new Date() && (
+                        <div className="absolute -top-2 right-3 z-10">
+                          <Badge className={`text-[10px] px-2 py-0.5 font-semibold shadow-sm ${
+                            listing.boostLevel === "ultra"
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-amber-500 text-white"
+                          }`}>
+                            ✨ Sponsorisé
+                          </Badge>
+                        </div>
+                      )}
                       {/* Thumbnail */}
                       <div className="w-16 h-12 md:w-20 md:h-14 rounded-lg overflow-hidden bg-muted flex-shrink-0">
                         {listing.photo ? (
@@ -523,16 +548,29 @@ export default function SellerDashboard() {
                               {t("dashboard.edit") || "Modifier"}
                             </DropdownMenuItem>
                             {listing.status === "approved" && (
-                              <DropdownMenuItem
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleMarkAsSold(listing.id);
-                                }}
-                                className="gap-2 cursor-pointer"
-                              >
-                                <CheckCircle2 className="w-4 h-4" />
-                                {t("dashboard.markAsSold") || "Marquer comme vendu"}
-                              </DropdownMenuItem>
+                              <>
+                                <DropdownMenuItem
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleMarkAsSold(listing.id);
+                                  }}
+                                  className="gap-2 cursor-pointer"
+                                >
+                                  <CheckCircle2 className="w-4 h-4" />
+                                  {t("dashboard.markAsSold") || "Marquer comme vendu"}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setListingToBoost(listing);
+                                    setBoostDialogOpen(true);
+                                  }}
+                                  className="gap-2 cursor-pointer text-amber-600 focus:text-amber-600"
+                                >
+                                  <Rocket className="w-4 h-4" />
+                                  {t("boost.boost") || "Booster cette annonce"}
+                                </DropdownMenuItem>
+                              </>
                             )}
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
@@ -589,6 +627,17 @@ export default function SellerDashboard() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Boost Dialog */}
+      {listingToBoost && (
+        <BoostDialog
+          open={boostDialogOpen}
+          onOpenChange={setBoostDialogOpen}
+          listingId={listingToBoost.id}
+          listingName={`${listingToBoost.brand} ${listingToBoost.model} ${listingToBoost.year}`}
+          onBoostApplied={() => refetch()}
+        />
+      )}
     </div>
   );
 }
