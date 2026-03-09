@@ -685,9 +685,19 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
 
+          <AnimatePresence mode="wait" custom={slideDirection}>
           {/* ===== STEP 1: Vehicle Info + Contact ===== */}
           {currentStep === 1 && (
-            <>
+            <motion.div
+              key="step1"
+              custom={slideDirection}
+              variants={stepVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              className="space-y-8"
+            >
               {/* Vehicle Info */}
               <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
                 <CardHeader>
