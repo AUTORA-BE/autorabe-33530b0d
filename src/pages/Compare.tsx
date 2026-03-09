@@ -179,9 +179,19 @@ const Compare = () => {
                 </h1>
               </div>
               {compareList.length > 0 && (
-                <Button variant="outline" onClick={clearCompare} className="rounded-xl">
-                  Tout effacer
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={handleShare}
+                    className="rounded-xl gap-2"
+                  >
+                    {copied ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
+                    {copied ? "Copié !" : "Partager"}
+                  </Button>
+                  <Button variant="outline" onClick={clearCompare} className="rounded-xl">
+                    Tout effacer
+                  </Button>
+                </div>
               )}
             </div>
 
