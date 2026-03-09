@@ -111,6 +111,11 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
   const [carPassFileName, setCarPassFileName] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(!!editId);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [slideDirection, setSlideDirection] = useState<1 | -1>(1);
+  const isEditMode = !!editId;
+  const { canPublish, activeCount, maxAllowed, isLoading: limitLoading } = useListingLimit();
+  const { updateDraft, loadDraft, clearDraft, lastSaved, isSaving } = useAutoSaveDraft(isEditMode);
   const isEditMode = !!editId;
   const { canPublish, activeCount, maxAllowed, isLoading: limitLoading } = useListingLimit();
 
