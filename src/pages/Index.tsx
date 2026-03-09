@@ -34,7 +34,7 @@ const Index = () => {
     updateFilter("brand", brand);
     updateFilter("searchQuery", model);
     updateFilter("maxPrice", maxPrice);
-    if (maxMileage) updateFilter("maxMileage", maxMileage);
+    if (maxMileage) updateFilter("kmMax", maxMileage);
     setTimeout(() => {
       const resultsSection = document.getElementById("results-section");
       if (resultsSection) {
