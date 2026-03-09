@@ -44,7 +44,7 @@ export interface CreateAlertData {
 /** Fetch all alerts for the current user */
 export function useUserAlerts() {
   return useQuery({
-    queryKey: ["user-alerts"],
+    queryKey: messageKeys.alerts(),
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return [];
