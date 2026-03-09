@@ -162,6 +162,8 @@ export default function SellerDashboard() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [listingToDelete, setListingToDelete] = useState<SellerListing | null>(null);
+  const [boostDialogOpen, setBoostDialogOpen] = useState(false);
+  const [listingToBoost, setListingToBoost] = useState<SellerListing | null>(null);
 
   const getDateLocale = () => (language === "nl" ? nl : language === "en" ? enGB : fr);
   const getLocaleString = () => (language === "nl" ? "nl-BE" : language === "en" ? "en-GB" : "fr-BE");
