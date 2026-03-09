@@ -281,7 +281,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
                 <button
                   onClick={handleSearch}
                   className="btn-primary-gradient flex-1 min-w-0 flex items-center justify-center gap-2 py-3 sm:py-4 rounded-md overflow-hidden"
-                  aria-label={isNl ? "Zoeken" : "Lancer la recherche"}
+                  aria-label={t("hero.search")}
                 >
                   <Search className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" aria-hidden="true" />
                   <span className="font-semibold text-sm sm:text-base truncate">{t("hero.search")}</span>
