@@ -64,6 +64,7 @@ const translations: Record<Language, Record<string, string>> = {
     "filters.electric": "Électrique",
     "filters.manual": "Manuelle",
     "filters.automatic": "Automatique",
+    "filters.color": "Couleur",
     
     // Car Card & Detail
     "car.addCompare": "Ajouter au comparateur",
