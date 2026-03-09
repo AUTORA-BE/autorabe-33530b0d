@@ -21,7 +21,7 @@ async function fetchSellerListings(userId: string): Promise<{
   // Get user's listings
   const { data: userListings, error } = await supabase
     .from("car_listings")
-    .select("id, brand, model, year, price, status, photos, created_at, euro_norm, car_pass_verified, fuel_type")
+    .select("id, brand, model, year, price, status, photos, created_at, euro_norm, car_pass_verified, fuel_type, boost_level, boost_expires_at")
     .eq("user_id", userId)
     .order("created_at", { ascending: false });
 
