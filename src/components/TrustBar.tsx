@@ -85,11 +85,11 @@ const TrustBar = memo(() => {
               <div className="text-base sm:text-lg font-extrabold text-foreground whitespace-nowrap">
                 <AnimatedNumber target={90} suffix=" %" duration={1800} />
                 <span className="text-amber-400 ml-1 text-xs font-bold">
-                  {isNl ? "gecertificeerd" : "certifiés"}
+                  {t("trust.certified")}
                 </span>
               </div>
               <div className="text-[10px] sm:text-xs text-muted-foreground whitespace-nowrap">
-                {isNl ? "LEZ & Car-Pass geverifieerd" : "LEZ & Car-Pass vérifié"}
+                {t("trust.certifiedSub")}
               </div>
             </div>
           </motion.div>
