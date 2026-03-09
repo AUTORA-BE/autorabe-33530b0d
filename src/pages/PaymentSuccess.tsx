@@ -38,7 +38,7 @@ export default function PaymentSuccess() {
   }, [navigate]);
 
   return (
-    <>
+    <div className="page-gradient">
       <SEOHead title="Paiement confirmé | AutoRa" description="Votre abonnement AutoRa a été activé avec succès." />
       <Header />
       <main className="min-h-screen pt-24 pb-16 flex items-center justify-center">
