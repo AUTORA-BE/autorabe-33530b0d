@@ -40,10 +40,12 @@ async function fetchSellerListings(userId: string): Promise<{
   ]);
 
   // Count stats per listing
-  const countByListing = (data: { car_listing_id: string }[] | null): Record<string, number> => {
+  const countByListing = (data: { car_listing_id: string | null }[] | null): Record<string, number> => {
     const m: Record<string, number> = {};
     data?.forEach((d) => {
-      m[d.car_listing_id] = (m[d.car_listing_id] || 0) + 1;
+      if (d.car_listing_id) {
+        m[d.car_listing_id] = (m[d.car_listing_id] || 0) + 1;
+      }
     });
     return m;
   };

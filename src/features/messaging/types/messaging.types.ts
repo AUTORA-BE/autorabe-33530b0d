@@ -60,7 +60,7 @@ export interface ConversationRow {
   car_brand: string | null;
   car_model: string | null;
   car_image: string | null;
-  last_message_at: string;
+  last_message_at: string | null;
   created_at: string;
 }
 

@@ -454,7 +454,7 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
               <AnimatePresence>
                 {fullscreenOpen && (
                   <FullscreenGallery
-                    images={images}
+                    images={images as string[]}
                     initialIndex={currentImageIndex}
                     alt={`${car.brand} ${car.model}`}
                     onClose={() => setFullscreenOpen(false)}

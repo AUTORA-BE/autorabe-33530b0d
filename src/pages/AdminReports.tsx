@@ -284,7 +284,7 @@ const AdminReports = () => {
             ...report,
             car_brand: carData?.brand || "Unknown",
             car_model: carData?.model || "Unknown",
-            reporter_name: profileData?.display_name || null,
+            reporter_name: profileData?.display_name ?? undefined,
             reporter_email: report.user_id,
           };
         })

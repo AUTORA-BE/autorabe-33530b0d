@@ -83,11 +83,11 @@ export const getCarByIdFromDb = async (id: string): Promise<Car | null> => {
       .eq('id', id)
       .maybeSingle();
 
-    if (error || !data) {
+    if (error || !data || !data.id) {
       return null;
     }
 
-    return mapListingToCar(data);
+    return mapListingToCar(data as VehicleListingRow);
   } catch {
     return null;
   }
