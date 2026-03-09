@@ -1,9 +1,11 @@
-import { useState, useEffect, useRef } from "react";
-import { Mic } from "lucide-react";
+import { useState, useEffect, useRef, useMemo } from "react";
+import { Mic, Car, Banknote, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { getAllBrands } from "@/utils/carUtils";
+import { BUDGET_OPTIONS } from "@/features/search/types/search.types";
 
 // Type definitions for SpeechRecognition API
 interface SpeechRecognitionEvent extends Event {
@@ -59,8 +61,38 @@ interface WindowWithSpeech extends Window {
   webkitSpeechRecognition?: new () => SpeechRecognition;
 }
 
+interface DetectedEntity {
+  type: 'brand' | 'budget';
+  value: string;
+}
+
 export interface VoiceSearchButtonProps {
   onResult: (transcript: string) => void;
+}
+
+/** Detects brands and budgets from a transcript string */
+function useDetectedEntities(transcript: string): DetectedEntity[] {
+  const brands = useMemo(() => getAllBrands(), []);
+
+  return useMemo(() => {
+    if (!transcript) return [];
+    const lower = transcript.toLowerCase();
+    const entities: DetectedEntity[] = [];
+
+    const foundBrand = brands.find(b => lower.includes(b.toLowerCase()));
+    if (foundBrand) entities.push({ type: 'brand', value: foundBrand });
+
+    const numberMatch = lower.match(/(\d+[\s.]?\d*)\s*(euro|€|mille)/i);
+    if (numberMatch) {
+      let budget = parseInt(numberMatch[1].replace(/\D/g, ''));
+      if (lower.includes("mille")) budget *= 1000;
+      else if (budget < 1000 && budget > 0) budget *= 1000;
+      const option = BUDGET_OPTIONS.find(o => o.value >= budget);
+      if (option) entities.push({ type: 'budget', value: option.label });
+    }
+
+    return entities;
+  }, [transcript, brands]);
 }
 
 export function VoiceSearchButton({ onResult }: VoiceSearchButtonProps) {
@@ -69,6 +101,7 @@ export function VoiceSearchButton({ onResult }: VoiceSearchButtonProps) {
   const [isSupported, setIsSupported] = useState(true);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const { language } = useLanguage();
+  const detectedEntities = useDetectedEntities(transcript);
 
   useEffect(() => {
     const win = window as unknown as WindowWithSpeech;
@@ -105,7 +138,11 @@ export function VoiceSearchButton({ onResult }: VoiceSearchButtonProps) {
       
       if (event.results[0].isFinal) {
         onResult(currentTranscript.trim());
-        setIsListening(false);
+        // Keep transcript visible briefly before clearing
+        setTimeout(() => {
+          setIsListening(false);
+          setTranscript("");
+        }, 1200);
         recognition.stop();
       }
     };
@@ -113,6 +150,7 @@ export function VoiceSearchButton({ onResult }: VoiceSearchButtonProps) {
     recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
       console.error("Speech recognition error", event.error);
       setIsListening(false);
+      setTranscript("");
       if (event.error === 'not-allowed') {
         toast.error(language === 'nl' ? "Microfoontoegang geweigerd" : "Accès au microphone refusé");
       } else if (event.error === 'no-speech') {
@@ -121,7 +159,10 @@ export function VoiceSearchButton({ onResult }: VoiceSearchButtonProps) {
     };
 
     recognition.onend = () => {
-      setIsListening(false);
+      // Delay clearing so user sees final result
+      setTimeout(() => {
+        setIsListening(false);
+      }, 800);
     };
 
     recognitionRef.current = recognition;
@@ -139,6 +180,7 @@ export function VoiceSearchButton({ onResult }: VoiceSearchButtonProps) {
     if (isListening) {
       recognitionRef.current.stop();
       setIsListening(false);
+      setTranscript("");
     } else {
       try {
         recognitionRef.current.start();
@@ -168,15 +210,57 @@ export function VoiceSearchButton({ onResult }: VoiceSearchButtonProps) {
       <AnimatePresence>
         {isListening && (
           <>
+            {/* Transcript bubble */}
             <motion.div
               initial={{ opacity: 0, scale: 0.8, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.8, y: 10 }}
-              className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 bg-popover text-popover-foreground text-sm py-2 px-4 rounded-lg shadow-xl whitespace-nowrap min-w-[200px] text-center border z-50"
+              className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 bg-popover text-popover-foreground text-sm py-3 px-4 rounded-xl shadow-xl min-w-[220px] max-w-[320px] text-center border z-50"
             >
-              {transcript || (language === 'nl' ? "Luisteren..." : "Écoute en cours...")}
+              {/* Transcript text */}
+              <div className="mb-1.5">
+                {transcript || (language === 'nl' ? "Luisteren..." : "Écoute en cours...")}
+              </div>
+
+              {/* Detected entity chips */}
+              <AnimatePresence>
+                {detectedEntities.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="flex flex-wrap items-center justify-center gap-1.5 pt-1.5 border-t border-border/50"
+                  >
+                    {detectedEntities.map((entity, i) => (
+                      <motion.span
+                        key={`${entity.type}-${i}`}
+                        initial={{ opacity: 0, scale: 0.5 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ type: "spring", stiffness: 500, damping: 25, delay: i * 0.1 }}
+                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
+                          entity.type === 'brand'
+                            ? 'bg-primary/15 text-primary'
+                            : 'bg-accent text-accent-foreground'
+                        }`}
+                      >
+                        {entity.type === 'brand' ? (
+                          <Car className="w-3 h-3" />
+                        ) : (
+                          <Banknote className="w-3 h-3" />
+                        )}
+                        {entity.value}
+                        <Check className="w-3 h-3 ml-0.5" />
+                      </motion.span>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Arrow */}
               <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-popover border-b border-r rotate-45" />
             </motion.div>
+
+            {/* Pulse ring */}
             <motion.div
               initial={{ opacity: 0, scale: 1 }}
               animate={{ opacity: [0, 0.2, 0], scale: [1, 1.5, 1] }}
