@@ -17,6 +17,9 @@ import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useListingLimit } from '@/features/subscription';
+import { useAutoSaveDraft } from '@/features/listings/hooks/useAutoSaveDraft';
+
+const ConfettiCanvas = lazy(() => import('@/components/ConfettiCanvas'));
 
 const MAX_PHOTOS = 10;
 const MAX_PHOTO_SIZE_MB = 5;
