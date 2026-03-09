@@ -51,6 +51,10 @@ export interface Vehicle {
   hasCarPass: boolean;
   /** Seller type (private/professional) */
   sellerType: string;
+  /** Boost level (none, standard, premium, ultra) */
+  boostLevel?: string;
+  /** Whether the boost is currently active */
+  isBoosted?: boolean;
 }
 
 /**
