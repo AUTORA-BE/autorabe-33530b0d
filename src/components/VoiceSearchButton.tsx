@@ -63,7 +63,7 @@ interface WindowWithSpeech extends Window {
 }
 
 interface DetectedEntity {
-  type: 'brand' | 'budget' | 'mileage';
+  type: 'brand' | 'budget' | 'mileage' | 'fuel';
   value: string;
 }
 
