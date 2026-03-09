@@ -507,7 +507,28 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
       photosPreviews[0],
       photosPreviews.length,
     );
-  }, [watchedData, photosPreviews, onFormDataChange]);
+    // Auto-save draft
+    updateDraft(
+      {
+        brand: watchedData.brand,
+        model: watchedData.model,
+        year: watchedData.year,
+        price: watchedData.price,
+        mileage: watchedData.mileage,
+        fuel_type: watchedData.fuel_type,
+        euro_norm: watchedData.euro_norm,
+        location: watchedData.location,
+        seller_type: watchedData.seller_type,
+        car_pass_verified: watchedData.car_pass_verified,
+        description: watchedData.description,
+        vin: watchedData.vin,
+        ct_valid: watchedData.ct_valid,
+        maintenance_book_complete: watchedData.maintenance_book_complete,
+        power: watchedData.power,
+      },
+      photosPreviews,
+    );
+  }, [watchedData, photosPreviews, onFormDataChange, updateDraft]);
 
   const selectedEuroNorm = form.watch('euro_norm');
   const lezWarning = getLezWarning(selectedEuroNorm);
