@@ -50,11 +50,21 @@ input[type="number"] {
     --glass-bg: 0 0% 100% / 0.7;
     --glass-border: 0 0% 100% / 0.2;
     --gradient-primary: linear-gradient(135deg, hsl(160 84% 39%), hsl(170 80% 45%));
-    --gradient-hero: linear-gradient(180deg, hsl(160 84% 97%) 0%, hsl(220 25% 96%) 40%, hsl(260 20% 96%) 100%);
-    --gradient-section: linear-gradient(180deg, hsl(220 20% 97%) 0%, hsl(180 30% 96%) 50%, hsl(220 20% 97%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(160 84% 97%) 0%, hsl(200 20% 96%) 100%);
+    --gradient-section: linear-gradient(180deg, transparent 0%, hsl(180 20% 96% / 0.5) 50%, transparent 100%);
     --gradient-warm: linear-gradient(135deg, hsl(160 84% 39%), hsl(140 70% 45%), hsl(180 60% 42%));
     --gradient-subtle: linear-gradient(135deg, hsl(160 40% 96%), hsl(200 30% 96%), hsl(240 20% 97%));
     --gradient-glow: radial-gradient(ellipse at 30% 0%, hsl(160 84% 39% / 0.08) 0%, transparent 60%);
+    --gradient-page: linear-gradient(
+      180deg,
+      hsl(160 30% 97%) 0%,
+      hsl(200 20% 96%) 15%,
+      hsl(220 20% 97%) 30%,
+      hsl(180 15% 97%) 50%,
+      hsl(220 20% 97%) 70%,
+      hsl(200 18% 96%) 85%,
+      hsl(220 20% 97%) 100%
+    );
     --shadow-card: 0 4px 24px -4px hsl(220 20% 10% / 0.08);
     --shadow-elevated: 0 20px 40px -12px hsl(220 20% 10% / 0.15);
     --shadow-glow-primary: 0 0 60px -15px hsl(160 84% 39% / 0.2);
@@ -92,11 +102,21 @@ input[type="number"] {
     /* Dark mode custom tokens */
     --glass-bg: 224 25% 12% / 0.6;
     --glass-border: 0 0% 100% / 0.08;
-    --gradient-hero: linear-gradient(180deg, hsl(224 30% 8%) 0%, hsl(200 40% 7%) 40%, hsl(160 30% 6%) 100%);
-    --gradient-section: linear-gradient(180deg, hsl(224 30% 8%) 0%, hsl(200 25% 9%) 50%, hsl(224 30% 8%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(200 30% 7%) 0%, hsl(224 30% 8%) 100%);
+    --gradient-section: linear-gradient(180deg, transparent 0%, hsl(200 20% 9% / 0.5) 50%, transparent 100%);
     --gradient-warm: linear-gradient(135deg, hsl(160 84% 45%), hsl(140 70% 50%), hsl(180 60% 48%));
     --gradient-subtle: linear-gradient(135deg, hsl(224 25% 10%), hsl(200 20% 11%), hsl(240 15% 10%));
     --gradient-glow: radial-gradient(ellipse at 30% 0%, hsl(160 84% 45% / 0.06) 0%, transparent 60%);
+    --gradient-page: linear-gradient(
+      180deg,
+      hsl(200 25% 7%) 0%,
+      hsl(224 30% 8%) 15%,
+      hsl(220 28% 9%) 30%,
+      hsl(200 20% 8%) 50%,
+      hsl(224 30% 8%) 70%,
+      hsl(220 25% 9%) 85%,
+      hsl(224 30% 8%) 100%
+    );
     --shadow-card: 0 4px 24px -4px hsl(0 0% 0% / 0.4);
     --shadow-elevated: 0 20px 40px -12px hsl(0 0% 0% / 0.5);
     --shadow-glow-primary: 0 0 60px -15px hsl(160 84% 45% / 0.15);
@@ -230,17 +250,6 @@ input[type="number"] {
   .hero-gradient {
     background: var(--gradient-hero);
     position: relative;
-  }
-
-  .hero-gradient::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 120px;
-    background: linear-gradient(to bottom, transparent, hsl(var(--background)));
-    pointer-events: none;
   }
 
   .card-gradient-border {
