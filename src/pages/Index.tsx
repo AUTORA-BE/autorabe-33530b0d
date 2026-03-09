@@ -217,6 +217,8 @@ const Index = () => {
                 totalCount={totalCount}
                 error={error}
                 onRetry={refresh}
+                buyerProfile={buyerProfile}
+                onOpenBuyerProfile={() => profileModalRef.current?.click()}
               />
             </Suspense>
           </div>
