@@ -40,37 +40,28 @@ function AnimatedNumber({ target, suffix = "", duration = 2000 }: { target: numb
 }
 
 const TrustBar = memo(() => {
-  const { language } = useLanguage();
-  const isNl = language === "nl";
+  const { t } = useLanguage();
 
   const badges = [
     {
       icon: ShieldCheck,
-      valueFr: <><AnimatedNumber target={12458} /> annonces</>,
-      valueNl: <><AnimatedNumber target={12458} /> advertenties</>,
-      labelFr: "vérifiées",
-      labelNl: "geverifieerd",
+      value: <><AnimatedNumber target={12458} /> {t("trust.listings")}</>,
+      label: t("trust.listingsLabel"),
     },
     {
       icon: FileCheck,
-      valueFr: "Car-Pass",
-      valueNl: "Car-Pass",
-      labelFr: "protégé",
-      labelNl: "beschermd",
+      value: t("trust.carpass"),
+      label: t("trust.carpassLabel"),
     },
     {
       icon: Leaf,
-      valueFr: "LEZ Engine",
-      valueNl: "LEZ Engine",
-      labelFr: "intégré",
-      labelNl: "geïntegreerd",
+      value: t("trust.lezEngine"),
+      label: t("trust.lezLabel"),
     },
     {
       icon: Headphones,
-      valueFr: "Support",
-      valueNl: "Ondersteuning",
-      labelFr: "100 % belge",
-      labelNl: "100% Belgisch",
+      value: t("trust.support"),
+      label: t("trust.supportLabel"),
     },
   ];
 
