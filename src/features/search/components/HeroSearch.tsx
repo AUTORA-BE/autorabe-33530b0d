@@ -228,7 +228,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
                   onChange={(e) => setSelectedBrand(e.target.value)}
                   onKeyDown={handleKeyDown}
                   className="search-input w-full appearance-none cursor-pointer pr-8 sm:pr-10 text-sm sm:text-base py-3 sm:py-4 bg-card"
-                  aria-label={isNl ? "Selecteer een merk" : "Sélectionner une marque"}
+                  aria-label={t("filters.brand")}
                 >
                   <option value="">{t("filters.brand")}</option>
                   {brands.map((brand) => (
