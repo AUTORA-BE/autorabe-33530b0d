@@ -71,6 +71,7 @@ const TrustBar = memo(() => {
       valueNl: "Ondersteuning",
       labelFr: "100 % belge",
       labelNl: "100% Belgisch",
+    },
   ];
 
   return (
