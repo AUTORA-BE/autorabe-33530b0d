@@ -626,6 +626,17 @@ export default function SellerDashboard() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Boost Dialog */}
+      {listingToBoost && (
+        <BoostDialog
+          open={boostDialogOpen}
+          onOpenChange={setBoostDialogOpen}
+          listingId={listingToBoost.id}
+          listingName={`${listingToBoost.brand} ${listingToBoost.model} ${listingToBoost.year}`}
+          onBoostApplied={() => refetch()}
+        />
+      )}
     </div>
   );
 }
