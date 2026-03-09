@@ -113,6 +113,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
     
     let newBrand = selectedBrand;
     let newBudget = selectedBudget;
+    let newMileage: number | undefined;
     
     const foundBrand = brands.find(b => lowerTranscript.includes(b.toLowerCase()));
     if (foundBrand) {
@@ -137,16 +138,23 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
        }
     }
 
+    const kmMatch = lowerTranscript.match(/(\d+[\s.]?\d*)\s*(km|kilomètre|kilometer|kilo)/i);
+    if (kmMatch) {
+      newMileage = parseInt(kmMatch[1].replace(/\D/g, ''));
+      if (newMileage < 1000 && newMileage > 0) newMileage *= 1000;
+    }
+
     let potentialModel = transcript
       .replace(new RegExp(foundBrand || '', 'ig'), '')
       .replace(new RegExp(numberMatch ? numberMatch[0] : '', 'ig'), '')
-      .replace(/(moins de|budget|euros|€|prix|maximum|max)/ig, '')
+      .replace(new RegExp(kmMatch ? kmMatch[0] : '', 'ig'), '')
+      .replace(/(moins de|budget|euros|€|prix|maximum|max|kilomètres|kilometers)/ig, '')
       .trim();
       
     setModel(potentialModel);
     
     setTimeout(() => {
-      onSearch(newBrand, potentialModel, newBudget || 1000000);
+      onSearch(newBrand, potentialModel, newBudget || 1000000, newMileage);
     }, 500);
   }, [brands, selectedBrand, selectedBudget, onSearch]);
 
