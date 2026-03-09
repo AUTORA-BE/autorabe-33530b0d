@@ -262,7 +262,9 @@ export function VoiceSearchButton({ onResult }: VoiceSearchButtonProps) {
                                 ? 'bg-primary/10 text-primary'
                                 : entity.type === 'transmission'
                                   ? 'bg-muted text-muted-foreground'
-                                  : 'bg-secondary text-secondary-foreground'
+                                  : entity.type === 'euroNorm'
+                                    ? 'bg-primary/20 text-primary'
+                                    : 'bg-secondary text-secondary-foreground'
                         }`}
                       >
                         {entity.type === 'brand' ? (
