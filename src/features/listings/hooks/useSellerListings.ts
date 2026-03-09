@@ -67,6 +67,8 @@ async function fetchSellerListings(userId: string): Promise<{
     euroNorm: l.euro_norm,
     carPassVerified: l.car_pass_verified ?? false,
     fuelType: l.fuel_type,
+    boostLevel: (l as any).boost_level || "none",
+    boostExpiresAt: (l as any).boost_expires_at || null,
   }));
 
   const totals: DashboardTotals = {
