@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
-import { Mic, Car, Banknote, Check, Gauge, Fuel } from "lucide-react";
+import { Mic, Car, Banknote, Check, Gauge, Fuel, Settings2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
@@ -63,7 +63,7 @@ interface WindowWithSpeech extends Window {
 }
 
 interface DetectedEntity {
-  type: 'brand' | 'budget' | 'mileage' | 'fuel';
+  type: 'brand' | 'budget' | 'mileage' | 'fuel' | 'transmission';
   value: string;
 }
 
@@ -108,6 +108,18 @@ function useDetectedEntities(transcript: string): DetectedEntity[] {
     for (const fuel of fuelMap) {
       if (fuel.keywords.some(k => lower.includes(k))) {
         entities.push({ type: 'fuel', value: fuel.label });
+        break;
+      }
+    }
+
+    // Transmission detection
+    const transMap: { keywords: string[]; label: string }[] = [
+      { keywords: ['automatique', 'automatic', 'automatisch', 'auto'], label: 'Automatique' },
+      { keywords: ['manuelle', 'manuel', 'manual', 'manueel'], label: 'Manuelle' },
+    ];
+    for (const trans of transMap) {
+      if (trans.keywords.some(k => lower.includes(k))) {
+        entities.push({ type: 'transmission', value: trans.label });
         break;
       }
     }
@@ -296,7 +308,9 @@ export function VoiceSearchButton({ onResult }: VoiceSearchButtonProps) {
                               ? 'bg-accent text-accent-foreground'
                               : entity.type === 'fuel'
                                 ? 'bg-primary/10 text-primary'
-                                : 'bg-secondary text-secondary-foreground'
+                                : entity.type === 'transmission'
+                                  ? 'bg-muted text-muted-foreground'
+                                  : 'bg-secondary text-secondary-foreground'
                         }`}
                       >
                         {entity.type === 'brand' ? (
@@ -305,6 +319,8 @@ export function VoiceSearchButton({ onResult }: VoiceSearchButtonProps) {
                           <Banknote className="w-3 h-3" />
                         ) : entity.type === 'fuel' ? (
                           <Fuel className="w-3 h-3" />
+                        ) : entity.type === 'transmission' ? (
+                          <Settings2 className="w-3 h-3" />
                         ) : (
                           <Gauge className="w-3 h-3" />
                         )}

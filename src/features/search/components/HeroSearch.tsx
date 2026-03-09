@@ -45,7 +45,7 @@ function AnimatedCounter({ target, suffix = "", duration = 2 }: { target: number
 }
 
 export interface HeroSearchProps {
-  onSearch: (brand: string, model: string, maxPrice: number, maxMileage?: number, fuelType?: string) => void;
+  onSearch: (brand: string, model: string, maxPrice: number, maxMileage?: number, fuelType?: string, transmission?: string) => void;
 }
 
 /** Parallax hook — moves element based on scroll */
@@ -115,6 +115,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
     let newBudget = selectedBudget;
     let newMileage: number | undefined;
     let detectedFuel: string | undefined;
+    let detectedTransmission: string | undefined;
     
     const foundBrand = brands.find(b => lowerTranscript.includes(b.toLowerCase()));
     if (foundBrand) {
@@ -159,17 +160,29 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
       }
     }
 
+    // Transmission detection
+    const transMap: { keywords: string[]; value: string }[] = [
+      { keywords: ['automatique', 'automatic', 'automatisch'], value: 'automatique' },
+      { keywords: ['manuelle', 'manuel', 'manual', 'manueel'], value: 'manuelle' },
+    ];
+    for (const trans of transMap) {
+      if (trans.keywords.some(k => lowerTranscript.includes(k))) {
+        detectedTransmission = trans.value;
+        break;
+      }
+    }
+
     let potentialModel = transcript
       .replace(new RegExp(foundBrand || '', 'ig'), '')
       .replace(new RegExp(numberMatch ? numberMatch[0] : '', 'ig'), '')
       .replace(new RegExp(kmMatch ? kmMatch[0] : '', 'ig'), '')
-      .replace(/(moins de|budget|euros|€|prix|maximum|max|kilomètres|kilometers|essence|diesel|électrique|electrique|hybride)/ig, '')
+      .replace(/(moins de|budget|euros|€|prix|maximum|max|kilomètres|kilometers|essence|diesel|électrique|electrique|hybride|automatique|manuelle|manuel|boîte)/ig, '')
       .trim();
       
     setModel(potentialModel);
     
     setTimeout(() => {
-      onSearch(newBrand, potentialModel, newBudget || 1000000, newMileage, detectedFuel);
+      onSearch(newBrand, potentialModel, newBudget || 1000000, newMileage, detectedFuel, detectedTransmission);
     }, 500);
   }, [brands, selectedBrand, selectedBudget, onSearch]);
 
