@@ -4,7 +4,7 @@
  */
 
 import { memo, useRef, useState, useEffect } from "react";
-import { Shield, Leaf, FileCheck, HeadphonesIcon, Award } from "lucide-react";
+import { Shield, Leaf, FileCheck, Award } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
 

@@ -84,9 +84,8 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
   const [brands, setBrands] = useState<string[]>([]);
   const [models, setModels] = useState<string[]>([]);
   const [loadingModels, setLoadingModels] = useState(false);
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const parallaxOffset = useParallax(0.25);
-  const isNl = language === "nl";
 
   useEffect(() => {
     setBrands(getAllBrands());
