@@ -5,6 +5,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { messageKeys } from "@/features/messaging/api/messageKeys";
 
 export interface AlertFilters {
   brand?: string;
