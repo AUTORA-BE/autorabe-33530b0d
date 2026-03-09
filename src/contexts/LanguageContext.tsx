@@ -64,6 +64,7 @@ const translations: Record<Language, Record<string, string>> = {
     "filters.electric": "Électrique",
     "filters.manual": "Manuelle",
     "filters.automatic": "Automatique",
+    "filters.color": "Couleur",
     
     // Car Card & Detail
     "car.addCompare": "Ajouter au comparateur",
@@ -579,6 +580,7 @@ const translations: Record<Language, Record<string, string>> = {
     "filters.electric": "Elektrisch",
     "filters.manual": "Manueel",
     "filters.automatic": "Automatisch",
+    "filters.color": "Kleur",
     
     // Car Card & Detail
     "car.addCompare": "Toevoegen aan vergelijker",
@@ -1094,6 +1096,7 @@ const translations: Record<Language, Record<string, string>> = {
     "filters.electric": "Elektrisch",
     "filters.manual": "Schaltung",
     "filters.automatic": "Automatik",
+    "filters.color": "Farbe",
     
     // Car Card & Detail
     "car.addCompare": "Zum Vergleich hinzufügen",
@@ -1609,6 +1612,7 @@ const translations: Record<Language, Record<string, string>> = {
     "filters.electric": "Electric",
     "filters.manual": "Manual",
     "filters.automatic": "Automatic",
+    "filters.color": "Color",
     
     // Car Card & Detail
     "car.addCompare": "Add to compare",
