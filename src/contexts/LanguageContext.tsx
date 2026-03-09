@@ -1163,6 +1163,9 @@ const translations: Record<Language, Record<string, string>> = {
     "filters.bodyCoupe": "Coupé",
     "filters.bodyConvertible": "Cabrio",
     "filters.bodyMPV": "Van",
+    "filters.sellerType": "Verkäufertyp",
+    "filters.sellerPrivate": "Privat",
+    "filters.sellerPro": "Pro",
     
     // Car Card & Detail
     "car.addCompare": "Zum Vergleich hinzufügen",
