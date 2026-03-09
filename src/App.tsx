@@ -11,6 +11,7 @@ import PageTransition from "@/components/PageTransition";
 import ScrollToTop from "@/components/ScrollToTop";
 const CarChatbot = lazy(() => import("@/components/CarChatbot"));
 const TcoFloatingButton = lazy(() => import("@/components/TcoFloatingButton"));
+const CompareBar = lazy(() => import("@/features/compare/components/CompareBar"));
 
 // Lazy-loaded — reduces main bundle unused JS
 const Index = lazy(() => import("./pages/Index"));
