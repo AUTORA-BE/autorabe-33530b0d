@@ -15,7 +15,7 @@ interface DraftData {
   photoUrls: string[];
 }
 
-/** Persist draft to Supabase (fire-and-forget, no state updates) */
+/** Persist draft to Supabase (standalone, no React state) */
 async function persistDraft(draft: DraftData): Promise<boolean> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return false;
@@ -52,13 +52,21 @@ export function useAutoSaveDraft(isEditMode: boolean) {
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const draftRef = useRef<DraftData | null>(null);
-  const savedRef = useRef(false); // tracks if current draftRef value was already saved
+  const savedRef = useRef(false);
+  const draftLoadedRef = useRef(false); // prevents auto-save from overwriting before draft is loaded
   const [debouncedDraft, setDebouncedDraft] = useState<DraftData | null>(null);
   const debouncedValue = useDebounce(debouncedDraft, 2000);
 
   /** Met à jour les données du brouillon (appelé à chaque changement) */
   const updateDraft = useCallback((formData: SellCarFormWatchData, photoUrls: string[]) => {
     if (isEditMode) return;
+    // Don't save until the draft has been loaded (prevents overwriting with defaults)
+    if (!draftLoadedRef.current) return;
+
+    // Only save if there's meaningful data
+    const hasMeaningfulData = formData.brand || formData.model || (formData.price && formData.price > 0);
+    if (!hasMeaningfulData) return;
+
     const draft = { formData, photoUrls };
     draftRef.current = draft;
     savedRef.current = false;
@@ -91,7 +99,6 @@ export function useAutoSaveDraft(isEditMode: boolean) {
   useEffect(() => {
     return () => {
       if (!isEditMode && draftRef.current && !savedRef.current) {
-        // Fire-and-forget; component is unmounting so no state updates
         persistDraft(draftRef.current).catch((e) =>
           console.error('[AutoSave] Flush erreur:', e)
         );
@@ -102,16 +109,25 @@ export function useAutoSaveDraft(isEditMode: boolean) {
 
   /** Charge le brouillon existant */
   const loadDraft = useCallback(async (): Promise<DraftData | null> => {
-    if (isEditMode) return null;
+    if (isEditMode) {
+      draftLoadedRef.current = true;
+      return null;
+    }
 
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return null;
+    if (!user) {
+      draftLoadedRef.current = true;
+      return null;
+    }
 
     const { data, error } = await supabase
       .from('listing_drafts')
       .select('form_data, photo_urls')
       .eq('user_id', user.id)
       .maybeSingle();
+
+    // Mark as loaded so updateDraft can start saving
+    draftLoadedRef.current = true;
 
     if (error || !data) return null;
 
