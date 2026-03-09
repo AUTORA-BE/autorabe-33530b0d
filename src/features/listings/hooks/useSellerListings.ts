@@ -7,8 +7,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { vehicleKeys } from "../api/vehicleKeys";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/features/auth/hooks/useAuth";
 import type { SellerListing, DashboardTotals, DailyStats, ChartPeriod } from "../types/sellerDashboard.types";
 import { format, subDays, eachDayOfInterval, startOfDay } from "date-fns";
 import { toast } from "sonner";
