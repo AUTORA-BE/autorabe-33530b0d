@@ -135,7 +135,7 @@ const AdminReports = () => {
         .order("created_at", { ascending: true });
 
       if (error) throw error;
-      setPendingListings(data || []);
+      setPendingListings((data || []).map(d => ({ ...d, status: d.status ?? 'pending' })));
     } catch (error) {
       console.error("Error fetching pending listings:", error);
     } finally {
@@ -284,7 +284,7 @@ const AdminReports = () => {
             ...report,
             car_brand: carData?.brand || "Unknown",
             car_model: carData?.model || "Unknown",
-            reporter_name: profileData?.display_name || null,
+            reporter_name: profileData?.display_name ?? undefined,
             reporter_email: report.user_id,
           };
         })

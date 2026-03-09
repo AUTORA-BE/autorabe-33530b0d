@@ -5,6 +5,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { messageKeys } from "@/features/messaging/api/messageKeys";
 
 export interface AlertFilters {
   brand?: string;
@@ -43,7 +44,7 @@ export interface CreateAlertData {
 /** Fetch all alerts for the current user */
 export function useUserAlerts() {
   return useQuery({
-    queryKey: ["user-alerts"],
+    queryKey: messageKeys.alerts(),
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return [];
@@ -62,7 +63,7 @@ export function useUserAlerts() {
 /** Count active alerts */
 export function useActiveAlertCount() {
   return useQuery({
-    queryKey: ["user-alerts-count"],
+    queryKey: messageKeys.alertsCount(),
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return 0;
@@ -104,8 +105,8 @@ export function useCreateAlert() {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user-alerts"] });
-      queryClient.invalidateQueries({ queryKey: ["user-alerts-count"] });
+      queryClient.invalidateQueries({ queryKey: messageKeys.alerts() });
+      queryClient.invalidateQueries({ queryKey: messageKeys.alertsCount() });
       toast.success("Alerte créée avec succès !");
     },
     onError: () => {
@@ -128,8 +129,8 @@ export function useToggleAlert() {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user-alerts"] });
-      queryClient.invalidateQueries({ queryKey: ["user-alerts-count"] });
+      queryClient.invalidateQueries({ queryKey: messageKeys.alerts() });
+      queryClient.invalidateQueries({ queryKey: messageKeys.alertsCount() });
     },
   });
 }
@@ -148,8 +149,8 @@ export function useDeleteAlert() {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user-alerts"] });
-      queryClient.invalidateQueries({ queryKey: ["user-alerts-count"] });
+      queryClient.invalidateQueries({ queryKey: messageKeys.alerts() });
+      queryClient.invalidateQueries({ queryKey: messageKeys.alertsCount() });
       toast.success("Alerte supprimée");
     },
   });

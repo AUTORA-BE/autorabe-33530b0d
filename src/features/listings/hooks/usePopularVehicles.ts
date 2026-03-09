@@ -6,10 +6,8 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { vehicleQueries } from '../api/vehicleQueries';
+import { vehicleKeys } from '../api/vehicleKeys';
 import type { Vehicle } from '../types/vehicle.types';
-
-/** Query key for popular vehicles */
-const POPULAR_VEHICLES_KEY = 'popularVehicles';
 
 interface UsePopularVehiclesOptions {
   /** Maximum number of vehicles to fetch */
@@ -55,7 +53,7 @@ export function usePopularVehicles(
     error,
     refetch,
   } = useQuery({
-    queryKey: [POPULAR_VEHICLES_KEY, limit],
+    queryKey: vehicleKeys.popular(limit),
     queryFn: async () => {
       return vehicleQueries.getPopular(limit);
     },

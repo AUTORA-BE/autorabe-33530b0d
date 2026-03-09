@@ -184,8 +184,8 @@ const CarDetail = () => {
     );
   }
 
-  const images = dbListing?.photos?.length > 0 
-    ? dbListing.photos 
+  const images: string[] = (dbListing?.photos && dbListing.photos.length > 0)
+    ? dbListing.photos
     : [
         car.image,
         car.image.replace("w=800", "w=801"),
@@ -262,7 +262,7 @@ const CarDetail = () => {
 
     const currentUserId = session.user.id;
 
-    const contact = await getSellerContact(id!);
+    const contact = await getSellerContact(id ?? '');
     if (!contact) {
       toast({
         title: "Erreur",
@@ -284,7 +284,7 @@ const CarDetail = () => {
       const { data: existingConvo } = await supabase
         .from('conversations')
         .select('id')
-        .eq('car_listing_id', dbListing.id)
+        .eq('car_listing_id', dbListing.id ?? '')
         .eq('buyer_id', currentUserId)
         .eq('seller_id', contact.user_id)
         .maybeSingle();
@@ -454,7 +454,7 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
               <AnimatePresence>
                 {fullscreenOpen && (
                   <FullscreenGallery
-                    images={images}
+                    images={images as string[]}
                     initialIndex={currentImageIndex}
                     alt={`${car.brand} ${car.model}`}
                     onClose={() => setFullscreenOpen(false)}

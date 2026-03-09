@@ -11,6 +11,7 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { vehicleQueries, PAGE_SIZE } from '../api/vehicleQueries';
+import { vehicleKeys } from '../api/vehicleKeys';
 import type {
   Vehicle,
   VehicleFilters,
@@ -20,7 +21,7 @@ import { defaultVehicleFilters } from '../types/vehicle.types';
 import { useDebounce } from '@/shared/hooks/useDebounce';
 import { useFiltersUrlSync } from './useFiltersUrlSync';
 
-/** Query key prefix for vehicle searches */
+/** @deprecated Utilisez vehicleKeys à la place */
 const VEHICLE_QUERY_KEY = 'vehicles';
 
 interface UseVehicleSearchOptions {
@@ -78,7 +79,7 @@ export function useVehicleSearch(options: UseVehicleSearchOptions = {}) {
 
   // ── React Query ───────────────────────────────────────────────────
   const queryKey = useMemo(
-    () => [VEHICLE_QUERY_KEY, debouncedFiltersKey, sortBy, page],
+    () => vehicleKeys.list(debouncedFiltersKey, sortBy, page),
     [debouncedFiltersKey, sortBy, page],
   );
 
@@ -130,7 +131,7 @@ export function useVehicleSearch(options: UseVehicleSearchOptions = {}) {
     setPage(0);
     setAllVehicles([]);
     setHasMoreStable(false);
-    queryClient.invalidateQueries({ queryKey: [VEHICLE_QUERY_KEY] });
+    queryClient.invalidateQueries({ queryKey: vehicleKeys.lists() });
     refetch();
   }, [queryClient, refetch]);
 

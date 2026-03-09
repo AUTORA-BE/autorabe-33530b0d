@@ -6,6 +6,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/features/auth/hooks/useAuth";
+import { vehicleKeys } from "../api/vehicleKeys";
 import type { SellerListing, DashboardTotals, DailyStats, ChartPeriod } from "../types/sellerDashboard.types";
 import { format, subDays, eachDayOfInterval, startOfDay } from "date-fns";
 import { toast } from "sonner";
@@ -40,10 +41,12 @@ async function fetchSellerListings(userId: string): Promise<{
   ]);
 
   // Count stats per listing
-  const countByListing = (data: { car_listing_id: string }[] | null): Record<string, number> => {
+  const countByListing = (data: { car_listing_id: string | null }[] | null): Record<string, number> => {
     const m: Record<string, number> = {};
     data?.forEach((d) => {
-      m[d.car_listing_id] = (m[d.car_listing_id] || 0) + 1;
+      if (d.car_listing_id) {
+        m[d.car_listing_id] = (m[d.car_listing_id] || 0) + 1;
+      }
     });
     return m;
   };
@@ -144,7 +147,7 @@ export function useSellerListings(period: ChartPeriod = 30, dateLocale?: Locale)
 
   // Main listings query
   const listingsQuery = useQuery({
-    queryKey: ["seller-listings", user?.id],
+    queryKey: vehicleKeys.seller(user!.id),
     queryFn: () => fetchSellerListings(user!.id),
     enabled: !!user?.id,
     staleTime: 2 * 60 * 1000, // 2 minutes
@@ -152,7 +155,7 @@ export function useSellerListings(period: ChartPeriod = 30, dateLocale?: Locale)
 
   // Daily stats query
   const statsQuery = useQuery({
-    queryKey: ["seller-daily-stats", user?.id, period],
+    queryKey: vehicleKeys.sellerStats(user!.id, period),
     queryFn: () => fetchDailyStats(user!.id, period, dateLocale!),
     enabled: !!user?.id && !!dateLocale,
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -168,7 +171,7 @@ export function useSellerListings(period: ChartPeriod = 30, dateLocale?: Locale)
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["seller-listings"] });
+      queryClient.invalidateQueries({ queryKey: vehicleKeys.all });
       toast.success(t("dashboard.deleteSuccess"));
     },
     onError: () => {
@@ -186,7 +189,7 @@ export function useSellerListings(period: ChartPeriod = 30, dateLocale?: Locale)
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["seller-listings"] });
+      queryClient.invalidateQueries({ queryKey: vehicleKeys.all });
       toast.success(t("dashboard.markedAsSold") || "Véhicule marqué comme vendu");
     },
     onError: () => {

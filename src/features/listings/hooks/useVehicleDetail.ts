@@ -5,10 +5,8 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { vehicleQueries } from '../api/vehicleQueries';
+import { vehicleKeys } from '../api/vehicleKeys';
 import type { VehicleDetail } from '../types/vehicle.types';
-
-/** Query key factory for vehicle details */
-const VEHICLE_DETAIL_KEY = 'vehicleDetail';
 
 interface UseVehicleDetailOptions {
   /** Whether to enable the query */
@@ -57,7 +55,7 @@ export function useVehicleDetail(
     error,
     refetch,
   } = useQuery({
-    queryKey: [VEHICLE_DETAIL_KEY, vehicleId],
+    queryKey: vehicleKeys.detail(vehicleId!),
     queryFn: () => vehicleQueries.getById(vehicleId!),
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
