@@ -81,6 +81,21 @@ describe("detectEntities", () => {
     expect(result).toContainEqual({ type: "transmission", value: "Manuelle" });
   });
 
+  it("detects color - blanc", () => {
+    const result = detectEntities("voiture blanche", BRANDS);
+    expect(result).toContainEqual({ type: "color", value: "Blanc" });
+  });
+
+  it("detects color - noir", () => {
+    const result = detectEntities("BMW noir", BRANDS);
+    expect(result).toContainEqual({ type: "color", value: "Noir" });
+  });
+
+  it("detects color - Dutch (rood)", () => {
+    const result = detectEntities("rode auto", BRANDS);
+    expect(result).toContainEqual({ type: "color", value: "Rouge" });
+  });
+
   it("detects euro norm", () => {
     const result = detectEntities("voiture Euro 6", BRANDS);
     expect(result).toContainEqual({ type: "euroNorm", value: "Euro 6" });
