@@ -906,11 +906,20 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
                   )} />
                 </CardContent>
               </Card>
-            </>
+            </motion.div>
           )}
 
           {/* ===== STEP 2: Photos ===== */}
           {currentStep === 2 && (
+            <motion.div
+              key="step2"
+              custom={slideDirection}
+              variants={stepVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+            >
             <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-foreground">
