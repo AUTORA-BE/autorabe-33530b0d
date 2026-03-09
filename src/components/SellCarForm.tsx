@@ -582,8 +582,28 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
     );
   }
 
+  /** Framer Motion slide variants pour les étapes */
+  const stepVariants = {
+    enter: (dir: number) => ({ x: dir > 0 ? 80 : -80, opacity: 0 }),
+    center: { x: 0, opacity: 1 },
+    exit: (dir: number) => ({ x: dir > 0 ? -80 : 80, opacity: 0 }),
+  };
+
   return (
     <>
+      {/* Confetti */}
+      {showConfetti && (
+        <Suspense fallback={null}>
+          <ConfettiCanvas onComplete={() => setShowConfetti(false)} />
+        </Suspense>
+      )}
+
+      {/* Auto-save indicator */}
+      {!isEditMode && (
+        <div className="text-xs text-muted-foreground text-right mb-2">
+          {isSaving ? '💾 Sauvegarde…' : lastSaved ? `✅ Brouillon sauvegardé à ${lastSaved.toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' })}` : ''}
+        </div>
+      )}
       {/* Listing limit banner */}
       {!isEditMode && !canPublish && !limitLoading && (
         <Card className="border-destructive bg-destructive/5 mb-6">
