@@ -92,7 +92,7 @@ describe("detectEntities", () => {
   });
 
   it("detects color - Dutch (rood)", () => {
-    const result = detectEntities("rode auto", BRANDS);
+    const result = detectEntities("rood auto", BRANDS);
     expect(result).toContainEqual({ type: "color", value: "Rouge" });
   });
 
