@@ -209,18 +209,18 @@ export function VoiceSearchButton({ onResult }: VoiceSearchButtonProps) {
   if (!isSupported) return null;
 
   return (
-    <div className="relative flex items-center justify-center">
+    <div className="relative flex items-center justify-center shrink-0">
       <Button
         variant={isListening ? "default" : "outline"}
         size="icon"
         type="button"
         onClick={toggleListening}
-        className={`rounded-md relative z-10 transition-colors h-full aspect-square ${
+        className={`rounded-md relative z-10 transition-colors w-10 h-10 sm:w-12 sm:h-12 shrink-0 ${
           isListening ? "bg-primary text-primary-foreground hover:bg-primary/90" : "bg-card text-muted-foreground hover:bg-muted"
         }`}
         aria-label={language === 'nl' ? "Gesproken zoekopdracht" : "Recherche vocale"}
       >
-        {isListening ? <Mic className="w-5 h-5 animate-pulse" /> : <Mic className="w-5 h-5" />}
+        {isListening ? <Mic className="w-4 h-4 sm:w-5 sm:h-5 animate-pulse" /> : <Mic className="w-4 h-4 sm:w-5 sm:h-5" />}
       </Button>
 
       <AnimatePresence>
@@ -231,7 +231,7 @@ export function VoiceSearchButton({ onResult }: VoiceSearchButtonProps) {
               initial={{ opacity: 0, scale: 0.8, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.8, y: 10 }}
-              className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 bg-popover text-popover-foreground text-sm py-3 px-4 rounded-xl shadow-xl min-w-[220px] max-w-[320px] text-center border z-50"
+              className="fixed sm:absolute bottom-auto sm:bottom-full top-4 sm:top-auto sm:mb-3 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 bg-popover text-popover-foreground text-sm py-3 px-4 rounded-xl shadow-xl sm:min-w-[220px] sm:max-w-[320px] text-center border z-50"
             >
               {/* Transcript text */}
               <div className="mb-1.5">
