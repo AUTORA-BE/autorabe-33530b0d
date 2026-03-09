@@ -43,6 +43,12 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
   const { t, language } = useLanguage();
   const { impactLight, notificationSuccess, selectionChanged } = useHapticFeedback();
 
+  // TCO Matchmaker score
+  const matchResult = useMemo(
+    () => buyerProfile?.isConfigured ? computeMatchScore(car, buyerProfile) : null,
+    [car, buyerProfile],
+  );
+
   const getAltText = () => {
     const yearText = car.year;
     const mileageFormatted = new Intl.NumberFormat(language === "nl" ? "nl-BE" : "fr-BE").format(car.mileage);
