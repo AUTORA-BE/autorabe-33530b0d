@@ -83,13 +83,19 @@ function useDetectedEntities(transcript: string): DetectedEntity[] {
     const foundBrand = brands.find(b => lower.includes(b.toLowerCase()));
     if (foundBrand) entities.push({ type: 'brand', value: foundBrand });
 
-    const numberMatch = lower.match(/(\d+[\s.]?\d*)\s*(euro|€|mille)/i);
-    if (numberMatch) {
-      let budget = parseInt(numberMatch[1].replace(/\D/g, ''));
-      if (lower.includes("mille")) budget *= 1000;
-      else if (budget < 1000 && budget > 0) budget *= 1000;
+    const budgetMatch = lower.match(/(\d+[\s.]?\d*)\s*(euro|€)/i);
+    if (budgetMatch) {
+      let budget = parseInt(budgetMatch[1].replace(/\D/g, ''));
+      if (budget < 1000 && budget > 0) budget *= 1000;
       const option = BUDGET_OPTIONS.find(o => o.value >= budget);
       if (option) entities.push({ type: 'budget', value: option.label });
+    }
+
+    const kmMatch = lower.match(/(\d+[\s.]?\d*)\s*(km|kilomètre|kilometer|kilo)/i);
+    if (kmMatch) {
+      let km = parseInt(kmMatch[1].replace(/\D/g, ''));
+      if (km < 1000 && km > 0) km *= 1000;
+      entities.push({ type: 'mileage', value: `${km.toLocaleString('fr-BE')} km` });
     }
 
     return entities;
