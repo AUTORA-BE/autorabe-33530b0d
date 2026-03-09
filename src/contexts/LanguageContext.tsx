@@ -76,6 +76,15 @@ const translations: Record<Language, Record<string, string>> = {
     "filters.colorOrange": "Orange",
     "filters.colorBrown": "Marron",
     "filters.colorBeige": "Beige",
+    "filters.bodyType": "Carrosserie",
+    "filters.bodySedan": "Berline",
+    "filters.bodySUV": "SUV",
+    "filters.bodyCity": "Citadine",
+    "filters.bodyCompact": "Compacte",
+    "filters.bodyWagon": "Break",
+    "filters.bodyCoupe": "Coupé",
+    "filters.bodyConvertible": "Cabriolet",
+    "filters.bodyMPV": "Monospace",
     
     // Car Card & Detail
     "car.addCompare": "Ajouter au comparateur",
@@ -603,6 +612,15 @@ const translations: Record<Language, Record<string, string>> = {
     "filters.colorOrange": "Oranje",
     "filters.colorBrown": "Bruin",
     "filters.colorBeige": "Beige",
+    "filters.bodyType": "Carrosserie",
+    "filters.bodySedan": "Berline",
+    "filters.bodySUV": "SUV",
+    "filters.bodyCity": "Stadsauto",
+    "filters.bodyCompact": "Compact",
+    "filters.bodyWagon": "Break",
+    "filters.bodyCoupe": "Coupé",
+    "filters.bodyConvertible": "Cabrio",
+    "filters.bodyMPV": "Monovolume",
     
     // Car Card & Detail
     "car.addCompare": "Toevoegen aan vergelijker",
@@ -1130,6 +1148,15 @@ const translations: Record<Language, Record<string, string>> = {
     "filters.colorOrange": "Orange",
     "filters.colorBrown": "Braun",
     "filters.colorBeige": "Beige",
+    "filters.bodyType": "Karosserie",
+    "filters.bodySedan": "Limousine",
+    "filters.bodySUV": "SUV",
+    "filters.bodyCity": "Kleinwagen",
+    "filters.bodyCompact": "Kompakt",
+    "filters.bodyWagon": "Kombi",
+    "filters.bodyCoupe": "Coupé",
+    "filters.bodyConvertible": "Cabrio",
+    "filters.bodyMPV": "Van",
     
     // Car Card & Detail
     "car.addCompare": "Zum Vergleich hinzufügen",
@@ -1657,6 +1684,15 @@ const translations: Record<Language, Record<string, string>> = {
     "filters.colorOrange": "Orange",
     "filters.colorBrown": "Brown",
     "filters.colorBeige": "Beige",
+    "filters.bodyType": "Body Type",
+    "filters.bodySedan": "Sedan",
+    "filters.bodySUV": "SUV",
+    "filters.bodyCity": "City Car",
+    "filters.bodyCompact": "Compact",
+    "filters.bodyWagon": "Wagon",
+    "filters.bodyCoupe": "Coupé",
+    "filters.bodyConvertible": "Convertible",
+    "filters.bodyMPV": "MPV",
     
     // Car Card & Detail
     "car.addCompare": "Add to compare",

@@ -294,17 +294,17 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
         <div className="h-px w-full" style={{ background: "hsl(var(--border) / 0.5)" }} />
 
         {/* Body Type */}
-        <FilterSection icon={<Car className="w-4 h-4 text-primary" aria-hidden="true" />} title="Carrosserie">
+        <FilterSection icon={<Car className="w-4 h-4 text-primary" aria-hidden="true" />} title={t("filters.bodyType")}>
           <div className="grid grid-cols-2 gap-2">
             {[
-              { id: "Berline", label: "Berline", Icon: CarFront },
-              { id: "SUV", label: "SUV", Icon: Truck },
-              { id: "Citadine", label: "Citadine", Icon: CircleDot },
-              { id: "Compacte", label: "Compacte", Icon: Car },
-              { id: "Break", label: "Break", Icon: RectangleHorizontal },
-              { id: "Coupé", label: "Coupé", Icon: Sparkles },
-              { id: "Cabriolet", label: "Cabriolet", Icon: Sun },
-              { id: "Monospace", label: "Monospace", Icon: Users },
+              { id: "Berline", label: t("filters.bodySedan"), Icon: CarFront },
+              { id: "SUV", label: t("filters.bodySUV"), Icon: Truck },
+              { id: "Citadine", label: t("filters.bodyCity"), Icon: CircleDot },
+              { id: "Compacte", label: t("filters.bodyCompact"), Icon: Car },
+              { id: "Break", label: t("filters.bodyWagon"), Icon: RectangleHorizontal },
+              { id: "Coupé", label: t("filters.bodyCoupe"), Icon: Sparkles },
+              { id: "Cabriolet", label: t("filters.bodyConvertible"), Icon: Sun },
+              { id: "Monospace", label: t("filters.bodyMPV"), Icon: Users },
             ].map(({ id, label, Icon }) => (
               <button
                 key={id}
