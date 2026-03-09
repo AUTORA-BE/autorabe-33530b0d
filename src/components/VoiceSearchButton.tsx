@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { getAllBrands } from "@/utils/carUtils";
 import { BUDGET_OPTIONS } from "@/features/search/types/search.types";
+import { useHapticFeedback } from "@/hooks/useHapticFeedback";
 
 // Type definitions for SpeechRecognition API
 interface SpeechRecognitionEvent extends Event {
