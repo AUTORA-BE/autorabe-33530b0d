@@ -115,6 +115,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
     let newBudget = selectedBudget;
     let newMileage: number | undefined;
     let detectedFuel: string | undefined;
+    let detectedTransmission: string | undefined;
     
     const foundBrand = brands.find(b => lowerTranscript.includes(b.toLowerCase()));
     if (foundBrand) {
