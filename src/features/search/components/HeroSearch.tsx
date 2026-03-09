@@ -182,11 +182,11 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
           {/* Search Box */}
           <motion.div
             {...fadeUp(0.35)}
-            className="glass-panel p-3 sm:p-4 md:p-5 max-w-3xl mx-auto ring-1 ring-white/10"
+            className="glass-panel p-3 sm:p-4 md:p-5 max-w-3xl mx-auto ring-1 ring-white/10 overflow-hidden"
             role="search"
             aria-label={isNl ? "Snel zoeken naar voertuigen" : "Recherche rapide de véhicules"}
           >
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
               {/* Brand */}
               <div className="relative">
                 <select
@@ -242,15 +242,15 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
               </div>
 
               {/* Search & Voice */}
-              <div className="col-span-2 md:col-span-1 flex gap-2">
+              <div className="sm:col-span-2 md:col-span-1 flex gap-2 min-w-0 overflow-hidden">
                 <VoiceSearchButton onResult={handleVoiceResult} />
                 <button
                   onClick={handleSearch}
-                  className="btn-primary-gradient flex-1 flex items-center justify-center gap-2 py-3 sm:py-4 rounded-md"
+                  className="btn-primary-gradient flex-1 min-w-0 flex items-center justify-center gap-2 py-3 sm:py-4 rounded-md overflow-hidden"
                   aria-label={isNl ? "Zoeken" : "Lancer la recherche"}
                 >
-                  <Search className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
-                  <span className="font-semibold text-sm sm:text-base">{t("hero.search")}</span>
+                  <Search className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" aria-hidden="true" />
+                  <span className="font-semibold text-sm sm:text-base truncate">{t("hero.search")}</span>
                 </button>
               </div>
             </div>
