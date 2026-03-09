@@ -3,7 +3,7 @@
  * @module features/listings/components
  */
 
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import { Heart, MapPin, Calendar, Gauge, Shield, CheckCircle, AlertTriangle, Ban, Leaf, Info, Building2, Sparkles, Scale } from "lucide-react";
 import { useCompareContext } from "@/features/compare";
 import CarImage from "@/components/cars/CarImage";
@@ -12,6 +12,8 @@ import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/comp
 import { useLanguage } from "@/contexts/LanguageContext";
 import { calculerStatutLEZ } from "@/lib/lezData";
 import type { Vehicle } from "../types/vehicle.types";
+import { computeMatchScore } from "@/features/tco/utils/matchScore";
+import type { BuyerProfile } from "@/features/tco/hooks/useBuyerProfile";
 
 /**
  * Props for the VehicleCard component
@@ -27,6 +29,8 @@ export interface VehicleCardProps {
   onClick?: (vehicleId: string) => void;
   /** Whether to eager-load the image (for LCP) */
   eager?: boolean;
+  /** Profil acheteur pour le TCO Matchmaker (optionnel) */
+  buyerProfile?: BuyerProfile | null;
 }
 
 /**
@@ -65,11 +69,18 @@ const VehicleCard = memo(function VehicleCard({
   onToggleFavorite,
   onClick,
   eager = false,
+  buyerProfile,
 }: VehicleCardProps) {
   const { addToCompare, removeFromCompare: removeCompare, isInCompare } = useCompareContext();
   const { language } = useLanguage();
   const lezResult = calculerStatutLEZ(vehicle.fuelType, vehicle.euroNorm);
   const lezConfig = lezBadgeConfig[lezResult.global.statut];
+
+  // TCO Matchmaker score
+  const matchResult = useMemo(
+    () => buyerProfile?.isConfigured ? computeMatchScore(vehicle, buyerProfile) : null,
+    [vehicle, buyerProfile],
+  );
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -251,6 +262,23 @@ const VehicleCard = memo(function VehicleCard({
             <span className="truncate">{formatMileage(vehicle.mileage)} {labels.km}</span>
           </div>
         </div>
+
+        {/* TCO Match Score */}
+        {matchResult && (
+          <div className={`mt-3 flex items-center justify-between rounded-lg px-3 py-2 text-xs font-medium ${
+            matchResult.color === "primary"
+              ? "bg-primary/10 text-primary"
+              : matchResult.color === "amber"
+                ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                : "bg-muted text-muted-foreground"
+          }`}>
+            <span className="flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5" />
+              {matchResult.label}
+            </span>
+            <span className="font-bold">{matchResult.score}%</span>
+          </div>
+        )}
       </div>
     </article>
   );

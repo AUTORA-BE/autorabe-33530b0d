@@ -1,5 +1,5 @@
-import { forwardRef, memo } from "react";
-import { Calendar, Gauge, MapPin, Heart, GitCompareArrows, Leaf, AlertTriangle, Ban, Info, CheckCircle, Building2 } from "lucide-react";
+import { forwardRef, memo, useMemo } from "react";
+import { Calendar, Gauge, MapPin, Heart, GitCompareArrows, Leaf, AlertTriangle, Ban, Info, CheckCircle, Building2, Sparkles } from "lucide-react";
 import { useCompareContext } from "@/features/compare";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useHapticFeedback } from "@/hooks/useHapticFeedback";
@@ -8,12 +8,16 @@ import { calculerStatutLEZ } from "@/lib/lezData";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 import type { Vehicle } from "../types/vehicle.types";
+import { computeMatchScore } from "@/features/tco/utils/matchScore";
+import type { BuyerProfile } from "@/features/tco/hooks/useBuyerProfile";
 
 export interface CarCardProps {
   car: Vehicle;
   isFavorite?: boolean;
   onToggleFavorite?: (carId: string) => void;
   onClick?: (carId: string) => void;
+  /** Profil acheteur pour le TCO Matchmaker (optionnel) */
+  buyerProfile?: BuyerProfile | null;
 }
 
 const lezBadgeConfig = {
@@ -34,10 +38,16 @@ const getLezBadgeInfo = (euroNorm: string, fuelType: string) => {
   return { config, badgeText, details: result.details };
 };
 
-const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = false, onToggleFavorite, onClick }, ref) => {
+const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = false, onToggleFavorite, onClick, buyerProfile }, ref) => {
   const { addToCompare, removeFromCompare, isInCompare, canAddMore } = useCompareContext();
   const { t, language } = useLanguage();
   const { impactLight, notificationSuccess, selectionChanged } = useHapticFeedback();
+
+  // TCO Matchmaker score
+  const matchResult = useMemo(
+    () => buyerProfile?.isConfigured ? computeMatchScore(car, buyerProfile) : null,
+    [car, buyerProfile],
+  );
 
   const getAltText = () => {
     const yearText = car.year;
@@ -223,6 +233,23 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
             {formatMileage(car.mileage)}
           </span>
         </div>
+
+        {/* TCO Match Score */}
+        {matchResult && (
+          <div className={`mt-3 flex items-center justify-between rounded-xl px-3 py-2 text-xs font-medium ${
+            matchResult.color === "primary"
+              ? "bg-primary/10 text-primary"
+              : matchResult.color === "amber"
+                ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                : "bg-muted text-muted-foreground"
+          }`}>
+            <span className="flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5" />
+              {matchResult.label}
+            </span>
+            <span className="font-bold">{matchResult.score}%</span>
+          </div>
+        )}
       </div>
     </article>
   );

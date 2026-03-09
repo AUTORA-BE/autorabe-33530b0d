@@ -1,4 +1,4 @@
-import { useState, lazy, Suspense, useCallback } from "react";
+import { useState, lazy, Suspense, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header, Footer } from "@/shared/components";
 import { HeroSearch } from "@/features/search";
@@ -19,6 +19,7 @@ import { useVehicleSearch } from "@/features/listings";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { BUDGET_OPTIONS } from "@/features/search/types/search.types";
+import { useBuyerProfile, BuyerProfileModal } from "@/features/tco";
 
 const Index = () => {
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -33,6 +34,8 @@ const Index = () => {
   } = useVehicleSearch();
 
   const { isFavorite, toggleFavorite } = useFavorites();
+  const { profile: buyerProfile, saveProfile } = useBuyerProfile();
+  const profileModalRef = useRef<HTMLButtonElement>(null);
 
   const handleSearch = useCallback((brand: string, model: string, maxPrice: number, maxMileage?: number, fuelType?: string, transmission?: string, euroNorm?: string, color?: string) => {
     const newVoiceFilters: VoiceFilter[] = [];
@@ -214,10 +217,19 @@ const Index = () => {
                 totalCount={totalCount}
                 error={error}
                 onRetry={refresh}
+                buyerProfile={buyerProfile}
+                onOpenBuyerProfile={() => profileModalRef.current?.click()}
               />
             </Suspense>
           </div>
         </section>
+
+        {/* Hidden BuyerProfileModal trigger */}
+        <BuyerProfileModal
+          profile={buyerProfile}
+          onSave={saveProfile}
+          trigger={<button ref={profileModalRef} className="hidden" />}
+        />
       </main>
       <Footer />
     </div>

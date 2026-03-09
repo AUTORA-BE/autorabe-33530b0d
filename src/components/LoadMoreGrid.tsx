@@ -1,10 +1,11 @@
 import { useEffect, useRef, useCallback, useMemo } from "react";
 import { CarCard, type Car } from "@/features/listings";
-import { SlidersHorizontal, ChevronDown, AlertCircle, RefreshCw, Share2, Check } from "lucide-react";
+import { SlidersHorizontal, ChevronDown, AlertCircle, RefreshCw, Share2, Check, Sparkles } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+import type { BuyerProfile } from "@/features/tco/hooks/useBuyerProfile";
 
 interface LoadMoreGridProps {
   cars: Car[];
@@ -22,6 +23,10 @@ interface LoadMoreGridProps {
   totalCount: number;
   error?: string | null;
   onRetry?: () => void;
+  /** Profil acheteur pour le TCO Matchmaker */
+  buyerProfile?: BuyerProfile | null;
+  /** Callback pour ouvrir le modal de profil */
+  onOpenBuyerProfile?: () => void;
 }
 
 // Skeleton component for car cards with shimmer effect
@@ -70,6 +75,8 @@ const LoadMoreGrid = ({
   totalCount,
   error,
   onRetry,
+  buyerProfile,
+  onOpenBuyerProfile,
 }: LoadMoreGridProps) => {
   const { language } = useLanguage();
   const observerRef = useRef<IntersectionObserver | null>(null);
@@ -244,6 +251,24 @@ const LoadMoreGrid = ({
             </button>
           )}
 
+          {/* TCO Matchmaker button */}
+          {onOpenBuyerProfile && (
+            <button
+              onClick={onOpenBuyerProfile}
+              className={`flex items-center gap-1.5 px-3 py-2.5 rounded-xl font-medium text-sm touch-manipulation transition-colors ${
+                buyerProfile?.isConfigured
+                  ? "bg-primary/10 text-primary hover:bg-primary/20"
+                  : "bg-secondary text-foreground hover:bg-secondary/80"
+              }`}
+              title="Activer le matching personnalisé"
+            >
+              <Sparkles className="w-4 h-4" />
+              <span className="hidden sm:inline">
+                {buyerProfile?.isConfigured ? "Mon profil" : "Matching"}
+              </span>
+            </button>
+          )}
+
           {/* Sort dropdown */}
           <div className="relative flex-1 sm:flex-none">
             <select
@@ -273,6 +298,7 @@ const LoadMoreGrid = ({
                   isFavorite={isFavorite(car.id)}
                   onToggleFavorite={onToggleFavorite}
                   onClick={onCarClick}
+                  buyerProfile={buyerProfile}
                 />
               </div>
             ))}
