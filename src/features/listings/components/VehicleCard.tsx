@@ -76,6 +76,12 @@ const VehicleCard = memo(function VehicleCard({
   const lezResult = calculerStatutLEZ(vehicle.fuelType, vehicle.euroNorm);
   const lezConfig = lezBadgeConfig[lezResult.global.statut];
 
+  // TCO Matchmaker score
+  const matchResult = useMemo(
+    () => buyerProfile?.isConfigured ? computeMatchScore(vehicle, buyerProfile) : null,
+    [vehicle, buyerProfile],
+  );
+
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     onToggleFavorite?.(vehicle.id);
