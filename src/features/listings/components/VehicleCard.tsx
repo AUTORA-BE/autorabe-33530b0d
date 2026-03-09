@@ -12,6 +12,8 @@ import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/comp
 import { useLanguage } from "@/contexts/LanguageContext";
 import { calculerStatutLEZ } from "@/lib/lezData";
 import type { Vehicle } from "../types/vehicle.types";
+import { computeMatchScore } from "@/features/tco/utils/matchScore";
+import type { BuyerProfile } from "@/features/tco/hooks/useBuyerProfile";
 
 /**
  * Props for the VehicleCard component
