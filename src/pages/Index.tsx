@@ -8,13 +8,16 @@ import { VoiceSearchSummary, type VoiceFilter } from "@/components/VoiceSearchSu
 import { AnimatePresence } from "framer-motion";
 
 const SellCarBanner = lazy(() => import("@/components/SellCarBanner"));
+const TrustBar = lazy(() => import("@/components/TrustBar"));
 const BrandCarousel = lazy(() => import("@/features/search/components/BrandCarousel"));
 const FilterPanel = lazy(() => import("@/features/search/components/FilterPanel"));
 const PopularVehicles = lazy(() => import("@/features/listings/components/PopularVehicles"));
 const LoadMoreGrid = lazy(() => import("@/components/LoadMoreGrid"));
-const PricingCTA = lazy(() => import("@/components/PricingCTA"));
 const WhyAutoRa = lazy(() => import("@/components/WhyAutoRa"));
-const StatsStrip = lazy(() => import("@/components/StatsStrip"));
+const TestimonialsSection = lazy(() => import("@/components/TestimonialsSection"));
+const SellCarCTA = lazy(() => import("@/components/SellCarCTA"));
+const PricingCTA = lazy(() => import("@/components/PricingCTA"));
+
 import { useVehicleSearch } from "@/features/listings";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -55,7 +58,7 @@ const Index = () => {
     }
     if (maxMileage) {
       updateFilter("kmMax", maxMileage);
-      newVoiceFilters.push({ type: 'mileage', label: language === 'nl' ? 'Km max' : 'Km max', value: `${maxMileage.toLocaleString('fr-BE')} km` });
+      newVoiceFilters.push({ type: 'mileage', label: 'Km max', value: `${maxMileage.toLocaleString('fr-BE')} km` });
     }
     if (fuelType) {
       updateFilter("fuelTypes", [fuelType]);
@@ -64,32 +67,27 @@ const Index = () => {
     }
     if (transmission) {
       updateFilter("transmission", transmission);
-      newVoiceFilters.push({ type: 'transmission', label: language === 'nl' ? 'Versnelling' : 'Transmission', value: transmission === 'automatique' ? 'Automatique' : 'Manuelle' });
+      newVoiceFilters.push({ type: 'transmission', label: 'Transmission', value: transmission === 'automatique' ? 'Automatique' : 'Manuelle' });
     }
     if (euroNorm) {
       updateFilter("euroNorm", euroNorm);
-      newVoiceFilters.push({ type: 'euroNorm', label: language === 'nl' ? 'Euro norm' : 'Norme Euro', value: `Euro ${euroNorm}` });
+      newVoiceFilters.push({ type: 'euroNorm', label: 'Norme Euro', value: `Euro ${euroNorm}` });
     }
     if (color) {
       updateFilter("color", color);
-      const colorLabels: Record<string, string> = { blanc: 'Blanc', noir: 'Noir', gris: 'Gris', rouge: 'Rouge', bleu: 'Bleu', vert: 'Vert', jaune: 'Jaune', orange: 'Orange', marron: 'Marron', beige: 'Beige', argent: 'Argent' };
-      newVoiceFilters.push({ type: 'color', label: language === 'nl' ? 'Kleur' : 'Couleur', value: colorLabels[color] || color });
+      const colorLabels: Record<string, string> = { blanc: 'Blanc', noir: 'Noir', gris: 'Gris', rouge: 'Rouge', bleu: 'Bleu', vert: 'Vert' };
+      newVoiceFilters.push({ type: 'color', label: 'Couleur', value: colorLabels[color] || color });
     }
     
     setVoiceFilters(newVoiceFilters);
     
     setTimeout(() => {
-      const resultsSection = document.getElementById("results-section");
-      if (resultsSection) {
-        resultsSection.scrollIntoView({ behavior: "smooth" });
-      }
+      document.getElementById("results-section")?.scrollIntoView({ behavior: "smooth" });
     }, 100);
   }, [updateFilter, language]);
 
   const handleRemoveVoiceFilter = useCallback((type: VoiceFilter['type']) => {
     setVoiceFilters(prev => prev.filter(f => f.type !== type));
-    
-    // Also clear the actual filter
     switch (type) {
       case 'brand': updateFilter("brand", ""); break;
       case 'model': updateFilter("searchQuery", ""); break;
@@ -107,33 +105,29 @@ const Index = () => {
     resetFilters();
   }, [resetFilters]);
 
-  const handleCarClick = (carId: string) => {
-    navigate(`/car/${carId}`);
-  };
+  const handleCarClick = (carId: string) => navigate(`/car/${carId}`);
 
   return (
     <div className="min-h-screen bg-background">
       <SEOHead 
-        title={language === "nl" ? "Vind uw volgende auto" : "Trouvez votre prochaine voiture"}
+        title={language === "nl" ? "AutoRa — De Belgische automarktplaats" : "AutoRa — La marketplace automobile belge"}
         description={language === "nl" 
           ? "AutoRa - De betrouwbare Belgische automarkt. Vind duizenden geverifieerde voertuigen met Car-Pass en gegarandeerde LEZ-compatibiliteit."
-          : "AutoRa - La marketplace automobile belge de confiance. Trouvez des milliers de véhicules vérifiés avec Car-Pass et compatibilité LEZ garantie."
-        }
+          : "AutoRa - La marketplace automobile belge de confiance. Véhicules vérifiés Car-Pass, conformité LEZ garantie et calcul TCO régional."}
         url="https://autora.be"
       />
       <Header />
-      <main className="pt-16 sm:pt-20 space-y-2 sm:space-y-0">
-        {/* Sell banner */}
+
+      <main className="pt-16 sm:pt-20">
+        {/* 1. Sell banner (dismissable) */}
         <Suspense fallback={<div className="h-[60px] sm:h-[72px]" />}>
-          <ScrollReveal>
-            <SellCarBanner />
-          </ScrollReveal>
+          <SellCarBanner />
         </Suspense>
 
-        {/* Hero */}
+        {/* 2. Hero — immersive search + trust */}
         <HeroSearch onSearch={handleSearch} />
 
-        {/* Voice search filter summary */}
+        {/* Voice search summary */}
         <div className="container mx-auto px-4 sm:px-6">
           <AnimatePresence>
             {voiceFilters.length > 0 && (
@@ -146,12 +140,28 @@ const Index = () => {
           </AnimatePresence>
         </div>
 
-        {/* Stats strip — social proof between hero and content */}
-        <Suspense fallback={<div className="h-[72px] sm:h-[88px]" />}>
-          <StatsStrip />
+        {/* 3. Trust Bar — social proof badges */}
+        <Suspense fallback={<div className="h-[56px] sm:h-[64px]" />}>
+          <TrustBar />
         </Suspense>
 
-        {/* Brand carousel */}
+        {/* 4. Why AutoRa — trust pillars */}
+        <Suspense fallback={<div className="min-h-[240px] sm:min-h-[300px]" />}>
+          <WhyAutoRa />
+        </Suspense>
+
+        {/* 5. Popular vehicles */}
+        <Suspense fallback={<div className="min-h-[260px] sm:min-h-[300px]" />}>
+          <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 400px" }}>
+            <PopularVehicles
+              isFavorite={isFavorite}
+              onToggleFavorite={toggleFavorite}
+              onVehicleClick={handleCarClick}
+            />
+          </div>
+        </Suspense>
+
+        {/* 6. Brand carousel */}
         <Suspense fallback={<div className="min-h-[140px] sm:min-h-[180px]" />}>
           <ScrollReveal delay={0.05} direction="left">
             <BrandCarousel 
@@ -161,35 +171,26 @@ const Index = () => {
           </ScrollReveal>
         </Suspense>
 
-        {/* Popular vehicles */}
-        <Suspense fallback={<div className="min-h-[260px] sm:min-h-[300px]" />}>
-          <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 400px" }}>
-            <ScrollReveal delay={0.1}>
-              <PopularVehicles
-                isFavorite={isFavorite}
-                onToggleFavorite={toggleFavorite}
-                onVehicleClick={handleCarClick}
-              />
-            </ScrollReveal>
-          </div>
+        {/* 7. Testimonials */}
+        <Suspense fallback={<div className="min-h-[200px] sm:min-h-[300px]" />}>
+          <TestimonialsSection />
         </Suspense>
 
-        {/* Why AutoRa — trust section */}
-        <Suspense fallback={<div className="min-h-[240px] sm:min-h-[300px]" />}>
-          <WhyAutoRa />
+        {/* 8. Sell Car CTA */}
+        <Suspense fallback={null}>
+          <SellCarCTA />
         </Suspense>
 
-        {/* Pricing CTA */}
+        {/* 9. Pricing CTA */}
         <Suspense fallback={null}>
           <ScrollReveal delay={0.1}>
             <PricingCTA />
           </ScrollReveal>
         </Suspense>
 
-        {/* Results section with sidebar filters */}
+        {/* 10. Results section */}
         <section id="results-section" className="container mx-auto px-4 sm:px-6 pb-12 sm:pb-24">
           <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
-            {/* Filter panel — outside contentVisibility/ScrollReveal to preserve fixed positioning on mobile */}
             <FilterPanel
               isOpen={filtersOpen}
               onClose={() => setFiltersOpen(false)}
@@ -199,7 +200,6 @@ const Index = () => {
               resultsCount={totalCount}
             />
 
-            {/* Results grid */}
             <Suspense fallback={<div className="min-h-[400px] flex-1" />}>
               <LoadMoreGrid
                 cars={cars}
@@ -231,6 +231,7 @@ const Index = () => {
           trigger={<button ref={profileModalRef} className="hidden" />}
         />
       </main>
+
       <Footer />
     </div>
   );

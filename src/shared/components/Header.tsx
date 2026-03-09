@@ -90,7 +90,7 @@ const Header = () => {
             <span className={`font-display font-bold tracking-wider transition-all duration-300 group-hover:tracking-[0.2em] ${
               scrolled ? "text-lg" : "text-xl"
             }`}>
-              <span className="text-white dark:text-white text-foreground">Auto</span><span className="text-primary">RA</span>
+              <span className="text-foreground">Auto</span><span className="text-primary">RA</span>
             </span>
           </Link>
 
