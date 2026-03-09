@@ -21,7 +21,7 @@ import { defaultVehicleFilters } from '../types/vehicle.types';
 import { useDebounce } from '@/shared/hooks/useDebounce';
 import { useFiltersUrlSync } from './useFiltersUrlSync';
 
-/** Query key prefix for vehicle searches */
+/** @deprecated Utilisez vehicleKeys à la place */
 const VEHICLE_QUERY_KEY = 'vehicles';
 
 interface UseVehicleSearchOptions {
