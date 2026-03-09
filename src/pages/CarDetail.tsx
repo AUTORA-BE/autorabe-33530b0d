@@ -184,8 +184,8 @@ const CarDetail = () => {
     );
   }
 
-  const images = dbListing?.photos?.length > 0 
-    ? dbListing.photos 
+  const images: string[] = (dbListing?.photos && dbListing.photos.length > 0)
+    ? dbListing.photos
     : [
         car.image,
         car.image.replace("w=800", "w=801"),
