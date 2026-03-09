@@ -113,6 +113,6 @@ export default function MesAlertes() {
         </div>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

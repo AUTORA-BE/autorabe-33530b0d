@@ -323,6 +323,6 @@ export default function CreerAlerte() {
         </div>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

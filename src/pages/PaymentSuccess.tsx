@@ -103,6 +103,6 @@ export default function PaymentSuccess() {
         </motion.div>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

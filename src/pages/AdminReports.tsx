@@ -404,7 +404,7 @@ const AdminReports = () => {
   if (!isAdmin) return null;
 
   return (
-    <>
+    <div className="page-gradient">
       <SEOHead title={`${t("admin.title")} - AutoRa`} description="Admin dashboard" />
       <Header />
 
