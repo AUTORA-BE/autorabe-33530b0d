@@ -81,9 +81,19 @@ describe("detectEntities", () => {
     expect(result).toContainEqual({ type: "transmission", value: "Manuelle" });
   });
 
+  it("detects euro norm", () => {
+    const result = detectEntities("voiture Euro 6", BRANDS);
+    expect(result).toContainEqual({ type: "euroNorm", value: "Euro 6" });
+  });
+
+  it("detects euro norm - euro 6d", () => {
+    const result = detectEntities("euro 6d diesel", BRANDS);
+    expect(result).toContainEqual({ type: "euroNorm", value: "Euro 6D" });
+  });
+
   it("detects multiple entities from a complex sentence", () => {
     const result = detectEntities(
-      "Volkswagen diesel automatique moins de 25000 euros 80000 km",
+      "Volkswagen diesel automatique euro 6 moins de 25000 euros 80000 km",
       BRANDS
     );
     const types = result.map(e => e.type);
@@ -92,7 +102,8 @@ describe("detectEntities", () => {
     expect(types).toContain("mileage");
     expect(types).toContain("fuel");
     expect(types).toContain("transmission");
-    expect(result).toHaveLength(5);
+    expect(types).toContain("euroNorm");
+    expect(result).toHaveLength(6);
   });
 
   it("detects Dutch keywords - benzine", () => {
