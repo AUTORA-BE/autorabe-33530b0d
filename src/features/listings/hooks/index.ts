@@ -6,3 +6,4 @@
 export { useVehicleSearch } from './useVehicleSearch';
 export { usePopularVehicles } from './usePopularVehicles';
 export { useVehicleDetail } from './useVehicleDetail';
+export { useAutoSaveDraft } from './useAutoSaveDraft';

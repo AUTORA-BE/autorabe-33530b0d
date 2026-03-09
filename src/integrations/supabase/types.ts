@@ -363,6 +363,33 @@ export type Database = {
           },
         ]
       }
+      listing_drafts: {
+        Row: {
+          created_at: string
+          form_data: Json
+          id: string
+          photo_urls: string[] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          form_data?: Json
+          id?: string
+          photo_urls?: string[] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          form_data?: Json
+          id?: string
+          photo_urls?: string[] | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           content: string

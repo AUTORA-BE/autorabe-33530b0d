@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Upload, X, Car, Info, User, Camera, FileCheck, Building2, AlertTriangle, Leaf, CreditCard, ChevronLeft, ChevronRight, Check, FileText, Shield } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -16,6 +17,9 @@ import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useListingLimit } from '@/features/subscription';
+import { useAutoSaveDraft } from '@/features/listings/hooks/useAutoSaveDraft';
+
+const ConfettiCanvas = lazy(() => import('@/components/ConfettiCanvas'));
 
 const MAX_PHOTOS = 10;
 const MAX_PHOTO_SIZE_MB = 5;
@@ -107,8 +111,11 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
   const [carPassFileName, setCarPassFileName] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(!!editId);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [slideDirection, setSlideDirection] = useState<1 | -1>(1);
   const isEditMode = !!editId;
   const { canPublish, activeCount, maxAllowed, isLoading: limitLoading } = useListingLimit();
+  const { updateDraft, loadDraft, clearDraft, lastSaved, isSaving } = useAutoSaveDraft(isEditMode);
 
   const fuelTypes = [
     { value: 'Essence', label: t('sellForm.fuelGasoline') },
@@ -231,7 +238,23 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
     };
 
     fetchListing();
-  }, [editId, form, navigate, t]);
+
+  // ── Charger le brouillon au montage (mode création uniquement) ───
+  useEffect(() => {
+    if (isEditMode) return;
+    const load = async () => {
+      const draft = await loadDraft();
+      if (draft && draft.formData && Object.keys(draft.formData).length > 0) {
+        form.reset({ ...form.getValues(), ...draft.formData });
+        if (draft.photoUrls.length > 0) {
+          setExistingPhotos(draft.photoUrls);
+          setPhotosPreviews(draft.photoUrls);
+        }
+      }
+    };
+    load();
+  }, [isEditMode, loadDraft, form]);
+
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -422,6 +445,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
           return;
         }
         toast.success(t('sellForm.successEdit'));
+        toast.success(t('sellForm.successEdit'));
         navigate('/dashboard');
       } else {
         const { error } = await supabase
@@ -437,8 +461,12 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
           toast.error(t('sellForm.error'));
           return;
         }
-        toast.success(t('sellForm.success'));
-        navigate('/dashboard');
+        // Supprimer le brouillon après publication
+        await clearDraft();
+        // Confetti !
+        setShowConfetti(true);
+        toast.success('🎉 ' + t('sellForm.success'));
+        setTimeout(() => navigate('/dashboard'), 2500);
       }
       
     } catch (error) {
@@ -484,7 +512,28 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
       photosPreviews[0],
       photosPreviews.length,
     );
-  }, [watchedData, photosPreviews, onFormDataChange]);
+    // Auto-save draft
+    updateDraft(
+      {
+        brand: watchedData.brand,
+        model: watchedData.model,
+        year: watchedData.year,
+        price: watchedData.price,
+        mileage: watchedData.mileage,
+        fuel_type: watchedData.fuel_type,
+        euro_norm: watchedData.euro_norm,
+        location: watchedData.location,
+        seller_type: watchedData.seller_type,
+        car_pass_verified: watchedData.car_pass_verified,
+        description: watchedData.description,
+        vin: watchedData.vin,
+        ct_valid: watchedData.ct_valid,
+        maintenance_book_complete: watchedData.maintenance_book_complete,
+        power: watchedData.power,
+      },
+      photosPreviews,
+    );
+  }, [watchedData, photosPreviews, onFormDataChange, updateDraft]);
 
   const selectedEuroNorm = form.watch('euro_norm');
   const lezWarning = getLezWarning(selectedEuroNorm);
@@ -511,6 +560,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
   const goToNextStep = async () => {
     const valid = await validateStep(currentStep);
     if (valid && currentStep < 3) {
+      setSlideDirection(1);
       setCurrentStep(currentStep + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -518,6 +568,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
 
   const goToPrevStep = () => {
     if (currentStep > 1) {
+      setSlideDirection(-1);
       setCurrentStep(currentStep - 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -531,8 +582,28 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
     );
   }
 
+  /** Framer Motion slide variants pour les étapes */
+  const stepVariants = {
+    enter: (dir: number) => ({ x: dir > 0 ? 80 : -80, opacity: 0 }),
+    center: { x: 0, opacity: 1 },
+    exit: (dir: number) => ({ x: dir > 0 ? -80 : 80, opacity: 0 }),
+  };
+
   return (
     <>
+      {/* Confetti */}
+      {showConfetti && (
+        <Suspense fallback={null}>
+          <ConfettiCanvas onComplete={() => setShowConfetti(false)} />
+        </Suspense>
+      )}
+
+      {/* Auto-save indicator */}
+      {!isEditMode && (
+        <div className="text-xs text-muted-foreground text-right mb-2">
+          {isSaving ? '💾 Sauvegarde…' : lastSaved ? `✅ Brouillon sauvegardé à ${lastSaved.toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' })}` : ''}
+        </div>
+      )}
       {/* Listing limit banner */}
       {!isEditMode && !canPublish && !limitLoading && (
         <Card className="border-destructive bg-destructive/5 mb-6">
@@ -614,9 +685,19 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
 
+          <AnimatePresence mode="wait" custom={slideDirection}>
           {/* ===== STEP 1: Vehicle Info + Contact ===== */}
           {currentStep === 1 && (
-            <>
+            <motion.div
+              key="step1"
+              custom={slideDirection}
+              variants={stepVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              className="space-y-8"
+            >
               {/* Vehicle Info */}
               <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
                 <CardHeader>
@@ -825,11 +906,20 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
                   )} />
                 </CardContent>
               </Card>
-            </>
+            </motion.div>
           )}
 
           {/* ===== STEP 2: Photos ===== */}
           {currentStep === 2 && (
+            <motion.div
+              key="step2"
+              custom={slideDirection}
+              variants={stepVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+            >
             <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-foreground">
@@ -881,11 +971,21 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
                 <p className="text-sm text-muted-foreground mt-4">{t('sellForm.photosHint')}</p>
               </CardContent>
             </Card>
+            </motion.div>
           )}
 
           {/* ===== STEP 3: Documents (VIN, Car-Pass, Belgian specifics) ===== */}
           {currentStep === 3 && (
-            <>
+            <motion.div
+              key="step3"
+              custom={slideDirection}
+              variants={stepVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              className="space-y-8"
+            >
               {/* VIN Field with verified badge */}
               <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
                 <CardHeader>
@@ -1090,8 +1190,9 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
                   )} />
                 </CardContent>
               </Card>
-            </>
+            </motion.div>
           )}
+          </AnimatePresence>
 
           {/* Navigation Buttons */}
           <div className="flex justify-between gap-4">
