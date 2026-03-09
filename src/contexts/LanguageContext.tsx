@@ -1114,6 +1114,10 @@ const translations: Record<Language, Record<string, string>> = {
     "sellForm.colorBrown": "Bruin",
     "sellForm.colorOrange": "Oranje",
     "sellForm.colorYellow": "Geel",
+    "sellForm.draftRestored": "📝 Concept hersteld",
+    "sellForm.draftRestoredDesc": "Uw formulier is ingevuld met uw vorige gegevens.",
+    "sellForm.saving": "Opslaan…",
+    "sellForm.draftSaved": "Concept opgeslagen",
   },
   de: {
     // Navigation
