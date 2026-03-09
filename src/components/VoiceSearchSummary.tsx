@@ -32,6 +32,7 @@ const ICON_MAP: Record<VoiceFilter['type'], React.ElementType> = {
   mileage: Gauge,
   fuel: Fuel,
   transmission: Settings2,
+  euroNorm: Shield,
 };
 
 const COLOR_MAP: Record<VoiceFilter['type'], string> = {
