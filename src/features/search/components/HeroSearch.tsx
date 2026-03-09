@@ -1,10 +1,10 @@
 /**
- * HeroSearch component — immersive hero with parallax, premium copy and trust signals
+ * HeroSearch component — immersive hero with parallax, premium copy, trust signals & 90% badge
  * @module features/search/components
  */
 
 import { memo, useState, useEffect, useRef, useCallback } from "react";
-import { Search, ChevronDown, ShieldCheck, FileCheck, Leaf } from "lucide-react";
+import { Search, ChevronDown, ShieldCheck, FileCheck, Leaf, Award } from "lucide-react";
 import { motion } from "framer-motion";
 import { getAllBrands, getModelsByBrand } from "@/utils/carUtils";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -40,6 +40,38 @@ const fadeUp = (delay: number) => ({
   animate: { opacity: 1, y: 0 },
   transition: { duration: 0.6, delay, ease: [0.25, 0.1, 0.25, 1] as const },
 });
+
+/** Animated counter for the 90% badge */
+function AnimatedPercent({ target }: { target: number }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const [display, setDisplay] = useState(0);
+  const triggered = useRef(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !triggered.current) {
+          triggered.current = true;
+          const startTime = performance.now();
+          const step = (now: number) => {
+            const progress = Math.min((now - startTime) / 1600, 1);
+            const eased = 1 - Math.pow(1 - progress, 4);
+            setDisplay(Math.round(eased * target));
+            if (progress < 1) requestAnimationFrame(step);
+          };
+          requestAnimationFrame(step);
+        }
+      },
+      { rootMargin: "-20px" },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [target]);
+
+  return <span ref={ref}>{display}</span>;
+}
 
 export interface HeroSearchProps {
   onSearch: (brand: string, model: string, maxPrice: number, maxMileage?: number, fuelType?: string, transmission?: string, euroNorm?: string, color?: string) => void;
@@ -169,15 +201,32 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
             )}
           </motion.h1>
 
-          {/* Subheadline — trust-focused */}
+          {/* Subheadline — trust-focused with 90% callout */}
           <motion.p
             {...fadeUp(0.2)}
-            className="text-sm sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 sm:mb-12 px-2 leading-relaxed"
+            className="text-sm sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-3 sm:mb-4 px-2 leading-relaxed"
           >
             {isNl
               ? "Geen verrassingen. Elke advertentie is geverifieerd met Car-Pass, LEZ-compatibiliteit en regionale belastingberekening."
               : "Sans aucune mauvaise surprise. Chaque annonce est vérifiée Car-Pass, conforme LEZ et accompagnée du calcul fiscal régional."}
           </motion.p>
+
+          {/* 90% Trust Badge — hero callout */}
+          <motion.div
+            {...fadeUp(0.28)}
+            className="inline-flex items-center gap-2.5 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-gradient-to-r from-amber-500/10 via-amber-400/5 to-transparent border border-amber-500/20 mb-8 sm:mb-12"
+          >
+            <Award className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400" />
+            <span className="text-xs sm:text-sm font-bold text-foreground">
+              <span className="text-amber-400 text-sm sm:text-base font-extrabold">
+                <AnimatedPercent target={90} /> %
+              </span>
+              {" "}
+              {isNl
+                ? "voertuigen al gecertificeerd LEZ & Car-Pass"
+                : "des véhicules déjà certifiés LEZ & Car-Pass"}
+            </span>
+          </motion.div>
 
           {/* Search Box */}
           <motion.div
