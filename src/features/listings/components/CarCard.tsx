@@ -214,7 +214,7 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
       </div>
 
       {/* Content */}
-      <div className="p-3.5 sm:p-5">
+      <div className="p-3.5 sm:p-5 relative z-[1]">
         <div className="flex items-center justify-between mb-1">
           <h3 className="font-display text-lg font-bold text-foreground group-hover:text-primary transition-colors duration-300 line-clamp-1">
             {car.brand} {car.model}
