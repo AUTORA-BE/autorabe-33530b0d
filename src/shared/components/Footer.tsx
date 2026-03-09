@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import autoraLogo from "@/assets/autora-logo.png";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Shield, FileCheck, Mail, MapPin, HelpCircle, Calculator } from "lucide-react";
-import LezMapFooter from "@/components/LezMapFooter";
+import LEZBelgiumMap from "@/features/lez/components/LEZBelgiumMap";
 
 const Footer = () => {
   const { language, setLanguage } = useLanguage();
@@ -128,8 +128,8 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* LEZ Map */}
-        <LezMapFooter />
+        {/* LEZ Map — premium interactive */}
+        <LEZBelgiumMap />
 
         {/* Warnings */}
         <div className="mt-10 space-y-3">
