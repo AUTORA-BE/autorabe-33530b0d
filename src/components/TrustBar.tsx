@@ -66,8 +66,15 @@ const TrustBar = memo(() => {
   ];
 
   return (
-    <section className="border-y border-border/50 bg-card/60 backdrop-blur-sm">
-      <div className="container mx-auto px-4 sm:px-6">
+    <section className="relative overflow-hidden border-y border-border/30">
+      {/* Gradient background — color fusion */}
+      <div className="absolute inset-0 bg-gradient-to-r from-primary/[0.04] via-card/80 to-primary/[0.03]" />
+      <div className="absolute inset-0 backdrop-blur-sm" />
+      {/* Subtle glow accent */}
+      <div className="absolute left-1/4 top-0 w-48 h-full bg-primary/[0.03] blur-3xl pointer-events-none" />
+      <div className="absolute right-1/3 top-0 w-64 h-full bg-primary/[0.02] blur-3xl pointer-events-none" />
+
+      <div className="container mx-auto px-4 sm:px-6 relative">
         <div className="flex flex-col lg:flex-row items-center justify-between py-4 sm:py-5 gap-6 lg:gap-8">
           
           {/* 90% Highlight - Left side */}
@@ -76,9 +83,9 @@ const TrustBar = memo(() => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-            className="flex items-center gap-3.5 px-5 py-2.5 rounded-2xl bg-primary/[0.04] border border-primary/10 w-full lg:w-auto justify-center lg:justify-start"
+            className="group flex items-center gap-3.5 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-primary/[0.08] to-primary/[0.03] border border-primary/15 w-full lg:w-auto justify-center lg:justify-start transition-all duration-300 hover:shadow-glow hover:border-primary/25"
           >
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
               <Award className="w-5 h-5 text-primary" />
             </div>
             <div className="leading-tight">
@@ -103,9 +110,9 @@ const TrustBar = memo(() => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: i * 0.1 }}
-                className="flex items-center gap-3 flex-shrink-0 snap-start"
+                className="group flex items-center gap-3 flex-shrink-0 snap-start cursor-default"
               >
-                <div className="w-9 h-9 rounded-full bg-secondary/50 flex items-center justify-center shrink-0 text-muted-foreground group-hover:text-primary transition-colors">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-secondary/60 to-secondary/30 flex items-center justify-center shrink-0 text-muted-foreground group-hover:text-primary group-hover:from-primary/15 group-hover:to-primary/5 transition-all duration-300">
                   <badge.icon className="w-4 h-4" />
                 </div>
                 <div className="leading-tight">
