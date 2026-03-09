@@ -14,8 +14,14 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-[hsl(224,30%,6%)] text-gray-300 mt-12 sm:mt-20 border-t border-white/5">
-      <div className="container mx-auto px-4 sm:px-6 py-10 sm:py-16">
+    <footer className="relative overflow-hidden mt-12 sm:mt-20 border-t border-white/5">
+      {/* Gradient background fusion */}
+      <div className="absolute inset-0 bg-[hsl(224,30%,6%)]" />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.04] via-transparent to-primary/[0.02]" />
+      <div className="absolute top-0 left-1/3 w-96 h-96 bg-primary/[0.03] rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-primary/[0.02] rounded-full blur-[100px] pointer-events-none" />
+
+      <div className="container mx-auto px-4 sm:px-6 py-10 sm:py-16 relative">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 sm:gap-12">
           {/* 1. Logo & Slogan */}
           <div className="space-y-4 col-span-2 md:col-span-1">
