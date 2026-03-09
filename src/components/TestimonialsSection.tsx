@@ -68,9 +68,10 @@ const TestimonialsSection = memo(() => {
   const isNl = language === "nl";
 
   return (
-    <section className="py-12 sm:py-24 relative overflow-hidden">
-      {/* Background accent */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/[0.015] to-transparent pointer-events-none" />
+    <section className="py-12 sm:py-24 relative overflow-hidden section-gradient">
+      {/* Ambient glow */}
+      <div className="absolute top-1/3 right-0 w-72 h-72 bg-primary/[0.04] rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-96 h-64 bg-primary/[0.03] rounded-full blur-3xl pointer-events-none" />
 
       <div className="container mx-auto px-4 sm:px-6 relative">
         {/* Section header */}

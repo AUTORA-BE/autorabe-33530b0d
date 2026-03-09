@@ -145,21 +145,31 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
       className="relative min-h-[55vh] sm:min-h-[75vh] flex items-center justify-center pt-8 sm:pt-16 pb-8 sm:pb-16 overflow-hidden"
       style={{ contain: "layout style" }}
     >
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-secondary/40" />
+      {/* Background gradient — color fusion */}
+      <div className="absolute inset-0 hero-gradient" />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.03] via-transparent to-primary/[0.02]" />
 
-      {/* Parallax decorative orbs */}
+      {/* Parallax decorative orbs — rich color blend */}
       <div
-        className="hidden sm:block absolute top-1/4 left-[10%] w-[32rem] h-[32rem] bg-primary/[0.10] rounded-full blur-[120px]"
-        style={{ transform: `translateY(${parallaxOffset * 0.6}px)` }}
+        className="hidden sm:block absolute top-1/4 left-[10%] w-[32rem] h-[32rem] rounded-full blur-[120px]"
+        style={{ 
+          background: 'radial-gradient(circle, hsl(160 84% 39% / 0.12), hsl(180 60% 42% / 0.06), transparent)',
+          transform: `translateY(${parallaxOffset * 0.6}px)` 
+        }}
       />
       <div
-        className="hidden sm:block absolute bottom-[5%] right-[8%] w-[26rem] h-[26rem] bg-primary/[0.06] rounded-full blur-[100px]"
-        style={{ transform: `translateY(${-parallaxOffset * 0.4}px)` }}
+        className="hidden sm:block absolute bottom-[5%] right-[8%] w-[26rem] h-[26rem] rounded-full blur-[100px]"
+        style={{ 
+          background: 'radial-gradient(circle, hsl(140 70% 45% / 0.08), hsl(200 50% 50% / 0.04), transparent)',
+          transform: `translateY(${-parallaxOffset * 0.4}px)` 
+        }}
       />
       <div
-        className="hidden md:block absolute top-[10%] right-[18%] w-72 h-72 bg-primary/[0.05] rounded-full blur-[80px]"
-        style={{ transform: `translateY(${parallaxOffset * 0.8}px)` }}
+        className="hidden md:block absolute top-[10%] right-[18%] w-72 h-72 rounded-full blur-[80px]"
+        style={{ 
+          background: 'radial-gradient(circle, hsl(170 80% 45% / 0.07), hsl(160 60% 50% / 0.03), transparent)',
+          transform: `translateY(${parallaxOffset * 0.8}px)` 
+        }}
       />
 
       {/* Subtle grid pattern */}

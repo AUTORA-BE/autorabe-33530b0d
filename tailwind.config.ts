@@ -64,6 +64,7 @@ export default {
         'card': 'var(--shadow-card)',
         'elevated': 'var(--shadow-elevated)',
         'glow': '0 0 40px -10px hsl(var(--primary) / 0.3)',
+        'glow-lg': 'var(--shadow-glow-primary)',
       },
       keyframes: {
         "accordion-down": {

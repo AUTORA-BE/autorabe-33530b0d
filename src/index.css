@@ -50,9 +50,14 @@ input[type="number"] {
     --glass-bg: 0 0% 100% / 0.7;
     --glass-border: 0 0% 100% / 0.2;
     --gradient-primary: linear-gradient(135deg, hsl(160 84% 39%), hsl(170 80% 45%));
-    --gradient-hero: linear-gradient(180deg, hsl(220 20% 97%) 0%, hsl(220 25% 94%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(160 84% 97%) 0%, hsl(220 25% 96%) 40%, hsl(260 20% 96%) 100%);
+    --gradient-section: linear-gradient(180deg, hsl(220 20% 97%) 0%, hsl(180 30% 96%) 50%, hsl(220 20% 97%) 100%);
+    --gradient-warm: linear-gradient(135deg, hsl(160 84% 39%), hsl(140 70% 45%), hsl(180 60% 42%));
+    --gradient-subtle: linear-gradient(135deg, hsl(160 40% 96%), hsl(200 30% 96%), hsl(240 20% 97%));
+    --gradient-glow: radial-gradient(ellipse at 30% 0%, hsl(160 84% 39% / 0.08) 0%, transparent 60%);
     --shadow-card: 0 4px 24px -4px hsl(220 20% 10% / 0.08);
     --shadow-elevated: 0 20px 40px -12px hsl(220 20% 10% / 0.15);
+    --shadow-glow-primary: 0 0 60px -15px hsl(160 84% 39% / 0.2);
   }
 
   .dark {
@@ -87,9 +92,14 @@ input[type="number"] {
     /* Dark mode custom tokens */
     --glass-bg: 224 25% 12% / 0.6;
     --glass-border: 0 0% 100% / 0.08;
-    --gradient-hero: linear-gradient(180deg, hsl(224 30% 8%) 0%, hsl(224 35% 6%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(224 30% 8%) 0%, hsl(200 40% 7%) 40%, hsl(160 30% 6%) 100%);
+    --gradient-section: linear-gradient(180deg, hsl(224 30% 8%) 0%, hsl(200 25% 9%) 50%, hsl(224 30% 8%) 100%);
+    --gradient-warm: linear-gradient(135deg, hsl(160 84% 45%), hsl(140 70% 50%), hsl(180 60% 48%));
+    --gradient-subtle: linear-gradient(135deg, hsl(224 25% 10%), hsl(200 20% 11%), hsl(240 15% 10%));
+    --gradient-glow: radial-gradient(ellipse at 30% 0%, hsl(160 84% 45% / 0.06) 0%, transparent 60%);
     --shadow-card: 0 4px 24px -4px hsl(0 0% 0% / 0.4);
     --shadow-elevated: 0 20px 40px -12px hsl(0 0% 0% / 0.5);
+    --shadow-glow-primary: 0 0 60px -15px hsl(160 84% 45% / 0.15);
   }
 }
 
@@ -168,7 +178,7 @@ input[type="number"] {
   }
 
   .glass-card:hover {
-    box-shadow: 0 12px 32px -8px hsl(var(--foreground) / 0.12);
+    box-shadow: 0 12px 32px -8px hsl(var(--foreground) / 0.12), var(--shadow-glow-primary);
     transform: translateY(-4px);
     transition: box-shadow 0.3s ease, transform 0.3s ease;
   }
@@ -186,19 +196,73 @@ input[type="number"] {
   }
 
   .btn-primary-gradient {
-    background: var(--gradient-primary);
+    background: var(--gradient-warm);
     @apply text-primary-foreground font-semibold rounded-2xl px-6 py-3 transition-all duration-300;
     box-shadow: 0 4px 14px -3px hsl(var(--primary) / 0.4);
+    background-size: 200% 200%;
   }
 
   .btn-primary-gradient:hover {
     transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 8px 24px -4px hsl(var(--primary) / 0.5);
+    box-shadow: 0 8px 24px -4px hsl(var(--primary) / 0.5), var(--shadow-glow-primary);
+    background-position: 100% 100%;
   }
 
   .btn-primary-gradient:active {
     transform: translateY(0) scale(0.98);
     box-shadow: 0 2px 8px -2px hsl(var(--primary) / 0.4);
+  }
+
+  /* Gradient sections */
+  .section-gradient {
+    background: var(--gradient-section);
+    position: relative;
+  }
+
+  .section-gradient::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gradient-glow);
+    pointer-events: none;
+  }
+
+  .hero-gradient {
+    background: var(--gradient-hero);
+    position: relative;
+  }
+
+  .hero-gradient::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background: linear-gradient(to bottom, transparent, hsl(var(--background)));
+    pointer-events: none;
+  }
+
+  .card-gradient-border {
+    position: relative;
+    background: hsl(var(--card));
+    border: 1px solid transparent;
+    background-clip: padding-box;
+  }
+
+  .card-gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.2), hsl(var(--border)), hsl(var(--primary) / 0.1));
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .card-gradient-border:hover::before {
+    opacity: 1;
   }
 
   .lez-badge {
