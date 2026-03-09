@@ -30,10 +30,11 @@ const Index = () => {
 
   const { isFavorite, toggleFavorite } = useFavorites();
 
-  const handleSearch = (brand: string, model: string, maxPrice: number) => {
+  const handleSearch = (brand: string, model: string, maxPrice: number, maxMileage?: number) => {
     updateFilter("brand", brand);
     updateFilter("searchQuery", model);
     updateFilter("maxPrice", maxPrice);
+    if (maxMileage) updateFilter("kmMax", maxMileage);
     setTimeout(() => {
       const resultsSection = document.getElementById("results-section");
       if (resultsSection) {

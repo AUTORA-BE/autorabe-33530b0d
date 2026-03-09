@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
-import { Mic, Car, Banknote, Check } from "lucide-react";
+import { Mic, Car, Banknote, Check, Gauge } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
@@ -63,7 +63,7 @@ interface WindowWithSpeech extends Window {
 }
 
 interface DetectedEntity {
-  type: 'brand' | 'budget';
+  type: 'brand' | 'budget' | 'mileage';
   value: string;
 }
 
@@ -83,13 +83,19 @@ function useDetectedEntities(transcript: string): DetectedEntity[] {
     const foundBrand = brands.find(b => lower.includes(b.toLowerCase()));
     if (foundBrand) entities.push({ type: 'brand', value: foundBrand });
 
-    const numberMatch = lower.match(/(\d+[\s.]?\d*)\s*(euro|€|mille)/i);
-    if (numberMatch) {
-      let budget = parseInt(numberMatch[1].replace(/\D/g, ''));
-      if (lower.includes("mille")) budget *= 1000;
-      else if (budget < 1000 && budget > 0) budget *= 1000;
+    const budgetMatch = lower.match(/(\d+[\s.]?\d*)\s*(euro|€)/i);
+    if (budgetMatch) {
+      let budget = parseInt(budgetMatch[1].replace(/\D/g, ''));
+      if (budget < 1000 && budget > 0) budget *= 1000;
       const option = BUDGET_OPTIONS.find(o => o.value >= budget);
       if (option) entities.push({ type: 'budget', value: option.label });
+    }
+
+    const kmMatch = lower.match(/(\d+[\s.]?\d*)\s*(km|kilomètre|kilometer|kilo)/i);
+    if (kmMatch) {
+      let km = parseInt(kmMatch[1].replace(/\D/g, ''));
+      if (km < 1000 && km > 0) km *= 1000;
+      entities.push({ type: 'mileage', value: `${km.toLocaleString('fr-BE')} km` });
     }
 
     return entities;
@@ -272,13 +278,17 @@ export function VoiceSearchButton({ onResult }: VoiceSearchButtonProps) {
                         className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${
                           entity.type === 'brand'
                             ? 'bg-primary/15 text-primary'
-                            : 'bg-accent text-accent-foreground'
+                            : entity.type === 'budget'
+                              ? 'bg-accent text-accent-foreground'
+                              : 'bg-secondary text-secondary-foreground'
                         }`}
                       >
                         {entity.type === 'brand' ? (
                           <Car className="w-3 h-3" />
-                        ) : (
+                        ) : entity.type === 'budget' ? (
                           <Banknote className="w-3 h-3" />
+                        ) : (
+                          <Gauge className="w-3 h-3" />
                         )}
                         {entity.value}
                         <Check className="w-3 h-3 ml-0.5" />
