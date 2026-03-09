@@ -255,15 +255,25 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
     const load = async () => {
       const draft = await loadDraft();
       if (draft && draft.formData && Object.keys(draft.formData).length > 0) {
-        form.reset({ ...form.getValues(), ...draft.formData });
-        if (draft.photoUrls.length > 0) {
-          setExistingPhotos(draft.photoUrls);
-          setPhotosPreviews(draft.photoUrls);
+        // Check if draft has meaningful data (not just defaults)
+        const { brand, model, price } = draft.formData;
+        const hasMeaningfulData = brand || model || (price && price > 0);
+        if (hasMeaningfulData) {
+          form.reset({ ...form.getValues(), ...draft.formData });
+          if (draft.photoUrls.length > 0) {
+            setExistingPhotos(draft.photoUrls);
+            setPhotosPreviews(draft.photoUrls);
+          }
+          toast.info(t('sellForm.draftRestored') || '📝 Brouillon restauré', {
+            description: t('sellForm.draftRestoredDesc') || 'Votre formulaire a été pré-rempli avec vos données précédentes.',
+            duration: 4000,
+          });
         }
       }
     };
     load();
-  }, [isEditMode, loadDraft, form]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEditMode]);
 
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
