@@ -131,7 +131,7 @@ export function useVehicleSearch(options: UseVehicleSearchOptions = {}) {
     setPage(0);
     setAllVehicles([]);
     setHasMoreStable(false);
-    queryClient.invalidateQueries({ queryKey: [VEHICLE_QUERY_KEY] });
+    queryClient.invalidateQueries({ queryKey: vehicleKeys.lists() });
     refetch();
   }, [queryClient, refetch]);
 

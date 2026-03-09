@@ -55,7 +55,7 @@ export function useVehicleDetail(
     error,
     refetch,
   } = useQuery({
-    queryKey: [VEHICLE_DETAIL_KEY, vehicleId],
+    queryKey: vehicleKeys.detail(vehicleId!),
     queryFn: () => vehicleQueries.getById(vehicleId!),
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes

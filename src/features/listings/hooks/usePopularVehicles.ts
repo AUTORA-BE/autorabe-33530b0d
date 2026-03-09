@@ -53,7 +53,7 @@ export function usePopularVehicles(
     error,
     refetch,
   } = useQuery({
-    queryKey: [POPULAR_VEHICLES_KEY, limit],
+    queryKey: vehicleKeys.popular(limit),
     queryFn: async () => {
       return vehicleQueries.getPopular(limit);
     },
