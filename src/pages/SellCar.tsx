@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Header, Footer } from "@/shared/components";
 import SEOHead from "@/components/SEOHead";
 import { SellCarForm } from "@/components/SellCarForm";
+import type { SellCarFormWatchData } from "@/components/SellCarForm";
+import ListingPreview from "@/components/ListingPreview";
 import { Button } from "@/components/ui/button";
 import { Car, Shield, Clock, CheckCircle } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -14,6 +16,20 @@ export default function SellCar() {
   const editId = searchParams.get("edit");
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const { t } = useLanguage();
+
+  // Live preview state
+  const [previewData, setPreviewData] = useState<SellCarFormWatchData>({});
+  const [previewPhoto, setPreviewPhoto] = useState<string | undefined>();
+  const [previewPhotoCount, setPreviewPhotoCount] = useState(0);
+
+  const handleFormDataChange = useCallback(
+    (data: SellCarFormWatchData, photoPreview: string | undefined, photoCount: number) => {
+      setPreviewData(data);
+      setPreviewPhoto(photoPreview);
+      setPreviewPhotoCount(photoCount);
+    },
+    [],
+  );
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -92,9 +108,35 @@ export default function SellCar() {
               </div>
             </div>
           ) : (
-            /* Sell Form */
-            <div className="max-w-4xl mx-auto">
-              <SellCarForm editId={editId || undefined} />
+            /* Form + Live Preview side-by-side */
+            <div className="flex flex-col lg:flex-row gap-8 max-w-7xl mx-auto">
+              {/* Mobile preview (top) */}
+              <div className="lg:hidden">
+                <ListingPreview
+                  data={previewData}
+                  photoPreview={previewPhoto}
+                  photoCount={previewPhotoCount}
+                />
+              </div>
+
+              {/* Form */}
+              <div className="flex-1 min-w-0">
+                <SellCarForm
+                  editId={editId || undefined}
+                  onFormDataChange={handleFormDataChange}
+                />
+              </div>
+
+              {/* Desktop sticky preview (right) */}
+              <div className="hidden lg:block w-[340px] shrink-0">
+                <div className="sticky top-28">
+                  <ListingPreview
+                    data={previewData}
+                    photoPreview={previewPhoto}
+                    photoCount={previewPhotoCount}
+                  />
+                </div>
+              </div>
             </div>
           )}
         </div>
