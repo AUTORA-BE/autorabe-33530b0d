@@ -174,6 +174,12 @@ describe("parseVoiceTranscript", () => {
     expect(result.remainingText).toContain("série 3");
   });
 
+  it("parses color", () => {
+    const result = parseVoiceTranscript("BMW grise", BRANDS);
+    expect(result.color).toBe("gris");
+    expect(result.brand).toBe("BMW");
+  });
+
   it("parses euro norm", () => {
     const result = parseVoiceTranscript("voiture euro 5", BRANDS);
     expect(result.euroNorm).toBe("5");

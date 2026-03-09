@@ -95,6 +95,7 @@ const Index = () => {
       case 'fuel': updateFilter("fuelTypes", []); break;
       case 'transmission': updateFilter("transmission", ""); break;
       case 'euroNorm': updateFilter("euroNorm", ""); break;
+      case 'color': updateFilter("color", ""); break;
     }
   }, [updateFilter]);
 

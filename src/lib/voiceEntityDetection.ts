@@ -219,6 +219,7 @@ export function parseVoiceTranscript(transcript: string, brands?: string[]): Voi
     .replace(new RegExp(budgetMatch?.[0] ?? '', 'ig'), '')
     .replace(new RegExp(kmMatch?.[0] ?? '', 'ig'), '')
     .replace(new RegExp(euroMatch?.[0] ?? '', 'ig'), '')
+    .replace(new RegExp(colorMatch?.keyword ?? '', 'ig'), '')
     .replace(NOISE_WORDS, '')
     .trim();
 

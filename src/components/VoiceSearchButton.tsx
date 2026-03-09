@@ -279,6 +279,8 @@ export function VoiceSearchButton({ onResult }: VoiceSearchButtonProps) {
                           <Settings2 className="w-3 h-3" />
                         ) : entity.type === 'euroNorm' ? (
                           <Shield className="w-3 h-3" />
+                        ) : entity.type === 'color' ? (
+                          <Palette className="w-3 h-3" />
                         ) : (
                           <Gauge className="w-3 h-3" />
                         )}
