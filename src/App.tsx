@@ -120,6 +120,7 @@ const App = () => (
               <AppRoutes />
             </Suspense>
             <ScrollToTop />
+            <Suspense fallback={null}><CompareBar /></Suspense>
             <Suspense fallback={null}><TcoFloatingButton /></Suspense>
             <Suspense fallback={null}><CarChatbot /></Suspense>
           </BrowserRouter>
