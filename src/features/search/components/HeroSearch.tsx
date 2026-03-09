@@ -265,7 +265,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
                   onChange={(e) => setSelectedBudget(Number(e.target.value))}
                   onKeyDown={handleKeyDown}
                   className="search-input w-full appearance-none cursor-pointer pr-8 sm:pr-10 text-sm sm:text-base py-3 sm:py-4 bg-card"
-                  aria-label={isNl ? "Selecteer een budget" : "Sélectionner un budget"}
+                  aria-label={t("filters.budget")}
                 >
                   <option value={0}>{t("filters.budget")}</option>
                   {BUDGET_OPTIONS.map((budget) => (
