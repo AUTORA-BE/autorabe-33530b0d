@@ -149,6 +149,18 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
       <div className="absolute inset-0 hero-gradient" />
       <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.03] via-transparent to-primary/[0.02]" />
 
+      {/* Floating light particles — CSS only for performance */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+        <div className="hero-particle hero-particle-1" />
+        <div className="hero-particle hero-particle-2" />
+        <div className="hero-particle hero-particle-3" />
+        <div className="hero-particle hero-particle-4" />
+        <div className="hero-particle hero-particle-5" />
+        <div className="hidden sm:block hero-particle hero-particle-6" />
+        <div className="hidden sm:block hero-particle hero-particle-7" />
+        <div className="hidden md:block hero-particle hero-particle-8" />
+      </div>
+
       {/* Parallax decorative orbs — rich color blend */}
       <div
         className="hidden sm:block absolute top-1/4 left-[10%] w-[32rem] h-[32rem] rounded-full blur-[120px]"
