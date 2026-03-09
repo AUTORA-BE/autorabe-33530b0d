@@ -63,7 +63,7 @@ export function useUserAlerts() {
 /** Count active alerts */
 export function useActiveAlertCount() {
   return useQuery({
-    queryKey: ["user-alerts-count"],
+    queryKey: messageKeys.alertsCount(),
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return 0;
