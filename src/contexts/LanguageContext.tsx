@@ -560,6 +560,10 @@ const translations: Record<Language, Record<string, string>> = {
     "sellForm.colorBrown": "Marron",
     "sellForm.colorOrange": "Orange",
     "sellForm.colorYellow": "Jaune",
+    "sellForm.draftRestored": "📝 Brouillon restauré",
+    "sellForm.draftRestoredDesc": "Votre formulaire a été pré-rempli avec vos données précédentes.",
+    "sellForm.saving": "Sauvegarde…",
+    "sellForm.draftSaved": "Brouillon sauvegardé",
   },
   nl: {
     // Navigation
@@ -1110,6 +1114,10 @@ const translations: Record<Language, Record<string, string>> = {
     "sellForm.colorBrown": "Bruin",
     "sellForm.colorOrange": "Oranje",
     "sellForm.colorYellow": "Geel",
+    "sellForm.draftRestored": "📝 Concept hersteld",
+    "sellForm.draftRestoredDesc": "Uw formulier is ingevuld met uw vorige gegevens.",
+    "sellForm.saving": "Opslaan…",
+    "sellForm.draftSaved": "Concept opgeslagen",
   },
   de: {
     // Navigation
@@ -1660,6 +1668,10 @@ const translations: Record<Language, Record<string, string>> = {
     "sellForm.colorBrown": "Braun",
     "sellForm.colorOrange": "Orange",
     "sellForm.colorYellow": "Gelb",
+    "sellForm.draftRestored": "📝 Entwurf wiederhergestellt",
+    "sellForm.draftRestoredDesc": "Ihr Formular wurde mit Ihren vorherigen Daten vorausgefüllt.",
+    "sellForm.saving": "Speichern…",
+    "sellForm.draftSaved": "Entwurf gespeichert",
   },
   en: {
     // Navigation
@@ -2210,6 +2222,10 @@ const translations: Record<Language, Record<string, string>> = {
     "sellForm.colorBrown": "Brown",
     "sellForm.colorOrange": "Orange",
     "sellForm.colorYellow": "Yellow",
+    "sellForm.draftRestored": "📝 Draft restored",
+    "sellForm.draftRestoredDesc": "Your form has been pre-filled with your previous data.",
+    "sellForm.saving": "Saving…",
+    "sellForm.draftSaved": "Draft saved",
   },
 };
 
