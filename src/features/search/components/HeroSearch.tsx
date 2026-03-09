@@ -218,7 +218,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
             {...fadeUp(0.35)}
             className="glass-panel p-3 sm:p-4 md:p-5 max-w-3xl mx-auto ring-1 ring-white/10 overflow-hidden"
             role="search"
-            aria-label={isNl ? "Snel zoeken naar voertuigen" : "Recherche rapide de véhicules"}
+            aria-label={t("hero.search")}
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
               {/* Brand */}
