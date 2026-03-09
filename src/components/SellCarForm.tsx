@@ -238,6 +238,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
     };
 
     fetchListing();
+  }, [editId]);
 
   // ── Charger le brouillon au montage (mode création uniquement) ───
   useEffect(() => {
