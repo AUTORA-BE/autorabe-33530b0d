@@ -108,6 +108,48 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
     onSearch(selectedBrand, model, selectedBudget || 1000000);
   };
 
+  const handleVoiceResult = (transcript: string) => {
+    const lowerTranscript = transcript.toLowerCase();
+    
+    let newBrand = selectedBrand;
+    let newBudget = selectedBudget;
+    
+    const foundBrand = brands.find(b => lowerTranscript.includes(b.toLowerCase()));
+    if (foundBrand) {
+      newBrand = foundBrand;
+      setSelectedBrand(foundBrand);
+    }
+    
+    const numberMatch = lowerTranscript.match(/(\d+[\s.]?\d*)\s*(euro|€|mille)/i);
+    let budget = 0;
+    if (numberMatch) {
+       budget = parseInt(numberMatch[1].replace(/\D/g, ''));
+       if (lowerTranscript.includes("mille")) budget *= 1000;
+       else if (budget < 1000 && budget > 0) budget *= 1000;
+       
+       const option = BUDGET_OPTIONS.find(o => o.value >= budget);
+       if (option) {
+          newBudget = option.value;
+          setSelectedBudget(option.value);
+       } else {
+          newBudget = 1000000;
+          setSelectedBudget(1000000);
+       }
+    }
+
+    let potentialModel = transcript
+      .replace(new RegExp(foundBrand || '', 'ig'), '')
+      .replace(new RegExp(numberMatch ? numberMatch[0] : '', 'ig'), '')
+      .replace(/(moins de|budget|euros|€|prix|maximum|max)/ig, '')
+      .trim();
+      
+    setModel(potentialModel);
+    
+    setTimeout(() => {
+      onSearch(newBrand, potentialModel, newBudget || 1000000);
+    }, 500);
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") handleSearch();
   };
