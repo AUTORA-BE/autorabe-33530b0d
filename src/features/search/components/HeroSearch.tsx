@@ -9,6 +9,7 @@ import { motion } from "framer-motion";
 import { getAllBrands, getModelsByBrand } from "@/utils/carUtils";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { BUDGET_OPTIONS } from "../types/search.types";
+import { VoiceSearchButton } from "@/components/VoiceSearchButton";
 import type { QuickSearchParams } from "../types/search.types";
 
 /** Animated counter that increments when visible in viewport */
