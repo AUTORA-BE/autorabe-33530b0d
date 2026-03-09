@@ -157,7 +157,7 @@ export function useSellerListings(period: ChartPeriod = 30, dateLocale?: Locale)
 
   // Daily stats query
   const statsQuery = useQuery({
-    queryKey: ["seller-daily-stats", user?.id, period],
+    queryKey: vehicleKeys.sellerStats(user!.id, period),
     queryFn: () => fetchDailyStats(user!.id, period, dateLocale!),
     enabled: !!user?.id && !!dateLocale,
     staleTime: 5 * 60 * 1000, // 5 minutes
