@@ -80,13 +80,13 @@ export default function Pricing() {
   const paidTiers = Object.entries(SUBSCRIPTION_TIERS);
 
   return (
-    <>
+    <div className="page-gradient">
       <SEOHead
         title="Abonnements Vendeurs | AutoRa"
         description="Choisissez votre abonnement vendeur AutoRa. Publiez vos annonces, obtenez le badge Pro et des statistiques avancées."
       />
       <Header />
-      <main className="min-h-screen bg-background pt-28 pb-20">
+      <main className="min-h-screen pt-28 pb-20">
         <div className="container mx-auto px-4">
 
           {/* Hero */}
@@ -289,6 +289,6 @@ export default function Pricing() {
         </div>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

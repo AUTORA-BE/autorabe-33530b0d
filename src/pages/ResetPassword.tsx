@@ -99,7 +99,7 @@ const ResetPassword = () => {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-6">
+      <div className="page-gradient flex items-center justify-center p-6">
         <div className="w-full max-w-md">
           <div className="glass-panel p-8 text-center">
             <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mx-auto mb-6">
@@ -124,7 +124,7 @@ const ResetPassword = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-6">
+    <div className="page-gradient flex items-center justify-center p-6">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="flex items-center gap-3 mb-8 justify-center">

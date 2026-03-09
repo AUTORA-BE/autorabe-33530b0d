@@ -385,14 +385,14 @@ export default function Settings() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="page-gradient flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="page-gradient flex flex-col">
       <Header />
       
       <main className="flex-1 container mx-auto px-4 py-8 max-w-2xl">

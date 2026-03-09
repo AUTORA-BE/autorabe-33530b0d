@@ -50,7 +50,7 @@ const About = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="page-gradient">
       <SEOHead 
         title="À propos - AutoRa"
         description="Découvrez AutoRa, la marketplace automobile belge de confiance. Fondée en 2024, nous révolutionnons l'achat et la vente de véhicules en Belgique."

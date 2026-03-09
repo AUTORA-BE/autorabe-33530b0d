@@ -100,10 +100,10 @@ export default function CreerAlerte() {
   const fuelTypes = watch("fuel_types") || [];
 
   return (
-    <>
+    <div className="page-gradient">
       <SEOHead title="Créer une alerte | AutoRA" description="Définissez vos critères et soyez notifié des nouvelles annonces" />
       <Header />
-      <main className="min-h-screen bg-background pt-24 pb-16">
+      <main className="min-h-screen pt-24 pb-16">
         <div className="container mx-auto px-4 sm:px-6 max-w-2xl">
           {/* Back */}
           <Button
@@ -323,6 +323,6 @@ export default function CreerAlerte() {
         </div>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

@@ -33,10 +33,10 @@ export default function MesAlertes() {
   const totalNotifications = alerts?.reduce((sum, a) => sum + a.match_count, 0) || 0;
 
   return (
-    <>
+    <div className="page-gradient">
       <SEOHead title="Mes Alertes | AutoRA" description="Gérez vos alertes véhicules et soyez notifié des nouvelles annonces" />
       <Header />
-      <main className="min-h-screen bg-background pt-24 pb-16">
+      <main className="min-h-screen pt-24 pb-16">
         <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
           {/* Header — stacks on mobile */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
@@ -113,6 +113,6 @@ export default function MesAlertes() {
         </div>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }
