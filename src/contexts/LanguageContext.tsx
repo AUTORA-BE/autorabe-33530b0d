@@ -1786,7 +1786,7 @@ const translations: Record<Language, Record<string, string>> = {
     "hero.brands": "Brands",
     "hero.titleLine1": "The perfect car for your",
     "hero.titleLine2": "life in Belgium",
-    "hero.subtitleTrust": "No surprises. Every listing is Car-Pass verified, LEZ compliant, and comes with regional tax calculation.",
+    "hero.subtitleTrust": "Buy with complete peace of mind. The vast majority of our vehicles are already certified — see the number below.",
     "hero.trustBadge": "of vehicles already LEZ & Car-Pass certified",
     "hero.pill.verified": "Verified listings",
     "hero.pill.carpass": "Car-Pass protected",
