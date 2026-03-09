@@ -85,6 +85,9 @@ const translations: Record<Language, Record<string, string>> = {
     "filters.bodyCoupe": "Coupé",
     "filters.bodyConvertible": "Cabriolet",
     "filters.bodyMPV": "Monospace",
+    "filters.sellerType": "Type de vendeur",
+    "filters.sellerPrivate": "Particulier",
+    "filters.sellerPro": "Pro",
     
     // Car Card & Detail
     "car.addCompare": "Ajouter au comparateur",
@@ -621,6 +624,9 @@ const translations: Record<Language, Record<string, string>> = {
     "filters.bodyCoupe": "Coupé",
     "filters.bodyConvertible": "Cabrio",
     "filters.bodyMPV": "Monovolume",
+    "filters.sellerType": "Verkoperstype",
+    "filters.sellerPrivate": "Particulier",
+    "filters.sellerPro": "Pro",
     
     // Car Card & Detail
     "car.addCompare": "Toevoegen aan vergelijker",
@@ -1157,6 +1163,9 @@ const translations: Record<Language, Record<string, string>> = {
     "filters.bodyCoupe": "Coupé",
     "filters.bodyConvertible": "Cabrio",
     "filters.bodyMPV": "Van",
+    "filters.sellerType": "Verkäufertyp",
+    "filters.sellerPrivate": "Privat",
+    "filters.sellerPro": "Pro",
     
     // Car Card & Detail
     "car.addCompare": "Zum Vergleich hinzufügen",
@@ -1693,6 +1702,9 @@ const translations: Record<Language, Record<string, string>> = {
     "filters.bodyCoupe": "Coupé",
     "filters.bodyConvertible": "Convertible",
     "filters.bodyMPV": "MPV",
+    "filters.sellerType": "Seller type",
+    "filters.sellerPrivate": "Private",
+    "filters.sellerPro": "Pro",
     
     // Car Card & Detail
     "car.addCompare": "Add to compare",
