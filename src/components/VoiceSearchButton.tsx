@@ -5,8 +5,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { getAllBrands } from "@/utils/carUtils";
-import { BUDGET_OPTIONS } from "@/features/search/types/search.types";
 import { useHapticFeedback } from "@/hooks/useHapticFeedback";
+import { detectEntities, type DetectedEntity } from "@/lib/voiceEntityDetection";
 
 // Type definitions for SpeechRecognition API
 interface SpeechRecognitionEvent extends Event {
@@ -44,17 +44,17 @@ interface SpeechRecognition extends EventTarget {
   start(): void;
   stop(): void;
   abort(): void;
-  onaudiostart: ((this: SpeechRecognition, ev: Event) => any) | null;
-  onsoundstart: ((this: SpeechRecognition, ev: Event) => any) | null;
-  onspeechstart: ((this: SpeechRecognition, ev: Event) => any) | null;
-  onspeechend: ((this: SpeechRecognition, ev: Event) => any) | null;
-  onsoundend: ((this: SpeechRecognition, ev: Event) => any) | null;
-  onaudioend: ((this: SpeechRecognition, ev: Event) => any) | null;
-  onresult: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => any) | null;
-  onnomatch: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => any) | null;
-  onerror: ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => any) | null;
-  onstart: ((this: SpeechRecognition, ev: Event) => any) | null;
-  onend: ((this: SpeechRecognition, ev: Event) => any) | null;
+  onaudiostart: ((this: SpeechRecognition, ev: Event) => void) | null;
+  onsoundstart: ((this: SpeechRecognition, ev: Event) => void) | null;
+  onspeechstart: ((this: SpeechRecognition, ev: Event) => void) | null;
+  onspeechend: ((this: SpeechRecognition, ev: Event) => void) | null;
+  onsoundend: ((this: SpeechRecognition, ev: Event) => void) | null;
+  onaudioend: ((this: SpeechRecognition, ev: Event) => void) | null;
+  onresult: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => void) | null;
+  onnomatch: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => void) | null;
+  onerror: ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => void) | null;
+  onstart: ((this: SpeechRecognition, ev: Event) => void) | null;
+  onend: ((this: SpeechRecognition, ev: Event) => void) | null;
 }
 
 interface WindowWithSpeech extends Window {
@@ -62,72 +62,24 @@ interface WindowWithSpeech extends Window {
   webkitSpeechRecognition?: new () => SpeechRecognition;
 }
 
-interface DetectedEntity {
-  type: 'brand' | 'budget' | 'mileage' | 'fuel' | 'transmission';
-  value: string;
-}
-
 export interface VoiceSearchButtonProps {
+  /** Callback fired with raw transcript when recognition completes */
   onResult: (transcript: string) => void;
 }
 
-/** Detects brands and budgets from a transcript string */
+/**
+ * Hook that detects entities from a transcript string
+ * Uses memoization for performance during real-time updates
+ */
 function useDetectedEntities(transcript: string): DetectedEntity[] {
   const brands = useMemo(() => getAllBrands(), []);
-
-  return useMemo(() => {
-    if (!transcript) return [];
-    const lower = transcript.toLowerCase();
-    const entities: DetectedEntity[] = [];
-
-    const foundBrand = brands.find(b => lower.includes(b.toLowerCase()));
-    if (foundBrand) entities.push({ type: 'brand', value: foundBrand });
-
-    const budgetMatch = lower.match(/(\d+[\s.]?\d*)\s*(euro|€)/i);
-    if (budgetMatch) {
-      let budget = parseInt(budgetMatch[1].replace(/\D/g, ''));
-      if (budget < 1000 && budget > 0) budget *= 1000;
-      const option = BUDGET_OPTIONS.find(o => o.value >= budget);
-      if (option) entities.push({ type: 'budget', value: option.label });
-    }
-
-    const kmMatch = lower.match(/(\d+[\s.]?\d*)\s*(km|kilomètre|kilometer|kilo)/i);
-    if (kmMatch) {
-      let km = parseInt(kmMatch[1].replace(/\D/g, ''));
-      if (km < 1000 && km > 0) km *= 1000;
-      entities.push({ type: 'mileage', value: `${km.toLocaleString('fr-BE')} km` });
-    }
-
-    // Fuel type detection
-    const fuelMap: { keywords: string[]; label: string }[] = [
-      { keywords: ['électrique', 'electrique', 'electric', 'elektrisch'], label: 'Électrique' },
-      { keywords: ['hybride', 'hybrid'], label: 'Hybride' },
-      { keywords: ['diesel'], label: 'Diesel' },
-      { keywords: ['essence', 'benzine', 'gasoline', 'petrol'], label: 'Essence' },
-    ];
-    for (const fuel of fuelMap) {
-      if (fuel.keywords.some(k => lower.includes(k))) {
-        entities.push({ type: 'fuel', value: fuel.label });
-        break;
-      }
-    }
-
-    // Transmission detection
-    const transMap: { keywords: string[]; label: string }[] = [
-      { keywords: ['automatique', 'automatic', 'automatisch', 'auto'], label: 'Automatique' },
-      { keywords: ['manuelle', 'manuel', 'manual', 'manueel'], label: 'Manuelle' },
-    ];
-    for (const trans of transMap) {
-      if (trans.keywords.some(k => lower.includes(k))) {
-        entities.push({ type: 'transmission', value: trans.label });
-        break;
-      }
-    }
-
-    return entities;
-  }, [transcript, brands]);
+  return useMemo(() => detectEntities(transcript, brands), [transcript, brands]);
 }
 
+/**
+ * Voice search button with real-time entity detection feedback
+ * Displays detected brands, budgets, mileage, fuel types, and transmission
+ */
 export function VoiceSearchButton({ onResult }: VoiceSearchButtonProps) {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState("");
@@ -169,14 +121,14 @@ export function VoiceSearchButton({ onResult }: VoiceSearchButtonProps) {
 
   useEffect(() => {
     const win = window as unknown as WindowWithSpeech;
-    const SpeechRecognition = win.SpeechRecognition || win.webkitSpeechRecognition;
+    const SpeechRecognitionCtor = win.SpeechRecognition || win.webkitSpeechRecognition;
     
-    if (!SpeechRecognition) {
+    if (!SpeechRecognitionCtor) {
       setIsSupported(false);
       return;
     }
 
-    const recognition = new SpeechRecognition();
+    const recognition = new SpeechRecognitionCtor();
     recognition.continuous = false;
     recognition.interimResults = true;
     
