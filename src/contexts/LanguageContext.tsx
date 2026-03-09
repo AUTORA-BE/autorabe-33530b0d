@@ -560,6 +560,10 @@ const translations: Record<Language, Record<string, string>> = {
     "sellForm.colorBrown": "Marron",
     "sellForm.colorOrange": "Orange",
     "sellForm.colorYellow": "Jaune",
+    "sellForm.draftRestored": "📝 Brouillon restauré",
+    "sellForm.draftRestoredDesc": "Votre formulaire a été pré-rempli avec vos données précédentes.",
+    "sellForm.saving": "Sauvegarde…",
+    "sellForm.draftSaved": "Brouillon sauvegardé",
   },
   nl: {
     // Navigation
