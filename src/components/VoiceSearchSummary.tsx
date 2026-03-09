@@ -11,7 +11,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 /** Represents an applied voice filter */
 export interface VoiceFilter {
-  type: 'brand' | 'model' | 'budget' | 'mileage' | 'fuel' | 'transmission' | 'euroNorm';
+  type: 'brand' | 'model' | 'budget' | 'mileage' | 'fuel' | 'transmission' | 'euroNorm' | 'color';
   label: string;
   value: string;
 }
