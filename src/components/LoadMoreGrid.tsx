@@ -74,6 +74,15 @@ const LoadMoreGrid = ({
   const { language } = useLanguage();
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
+  const prevFiltersCount = useRef(activeFiltersCount);
+
+  // Haptic feedback when filter count changes
+  useEffect(() => {
+    if (prevFiltersCount.current !== activeFiltersCount && activeFiltersCount > 0) {
+      if (navigator.vibrate) navigator.vibrate(6);
+    }
+    prevFiltersCount.current = activeFiltersCount;
+  }, [activeFiltersCount]);
 
   const sortOptions = [
     { value: "recent", label: language === "nl" ? "Meest recent" : "Plus récentes" },

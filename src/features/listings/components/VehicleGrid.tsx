@@ -80,6 +80,15 @@ const VehicleGrid = memo(function VehicleGrid({
   activeFiltersCount,
 }: VehicleGridProps) {
   const { t, language } = useLanguage();
+  const prevFiltersCount = useRef(activeFiltersCount);
+
+  // Haptic feedback when filter count changes
+  useEffect(() => {
+    if (prevFiltersCount.current !== activeFiltersCount && activeFiltersCount > 0) {
+      if (navigator.vibrate) navigator.vibrate(6);
+    }
+    prevFiltersCount.current = activeFiltersCount;
+  }, [activeFiltersCount]);
 
   // Localized labels
   const labels = {
