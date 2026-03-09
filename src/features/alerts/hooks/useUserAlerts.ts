@@ -129,8 +129,8 @@ export function useToggleAlert() {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["user-alerts"] });
-      queryClient.invalidateQueries({ queryKey: ["user-alerts-count"] });
+      queryClient.invalidateQueries({ queryKey: messageKeys.alerts() });
+      queryClient.invalidateQueries({ queryKey: messageKeys.alertsCount() });
     },
   });
 }
