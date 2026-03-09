@@ -42,6 +42,7 @@ import ScrollReveal from "@/components/ScrollReveal";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 const VehicleTcoSection = lazy(() => import("@/features/tco/components/VehicleTcoSection"));
 const BelgianTaxCalculator = lazy(() => import("@/components/BelgianTaxCalculator"));
+const TaxChatModal = lazy(() => import("@/components/TaxChatModal"));
 
 /** Stagger variants for sections */
 const fadeUp = (delay: number) => ({
