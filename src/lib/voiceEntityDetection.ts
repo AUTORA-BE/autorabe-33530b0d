@@ -50,6 +50,9 @@ const TRANSMISSION_KEYWORDS: { keywords: string[]; label: string; value: string 
   { keywords: ['manuelle', 'manuel', 'manual', 'manueel'], label: 'Manuelle', value: 'manuelle' },
 ];
 
+/** Euro norm detection pattern */
+const EURO_NORM_PATTERN = /euro\s*(6d|6|5|4|3|2|1)/i;
+
 /** Words to strip when extracting potential model name */
 const NOISE_WORDS = /(moins de|budget|euros|€|prix|maximum|max|kilomètres|kilometers|essence|diesel|électrique|electrique|hybride|automatique|manuelle|manuel|boîte|auto)/gi;
 
