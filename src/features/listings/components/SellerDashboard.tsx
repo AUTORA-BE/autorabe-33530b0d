@@ -435,8 +435,28 @@ export default function SellerDashboard() {
                       key={listing.id}
                       variants={listItemVariants}
                       onClick={() => navigate(`/car/${listing.id}`)}
-                      className="group flex items-center gap-4 p-3 rounded-xl border border-border bg-card hover:border-primary/30 hover:shadow-sm transition-all cursor-pointer"
+                      className={`group flex items-center gap-4 p-3 rounded-xl border-2 bg-card hover:shadow-sm transition-all cursor-pointer ${
+                        listing.boostLevel === "ultra" && listing.boostExpiresAt && new Date(listing.boostExpiresAt) > new Date()
+                          ? "border-primary shadow-md"
+                          : listing.boostLevel === "premium" && listing.boostExpiresAt && new Date(listing.boostExpiresAt) > new Date()
+                            ? "border-amber-400 shadow-md"
+                            : listing.boostLevel === "standard" && listing.boostExpiresAt && new Date(listing.boostExpiresAt) > new Date()
+                              ? "border-amber-200 dark:border-amber-700"
+                              : "border-border hover:border-primary/30"
+                      }`}
                     >
+                      {/* Sponsored Badge */}
+                      {listing.boostLevel !== "none" && listing.boostExpiresAt && new Date(listing.boostExpiresAt) > new Date() && (
+                        <div className="absolute -top-2 right-3 z-10">
+                          <Badge className={`text-[10px] px-2 py-0.5 font-semibold shadow-sm ${
+                            listing.boostLevel === "ultra"
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-amber-500 text-white"
+                          }`}>
+                            ✨ Sponsorisé
+                          </Badge>
+                        </div>
+                      )}
                       {/* Thumbnail */}
                       <div className="w-16 h-12 md:w-20 md:h-14 rounded-lg overflow-hidden bg-muted flex-shrink-0">
                         {listing.photo ? (
