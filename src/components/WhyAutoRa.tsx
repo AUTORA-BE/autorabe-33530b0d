@@ -113,9 +113,7 @@ const WhyAutoRa = memo(() => {
             transition={{ duration: 0.5, delay: 0.15 }}
             className="text-muted-foreground text-sm sm:text-base max-w-lg mx-auto"
           >
-            {isNl
-              ? "AutoRa biedt een veilige en betrouwbare marktplaats, speciaal ontworpen voor de Belgische automobielsector."
-              : "AutoRa offre une marketplace sécurisée et fiable, spécialement conçue pour le marché automobile belge."}
+            {t("why.subtitle")}
           </motion.p>
         </div>
 
