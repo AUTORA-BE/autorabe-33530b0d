@@ -622,7 +622,7 @@ const translations: Record<Language, Record<string, string>> = {
     "hero.brands": "Merken",
     "hero.titleLine1": "De perfecte auto voor uw",
     "hero.titleLine2": "leven in België",
-    "hero.subtitleTrust": "Geen verrassingen. Elke advertentie is geverifieerd met Car-Pass, LEZ-compatibiliteit en regionale belastingberekening.",
+    "hero.subtitleTrust": "Koop met een gerust gemoed. Het overgrote deel van onze voertuigen is al gecertificeerd — zie het cijfer hieronder.",
     "hero.trustBadge": "voertuigen al gecertificeerd LEZ & Car-Pass",
     "hero.pill.verified": "Geverifieerde advertenties",
     "hero.pill.carpass": "Car-Pass beschermd",
