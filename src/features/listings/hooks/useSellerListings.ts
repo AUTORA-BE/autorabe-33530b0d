@@ -173,7 +173,7 @@ export function useSellerListings(period: ChartPeriod = 30, dateLocale?: Locale)
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["seller-listings"] });
+      queryClient.invalidateQueries({ queryKey: vehicleKeys.all });
       toast.success(t("dashboard.deleteSuccess"));
     },
     onError: () => {
