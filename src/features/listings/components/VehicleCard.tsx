@@ -148,6 +148,19 @@ const VehicleCard = memo(function VehicleCard({
           />
         </button>
 
+        {/* Compare Button */}
+        <button
+          onClick={handleCompareClick}
+          aria-label={isInCompare(vehicle.id) ? "Retirer du comparateur" : "Ajouter au comparateur"}
+          className={`absolute top-3 right-14 w-10 h-10 rounded-full backdrop-blur-sm flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 shadow-lg touch-manipulation z-10 ${
+            isInCompare(vehicle.id)
+              ? "bg-primary text-primary-foreground"
+              : "bg-white/90 dark:bg-black/50 text-muted-foreground hover:text-primary"
+          }`}
+        >
+          <Scale className="w-5 h-5" />
+        </button>
+
         {/* LEZ & CarPass Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-2 z-10">
           <TooltipProvider delayDuration={300}>
