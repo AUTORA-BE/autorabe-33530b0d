@@ -71,8 +71,29 @@ const STEPS = [
   { id: 3, label: 'Documents', icon: FileCheck },
 ];
 
+/** Données observées en temps réel depuis le formulaire */
+export interface SellCarFormWatchData {
+  brand?: string;
+  model?: string;
+  year?: number;
+  price?: number;
+  mileage?: number;
+  fuel_type?: string;
+  euro_norm?: string;
+  location?: string;
+  seller_type?: string;
+  car_pass_verified?: boolean;
+  description?: string;
+  vin?: string;
+  ct_valid?: boolean;
+  maintenance_book_complete?: boolean;
+  power?: number;
+}
+
 interface SellCarFormProps {
   editId?: string;
+  /** Callback appelé à chaque changement de données pour la live preview */
+  onFormDataChange?: (data: SellCarFormWatchData, photoPreview: string | undefined, photoCount: number) => void;
 }
 
 export function SellCarForm({ editId }: SellCarFormProps) {
