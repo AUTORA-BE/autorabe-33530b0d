@@ -508,52 +508,42 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
     return { type: 'success' as const, message: t('sellForm.euroNormHint') };
   };
 
-  // ── Live preview data broadcast ─────────────────────────────────
+  // ── Live preview data broadcast + auto-save ─────────────────────
   const watchedData = form.watch();
   useEffect(() => {
-    onFormDataChange?.(
-      {
-        brand: watchedData.brand,
-        model: watchedData.model,
-        year: watchedData.year,
-        price: watchedData.price,
-        mileage: watchedData.mileage,
-        fuel_type: watchedData.fuel_type,
-        euro_norm: watchedData.euro_norm,
-        location: watchedData.location,
-        seller_type: watchedData.seller_type,
-        car_pass_verified: watchedData.car_pass_verified,
-        description: watchedData.description,
-        vin: watchedData.vin,
-        ct_valid: watchedData.ct_valid,
-        maintenance_book_complete: watchedData.maintenance_book_complete,
-        power: watchedData.power,
-      },
-      photosPreviews[0],
-      photosPreviews.length,
-    );
-    // Auto-save draft
-    updateDraft(
-      {
-        brand: watchedData.brand,
-        model: watchedData.model,
-        year: watchedData.year,
-        price: watchedData.price,
-        mileage: watchedData.mileage,
-        fuel_type: watchedData.fuel_type,
-        euro_norm: watchedData.euro_norm,
-        location: watchedData.location,
-        seller_type: watchedData.seller_type,
-        car_pass_verified: watchedData.car_pass_verified,
-        description: watchedData.description,
-        vin: watchedData.vin,
-        ct_valid: watchedData.ct_valid,
-        maintenance_book_complete: watchedData.maintenance_book_complete,
-        power: watchedData.power,
-      },
-      photosPreviews,
-    );
-  }, [watchedData, photosPreviews, onFormDataChange, updateDraft]);
+    const draftFields: SellCarFormWatchData = {
+      brand: watchedData.brand,
+      model: watchedData.model,
+      year: watchedData.year,
+      price: watchedData.price,
+      mileage: watchedData.mileage,
+      fuel_type: watchedData.fuel_type,
+      transmission: watchedData.transmission,
+      body_type: watchedData.body_type,
+      color: watchedData.color,
+      euro_norm: watchedData.euro_norm,
+      location: watchedData.location,
+      seller_type: watchedData.seller_type,
+      car_pass_verified: watchedData.car_pass_verified,
+      description: watchedData.description,
+      vin: watchedData.vin,
+      ct_valid: watchedData.ct_valid,
+      maintenance_book_complete: watchedData.maintenance_book_complete,
+      power: watchedData.power,
+      doors: watchedData.doors,
+      first_registration: watchedData.first_registration,
+      contact_name: watchedData.contact_name,
+      contact_email: watchedData.contact_email,
+      contact_phone: watchedData.contact_phone,
+      tva_number: watchedData.tva_number,
+    };
+
+    onFormDataChange?.(draftFields, photosPreviews[0], photosPreviews.length);
+
+    // Auto-save draft — only persist actual uploaded URLs, never base64 data URLs
+    const persistablePhotoUrls = existingPhotos.filter(url => url.startsWith('http'));
+    updateDraft(draftFields, persistablePhotoUrls);
+  }, [watchedData, photosPreviews, existingPhotos, onFormDataChange, updateDraft]);
 
   const selectedEuroNorm = form.watch('euro_norm');
   const lezWarning = getLezWarning(selectedEuroNorm);
