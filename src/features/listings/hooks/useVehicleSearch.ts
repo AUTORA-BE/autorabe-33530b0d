@@ -79,7 +79,7 @@ export function useVehicleSearch(options: UseVehicleSearchOptions = {}) {
 
   // ── React Query ───────────────────────────────────────────────────
   const queryKey = useMemo(
-    () => [VEHICLE_QUERY_KEY, debouncedFiltersKey, sortBy, page],
+    () => vehicleKeys.list(debouncedFiltersKey, sortBy, page),
     [debouncedFiltersKey, sortBy, page],
   );
 
