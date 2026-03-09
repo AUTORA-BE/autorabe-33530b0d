@@ -916,7 +916,7 @@ const AdminReports = () => {
       </Dialog>
 
       <Footer />
-    </>
+    </div>
   );
 };
 
