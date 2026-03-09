@@ -1684,6 +1684,15 @@ const translations: Record<Language, Record<string, string>> = {
     "filters.colorOrange": "Orange",
     "filters.colorBrown": "Brown",
     "filters.colorBeige": "Beige",
+    "filters.bodyType": "Body Type",
+    "filters.bodySedan": "Sedan",
+    "filters.bodySUV": "SUV",
+    "filters.bodyCity": "City Car",
+    "filters.bodyCompact": "Compact",
+    "filters.bodyWagon": "Wagon",
+    "filters.bodyCoupe": "Coupé",
+    "filters.bodyConvertible": "Convertible",
+    "filters.bodyMPV": "MPV",
     
     // Car Card & Detail
     "car.addCompare": "Add to compare",
