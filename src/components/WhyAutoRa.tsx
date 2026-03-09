@@ -155,11 +155,11 @@ const WhyAutoRa = memo(() => {
               )}
 
               <h3 className="font-display text-base sm:text-lg font-bold text-foreground mb-2">
-                {isNl ? feature.titleNl : feature.titleFr}
+                {feature.title}
               </h3>
 
               <p className="text-sm text-muted-foreground leading-relaxed">
-                {isNl ? feature.descNl : feature.descFr}
+                {feature.desc}
               </p>
 
               {/* Bottom accent */}
