@@ -80,7 +80,7 @@ export default function Pricing() {
   const paidTiers = Object.entries(SUBSCRIPTION_TIERS);
 
   return (
-    <>
+    <div className="page-gradient">
       <SEOHead
         title="Abonnements Vendeurs | AutoRa"
         description="Choisissez votre abonnement vendeur AutoRa. Publiez vos annonces, obtenez le badge Pro et des statistiques avancées."
