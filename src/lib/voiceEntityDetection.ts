@@ -55,8 +55,23 @@ const TRANSMISSION_KEYWORDS: { keywords: string[]; label: string; value: string 
 /** Euro norm detection pattern */
 const EURO_NORM_PATTERN = /euro\s*(6d|6|5|4|3|2|1)/i;
 
+/** Keyword mapping for color detection (FR, NL, EN, DE) */
+const COLOR_KEYWORDS: { keywords: string[]; label: string; value: string }[] = [
+  { keywords: ['blanc', 'blanche', 'wit', 'white', 'weiß', 'weiss'], label: 'Blanc', value: 'blanc' },
+  { keywords: ['noir', 'noire', 'zwart', 'black', 'schwarz'], label: 'Noir', value: 'noir' },
+  { keywords: ['gris', 'grise', 'grijs', 'gray', 'grey', 'grau'], label: 'Gris', value: 'gris' },
+  { keywords: ['rouge', 'rood', 'red', 'rot'], label: 'Rouge', value: 'rouge' },
+  { keywords: ['bleu', 'bleue', 'blauw', 'blue', 'blau'], label: 'Bleu', value: 'bleu' },
+  { keywords: ['vert', 'verte', 'groen', 'green', 'grün'], label: 'Vert', value: 'vert' },
+  { keywords: ['jaune', 'geel', 'yellow', 'gelb'], label: 'Jaune', value: 'jaune' },
+  { keywords: ['orange', 'oranje'], label: 'Orange', value: 'orange' },
+  { keywords: ['marron', 'brun', 'bruin', 'brown', 'braun'], label: 'Marron', value: 'marron' },
+  { keywords: ['beige'], label: 'Beige', value: 'beige' },
+  { keywords: ['argent', 'argenté', 'zilver', 'silver', 'silber'], label: 'Argent', value: 'argent' },
+];
+
 /** Words to strip when extracting potential model name */
-const NOISE_WORDS = /(moins de|budget|euros|€|prix|maximum|max|kilomètres|kilometers|essence|diesel|électrique|electrique|hybride|automatique|manuelle|manuel|boîte|auto)/gi;
+const NOISE_WORDS = /(moins de|budget|euros|€|prix|maximum|max|kilomètres|kilometers|essence|diesel|électrique|electrique|hybride|automatique|manuelle|manuel|boîte|auto|blanc|blanche|noir|noire|gris|grise|rouge|bleu|bleue|vert|verte|jaune|orange|marron|brun|beige|argent|argenté|couleur)/gi;
 
 /**
  * Detects entities from a voice transcript for display purposes
