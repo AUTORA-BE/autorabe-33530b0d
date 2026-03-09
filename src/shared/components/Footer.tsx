@@ -135,7 +135,7 @@ const Footer = () => {
         </div>
 
         {/* LEZ reassurance strip */}
-        <div className="mt-10 p-3 sm:p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/10 flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
+        <div className="mt-10 p-3 sm:p-4 rounded-xl bg-gradient-to-r from-emerald-500/[0.06] via-emerald-500/[0.03] to-emerald-500/[0.06] border border-emerald-500/10 flex flex-col sm:flex-row items-center gap-3 sm:gap-4 backdrop-blur-sm">
           <div className="flex items-center gap-2 shrink-0">
             <Shield className="w-4 h-4 text-emerald-400" />
             <span className="text-xs sm:text-sm font-semibold text-emerald-300">
