@@ -133,6 +133,14 @@ export function detectEntities(transcript: string, brands?: string[]): DetectedE
     entities.push({ type: 'euroNorm', value: `Euro ${euroMatch[1].toUpperCase()}` });
   }
 
+  // Color detection
+  for (const color of COLOR_KEYWORDS) {
+    if (color.keywords.some(k => lower.includes(k))) {
+      entities.push({ type: 'color', value: color.label });
+      break;
+    }
+  }
+
   return entities;
 }
 
