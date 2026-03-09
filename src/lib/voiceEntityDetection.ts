@@ -8,7 +8,7 @@ import { getAllBrands } from "@/utils/carUtils";
 import { BUDGET_OPTIONS } from "@/features/search/types/search.types";
 
 /** Types of entities that can be detected from voice input */
-export type EntityType = 'brand' | 'budget' | 'mileage' | 'fuel' | 'transmission';
+export type EntityType = 'brand' | 'budget' | 'mileage' | 'fuel' | 'transmission' | 'euroNorm';
 
 /** A detected entity from voice transcript */
 export interface DetectedEntity {
