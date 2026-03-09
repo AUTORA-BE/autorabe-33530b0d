@@ -1,9 +1,11 @@
-import { useState, lazy, Suspense } from "react";
+import { useState, lazy, Suspense, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header, Footer } from "@/shared/components";
 import { HeroSearch } from "@/features/search";
 import SEOHead from "@/components/SEOHead";
 import ScrollReveal from "@/components/ScrollReveal";
+import { VoiceSearchSummary, type VoiceFilter } from "@/components/VoiceSearchSummary";
+import { AnimatePresence } from "framer-motion";
 
 const SellCarBanner = lazy(() => import("@/components/SellCarBanner"));
 const BrandCarousel = lazy(() => import("@/features/search/components/BrandCarousel"));
@@ -16,9 +18,11 @@ const StatsStrip = lazy(() => import("@/components/StatsStrip"));
 import { useVehicleSearch } from "@/features/listings";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { BUDGET_OPTIONS } from "@/features/search/types/search.types";
 
 const Index = () => {
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [voiceFilters, setVoiceFilters] = useState<VoiceFilter[]>([]);
   const navigate = useNavigate();
   const { language } = useLanguage();
 
@@ -30,20 +34,64 @@ const Index = () => {
 
   const { isFavorite, toggleFavorite } = useFavorites();
 
-  const handleSearch = (brand: string, model: string, maxPrice: number, maxMileage?: number, fuelType?: string, transmission?: string) => {
-    updateFilter("brand", brand);
-    updateFilter("searchQuery", model);
-    updateFilter("maxPrice", maxPrice);
-    if (maxMileage) updateFilter("kmMax", maxMileage);
-    if (fuelType) updateFilter("fuelTypes", [fuelType]);
-    if (transmission) updateFilter("transmission", transmission);
+  const handleSearch = useCallback((brand: string, model: string, maxPrice: number, maxMileage?: number, fuelType?: string, transmission?: string) => {
+    const newVoiceFilters: VoiceFilter[] = [];
+    
+    if (brand) {
+      updateFilter("brand", brand);
+      newVoiceFilters.push({ type: 'brand', label: language === 'nl' ? 'Merk' : 'Marque', value: brand });
+    }
+    if (model) {
+      updateFilter("searchQuery", model);
+      newVoiceFilters.push({ type: 'model', label: language === 'nl' ? 'Model' : 'Modèle', value: model });
+    }
+    if (maxPrice && maxPrice < 1000000) {
+      updateFilter("maxPrice", maxPrice);
+      const budgetLabel = BUDGET_OPTIONS.find(o => o.value === maxPrice)?.label || `< ${maxPrice.toLocaleString('fr-BE')}€`;
+      newVoiceFilters.push({ type: 'budget', label: 'Budget', value: budgetLabel });
+    }
+    if (maxMileage) {
+      updateFilter("kmMax", maxMileage);
+      newVoiceFilters.push({ type: 'mileage', label: language === 'nl' ? 'Km max' : 'Km max', value: `${maxMileage.toLocaleString('fr-BE')} km` });
+    }
+    if (fuelType) {
+      updateFilter("fuelTypes", [fuelType]);
+      const fuelLabels: Record<string, string> = { essence: 'Essence', diesel: 'Diesel', electrique: 'Électrique', hybride: 'Hybride' };
+      newVoiceFilters.push({ type: 'fuel', label: language === 'nl' ? 'Brandstof' : 'Carburant', value: fuelLabels[fuelType] || fuelType });
+    }
+    if (transmission) {
+      updateFilter("transmission", transmission);
+      newVoiceFilters.push({ type: 'transmission', label: language === 'nl' ? 'Versnelling' : 'Transmission', value: transmission === 'automatique' ? 'Automatique' : 'Manuelle' });
+    }
+    
+    setVoiceFilters(newVoiceFilters);
+    
     setTimeout(() => {
       const resultsSection = document.getElementById("results-section");
       if (resultsSection) {
         resultsSection.scrollIntoView({ behavior: "smooth" });
       }
     }, 100);
-  };
+  }, [updateFilter, language]);
+
+  const handleRemoveVoiceFilter = useCallback((type: VoiceFilter['type']) => {
+    setVoiceFilters(prev => prev.filter(f => f.type !== type));
+    
+    // Also clear the actual filter
+    switch (type) {
+      case 'brand': updateFilter("brand", ""); break;
+      case 'model': updateFilter("searchQuery", ""); break;
+      case 'budget': updateFilter("maxPrice", 200000); break;
+      case 'mileage': updateFilter("kmMax", 200000); break;
+      case 'fuel': updateFilter("fuelTypes", []); break;
+      case 'transmission': updateFilter("transmission", ""); break;
+    }
+  }, [updateFilter]);
+
+  const handleClearAllVoiceFilters = useCallback(() => {
+    setVoiceFilters([]);
+    resetFilters();
+  }, [resetFilters]);
 
   const handleCarClick = (carId: string) => {
     navigate(`/car/${carId}`);
