@@ -4,7 +4,8 @@
  */
 
 import { memo } from "react";
-import { Heart, MapPin, Calendar, Gauge, Shield, CheckCircle, AlertTriangle, Ban, Leaf, Info, Building2, Sparkles } from "lucide-react";
+import { Heart, MapPin, Calendar, Gauge, Shield, CheckCircle, AlertTriangle, Ban, Leaf, Info, Building2, Sparkles, Scale } from "lucide-react";
+import { useCompareContext } from "@/features/compare";
 import CarImage from "@/components/cars/CarImage";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
@@ -65,6 +66,7 @@ const VehicleCard = memo(function VehicleCard({
   onClick,
   eager = false,
 }: VehicleCardProps) {
+  const { addToCompare, removeFromCompare: removeCompare, isInCompare } = useCompareContext();
   const { language } = useLanguage();
   const lezResult = calculerStatutLEZ(vehicle.fuelType, vehicle.euroNorm);
   const lezConfig = lezBadgeConfig[lezResult.global.statut];
@@ -76,6 +78,15 @@ const VehicleCard = memo(function VehicleCard({
 
   const handleCardClick = () => {
     onClick?.(vehicle.id);
+  };
+
+  const handleCompareClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isInCompare(vehicle.id)) {
+      removeCompare(vehicle.id);
+    } else {
+      addToCompare(vehicle);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -145,6 +156,19 @@ const VehicleCard = memo(function VehicleCard({
                 : "text-muted-foreground hover:text-red-500"
             }`}
           />
+        </button>
+
+        {/* Compare Button */}
+        <button
+          onClick={handleCompareClick}
+          aria-label={isInCompare(vehicle.id) ? "Retirer du comparateur" : "Ajouter au comparateur"}
+          className={`absolute top-3 right-14 w-10 h-10 rounded-full backdrop-blur-sm flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 shadow-lg touch-manipulation z-10 ${
+            isInCompare(vehicle.id)
+              ? "bg-primary text-primary-foreground"
+              : "bg-white/90 dark:bg-black/50 text-muted-foreground hover:text-primary"
+          }`}
+        >
+          <Scale className="w-5 h-5" />
         </button>
 
         {/* LEZ & CarPass Badges */}

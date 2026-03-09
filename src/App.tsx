@@ -11,6 +11,7 @@ import PageTransition from "@/components/PageTransition";
 import ScrollToTop from "@/components/ScrollToTop";
 const CarChatbot = lazy(() => import("@/components/CarChatbot"));
 const TcoFloatingButton = lazy(() => import("@/components/TcoFloatingButton"));
+const CompareBar = lazy(() => import("@/features/compare/components/CompareBar"));
 
 // Lazy-loaded — reduces main bundle unused JS
 const Index = lazy(() => import("./pages/Index"));
@@ -119,6 +120,7 @@ const App = () => (
               <AppRoutes />
             </Suspense>
             <ScrollToTop />
+            <Suspense fallback={null}><CompareBar /></Suspense>
             <Suspense fallback={null}><TcoFloatingButton /></Suspense>
             <Suspense fallback={null}><CarChatbot /></Suspense>
           </BrowserRouter>

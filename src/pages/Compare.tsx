@@ -10,37 +10,80 @@ import {
   Shield, 
   MapPin, 
   Car, 
-  Palette,
   Cog,
-  Leaf
+  Leaf,
+  CheckCircle,
+  AlertTriangle,
+  Ban,
+  Info
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { calculerStatutLEZ } from "@/lib/lezData";
 
 const Compare = () => {
   const { compareList, removeFromCompare, clearCompare } = useCompareContext();
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("fr-BE", {
-      style: "currency",
-      currency: "EUR",
-      maximumFractionDigits: 0,
-    }).format(price);
-  };
+  const formatPrice = (price: number) =>
+    new Intl.NumberFormat("fr-BE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(price);
 
-  const formatMileage = (km: number) => {
-    return new Intl.NumberFormat("fr-BE").format(km) + " km";
+  const formatMileage = (km: number) =>
+    new Intl.NumberFormat("fr-BE").format(km) + " km";
+
+  const lezStatusConfig = {
+    autorise: { text: "Autorisé", className: "bg-primary/15 text-primary border-primary/30", Icon: CheckCircle },
+    alerte: { text: "Alerte", className: "bg-amber-500/15 text-amber-600 border-amber-500/30", Icon: AlertTriangle },
+    derogation_requise: { text: "Dérogation", className: "bg-amber-500/15 text-amber-600 border-amber-500/30", Icon: AlertTriangle },
+    interdit: { text: "Interdit", className: "bg-destructive/15 text-destructive border-destructive/30", Icon: Ban },
+    inconnu: { text: "Inconnu", className: "bg-muted text-muted-foreground", Icon: Info },
+  } as const;
+
+  const renderLezBadges = (car: typeof compareList[0]) => {
+    const result = calculerStatutLEZ(car.fuelType, car.euroNorm);
+    return (
+      <div className="space-y-1.5">
+        {result.details.map((d) => {
+          const cfg = lezStatusConfig[d.statut] || lezStatusConfig.inconnu;
+          return (
+            <div key={d.ville} className="flex items-center gap-1.5">
+              <Badge variant="outline" className={`${cfg.className} text-xs`}>
+                <cfg.Icon className="w-3 h-3 mr-1" />
+                {d.ville}
+              </Badge>
+              <span className="text-xs text-muted-foreground">{d.message}</span>
+            </div>
+          );
+        })}
+      </div>
+    );
   };
 
   const specs = [
-    { key: "price", label: "Prix", icon: null, format: (car: typeof compareList[0]) => formatPrice(car.price) },
-    { key: "year", label: "Année", icon: Calendar, format: (car: typeof compareList[0]) => car.year.toString() },
-    { key: "mileage", label: "Kilométrage", icon: Gauge, format: (car: typeof compareList[0]) => formatMileage(car.mileage) },
-    { key: "fuelType", label: "Carburant", icon: Fuel, format: (car: typeof compareList[0]) => car.fuelType },
-    { key: "transmission", label: "Transmission", icon: Cog, format: (car: typeof compareList[0]) => car.transmission },
-    { key: "euroNorm", label: "Norme Euro", icon: Leaf, format: (car: typeof compareList[0]) => car.euroNorm },
-    { key: "location", label: "Localisation", icon: MapPin, format: (car: typeof compareList[0]) => car.location },
-    { key: "isLezCompatible", label: "Compatible LEZ", icon: Shield, format: (car: typeof compareList[0]) => car.isLezCompatible ? "Oui" : "Non" },
-    { key: "hasCarPass", label: "Car-Pass", icon: Shield, format: (car: typeof compareList[0]) => car.hasCarPass ? "Vérifié" : "Non vérifié" },
+    { label: "Prix", icon: null, render: (car: typeof compareList[0]) => (
+      <span className="text-lg font-bold text-primary">{formatPrice(car.price)}</span>
+    )},
+    { label: "Année", icon: Calendar, render: (car: typeof compareList[0]) => car.year.toString() },
+    { label: "Kilométrage", icon: Gauge, render: (car: typeof compareList[0]) => formatMileage(car.mileage) },
+    { label: "Carburant", icon: Fuel, render: (car: typeof compareList[0]) => car.fuelType },
+    { label: "Transmission", icon: Cog, render: (car: typeof compareList[0]) => car.transmission },
+    { label: "Norme Euro", icon: Leaf, render: (car: typeof compareList[0]) => car.euroNorm || "—" },
+    { label: "Localisation", icon: MapPin, render: (car: typeof compareList[0]) => car.location || "—" },
+    { label: "Compatibilité LEZ", icon: Shield, render: renderLezBadges },
+    { label: "Car-Pass", icon: Shield, render: (car: typeof compareList[0]) => (
+      <Badge variant="outline" className={car.hasCarPass ? "bg-primary/15 text-primary border-primary/30" : "bg-muted text-muted-foreground"}>
+        {car.hasCarPass ? (
+          <><CheckCircle className="w-3 h-3 mr-1" /> Vérifié</>
+        ) : "Non vérifié"}
+      </Badge>
+    )},
   ];
 
   return (
@@ -48,8 +91,7 @@ const Compare = () => {
       <Header />
       
       <main className="pt-24">
-        {/* Hero Section */}
-        <section className="container mx-auto px-6 py-12">
+        <section className="container mx-auto px-4 sm:px-6 py-12">
           <div className="max-w-6xl mx-auto">
             <div className="flex items-center justify-between mb-8">
               <div>
@@ -78,18 +120,14 @@ const Compare = () => {
                   Ajoutez jusqu'à 3 véhicules pour les comparer côte à côte.
                 </p>
                 <Link to="/">
-                  <Button className="btn-primary-gradient">
-                    Parcourir les véhicules
-                  </Button>
+                  <Button className="btn-primary-gradient">Parcourir les véhicules</Button>
                 </Link>
               </div>
             ) : (
               <div className="bg-card border border-border rounded-2xl overflow-hidden">
-                {/* Car Headers */}
-                <div className="grid gap-4 p-6 border-b border-border" style={{ gridTemplateColumns: `200px repeat(${compareList.length}, 1fr)` }}>
-                  <div className="flex items-center">
-                    <span className="text-sm font-medium text-muted-foreground">Véhicule</span>
-                  </div>
+                {/* Vehicle header row */}
+                <div className="grid gap-4 p-6 border-b border-border" style={{ gridTemplateColumns: `180px repeat(${compareList.length}, 1fr)` }}>
+                  <div />
                   {compareList.map((car) => (
                     <div key={car.id} className="relative">
                       <button
@@ -99,14 +137,14 @@ const Compare = () => {
                         <X className="w-4 h-4" />
                       </button>
                       <Link to={`/car/${car.id}`} className="block group">
-                        <div className="aspect-video rounded-xl overflow-hidden mb-3">
+                        <div className="aspect-video rounded-xl overflow-hidden mb-3 border border-border">
                           <img
                             src={car.image}
                             alt={`${car.brand} ${car.model}`}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
                         </div>
-                        <h3 className="font-display font-semibold text-foreground group-hover:text-primary transition-colors">
+                        <h3 className="font-display font-semibold text-foreground group-hover:text-primary transition-colors text-center">
                           {car.brand} {car.model}
                         </h3>
                       </Link>
@@ -119,33 +157,33 @@ const Compare = () => {
                     >
                       <Car className="w-8 h-8 text-muted-foreground group-hover:text-primary transition-colors mb-2" />
                       <span className="text-sm text-muted-foreground group-hover:text-primary transition-colors">
-                        Ajouter un véhicule
+                        Ajouter
                       </span>
                     </Link>
                   )}
                 </div>
 
-                {/* Specs Comparison */}
-                {specs.map((spec, index) => (
-                  <div 
-                    key={spec.key}
-                    className={`grid gap-4 p-6 ${index % 2 === 0 ? 'bg-muted/30' : ''}`}
-                    style={{ gridTemplateColumns: `200px repeat(${compareList.length}, 1fr)` }}
-                  >
-                    <div className="flex items-center gap-2">
-                      {spec.icon && <spec.icon className="w-4 h-4 text-muted-foreground" />}
-                      <span className="text-sm font-medium text-muted-foreground">{spec.label}</span>
-                    </div>
-                    {compareList.map((car) => (
-                      <div key={car.id} className="flex items-center">
-                        <span className={`font-medium ${spec.key === 'price' ? 'text-lg text-primary font-bold' : 'text-foreground'}`}>
-                          {spec.format(car)}
-                        </span>
-                      </div>
+                {/* Comparison table */}
+                <Table>
+                  <TableBody>
+                    {specs.map((spec, index) => (
+                      <TableRow key={spec.label} className={index % 2 === 0 ? "bg-muted/30" : ""}>
+                        <TableCell className="font-medium text-muted-foreground w-[180px]">
+                          <div className="flex items-center gap-2">
+                            {spec.icon && <spec.icon className="w-4 h-4" />}
+                            {spec.label}
+                          </div>
+                        </TableCell>
+                        {compareList.map((car) => (
+                          <TableCell key={car.id}>
+                            {spec.render(car)}
+                          </TableCell>
+                        ))}
+                        {compareList.length < 3 && <TableCell />}
+                      </TableRow>
                     ))}
-                    {compareList.length < 3 && <div />}
-                  </div>
-                ))}
+                  </TableBody>
+                </Table>
               </div>
             )}
           </div>
