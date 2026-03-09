@@ -45,7 +45,7 @@ function AnimatedCounter({ target, suffix = "", duration = 2 }: { target: number
 }
 
 export interface HeroSearchProps {
-  onSearch: (brand: string, model: string, maxPrice: number) => void;
+  onSearch: (brand: string, model: string, maxPrice: number, maxMileage?: number) => void;
 }
 
 /** Parallax hook — moves element based on scroll */
