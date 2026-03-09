@@ -63,6 +63,10 @@ const Index = () => {
       updateFilter("transmission", transmission);
       newVoiceFilters.push({ type: 'transmission', label: language === 'nl' ? 'Versnelling' : 'Transmission', value: transmission === 'automatique' ? 'Automatique' : 'Manuelle' });
     }
+    if (euroNorm) {
+      updateFilter("euroNorm", euroNorm);
+      newVoiceFilters.push({ type: 'euroNorm', label: language === 'nl' ? 'Euro norm' : 'Norme Euro', value: `Euro ${euroNorm}` });
+    }
     
     setVoiceFilters(newVoiceFilters);
     
