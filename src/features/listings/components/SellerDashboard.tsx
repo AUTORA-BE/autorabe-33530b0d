@@ -547,16 +547,29 @@ export default function SellerDashboard() {
                               {t("dashboard.edit") || "Modifier"}
                             </DropdownMenuItem>
                             {listing.status === "approved" && (
-                              <DropdownMenuItem
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleMarkAsSold(listing.id);
-                                }}
-                                className="gap-2 cursor-pointer"
-                              >
-                                <CheckCircle2 className="w-4 h-4" />
-                                {t("dashboard.markAsSold") || "Marquer comme vendu"}
-                              </DropdownMenuItem>
+                              <>
+                                <DropdownMenuItem
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleMarkAsSold(listing.id);
+                                  }}
+                                  className="gap-2 cursor-pointer"
+                                >
+                                  <CheckCircle2 className="w-4 h-4" />
+                                  {t("dashboard.markAsSold") || "Marquer comme vendu"}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setListingToBoost(listing);
+                                    setBoostDialogOpen(true);
+                                  }}
+                                  className="gap-2 cursor-pointer text-amber-600 focus:text-amber-600"
+                                >
+                                  <Rocket className="w-4 h-4" />
+                                  {t("boost.boost") || "Booster cette annonce"}
+                                </DropdownMenuItem>
+                              </>
                             )}
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
