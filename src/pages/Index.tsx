@@ -119,6 +119,19 @@ const Index = () => {
         {/* Hero */}
         <HeroSearch onSearch={handleSearch} />
 
+        {/* Voice search filter summary */}
+        <div className="container mx-auto px-4 sm:px-6">
+          <AnimatePresence>
+            {voiceFilters.length > 0 && (
+              <VoiceSearchSummary
+                filters={voiceFilters}
+                onRemoveFilter={handleRemoveVoiceFilter}
+                onClearAll={handleClearAllVoiceFilters}
+              />
+            )}
+          </AnimatePresence>
+        </div>
+
         {/* Stats strip — social proof between hero and content */}
         <Suspense fallback={<div className="h-[72px] sm:h-[88px]" />}>
           <StatsStrip />
