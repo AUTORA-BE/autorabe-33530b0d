@@ -5,7 +5,7 @@
 
 import { memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Car, Banknote, Gauge, Fuel, Settings2, Shield, Mic } from "lucide-react";
+import { X, Car, Banknote, Gauge, Fuel, Settings2, Shield, Palette, Mic } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 
