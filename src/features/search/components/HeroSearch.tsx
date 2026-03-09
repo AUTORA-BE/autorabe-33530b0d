@@ -1,10 +1,10 @@
 /**
- * HeroSearch component - immersive hero with parallax and staggered entrance
+ * HeroSearch component — immersive hero with parallax, premium copy and trust signals
  * @module features/search/components
  */
 
 import { memo, useState, useEffect, useRef, useCallback } from "react";
-import { Search, ChevronDown } from "lucide-react";
+import { Search, ChevronDown, ShieldCheck, FileCheck, Leaf } from "lucide-react";
 import { motion } from "framer-motion";
 import { getAllBrands, getModelsByBrand } from "@/utils/carUtils";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -12,42 +12,6 @@ import { BUDGET_OPTIONS } from "../types/search.types";
 import { VoiceSearchButton } from "@/components/VoiceSearchButton";
 import { parseVoiceTranscript } from "@/lib/voiceEntityDetection";
 import type { QuickSearchParams } from "../types/search.types";
-
-/** Animated counter that increments when visible in viewport */
-function AnimatedCounter({ target, suffix = "", duration = 2 }: { target: number; suffix?: string; duration?: number }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const [display, setDisplay] = useState(0);
-  const triggered = useRef(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !triggered.current) {
-          triggered.current = true;
-          const startTime = performance.now();
-          const step = (now: number) => {
-            const progress = Math.min((now - startTime) / (duration * 1000), 1);
-            const eased = 1 - Math.pow(1 - progress, 3);
-            setDisplay(Math.round(eased * target));
-            if (progress < 1) requestAnimationFrame(step);
-          };
-          requestAnimationFrame(step);
-        }
-      },
-      { rootMargin: "-50px" }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [target, duration]);
-
-  return <span ref={ref}>{display}{suffix}</span>;
-}
-
-export interface HeroSearchProps {
-  onSearch: (brand: string, model: string, maxPrice: number, maxMileage?: number, fuelType?: string, transmission?: string, euroNorm?: string, color?: string) => void;
-}
 
 /** Parallax hook — moves element based on scroll */
 function useParallax(speed = 0.3) {
@@ -77,6 +41,10 @@ const fadeUp = (delay: number) => ({
   transition: { duration: 0.6, delay, ease: [0.25, 0.1, 0.25, 1] as const },
 });
 
+export interface HeroSearchProps {
+  onSearch: (brand: string, model: string, maxPrice: number, maxMileage?: number, fuelType?: string, transmission?: string, euroNorm?: string, color?: string) => void;
+}
+
 const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
   const [selectedBrand, setSelectedBrand] = useState("");
   const [selectedBudget, setSelectedBudget] = useState<number>(0);
@@ -84,8 +52,9 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
   const [brands, setBrands] = useState<string[]>([]);
   const [models, setModels] = useState<string[]>([]);
   const [loadingModels, setLoadingModels] = useState(false);
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const parallaxOffset = useParallax(0.25);
+  const isNl = language === "nl";
 
   useEffect(() => {
     setBrands(getAllBrands());
@@ -111,17 +80,10 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
 
   const handleVoiceResult = useCallback((transcript: string) => {
     const parsed = parseVoiceTranscript(transcript, brands);
-    
-    if (parsed.brand) {
-      setSelectedBrand(parsed.brand);
-    }
-    
-    if (parsed.maxBudget) {
-      setSelectedBudget(parsed.maxBudget);
-    }
-    
+    if (parsed.brand) setSelectedBrand(parsed.brand);
+    if (parsed.maxBudget) setSelectedBudget(parsed.maxBudget);
     setModel(parsed.remainingText);
-    
+
     setTimeout(() => {
       onSearch(
         parsed.brand || selectedBrand,
@@ -131,7 +93,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
         parsed.fuelType,
         parsed.transmission,
         parsed.euroNorm,
-        parsed.color
+        parsed.color,
       );
     }, 500);
   }, [brands, selectedBrand, selectedBudget, onSearch]);
@@ -140,15 +102,22 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
     if (e.key === "Enter") handleSearch();
   };
 
+  /** Trust pills below search */
+  const trustPills = [
+    { icon: ShieldCheck, labelFr: "Annonces vérifiées", labelNl: "Geverifieerde advertenties" },
+    { icon: FileCheck, labelFr: "Car-Pass protégé", labelNl: "Car-Pass beschermd" },
+    { icon: Leaf, labelFr: "Conformité LEZ garantie", labelNl: "LEZ-compatibiliteit gegarandeerd" },
+  ];
+
   return (
     <section
-      className="relative min-h-[60vh] sm:min-h-[80vh] flex items-center justify-center pt-10 sm:pt-20 pb-10 sm:pb-20 overflow-hidden"
+      className="relative min-h-[55vh] sm:min-h-[75vh] flex items-center justify-center pt-8 sm:pt-16 pb-8 sm:pb-16 overflow-hidden"
       style={{ contain: "layout style" }}
     >
-      {/* Background gradient — richer */}
+      {/* Background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-secondary/40" />
 
-      {/* Parallax decorative orbs — more prominent */}
+      {/* Parallax decorative orbs */}
       <div
         className="hidden sm:block absolute top-1/4 left-[10%] w-[32rem] h-[32rem] bg-primary/[0.10] rounded-full blur-[120px]"
         style={{ transform: `translateY(${parallaxOffset * 0.6}px)` }}
@@ -180,22 +149,34 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
             {t("hero.badge")}
           </motion.div>
 
-          {/* Headline */}
+          {/* Headline — premium copy */}
           <motion.h1
             {...fadeUp(0.1)}
-            className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-[5rem] font-extrabold text-foreground mb-4 sm:mb-7 leading-[1.08] tracking-tight"
+            className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-[4.5rem] font-extrabold text-foreground mb-4 sm:mb-6 leading-[1.08] tracking-tight"
           >
-            {t("hero.title1")}
-            <br />
-            <span className="gradient-text">{t("hero.title2")}</span>
+            {isNl ? (
+              <>
+                De perfecte auto voor uw
+                <br />
+                <span className="gradient-text">leven in België</span>
+              </>
+            ) : (
+              <>
+                La voiture parfaite pour votre
+                <br />
+                <span className="gradient-text">vie en Belgique</span>
+              </>
+            )}
           </motion.h1>
 
-          {/* Subheadline */}
+          {/* Subheadline — trust-focused */}
           <motion.p
             {...fadeUp(0.2)}
-            className="text-sm sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 sm:mb-14 px-2 leading-relaxed"
+            className="text-sm sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 sm:mb-12 px-2 leading-relaxed"
           >
-            {t("hero.subtitle")}
+            {isNl
+              ? "Geen verrassingen. Elke advertentie is geverifieerd met Car-Pass, LEZ-compatibiliteit en regionale belastingberekening."
+              : "Sans aucune mauvaise surprise. Chaque annonce est vérifiée Car-Pass, conforme LEZ et accompagnée du calcul fiscal régional."}
           </motion.p>
 
           {/* Search Box */}
@@ -203,17 +184,17 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
             {...fadeUp(0.35)}
             className="glass-panel p-3 sm:p-4 md:p-5 max-w-3xl mx-auto ring-1 ring-white/10"
             role="search"
-            aria-label="Recherche rapide de véhicules"
+            aria-label={isNl ? "Snel zoeken naar voertuigen" : "Recherche rapide de véhicules"}
           >
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
-              {/* Brand Select */}
+              {/* Brand */}
               <div className="relative">
                 <select
                   value={selectedBrand}
                   onChange={(e) => setSelectedBrand(e.target.value)}
                   onKeyDown={handleKeyDown}
                   className="search-input w-full appearance-none cursor-pointer pr-8 sm:pr-10 text-sm sm:text-base py-3 sm:py-4 bg-card"
-                  aria-label="Sélectionner une marque"
+                  aria-label={isNl ? "Selecteer een merk" : "Sélectionner une marque"}
                 >
                   <option value="">{t("filters.brand")}</option>
                   {brands.map((brand) => (
@@ -223,7 +204,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
                 <ChevronDown className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground pointer-events-none" />
               </div>
 
-              {/* Model Select */}
+              {/* Model */}
               <div className="relative">
                 <select
                   value={model}
@@ -231,7 +212,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
                   onKeyDown={handleKeyDown}
                   className="search-input w-full appearance-none cursor-pointer pr-8 sm:pr-10 text-sm sm:text-base py-3 sm:py-4 bg-card"
                   disabled={!selectedBrand}
-                  aria-label="Sélectionner un modèle"
+                  aria-label={isNl ? "Selecteer een model" : "Sélectionner un modèle"}
                 >
                   <option value="">
                     {selectedBrand ? t("filters.allModels") : t("filters.model")}
@@ -243,14 +224,14 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
                 <ChevronDown className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground pointer-events-none" />
               </div>
 
-              {/* Budget Select */}
+              {/* Budget */}
               <div className="relative">
                 <select
                   value={selectedBudget}
                   onChange={(e) => setSelectedBudget(Number(e.target.value))}
                   onKeyDown={handleKeyDown}
                   className="search-input w-full appearance-none cursor-pointer pr-8 sm:pr-10 text-sm sm:text-base py-3 sm:py-4 bg-card"
-                  aria-label="Sélectionner un budget"
+                  aria-label={isNl ? "Selecteer een budget" : "Sélectionner un budget"}
                 >
                   <option value={0}>{t("filters.budget")}</option>
                   {BUDGET_OPTIONS.map((budget) => (
@@ -260,13 +241,13 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
                 <ChevronDown className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground pointer-events-none" />
               </div>
 
-              {/* Search & Voice Buttons */}
+              {/* Search & Voice */}
               <div className="col-span-2 md:col-span-1 flex gap-2">
                 <VoiceSearchButton onResult={handleVoiceResult} />
                 <button
                   onClick={handleSearch}
                   className="btn-primary-gradient flex-1 flex items-center justify-center gap-2 py-3 sm:py-4 rounded-md"
-                  aria-label="Lancer la recherche"
+                  aria-label={isNl ? "Zoeken" : "Lancer la recherche"}
                 >
                   <Search className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
                   <span className="font-semibold text-sm sm:text-base">{t("hero.search")}</span>
@@ -275,29 +256,20 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
             </div>
           </motion.div>
 
-          {/* Stats */}
+          {/* Trust pills */}
           <motion.div
             {...fadeUp(0.5)}
-            className="flex flex-wrap justify-center gap-6 sm:gap-10 md:gap-20 mt-8 sm:mt-14"
+            className="flex flex-wrap justify-center gap-3 sm:gap-5 mt-6 sm:mt-10"
           >
-            <div className="text-center">
-              <div className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
-                <AnimatedCounter target={150} suffix="+" />
+            {trustPills.map((pill, i) => (
+              <div
+                key={i}
+                className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground"
+              >
+                <pill.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
+                <span>{isNl ? pill.labelNl : pill.labelFr}</span>
               </div>
-              <div className="text-muted-foreground text-xs sm:text-sm">{t("hero.vehicles")}</div>
-            </div>
-            <div className="text-center">
-              <div className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
-                <AnimatedCounter target={98} suffix="%" />
-              </div>
-              <div className="text-muted-foreground text-xs sm:text-sm">{t("hero.verified")}</div>
-            </div>
-            <div className="text-center">
-              <div className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
-                <AnimatedCounter target={50} suffix="+" />
-              </div>
-              <div className="text-muted-foreground text-xs sm:text-sm">{t("hero.brands")}</div>
-            </div>
+            ))}
           </motion.div>
         </div>
       </div>
