@@ -41,6 +41,7 @@ import ReportAdModal from "@/components/ReportAdModal";
 import ScrollReveal from "@/components/ScrollReveal";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 const VehicleTcoSection = lazy(() => import("@/features/tco/components/VehicleTcoSection"));
+const BelgianTaxCalculator = lazy(() => import("@/components/BelgianTaxCalculator"));
 
 /** Stagger variants for sections */
 const fadeUp = (delay: number) => ({
@@ -575,6 +576,18 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
               {/* LEZ Widget */}
               <ScrollReveal delay={0.05}>
                 <LezWidget euroNorm={car.euroNorm} fuelType={car.fuelType} />
+              </ScrollReveal>
+
+              {/* Belgian Tax Calculator */}
+              <ScrollReveal delay={0.05}>
+                <Suspense fallback={<div className="h-20 rounded-2xl skeleton-shimmer" />}>
+                  <BelgianTaxCalculator
+                    powerKw={dbListing?.power}
+                    fuelType={car.fuelType}
+                    euroNorm={car.euroNorm}
+                    year={car.year}
+                  />
+                </Suspense>
               </ScrollReveal>
 
               {/* Description */}
