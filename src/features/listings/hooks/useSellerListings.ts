@@ -147,7 +147,7 @@ export function useSellerListings(period: ChartPeriod = 30, dateLocale?: Locale)
 
   // Main listings query
   const listingsQuery = useQuery({
-    queryKey: vehicleKeys.seller(user!.id),
+    queryKey: vehicleKeys.seller(user?.id ?? ""),
     queryFn: () => fetchSellerListings(user!.id),
     enabled: !!user?.id,
     staleTime: 2 * 60 * 1000, // 2 minutes
@@ -155,7 +155,7 @@ export function useSellerListings(period: ChartPeriod = 30, dateLocale?: Locale)
 
   // Daily stats query
   const statsQuery = useQuery({
-    queryKey: vehicleKeys.sellerStats(user!.id, period),
+    queryKey: vehicleKeys.sellerStats(user?.id ?? "", period),
     queryFn: () => fetchDailyStats(user!.id, period, dateLocale!),
     enabled: !!user?.id && !!dateLocale,
     staleTime: 5 * 60 * 1000, // 5 minutes
