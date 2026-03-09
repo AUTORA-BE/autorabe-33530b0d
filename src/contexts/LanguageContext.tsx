@@ -76,6 +76,15 @@ const translations: Record<Language, Record<string, string>> = {
     "filters.colorOrange": "Orange",
     "filters.colorBrown": "Marron",
     "filters.colorBeige": "Beige",
+    "filters.bodyType": "Carrosserie",
+    "filters.bodySedan": "Berline",
+    "filters.bodySUV": "SUV",
+    "filters.bodyCity": "Citadine",
+    "filters.bodyCompact": "Compacte",
+    "filters.bodyWagon": "Break",
+    "filters.bodyCoupe": "Coupé",
+    "filters.bodyConvertible": "Cabriolet",
+    "filters.bodyMPV": "Monospace",
     
     // Car Card & Detail
     "car.addCompare": "Ajouter au comparateur",
