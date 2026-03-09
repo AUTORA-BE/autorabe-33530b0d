@@ -8,7 +8,7 @@ import { getAllBrands } from "@/utils/carUtils";
 import { BUDGET_OPTIONS } from "@/features/search/types/search.types";
 
 /** Types of entities that can be detected from voice input */
-export type EntityType = 'brand' | 'budget' | 'mileage' | 'fuel' | 'transmission';
+export type EntityType = 'brand' | 'budget' | 'mileage' | 'fuel' | 'transmission' | 'euroNorm';
 
 /** A detected entity from voice transcript */
 export interface DetectedEntity {
@@ -30,6 +30,8 @@ export interface VoiceSearchParams {
   fuelType?: string;
   /** Transmission filter value */
   transmission?: string;
+  /** Euro emission norm */
+  euroNorm?: string;
   /** Remaining text after removing detected entities (potential model) */
   remainingText: string;
 }
@@ -47,6 +49,9 @@ const TRANSMISSION_KEYWORDS: { keywords: string[]; label: string; value: string 
   { keywords: ['automatique', 'automatic', 'automatisch'], label: 'Automatique', value: 'automatique' },
   { keywords: ['manuelle', 'manuel', 'manual', 'manueel'], label: 'Manuelle', value: 'manuelle' },
 ];
+
+/** Euro norm detection pattern */
+const EURO_NORM_PATTERN = /euro\s*(6d|6|5|4|3|2|1)/i;
 
 /** Words to strip when extracting potential model name */
 const NOISE_WORDS = /(moins de|budget|euros|€|prix|maximum|max|kilomètres|kilometers|essence|diesel|électrique|electrique|hybride|automatique|manuelle|manuel|boîte|auto)/gi;
@@ -105,6 +110,12 @@ export function detectEntities(transcript: string, brands?: string[]): DetectedE
     }
   }
 
+  // Euro norm detection
+  const euroMatch = lower.match(EURO_NORM_PATTERN);
+  if (euroMatch) {
+    entities.push({ type: 'euroNorm', value: `Euro ${euroMatch[1].toUpperCase()}` });
+  }
+
   return entities;
 }
 
@@ -160,11 +171,18 @@ export function parseVoiceTranscript(transcript: string, brands?: string[]): Voi
     }
   }
 
+  // Euro norm detection
+  const euroMatch = lower.match(EURO_NORM_PATTERN);
+  if (euroMatch) {
+    result.euroNorm = euroMatch[1].toUpperCase();
+  }
+
   // Extract remaining text (potential model name)
   result.remainingText = transcript
     .replace(new RegExp(foundBrand ?? '', 'ig'), '')
     .replace(new RegExp(budgetMatch?.[0] ?? '', 'ig'), '')
     .replace(new RegExp(kmMatch?.[0] ?? '', 'ig'), '')
+    .replace(new RegExp(euroMatch?.[0] ?? '', 'ig'), '')
     .replace(NOISE_WORDS, '')
     .trim();
 

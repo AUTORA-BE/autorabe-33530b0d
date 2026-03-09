@@ -34,7 +34,7 @@ const Index = () => {
 
   const { isFavorite, toggleFavorite } = useFavorites();
 
-  const handleSearch = useCallback((brand: string, model: string, maxPrice: number, maxMileage?: number, fuelType?: string, transmission?: string) => {
+  const handleSearch = useCallback((brand: string, model: string, maxPrice: number, maxMileage?: number, fuelType?: string, transmission?: string, euroNorm?: string) => {
     const newVoiceFilters: VoiceFilter[] = [];
     
     if (brand) {
@@ -63,6 +63,10 @@ const Index = () => {
       updateFilter("transmission", transmission);
       newVoiceFilters.push({ type: 'transmission', label: language === 'nl' ? 'Versnelling' : 'Transmission', value: transmission === 'automatique' ? 'Automatique' : 'Manuelle' });
     }
+    if (euroNorm) {
+      updateFilter("euroNorm", euroNorm);
+      newVoiceFilters.push({ type: 'euroNorm', label: language === 'nl' ? 'Euro norm' : 'Norme Euro', value: `Euro ${euroNorm}` });
+    }
     
     setVoiceFilters(newVoiceFilters);
     
@@ -85,6 +89,7 @@ const Index = () => {
       case 'mileage': updateFilter("kmMax", 200000); break;
       case 'fuel': updateFilter("fuelTypes", []); break;
       case 'transmission': updateFilter("transmission", ""); break;
+      case 'euroNorm': updateFilter("euroNorm", ""); break;
     }
   }, [updateFilter]);
 

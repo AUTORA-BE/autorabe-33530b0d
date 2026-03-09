@@ -5,13 +5,13 @@
 
 import { memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Car, Banknote, Gauge, Fuel, Settings2, Mic } from "lucide-react";
+import { X, Car, Banknote, Gauge, Fuel, Settings2, Shield, Mic } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 /** Represents an applied voice filter */
 export interface VoiceFilter {
-  type: 'brand' | 'model' | 'budget' | 'mileage' | 'fuel' | 'transmission';
+  type: 'brand' | 'model' | 'budget' | 'mileage' | 'fuel' | 'transmission' | 'euroNorm';
   label: string;
   value: string;
 }
@@ -32,6 +32,7 @@ const ICON_MAP: Record<VoiceFilter['type'], React.ElementType> = {
   mileage: Gauge,
   fuel: Fuel,
   transmission: Settings2,
+  euroNorm: Shield,
 };
 
 const COLOR_MAP: Record<VoiceFilter['type'], string> = {
@@ -41,6 +42,7 @@ const COLOR_MAP: Record<VoiceFilter['type'], string> = {
   mileage: 'bg-secondary text-secondary-foreground border-secondary',
   fuel: 'bg-primary/10 text-primary border-primary/15',
   transmission: 'bg-muted text-muted-foreground border-muted',
+  euroNorm: 'bg-primary/20 text-primary border-primary/25',
 };
 
 /**
