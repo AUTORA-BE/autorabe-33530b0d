@@ -72,12 +72,7 @@ const TrustBar = memo(() => {
       labelFr: "100 % belge",
       labelNl: "100% Belgisch",
     },
-    {
-      icon: Lock,
-      valueFr: "Transactions",
-      valueNl: "Transacties",
-      labelFr: "sécurisées",
-      labelNl: "beveiligd",
+  ];
     },
   ];
 
