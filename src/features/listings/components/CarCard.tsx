@@ -233,6 +233,23 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
             {formatMileage(car.mileage)}
           </span>
         </div>
+
+        {/* TCO Match Score */}
+        {matchResult && (
+          <div className={`mt-3 flex items-center justify-between rounded-xl px-3 py-2 text-xs font-medium ${
+            matchResult.color === "primary"
+              ? "bg-primary/10 text-primary"
+              : matchResult.color === "amber"
+                ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                : "bg-muted text-muted-foreground"
+          }`}>
+            <span className="flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5" />
+              {matchResult.label}
+            </span>
+            <span className="font-bold">{matchResult.score}%</span>
+          </div>
+        )}
       </div>
     </article>
   );
