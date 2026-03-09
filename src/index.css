@@ -178,7 +178,7 @@ input[type="number"] {
   }
 
   .glass-card:hover {
-    box-shadow: 0 12px 32px -8px hsl(var(--foreground) / 0.12);
+    box-shadow: 0 12px 32px -8px hsl(var(--foreground) / 0.12), var(--shadow-glow-primary);
     transform: translateY(-4px);
     transition: box-shadow 0.3s ease, transform 0.3s ease;
   }
