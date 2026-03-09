@@ -64,6 +64,7 @@ import { format } from "date-fns";
 import { fr, nl, enGB } from "date-fns/locale";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSellerListings } from "../hooks/useSellerListings";
+import BoostDialog from "./BoostDialog";
 import type { SellerListing, StatusFilter, ChartPeriod } from "../types/sellerDashboard.types";
 
 // Animation variants
