@@ -136,9 +136,9 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
 
   /** Trust pills below search */
   const trustPills = [
-    { icon: ShieldCheck, labelFr: "Annonces vérifiées", labelNl: "Geverifieerde advertenties" },
-    { icon: FileCheck, labelFr: "Car-Pass protégé", labelNl: "Car-Pass beschermd" },
-    { icon: Leaf, labelFr: "Conformité LEZ garantie", labelNl: "LEZ-compatibiliteit gegarandeerd" },
+    { icon: ShieldCheck, label: t("hero.pill.verified") },
+    { icon: FileCheck, label: t("hero.pill.carpass") },
+    { icon: Leaf, label: t("hero.pill.lez") },
   ];
 
   return (
