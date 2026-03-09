@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { Mic, Car, Banknote, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
