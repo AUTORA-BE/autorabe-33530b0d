@@ -110,6 +110,12 @@ export function detectEntities(transcript: string, brands?: string[]): DetectedE
     }
   }
 
+  // Euro norm detection
+  const euroMatch = lower.match(EURO_NORM_PATTERN);
+  if (euroMatch) {
+    entities.push({ type: 'euroNorm', value: `Euro ${euroMatch[1].toUpperCase()}` });
+  }
+
   return entities;
 }
 
