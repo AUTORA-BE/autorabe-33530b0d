@@ -129,7 +129,8 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
         parsed.maxBudget || selectedBudget || 1000000,
         parsed.maxMileage,
         parsed.fuelType,
-        parsed.transmission
+        parsed.transmission,
+        parsed.euroNorm
       );
     }, 500);
   }, [brands, selectedBrand, selectedBudget, onSearch]);

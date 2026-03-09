@@ -42,6 +42,7 @@ const COLOR_MAP: Record<VoiceFilter['type'], string> = {
   mileage: 'bg-secondary text-secondary-foreground border-secondary',
   fuel: 'bg-primary/10 text-primary border-primary/15',
   transmission: 'bg-muted text-muted-foreground border-muted',
+  euroNorm: 'bg-primary/20 text-primary border-primary/25',
 };
 
 /**

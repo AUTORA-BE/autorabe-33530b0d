@@ -159,14 +159,20 @@ describe("parseVoiceTranscript", () => {
     expect(result.remainingText).toContain("série 3");
   });
 
+  it("parses euro norm", () => {
+    const result = parseVoiceTranscript("voiture euro 5", BRANDS);
+    expect(result.euroNorm).toBe("5");
+  });
+
   it("parses a full complex sentence", () => {
     const result = parseVoiceTranscript(
-      "Audi diesel automatique moins de 40000 euros 80000 km",
+      "Audi diesel automatique euro 6 moins de 40000 euros 80000 km",
       BRANDS
     );
     expect(result.brand).toBe("Audi");
     expect(result.fuelType).toBe("diesel");
     expect(result.transmission).toBe("automatique");
+    expect(result.euroNorm).toBe("6");
     expect(result.maxBudget).toBe(40000);
     expect(result.maxMileage).toBe(80000);
   });

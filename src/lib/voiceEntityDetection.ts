@@ -171,11 +171,18 @@ export function parseVoiceTranscript(transcript: string, brands?: string[]): Voi
     }
   }
 
+  // Euro norm detection
+  const euroMatch = lower.match(EURO_NORM_PATTERN);
+  if (euroMatch) {
+    result.euroNorm = euroMatch[1].toUpperCase();
+  }
+
   // Extract remaining text (potential model name)
   result.remainingText = transcript
     .replace(new RegExp(foundBrand ?? '', 'ig'), '')
     .replace(new RegExp(budgetMatch?.[0] ?? '', 'ig'), '')
     .replace(new RegExp(kmMatch?.[0] ?? '', 'ig'), '')
+    .replace(new RegExp(euroMatch?.[0] ?? '', 'ig'), '')
     .replace(NOISE_WORDS, '')
     .trim();
 

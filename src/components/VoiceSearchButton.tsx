@@ -275,6 +275,8 @@ export function VoiceSearchButton({ onResult }: VoiceSearchButtonProps) {
                           <Fuel className="w-3 h-3" />
                         ) : entity.type === 'transmission' ? (
                           <Settings2 className="w-3 h-3" />
+                        ) : entity.type === 'euroNorm' ? (
+                          <Shield className="w-3 h-3" />
                         ) : (
                           <Gauge className="w-3 h-3" />
                         )}

@@ -89,6 +89,7 @@ const Index = () => {
       case 'mileage': updateFilter("kmMax", 200000); break;
       case 'fuel': updateFilter("fuelTypes", []); break;
       case 'transmission': updateFilter("transmission", ""); break;
+      case 'euroNorm': updateFilter("euroNorm", ""); break;
     }
   }, [updateFilter]);
 
