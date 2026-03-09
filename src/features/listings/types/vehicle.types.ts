@@ -149,6 +149,7 @@ export const defaultVehicleFilters: VehicleFilters = {
   lezOnly: false,
   sellerTypeFilter: "",
   bodyType: "",
+  color: "",
 };
 
 /**
