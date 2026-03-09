@@ -105,11 +105,11 @@ const TrustBar = memo(() => {
                   <badge.icon className="w-4 h-4 text-primary" />
                 </div>
                 <div className="leading-tight">
-                  <div className="text-sm font-bold text-foreground whitespace-nowrap">
-                    {isNl ? badge.valueNl : badge.valueFr}
+                <div className="text-sm font-bold text-foreground whitespace-nowrap">
+                    {badge.value}
                   </div>
                   <div className="text-[10px] sm:text-xs text-muted-foreground whitespace-nowrap">
-                    {isNl ? badge.labelNl : badge.labelFr}
+                    {badge.label}
                   </div>
                 </div>
               </div>
