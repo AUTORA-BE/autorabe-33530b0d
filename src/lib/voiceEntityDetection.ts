@@ -32,6 +32,8 @@ export interface VoiceSearchParams {
   transmission?: string;
   /** Euro emission norm */
   euroNorm?: string;
+  /** Vehicle color */
+  color?: string;
   /** Remaining text after removing detected entities (potential model) */
   remainingText: string;
 }
