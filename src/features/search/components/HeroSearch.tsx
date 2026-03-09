@@ -9,6 +9,7 @@ import { motion } from "framer-motion";
 import { getAllBrands, getModelsByBrand } from "@/utils/carUtils";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { BUDGET_OPTIONS } from "../types/search.types";
+import { VoiceSearchButton } from "@/components/VoiceSearchButton";
 import type { QuickSearchParams } from "../types/search.types";
 
 /** Animated counter that increments when visible in viewport */
@@ -105,6 +106,48 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
 
   const handleSearch = () => {
     onSearch(selectedBrand, model, selectedBudget || 1000000);
+  };
+
+  const handleVoiceResult = (transcript: string) => {
+    const lowerTranscript = transcript.toLowerCase();
+    
+    let newBrand = selectedBrand;
+    let newBudget = selectedBudget;
+    
+    const foundBrand = brands.find(b => lowerTranscript.includes(b.toLowerCase()));
+    if (foundBrand) {
+      newBrand = foundBrand;
+      setSelectedBrand(foundBrand);
+    }
+    
+    const numberMatch = lowerTranscript.match(/(\d+[\s.]?\d*)\s*(euro|€|mille)/i);
+    let budget = 0;
+    if (numberMatch) {
+       budget = parseInt(numberMatch[1].replace(/\D/g, ''));
+       if (lowerTranscript.includes("mille")) budget *= 1000;
+       else if (budget < 1000 && budget > 0) budget *= 1000;
+       
+       const option = BUDGET_OPTIONS.find(o => o.value >= budget);
+       if (option) {
+          newBudget = option.value;
+          setSelectedBudget(option.value);
+       } else {
+          newBudget = 1000000;
+          setSelectedBudget(1000000);
+       }
+    }
+
+    let potentialModel = transcript
+      .replace(new RegExp(foundBrand || '', 'ig'), '')
+      .replace(new RegExp(numberMatch ? numberMatch[0] : '', 'ig'), '')
+      .replace(/(moins de|budget|euros|€|prix|maximum|max)/ig, '')
+      .trim();
+      
+    setModel(potentialModel);
+    
+    setTimeout(() => {
+      onSearch(newBrand, potentialModel, newBudget || 1000000);
+    }, 500);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -231,15 +274,18 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
                 <ChevronDown className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground pointer-events-none" />
               </div>
 
-              {/* Search Button */}
-              <button
-                onClick={handleSearch}
-                className="btn-primary-gradient flex items-center justify-center gap-2 col-span-2 md:col-span-1 py-3 sm:py-4"
-                aria-label="Lancer la recherche"
-              >
-                <Search className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
-                <span className="font-semibold text-sm sm:text-base">{t("hero.search")}</span>
-              </button>
+              {/* Search & Voice Buttons */}
+              <div className="col-span-2 md:col-span-1 flex gap-2">
+                <VoiceSearchButton onResult={handleVoiceResult} />
+                <button
+                  onClick={handleSearch}
+                  className="btn-primary-gradient flex-1 flex items-center justify-center gap-2 py-3 sm:py-4 rounded-md"
+                  aria-label="Lancer la recherche"
+                >
+                  <Search className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
+                  <span className="font-semibold text-sm sm:text-base">{t("hero.search")}</span>
+                </button>
+              </div>
             </div>
           </motion.div>
 
