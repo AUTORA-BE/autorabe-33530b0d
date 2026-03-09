@@ -11,6 +11,7 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { vehicleQueries, PAGE_SIZE } from '../api/vehicleQueries';
+import { vehicleKeys } from '../api/vehicleKeys';
 import type {
   Vehicle,
   VehicleFilters,
