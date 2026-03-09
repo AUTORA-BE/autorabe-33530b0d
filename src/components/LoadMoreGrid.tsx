@@ -280,6 +280,7 @@ const LoadMoreGrid = ({
                   isFavorite={isFavorite(car.id)}
                   onToggleFavorite={onToggleFavorite}
                   onClick={onCarClick}
+                  buyerProfile={buyerProfile}
                 />
               </div>
             ))}
