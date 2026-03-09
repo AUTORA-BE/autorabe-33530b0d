@@ -148,7 +148,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
     setTimeout(() => {
       onSearch(newBrand, potentialModel, newBudget || 1000000);
     }, 500);
-  };
+  }, [brands, selectedBrand, selectedBudget, onSearch]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") handleSearch();
