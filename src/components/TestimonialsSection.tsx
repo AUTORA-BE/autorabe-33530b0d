@@ -73,6 +73,16 @@ const TestimonialsSection = memo(() => {
       <div className="absolute top-1/3 right-0 w-72 h-72 bg-primary/[0.04] rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-96 h-64 bg-primary/[0.03] rounded-full blur-3xl pointer-events-none" />
 
+      {/* Floating light particles */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+        <div className="testimonial-particle testimonial-particle-1" />
+        <div className="testimonial-particle testimonial-particle-2" />
+        <div className="testimonial-particle testimonial-particle-3" />
+        <div className="testimonial-particle testimonial-particle-4" />
+        <div className="hidden sm:block testimonial-particle testimonial-particle-5" />
+        <div className="hidden sm:block testimonial-particle testimonial-particle-6" />
+      </div>
+
       <div className="container mx-auto px-4 sm:px-6 relative">
         {/* Section header */}
         <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-14">
