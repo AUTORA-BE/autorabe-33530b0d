@@ -1,5 +1,5 @@
-import { forwardRef, memo } from "react";
-import { Calendar, Gauge, MapPin, Heart, GitCompareArrows, Leaf, AlertTriangle, Ban, Info, CheckCircle, Building2 } from "lucide-react";
+import { forwardRef, memo, useMemo } from "react";
+import { Calendar, Gauge, MapPin, Heart, GitCompareArrows, Leaf, AlertTriangle, Ban, Info, CheckCircle, Building2, Sparkles } from "lucide-react";
 import { useCompareContext } from "@/features/compare";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useHapticFeedback } from "@/hooks/useHapticFeedback";
