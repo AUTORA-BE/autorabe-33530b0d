@@ -283,8 +283,10 @@ export function VoiceSearchButton({ onResult }: VoiceSearchButtonProps) {
                       >
                         {entity.type === 'brand' ? (
                           <Car className="w-3 h-3" />
-                        ) : (
+                        ) : entity.type === 'budget' ? (
                           <Banknote className="w-3 h-3" />
+                        ) : (
+                          <Gauge className="w-3 h-3" />
                         )}
                         {entity.value}
                         <Check className="w-3 h-3 ml-0.5" />
