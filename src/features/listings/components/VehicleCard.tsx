@@ -4,7 +4,7 @@
  */
 
 import { memo } from "react";
-import { Heart, MapPin, Calendar, Gauge, Shield, CheckCircle, AlertTriangle, Ban, Leaf, Info, Building2 } from "lucide-react";
+import { Heart, MapPin, Calendar, Gauge, Shield, CheckCircle, AlertTriangle, Ban, Leaf, Info, Building2, Sparkles } from "lucide-react";
 import CarImage from "@/components/cars/CarImage";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
