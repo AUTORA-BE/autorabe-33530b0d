@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Header, Footer } from "@/shared/components";
 import { useCompareContext } from "@/features/compare";
 import { Link, useSearchParams } from "react-router-dom";
@@ -18,7 +18,9 @@ import {
   Ban,
   Info,
   Share2,
-  Check
+  Check,
+  Trophy,
+  Star
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -30,16 +32,150 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { calculerStatutLEZ } from "@/lib/lezData";
+import { Progress } from "@/components/ui/progress";
+import { calculerStatutLEZ, type LezStatutType } from "@/lib/lezData";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import type { Vehicle } from "@/features/listings/types/vehicle.types";
+
+// ─── Scoring Engine ──────────────────────────────────────────────────
+
+interface VehicleScore {
+  total: number;
+  breakdown: {
+    priceMileage: number;   // 0-30 — lower price per km = better
+    ageValue: number;       // 0-20 — newer + cheaper = better
+    lezCompat: number;      // 0-30 — LEZ compatibility across 3 cities
+    carPass: number;        // 0-10 — verified = bonus
+    transmission: number;   // 0-10 — auto = slight bonus
+  };
+  rank: number;
+  label: string;
+}
+
+const LEZ_STATUS_SCORES: Record<LezStatutType, number> = {
+  autorise: 10,
+  alerte: 5,
+  derogation_requise: 3,
+  interdit: 0,
+  inconnu: 2,
+};
+
+function computeScores(vehicles: Vehicle[]): Map<string, VehicleScore> {
+  if (vehicles.length === 0) return new Map();
+
+  const maxPrice = Math.max(...vehicles.map((v) => v.price), 1);
+  const maxMileage = Math.max(...vehicles.map((v) => v.mileage), 1);
+  const currentYear = new Date().getFullYear();
+
+  const rawScores = vehicles.map((v) => {
+    // Price/mileage ratio (30 pts) — lower cost per km is better
+    const costPerKm = v.mileage > 0 ? v.price / v.mileage : v.price;
+    const maxCostPerKm = Math.max(...vehicles.map((x) => x.mileage > 0 ? x.price / x.mileage : x.price), 1);
+    const priceMileage = Math.round((1 - costPerKm / maxCostPerKm) * 30);
+
+    // Age value (20 pts) — newer is better, adjusted by price
+    const age = currentYear - v.year;
+    const maxAge = Math.max(...vehicles.map((x) => currentYear - x.year), 1);
+    const ageFreshness = 1 - age / maxAge;
+    const priceRatio = 1 - v.price / maxPrice;
+    const ageValue = Math.round(((ageFreshness * 0.6 + priceRatio * 0.4)) * 20);
+
+    // LEZ compatibility (30 pts) — sum across 3 cities
+    const lezResult = calculerStatutLEZ(v.fuelType, v.euroNorm);
+    const lezCompat = lezResult.details.reduce((sum, d) => {
+      return sum + (LEZ_STATUS_SCORES[d.statut] || 0);
+    }, 0);
+
+    // Car-Pass (10 pts)
+    const carPass = v.hasCarPass ? 10 : 0;
+
+    // Transmission (10 pts) — auto slight edge
+    const transmission = v.transmission?.toLowerCase().includes("auto") ? 10 : 6;
+
+    const total = priceMileage + ageValue + lezCompat + carPass + transmission;
+
+    return {
+      id: v.id,
+      total,
+      breakdown: { priceMileage, ageValue, lezCompat, carPass, transmission },
+    };
+  });
+
+  // Rank
+  const sorted = [...rawScores].sort((a, b) => b.total - a.total);
+  const labels = ["Meilleur choix", "Bon choix", "À considérer"];
+
+  const result = new Map<string, VehicleScore>();
+  sorted.forEach((s, i) => {
+    result.set(s.id, { ...s, rank: i + 1, label: labels[i] || "À considérer" });
+  });
+
+  return result;
+}
+
+// ─── Score Display Component ─────────────────────────────────────────
+
+function ScoreCard({ score }: { score: VehicleScore }) {
+  const isWinner = score.rank === 1;
+  const colorClass = isWinner
+    ? "text-primary"
+    : score.rank === 2
+    ? "text-amber-500"
+    : "text-muted-foreground";
+
+  const criteria = [
+    { label: "Rapport prix/km", value: score.breakdown.priceMileage, max: 30 },
+    { label: "Valeur/âge", value: score.breakdown.ageValue, max: 20 },
+    { label: "Compat. LEZ", value: score.breakdown.lezCompat, max: 30 },
+    { label: "Car-Pass", value: score.breakdown.carPass, max: 10 },
+    { label: "Transmission", value: score.breakdown.transmission, max: 10 },
+  ];
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-2">
+        {isWinner && <Trophy className="w-5 h-5 text-primary" />}
+        <span className={`text-2xl font-bold ${colorClass}`}>{score.total}</span>
+        <span className="text-xs text-muted-foreground">/100</span>
+      </div>
+      <Badge
+        variant="outline"
+        className={`${
+          isWinner
+            ? "bg-primary/15 text-primary border-primary/30"
+            : score.rank === 2
+            ? "bg-amber-500/15 text-amber-600 border-amber-500/30"
+            : "bg-muted text-muted-foreground"
+        }`}
+      >
+        {isWinner && <Star className="w-3 h-3 mr-1" />}
+        {score.label}
+      </Badge>
+      <div className="space-y-2 pt-1">
+        {criteria.map((c) => (
+          <div key={c.label}>
+            <div className="flex items-center justify-between text-[11px] mb-0.5">
+              <span className="text-muted-foreground">{c.label}</span>
+              <span className="font-medium">{c.value}/{c.max}</span>
+            </div>
+            <Progress value={(c.value / c.max) * 100} className="h-1.5" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── Main Component ──────────────────────────────────────────────────
 
 const Compare = () => {
   const { compareList, removeFromCompare, clearCompare, addToCompare } = useCompareContext();
   const [searchParams] = useSearchParams();
   const [copied, setCopied] = useState(false);
   const [loadingShared, setLoadingShared] = useState(false);
+
+  const scores = useMemo(() => computeScores(compareList), [compareList]);
 
   // Load vehicles from shared URL params
   useEffect(() => {
@@ -93,7 +229,6 @@ const Compare = () => {
       toast({ title: "Lien copié !", description: "Partagez ce lien pour montrer votre comparatif." });
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Fallback
       const input = document.createElement("input");
       input.value = url;
       document.body.appendChild(input);
@@ -141,6 +276,10 @@ const Compare = () => {
   };
 
   const specs = [
+    { label: "Score", icon: Trophy, render: (car: typeof compareList[0]) => {
+      const score = scores.get(car.id);
+      return score ? <ScoreCard score={score} /> : "—";
+    }},
     { label: "Prix", icon: null, render: (car: typeof compareList[0]) => (
       <span className="text-lg font-bold text-primary">{formatPrice(car.price)}</span>
     )},
