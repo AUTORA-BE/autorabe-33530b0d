@@ -98,7 +98,7 @@ export default function Messages() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="page-gradient">
       <Header />
       
       <main className="pt-20 pb-16">

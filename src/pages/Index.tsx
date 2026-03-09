@@ -108,7 +108,7 @@ const Index = () => {
   const handleCarClick = (carId: string) => navigate(`/car/${carId}`);
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--gradient-page)' }}>
+    <div className="page-gradient">
       <SEOHead 
         title={language === "nl" ? "AutoRa — De Belgische automarktplaats" : "AutoRa — La marketplace automobile belge"}
         description={language === "nl" 
