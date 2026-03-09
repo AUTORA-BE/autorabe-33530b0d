@@ -66,6 +66,7 @@ const VehicleCard = memo(function VehicleCard({
   onClick,
   eager = false,
 }: VehicleCardProps) {
+  const { addToCompare, removeFromCompare: removeCompare, isInCompare } = useCompareContext();
   const { language } = useLanguage();
   const lezResult = calculerStatutLEZ(vehicle.fuelType, vehicle.euroNorm);
   const lezConfig = lezBadgeConfig[lezResult.global.statut];
