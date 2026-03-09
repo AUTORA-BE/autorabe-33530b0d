@@ -96,7 +96,7 @@ interface SellCarFormProps {
   onFormDataChange?: (data: SellCarFormWatchData, photoPreview: string | undefined, photoCount: number) => void;
 }
 
-export function SellCarForm({ editId }: SellCarFormProps) {
+export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const [currentStep, setCurrentStep] = useState(1);
