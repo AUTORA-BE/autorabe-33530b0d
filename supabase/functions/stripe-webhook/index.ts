@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
+import { createClient } from "npm:@supabase/supabase-js@2.57.2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -37,7 +38,6 @@ serve(async (req) => {
       event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
       logStep("Webhook signature verified");
     } else {
-      // In dev/test, parse without verification
       event = JSON.parse(body) as Stripe.Event;
       logStep("WARNING: No webhook secret configured, skipping signature verification");
     }
@@ -51,7 +51,41 @@ serve(async (req) => {
           customer: session.customer,
           email: session.customer_email,
           subscription: session.subscription,
+          metadata: session.metadata,
         });
+
+        // Handle boost activation from metadata
+        const listingId = session.metadata?.listing_id;
+        const boostLevel = session.metadata?.boost_level;
+        const boostDays = session.metadata?.boost_days;
+
+        if (listingId && boostLevel && boostDays) {
+          logStep("Activating boost", { listingId, boostLevel, boostDays });
+
+          const supabaseAdmin = createClient(
+            Deno.env.get("SUPABASE_URL") ?? "",
+            Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+            { auth: { persistSession: false } }
+          );
+
+          const expiresAt = new Date();
+          expiresAt.setDate(expiresAt.getDate() + parseInt(boostDays, 10));
+
+          const { error: updateError } = await supabaseAdmin
+            .from("car_listings")
+            .update({
+              boost_level: boostLevel,
+              boost_expires_at: expiresAt.toISOString(),
+              boost_warning_sent: false,
+            })
+            .eq("id", listingId);
+
+          if (updateError) {
+            logStep("ERROR activating boost", { error: updateError.message });
+          } else {
+            logStep("Boost activated successfully", { listingId, boostLevel, expiresAt: expiresAt.toISOString() });
+          }
+        }
         break;
       }
 
