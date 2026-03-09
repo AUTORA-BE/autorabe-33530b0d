@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Upload, X, Car, Info, User, Camera, FileCheck, Building2, AlertTriangle, Leaf, CreditCard } from 'lucide-react';
+import { Upload, X, Car, Info, User, Camera, FileCheck, Building2, AlertTriangle, Leaf, CreditCard, ChevronLeft, ChevronRight, Check, FileText, Shield } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useListingLimit } from '@/features/subscription';
@@ -19,6 +20,8 @@ import { useListingLimit } from '@/features/subscription';
 const MAX_PHOTOS = 10;
 const MAX_PHOTO_SIZE_MB = 5;
 const MAX_PHOTO_SIZE_BYTES = MAX_PHOTO_SIZE_MB * 1024 * 1024;
+const MAX_PDF_SIZE_MB = 10;
+const MAX_PDF_SIZE_BYTES = MAX_PDF_SIZE_MB * 1024 * 1024;
 
 const sellCarSchema = z.object({
   brand: z.string().min(1, "La marque est obligatoire"),
@@ -37,7 +40,7 @@ const sellCarSchema = z.object({
   power: z.number().optional(),
   doors: z.number().optional(),
   euro_norm: z.string().optional(),
-  vin: z.string().optional(),
+  vin: z.string().max(17, "Le VIN doit contenir 17 caractères maximum").optional(),
   first_registration: z.string().optional(),
   description: z.string().optional(),
   contact_name: z.string().min(1, "Le nom de contact est obligatoire"),
@@ -62,6 +65,12 @@ const brands = [
 
 const euroNorms = ['Euro 6d', 'Euro 6c', 'Euro 6b', 'Euro 6', 'Euro 5', 'Euro 4', 'Euro 3'];
 
+const STEPS = [
+  { id: 1, label: 'Informations', icon: Car },
+  { id: 2, label: 'Photos', icon: Camera },
+  { id: 3, label: 'Documents', icon: FileCheck },
+];
+
 interface SellCarFormProps {
   editId?: string;
 }
@@ -69,15 +78,17 @@ interface SellCarFormProps {
 export function SellCarForm({ editId }: SellCarFormProps) {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const [currentStep, setCurrentStep] = useState(1);
   const [photos, setPhotos] = useState<File[]>([]);
   const [photosPreviews, setPhotosPreviews] = useState<string[]>([]);
   const [existingPhotos, setExistingPhotos] = useState<string[]>([]);
+  const [carPassFile, setCarPassFile] = useState<File | null>(null);
+  const [carPassFileName, setCarPassFileName] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(!!editId);
   const isEditMode = !!editId;
   const { canPublish, activeCount, maxAllowed, isLoading: limitLoading } = useListingLimit();
 
-  // Translated options
   const fuelTypes = [
     { value: 'Essence', label: t('sellForm.fuelGasoline') },
     { value: 'Diesel', label: t('sellForm.fuelDiesel') },
@@ -233,6 +244,51 @@ export function SellCarForm({ editId }: SellCarFormProps) {
     setPhotosPreviews(prev => prev.filter((_, i) => i !== index));
   };
 
+  const removeExistingPhoto = (index: number) => {
+    const photoUrl = photosPreviews[index];
+    if (existingPhotos.includes(photoUrl)) {
+      setExistingPhotos(prev => prev.filter(p => p !== photoUrl));
+    }
+    setPhotosPreviews(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleCarPassUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== 'application/pdf') {
+      toast.error('Seuls les fichiers PDF sont acceptés pour le Car-Pass.');
+      return;
+    }
+    if (file.size > MAX_PDF_SIZE_BYTES) {
+      toast.error(`Le fichier dépasse la taille maximale de ${MAX_PDF_SIZE_MB} Mo.`);
+      return;
+    }
+
+    setCarPassFile(file);
+    setCarPassFileName(file.name);
+    form.setValue('car_pass_verified', true);
+  };
+
+  const handleCarPassDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files?.[0];
+    if (!file) return;
+
+    if (file.type !== 'application/pdf') {
+      toast.error('Seuls les fichiers PDF sont acceptés pour le Car-Pass.');
+      return;
+    }
+    if (file.size > MAX_PDF_SIZE_BYTES) {
+      toast.error(`Le fichier dépasse la taille maximale de ${MAX_PDF_SIZE_MB} Mo.`);
+      return;
+    }
+
+    setCarPassFile(file);
+    setCarPassFileName(file.name);
+    form.setValue('car_pass_verified', true);
+  };
+
   const uploadPhotos = async (userId: string): Promise<string[]> => {
     const uploadedUrls: string[] = [];
     
@@ -259,8 +315,13 @@ export function SellCarForm({ editId }: SellCarFormProps) {
     return uploadedUrls;
   };
 
+  const uploadCarPass = async (userId: string): Promise<void> => {
+    if (!carPassFile) return;
+    const fileName = `${userId}/carpass-${Date.now()}.pdf`;
+    await supabase.storage.from('car-photos').upload(fileName, carPassFile);
+  };
+
   const onSubmit = async (data: SellCarFormData) => {
-    // Block new listings if limit reached (edits are always allowed)
     if (!isEditMode && !canPublish) {
       toast.error(`Vous avez atteint la limite de ${maxAllowed} annonces simultanées. Passez à un plan supérieur pour publier davantage.`);
       return;
@@ -280,6 +341,7 @@ export function SellCarForm({ editId }: SellCarFormProps) {
       const hasPhotos = photos.length > 0 || existingPhotos.length > 0;
       if (!hasPhotos) {
         toast.error(t('sellForm.photosRequired'));
+        setCurrentStep(2);
         setIsSubmitting(false);
         return;
       }
@@ -296,36 +358,41 @@ export function SellCarForm({ editId }: SellCarFormProps) {
         return;
       }
 
+      // Upload Car-Pass PDF if present
+      await uploadCarPass(user.id);
+
+      const listingData = {
+        brand: data.brand,
+        model: data.model,
+        year: data.year,
+        price: data.price,
+        mileage: data.mileage,
+        fuel_type: data.fuel_type,
+        transmission: data.transmission,
+        body_type: data.body_type,
+        color: data.color,
+        power: data.power || null,
+        doors: data.doors || 5,
+        euro_norm: data.euro_norm || null,
+        vin: data.vin || null,
+        first_registration: data.first_registration || null,
+        description: data.description || null,
+        contact_name: data.contact_name,
+        contact_phone: data.contact_phone || null,
+        contact_email: data.contact_email,
+        location: data.location || null,
+        photos: allPhotoUrls,
+        car_pass_verified: data.car_pass_verified || false,
+        ct_valid: data.ct_valid || false,
+        maintenance_book_complete: data.maintenance_book_complete || false,
+        seller_type: data.seller_type || 'particulier',
+        tva_number: data.tva_number || null,
+      };
+
       if (isEditMode && editId) {
         const { error } = await supabase
           .from('car_listings')
-          .update({
-            brand: data.brand,
-            model: data.model,
-            year: data.year,
-            price: data.price,
-            mileage: data.mileage,
-            fuel_type: data.fuel_type,
-            transmission: data.transmission,
-            body_type: data.body_type,
-            color: data.color,
-            power: data.power || null,
-            doors: data.doors || 5,
-            euro_norm: data.euro_norm || null,
-            vin: data.vin || null,
-            first_registration: data.first_registration || null,
-            description: data.description || null,
-            contact_name: data.contact_name,
-            contact_phone: data.contact_phone || null,
-            contact_email: data.contact_email,
-            location: data.location || null,
-            photos: allPhotoUrls,
-            car_pass_verified: data.car_pass_verified || false,
-            ct_valid: data.ct_valid || false,
-            maintenance_book_complete: data.maintenance_book_complete || false,
-            seller_type: data.seller_type || 'particulier',
-            tva_number: data.tva_number || null,
-          })
+          .update(listingData)
           .eq('id', editId);
 
         if (error) {
@@ -333,7 +400,6 @@ export function SellCarForm({ editId }: SellCarFormProps) {
           toast.error(t('sellForm.error'));
           return;
         }
-
         toast.success(t('sellForm.successEdit'));
         navigate('/dashboard');
       } else {
@@ -341,32 +407,8 @@ export function SellCarForm({ editId }: SellCarFormProps) {
           .from('car_listings')
           .insert({
             user_id: user.id,
-            brand: data.brand,
-            model: data.model,
-            year: data.year,
-            price: data.price,
-            mileage: data.mileage,
-            fuel_type: data.fuel_type,
-            transmission: data.transmission,
-            body_type: data.body_type,
-            color: data.color,
-            power: data.power || null,
-            doors: data.doors || 5,
-            euro_norm: data.euro_norm || null,
-            vin: data.vin || null,
-            first_registration: data.first_registration || null,
-            description: data.description || null,
-            contact_name: data.contact_name,
-            contact_phone: data.contact_phone || null,
-            contact_email: data.contact_email,
-            location: data.location || null,
-            photos: allPhotoUrls,
             status: 'pending',
-            car_pass_verified: data.car_pass_verified || false,
-            ct_valid: data.ct_valid || false,
-            maintenance_book_complete: data.maintenance_book_complete || false,
-            seller_type: data.seller_type || 'particulier',
-            tva_number: data.tva_number || null,
+            ...listingData,
           });
 
         if (error) {
@@ -374,7 +416,6 @@ export function SellCarForm({ editId }: SellCarFormProps) {
           toast.error(t('sellForm.error'));
           return;
         }
-
         toast.success(t('sellForm.success'));
         navigate('/dashboard');
       }
@@ -387,38 +428,53 @@ export function SellCarForm({ editId }: SellCarFormProps) {
     }
   };
 
-  const removeExistingPhoto = (index: number) => {
-    const photoUrl = photosPreviews[index];
-    if (existingPhotos.includes(photoUrl)) {
-      setExistingPhotos(prev => prev.filter(p => p !== photoUrl));
-    }
-    setPhotosPreviews(prev => prev.filter((_, i) => i !== index));
-  };
-
-  // Helper function to get LEZ warning based on euro norm
   const getLezWarning = (euroNorm: string | undefined) => {
     if (!euroNorm) return null;
-    
     if (euroNorm === 'Euro 3' || euroNorm === 'Euro 4') {
-      return {
-        type: 'error' as const,
-        message: t('sellForm.euroNormHint'),
-      };
+      return { type: 'error' as const, message: t('sellForm.euroNormHint') };
     }
     if (euroNorm === 'Euro 5') {
-      return {
-        type: 'warning' as const,
-        message: t('sellForm.euroNormHint'),
-      };
+      return { type: 'warning' as const, message: t('sellForm.euroNormHint') };
     }
-    return {
-      type: 'success' as const,
-      message: t('sellForm.euroNormHint'),
-    };
+    return { type: 'success' as const, message: t('sellForm.euroNormHint') };
   };
 
   const selectedEuroNorm = form.watch('euro_norm');
   const lezWarning = getLezWarning(selectedEuroNorm);
+  const watchedVin = form.watch('vin');
+  const hasValidVin = watchedVin && watchedVin.length === 17;
+
+  // Step validation
+  const validateStep = async (step: number): Promise<boolean> => {
+    if (step === 1) {
+      const result = await form.trigger(['brand', 'model', 'year', 'price', 'mileage', 'fuel_type', 'transmission', 'body_type', 'color', 'contact_name', 'contact_email']);
+      return result;
+    }
+    if (step === 2) {
+      const hasPhotos = photos.length > 0 || existingPhotos.length > 0;
+      if (!hasPhotos) {
+        toast.error('Ajoutez au moins une photo.');
+        return false;
+      }
+      return true;
+    }
+    return true;
+  };
+
+  const goToNextStep = async () => {
+    const valid = await validateStep(currentStep);
+    if (valid && currentStep < 3) {
+      setCurrentStep(currentStep + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const goToPrevStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   if (isLoading) {
     return (
@@ -459,634 +515,568 @@ export function SellCarForm({ editId }: SellCarFormProps) {
         </div>
       )}
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        {/* Photos Section */}
-        <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-foreground">
-              <Camera className="h-5 w-5 text-primary" />
-              {t('sellForm.photosTitle')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-              {photosPreviews.map((preview, index) => (
-                <div key={index} className="relative aspect-video rounded-lg overflow-hidden bg-muted group">
-                  <img src={preview} alt={`Photo ${index + 1}`} className="w-full h-full object-cover" />
+      {/* Progress Stepper */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between max-w-lg mx-auto">
+          {STEPS.map((step, index) => {
+            const StepIcon = step.icon;
+            const isCompleted = currentStep > step.id;
+            const isCurrent = currentStep === step.id;
+            return (
+              <div key={step.id} className="flex items-center flex-1">
+                <div className="flex flex-col items-center gap-2">
                   <button
                     type="button"
                     onClick={() => {
-                      const photoUrl = photosPreviews[index];
-                      if (existingPhotos.includes(photoUrl)) {
-                        removeExistingPhoto(index);
-                      } else {
-                        removePhoto(index);
-                      }
+                      if (step.id < currentStep) setCurrentStep(step.id);
                     }}
-                    className="absolute top-2 right-2 p-1 bg-destructive text-destructive-foreground rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                    className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 ${
+                      isCompleted
+                        ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25'
+                        : isCurrent
+                          ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25 scale-110'
+                          : 'bg-secondary text-muted-foreground'
+                    }`}
                   >
-                    <X className="h-4 w-4" />
+                    {isCompleted ? <Check className="h-5 w-5" /> : <StepIcon className="h-5 w-5" />}
                   </button>
-                  {index === 0 && (
-                    <span className="absolute bottom-2 left-2 px-2 py-1 bg-primary text-primary-foreground text-xs rounded">
-                      {t('sellForm.photosMain')}
-                    </span>
-                  )}
+                  <span className={`text-xs font-medium ${isCurrent ? 'text-primary' : 'text-muted-foreground'}`}>
+                    {step.label}
+                  </span>
                 </div>
-              ))}
-              
-              {photos.length < 10 && (
-                <label className="aspect-video rounded-lg border-2 border-dashed border-border hover:border-primary transition-colors cursor-pointer flex flex-col items-center justify-center gap-2 bg-muted/50">
-                  <Upload className="h-8 w-8 text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">{t('sellForm.photosAdd')}</span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={handlePhotoUpload}
-                    className="hidden"
-                  />
-                </label>
-              )}
-            </div>
-            <p className="text-sm text-muted-foreground mt-4">
-              {t('sellForm.photosHint')}
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Vehicle Info */}
-        <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-foreground">
-              <Car className="h-5 w-5 text-primary" />
-              {t('sellForm.vehicleInfo')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <FormField
-              control={form.control}
-              name="brand"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('sellForm.brand')} *</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t('sellForm.select')} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {brands.map(brand => (
-                        <SelectItem key={brand} value={brand}>{brand}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="model"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('sellForm.model')} *</FormLabel>
-                  <FormControl>
-                    <Input placeholder={t('sellForm.modelPlaceholder')} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="year"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('sellForm.year')} *</FormLabel>
-                  <FormControl>
-                    <Input 
-                      type="number" 
-                      {...field} 
-                      onChange={e => field.onChange(parseInt(e.target.value))}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="price"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('sellForm.price')} *</FormLabel>
-                  <FormControl>
-                    <Input 
-                      type="number" 
-                      placeholder="25000"
-                      {...field}
-                      onChange={e => field.onChange(parseInt(e.target.value))}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="mileage"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('sellForm.mileage')} *</FormLabel>
-                  <FormControl>
-                    <Input 
-                      type="number" 
-                      placeholder="50000"
-                      {...field}
-                      onChange={e => field.onChange(parseInt(e.target.value))}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="fuel_type"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('sellForm.fuel')} *</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t('sellForm.select')} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {fuelTypes.map(fuel => (
-                        <SelectItem key={fuel.value} value={fuel.value}>{fuel.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="transmission"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('sellForm.transmission')} *</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t('sellForm.select')} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {transmissions.map(trans => (
-                        <SelectItem key={trans.value} value={trans.value}>{trans.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="body_type"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('sellForm.bodyType')} *</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t('sellForm.select')} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {bodyTypes.map(body => (
-                        <SelectItem key={body.value} value={body.value}>{body.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="color"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('sellForm.color')} *</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t('sellForm.select')} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {colors.map(color => (
-                        <SelectItem key={color.value} value={color.value}>{color.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="power"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('sellForm.power')}</FormLabel>
-                  <FormControl>
-                    <Input 
-                      type="number" 
-                      placeholder="150"
-                      {...field}
-                      onChange={e => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="doors"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('sellForm.doors')}</FormLabel>
-                  <FormControl>
-                    <Input 
-                      type="number" 
-                      {...field}
-                      onChange={e => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </CardContent>
-        </Card>
-
-        {/* Belgian Specifics with LEZ hints */}
-        <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-foreground">
-              <Info className="h-5 w-5 text-primary" />
-              {t('sellForm.belgianInfo')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <FormField
-                control={form.control}
-                name="euro_norm"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex items-center gap-2">
-                      {t('sellForm.euroNorm')}
-                      <Leaf className="h-4 w-4 text-green-500" />
-                    </FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder={t('sellForm.select')} />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {euroNorms.map(norm => (
-                          <SelectItem key={norm} value={norm}>{norm}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
+                {index < STEPS.length - 1 && (
+                  <div className={`flex-1 h-0.5 mx-3 mb-7 rounded-full transition-colors ${
+                    isCompleted ? 'bg-primary' : 'bg-border'
+                  }`} />
                 )}
-              />
-
-              <FormField
-                control={form.control}
-                name="vin"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('sellForm.vin')}</FormLabel>
-                    <FormControl>
-                      <Input placeholder="WVWZZZ3CZWE123456" maxLength={17} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="first_registration"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('sellForm.firstRegistration')}</FormLabel>
-                    <FormControl>
-                      <Input type="date" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            {/* LEZ Warning Box */}
-            {lezWarning && (
-              <div className={`p-4 rounded-xl border ${
-                lezWarning.type === 'error' 
-                  ? 'bg-destructive/10 border-destructive/30 text-destructive' 
-                  : lezWarning.type === 'warning'
-                    ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-700 dark:text-yellow-400'
-                    : 'bg-green-500/10 border-green-500/30 text-green-700 dark:text-green-400'
-              }`}>
-                <div className="flex items-start gap-3">
-                  {lezWarning.type === 'error' || lezWarning.type === 'warning' ? (
-                    <AlertTriangle className="h-5 w-5 flex-shrink-0 mt-0.5" />
-                  ) : (
-                    <Leaf className="h-5 w-5 flex-shrink-0 mt-0.5" />
-                  )}
-                  <p className="text-sm">{lezWarning.message}</p>
-                </div>
               </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Transparency Indicators */}
-        <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-foreground">
-              <FileCheck className="h-5 w-5 text-primary" />
-              {t('sellForm.transparencyTitle')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-sm text-muted-foreground mb-4">
-              {t('sellForm.transparencyHint')}
-            </p>
-            
-            <FormField
-              control={form.control}
-              name="car_pass_verified"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-xl border border-border/50 p-4 hover:bg-secondary/50 transition-colors">
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel className="cursor-pointer">
-                      {t('sellForm.carPassAvailable')}
-                    </FormLabel>
-                    <p className="text-sm text-muted-foreground">
-                      {t('sellForm.carPassHint')}
-                    </p>
-                  </div>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="ct_valid"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-xl border border-border/50 p-4 hover:bg-secondary/50 transition-colors">
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel className="cursor-pointer">
-                      {t('sellForm.ctValid')}
-                    </FormLabel>
-                    <p className="text-sm text-muted-foreground">
-                      {t('sellForm.ctHint')}
-                    </p>
-                  </div>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="maintenance_book_complete"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-xl border border-border/50 p-4 hover:bg-secondary/50 transition-colors">
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel className="cursor-pointer">
-                      {t('sellForm.maintenanceBook')}
-                    </FormLabel>
-                    <p className="text-sm text-muted-foreground">
-                      {t('sellForm.maintenanceHint')}
-                    </p>
-                  </div>
-                </FormItem>
-              )}
-            />
-          </CardContent>
-        </Card>
-
-        {/* Seller Type */}
-        <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-foreground">
-              <Building2 className="h-5 w-5 text-primary" />
-              {t('sellForm.sellerType')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <FormField
-              control={form.control}
-              name="seller_type"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('sellForm.youAre')} *</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder={t('sellForm.select')} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {sellerTypes.map(type => (
-                        <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {form.watch('seller_type') === 'professionnel' && (
-              <FormField
-                control={form.control}
-                name="tva_number"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t('sellForm.vatNumber')}</FormLabel>
-                    <FormControl>
-                      <Input placeholder="BE0123456789" {...field} />
-                    </FormControl>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {t('sellForm.vatHint')}
-                    </p>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
-
-            {form.watch('seller_type') === 'particulier' && (
-              <p className="text-sm text-muted-foreground p-3 rounded-lg bg-muted/50">
-                {t('sellForm.individualHint')}
-              </p>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Description */}
-        <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-          <CardHeader>
-            <CardTitle className="text-foreground">{t('sellForm.description')}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Textarea 
-                      placeholder={t('sellForm.descriptionPlaceholder')}
-                      className="min-h-[150px]"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </CardContent>
-        </Card>
-
-        {/* Contact Info */}
-        <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-foreground">
-              <User className="h-5 w-5 text-primary" />
-              {t('sellForm.contact')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="grid md:grid-cols-2 gap-6">
-            <FormField
-              control={form.control}
-              name="contact_name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('sellForm.contactName')} *</FormLabel>
-                  <FormControl>
-                    <Input placeholder={t('sellForm.contactNamePlaceholder')} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="contact_email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('sellForm.contactEmail')} *</FormLabel>
-                  <FormControl>
-                    <Input type="email" placeholder="votre@email.be" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="contact_phone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('sellForm.contactPhone')}</FormLabel>
-                  <FormControl>
-                    <Input placeholder="+32 xxx xx xx xx" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="location"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t('sellForm.location')}</FormLabel>
-                  <FormControl>
-                    <Input placeholder={t('sellForm.locationPlaceholder')} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </CardContent>
-        </Card>
-
-        {/* Submit */}
-        <div className="flex justify-end gap-4">
-          <Button type="button" variant="outline" onClick={() => navigate(isEditMode ? '/dashboard' : '/')}>
-            {t('sellForm.cancel')}
-          </Button>
-          <Button type="submit" disabled={isSubmitting} className="min-w-[200px]">
-            {isSubmitting 
-              ? t('sellForm.submitting')
-              : isEditMode 
-                ? t('sellForm.submitEdit')
-                : t('sellForm.submit')
-            }
-          </Button>
+            );
+          })}
         </div>
-      </form>
-    </Form>
+        {/* Progress bar */}
+        <div className="mt-4 max-w-lg mx-auto">
+          <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
+            <div
+              className="h-full bg-primary rounded-full transition-all duration-500 ease-out"
+              style={{ width: `${((currentStep - 1) / (STEPS.length - 1)) * 100}%` }}
+            />
+          </div>
+        </div>
+      </div>
+
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+
+          {/* ===== STEP 1: Vehicle Info + Contact ===== */}
+          {currentStep === 1 && (
+            <>
+              {/* Vehicle Info */}
+              <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-foreground">
+                    <Car className="h-5 w-5 text-primary" />
+                    {t('sellForm.vehicleInfo')}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <FormField control={form.control} name="brand" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('sellForm.brand')} *</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl><SelectTrigger><SelectValue placeholder={t('sellForm.select')} /></SelectTrigger></FormControl>
+                        <SelectContent>{brands.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}</SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+
+                  <FormField control={form.control} name="model" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('sellForm.model')} *</FormLabel>
+                      <FormControl><Input placeholder={t('sellForm.modelPlaceholder')} {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+
+                  <FormField control={form.control} name="year" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('sellForm.year')} *</FormLabel>
+                      <FormControl><Input type="number" {...field} onChange={e => field.onChange(parseInt(e.target.value))} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+
+                  <FormField control={form.control} name="price" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('sellForm.price')} *</FormLabel>
+                      <FormControl><Input type="number" placeholder="25000" {...field} onChange={e => field.onChange(parseInt(e.target.value))} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+
+                  <FormField control={form.control} name="mileage" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('sellForm.mileage')} *</FormLabel>
+                      <FormControl><Input type="number" placeholder="50000" {...field} onChange={e => field.onChange(parseInt(e.target.value))} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+
+                  <FormField control={form.control} name="fuel_type" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('sellForm.fuel')} *</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl><SelectTrigger><SelectValue placeholder={t('sellForm.select')} /></SelectTrigger></FormControl>
+                        <SelectContent>{fuelTypes.map(f => <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>)}</SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+
+                  <FormField control={form.control} name="transmission" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('sellForm.transmission')} *</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl><SelectTrigger><SelectValue placeholder={t('sellForm.select')} /></SelectTrigger></FormControl>
+                        <SelectContent>{transmissions.map(t => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}</SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+
+                  <FormField control={form.control} name="body_type" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('sellForm.bodyType')} *</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl><SelectTrigger><SelectValue placeholder={t('sellForm.select')} /></SelectTrigger></FormControl>
+                        <SelectContent>{bodyTypes.map(b => <SelectItem key={b.value} value={b.value}>{b.label}</SelectItem>)}</SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+
+                  <FormField control={form.control} name="color" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('sellForm.color')} *</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl><SelectTrigger><SelectValue placeholder={t('sellForm.select')} /></SelectTrigger></FormControl>
+                        <SelectContent>{colors.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}</SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+
+                  <FormField control={form.control} name="power" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('sellForm.power')}</FormLabel>
+                      <FormControl><Input type="number" placeholder="150" {...field} onChange={e => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+
+                  <FormField control={form.control} name="doors" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('sellForm.doors')}</FormLabel>
+                      <FormControl><Input type="number" {...field} onChange={e => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                </CardContent>
+              </Card>
+
+              {/* Seller Type */}
+              <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-foreground">
+                    <Building2 className="h-5 w-5 text-primary" />
+                    {t('sellForm.sellerType')}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <FormField control={form.control} name="seller_type" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('sellForm.youAre')} *</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl><SelectTrigger><SelectValue placeholder={t('sellForm.select')} /></SelectTrigger></FormControl>
+                        <SelectContent>{sellerTypes.map(type => <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>)}</SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+
+                  {form.watch('seller_type') === 'professionnel' && (
+                    <FormField control={form.control} name="tva_number" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t('sellForm.vatNumber')}</FormLabel>
+                        <FormControl><Input placeholder="BE0123456789" {...field} /></FormControl>
+                        <p className="text-xs text-muted-foreground mt-1">{t('sellForm.vatHint')}</p>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                  )}
+
+                  {form.watch('seller_type') === 'particulier' && (
+                    <p className="text-sm text-muted-foreground p-3 rounded-lg bg-muted/50">{t('sellForm.individualHint')}</p>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Description */}
+              <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="text-foreground">{t('sellForm.description')}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <FormField control={form.control} name="description" render={({ field }) => (
+                    <FormItem>
+                      <FormControl><Textarea placeholder={t('sellForm.descriptionPlaceholder')} className="min-h-[150px]" {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                </CardContent>
+              </Card>
+
+              {/* Contact Info */}
+              <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-foreground">
+                    <User className="h-5 w-5 text-primary" />
+                    {t('sellForm.contact')}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="grid md:grid-cols-2 gap-6">
+                  <FormField control={form.control} name="contact_name" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('sellForm.contactName')} *</FormLabel>
+                      <FormControl><Input placeholder={t('sellForm.contactNamePlaceholder')} {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+
+                  <FormField control={form.control} name="contact_email" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('sellForm.contactEmail')} *</FormLabel>
+                      <FormControl><Input type="email" placeholder="votre@email.be" {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+
+                  <FormField control={form.control} name="contact_phone" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('sellForm.contactPhone')}</FormLabel>
+                      <FormControl><Input placeholder="+32 xxx xx xx xx" {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+
+                  <FormField control={form.control} name="location" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{t('sellForm.location')}</FormLabel>
+                      <FormControl><Input placeholder={t('sellForm.locationPlaceholder')} {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                </CardContent>
+              </Card>
+            </>
+          )}
+
+          {/* ===== STEP 2: Photos ===== */}
+          {currentStep === 2 && (
+            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-foreground">
+                  <Camera className="h-5 w-5 text-primary" />
+                  {t('sellForm.photosTitle')}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                  {photosPreviews.map((preview, index) => (
+                    <div key={index} className="relative aspect-video rounded-lg overflow-hidden bg-muted group">
+                      <img src={preview} alt={`Photo ${index + 1}`} className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const photoUrl = photosPreviews[index];
+                          if (existingPhotos.includes(photoUrl)) {
+                            removeExistingPhoto(index);
+                          } else {
+                            removePhoto(index);
+                          }
+                        }}
+                        className="absolute top-2 right-2 p-1 bg-destructive text-destructive-foreground rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                      {index === 0 && (
+                        <span className="absolute bottom-2 left-2 px-2 py-1 bg-primary text-primary-foreground text-xs rounded">
+                          {t('sellForm.photosMain')}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                  
+                  {(photos.length + existingPhotos.length) < MAX_PHOTOS && (
+                    <label className="aspect-video rounded-lg border-2 border-dashed border-border hover:border-primary transition-colors cursor-pointer flex flex-col items-center justify-center gap-2 bg-muted/50">
+                      <Upload className="h-8 w-8 text-muted-foreground" />
+                      <span className="text-sm text-muted-foreground">{t('sellForm.photosAdd')}</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        onChange={handlePhotoUpload}
+                        className="hidden"
+                      />
+                    </label>
+                  )}
+                </div>
+                <p className="text-sm text-muted-foreground mt-4">{t('sellForm.photosHint')}</p>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* ===== STEP 3: Documents (VIN, Car-Pass, Belgian specifics) ===== */}
+          {currentStep === 3 && (
+            <>
+              {/* VIN Field with verified badge */}
+              <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-foreground">
+                    <Shield className="h-5 w-5 text-primary" />
+                    Numéro de châssis (VIN)
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <FormField control={form.control} name="vin" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2">
+                        {t('sellForm.vin')}
+                        {hasValidVin && (
+                          <Badge className="bg-primary/10 text-primary border-0 text-xs animate-in fade-in">
+                            <Check className="w-3 h-3 mr-1" />
+                            Données techniques vérifiées
+                          </Badge>
+                        )}
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="WVWZZZ3CZWE123456"
+                          maxLength={17}
+                          {...field}
+                          className={hasValidVin ? 'border-primary/50 ring-1 ring-primary/20' : ''}
+                        />
+                      </FormControl>
+                      <p className="text-xs text-muted-foreground">
+                        Le numéro VIN contient 17 caractères. Il se trouve sur la carte grise ou sur le véhicule.
+                      </p>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                </CardContent>
+              </Card>
+
+              {/* Car-Pass PDF Upload */}
+              <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-foreground">
+                    <FileText className="h-5 w-5 text-primary" />
+                    Document Car-Pass
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {carPassFile ? (
+                    <div className="flex items-center gap-3 p-4 rounded-xl border border-primary/30 bg-primary/5">
+                      <FileText className="h-8 w-8 text-primary flex-shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-foreground truncate">{carPassFileName}</p>
+                        <p className="text-xs text-muted-foreground">PDF Car-Pass</p>
+                      </div>
+                      <Badge className="bg-primary/10 text-primary border-0 shrink-0">
+                        <Check className="w-3 h-3 mr-1" />
+                        Car-Pass Disponible
+                      </Badge>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCarPassFile(null);
+                          setCarPassFileName('');
+                          form.setValue('car_pass_verified', false);
+                        }}
+                        className="p-1 text-muted-foreground hover:text-destructive transition-colors"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={handleCarPassDrop}
+                      className="border-2 border-dashed border-border hover:border-primary transition-colors rounded-xl p-8 text-center cursor-pointer"
+                    >
+                      <label className="cursor-pointer flex flex-col items-center gap-3">
+                        <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center">
+                          <Upload className="h-6 w-6 text-muted-foreground" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-foreground">
+                            Glissez-déposez votre Car-Pass ici
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            ou cliquez pour sélectionner un fichier PDF (max {MAX_PDF_SIZE_MB} Mo)
+                          </p>
+                        </div>
+                        <input
+                          type="file"
+                          accept="application/pdf"
+                          onChange={handleCarPassUpload}
+                          className="hidden"
+                        />
+                      </label>
+                    </div>
+                  )}
+                  <p className="text-xs text-muted-foreground">
+                    Le Car-Pass est obligatoire en Belgique lors de la vente d'un véhicule d'occasion. Il garantit l'historique du kilométrage.
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Belgian Specifics with LEZ */}
+              <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-foreground">
+                    <Info className="h-5 w-5 text-primary" />
+                    {t('sellForm.belgianInfo')}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <FormField control={form.control} name="euro_norm" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-2">
+                          {t('sellForm.euroNorm')}
+                          <Leaf className="h-4 w-4 text-green-500" />
+                        </FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl><SelectTrigger><SelectValue placeholder={t('sellForm.select')} /></SelectTrigger></FormControl>
+                          <SelectContent>{euroNorms.map(norm => <SelectItem key={norm} value={norm}>{norm}</SelectItem>)}</SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+
+                    <FormField control={form.control} name="first_registration" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t('sellForm.firstRegistration')}</FormLabel>
+                        <FormControl><Input type="date" {...field} /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                  </div>
+
+                  {lezWarning && (
+                    <div className={`p-4 rounded-xl border ${
+                      lezWarning.type === 'error'
+                        ? 'bg-destructive/10 border-destructive/30 text-destructive'
+                        : lezWarning.type === 'warning'
+                          ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-700 dark:text-yellow-400'
+                          : 'bg-green-500/10 border-green-500/30 text-green-700 dark:text-green-400'
+                    }`}>
+                      <div className="flex items-start gap-3">
+                        {lezWarning.type === 'error' || lezWarning.type === 'warning' ? (
+                          <AlertTriangle className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                        ) : (
+                          <Leaf className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                        )}
+                        <p className="text-sm">{lezWarning.message}</p>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Transparency Indicators */}
+              <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-foreground">
+                    <FileCheck className="h-5 w-5 text-primary" />
+                    {t('sellForm.transparencyTitle')}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-sm text-muted-foreground mb-4">{t('sellForm.transparencyHint')}</p>
+                  
+                  <FormField control={form.control} name="car_pass_verified" render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-xl border border-border/50 p-4 hover:bg-secondary/50 transition-colors">
+                      <FormControl>
+                        <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel className="cursor-pointer">{t('sellForm.carPassAvailable')}</FormLabel>
+                        <p className="text-sm text-muted-foreground">{t('sellForm.carPassHint')}</p>
+                      </div>
+                    </FormItem>
+                  )} />
+
+                  <FormField control={form.control} name="ct_valid" render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-xl border border-border/50 p-4 hover:bg-secondary/50 transition-colors">
+                      <FormControl>
+                        <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel className="cursor-pointer">{t('sellForm.ctValid')}</FormLabel>
+                        <p className="text-sm text-muted-foreground">{t('sellForm.ctHint')}</p>
+                      </div>
+                    </FormItem>
+                  )} />
+
+                  <FormField control={form.control} name="maintenance_book_complete" render={({ field }) => (
+                    <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-xl border border-border/50 p-4 hover:bg-secondary/50 transition-colors">
+                      <FormControl>
+                        <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                      </FormControl>
+                      <div className="space-y-1 leading-none">
+                        <FormLabel className="cursor-pointer">{t('sellForm.maintenanceBook')}</FormLabel>
+                        <p className="text-sm text-muted-foreground">{t('sellForm.maintenanceHint')}</p>
+                      </div>
+                    </FormItem>
+                  )} />
+                </CardContent>
+              </Card>
+            </>
+          )}
+
+          {/* Navigation Buttons */}
+          <div className="flex justify-between gap-4">
+            {currentStep > 1 ? (
+              <Button type="button" variant="outline" onClick={goToPrevStep}>
+                <ChevronLeft className="h-4 w-4 mr-2" />
+                Précédent
+              </Button>
+            ) : (
+              <Button type="button" variant="outline" onClick={() => navigate(isEditMode ? '/dashboard' : '/')}>
+                {t('sellForm.cancel')}
+              </Button>
+            )}
+
+            {currentStep < 3 ? (
+              <Button type="button" onClick={goToNextStep}>
+                Suivant
+                <ChevronRight className="h-4 w-4 ml-2" />
+              </Button>
+            ) : (
+              <Button type="submit" disabled={isSubmitting} className="min-w-[200px]">
+                {isSubmitting
+                  ? t('sellForm.submitting')
+                  : isEditMode
+                    ? t('sellForm.submitEdit')
+                    : t('sellForm.submit')
+                }
+              </Button>
+            )}
+          </div>
+        </form>
+      </Form>
     </>
   );
 }
