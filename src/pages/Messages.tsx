@@ -172,7 +172,7 @@ export default function Messages() {
                               {conv.carBrand} {conv.carModel}
                             </span>
                             <span className="text-[11px] text-muted-foreground flex-shrink-0">
-                              {formatDate(conv.lastMessageAt)}
+                              {formatDate(conv.lastMessageAt ?? conv.createdAt)}
                             </span>
                           </div>
                           <div className="flex items-center justify-between gap-2 mt-0.5">

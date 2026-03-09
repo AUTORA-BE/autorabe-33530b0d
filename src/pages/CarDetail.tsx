@@ -284,7 +284,7 @@ const CarDetail = () => {
       const { data: existingConvo } = await supabase
         .from('conversations')
         .select('id')
-        .eq('car_listing_id', dbListing.id)
+        .eq('car_listing_id', dbListing.id ?? '')
         .eq('buyer_id', currentUserId)
         .eq('seller_id', contact.user_id)
         .maybeSingle();
