@@ -83,6 +83,9 @@ export interface SellCarFormWatchData {
   price?: number;
   mileage?: number;
   fuel_type?: string;
+  transmission?: string;
+  body_type?: string;
+  color?: string;
   euro_norm?: string;
   location?: string;
   seller_type?: string;
@@ -92,6 +95,12 @@ export interface SellCarFormWatchData {
   ct_valid?: boolean;
   maintenance_book_complete?: boolean;
   power?: number;
+  doors?: number;
+  first_registration?: string;
+  contact_name?: string;
+  contact_email?: string;
+  contact_phone?: string;
+  tva_number?: string;
 }
 
 interface SellCarFormProps {
