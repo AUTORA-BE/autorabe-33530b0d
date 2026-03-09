@@ -3,7 +3,7 @@
  * @module features/search/components
  */
 
-import { memo, useState, useEffect, useRef } from "react";
+import { memo, useState, useEffect, useRef, useCallback } from "react";
 import { Search, ChevronDown } from "lucide-react";
 import { motion } from "framer-motion";
 import { getAllBrands, getModelsByBrand } from "@/utils/carUtils";
