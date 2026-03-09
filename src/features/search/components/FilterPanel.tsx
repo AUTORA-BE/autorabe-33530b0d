@@ -462,29 +462,30 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
         <div className="h-px w-full" style={{ background: "hsl(var(--border) / 0.5)" }} />
 
         {/* Seller Type */}
-        <FilterSection icon={<Building2 className="w-4 h-4 text-primary" aria-hidden="true" />} title="Type de vendeur">
+        <FilterSection icon={<Building2 className="w-4 h-4 text-primary" aria-hidden="true" />} title={t("filters.sellerType")}>
           <div className="flex gap-2">
             {[
-              { id: "particulier", label: "Particulier" },
-              { id: "professionnel", label: "Pro" },
-            ].map((type) => (
+              { id: "particulier", label: t("filters.sellerPrivate"), Icon: User },
+              { id: "professionnel", label: t("filters.sellerPro"), Icon: Building2 },
+            ].map(({ id, label, Icon }) => (
               <button
-                key={type.id}
+                key={id}
                 onClick={() =>
                   onFilterChange(
                     "sellerTypeFilter",
-                    filters.sellerTypeFilter === type.id ? "" : type.id
+                    filters.sellerTypeFilter === id ? "" : id
                   )
                 }
-                aria-pressed={filters.sellerTypeFilter === type.id}
-                className={`flex-1 px-3 py-2.5 rounded-xl text-sm font-medium text-center transition-all duration-200 ${
-                  filters.sellerTypeFilter === type.id
+                aria-pressed={filters.sellerTypeFilter === id}
+                className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+                  filters.sellerTypeFilter === id
                     ? "bg-primary text-primary-foreground shadow-md"
                     : "bg-secondary/60 text-muted-foreground hover:bg-secondary hover:text-foreground"
                 }`}
-                style={filters.sellerTypeFilter === type.id ? { boxShadow: "0 4px 12px -2px hsl(var(--primary) / 0.4)" } : undefined}
+                style={filters.sellerTypeFilter === id ? { boxShadow: "0 4px 12px -2px hsl(var(--primary) / 0.4)" } : undefined}
               >
-                {type.label}
+                <Icon className="w-4 h-4 shrink-0" />
+                {label}
               </button>
             ))}
           </div>
