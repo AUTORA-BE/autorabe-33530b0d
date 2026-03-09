@@ -14,7 +14,7 @@ export default function PaymentCanceled() {
   const navigate = useNavigate();
 
   return (
-    <>
+    <div className="page-gradient">
       <SEOHead title="Paiement annulé | AutoRa" description="Votre paiement a été annulé. Vous pouvez réessayer à tout moment." />
       <Header />
       <main className="min-h-screen pt-24 pb-16 flex items-center justify-center">
