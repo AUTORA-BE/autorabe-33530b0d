@@ -252,17 +252,6 @@ input[type="number"] {
     position: relative;
   }
 
-  .hero-gradient::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 120px;
-    background: linear-gradient(to bottom, transparent, hsl(var(--background)));
-    pointer-events: none;
-  }
-
   .card-gradient-border {
     position: relative;
     background: hsl(var(--card));
