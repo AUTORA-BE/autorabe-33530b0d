@@ -93,7 +93,7 @@ const WhyAutoRa = memo(() => {
             className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-5"
           >
             <Shield className="w-3.5 h-3.5" />
-            {isNl ? "Waarom AutoRa?" : "Pourquoi AutoRa ?"}
+            {t("why.badge")}
           </motion.span>
 
           <motion.h2
