@@ -177,6 +177,7 @@ export default function SellerDashboard() {
     deleteListing,
     isDeleting,
     markAsSold,
+    refetch,
   } = useSellerListings(chartPeriod, getDateLocale());
 
   // Status counts
