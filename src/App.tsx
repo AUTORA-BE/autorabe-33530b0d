@@ -109,27 +109,31 @@ function AppRoutes() {
 }
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <LanguageProvider>
-        <CompareProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Suspense fallback={<PageLoader />}>
-              <ScrollToTopOnNavigate />
-              <AppRoutes />
-            </Suspense>
-            <ScrollToTop />
-            <Suspense fallback={null}><CompareBar /></Suspense>
-            <Suspense fallback={null}><TcoFloatingButton /></Suspense>
-            <Suspense fallback={null}><CarChatbot /></Suspense>
-          </BrowserRouter>
-        </CompareProvider>
-      </LanguageProvider>
-    </TooltipProvider>
-    {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
-  </QueryClientProvider>
+  <ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <LanguageProvider>
+          <CompareProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Suspense fallback={<PageLoader />}>
+                <ScrollToTopOnNavigate />
+                <ErrorBoundary>
+                  <AppRoutes />
+                </ErrorBoundary>
+              </Suspense>
+              <ScrollToTop />
+              <Suspense fallback={null}><CompareBar /></Suspense>
+              <Suspense fallback={null}><TcoFloatingButton /></Suspense>
+              <Suspense fallback={null}><CarChatbot /></Suspense>
+            </BrowserRouter>
+          </CompareProvider>
+        </LanguageProvider>
+      </TooltipProvider>
+      {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
+    </QueryClientProvider>
+  </ErrorBoundary>
 );
 
 export default App;
