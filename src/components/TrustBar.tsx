@@ -5,7 +5,7 @@
  */
 
 import { memo, useRef, useState, useEffect } from "react";
-import { ShieldCheck, FileCheck, Leaf, Headphones, Lock } from "lucide-react";
+import { ShieldCheck, FileCheck, Leaf, Headphones } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 function AnimatedNumber({ target, suffix = "" }: { target: number; suffix?: string }) {
