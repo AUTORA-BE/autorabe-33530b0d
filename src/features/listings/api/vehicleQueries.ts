@@ -49,6 +49,9 @@ export function mapListingToVehicle(listing: VehicleListingRow): Vehicle {
     isLezCompatible,
     hasCarPass: listing.car_pass_verified || false,
     sellerType: listing.seller_type || 'particulier',
+    boostLevel: listing.boost_level || 'none',
+    isBoosted: !!(listing.boost_level && listing.boost_level !== 'none' && 
+      (!listing.boost_expires_at || new Date(listing.boost_expires_at) > new Date())),
   };
 }
 
