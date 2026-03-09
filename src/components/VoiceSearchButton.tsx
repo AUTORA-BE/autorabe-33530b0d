@@ -98,6 +98,20 @@ function useDetectedEntities(transcript: string): DetectedEntity[] {
       entities.push({ type: 'mileage', value: `${km.toLocaleString('fr-BE')} km` });
     }
 
+    // Fuel type detection
+    const fuelMap: { keywords: string[]; label: string }[] = [
+      { keywords: ['électrique', 'electrique', 'electric', 'elektrisch'], label: 'Électrique' },
+      { keywords: ['hybride', 'hybrid'], label: 'Hybride' },
+      { keywords: ['diesel'], label: 'Diesel' },
+      { keywords: ['essence', 'benzine', 'gasoline', 'petrol'], label: 'Essence' },
+    ];
+    for (const fuel of fuelMap) {
+      if (fuel.keywords.some(k => lower.includes(k))) {
+        entities.push({ type: 'fuel', value: fuel.label });
+        break;
+      }
+    }
+
     return entities;
   }, [transcript, brands]);
 }
