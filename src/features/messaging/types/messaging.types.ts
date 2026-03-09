@@ -42,7 +42,7 @@ export interface Conversation {
   carBrand: string | null;
   carModel: string | null;
   carImage: string | null;
-  lastMessageAt: string;
+  lastMessageAt: string | null;
   createdAt: string;
   unreadCount?: number;
   lastMessage?: string;
