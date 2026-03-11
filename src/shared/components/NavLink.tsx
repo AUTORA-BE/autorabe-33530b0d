@@ -3,6 +3,7 @@
  * @module shared/components
  */
 
+import { forwardRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useCallback } from "react";
 import { prefetchRoute } from "@/utils/prefetchRoutes";
@@ -13,12 +14,13 @@ interface NavLinkProps {
   badge?: number;
 }
 
-const NavLink = ({ to, children, badge }: NavLinkProps) => {
+const NavLink = forwardRef<HTMLAnchorElement, NavLinkProps>(({ to, children, badge }, ref) => {
   const location = useLocation();
   const handlePrefetch = useCallback(() => prefetchRoute(to), [to]);
 
   return (
     <Link
+      ref={ref}
       to={to}
       onMouseEnter={handlePrefetch}
       onFocus={handlePrefetch}
@@ -39,6 +41,8 @@ const NavLink = ({ to, children, badge }: NavLinkProps) => {
       )}
     </Link>
   );
-};
+});
+
+NavLink.displayName = "NavLink";
 
 export default NavLink;
