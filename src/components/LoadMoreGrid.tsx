@@ -204,24 +204,24 @@ const LoadMoreGrid = ({
   return (
     <div className="flex-1 min-w-0">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-5 sm:mb-6">
         <div>
-          <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground">
+          <h2 className="font-display text-lg sm:text-2xl font-bold text-foreground">
             {texts.available}
           </h2>
-          <p className="text-muted-foreground mt-1 text-sm sm:text-base">
+          <p className="text-muted-foreground mt-0.5 text-xs sm:text-base">
             {cars.length} {texts.showing} {totalCount} {texts.vehicles}
           </p>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
+        <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide -mx-1 px-1">
           {/* Mobile filter button */}
           <button
             onClick={() => {
               if (navigator.vibrate) navigator.vibrate(8);
               onOpenFilters();
             }}
-            className="lg:hidden flex items-center gap-2 px-4 py-2.5 rounded-xl bg-secondary text-foreground font-medium relative touch-manipulation"
+            className="lg:hidden flex items-center gap-1.5 px-3 py-2 rounded-xl bg-secondary text-foreground text-sm font-medium relative touch-manipulation flex-shrink-0"
           >
             <SlidersHorizontal className="w-4 h-4" />
             {texts.filters}
@@ -243,7 +243,7 @@ const LoadMoreGrid = ({
                 toast.success(language === "nl" ? "Zoeklink gekopieerd!" : "Lien de recherche copié !");
                 if (navigator.vibrate) navigator.vibrate(8);
               }}
-              className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl bg-secondary text-foreground font-medium text-sm touch-manipulation hover:bg-secondary/80 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-secondary text-foreground font-medium text-sm touch-manipulation hover:bg-secondary/80 transition-colors flex-shrink-0"
               title={language === "nl" ? "Zoeklink kopiëren" : "Copier le lien de recherche"}
             >
               <Share2 className="w-4 h-4" />
@@ -255,7 +255,7 @@ const LoadMoreGrid = ({
           {onOpenBuyerProfile && (
             <button
               onClick={onOpenBuyerProfile}
-              className={`flex items-center gap-1.5 px-3 py-2.5 rounded-xl font-medium text-sm touch-manipulation transition-colors ${
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl font-medium text-sm touch-manipulation transition-colors flex-shrink-0 ${
                 buyerProfile?.isConfigured
                   ? "bg-primary/10 text-primary hover:bg-primary/20"
                   : "bg-secondary text-foreground hover:bg-secondary/80"
@@ -270,11 +270,11 @@ const LoadMoreGrid = ({
           )}
 
           {/* Sort dropdown */}
-          <div className="relative flex-1 sm:flex-none">
+          <div className="relative flex-shrink-0">
             <select
               value={sortBy}
               onChange={(e) => onSortChange(e.target.value)}
-              className="search-input w-full sm:w-48 appearance-none cursor-pointer pr-10 text-sm sm:text-base"
+              className="search-input w-36 sm:w-48 appearance-none cursor-pointer pr-8 text-xs sm:text-sm py-2"
             >
               {sortOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -282,7 +282,7 @@ const LoadMoreGrid = ({
                 </option>
               ))}
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
+            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
           </div>
         </div>
       </div>

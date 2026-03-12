@@ -163,6 +163,15 @@ input[type="number"] {
     }
   }
 
+  /* Safe area insets for notched devices */
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .safe-top {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
   /* Reduce motion for accessibility */
   @media (prefers-reduced-motion: reduce) {
     *,
@@ -201,6 +210,13 @@ input[type="number"] {
     box-shadow: 0 12px 32px -8px hsl(var(--foreground) / 0.12), var(--shadow-glow-primary);
     transform: translateY(-4px);
     transition: box-shadow 0.3s ease, transform 0.3s ease;
+  }
+
+  /* Disable hover transform on touch devices to prevent jank */
+  @media (hover: none) {
+    .glass-card:hover {
+      transform: none;
+    }
   }
 
   .glass-card:active {

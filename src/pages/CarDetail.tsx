@@ -339,7 +339,7 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
         type="product"
       />
       <Header />
-      <main className="pt-24 pb-20">
+      <main className="pt-24 pb-28 lg:pb-20">
         {/* Breadcrumb */}
         <motion.div {...fadeUp(0)} className="container mx-auto px-4 sm:px-6 mb-6">
           <button
@@ -464,21 +464,21 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
               </AnimatePresence>
 
               {/* Mobile-only: Title, Price & CTA */}
-              <motion.div {...fadeUp(0.1)} className="lg:hidden glass-card p-5 sm:p-6 space-y-5">
+              <motion.div {...fadeUp(0.1)} className="lg:hidden glass-card p-4 sm:p-6 space-y-4">
                 <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <h1 className="font-display text-2xl font-bold text-foreground leading-tight">
+                  <div className="min-w-0">
+                    <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground leading-tight truncate">
                       {car.brand} {car.model}
                     </h1>
-                    <p className="text-sm text-muted-foreground flex items-center gap-1.5 mt-1.5">
-                      <MapPin className="w-3.5 h-3.5" />
-                      {car.location}
+                    <p className="text-xs sm:text-sm text-muted-foreground flex items-center gap-1.5 mt-1">
+                      <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+                      <span className="truncate">{car.location}</span>
                     </p>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-1.5 flex-shrink-0">
                     <button
                       onClick={() => toggleFavorite(car.id)}
-                      className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all active:scale-90 ${
+                      className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all active:scale-90 touch-manipulation ${
                         isFavorite(car.id)
                           ? "bg-red-500 text-white shadow-lg shadow-red-500/25"
                           : "bg-secondary text-muted-foreground hover:text-red-500"
@@ -488,34 +488,15 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                     </button>
                     <button
                       onClick={handleShare}
-                      className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors active:scale-90"
+                      className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors active:scale-90 touch-manipulation"
                     >
                       <Share2 className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
 
-                <div className="text-3xl font-display font-extrabold text-foreground">
+                <div className="text-2xl sm:text-3xl font-display font-extrabold text-foreground">
                   {formatPrice(car.price)}
-                </div>
-
-                <div className="space-y-2.5">
-                  {dbListing && (
-                    <Button onClick={() => handleContact("Message")} className="w-full h-12 btn-primary-gradient text-base">
-                      <MessageCircle className="w-5 h-5 mr-2" />
-                      Envoyer un message
-                    </Button>
-                  )}
-                  <div className="grid grid-cols-2 gap-2.5">
-                    <Button onClick={() => handleContact("Appeler")} variant="outline" className="h-11">
-                      <Phone className="w-4 h-4 mr-1.5" />
-                      Appeler
-                    </Button>
-                    <Button onClick={() => handleContact("WhatsApp")} variant="outline" className="h-11">
-                      <MessageCircle className="w-4 h-4 mr-1.5" />
-                      WhatsApp
-                    </Button>
-                  </div>
                 </div>
 
                 <SellerBadge
@@ -535,6 +516,24 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                   </Button>
                 )}
               </motion.div>
+
+              {/* Sticky bottom CTA bar on mobile */}
+              <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-card/95 backdrop-blur-xl border-t border-border px-4 py-3 safe-bottom">
+                <div className="flex gap-2 max-w-lg mx-auto">
+                  {dbListing && (
+                    <Button onClick={() => handleContact("Message")} className="flex-1 h-12 btn-primary-gradient text-sm font-semibold">
+                      <MessageCircle className="w-4 h-4 mr-1.5" />
+                      Message
+                    </Button>
+                  )}
+                  <Button onClick={() => handleContact("Appeler")} variant="outline" className="h-12 px-4">
+                    <Phone className="w-4 h-4" />
+                  </Button>
+                  <Button onClick={() => handleContact("WhatsApp")} variant="outline" className="h-12 px-4">
+                    <MessageCircle className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
 
               {/* TCO Calculator */}
               <ScrollReveal delay={0.05}>
@@ -754,23 +753,26 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
           {/* Related Cars */}
           {relatedCars.length > 0 && (
             <ScrollReveal delay={0.1}>
-              <section className="mt-16 sm:mt-20">
-                <div className="flex items-center gap-3 mb-8">
+              <section className="mt-12 sm:mt-16 lg:mt-20">
+                <div className="flex items-center gap-3 mb-6 sm:mb-8">
                   <div className="w-1 h-8 rounded-full bg-primary" />
-                  <h2 className="font-display text-2xl font-bold text-foreground">
+                  <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground">
                     Véhicules similaires
                   </h2>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+                {/* Horizontal scroll on mobile, grid on desktop */}
+                <div className="flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 lg:grid lg:grid-cols-4 lg:gap-6 lg:overflow-visible lg:snap-none lg:pb-0">
                   {relatedCars.map((relatedCar, i) => (
-                    <ScrollReveal key={relatedCar.id} delay={i * 0.08}>
-                      <CarCard
-                        car={relatedCar}
-                        isFavorite={isFavorite(relatedCar.id)}
-                        onToggleFavorite={toggleFavorite}
-                        onClick={(id) => navigate(`/car/${id}`)}
-                      />
-                    </ScrollReveal>
+                    <div key={relatedCar.id} className="min-w-[280px] sm:min-w-[300px] lg:min-w-0 snap-start">
+                      <ScrollReveal delay={i * 0.08}>
+                        <CarCard
+                          car={relatedCar}
+                          isFavorite={isFavorite(relatedCar.id)}
+                          onToggleFavorite={toggleFavorite}
+                          onClick={(id) => navigate(`/car/${id}`)}
+                        />
+                      </ScrollReveal>
+                    </div>
                   ))}
                 </div>
               </section>
