@@ -35,6 +35,7 @@ const Header = () => {
   const { theme, setTheme } = useTheme();
   const { language, setLanguage, t } = useLanguage();
   const isAdmin = useIsAdmin(user?.id);
+  useMessageNotifications(user?.id);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);

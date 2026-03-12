@@ -7,3 +7,4 @@ export { useTypingIndicator, default as useTypingIndicatorDefault } from './useT
 export { useOnlineStatus, default as useOnlineStatusDefault } from './useOnlineStatus';
 export { useUnreadMessages, default as useUnreadMessagesDefault } from './useUnreadMessages';
 export { useConversations, default as useConversationsDefault } from './useConversations';
+export { useMessageNotifications, default as useMessageNotificationsDefault } from './useMessageNotifications';
