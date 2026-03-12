@@ -11,7 +11,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import { useToast } from "@/hooks/use-toast";
-import { useUnreadMessages } from "@/features/messaging";
+import { useUnreadMessages, useMessageNotifications } from "@/features/messaging";
 import { useCompareContext } from "@/features/compare";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTheme } from "next-themes";
@@ -35,6 +35,7 @@ const Header = () => {
   const { theme, setTheme } = useTheme();
   const { language, setLanguage, t } = useLanguage();
   const isAdmin = useIsAdmin(user?.id);
+  useMessageNotifications(user?.id);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);

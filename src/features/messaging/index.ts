@@ -10,6 +10,7 @@ export {
   useOnlineStatus, 
   useUnreadMessages,
   useConversations,
+  useMessageNotifications,
 } from './hooks';
 
 // Types
