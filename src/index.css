@@ -212,6 +212,13 @@ input[type="number"] {
     transition: box-shadow 0.3s ease, transform 0.3s ease;
   }
 
+  /* Disable hover transform on touch devices to prevent jank */
+  @media (hover: none) {
+    .glass-card:hover {
+      transform: none;
+    }
+  }
+
   .glass-card:active {
     transform: translateY(-2px);
     box-shadow: 0 8px 24px -6px hsl(var(--foreground) / 0.1);

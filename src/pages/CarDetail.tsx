@@ -753,23 +753,26 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
           {/* Related Cars */}
           {relatedCars.length > 0 && (
             <ScrollReveal delay={0.1}>
-              <section className="mt-16 sm:mt-20">
-                <div className="flex items-center gap-3 mb-8">
+              <section className="mt-12 sm:mt-16 lg:mt-20">
+                <div className="flex items-center gap-3 mb-6 sm:mb-8">
                   <div className="w-1 h-8 rounded-full bg-primary" />
-                  <h2 className="font-display text-2xl font-bold text-foreground">
+                  <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground">
                     Véhicules similaires
                   </h2>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+                {/* Horizontal scroll on mobile, grid on desktop */}
+                <div className="flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 lg:grid lg:grid-cols-4 lg:gap-6 lg:overflow-visible lg:snap-none lg:pb-0">
                   {relatedCars.map((relatedCar, i) => (
-                    <ScrollReveal key={relatedCar.id} delay={i * 0.08}>
-                      <CarCard
-                        car={relatedCar}
-                        isFavorite={isFavorite(relatedCar.id)}
-                        onToggleFavorite={toggleFavorite}
-                        onClick={(id) => navigate(`/car/${id}`)}
-                      />
-                    </ScrollReveal>
+                    <div key={relatedCar.id} className="min-w-[280px] sm:min-w-[300px] lg:min-w-0 snap-start">
+                      <ScrollReveal delay={i * 0.08}>
+                        <CarCard
+                          car={relatedCar}
+                          isFavorite={isFavorite(relatedCar.id)}
+                          onToggleFavorite={toggleFavorite}
+                          onClick={(id) => navigate(`/car/${id}`)}
+                        />
+                      </ScrollReveal>
+                    </div>
                   ))}
                 </div>
               </section>
