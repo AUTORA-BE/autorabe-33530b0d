@@ -339,7 +339,7 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
         type="product"
       />
       <Header />
-      <main className="pt-24 pb-20 lg:pb-20 pb-28">
+      <main className="pt-24 pb-28 lg:pb-20">
         {/* Breadcrumb */}
         <motion.div {...fadeUp(0)} className="container mx-auto px-4 sm:px-6 mb-6">
           <button
