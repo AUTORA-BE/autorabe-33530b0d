@@ -156,7 +156,7 @@ const CarChatbot = forwardRef<HTMLDivElement>(function CarChatbot(_props, ref) {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 z-50 w-[380px] h-[600px] max-h-[80vh] glass-card flex flex-col overflow-hidden animate-scale-in">
+        <div className="fixed bottom-20 right-4 lg:bottom-6 lg:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[380px] h-[70vh] sm:h-[600px] max-h-[80vh] glass-card flex flex-col overflow-hidden animate-scale-in">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-border/50 bg-primary/5">
             <div className="flex items-center gap-3">

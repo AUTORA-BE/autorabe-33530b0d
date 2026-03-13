@@ -10,7 +10,7 @@ const TcoFloatingButton = () => {
       <TooltipTrigger asChild>
         <button
           onClick={() => navigate("/calculateur-tco")}
-          className="fixed bottom-6 left-6 z-[60] w-14 h-14 rounded-full bg-gradient-to-br from-accent to-primary text-primary-foreground shadow-xl shadow-primary/25 flex items-center justify-center transition-all hover:scale-110 active:scale-95 group"
+          className="fixed bottom-20 left-4 lg:bottom-6 lg:left-6 z-[60] w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-gradient-to-br from-accent to-primary text-primary-foreground shadow-xl shadow-primary/25 flex items-center justify-center transition-all hover:scale-110 active:scale-95 group"
           aria-label="Calculateur TCO"
         >
           <Calculator className="w-6 h-6 transition-transform group-hover:rotate-12" />
