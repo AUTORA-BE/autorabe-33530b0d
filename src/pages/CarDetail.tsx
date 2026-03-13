@@ -518,7 +518,7 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
               </motion.div>
 
               {/* Sticky bottom CTA bar on mobile */}
-              <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-card/95 backdrop-blur-xl border-t border-border px-4 py-3 safe-bottom">
+              <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-xl border-t border-border px-4 py-3 safe-bottom">
                 <div className="flex gap-2 max-w-lg mx-auto">
                   {dbListing && (
                     <Button onClick={() => handleContact("Message")} className="flex-1 h-12 btn-primary-gradient text-sm font-semibold">
