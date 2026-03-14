@@ -3,6 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { Header, Footer } from "@/shared/components";
 import { HeroSearch } from "@/features/search";
 import SEOHead from "@/components/SEOHead";
+import {
+  CarouselSkeleton,
+  TrustBarSkeleton,
+  WhyAutoRaSkeleton,
+  TestimonialsSkeleton,
+  BrandCarouselSkeleton,
+  GridSkeleton,
+} from "@/components/skeletons/HomeSkeleton";
 import ScrollReveal from "@/components/ScrollReveal";
 import { VoiceSearchSummary, type VoiceFilter } from "@/components/VoiceSearchSummary";
 import { AnimatePresence } from "framer-motion";
@@ -148,7 +156,7 @@ const Index = () => {
         </div>
 
         {/* 3. Trust Bar — social proof badges */}
-        <Suspense fallback={<div className="h-[56px] sm:h-[64px]" />}>
+        <Suspense fallback={<TrustBarSkeleton />}>
           <TrustBar />
         </Suspense>
 
@@ -163,12 +171,12 @@ const Index = () => {
         </Suspense>
 
         {/* 4. Why AutoRa — trust pillars */}
-        <Suspense fallback={<div className="min-h-[240px] sm:min-h-[300px]" />}>
+        <Suspense fallback={<WhyAutoRaSkeleton />}>
           <WhyAutoRa />
         </Suspense>
 
         {/* 5. Popular vehicles */}
-        <Suspense fallback={<div className="min-h-[260px] sm:min-h-[300px]" />}>
+        <Suspense fallback={<CarouselSkeleton />}>
           <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 400px" }}>
             <PopularVehicles
               isFavorite={isFavorite}
@@ -179,7 +187,7 @@ const Index = () => {
         </Suspense>
 
         {/* 6. Brand carousel */}
-        <Suspense fallback={<div className="min-h-[140px] sm:min-h-[180px]" />}>
+        <Suspense fallback={<BrandCarouselSkeleton />}>
           <ScrollReveal delay={0.05} direction="left">
             <BrandCarousel 
               onBrandFilter={(brand) => updateFilter("brand", brand)} 
@@ -189,7 +197,7 @@ const Index = () => {
         </Suspense>
 
         {/* 7. Testimonials */}
-        <Suspense fallback={<div className="min-h-[200px] sm:min-h-[300px]" />}>
+        <Suspense fallback={<TestimonialsSkeleton />}>
           <TestimonialsSection />
         </Suspense>
 
@@ -217,7 +225,7 @@ const Index = () => {
               resultsCount={totalCount}
             />
 
-            <Suspense fallback={<div className="min-h-[400px] flex-1" />}>
+            <Suspense fallback={<GridSkeleton />}>
               <LoadMoreGrid
                 cars={cars}
                 onOpenFilters={() => setFiltersOpen(true)}
