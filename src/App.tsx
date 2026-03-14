@@ -127,8 +127,6 @@ const App = () => (
               <ScrollToTop />
               <Suspense fallback={null}><BottomNav /></Suspense>
               <Suspense fallback={null}><CompareBar /></Suspense>
-              <Suspense fallback={null}><TcoFloatingButton /></Suspense>
-              <Suspense fallback={null}><CarChatbot /></Suspense>
             </BrowserRouter>
           </CompareProvider>
         </LanguageProvider>
