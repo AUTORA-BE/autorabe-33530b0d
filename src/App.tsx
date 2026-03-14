@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
+import { prefetchCriticalRoutes } from "@/utils/prefetchRoutes";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
