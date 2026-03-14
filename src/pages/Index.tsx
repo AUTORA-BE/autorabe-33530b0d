@@ -225,7 +225,7 @@ const Index = () => {
               resultsCount={totalCount}
             />
 
-            <Suspense fallback={<div className="min-h-[400px] flex-1" />}>
+            <Suspense fallback={<GridSkeleton />}>
               <LoadMoreGrid
                 cars={cars}
                 onOpenFilters={() => setFiltersOpen(true)}
