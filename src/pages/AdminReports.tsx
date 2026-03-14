@@ -134,7 +134,7 @@ const AdminReports = () => {
       }
 
       setIsAdmin(true);
-      await Promise.all([fetchReports(), fetchPendingListings(), fetchAdminActions()]);
+      await Promise.all([fetchReports(), fetchPendingListings(), fetchAdminActions(), fetchUsers()]);
     } catch (error) {
       console.error("Error checking admin status:", error);
       navigate("/");
