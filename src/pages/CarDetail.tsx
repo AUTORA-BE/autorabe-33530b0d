@@ -520,112 +520,128 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                 )}
               </motion.div>
 
-              {/* Sticky bottom CTA bar on mobile */}
-              <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-xl border-t border-border px-4 py-3 safe-bottom">
-                <div className="flex gap-2 max-w-lg mx-auto">
-                  {dbListing && (
-                    <Button onClick={() => handleContact("Message")} className="flex-1 h-12 btn-primary-gradient text-sm font-semibold">
-                      <MessageCircle className="w-4 h-4 mr-1.5" />
-                      Message
-                    </Button>
-                  )}
-                  <Button onClick={() => handleContact("Appeler")} variant="outline" className="h-12 px-4">
-                    <Phone className="w-4 h-4" />
-                  </Button>
-                  <Button onClick={() => handleContact("WhatsApp")} variant="outline" className="h-12 px-4">
-                    <MessageCircle className="w-4 h-4" />
-                  </Button>
-                </div>
+              {/* Mobile FAB buttons */}
+              <div className="lg:hidden fixed bottom-20 right-4 z-50 flex flex-col gap-3 safe-bottom">
+                <motion.button
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.3, type: "spring", stiffness: 400 }}
+                  onClick={handleShare}
+                  className="w-12 h-12 rounded-full bg-card border border-border/50 shadow-xl flex items-center justify-center text-muted-foreground active:scale-90 transition-transform"
+                  aria-label="Partager"
+                >
+                  <Share2 className="w-5 h-5" />
+                </motion.button>
+                <motion.button
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.2, type: "spring", stiffness: 400 }}
+                  onClick={() => toggleFavorite(car.id)}
+                  className={`w-12 h-12 rounded-full shadow-xl flex items-center justify-center active:scale-90 transition-transform ${
+                    isFavorite(car.id)
+                      ? "bg-red-500 text-white shadow-red-500/30"
+                      : "bg-card border border-border/50 text-muted-foreground"
+                  }`}
+                  aria-label="Favori"
+                >
+                  <Heart className={`w-5 h-5 ${isFavorite(car.id) ? "fill-current" : ""}`} />
+                </motion.button>
+                <motion.button
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.1, type: "spring", stiffness: 400 }}
+                  onClick={() => handleContact("Message")}
+                  className="w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-xl shadow-primary/30 flex items-center justify-center active:scale-90 transition-transform"
+                  aria-label="Contacter"
+                >
+                  <MessageCircle className="w-6 h-6" />
+                </motion.button>
               </div>
 
-              {/* TCO Calculator */}
-              <ScrollReveal delay={0.05}>
-                <Suspense fallback={<div className="h-20 rounded-2xl skeleton-shimmer" />}>
-                  <VehicleTcoSection
-                    price={car.price}
-                    fuelType={car.fuelType}
-                    year={car.year}
-                    mileage={car.mileage}
-                    power={dbListing?.power}
-                  />
-                </Suspense>
-              </ScrollReveal>
+              {/* Mobile swipeable tabs for specs */}
+              {isMobile ? (
+                <div className="space-y-4">
+                  {/* Tab bar */}
+                  <div className="flex gap-1.5 overflow-x-auto scrollbar-hide px-1 py-1 bg-secondary/50 rounded-2xl">
+                    {["Specs", "Confiance", "Coûts", "Description"].map((tab, i) => (
+                      <button
+                        key={tab}
+                        onClick={() => setMobileTab(i)}
+                        className={`flex-shrink-0 px-4 py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${
+                          mobileTab === i
+                            ? "bg-primary text-primary-foreground shadow-sm"
+                            : "text-muted-foreground"
+                        }`}
+                      >
+                        {tab}
+                      </button>
+                    ))}
+                  </div>
 
-              {/* Bento Specifications */}
-              <ScrollReveal delay={0.05}>
-                <BentoSpecs
-                  year={car.year}
-                  mileage={car.mileage}
-                  fuelType={car.fuelType}
-                  transmission={car.transmission}
-                  euroNorm={car.euroNorm}
-                  location={car.location}
-                  power={dbListing?.power}
-                  color={dbListing?.color}
-                  bodyType={dbListing?.body_type}
-                  doors={dbListing?.doors}
-                />
-              </ScrollReveal>
-
-              {/* Transparency Checklist */}
-              <ScrollReveal delay={0.05}>
-                <TransparencyChecklist
-                  carPassVerified={dbListing?.car_pass_verified}
-                  ctValid={dbListing?.ct_valid}
-                  maintenanceBookComplete={dbListing?.maintenance_book_complete}
-                />
-              </ScrollReveal>
-
-              {/* LEZ Widget */}
-              <ScrollReveal delay={0.05}>
-                <LezWidget euroNorm={car.euroNorm} fuelType={car.fuelType} />
-              </ScrollReveal>
-
-              {/* Belgian Tax Calculator */}
-              <ScrollReveal delay={0.05}>
-                <Suspense fallback={<div className="h-20 rounded-2xl skeleton-shimmer" />}>
-                  <BelgianTaxCalculator
-                    powerKw={dbListing?.power}
-                    fuelType={car.fuelType}
-                    euroNorm={car.euroNorm}
-                    year={car.year}
-                  />
-                </Suspense>
-                {/* Bouton chat fiscal contextuel */}
-                <div className="mt-3 flex justify-center">
-                  <Suspense fallback={null}>
-                    <TaxChatModal
-                      vehicle={{
-                        brand: car.brand,
-                        model: car.model,
-                        year: car.year,
-                        fuelType: car.fuelType,
-                        power: dbListing?.power,
-                        euroNorm: car.euroNorm,
+                  {/* Tab content with swipe */}
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={mobileTab}
+                      initial={{ opacity: 0, x: 30 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -30 }}
+                      transition={{ duration: 0.2 }}
+                      drag="x"
+                      dragConstraints={{ left: 0, right: 0 }}
+                      dragElastic={0.15}
+                      onDragEnd={(_: unknown, info: PanInfo) => {
+                        if (info.offset.x < -60 && mobileTab < 3) setMobileTab(mobileTab + 1);
+                        else if (info.offset.x > 60 && mobileTab > 0) setMobileTab(mobileTab - 1);
                       }}
-                    />
-                  </Suspense>
-                </div>
-              </ScrollReveal>
-
-              {/* Description */}
-              <ScrollReveal delay={0.05}>
-                <div className="glass-card p-6 sm:p-7">
-                  <h2 className="font-display text-xl font-bold text-foreground mb-4">
-                    Description
-                  </h2>
-                  <p className="text-muted-foreground leading-relaxed whitespace-pre-line text-sm sm:text-base">
-                    {description}
-                  </p>
-                </div>
-              </ScrollReveal>
-
-              {/* Reviews Section */}
-              <ScrollReveal delay={0.05}>
-                <ReviewsSection 
-                  carListingId={id!} 
-                  sellerId={sellerContact?.user_id}
-                />
+                    >
+                      {mobileTab === 0 && (
+                        <div className="space-y-4">
+                          <BentoSpecs
+                            year={car.year} mileage={car.mileage} fuelType={car.fuelType}
+                            transmission={car.transmission} euroNorm={car.euroNorm} location={car.location}
+                            power={dbListing?.power} color={dbListing?.color}
+                            bodyType={dbListing?.body_type} doors={dbListing?.doors}
+                          />
+                        </div>
+                      )}
+                      {mobileTab === 1 && (
+                        <div className="space-y-4">
+                          <TransparencyChecklist
+                            carPassVerified={dbListing?.car_pass_verified}
+                            ctValid={dbListing?.ct_valid}
+                            maintenanceBookComplete={dbListing?.maintenance_book_complete}
+                          />
+                          <LezWidget euroNorm={car.euroNorm} fuelType={car.fuelType} />
+                        </div>
+                      )}
+                      {mobileTab === 2 && (
+                        <div className="space-y-4">
+                          <Suspense fallback={<div className="h-20 rounded-2xl skeleton-shimmer" />}>
+                            <VehicleTcoSection
+                              price={car.price} fuelType={car.fuelType}
+                              year={car.year} mileage={car.mileage} power={dbListing?.power}
+                            />
+                          </Suspense>
+                          <Suspense fallback={<div className="h-20 rounded-2xl skeleton-shimmer" />}>
+                            <BelgianTaxCalculator
+                              powerKw={dbListing?.power} fuelType={car.fuelType}
+                              euroNorm={car.euroNorm} year={car.year}
+                            />
+                          </Suspense>
+                          <div className="flex justify-center">
+                            <Suspense fallback={null}>
+                              <TaxChatModal vehicle={{ brand: car.brand, model: car.model, year: car.year, fuelType: car.fuelType, power: dbListing?.power, euroNorm: car.euroNorm }} />
+                            </Suspense>
+                          </div>
+                        </div>
+                      )}
+                      {mobileTab === 3 && (
+                        <div className="space-y-4">
+                          <div className="glass-card p-5">
+                            <h2 className="font-display text-lg font-bold text-foreground mb-3">Description</h2>
+                            <p className="text-muted-foreground leading-relaxed whitespace-pre-line text-sm">{description}</p>
+                          </div>
+                          <ReviewsSection carListingId={id!} sellerId={sellerContact?.user_id} />
               </ScrollReveal>
             </div>
 
