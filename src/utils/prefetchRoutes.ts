@@ -18,6 +18,9 @@ const routePrefetchMap: Record<string, () => Promise<unknown>> = {
   "/terms": () => import("@/pages/Terms"),
   "/privacy": () => import("@/pages/Privacy"),
   "/legal": () => import("@/pages/Legal"),
+  "/calculateur-tco": () => import("@/pages/CalculateurTCO"),
+  "/pricing": () => import("@/pages/Pricing"),
+  "/mes-alertes": () => import("@/pages/MesAlertes"),
 };
 
 const prefetched = new Set<string>();
@@ -27,11 +30,28 @@ const prefetched = new Set<string>();
  * Safe to call multiple times — each route is only fetched once.
  */
 export function prefetchRoute(path: string): void {
-  // Match exact path or the first segment (e.g. "/car/123" → "/car")
   const key = routePrefetchMap[path] ? path : `/${path.split("/")[1]}`;
 
   if (prefetched.has(key) || !routePrefetchMap[key]) return;
 
   prefetched.add(key);
   routePrefetchMap[key]();
+}
+
+/** Routes to prefetch during browser idle time (most visited) */
+const HIGH_PRIORITY_ROUTES = ["/car", "/favorites", "/sell", "/auth", "/messages"];
+
+/**
+ * Prefetch the most visited routes when the browser is idle.
+ * Uses requestIdleCallback with a 3s timeout fallback.
+ * Call once after the app has mounted and rendered.
+ */
+export function prefetchCriticalRoutes(): void {
+  const schedule = typeof requestIdleCallback === "function"
+    ? requestIdleCallback
+    : (cb: () => void) => setTimeout(cb, 3000);
+
+  schedule(() => {
+    HIGH_PRIORITY_ROUTES.forEach(prefetchRoute);
+  }, { timeout: 5000 });
 }

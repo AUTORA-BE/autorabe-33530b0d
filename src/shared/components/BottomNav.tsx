@@ -3,7 +3,7 @@
  * @module shared/components
  */
 
-import { memo, useMemo, useEffect, useState } from "react";
+import { memo, useMemo, useEffect, useState, useCallback } from "react";
 import { Home, PlusCircle, Heart, User, MessageCircle } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -11,6 +11,7 @@ import { useUnreadMessages } from "@/features/messaging";
 import { useFavorites } from "@/features/favorites";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
+import { prefetchRoute } from "@/utils/prefetchRoutes";
 
 const BottomNav = memo(function BottomNav() {
   const location = useLocation();
