@@ -642,8 +642,49 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                             <p className="text-muted-foreground leading-relaxed whitespace-pre-line text-sm">{description}</p>
                           </div>
                           <ReviewsSection carListingId={id!} sellerId={sellerContact?.user_id} />
-              </ScrollReveal>
-            </div>
+                        </div>
+                      )}
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+              ) : (
+                /* Desktop: all sections stacked */
+                <div className="space-y-6">
+                  <ScrollReveal delay={0.05}>
+                    <Suspense fallback={<div className="h-20 rounded-2xl skeleton-shimmer" />}>
+                      <VehicleTcoSection price={car.price} fuelType={car.fuelType} year={car.year} mileage={car.mileage} power={dbListing?.power} />
+                    </Suspense>
+                  </ScrollReveal>
+                  <ScrollReveal delay={0.05}>
+                    <BentoSpecs year={car.year} mileage={car.mileage} fuelType={car.fuelType} transmission={car.transmission} euroNorm={car.euroNorm} location={car.location} power={dbListing?.power} color={dbListing?.color} bodyType={dbListing?.body_type} doors={dbListing?.doors} />
+                  </ScrollReveal>
+                  <ScrollReveal delay={0.05}>
+                    <TransparencyChecklist carPassVerified={dbListing?.car_pass_verified} ctValid={dbListing?.ct_valid} maintenanceBookComplete={dbListing?.maintenance_book_complete} />
+                  </ScrollReveal>
+                  <ScrollReveal delay={0.05}>
+                    <LezWidget euroNorm={car.euroNorm} fuelType={car.fuelType} />
+                  </ScrollReveal>
+                  <ScrollReveal delay={0.05}>
+                    <Suspense fallback={<div className="h-20 rounded-2xl skeleton-shimmer" />}>
+                      <BelgianTaxCalculator powerKw={dbListing?.power} fuelType={car.fuelType} euroNorm={car.euroNorm} year={car.year} />
+                    </Suspense>
+                    <div className="mt-3 flex justify-center">
+                      <Suspense fallback={null}>
+                        <TaxChatModal vehicle={{ brand: car.brand, model: car.model, year: car.year, fuelType: car.fuelType, power: dbListing?.power, euroNorm: car.euroNorm }} />
+                      </Suspense>
+                    </div>
+                  </ScrollReveal>
+                  <ScrollReveal delay={0.05}>
+                    <div className="glass-card p-6 sm:p-7">
+                      <h2 className="font-display text-xl font-bold text-foreground mb-4">Description</h2>
+                      <p className="text-muted-foreground leading-relaxed whitespace-pre-line text-sm sm:text-base">{description}</p>
+                    </div>
+                  </ScrollReveal>
+                  <ScrollReveal delay={0.05}>
+                    <ReviewsSection carListingId={id!} sellerId={sellerContact?.user_id} />
+                  </ScrollReveal>
+                </div>
+              )}
 
             {/* Right Column - Price & Contact (desktop only) */}
             <div className="hidden lg:block">
