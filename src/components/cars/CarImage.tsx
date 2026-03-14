@@ -1,12 +1,17 @@
 /**
- * Reusable car image component with skeleton loading, error handling, and LCP optimization
+ * Reusable car image component with blur-up placeholder, skeleton loading,
+ * error handling, and LCP optimization.
  * @module components/cars
  */
 
-import { memo, useState, useCallback } from "react";
+import { memo, useState, useCallback, useRef, useEffect } from "react";
 import { ImageOff } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+
+/** Tiny 1×1 transparent SVG used as a base for the blur placeholder */
+const BLUR_PLACEHOLDER =
+  "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxIiBoZWlnaHQ9IjEiPjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiM4ODgiLz48L3N2Zz4=";
 
 export interface CarImageProps {
   /** Image source URL */
@@ -26,8 +31,8 @@ export interface CarImageProps {
 }
 
 /**
- * CarImage displays a vehicle image with skeleton loader,
- * error fallback, optional "Photo principale" badge, and LCP optimization
+ * CarImage displays a vehicle image with a blur-up placeholder transition,
+ * error fallback, optional "Photo principale" badge, and LCP optimization.
  */
 const CarImage = memo(function CarImage({
   src,
@@ -40,12 +45,20 @@ const CarImage = memo(function CarImage({
 }: CarImageProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
 
   const handleLoad = useCallback(() => setIsLoaded(true), []);
   const handleError = useCallback(() => {
     setHasError(true);
     setIsLoaded(true);
   }, []);
+
+  // Handle already-cached images (complete before onLoad fires)
+  useEffect(() => {
+    if (imgRef.current?.complete && imgRef.current.naturalWidth > 0) {
+      setIsLoaded(true);
+    }
+  }, [src]);
 
   return (
     <div
@@ -60,9 +73,17 @@ const CarImage = memo(function CarImage({
       tabIndex={onClick ? 0 : undefined}
       onKeyDown={onClick ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick(); } } : undefined}
     >
-      {/* Skeleton loader */}
-      {!isLoaded && (
-        <div className="absolute inset-0 animate-pulse bg-muted" />
+      {/* Blur placeholder layer — visible until real image loads */}
+      {!isLoaded && !hasError && (
+        <div
+          className="absolute inset-0 skeleton-shimmer"
+          style={{
+            backgroundImage: `url(${BLUR_PLACEHOLDER})`,
+            backgroundSize: "cover",
+            filter: "blur(20px)",
+            transform: "scale(1.1)",
+          }}
+        />
       )}
 
       {/* Error fallback */}
@@ -73,14 +94,16 @@ const CarImage = memo(function CarImage({
         </div>
       ) : (
         <img
+          ref={imgRef}
           src={src}
           alt={alt}
           loading={eager ? "eager" : "lazy"}
           fetchPriority={eager ? "high" : undefined}
+          decoding={eager ? "sync" : "async"}
           onLoad={handleLoad}
           onError={handleError}
           className={cn(
-            "w-full h-full object-cover transition-opacity duration-300",
+            "w-full h-full object-cover transition-opacity duration-500 ease-out",
             isLoaded ? "opacity-100" : "opacity-0"
           )}
         />
