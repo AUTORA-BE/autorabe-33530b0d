@@ -29,7 +29,14 @@ const translations: Record<Language, Record<string, string>> = {
     "logout.success": "Déconnexion",
     "logout.description": "Vous avez été déconnecté avec succès",
     
-    // Hero
+    // Favorites
+    "favorites.title": "Mes Favoris",
+    "favorites.vehicleCount": "véhicule sauvegardé",
+    "favorites.clearAll": "Tout supprimer",
+    "favorites.empty": "Aucun favori",
+    "favorites.emptyDescription": "Ajoutez des véhicules à vos favoris en cliquant sur le cœur pour les retrouver facilement ici.",
+    "favorites.discover": "Découvrir les véhicules",
+    
     "hero.badge": "Marché automobile belge",
     "hero.title1": "Trouvez votre prochaine",
     "hero.title2": "voiture en Belgique",
