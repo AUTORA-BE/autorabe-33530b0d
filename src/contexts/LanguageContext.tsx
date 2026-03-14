@@ -600,6 +600,7 @@ const translations: Record<Language, Record<string, string>> = {
     "sellForm.draftRestoredDesc": "Votre formulaire a été pré-rempli avec vos données précédentes.",
     "sellForm.saving": "Sauvegarde…",
     "sellForm.draftSaved": "Brouillon sauvegardé",
+    "common.back": "Retour",
   },
   nl: {
     // Navigation
