@@ -174,6 +174,9 @@ const Compare = () => {
   const [searchParams] = useSearchParams();
   const [copied, setCopied] = useState(false);
   const [loadingShared, setLoadingShared] = useState(false);
+  const [activeCardIndex, setActiveCardIndex] = useState(0);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const scores = useMemo(() => computeScores(compareList), [compareList]);
 
