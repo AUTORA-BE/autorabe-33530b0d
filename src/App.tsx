@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect } from "react";
+import { AnimatePresence } from "framer-motion";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -76,34 +77,37 @@ function ScrollToTopOnNavigate() {
 
 /** Routes wrapper — no AnimatePresence to reduce style/layout cost */
 function AppRoutes() {
+  const location = useLocation();
   return (
-    <Routes>
-      <Route path="/" element={<PageTransition><Index /></PageTransition>} />
-      <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
-      <Route path="/car/:id" element={<PageTransition><CarDetail /></PageTransition>} />
-      <Route path="/favorites" element={<PageTransition><Favorites /></PageTransition>} />
-      <Route path="/sell" element={<PageTransition><SellCar /></PageTransition>} />
-      <Route path="/messages" element={<PageTransition><Messages /></PageTransition>} />
-      <Route path="/about" element={<PageTransition><About /></PageTransition>} />
-      <Route path="/faq" element={<PageTransition><FAQ /></PageTransition>} />
-      <Route path="/compare" element={<PageTransition><Compare /></PageTransition>} />
-      <Route path="/dashboard" element={<PageTransition><SellerDashboard /></PageTransition>} />
-      <Route path="/dashboard/stats" element={<PageTransition><SellerStats /></PageTransition>} />
-      <Route path="/admin/reports" element={<PageTransition><AdminReports /></PageTransition>} />
-      <Route path="/settings" element={<PageTransition><Settings /></PageTransition>} />
-      <Route path="/reset-password" element={<PageTransition><ResetPassword /></PageTransition>} />
-      <Route path="/terms" element={<PageTransition><Terms /></PageTransition>} />
-      <Route path="/privacy" element={<PageTransition><Privacy /></PageTransition>} />
-      <Route path="/legal" element={<PageTransition><Legal /></PageTransition>} />
-      <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
-      <Route path="/calculateur-tco" element={<PageTransition><CalculateurTCO /></PageTransition>} />
-      <Route path="/mes-alertes" element={<PageTransition><MesAlertes /></PageTransition>} />
-      <Route path="/mes-alertes/creer" element={<PageTransition><CreerAlerte /></PageTransition>} />
-      <Route path="/pricing" element={<PageTransition><Pricing /></PageTransition>} />
-      <Route path="/payment-success" element={<PageTransition><PaymentSuccess /></PageTransition>} />
-      <Route path="/payment-canceled" element={<PageTransition><PaymentCanceled /></PageTransition>} />
-      <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
-    </Routes>
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<PageTransition><Index /></PageTransition>} />
+        <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
+        <Route path="/car/:id" element={<PageTransition><CarDetail /></PageTransition>} />
+        <Route path="/favorites" element={<PageTransition><Favorites /></PageTransition>} />
+        <Route path="/sell" element={<PageTransition><SellCar /></PageTransition>} />
+        <Route path="/messages" element={<PageTransition><Messages /></PageTransition>} />
+        <Route path="/about" element={<PageTransition><About /></PageTransition>} />
+        <Route path="/faq" element={<PageTransition><FAQ /></PageTransition>} />
+        <Route path="/compare" element={<PageTransition><Compare /></PageTransition>} />
+        <Route path="/dashboard" element={<PageTransition><SellerDashboard /></PageTransition>} />
+        <Route path="/dashboard/stats" element={<PageTransition><SellerStats /></PageTransition>} />
+        <Route path="/admin/reports" element={<PageTransition><AdminReports /></PageTransition>} />
+        <Route path="/settings" element={<PageTransition><Settings /></PageTransition>} />
+        <Route path="/reset-password" element={<PageTransition><ResetPassword /></PageTransition>} />
+        <Route path="/terms" element={<PageTransition><Terms /></PageTransition>} />
+        <Route path="/privacy" element={<PageTransition><Privacy /></PageTransition>} />
+        <Route path="/legal" element={<PageTransition><Legal /></PageTransition>} />
+        <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
+        <Route path="/calculateur-tco" element={<PageTransition><CalculateurTCO /></PageTransition>} />
+        <Route path="/mes-alertes" element={<PageTransition><MesAlertes /></PageTransition>} />
+        <Route path="/mes-alertes/creer" element={<PageTransition><CreerAlerte /></PageTransition>} />
+        <Route path="/pricing" element={<PageTransition><Pricing /></PageTransition>} />
+        <Route path="/payment-success" element={<PageTransition><PaymentSuccess /></PageTransition>} />
+        <Route path="/payment-canceled" element={<PageTransition><PaymentCanceled /></PageTransition>} />
+        <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
+      </Routes>
+    </AnimatePresence>
   );
 }
 
