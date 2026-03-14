@@ -659,51 +659,104 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
         </div>
       )}
 
-      {/* Progress Stepper */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between max-w-lg mx-auto">
-          {STEPS.map((step, index) => {
-            const StepIcon = step.icon;
-            const isCompleted = currentStep > step.id;
-            const isCurrent = currentStep === step.id;
-            return (
-              <div key={step.id} className="flex items-center flex-1">
-                <div className="flex flex-col items-center gap-2">
+      {/* Progress Stepper — sticky on mobile */}
+      <div className="mb-8 lg:mb-8">
+        {/* Mobile: compact sticky stepper */}
+        <div className="lg:hidden sticky top-16 z-40 -mx-4 px-4 py-3 bg-background/90 backdrop-blur-lg border-b border-border/50">
+          <div className="flex items-center gap-2 mb-2">
+            {STEPS.map((step, index) => {
+              const StepIcon = step.icon;
+              const isCompleted = currentStep > step.id;
+              const isCurrent = currentStep === step.id;
+              return (
+                <div key={step.id} className="flex items-center flex-1">
                   <button
                     type="button"
                     onClick={() => {
                       if (step.id < currentStep) setCurrentStep(step.id);
                     }}
-                    className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 ${
+                    className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-300 shrink-0 ${
                       isCompleted
-                        ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25'
+                        ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20'
                         : isCurrent
-                          ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25 scale-110'
+                          ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20 ring-2 ring-primary/30 ring-offset-2 ring-offset-background'
                           : 'bg-secondary text-muted-foreground'
                     }`}
                   >
-                    {isCompleted ? <Check className="h-5 w-5" /> : <StepIcon className="h-5 w-5" />}
+                    {isCompleted ? <Check className="h-4 w-4" /> : <StepIcon className="h-4 w-4" />}
                   </button>
-                  <span className={`text-xs font-medium ${isCurrent ? 'text-primary' : 'text-muted-foreground'}`}>
-                    {step.label}
-                  </span>
+                  {index < STEPS.length - 1 && (
+                    <div className={`flex-1 h-0.5 mx-1.5 rounded-full transition-colors ${
+                      isCompleted ? 'bg-primary' : 'bg-border'
+                    }`} />
+                  )}
                 </div>
-                {index < STEPS.length - 1 && (
-                  <div className={`flex-1 h-0.5 mx-3 mb-7 rounded-full transition-colors ${
-                    isCompleted ? 'bg-primary' : 'bg-border'
-                  }`} />
-                )}
-              </div>
-            );
-          })}
-        </div>
-        {/* Progress bar */}
-        <div className="mt-4 max-w-lg mx-auto">
-          <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
-            <div
-              className="h-full bg-primary rounded-full transition-all duration-500 ease-out"
-              style={{ width: `${((currentStep - 1) / (STEPS.length - 1)) * 100}%` }}
+              );
+            })}
+          </div>
+          <div className="flex items-center justify-between text-xs">
+            <span className="font-medium text-foreground">
+              Étape {currentStep}/{STEPS.length} · {STEPS[currentStep - 1].label}
+            </span>
+            <span className="text-muted-foreground">
+              {currentStep === STEPS.length ? 'Dernière étape' : `${STEPS.length - currentStep} restante${STEPS.length - currentStep > 1 ? 's' : ''}`}
+            </span>
+          </div>
+          <div className="mt-2 h-1 bg-secondary rounded-full overflow-hidden">
+            <motion.div
+              className="h-full bg-primary rounded-full"
+              initial={false}
+              animate={{ width: `${((currentStep - 1) / (STEPS.length - 1)) * 100}%` }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             />
+          </div>
+        </div>
+
+        {/* Desktop: original stepper */}
+        <div className="hidden lg:block">
+          <div className="flex items-center justify-between max-w-lg mx-auto">
+            {STEPS.map((step, index) => {
+              const StepIcon = step.icon;
+              const isCompleted = currentStep > step.id;
+              const isCurrent = currentStep === step.id;
+              return (
+                <div key={step.id} className="flex items-center flex-1">
+                  <div className="flex flex-col items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (step.id < currentStep) setCurrentStep(step.id);
+                      }}
+                      className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 ${
+                        isCompleted
+                          ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25'
+                          : isCurrent
+                            ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25 scale-110'
+                            : 'bg-secondary text-muted-foreground'
+                      }`}
+                    >
+                      {isCompleted ? <Check className="h-5 w-5" /> : <StepIcon className="h-5 w-5" />}
+                    </button>
+                    <span className={`text-xs font-medium ${isCurrent ? 'text-primary' : 'text-muted-foreground'}`}>
+                      {step.label}
+                    </span>
+                  </div>
+                  {index < STEPS.length - 1 && (
+                    <div className={`flex-1 h-0.5 mx-3 mb-7 rounded-full transition-colors ${
+                      isCompleted ? 'bg-primary' : 'bg-border'
+                    }`} />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          <div className="mt-4 max-w-lg mx-auto">
+            <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
+              <div
+                className="h-full bg-primary rounded-full transition-all duration-500 ease-out"
+                style={{ width: `${((currentStep - 1) / (STEPS.length - 1)) * 100}%` }}
+              />
+            </div>
           </div>
         </div>
       </div>
