@@ -70,7 +70,9 @@ const CarDetail = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [relatedCars, setRelatedCars] = useState<Car[]>([]);
   const [currentUser, setCurrentUser] = useState<string | undefined>(undefined);
+  const [mobileTab, setMobileTab] = useState(0);
   const isAdmin = useIsAdmin(currentUser);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
