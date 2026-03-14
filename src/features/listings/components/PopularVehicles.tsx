@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import CarCard from "./CarCard";
 import { usePopularVehicles } from "../hooks/usePopularVehicles";
+import { CarCardSkeleton } from "@/components/skeletons/HomeSkeleton";
 
 export interface PopularVehiclesProps {
   isFavorite: (vehicleId: string) => boolean;
