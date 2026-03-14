@@ -98,6 +98,23 @@ const AdminReports = () => {
   const [actionDateFrom, setActionDateFrom] = useState<string>("");
   const [actionDateTo, setActionDateTo] = useState<string>("");
 
+  // Users management state
+  interface AdminUser {
+    user_id: string;
+    display_name: string | null;
+    avatar_url: string | null;
+    suspended_at: string | null;
+    suspended_reason: string | null;
+    created_at: string;
+    listing_count?: number;
+  }
+  const [users, setUsers] = useState<AdminUser[]>([]);
+  const [usersLoading, setUsersLoading] = useState(false);
+  const [userSearch, setUserSearch] = useState("");
+  const [suspendDialogOpen, setSuspendDialogOpen] = useState(false);
+  const [userToSuspend, setUserToSuspend] = useState<AdminUser | null>(null);
+  const [suspendReason, setSuspendReason] = useState("");
+
   const dateLocale = language === "fr" ? fr : language === "nl" ? nl : language === "de" ? de : enUS;
 
   useEffect(() => { checkAdminAndFetch(); }, []);
