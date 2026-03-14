@@ -1801,6 +1801,14 @@ const translations: Record<Language, Record<string, string>> = {
     "logout.success": "Logged out",
     "logout.description": "You have been successfully logged out",
     
+    // Favorites
+    "favorites.title": "My Favorites",
+    "favorites.vehicleCount": "saved vehicle",
+    "favorites.clearAll": "Clear all",
+    "favorites.empty": "No favorites",
+    "favorites.emptyDescription": "Add vehicles to your favorites by clicking the heart icon to easily find them here.",
+    "favorites.discover": "Discover vehicles",
+    
     // Hero
     "hero.badge": "Belgian car market",
     "hero.title1": "Find your next",
