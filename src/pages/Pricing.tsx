@@ -8,7 +8,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Check, Crown, Rocket, Settings, User, Star, Sparkles, ArrowRight, Shield, Zap, Building2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Header, Footer } from '@/shared/components';
+import { Header, Footer, BackButton } from '@/shared/components';
 import { useSubscription, SUBSCRIPTION_TIERS, FREE_PARTICULIER_LIMIT, FREE_TIER_FEATURES } from '@/features/subscription';
 import { useAuth } from '@/features/auth';
 import { useToast } from '@/hooks/use-toast';

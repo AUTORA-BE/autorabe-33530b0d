@@ -65,6 +65,7 @@ export default function SellCar() {
       
       <main className="pt-24 pb-16">
         <div className="container mx-auto px-4">
+          <BackButton to="/" className="mb-4" />
           {/* Header */}
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">

@@ -26,6 +26,7 @@ const SellerDashboardPage = () => {
       <Header />
       <main className="pt-24 pb-12">
         <div className="container mx-auto px-6">
+          <BackButton to="/" className="mb-4" />
           <div className="max-w-6xl mx-auto">
             <SellerDashboardComponent />
           </div>
