@@ -13,6 +13,7 @@ import { User as SupabaseUser } from "@supabase/supabase-js";
 import { useToast } from "@/hooks/use-toast";
 import { useUnreadMessages, useMessageNotifications } from "@/features/messaging";
 import { useCompareContext } from "@/features/compare";
+import { useFavorites } from "@/features/favorites";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTheme } from "next-themes";
 import NavLink from "./NavLink";
