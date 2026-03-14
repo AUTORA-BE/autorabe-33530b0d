@@ -89,6 +89,7 @@ export default function Pricing() {
       <Header />
       <main className="min-h-screen pt-28 pb-20">
         <div className="container mx-auto px-4">
+          <BackButton to="/" className="mb-4" />
 
           {/* Hero */}
           <motion.div
