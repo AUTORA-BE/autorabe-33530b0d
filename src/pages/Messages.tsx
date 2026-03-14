@@ -222,5 +222,6 @@ export default function Messages() {
 
       <Footer />
     </div>
+    </PullToRefresh>
   );
 }
