@@ -99,6 +99,7 @@ export default function Messages() {
   }
 
   return (
+    <PullToRefresh onRefresh={refetch}>
     <div className="page-gradient">
       <Header />
       
