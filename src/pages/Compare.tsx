@@ -526,6 +526,7 @@ const Compare = () => {
                     {compareList.length < 3 && (
                       <Link
                         to="/"
+                        ref={(el) => { cardRefs.current[compareList.length] = el as HTMLDivElement | null; }}
                         className="snap-center shrink-0 w-[85vw] max-w-[340px] rounded-2xl border-2 border-dashed border-border flex flex-col items-center justify-center min-h-[200px] hover:border-primary/50 transition-colors"
                       >
                         <Car className="w-10 h-10 text-muted-foreground mb-3" />
@@ -534,18 +535,22 @@ const Compare = () => {
                     )}
                   </div>
 
-                  {/* Scroll hint */}
-                  {compareList.length > 1 && (
-                    <div className="flex items-center justify-center gap-1.5">
-                      {compareList.map((car, i) => (
-                        <div
-                          key={car.id}
-                          className="w-2 h-2 rounded-full bg-primary/30"
+                  {/* Active dots */}
+                  {totalCards > 1 && (
+                    <div className="flex items-center justify-center gap-2">
+                      {Array.from({ length: totalCards }).map((_, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          onClick={() => scrollToCard(i)}
+                          aria-label={`Aller à la carte ${i + 1}`}
+                          className={`rounded-full transition-all duration-300 ${
+                            activeCardIndex === i
+                              ? 'w-6 h-2.5 bg-primary'
+                              : 'w-2.5 h-2.5 bg-primary/25 hover:bg-primary/40'
+                          }`}
                         />
                       ))}
-                      {compareList.length < 3 && (
-                        <div className="w-2 h-2 rounded-full bg-border" />
-                      )}
                     </div>
                   )}
                 </div>
