@@ -21,7 +21,7 @@ export default function Messages() {
   const isMobile = useIsMobile();
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
 
-  const { conversations, isLoading: conversationsLoading } = useConversations(currentUserId ?? undefined);
+  const { conversations, isLoading: conversationsLoading, refetch } = useConversations(currentUserId ?? undefined);
 
   useEffect(() => {
     if (!authLoading && !user) {
