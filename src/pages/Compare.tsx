@@ -299,20 +299,39 @@ const Compare = () => {
     )},
   ];
 
+  // Find the best value for each spec across vehicles (for highlighting)
+  const getBestForSpec = (specLabel: string): string | null => {
+    if (compareList.length < 2) return null;
+    if (specLabel === "Prix") {
+      const min = Math.min(...compareList.map(c => c.price));
+      return compareList.find(c => c.price === min)?.id || null;
+    }
+    if (specLabel === "Kilométrage") {
+      const min = Math.min(...compareList.map(c => c.mileage));
+      return compareList.find(c => c.mileage === min)?.id || null;
+    }
+    if (specLabel === "Année") {
+      const max = Math.max(...compareList.map(c => c.year));
+      return compareList.find(c => c.year === max)?.id || null;
+    }
+    return null;
+  };
+
   return (
     <div className="page-gradient">
       <Header />
       
       <main className="pt-24">
-        <section className="container mx-auto px-4 sm:px-6 py-12">
+        <section className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
           <div className="max-w-6xl mx-auto">
-            <div className="flex items-center justify-between mb-8">
+            {/* Header — responsive */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
               <div>
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs sm:text-sm font-medium mb-3">
                   <GitCompareArrows className="w-4 h-4" />
                   Comparateur
                 </div>
-                <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground">
+                <h1 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
                   Comparer les <span className="gradient-text">véhicules</span>
                 </h1>
               </div>
@@ -320,26 +339,28 @@ const Compare = () => {
                 <div className="flex items-center gap-2">
                   <Button
                     variant="outline"
+                    size="sm"
                     onClick={handleShare}
                     className="rounded-xl gap-2"
                   >
                     {copied ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
-                    {copied ? "Copié !" : "Partager"}
+                    <span className="hidden sm:inline">{copied ? "Copié !" : "Partager"}</span>
                   </Button>
-                  <Button variant="outline" onClick={clearCompare} className="rounded-xl">
-                    Tout effacer
+                  <Button variant="outline" size="sm" onClick={clearCompare} className="rounded-xl">
+                    <X className="w-4 h-4 sm:mr-1" />
+                    <span className="hidden sm:inline">Effacer</span>
                   </Button>
                 </div>
               )}
             </div>
 
             {compareList.length === 0 ? (
-              <div className="text-center py-20">
-                <GitCompareArrows className="w-16 h-16 text-muted-foreground mx-auto mb-6" />
-                <h2 className="font-display text-xl font-semibold text-foreground mb-3">
+              <div className="text-center py-16 sm:py-20">
+                <GitCompareArrows className="w-12 h-12 sm:w-16 sm:h-16 text-muted-foreground mx-auto mb-4 sm:mb-6" />
+                <h2 className="font-display text-lg sm:text-xl font-semibold text-foreground mb-3">
                   Aucun véhicule à comparer
                 </h2>
-                <p className="text-muted-foreground mb-6">
+                <p className="text-sm sm:text-base text-muted-foreground mb-6">
                   Ajoutez jusqu'à 3 véhicules pour les comparer côte à côte.
                 </p>
                 <Link to="/">
@@ -347,67 +368,211 @@ const Compare = () => {
                 </Link>
               </div>
             ) : (
-              <div className="bg-card border border-border rounded-2xl overflow-hidden">
-                {/* Vehicle header row */}
-                <div className="grid gap-4 p-6 border-b border-border" style={{ gridTemplateColumns: `180px repeat(${compareList.length}, 1fr)` }}>
-                  <div />
-                  {compareList.map((car) => (
-                    <div key={car.id} className="relative">
-                      <button
-                        onClick={() => removeFromCompare(car.id)}
-                        className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center hover:bg-destructive/80 transition-colors z-10"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                      <Link to={`/car/${car.id}`} className="block group">
-                        <div className="aspect-video rounded-xl overflow-hidden mb-3 border border-border">
-                          <img
-                            src={car.image}
-                            alt={`${car.brand} ${car.model}`}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
+              <>
+                {/* ═══ MOBILE: Swipeable card layout ═══ */}
+                <div className="lg:hidden space-y-6">
+                  {/* Horizontal scrollable vehicle cards */}
+                  <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 scrollbar-hide -mx-4 px-4">
+                    {compareList.map((car) => {
+                      const score = scores.get(car.id);
+                      const isWinner = score?.rank === 1;
+                      return (
+                        <div
+                          key={car.id}
+                          className={`snap-center shrink-0 w-[85vw] max-w-[340px] rounded-2xl border bg-card overflow-hidden ${
+                            isWinner ? 'border-primary/50 ring-1 ring-primary/20' : 'border-border'
+                          }`}
+                        >
+                          {/* Vehicle image + remove */}
+                          <div className="relative">
+                            <Link to={`/car/${car.id}`}>
+                              <div className="aspect-[16/10] overflow-hidden">
+                                <img
+                                  src={car.image}
+                                  alt={`${car.brand} ${car.model}`}
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                            </Link>
+                            <button
+                              onClick={() => removeFromCompare(car.id)}
+                              className="absolute top-2 right-2 w-8 h-8 rounded-full bg-background/80 backdrop-blur-sm text-foreground flex items-center justify-center shadow-lg"
+                              aria-label={`Retirer ${car.brand} ${car.model}`}
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                            {isWinner && (
+                              <div className="absolute top-2 left-2 flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary text-primary-foreground text-xs font-semibold shadow-lg">
+                                <Trophy className="w-3 h-3" /> Meilleur choix
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Vehicle info */}
+                          <div className="p-4 space-y-4">
+                            <div className="flex items-start justify-between gap-2">
+                              <div>
+                                <h3 className="font-display font-bold text-foreground text-base">
+                                  {car.brand} {car.model}
+                                </h3>
+                                <p className="text-sm text-muted-foreground">{car.year} · {car.fuelType}</p>
+                              </div>
+                              <span className="text-lg font-bold text-primary whitespace-nowrap">
+                                {formatPrice(car.price)}
+                              </span>
+                            </div>
+
+                            {/* Score */}
+                            {score && <ScoreCard score={score} />}
+
+                            {/* Key specs */}
+                            <div className="grid grid-cols-2 gap-3">
+                              {[
+                                { icon: Gauge, label: "Kilométrage", value: formatMileage(car.mileage), best: getBestForSpec("Kilométrage") === car.id },
+                                { icon: Calendar, label: "Année", value: car.year.toString(), best: getBestForSpec("Année") === car.id },
+                                { icon: Cog, label: "Transmission", value: car.transmission, best: false },
+                                { icon: Leaf, label: "Norme Euro", value: car.euroNorm || "—", best: false },
+                              ].map((spec) => (
+                                <div
+                                  key={spec.label}
+                                  className={`flex items-center gap-2 rounded-xl p-2.5 text-sm ${
+                                    spec.best ? 'bg-primary/10 text-primary' : 'bg-muted/50 text-foreground'
+                                  }`}
+                                >
+                                  <spec.icon className="w-4 h-4 shrink-0 text-muted-foreground" />
+                                  <div className="min-w-0">
+                                    <p className="text-[10px] text-muted-foreground leading-tight">{spec.label}</p>
+                                    <p className="font-medium truncate text-xs">{spec.value}</p>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+
+                            {/* Location */}
+                            {car.location && (
+                              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                <MapPin className="w-4 h-4 shrink-0" />
+                                <span className="truncate">{car.location}</span>
+                              </div>
+                            )}
+
+                            {/* LEZ */}
+                            <div className="pt-2 border-t border-border">
+                              <p className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1">
+                                <Shield className="w-3.5 h-3.5" /> Compatibilité LEZ
+                              </p>
+                              {renderLezBadges(car)}
+                            </div>
+
+                            {/* Car-Pass */}
+                            <Badge variant="outline" className={`w-fit ${car.hasCarPass ? "bg-primary/15 text-primary border-primary/30" : "bg-muted text-muted-foreground"}`}>
+                              {car.hasCarPass ? (
+                                <><CheckCircle className="w-3 h-3 mr-1" /> Car-Pass vérifié</>
+                              ) : "Car-Pass non vérifié"}
+                            </Badge>
+
+                            {/* CTA */}
+                            <Link to={`/car/${car.id}`}>
+                              <Button variant="outline" className="w-full rounded-xl mt-1">
+                                Voir l'annonce
+                              </Button>
+                            </Link>
+                          </div>
                         </div>
-                        <h3 className="font-display font-semibold text-foreground group-hover:text-primary transition-colors text-center">
-                          {car.brand} {car.model}
-                        </h3>
+                      );
+                    })}
+
+                    {/* Add vehicle slot */}
+                    {compareList.length < 3 && (
+                      <Link
+                        to="/"
+                        className="snap-center shrink-0 w-[85vw] max-w-[340px] rounded-2xl border-2 border-dashed border-border flex flex-col items-center justify-center min-h-[200px] hover:border-primary/50 transition-colors"
+                      >
+                        <Car className="w-10 h-10 text-muted-foreground mb-3" />
+                        <span className="text-sm font-medium text-muted-foreground">Ajouter un véhicule</span>
                       </Link>
+                    )}
+                  </div>
+
+                  {/* Scroll hint */}
+                  {compareList.length > 1 && (
+                    <div className="flex items-center justify-center gap-1.5">
+                      {compareList.map((car, i) => (
+                        <div
+                          key={car.id}
+                          className="w-2 h-2 rounded-full bg-primary/30"
+                        />
+                      ))}
+                      {compareList.length < 3 && (
+                        <div className="w-2 h-2 rounded-full bg-border" />
+                      )}
                     </div>
-                  ))}
-                  {compareList.length < 3 && (
-                    <Link 
-                      to="/"
-                      className="flex flex-col items-center justify-center aspect-video rounded-xl border-2 border-dashed border-border hover:border-primary/50 transition-colors group"
-                    >
-                      <Car className="w-8 h-8 text-muted-foreground group-hover:text-primary transition-colors mb-2" />
-                      <span className="text-sm text-muted-foreground group-hover:text-primary transition-colors">
-                        Ajouter
-                      </span>
-                    </Link>
                   )}
                 </div>
 
-                {/* Comparison table */}
-                <Table>
-                  <TableBody>
-                    {specs.map((spec, index) => (
-                      <TableRow key={spec.label} className={index % 2 === 0 ? "bg-muted/30" : ""}>
-                        <TableCell className="font-medium text-muted-foreground w-[180px]">
-                          <div className="flex items-center gap-2">
-                            {spec.icon && <spec.icon className="w-4 h-4" />}
-                            {spec.label}
+                {/* ═══ DESKTOP: Original table layout ═══ */}
+                <div className="hidden lg:block bg-card border border-border rounded-2xl overflow-hidden">
+                  {/* Vehicle header row */}
+                  <div className="grid gap-4 p-6 border-b border-border" style={{ gridTemplateColumns: `180px repeat(${compareList.length}, 1fr)` }}>
+                    <div />
+                    {compareList.map((car) => (
+                      <div key={car.id} className="relative">
+                        <button
+                          onClick={() => removeFromCompare(car.id)}
+                          className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center hover:bg-destructive/80 transition-colors z-10"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                        <Link to={`/car/${car.id}`} className="block group">
+                          <div className="aspect-video rounded-xl overflow-hidden mb-3 border border-border">
+                            <img
+                              src={car.image}
+                              alt={`${car.brand} ${car.model}`}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
                           </div>
-                        </TableCell>
-                        {compareList.map((car) => (
-                          <TableCell key={car.id}>
-                            {spec.render(car)}
-                          </TableCell>
-                        ))}
-                        {compareList.length < 3 && <TableCell />}
-                      </TableRow>
+                          <h3 className="font-display font-semibold text-foreground group-hover:text-primary transition-colors text-center">
+                            {car.brand} {car.model}
+                          </h3>
+                        </Link>
+                      </div>
                     ))}
-                  </TableBody>
-                </Table>
-              </div>
+                    {compareList.length < 3 && (
+                      <Link 
+                        to="/"
+                        className="flex flex-col items-center justify-center aspect-video rounded-xl border-2 border-dashed border-border hover:border-primary/50 transition-colors group"
+                      >
+                        <Car className="w-8 h-8 text-muted-foreground group-hover:text-primary transition-colors mb-2" />
+                        <span className="text-sm text-muted-foreground group-hover:text-primary transition-colors">
+                          Ajouter
+                        </span>
+                      </Link>
+                    )}
+                  </div>
+
+                  {/* Comparison table */}
+                  <Table>
+                    <TableBody>
+                      {specs.map((spec, index) => (
+                        <TableRow key={spec.label} className={index % 2 === 0 ? "bg-muted/30" : ""}>
+                          <TableCell className="font-medium text-muted-foreground w-[180px]">
+                            <div className="flex items-center gap-2">
+                              {spec.icon && <spec.icon className="w-4 h-4" />}
+                              {spec.label}
+                            </div>
+                          </TableCell>
+                          {compareList.map((car) => (
+                            <TableCell key={car.id}>
+                              {spec.render(car)}
+                            </TableCell>
+                          ))}
+                          {compareList.length < 3 && <TableCell />}
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </>
             )}
           </div>
         </section>
