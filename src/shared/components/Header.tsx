@@ -82,7 +82,7 @@ const Header = () => {
       <div className={`container mx-auto px-4 sm:px-6 transition-all duration-300 ${scrolled ? "py-1 sm:py-2" : "py-0"}`}>
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3 group">
+          <Link to="/" className="flex items-center gap-2 sm:gap-3 group">
             <img
               src={autoraLogo}
               alt="Autora Logo"
@@ -133,22 +133,22 @@ const Header = () => {
           {/* Desktop Actions */}
           <DesktopActions user={user} userProfile={userProfile} onLogout={handleLogout} t={t} isAdmin={isAdmin} />
 
-          {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center gap-2">
+          {/* Mobile: minimal actions (theme + hamburger for extra menu) */}
+          <div className="md:hidden flex items-center gap-1.5">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="text-muted-foreground hover:text-foreground rounded-2xl"
+              className="text-muted-foreground hover:text-foreground rounded-2xl w-9 h-9"
             >
-              {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              {theme === "dark" ? <Sun className="w-4.5 h-4.5" /> : <Moon className="w-4.5 h-4.5" />}
             </Button>
             <button
               className="p-2 text-foreground rounded-2xl hover:bg-secondary transition-colors"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Menu"
             >
-              <Menu className="w-6 h-6" />
+              <Menu className="w-5 h-5" />
             </button>
           </div>
         </div>

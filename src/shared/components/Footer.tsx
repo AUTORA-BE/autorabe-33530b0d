@@ -14,7 +14,7 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative overflow-hidden mt-12 sm:mt-20 border-t border-white/5">
+    <footer className="relative overflow-hidden mt-12 sm:mt-20 border-t border-white/5 pb-20 md:pb-0">
       {/* Gradient background fusion */}
       <div className="absolute inset-0 bg-[hsl(224,30%,6%)]" />
       <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.04] via-transparent to-primary/[0.02]" />

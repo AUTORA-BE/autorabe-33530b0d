@@ -13,6 +13,7 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 const CarChatbot = lazy(() => import("@/components/CarChatbot"));
 const TcoFloatingButton = lazy(() => import("@/components/TcoFloatingButton"));
 const CompareBar = lazy(() => import("@/features/compare/components/CompareBar"));
+const BottomNav = lazy(() => import("@/shared/components/BottomNav"));
 
 // Lazy-loaded — reduces main bundle unused JS
 const Index = lazy(() => import("./pages/Index"));
@@ -124,6 +125,7 @@ const App = () => (
                 </ErrorBoundary>
               </Suspense>
               <ScrollToTop />
+              <Suspense fallback={null}><BottomNav /></Suspense>
               <Suspense fallback={null}><CompareBar /></Suspense>
               <Suspense fallback={null}><TcoFloatingButton /></Suspense>
               <Suspense fallback={null}><CarChatbot /></Suspense>
