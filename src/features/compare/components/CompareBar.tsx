@@ -1,34 +1,34 @@
 /**
- * Floating compare bar that appears when vehicles are selected for comparison
+ * Floating compare bar – mobile-first, compact & non-intrusive
  * @module features/compare/components/CompareBar
  */
 import { useCompareContext } from "../context/CompareContext";
-import { useNavigate } from "react-router-dom";
-import { X, GitCompareArrows, Plus } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { X, GitCompareArrows } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 
 const CompareBar = () => {
   const { compareList, removeFromCompare, compareCount } = useCompareContext();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  if (compareCount === 0) return null;
-
-  const emptySlots = Math.max(0, 3 - compareCount);
+  // Hide on the compare page itself & when empty
+  if (compareCount === 0 || location.pathname === "/compare") return null;
 
   return (
     <AnimatePresence>
       <motion.div
-        initial={{ y: 100, opacity: 0 }}
+        initial={{ y: 80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        exit={{ y: 100, opacity: 0 }}
-        transition={{ type: "spring", damping: 25, stiffness: 300 }}
-        className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[95vw] max-w-2xl"
+        exit={{ y: 80, opacity: 0 }}
+        transition={{ type: "spring", damping: 28, stiffness: 350 }}
+        className="fixed bottom-20 sm:bottom-6 left-1/2 -translate-x-1/2 z-50 w-auto max-w-[92vw] safe-bottom"
       >
-        <div className="bg-card/95 backdrop-blur-xl border border-border shadow-2xl rounded-2xl p-3 sm:p-4">
-          <div className="flex items-center gap-3">
-            {/* Vehicle thumbnails */}
-            <div className="flex items-center gap-2 flex-1 min-w-0">
+        <div className="bg-card/95 backdrop-blur-xl border border-border shadow-elevated rounded-2xl px-3 py-2.5 sm:px-4 sm:py-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Compact vehicle pills */}
+            <div className="flex items-center gap-1.5 sm:gap-2">
               {compareList.map((car) => (
                 <motion.div
                   key={car.id}
@@ -37,7 +37,7 @@ const CompareBar = () => {
                   exit={{ scale: 0, opacity: 0 }}
                   className="relative group/thumb shrink-0"
                 >
-                  <div className="w-16 h-12 sm:w-20 sm:h-14 rounded-xl overflow-hidden border-2 border-primary/30 bg-muted">
+                  <div className="w-10 h-10 sm:w-14 sm:h-10 rounded-lg overflow-hidden border border-primary/30 bg-muted">
                     <img
                       src={car.image || "/placeholder.svg"}
                       alt={`${car.brand} ${car.model}`}
@@ -46,37 +46,25 @@ const CompareBar = () => {
                   </div>
                   <button
                     onClick={() => removeFromCompare(car.id)}
-                    className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover/thumb:opacity-100 transition-opacity shadow-md"
+                    className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center shadow-sm opacity-100 sm:opacity-0 sm:group-hover/thumb:opacity-100 transition-opacity"
                     aria-label={`Retirer ${car.brand} ${car.model}`}
                   >
-                    <X className="w-3 h-3" />
+                    <X className="w-2.5 h-2.5" />
                   </button>
-                  <p className="text-[10px] text-muted-foreground text-center mt-0.5 truncate w-16 sm:w-20">
-                    {car.brand} {car.model}
-                  </p>
                 </motion.div>
-              ))}
-
-              {/* Empty slots */}
-              {Array.from({ length: emptySlots }).map((_, i) => (
-                <div
-                  key={`empty-${i}`}
-                  className="w-16 h-12 sm:w-20 sm:h-14 rounded-xl border-2 border-dashed border-border flex items-center justify-center shrink-0"
-                >
-                  <Plus className="w-4 h-4 text-muted-foreground" />
-                </div>
               ))}
             </div>
 
-            {/* Compare button */}
+            {/* Compact count badge on mobile, full button on desktop */}
             <Button
               onClick={() => navigate("/compare")}
               disabled={compareCount < 2}
-              className="btn-primary-gradient rounded-xl shrink-0 gap-2"
+              size="sm"
+              className="btn-primary-gradient rounded-xl shrink-0 gap-1.5 h-10 px-3 sm:px-4 text-sm"
             >
               <GitCompareArrows className="w-4 h-4" />
               <span className="hidden sm:inline">Comparer</span>
-              <span className="sm:hidden">{compareCount}</span>
+              <span className="sm:hidden font-bold">{compareCount}</span>
             </Button>
           </div>
         </div>
