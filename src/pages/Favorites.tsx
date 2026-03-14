@@ -1,8 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Header, Footer } from "@/shared/components";
-import { CarCard, vehicleQueries, type Vehicle } from "@/features/listings";
-import { useFavorites } from "@/hooks/useFavorites";
+import { CarCard, type Vehicle } from "@/features/listings";
+import { useFavorites } from "@/features/favorites";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,19 +12,19 @@ import type { VehicleListingRow } from "@/features/listings/types/vehicle.types"
 
 const Favorites = () => {
   const navigate = useNavigate();
-  const { favorites, isFavorite, toggleFavorite, clearFavorites } = useFavorites();
+  const { favorites, isFavorite, toggleFavorite, clearFavorites, isAuthenticated } = useFavorites();
+  const { t } = useLanguage();
 
-  // Fetch only the favorited vehicles by IDs
   const { data: favoriteCars = [], isLoading } = useQuery({
-    queryKey: ['favorites', favorites],
+    queryKey: ["favorite-vehicles", favorites],
     queryFn: async (): Promise<Vehicle[]> => {
       if (favorites.length === 0) return [];
       const { data, error } = await supabase
-        .from('car_listings_public')
-        .select('*')
-        .in('id', favorites);
+        .from("car_listings_public")
+        .select("*")
+        .in("id", favorites);
       if (error) throw new Error(error.message);
-      return (data || []).map(row => mapListingToVehicle(row as VehicleListingRow));
+      return (data || []).map((row) => mapListingToVehicle(row as VehicleListingRow));
     },
     enabled: favorites.length > 0,
     staleTime: 5 * 60 * 1000,
@@ -32,26 +33,31 @@ const Favorites = () => {
   return (
     <div className="page-gradient">
       <Header />
-      <main className="container mx-auto px-6 pt-32 pb-20">
-        <div className="flex items-center justify-between mb-8">
+      <main className="container mx-auto px-4 sm:px-6 pt-28 sm:pt-32 pb-20">
+        <div className="flex items-center justify-between mb-6 sm:mb-8">
           <div>
-            <h1 className="font-display text-3xl font-bold text-foreground mb-2">
-              Mes Favoris
+            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground mb-1">
+              {t("favorites.title")}
             </h1>
-            <p className="text-muted-foreground">
-              {favoriteCars.length} véhicule{favoriteCars.length !== 1 ? "s" : ""} sauvegardé
-              {favoriteCars.length !== 1 ? "s" : ""}
+            <p className="text-sm sm:text-base text-muted-foreground">
+              {favoriteCars.length} {t("favorites.vehicleCount")}{favoriteCars.length !== 1 ? "s" : ""}
             </p>
           </div>
           {favoriteCars.length > 0 && (
-            <Button variant="outline" onClick={clearFavorites}>
-              Tout supprimer
+            <Button variant="outline" size="sm" onClick={clearFavorites}>
+              {t("favorites.clearAll")}
             </Button>
           )}
         </div>
 
-        {favoriteCars.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {isLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="aspect-[4/3] rounded-2xl bg-muted animate-pulse" />
+            ))}
+          </div>
+        ) : favoriteCars.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
             {favoriteCars.map((car) => (
               <CarCard
                 key={car.id}
@@ -63,19 +69,18 @@ const Favorites = () => {
             ))}
           </div>
         ) : (
-          <div className="text-center py-20">
-            <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-secondary flex items-center justify-center">
-              <Heart className="w-8 h-8 text-muted-foreground" />
+          <div className="text-center py-16 sm:py-20">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-5 rounded-full bg-secondary flex items-center justify-center">
+              <Heart className="w-7 h-7 sm:w-8 sm:h-8 text-muted-foreground" />
             </div>
-            <h3 className="font-display text-xl font-bold text-foreground mb-2">
-              Aucun favori
+            <h3 className="font-display text-lg sm:text-xl font-bold text-foreground mb-2">
+              {t("favorites.empty")}
             </h3>
-            <p className="text-muted-foreground max-w-md mx-auto mb-8">
-              Ajoutez des véhicules à vos favoris en cliquant sur le cœur pour les
-              retrouver facilement ici.
+            <p className="text-sm sm:text-base text-muted-foreground max-w-md mx-auto mb-6 sm:mb-8">
+              {t("favorites.emptyDescription")}
             </p>
             <Button onClick={() => navigate("/")} className="btn-primary-gradient">
-              Découvrir les véhicules
+              {t("favorites.discover")}
             </Button>
           </div>
         )}
