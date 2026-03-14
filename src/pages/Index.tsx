@@ -176,7 +176,7 @@ const Index = () => {
         </Suspense>
 
         {/* 5. Popular vehicles */}
-        <Suspense fallback={<div className="min-h-[260px] sm:min-h-[300px]" />}>
+        <Suspense fallback={<CarouselSkeleton />}>
           <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 400px" }}>
             <PopularVehicles
               isFavorite={isFavorite}
