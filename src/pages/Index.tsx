@@ -3,6 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { Header, Footer } from "@/shared/components";
 import { HeroSearch } from "@/features/search";
 import SEOHead from "@/components/SEOHead";
+import {
+  CarouselSkeleton,
+  TrustBarSkeleton,
+  WhyAutoRaSkeleton,
+  TestimonialsSkeleton,
+  BrandCarouselSkeleton,
+  GridSkeleton,
+} from "@/components/skeletons/HomeSkeleton";
 import ScrollReveal from "@/components/ScrollReveal";
 import { VoiceSearchSummary, type VoiceFilter } from "@/components/VoiceSearchSummary";
 import { AnimatePresence } from "framer-motion";
