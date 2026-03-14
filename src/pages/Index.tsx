@@ -39,6 +39,7 @@ const Index = () => {
   } = useVehicleSearch();
 
   const { isFavorite, toggleFavorite } = useFavorites();
+  const { vehicles: popularVehicles } = usePopularVehicles({ limit: 12 });
   const { profile: buyerProfile, saveProfile } = useBuyerProfile();
   const profileModalRef = useRef<HTMLButtonElement>(null);
 
