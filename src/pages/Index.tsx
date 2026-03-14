@@ -6,6 +6,7 @@ import SEOHead from "@/components/SEOHead";
 import ScrollReveal from "@/components/ScrollReveal";
 import { VoiceSearchSummary, type VoiceFilter } from "@/components/VoiceSearchSummary";
 import { AnimatePresence } from "framer-motion";
+import { PullToRefresh } from "@/components/PullToRefresh";
 
 const SellCarBanner = lazy(() => import("@/components/SellCarBanner"));
 const TrustBar = lazy(() => import("@/components/TrustBar"));
