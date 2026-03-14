@@ -327,6 +327,30 @@ export type Database = {
           },
         ]
       }
+      daily_message_counts: {
+        Row: {
+          count: number
+          created_at: string
+          id: string
+          message_date: string
+          user_id: string
+        }
+        Insert: {
+          count?: number
+          created_at?: string
+          id?: string
+          message_date?: string
+          user_id: string
+        }
+        Update: {
+          count?: number
+          created_at?: string
+          id?: string
+          message_date?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       favorites: {
         Row: {
           car_listing_id: string
