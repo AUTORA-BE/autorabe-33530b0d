@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import { Header, Footer } from "@/shared/components";
 import { useCompareContext } from "@/features/compare";
 import { Link, useSearchParams } from "react-router-dom";
@@ -174,6 +174,9 @@ const Compare = () => {
   const [searchParams] = useSearchParams();
   const [copied, setCopied] = useState(false);
   const [loadingShared, setLoadingShared] = useState(false);
+  const [activeCardIndex, setActiveCardIndex] = useState(0);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const scores = useMemo(() => computeScores(compareList), [compareList]);
 
@@ -317,6 +320,39 @@ const Compare = () => {
     return null;
   };
 
+  // Intersection observer for active dot tracking
+  const totalCards = compareList.length + (compareList.length < 3 ? 1 : 0);
+
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const idx = cardRefs.current.indexOf(entry.target as HTMLDivElement);
+            if (idx !== -1) setActiveCardIndex(idx);
+          }
+        });
+      },
+      { root: container, threshold: 0.6 }
+    );
+
+    cardRefs.current.forEach((el) => {
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, [compareList.length]);
+
+  const scrollToCard = useCallback((index: number) => {
+    const card = cardRefs.current[index];
+    if (card) {
+      card.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
+  }, []);
+
   return (
     <div className="page-gradient">
       <Header />
@@ -372,13 +408,17 @@ const Compare = () => {
                 {/* ═══ MOBILE: Swipeable card layout ═══ */}
                 <div className="lg:hidden space-y-6">
                   {/* Horizontal scrollable vehicle cards */}
-                  <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 scrollbar-hide -mx-4 px-4">
-                    {compareList.map((car) => {
+                  <div
+                    ref={scrollContainerRef}
+                    className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 scrollbar-hide -mx-4 px-4"
+                  >
+                    {compareList.map((car, cardIndex) => {
                       const score = scores.get(car.id);
                       const isWinner = score?.rank === 1;
                       return (
                         <div
                           key={car.id}
+                          ref={(el) => { cardRefs.current[cardIndex] = el; }}
                           className={`snap-center shrink-0 w-[85vw] max-w-[340px] rounded-2xl border bg-card overflow-hidden ${
                             isWinner ? 'border-primary/50 ring-1 ring-primary/20' : 'border-border'
                           }`}
@@ -486,6 +526,7 @@ const Compare = () => {
                     {compareList.length < 3 && (
                       <Link
                         to="/"
+                        ref={(el) => { cardRefs.current[compareList.length] = el as HTMLDivElement | null; }}
                         className="snap-center shrink-0 w-[85vw] max-w-[340px] rounded-2xl border-2 border-dashed border-border flex flex-col items-center justify-center min-h-[200px] hover:border-primary/50 transition-colors"
                       >
                         <Car className="w-10 h-10 text-muted-foreground mb-3" />
@@ -494,18 +535,22 @@ const Compare = () => {
                     )}
                   </div>
 
-                  {/* Scroll hint */}
-                  {compareList.length > 1 && (
-                    <div className="flex items-center justify-center gap-1.5">
-                      {compareList.map((car, i) => (
-                        <div
-                          key={car.id}
-                          className="w-2 h-2 rounded-full bg-primary/30"
+                  {/* Active dots */}
+                  {totalCards > 1 && (
+                    <div className="flex items-center justify-center gap-2">
+                      {Array.from({ length: totalCards }).map((_, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          onClick={() => scrollToCard(i)}
+                          aria-label={`Aller à la carte ${i + 1}`}
+                          className={`rounded-full transition-all duration-300 ${
+                            activeCardIndex === i
+                              ? 'w-6 h-2.5 bg-primary'
+                              : 'w-2.5 h-2.5 bg-primary/25 hover:bg-primary/40'
+                          }`}
                         />
                       ))}
-                      {compareList.length < 3 && (
-                        <div className="w-2 h-2 rounded-full bg-border" />
-                      )}
                     </div>
                   )}
                 </div>
