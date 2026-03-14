@@ -408,13 +408,17 @@ const Compare = () => {
                 {/* ═══ MOBILE: Swipeable card layout ═══ */}
                 <div className="lg:hidden space-y-6">
                   {/* Horizontal scrollable vehicle cards */}
-                  <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 scrollbar-hide -mx-4 px-4">
-                    {compareList.map((car) => {
+                  <div
+                    ref={scrollContainerRef}
+                    className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 scrollbar-hide -mx-4 px-4"
+                  >
+                    {compareList.map((car, cardIndex) => {
                       const score = scores.get(car.id);
                       const isWinner = score?.rank === 1;
                       return (
                         <div
                           key={car.id}
+                          ref={(el) => { cardRefs.current[cardIndex] = el; }}
                           className={`snap-center shrink-0 w-[85vw] max-w-[340px] rounded-2xl border bg-card overflow-hidden ${
                             isWinner ? 'border-primary/50 ring-1 ring-primary/20' : 'border-border'
                           }`}
