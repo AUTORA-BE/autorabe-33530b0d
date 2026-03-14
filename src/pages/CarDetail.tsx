@@ -40,6 +40,7 @@ import SEOHead from "@/components/SEOHead";
 import ReportAdModal from "@/components/ReportAdModal";
 import ScrollReveal from "@/components/ScrollReveal";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { useIsMobile } from "@/hooks/use-mobile";
 const VehicleTcoSection = lazy(() => import("@/features/tco/components/VehicleTcoSection"));
 const BelgianTaxCalculator = lazy(() => import("@/components/BelgianTaxCalculator"));
 const TaxChatModal = lazy(() => import("@/components/TaxChatModal"));
