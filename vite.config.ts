@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.png", "favicon.ico", "notification.mp3"],
+      includeAssets: ["favicon.png", "favicon.ico", "notification.mp3", "sw-push.js"],
       workbox: {
         // Cache JS/CSS/HTML navigations
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
