@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useNavigate } from 'react-router-dom';
 import { MessageCircle, Car, Search } from 'lucide-react';
+import { PullToRefresh } from '@/components/PullToRefresh';
 import { Header, Footer, BackButton } from '@/shared/components';
 import { ChatWindow } from '@/components/ChatWindow';
 import { Button } from '@/components/ui/button';
@@ -20,7 +21,7 @@ export default function Messages() {
   const isMobile = useIsMobile();
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
 
-  const { conversations, isLoading: conversationsLoading } = useConversations(currentUserId ?? undefined);
+  const { conversations, isLoading: conversationsLoading, refetch } = useConversations(currentUserId ?? undefined);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -98,6 +99,7 @@ export default function Messages() {
   }
 
   return (
+    <PullToRefresh onRefresh={refetch}>
     <div className="page-gradient">
       <Header />
       
@@ -220,5 +222,6 @@ export default function Messages() {
 
       <Footer />
     </div>
+    </PullToRefresh>
   );
 }

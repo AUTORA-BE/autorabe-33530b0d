@@ -6,6 +6,7 @@ import SEOHead from "@/components/SEOHead";
 import ScrollReveal from "@/components/ScrollReveal";
 import { VoiceSearchSummary, type VoiceFilter } from "@/components/VoiceSearchSummary";
 import { AnimatePresence } from "framer-motion";
+import { PullToRefresh } from "@/components/PullToRefresh";
 
 const SellCarBanner = lazy(() => import("@/components/SellCarBanner"));
 const TrustBar = lazy(() => import("@/components/TrustBar"));
@@ -121,6 +122,7 @@ const Index = () => {
       />
       <Header />
 
+      <PullToRefresh onRefresh={async () => { refresh(); }}>
       <main className="pt-16 sm:pt-20 pb-20 md:pb-0">
         {/* 1. Sell banner (dismissable) */}
         <Suspense fallback={<div className="h-[60px] sm:h-[72px]" />}>
@@ -246,6 +248,7 @@ const Index = () => {
       </main>
 
       <Footer />
+      </PullToRefresh>
     </div>
   );
 };
