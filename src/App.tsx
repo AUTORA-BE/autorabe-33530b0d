@@ -10,8 +10,6 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import PageTransition from "@/components/PageTransition";
 import ScrollToTop from "@/components/ScrollToTop";
 import ErrorBoundary from "@/components/ErrorBoundary";
-const CarChatbot = lazy(() => import("@/components/CarChatbot"));
-const TcoFloatingButton = lazy(() => import("@/components/TcoFloatingButton"));
 const CompareBar = lazy(() => import("@/features/compare/components/CompareBar"));
 const BottomNav = lazy(() => import("@/shared/components/BottomNav"));
 
@@ -127,8 +125,6 @@ const App = () => (
               <ScrollToTop />
               <Suspense fallback={null}><BottomNav /></Suspense>
               <Suspense fallback={null}><CompareBar /></Suspense>
-              <Suspense fallback={null}><TcoFloatingButton /></Suspense>
-              <Suspense fallback={null}><CarChatbot /></Suspense>
             </BrowserRouter>
           </CompareProvider>
         </LanguageProvider>
