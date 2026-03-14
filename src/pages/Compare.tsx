@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo, useRef, useCallback } from "react";
-import { Header, Footer } from "@/shared/components";
+import { Header, Footer, BackButton } from "@/shared/components";
 import { useCompareContext } from "@/features/compare";
 import { Link, useSearchParams } from "react-router-dom";
 import { 
@@ -359,6 +359,7 @@ const Compare = () => {
       
       <main className="pt-24">
         <section className="container mx-auto px-4 sm:px-6 py-8 sm:py-12">
+          <BackButton to="/" className="mb-4" />
           <div className="max-w-6xl mx-auto">
             {/* Header — responsive */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">

@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Header, Footer } from "@/shared/components";
+import { Header, Footer, BackButton } from "@/shared/components";
 import SEOHead from "@/components/SEOHead";
 import { SellCarForm } from "@/components/SellCarForm";
 import type { SellCarFormWatchData } from "@/components/SellCarForm";
@@ -65,6 +65,7 @@ export default function SellCar() {
       
       <main className="pt-24 pb-16">
         <div className="container mx-auto px-4">
+          <BackButton to="/" className="mb-4" />
           {/* Header */}
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">

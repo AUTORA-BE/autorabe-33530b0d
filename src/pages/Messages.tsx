@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useNavigate } from 'react-router-dom';
 import { MessageCircle, Car, Search } from 'lucide-react';
-import { Header, Footer } from '@/shared/components';
+import { Header, Footer, BackButton } from '@/shared/components';
 import { ChatWindow } from '@/components/ChatWindow';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -104,6 +104,7 @@ export default function Messages() {
       <main className="pt-20 pb-16">
         <div className="container mx-auto px-4 max-w-4xl">
           {/* Compact header */}
+          <BackButton to="/" className="mb-2" />
           <div className="flex items-center justify-between mb-4 mt-2">
             <h1 className="text-2xl font-bold text-foreground">{t("messages.title")}</h1>
             {conversations.length > 0 && (

@@ -5,7 +5,7 @@
 
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Header, Footer } from "@/shared/components";
+import { Header, Footer, BackButton } from "@/shared/components";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import SellerDashboardComponent from "@/features/listings/components/SellerDashboard";
 
@@ -26,6 +26,7 @@ const SellerDashboardPage = () => {
       <Header />
       <main className="pt-24 pb-12">
         <div className="container mx-auto px-6">
+          <BackButton to="/" className="mb-4" />
           <div className="max-w-6xl mx-auto">
             <SellerDashboardComponent />
           </div>

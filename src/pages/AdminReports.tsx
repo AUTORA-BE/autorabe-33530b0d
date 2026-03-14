@@ -9,7 +9,7 @@ import type { Json } from "@/integrations/supabase/types";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Header, Footer } from "@/shared/components";
+import { Header, Footer, BackButton } from "@/shared/components";
 import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import {
   AlertTriangle, CheckCircle, Clock, Eye, ExternalLink, Filter, Loader2,
   Shield, Trash2, XCircle, Car, Check, X, ImageIcon, History, CalendarIcon,
+  Users, Ban, UserCheck, Search,
 } from "lucide-react";
 import { format } from "date-fns";
 import { fr, nl, de, enUS } from "date-fns/locale";
@@ -97,6 +98,23 @@ const AdminReports = () => {
   const [actionDateFrom, setActionDateFrom] = useState<string>("");
   const [actionDateTo, setActionDateTo] = useState<string>("");
 
+  // Users management state
+  interface AdminUser {
+    user_id: string;
+    display_name: string | null;
+    avatar_url: string | null;
+    suspended_at: string | null;
+    suspended_reason: string | null;
+    created_at: string;
+    listing_count?: number;
+  }
+  const [users, setUsers] = useState<AdminUser[]>([]);
+  const [usersLoading, setUsersLoading] = useState(false);
+  const [userSearch, setUserSearch] = useState("");
+  const [suspendDialogOpen, setSuspendDialogOpen] = useState(false);
+  const [userToSuspend, setUserToSuspend] = useState<AdminUser | null>(null);
+  const [suspendReason, setSuspendReason] = useState("");
+
   const dateLocale = language === "fr" ? fr : language === "nl" ? nl : language === "de" ? de : enUS;
 
   useEffect(() => { checkAdminAndFetch(); }, []);
@@ -116,7 +134,7 @@ const AdminReports = () => {
       }
 
       setIsAdmin(true);
-      await Promise.all([fetchReports(), fetchPendingListings(), fetchAdminActions()]);
+      await Promise.all([fetchReports(), fetchPendingListings(), fetchAdminActions(), fetchUsers()]);
     } catch (error) {
       console.error("Error checking admin status:", error);
       navigate("/");
@@ -173,6 +191,70 @@ const AdminReports = () => {
       setActionsLoading(false);
     }
   };
+
+  const fetchUsers = async () => {
+    setUsersLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("user_id, display_name, avatar_url, suspended_at, suspended_reason, created_at")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      setUsers((data || []).map(p => ({ ...p, listing_count: undefined })));
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    } finally {
+      setUsersLoading(false);
+    }
+  };
+
+  const handleSuspendUser = async () => {
+    if (!userToSuspend) return;
+    setActionLoading(true);
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ suspended_at: new Date().toISOString(), suspended_reason: suspendReason || "Violation des conditions" })
+        .eq("user_id", userToSuspend.user_id);
+      if (error) throw error;
+      setUsers(prev => prev.map(u => u.user_id === userToSuspend.user_id ? { ...u, suspended_at: new Date().toISOString(), suspended_reason: suspendReason } : u));
+      toast.success("Utilisateur suspendu");
+      await logAdminAction("suspend_user", "user", userToSuspend.user_id, suspendReason, { display_name: userToSuspend.display_name });
+    } catch (error) {
+      console.error("Error suspending user:", error);
+      toast.error("Erreur lors de la suspension");
+    } finally {
+      setActionLoading(false);
+      setSuspendDialogOpen(false);
+      setUserToSuspend(null);
+      setSuspendReason("");
+    }
+  };
+
+  const handleUnsuspendUser = async (userId: string) => {
+    setActionLoading(true);
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ suspended_at: null, suspended_reason: null })
+        .eq("user_id", userId);
+      if (error) throw error;
+      setUsers(prev => prev.map(u => u.user_id === userId ? { ...u, suspended_at: null, suspended_reason: null } : u));
+      toast.success("Utilisateur réactivé");
+      await logAdminAction("unsuspend_user", "user", userId);
+    } catch (error) {
+      console.error("Error unsuspending user:", error);
+      toast.error("Erreur lors de la réactivation");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const filteredUsers = users.filter(u => {
+    if (!userSearch) return true;
+    const q = userSearch.toLowerCase();
+    return (u.display_name?.toLowerCase().includes(q)) || u.user_id.toLowerCase().includes(q);
+  });
 
   const logAdminAction = async (actionType: string, targetType: string, targetId: string, reason?: string, metadata?: Record<string, unknown>) => {
     try {
@@ -414,6 +496,7 @@ const AdminReports = () => {
 
             {/* Header */}
             <div className="mb-6">
+              <BackButton to="/" className="mb-3" />
               <div className="flex items-center gap-3 mb-1">
                 <Shield className="h-6 w-6 text-primary" />
                 <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{t("admin.title")}</h1>
@@ -441,6 +524,13 @@ const AdminReports = () => {
                       {reportStats.pending}
                     </span>
                   )}
+                </TabsTrigger>
+                <TabsTrigger value="users" className="rounded-lg text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2">
+                  <Users className="w-4 h-4" />
+                  Utilisateurs
+                  <span className="ml-1 px-1.5 py-0.5 text-xs font-medium rounded-full bg-muted text-muted-foreground">
+                    {users.length}
+                  </span>
                 </TabsTrigger>
                 <TabsTrigger value="history" className="rounded-lg text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2">
                   <History className="w-4 h-4" />
@@ -833,6 +923,118 @@ const AdminReports = () => {
                   </CardContent>
                 </Card>
               </TabsContent>
+
+              {/* ═══════════════════════════════════════════════ */}
+              {/* TAB: Users Management                          */}
+              {/* ═══════════════════════════════════════════════ */}
+              <TabsContent value="users" className="mt-0 space-y-6">
+                {/* Search */}
+                <div className="relative max-w-sm">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Rechercher un utilisateur…"
+                    value={userSearch}
+                    onChange={(e) => setUserSearch(e.target.value)}
+                    className="pl-10 rounded-lg"
+                  />
+                </div>
+
+                {/* Users Table */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-sm">Tous les utilisateurs</CardTitle>
+                    <CardDescription>{filteredUsers.length} utilisateur{filteredUsers.length !== 1 ? "s" : ""}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {usersLoading ? (
+                      <div className="space-y-3">
+                        {[1, 2, 3].map(i => (
+                          <div key={i} className="h-12 rounded-xl bg-muted animate-pulse" />
+                        ))}
+                      </div>
+                    ) : filteredUsers.length === 0 ? (
+                      <div className="text-center py-12 text-muted-foreground">
+                        <Users className="w-10 h-10 mx-auto mb-3 opacity-40" />
+                        <p className="text-sm">Aucun utilisateur trouvé</p>
+                      </div>
+                    ) : (
+                      <div className="overflow-x-auto">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>Utilisateur</TableHead>
+                              <TableHead>ID</TableHead>
+                              <TableHead>Inscrit le</TableHead>
+                              <TableHead>Statut</TableHead>
+                              <TableHead className="text-right">Actions</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {filteredUsers.map((u) => (
+                              <TableRow key={u.user_id}>
+                                <TableCell>
+                                  <div className="flex items-center gap-2">
+                                    {u.avatar_url ? (
+                                      <img src={u.avatar_url} alt="" className="w-8 h-8 rounded-full object-cover" />
+                                    ) : (
+                                      <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground">
+                                        {(u.display_name || "?")[0].toUpperCase()}
+                                      </div>
+                                    )}
+                                    <span className="text-sm font-medium">{u.display_name || "Sans nom"}</span>
+                                  </div>
+                                </TableCell>
+                                <TableCell className="font-mono text-xs text-muted-foreground">{u.user_id.slice(0, 8)}…</TableCell>
+                                <TableCell className="text-sm whitespace-nowrap">
+                                  {format(new Date(u.created_at), "dd MMM yyyy", { locale: dateLocale })}
+                                </TableCell>
+                                <TableCell>
+                                  {u.suspended_at ? (
+                                    <Badge variant="destructive" className="text-xs gap-1">
+                                      <Ban className="w-3 h-3" />Suspendu
+                                    </Badge>
+                                  ) : (
+                                    <Badge variant="outline" className="text-xs gap-1 bg-primary/10 text-primary border-primary/30">
+                                      <UserCheck className="w-3 h-3" />Actif
+                                    </Badge>
+                                  )}
+                                </TableCell>
+                                <TableCell className="text-right">
+                                  <div className="flex justify-end gap-1.5">
+                                    {u.suspended_at ? (
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        className="rounded-lg gap-1.5 text-primary"
+                                        onClick={() => handleUnsuspendUser(u.user_id)}
+                                        disabled={actionLoading}
+                                      >
+                                        <UserCheck className="w-3.5 h-3.5" />
+                                        <span className="hidden sm:inline">Réactiver</span>
+                                      </Button>
+                                    ) : (
+                                      <Button
+                                        size="sm"
+                                        variant="outline"
+                                        className="rounded-lg gap-1.5 text-destructive hover:text-destructive"
+                                        onClick={() => { setUserToSuspend(u); setSuspendDialogOpen(true); }}
+                                        disabled={actionLoading}
+                                      >
+                                        <Ban className="w-3.5 h-3.5" />
+                                        <span className="hidden sm:inline">Suspendre</span>
+                                      </Button>
+                                    )}
+                                  </div>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
             </Tabs>
           </div>
         </div>
@@ -910,6 +1112,36 @@ const AdminReports = () => {
             <Button variant="destructive" className="rounded-lg" onClick={deleteReport} disabled={actionLoading}>
               {actionLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
               {t("dashboard.delete")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Suspend User Dialog */}
+      <Dialog open={suspendDialogOpen} onOpenChange={setSuspendDialogOpen}>
+        <DialogContent className="rounded-2xl">
+          <DialogHeader>
+            <DialogTitle>Suspendre l'utilisateur</DialogTitle>
+            <DialogDescription>
+              {userToSuspend?.display_name || "Cet utilisateur"} ne pourra plus accéder aux fonctionnalités.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-2">
+            <label className="text-sm font-medium text-muted-foreground">Raison (optionnelle)</label>
+            <Input
+              value={suspendReason}
+              onChange={(e) => setSuspendReason(e.target.value)}
+              placeholder="Ex: Spam, faux annonces, comportement abusif…"
+              className="mt-1.5 rounded-lg"
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" className="rounded-lg" onClick={() => { setSuspendDialogOpen(false); setUserToSuspend(null); setSuspendReason(""); }}>
+              Annuler
+            </Button>
+            <Button variant="destructive" className="rounded-lg" onClick={handleSuspendUser} disabled={actionLoading}>
+              {actionLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Ban className="w-4 h-4 mr-2" />}
+              Suspendre
             </Button>
           </DialogFooter>
         </DialogContent>

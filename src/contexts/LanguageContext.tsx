@@ -600,6 +600,7 @@ const translations: Record<Language, Record<string, string>> = {
     "sellForm.draftRestoredDesc": "Votre formulaire a été pré-rempli avec vos données précédentes.",
     "sellForm.saving": "Sauvegarde…",
     "sellForm.draftSaved": "Brouillon sauvegardé",
+    "common.back": "Retour",
   },
   nl: {
     // Navigation
@@ -1191,6 +1192,7 @@ const translations: Record<Language, Record<string, string>> = {
     "sellForm.draftRestoredDesc": "Uw formulier is ingevuld met uw vorige gegevens.",
     "sellForm.saving": "Opslaan…",
     "sellForm.draftSaved": "Concept opgeslagen",
+    "common.back": "Terug",
   },
   de: {
     // Navigation
@@ -1782,6 +1784,7 @@ const translations: Record<Language, Record<string, string>> = {
     "sellForm.draftRestoredDesc": "Ihr Formular wurde mit Ihren vorherigen Daten vorausgefüllt.",
     "sellForm.saving": "Speichern…",
     "sellForm.draftSaved": "Entwurf gespeichert",
+    "common.back": "Zurück",
   },
   en: {
     // Navigation
@@ -2373,6 +2376,7 @@ const translations: Record<Language, Record<string, string>> = {
     "sellForm.draftRestoredDesc": "Your form has been pre-filled with your previous data.",
     "sellForm.saving": "Saving…",
     "sellForm.draftSaved": "Draft saved",
+    "common.back": "Back",
   },
 };
 
