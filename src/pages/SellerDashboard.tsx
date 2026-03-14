@@ -5,7 +5,7 @@
 
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Header, Footer } from "@/shared/components";
+import { Header, Footer, BackButton } from "@/shared/components";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import SellerDashboardComponent from "@/features/listings/components/SellerDashboard";
 
