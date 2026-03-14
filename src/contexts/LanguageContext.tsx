@@ -619,6 +619,14 @@ const translations: Record<Language, Record<string, string>> = {
     "logout.success": "Uitloggen",
     "logout.description": "U bent succesvol uitgelogd",
     
+    // Favorites
+    "favorites.title": "Mijn Favorieten",
+    "favorites.vehicleCount": "opgeslagen voertuig",
+    "favorites.clearAll": "Alles verwijderen",
+    "favorites.empty": "Geen favorieten",
+    "favorites.emptyDescription": "Voeg voertuigen toe aan uw favorieten door op het hartje te klikken om ze hier gemakkelijk terug te vinden.",
+    "favorites.discover": "Voertuigen ontdekken",
+    
     // Hero
     "hero.badge": "Belgische automarkt",
     "hero.title1": "Vind uw volgende",
