@@ -187,7 +187,7 @@ const Index = () => {
         </Suspense>
 
         {/* 6. Brand carousel */}
-        <Suspense fallback={<div className="min-h-[140px] sm:min-h-[180px]" />}>
+        <Suspense fallback={<BrandCarouselSkeleton />}>
           <ScrollReveal delay={0.05} direction="left">
             <BrandCarousel 
               onBrandFilter={(brand) => updateFilter("brand", brand)} 
