@@ -111,9 +111,11 @@ const PopularVehicles = memo(function PopularVehicles({
 
         {/* Carousel */}
         {isLoading ? (
-          <div className="flex gap-4 sm:gap-6 overflow-x-auto" role="status" aria-label="Chargement">
+          <div className="flex gap-4 sm:gap-6 overflow-hidden" role="status" aria-label="Chargement">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="flex-shrink-0 w-[280px] sm:w-[320px] md:w-[350px] h-[360px] sm:h-[400px] bg-secondary/50 rounded-2xl animate-pulse" />
+              <div key={i} className="flex-shrink-0 w-[280px] sm:w-[320px] md:w-[350px]">
+                <CarCardSkeleton />
+              </div>
             ))}
           </div>
         ) : (
