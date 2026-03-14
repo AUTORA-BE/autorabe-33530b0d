@@ -197,7 +197,7 @@ const Index = () => {
         </Suspense>
 
         {/* 7. Testimonials */}
-        <Suspense fallback={<div className="min-h-[200px] sm:min-h-[300px]" />}>
+        <Suspense fallback={<TestimonialsSkeleton />}>
           <TestimonialsSection />
         </Suspense>
 
