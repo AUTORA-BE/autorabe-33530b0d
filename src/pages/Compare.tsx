@@ -320,6 +320,39 @@ const Compare = () => {
     return null;
   };
 
+  // Intersection observer for active dot tracking
+  const totalCards = compareList.length + (compareList.length < 3 ? 1 : 0);
+
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const idx = cardRefs.current.indexOf(entry.target as HTMLDivElement);
+            if (idx !== -1) setActiveCardIndex(idx);
+          }
+        });
+      },
+      { root: container, threshold: 0.6 }
+    );
+
+    cardRefs.current.forEach((el) => {
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, [compareList.length]);
+
+  const scrollToCard = useCallback((index: number) => {
+    const card = cardRefs.current[index];
+    if (card) {
+      card.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
+  }, []);
+
   return (
     <div className="page-gradient">
       <Header />
