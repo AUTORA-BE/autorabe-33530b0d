@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useNavigate } from 'react-router-dom';
 import { MessageCircle, Car, Search } from 'lucide-react';
-import { Header, Footer } from '@/shared/components';
+import { Header, Footer, BackButton } from '@/shared/components';
 import { ChatWindow } from '@/components/ChatWindow';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';

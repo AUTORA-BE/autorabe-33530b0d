@@ -34,6 +34,7 @@ const Favorites = () => {
     <div className="page-gradient">
       <Header />
       <main className="container mx-auto px-4 sm:px-6 pt-28 sm:pt-32 pb-20">
+        <BackButton to="/" className="mb-4" />
         <div className="flex items-center justify-between mb-6 sm:mb-8">
           <div>
             <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground mb-1">

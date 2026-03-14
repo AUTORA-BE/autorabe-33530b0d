@@ -1,4 +1,4 @@
-import { Header, Footer } from "@/shared/components";
+import { Header, Footer, BackButton } from "@/shared/components";
 import SEOHead from "@/components/SEOHead";
 import { Users, Shield, Car, Award, MapPin, Heart } from "lucide-react";
 

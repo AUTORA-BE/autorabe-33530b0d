@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo, useRef, useCallback } from "react";
-import { Header, Footer } from "@/shared/components";
+import { Header, Footer, BackButton } from "@/shared/components";
 import { useCompareContext } from "@/features/compare";
 import { Link, useSearchParams } from "react-router-dom";
 import { 

@@ -414,6 +414,7 @@ const AdminReports = () => {
 
             {/* Header */}
             <div className="mb-6">
+              <BackButton to="/" className="mb-3" />
               <div className="flex items-center gap-3 mb-1">
                 <Shield className="h-6 w-6 text-primary" />
                 <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{t("admin.title")}</h1>
