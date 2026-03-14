@@ -156,7 +156,7 @@ const Index = () => {
         </div>
 
         {/* 3. Trust Bar — social proof badges */}
-        <Suspense fallback={<div className="h-[56px] sm:h-[64px]" />}>
+        <Suspense fallback={<TrustBarSkeleton />}>
           <TrustBar />
         </Suspense>
 
