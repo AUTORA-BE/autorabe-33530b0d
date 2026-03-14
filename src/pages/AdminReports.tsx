@@ -256,7 +256,7 @@ const AdminReports = () => {
     return (u.display_name?.toLowerCase().includes(q)) || u.user_id.toLowerCase().includes(q);
   });
 
-
+  const logAdminAction = async (actionType: string, targetType: string, targetId: string, reason?: string, metadata?: Record<string, unknown>) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
