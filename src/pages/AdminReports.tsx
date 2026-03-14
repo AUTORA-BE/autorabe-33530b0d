@@ -192,7 +192,71 @@ const AdminReports = () => {
     }
   };
 
-  const logAdminAction = async (actionType: string, targetType: string, targetId: string, reason?: string, metadata?: Record<string, unknown>) => {
+  const fetchUsers = async () => {
+    setUsersLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("user_id, display_name, avatar_url, suspended_at, suspended_reason, created_at")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      setUsers((data || []).map(p => ({ ...p, listing_count: undefined })));
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    } finally {
+      setUsersLoading(false);
+    }
+  };
+
+  const handleSuspendUser = async () => {
+    if (!userToSuspend) return;
+    setActionLoading(true);
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ suspended_at: new Date().toISOString(), suspended_reason: suspendReason || "Violation des conditions" })
+        .eq("user_id", userToSuspend.user_id);
+      if (error) throw error;
+      setUsers(prev => prev.map(u => u.user_id === userToSuspend.user_id ? { ...u, suspended_at: new Date().toISOString(), suspended_reason: suspendReason } : u));
+      toast.success("Utilisateur suspendu");
+      await logAdminAction("suspend_user", "user", userToSuspend.user_id, suspendReason, { display_name: userToSuspend.display_name });
+    } catch (error) {
+      console.error("Error suspending user:", error);
+      toast.error("Erreur lors de la suspension");
+    } finally {
+      setActionLoading(false);
+      setSuspendDialogOpen(false);
+      setUserToSuspend(null);
+      setSuspendReason("");
+    }
+  };
+
+  const handleUnsuspendUser = async (userId: string) => {
+    setActionLoading(true);
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ suspended_at: null, suspended_reason: null })
+        .eq("user_id", userId);
+      if (error) throw error;
+      setUsers(prev => prev.map(u => u.user_id === userId ? { ...u, suspended_at: null, suspended_reason: null } : u));
+      toast.success("Utilisateur réactivé");
+      await logAdminAction("unsuspend_user", "user", userId);
+    } catch (error) {
+      console.error("Error unsuspending user:", error);
+      toast.error("Erreur lors de la réactivation");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const filteredUsers = users.filter(u => {
+    if (!userSearch) return true;
+    const q = userSearch.toLowerCase();
+    return (u.display_name?.toLowerCase().includes(q)) || u.user_id.toLowerCase().includes(q);
+  });
+
+
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
