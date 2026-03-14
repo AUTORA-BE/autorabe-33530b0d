@@ -1117,6 +1117,36 @@ const AdminReports = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Suspend User Dialog */}
+      <Dialog open={suspendDialogOpen} onOpenChange={setSuspendDialogOpen}>
+        <DialogContent className="rounded-2xl">
+          <DialogHeader>
+            <DialogTitle>Suspendre l'utilisateur</DialogTitle>
+            <DialogDescription>
+              {userToSuspend?.display_name || "Cet utilisateur"} ne pourra plus accéder aux fonctionnalités.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-2">
+            <label className="text-sm font-medium text-muted-foreground">Raison (optionnelle)</label>
+            <Input
+              value={suspendReason}
+              onChange={(e) => setSuspendReason(e.target.value)}
+              placeholder="Ex: Spam, faux annonces, comportement abusif…"
+              className="mt-1.5 rounded-lg"
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" className="rounded-lg" onClick={() => { setSuspendDialogOpen(false); setUserToSuspend(null); setSuspendReason(""); }}>
+              Annuler
+            </Button>
+            <Button variant="destructive" className="rounded-lg" onClick={handleSuspendUser} disabled={actionLoading}>
+              {actionLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Ban className="w-4 h-4 mr-2" />}
+              Suspendre
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <Footer />
     </div>
   );
