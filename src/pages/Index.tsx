@@ -251,6 +251,14 @@ const Index = () => {
 
       <Footer />
       </PullToRefresh>
+
+      {/* Floating buttons — only on homepage, aligned bottom-right & bottom-left */}
+      <Suspense fallback={null}>
+        <TcoFloatingButton />
+      </Suspense>
+      <Suspense fallback={null}>
+        <CarChatbot />
+      </Suspense>
     </div>
   );
 };
