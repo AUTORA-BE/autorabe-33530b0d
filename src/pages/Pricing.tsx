@@ -1,15 +1,15 @@
 /**
- * Pricing page for professional seller subscriptions
+ * Pricing page for seller subscriptions
  * @module pages
  */
 
 import { useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Check, Crown, Rocket, Settings, User, Star, Sparkles, ArrowRight, Shield, Zap } from 'lucide-react';
+import { Check, Crown, Rocket, Settings, User, Star, Sparkles, ArrowRight, Shield, Zap, Building2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Header, Footer } from '@/shared/components';
-import { useSubscription, SUBSCRIPTION_TIERS, FREE_PARTICULIER_LIMIT } from '@/features/subscription';
+import { useSubscription, SUBSCRIPTION_TIERS, FREE_PARTICULIER_LIMIT, FREE_TIER_FEATURES } from '@/features/subscription';
 import { useAuth } from '@/features/auth';
 import { useToast } from '@/hooks/use-toast';
 import SEOHead from '@/components/SEOHead';
@@ -77,7 +77,8 @@ export default function Pricing() {
     }
   };
 
-  const paidTiers = Object.entries(SUBSCRIPTION_TIERS);
+  const particulierTiers = Object.entries(SUBSCRIPTION_TIERS).filter(([, t]) => t.category === 'particulier');
+  const proTiers = Object.entries(SUBSCRIPTION_TIERS).filter(([, t]) => t.category === 'professionnel');
 
   return (
     <div className="page-gradient">
@@ -130,140 +131,194 @@ export default function Pricing() {
             </motion.div>
           )}
 
-          {/* Free tier card */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, duration: 0.5 }}
-            className="max-w-3xl mx-auto mb-16"
-          >
-            <div className="rounded-2xl border border-border bg-card p-8 md:p-10 flex flex-col md:flex-row items-center gap-8">
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="h-10 w-10 rounded-xl bg-muted flex items-center justify-center">
-                    <User className="h-5 w-5 text-muted-foreground" />
-                  </div>
-                  <div>
-                    <h2 className="text-xl font-bold text-foreground">Gratuit</h2>
-                    <p className="text-sm text-muted-foreground">Pour les particuliers</p>
+          {/* ─── SECTION PARTICULIER ─── */}
+          <div className="max-w-5xl mx-auto mb-20">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="h-10 w-10 rounded-xl bg-muted flex items-center justify-center">
+                <User className="h-5 w-5 text-muted-foreground" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-foreground">Particuliers</h2>
+                <p className="text-sm text-muted-foreground">Pour les vendeurs occasionnels et réguliers</p>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Free tier */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1, duration: 0.5 }}
+                className="rounded-2xl border border-border bg-card p-8 flex flex-col"
+              >
+                <div className="mb-6">
+                  <h3 className="text-xl font-bold text-foreground mb-1">Gratuit</h3>
+                  <div className="mt-3">
+                    <span className="text-5xl font-extrabold text-foreground">0€</span>
+                    <span className="text-muted-foreground text-sm ml-1">pour toujours</span>
                   </div>
                 </div>
-                <ul className="space-y-2 mt-4">
-                  {[
-                    `Jusqu'à ${FREE_PARTICULIER_LIMIT} annonces simultanées`,
-                    'Messagerie intégrée',
-                    'Aucun engagement, aucune carte requise',
-                  ].map((f) => (
-                    <li key={f} className="flex items-center gap-2 text-sm text-foreground">
-                      <Check className="h-4 w-4 text-primary shrink-0" />
-                      {f}
+                <ul className="space-y-3 flex-1">
+                  {FREE_TIER_FEATURES.map((f) => (
+                    <li key={f} className="flex items-start gap-2.5 text-sm">
+                      <Check className="h-4 w-4 mt-0.5 shrink-0 text-primary" />
+                      <span className="text-foreground">{f}</span>
                     </li>
                   ))}
                 </ul>
-              </div>
-              <div className="text-center md:text-right">
-                <p className="text-5xl font-extrabold text-foreground">0€</p>
-                <p className="text-muted-foreground text-sm mt-1">pour toujours</p>
-                <Button
-                  variant="outline"
-                  className="mt-4 rounded-xl"
-                  onClick={() => navigate('/sell')}
-                >
+                <Button variant="outline" className="w-full rounded-xl h-12 mt-6" onClick={() => navigate('/sell')}>
                   Commencer gratuitement
                   <ArrowRight className="h-4 w-4 ml-2" />
                 </Button>
-              </div>
-            </div>
-          </motion.div>
+              </motion.div>
 
-          {/* Paid tiers */}
-          <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-            {paidTiers.map(([key, tier], idx) => {
-              const isCurrentPlan = currentTier?.slug === tier.slug;
-              const isPremium = key === 'premium';
-              return (
-                <motion.div
-                  key={key}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.15 + idx * 0.1, duration: 0.5 }}
-                  className={`relative rounded-2xl border bg-card overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${tierAccents[key]} ${isCurrentPlan ? 'ring-2 ring-primary' : ''}`}
-                >
-                  {/* Gradient header */}
-                  <div className={`bg-gradient-to-br ${tierGradients[key]} px-6 pt-8 pb-6`}>
-                    {tier.popular && (
-                      <div className="absolute top-4 right-4">
-                        <Badge className="bg-primary text-primary-foreground gap-1">
-                          <Star className="h-3 w-3" /> Populaire
-                        </Badge>
+              {/* Particulier+ */}
+              {particulierTiers.map(([key, tier], idx) => {
+                const isCurrentPlan = currentTier?.slug === tier.slug;
+                return (
+                  <motion.div
+                    key={key}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2, duration: 0.5 }}
+                    className={`rounded-2xl border bg-card p-8 flex flex-col ${isCurrentPlan ? 'ring-2 ring-primary border-primary' : tierAccents[key]}`}
+                  >
+                    <div className="mb-6">
+                      {isCurrentPlan && <Badge variant="secondary" className="mb-2">Votre plan</Badge>}
+                      <h3 className="text-xl font-bold text-foreground mb-1">{tier.name}</h3>
+                      <div className="mt-3">
+                        <span className="text-5xl font-extrabold text-foreground">
+                          {tier.price % 1 === 0 ? tier.price : tier.price.toFixed(2).replace('.', ',')}€
+                        </span>
+                        <span className="text-muted-foreground text-sm ml-1">/mois</span>
                       </div>
-                    )}
-                    {isPremium && (
-                      <div className="absolute top-4 right-4">
-                        <Badge className="bg-amber-500 text-white border-0 gap-1">
-                          <Zap className="h-3 w-3" /> Performance max
-                        </Badge>
-                      </div>
-                    )}
-                    {isCurrentPlan && (
-                      <div className="absolute top-4 left-4">
-                        <Badge variant="secondary">Votre plan</Badge>
-                      </div>
-                    )}
-
-                    <div className={`h-12 w-12 rounded-xl flex items-center justify-center mb-4 ${isPremium ? 'bg-amber-500/20 text-amber-500' : 'bg-primary/10 text-primary'}`}>
-                      {tierIcons[key]}
                     </div>
-                    <h3 className="text-2xl font-bold text-foreground">{tier.name}</h3>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {tier.maxListings ? `${tier.maxListings} annonces simultanées` : 'Annonces illimitées'}
-                    </p>
-
-                    <div className="mt-5">
-                      <span className="text-5xl font-extrabold text-foreground">
-                        {tier.price % 1 === 0 ? tier.price : tier.price.toFixed(2).replace('.', ',')}€
-                      </span>
-                      <span className="text-muted-foreground text-sm ml-1">/mois</span>
-                    </div>
-                    {tier.price >= 50 && (
-                      <p className="text-xs text-muted-foreground mt-1">HTVA · TVA belge 21% applicable</p>
-                    )}
-                  </div>
-
-                  {/* Features */}
-                  <div className="px-6 py-6 flex-1">
-                    <ul className="space-y-3">
-                      {tier.features.map((feature) => (
-                        <li key={feature} className="flex items-start gap-2.5 text-sm">
-                          <Check className={`h-4 w-4 mt-0.5 shrink-0 ${isPremium ? 'text-amber-500' : 'text-primary'}`} />
-                          <span className="text-foreground">{feature}</span>
+                    <ul className="space-y-3 flex-1">
+                      {tier.features.map((f) => (
+                        <li key={f} className="flex items-start gap-2.5 text-sm">
+                          <Check className="h-4 w-4 mt-0.5 shrink-0 text-primary" />
+                          <span className="text-foreground">{f}</span>
                         </li>
                       ))}
                     </ul>
-                  </div>
+                    <div className="mt-6">
+                      {isCurrentPlan ? (
+                        <Button variant="outline" className="w-full rounded-xl h-12" onClick={handleManage}>
+                          <Settings className="h-4 w-4 mr-2" /> Gérer
+                        </Button>
+                      ) : (
+                        <Button variant="default" className="w-full rounded-xl h-12 font-semibold" onClick={() => handleSubscribe(tier.price_id)} disabled={isLoading}>
+                          {isLoading ? 'Chargement...' : 'Choisir ce plan'}
+                          {!isLoading && <ArrowRight className="h-4 w-4 ml-2" />}
+                        </Button>
+                      )}
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </div>
 
-                  {/* CTA */}
-                  <div className="px-6 pb-6">
-                    {isCurrentPlan ? (
-                      <Button variant="outline" className="w-full rounded-xl h-12" onClick={handleManage}>
-                        <Settings className="h-4 w-4 mr-2" />
-                        Gérer
-                      </Button>
-                    ) : (
-                      <Button
-                        variant={isPremium ? 'outline' : tierBtnVariants[key]}
-                        className={`w-full rounded-xl h-12 font-semibold ${isPremium ? 'border-amber-500 text-amber-600 hover:bg-amber-500/10 dark:text-amber-400' : ''}`}
-                        onClick={() => handleSubscribe(tier.price_id)}
-                        disabled={isLoading}
-                      >
-                        {isLoading ? 'Chargement...' : 'Choisir ce plan'}
-                        {!isLoading && <ArrowRight className="h-4 w-4 ml-2" />}
-                      </Button>
-                    )}
-                  </div>
-                </motion.div>
-              );
-            })}
+          {/* ─── SECTION PROFESSIONNEL ─── */}
+          <div className="max-w-5xl mx-auto mb-16">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                <Building2 className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-foreground">Professionnels & Garages</h2>
+                <p className="text-sm text-muted-foreground">Numéro TVA requis · Rendez-vous de vérification</p>
+              </div>
+            </div>
+            <p className="text-sm text-muted-foreground mb-8 ml-[3.25rem]">
+              Les abonnements garage nécessitent un numéro de TVA valide et un rendez-vous de vérification avec notre équipe.
+            </p>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              {proTiers.map(([key, tier], idx) => {
+                const isCurrentPlan = currentTier?.slug === tier.slug;
+                const isPremium = key === 'premium';
+                return (
+                  <motion.div
+                    key={key}
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 + idx * 0.1, duration: 0.5 }}
+                    className={`relative rounded-2xl border bg-card overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${tierAccents[key]} ${isCurrentPlan ? 'ring-2 ring-primary' : ''}`}
+                  >
+                    {/* Gradient header */}
+                    <div className={`bg-gradient-to-br ${tierGradients[key]} px-6 pt-8 pb-6`}>
+                      {tier.popular && (
+                        <div className="absolute top-4 right-4">
+                          <Badge className="bg-primary text-primary-foreground gap-1">
+                            <Star className="h-3 w-3" /> Populaire
+                          </Badge>
+                        </div>
+                      )}
+                      {isPremium && (
+                        <div className="absolute top-4 right-4">
+                          <Badge className="bg-amber-500 text-white border-0 gap-1">
+                            <Zap className="h-3 w-3" /> Performance max
+                          </Badge>
+                        </div>
+                      )}
+                      {isCurrentPlan && (
+                        <div className="absolute top-4 left-4">
+                          <Badge variant="secondary">Votre plan</Badge>
+                        </div>
+                      )}
+
+                      <div className={`h-12 w-12 rounded-xl flex items-center justify-center mb-4 ${isPremium ? 'bg-amber-500/20 text-amber-500' : 'bg-primary/10 text-primary'}`}>
+                        {tierIcons[key]}
+                      </div>
+                      <h3 className="text-2xl font-bold text-foreground">{tier.name}</h3>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {tier.maxListings ? `${tier.maxListings} annonces simultanées` : 'Annonces illimitées'}
+                      </p>
+
+                      <div className="mt-5">
+                        <span className="text-5xl font-extrabold text-foreground">
+                          {tier.price % 1 === 0 ? tier.price : tier.price.toFixed(2).replace('.', ',')}€
+                        </span>
+                        <span className="text-muted-foreground text-sm ml-1">/mois</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">HTVA · TVA belge 21% applicable</p>
+                    </div>
+
+                    {/* Features */}
+                    <div className="px-6 py-6 flex-1">
+                      <ul className="space-y-3">
+                        {tier.features.map((feature) => (
+                          <li key={feature} className="flex items-start gap-2.5 text-sm">
+                            <Check className={`h-4 w-4 mt-0.5 shrink-0 ${isPremium ? 'text-amber-500' : 'text-primary'}`} />
+                            <span className="text-foreground">{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* CTA */}
+                    <div className="px-6 pb-6">
+                      {isCurrentPlan ? (
+                        <Button variant="outline" className="w-full rounded-xl h-12" onClick={handleManage}>
+                          <Settings className="h-4 w-4 mr-2" /> Gérer
+                        </Button>
+                      ) : (
+                        <Button
+                          variant={isPremium ? 'outline' : tierBtnVariants[key]}
+                          className={`w-full rounded-xl h-12 font-semibold ${isPremium ? 'border-amber-500 text-amber-600 hover:bg-amber-500/10 dark:text-amber-400' : ''}`}
+                          onClick={() => handleSubscribe(tier.price_id)}
+                          disabled={isLoading}
+                        >
+                          {isLoading ? 'Chargement...' : 'Choisir ce plan'}
+                          {!isLoading && <ArrowRight className="h-4 w-4 ml-2" />}
+                        </Button>
+                      )}
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
           </div>
 
           {/* Trust indicators */}

@@ -12,6 +12,7 @@ export {
   useConversations,
   useMessageNotifications,
 } from './hooks';
+export { useMessageLimit } from './hooks/useMessageLimit';
 
 // Types
 export type {

@@ -4,13 +4,12 @@
  */
 
 import { Link } from "react-router-dom";
-import { ArrowRight, Check, Crown, Rocket, Sparkles, Zap } from "lucide-react";
+import { ArrowRight, Check, Crown, Rocket, Sparkles, Zap, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const PricingCTA = () => {
   const { language } = useLanguage();
-
   const isNl = language === "nl";
 
   return (
@@ -19,7 +18,6 @@ const PricingCTA = () => {
         {/* Decorative background */}
         <div className="absolute -top-32 -right-32 w-80 h-80 rounded-full bg-primary/[0.06] blur-3xl pointer-events-none" />
         <div className="absolute -bottom-24 -left-24 w-64 h-64 rounded-full bg-primary/[0.04] blur-3xl pointer-events-none" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-primary/[0.02] blur-3xl pointer-events-none" />
 
         <div className="relative px-5 py-8 sm:px-12 sm:py-16">
           {/* Header */}
@@ -29,14 +27,12 @@ const PricingCTA = () => {
               {isNl ? "Pro plannen" : "Plans professionnels"}
             </div>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 leading-tight tracking-tight">
-              {isNl
-                ? "Verkoop sneller met een Pro-plan"
-                : "Vendez plus vite avec un plan\u00a0Pro"}
+              {isNl ? "Verkoop sneller met een Pro-plan" : "Vendez plus vite avec un plan\u00a0Pro"}
             </h2>
             <p className="text-muted-foreground text-sm sm:text-base max-w-lg mx-auto">
               {isNl
-                ? "Geverifieerde badge, prioriteitspositie in de zoekresultaten en geavanceerde statistieken om uw zichtbaarheid te maximaliseren."
-                : "Badge vérifié, position prioritaire dans les résultats et statistiques avancées pour maximiser votre visibilité."}
+                ? "Geverifieerde badge, prioriteitspositie in de zoekresultaten en geavanceerde statistieken."
+                : "Badge vérifié, position prioritaire dans les résultats et statistiques avancées."}
             </p>
           </div>
 
@@ -57,9 +53,9 @@ const PricingCTA = () => {
               </div>
               <ul className="space-y-2.5">
                 {[
-                  isNl ? "Tot 30 gelijktijdige advertenties" : "Jusqu'à 30 annonces simultanées",
+                  isNl ? "Tot 10 gelijktijdige advertenties" : "Jusqu'à 10 annonces simultanées",
                   isNl ? 'Geverifieerde "Pro" badge' : 'Badge "Vendeur Pro" vérifié',
-                  isNl ? "Prioriteitspositie in resultaten" : "Mise en avant dans les résultats",
+                  isNl ? "Dashboard met statistieken" : "Dashboard avec statistiques",
                   isNl ? "Prioritaire ondersteuning 7/7" : "Support prioritaire 7j/7",
                 ].map((f) => (
                   <li key={f} className="flex items-start gap-2 text-sm text-muted-foreground">
@@ -75,7 +71,7 @@ const PricingCTA = () => {
               <div className="absolute -top-3 right-5">
                 <span className="inline-flex items-center gap-1 bg-amber-500 text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full shadow-lg">
                   <Sparkles className="w-3 h-3" />
-                  {isNl ? "Populair" : "Populaire"}
+                  {isNl ? "Alles inbegrepen" : "Tout inclus"}
                 </span>
               </div>
               <div className="flex items-center gap-3 mb-5">
@@ -85,7 +81,7 @@ const PricingCTA = () => {
                 <div>
                   <p className="font-bold text-foreground">Premium</p>
                   <p className="text-amber-500 font-extrabold text-2xl leading-none">
-                    200€<span className="text-xs font-normal text-muted-foreground">/mois</span>
+                    249,99€<span className="text-xs font-normal text-muted-foreground">/mois</span>
                   </p>
                 </div>
               </div>
@@ -103,6 +99,12 @@ const PricingCTA = () => {
                 ))}
               </ul>
             </div>
+          </div>
+
+          {/* Notice */}
+          <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground mb-6">
+            <Building2 className="h-3.5 w-3.5" />
+            {isNl ? "Btw-nummer en verificatieafspraak vereist" : "Numéro TVA et rendez-vous de vérification requis"}
           </div>
 
           {/* CTA */}
