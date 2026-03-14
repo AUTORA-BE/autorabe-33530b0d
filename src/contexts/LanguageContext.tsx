@@ -1192,6 +1192,7 @@ const translations: Record<Language, Record<string, string>> = {
     "sellForm.draftRestoredDesc": "Uw formulier is ingevuld met uw vorige gegevens.",
     "sellForm.saving": "Opslaan…",
     "sellForm.draftSaved": "Concept opgeslagen",
+    "common.back": "Terug",
   },
   de: {
     // Navigation
