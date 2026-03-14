@@ -685,6 +685,7 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                   </ScrollReveal>
                 </div>
               )}
+            </div>
 
             {/* Right Column - Price & Contact (desktop only) */}
             <div className="hidden lg:block">
