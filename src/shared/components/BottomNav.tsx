@@ -3,15 +3,14 @@
  * @module shared/components
  */
 
-import { memo, useMemo } from "react";
-import { Home, Search, PlusCircle, Heart, User, MessageCircle } from "lucide-react";
+import { memo, useMemo, useEffect, useState } from "react";
+import { Home, PlusCircle, Heart, User, MessageCircle } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useUnreadMessages } from "@/features/messaging";
 import { useFavorites } from "@/features/favorites";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
-import { useEffect, useState } from "react";
 
 const BottomNav = memo(function BottomNav() {
   const location = useLocation();
@@ -28,11 +27,6 @@ const BottomNav = memo(function BottomNav() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Hide on messaging conversation (fullscreen) and auth page
-  const hiddenRoutes = ["/messages", "/auth"];
-  const isHidden = hiddenRoutes.some(r => location.pathname.startsWith(r));
-  if (isHidden) return null;
-
   const tabs = useMemo(() => [
     { to: "/", icon: Home, label: t("nav.buy"), badge: 0 },
     { to: "/favorites", icon: Heart, label: t("nav.favorites"), badge: favoritesCount },
@@ -40,6 +34,11 @@ const BottomNav = memo(function BottomNav() {
     { to: user ? "/messages" : "/auth", icon: MessageCircle, label: t("nav.messages"), badge: hasUnread ? unreadCount : 0 },
     { to: user ? "/settings" : "/auth", icon: User, label: t("nav.profile") || "Profil", badge: 0 },
   ], [t, favoritesCount, hasUnread, unreadCount, user]);
+
+  // Hide on messaging conversation (fullscreen) and auth page
+  const hiddenRoutes = ["/messages", "/auth"];
+  const isHidden = hiddenRoutes.some(r => location.pathname.startsWith(r));
+  if (isHidden) return null;
 
   return (
     <nav
@@ -55,7 +54,7 @@ const BottomNav = memo(function BottomNav() {
 
           return (
             <Link
-              key={tab.to}
+              key={tab.to + tab.label}
               to={tab.to}
               className={`relative flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-colors ${
                 tab.isCta ? "" : isActive ? "text-primary" : "text-muted-foreground"
