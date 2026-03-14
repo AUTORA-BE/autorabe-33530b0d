@@ -67,12 +67,15 @@ const queryClient = new QueryClient({
   },
 });
 
-/** Scroll to top on route change */
+/** Scroll to top on route change + trigger idle prefetching once */
 function ScrollToTopOnNavigate() {
   const { pathname } = useLocation();
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
+  useEffect(() => {
+    prefetchCriticalRoutes();
+  }, []);
   return null;
 }
 
