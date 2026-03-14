@@ -354,26 +354,37 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
   };
 
   const uploadPhotos = async (userId: string): Promise<string[]> => {
+    const { compressImage } = await import("@/utils/compressImage");
     const uploadedUrls: string[] = [];
     
     for (const photo of photos) {
-      const fileExt = photo.name.split('.').pop();
-      const fileName = `${userId}/${Date.now()}-${Math.random().toString(36).substr(2, 9)}.${fileExt}`;
-      
-      const { error } = await supabase.storage
-        .from('car-photos')
-        .upload(fileName, photo);
-      
-      if (error) {
-        console.error('Upload error:', error);
-        continue;
+      try {
+        const { blob, extension } = await compressImage(photo, {
+          maxDimension: 1920,
+          quality: 0.82,
+        });
+        const fileName = `${userId}/${Date.now()}-${Math.random().toString(36).substr(2, 9)}.${extension}`;
+        
+        const { error } = await supabase.storage
+          .from('car-photos')
+          .upload(fileName, blob, {
+            contentType: blob.type,
+            cacheControl: '31536000',
+          });
+        
+        if (error) {
+          console.error('Upload error:', error);
+          continue;
+        }
+        
+        const { data: urlData } = supabase.storage
+          .from('car-photos')
+          .getPublicUrl(fileName);
+        
+        uploadedUrls.push(urlData.publicUrl);
+      } catch (err) {
+        console.error('Compression/upload error:', err);
       }
-      
-      const { data: urlData } = supabase.storage
-        .from('car-photos')
-        .getPublicUrl(fileName);
-      
-      uploadedUrls.push(urlData.publicUrl);
     }
     
     return uploadedUrls;
