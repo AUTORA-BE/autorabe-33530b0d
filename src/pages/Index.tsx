@@ -12,6 +12,7 @@ const TrustBar = lazy(() => import("@/components/TrustBar"));
 const BrandCarousel = lazy(() => import("@/features/search/components/BrandCarousel"));
 const FilterPanel = lazy(() => import("@/features/search/components/FilterPanel"));
 const PopularVehicles = lazy(() => import("@/features/listings/components/PopularVehicles"));
+const SwipeDiscovery = lazy(() => import("@/features/listings/components/SwipeDiscovery"));
 const LoadMoreGrid = lazy(() => import("@/components/LoadMoreGrid"));
 const WhyAutoRa = lazy(() => import("@/components/WhyAutoRa"));
 const TestimonialsSection = lazy(() => import("@/components/TestimonialsSection"));
