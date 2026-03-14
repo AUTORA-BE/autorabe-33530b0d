@@ -1784,6 +1784,7 @@ const translations: Record<Language, Record<string, string>> = {
     "sellForm.draftRestoredDesc": "Ihr Formular wurde mit Ihren vorherigen Daten vorausgefüllt.",
     "sellForm.saving": "Speichern…",
     "sellForm.draftSaved": "Entwurf gespeichert",
+    "common.back": "Zurück",
   },
   en: {
     // Navigation
