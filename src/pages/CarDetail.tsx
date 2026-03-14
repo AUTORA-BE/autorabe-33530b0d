@@ -143,21 +143,87 @@ const CarDetail = () => {
     return (
       <div className="page-gradient">
         <Header />
-        <main className="container mx-auto px-6 py-32">
-          {/* Skeleton loading state */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
-            <div className="lg:col-span-2 space-y-6">
-              <div className="aspect-video rounded-3xl skeleton-shimmer" />
-              <div className="grid grid-cols-4 gap-3">
-                {[1,2,3,4].map(i => <div key={i} className="h-16 rounded-xl skeleton-shimmer" />)}
-              </div>
-              <div className="h-48 rounded-2xl skeleton-shimmer" />
+        <main className="container mx-auto px-4 sm:px-6 pt-20 sm:pt-24 pb-24 sm:pb-12">
+          {/* Mobile skeleton */}
+          <div className="lg:hidden space-y-4">
+            {/* Gallery */}
+            <div className="aspect-[4/3] rounded-2xl skeleton-shimmer" />
+            <div className="flex gap-2">
+              {[1, 2, 3, 4].map(i => <div key={i} className="h-2 w-2 rounded-full skeleton-shimmer" />)}
             </div>
-            <div className="hidden lg:block space-y-4">
-              <div className="h-8 w-3/4 rounded-lg skeleton-shimmer" />
-              <div className="h-12 w-1/2 rounded-lg skeleton-shimmer" />
-              <div className="h-12 rounded-xl skeleton-shimmer" />
-              <div className="h-12 rounded-xl skeleton-shimmer" />
+            {/* Title + price */}
+            <div className="space-y-2">
+              <div className="h-7 w-3/4 rounded-lg skeleton-shimmer" />
+              <div className="h-5 w-1/2 rounded-lg skeleton-shimmer" />
+              <div className="h-8 w-32 rounded-lg skeleton-shimmer" />
+            </div>
+            {/* Spec chips */}
+            <div className="flex gap-2 flex-wrap">
+              {[1, 2, 3, 4, 5].map(i => (
+                <div key={i} className="h-8 w-20 rounded-full skeleton-shimmer" />
+              ))}
+            </div>
+            {/* Tab bar */}
+            <div className="flex gap-2 border-b border-border/40 pb-2">
+              {[1, 2, 3, 4].map(i => (
+                <div key={i} className="h-8 w-16 rounded-lg skeleton-shimmer" />
+              ))}
+            </div>
+            {/* Tab content */}
+            <div className="space-y-3">
+              {[1, 2, 3].map(i => (
+                <div key={i} className="h-14 rounded-xl skeleton-shimmer" />
+              ))}
+            </div>
+          </div>
+
+          {/* Desktop skeleton */}
+          <div className="hidden lg:grid grid-cols-3 gap-8">
+            {/* Left — gallery + details */}
+            <div className="col-span-2 space-y-6">
+              <div className="aspect-video rounded-3xl skeleton-shimmer" />
+              <div className="grid grid-cols-5 gap-3">
+                {[1, 2, 3, 4, 5].map(i => (
+                  <div key={i} className="aspect-[4/3] rounded-xl skeleton-shimmer" />
+                ))}
+              </div>
+              {/* BentoSpecs placeholder */}
+              <div className="grid grid-cols-3 gap-3">
+                {[1, 2, 3, 4, 5, 6].map(i => (
+                  <div key={i} className="h-20 rounded-xl skeleton-shimmer" />
+                ))}
+              </div>
+              {/* Description */}
+              <div className="space-y-2">
+                <div className="h-5 w-40 rounded-lg skeleton-shimmer" />
+                <div className="h-4 w-full rounded skeleton-shimmer" />
+                <div className="h-4 w-5/6 rounded skeleton-shimmer" />
+                <div className="h-4 w-3/4 rounded skeleton-shimmer" />
+              </div>
+              {/* Transparency */}
+              <div className="h-32 rounded-2xl skeleton-shimmer" />
+            </div>
+
+            {/* Right — sticky sidebar */}
+            <div className="space-y-4">
+              <div className="h-7 w-3/4 rounded-lg skeleton-shimmer" />
+              <div className="h-5 w-1/2 rounded-lg skeleton-shimmer" />
+              <div className="h-10 w-36 rounded-lg skeleton-shimmer" />
+              <div className="h-px w-full bg-border/40" />
+              <div className="space-y-3">
+                <div className="h-12 rounded-xl skeleton-shimmer" />
+                <div className="h-12 rounded-xl skeleton-shimmer" />
+                <div className="h-12 rounded-xl skeleton-shimmer" />
+              </div>
+              <div className="h-px w-full bg-border/40" />
+              {/* Seller badge */}
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full skeleton-shimmer" />
+                <div className="space-y-1.5">
+                  <div className="h-4 w-28 rounded skeleton-shimmer" />
+                  <div className="h-3 w-20 rounded skeleton-shimmer" />
+                </div>
+              </div>
             </div>
           </div>
         </main>
