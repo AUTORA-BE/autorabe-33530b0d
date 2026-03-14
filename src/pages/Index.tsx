@@ -148,6 +148,16 @@ const Index = () => {
           <TrustBar />
         </Suspense>
 
+        {/* Swipe Discovery — mobile only */}
+        <Suspense fallback={null}>
+          <SwipeDiscovery
+            vehicles={popularVehicles}
+            isFavorite={isFavorite}
+            onToggleFavorite={toggleFavorite}
+            onVehicleClick={handleCarClick}
+          />
+        </Suspense>
+
         {/* 4. Why AutoRa — trust pillars */}
         <Suspense fallback={<div className="min-h-[240px] sm:min-h-[300px]" />}>
           <WhyAutoRa />
