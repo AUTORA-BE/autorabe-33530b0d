@@ -33,6 +33,7 @@ const Header = () => {
   const { toast } = useToast();
   const { unreadCount, hasUnread } = useUnreadMessages();
   const { compareCount } = useCompareContext();
+  const { favoritesCount } = useFavorites();
   const { theme, setTheme } = useTheme();
   const { language, setLanguage, t } = useLanguage();
   const isAdmin = useIsAdmin(user?.id);
