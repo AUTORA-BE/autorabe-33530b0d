@@ -1210,6 +1210,14 @@ const translations: Record<Language, Record<string, string>> = {
     "logout.success": "Abgemeldet",
     "logout.description": "Sie wurden erfolgreich abgemeldet",
     
+    // Favorites
+    "favorites.title": "Meine Favoriten",
+    "favorites.vehicleCount": "gespeichertes Fahrzeug",
+    "favorites.clearAll": "Alle löschen",
+    "favorites.empty": "Keine Favoriten",
+    "favorites.emptyDescription": "Fügen Sie Fahrzeuge zu Ihren Favoriten hinzu, indem Sie auf das Herz klicken, um sie hier leicht wiederzufinden.",
+    "favorites.discover": "Fahrzeuge entdecken",
+    
     // Hero
     "hero.badge": "Belgischer Automarkt",
     "hero.title1": "Finden Sie Ihr nächstes",
