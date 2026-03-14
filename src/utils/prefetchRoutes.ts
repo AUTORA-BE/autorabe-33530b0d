@@ -47,11 +47,13 @@ const HIGH_PRIORITY_ROUTES = ["/car", "/favorites", "/sell", "/auth", "/messages
  * Call once after the app has mounted and rendered.
  */
 export function prefetchCriticalRoutes(): void {
-  const schedule = typeof requestIdleCallback === "function"
-    ? requestIdleCallback
-    : (cb: () => void) => setTimeout(cb, 3000);
-
-  schedule(() => {
-    HIGH_PRIORITY_ROUTES.forEach(prefetchRoute);
-  }, { timeout: 5000 });
+  if (typeof requestIdleCallback === "function") {
+    requestIdleCallback(() => {
+      HIGH_PRIORITY_ROUTES.forEach(prefetchRoute);
+    }, { timeout: 5000 });
+  } else {
+    setTimeout(() => {
+      HIGH_PRIORITY_ROUTES.forEach(prefetchRoute);
+    }, 3000);
+  }
 }

@@ -57,6 +57,8 @@ const BottomNav = memo(function BottomNav() {
             <Link
               key={tab.to + tab.label}
               to={tab.to}
+              onTouchStart={() => prefetchRoute(tab.to)}
+              onMouseEnter={() => prefetchRoute(tab.to)}
               className={`relative flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-colors ${
                 tab.isCta ? "" : isActive ? "text-primary" : "text-muted-foreground"
               }`}
