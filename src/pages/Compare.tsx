@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import { Header, Footer } from "@/shared/components";
 import { useCompareContext } from "@/features/compare";
 import { Link, useSearchParams } from "react-router-dom";
