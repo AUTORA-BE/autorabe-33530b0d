@@ -12,6 +12,7 @@ const TrustBar = lazy(() => import("@/components/TrustBar"));
 const BrandCarousel = lazy(() => import("@/features/search/components/BrandCarousel"));
 const FilterPanel = lazy(() => import("@/features/search/components/FilterPanel"));
 const PopularVehicles = lazy(() => import("@/features/listings/components/PopularVehicles"));
+const SwipeDiscovery = lazy(() => import("@/features/listings/components/SwipeDiscovery"));
 const LoadMoreGrid = lazy(() => import("@/components/LoadMoreGrid"));
 const WhyAutoRa = lazy(() => import("@/components/WhyAutoRa"));
 const TestimonialsSection = lazy(() => import("@/components/TestimonialsSection"));
@@ -19,6 +20,7 @@ const SellCarCTA = lazy(() => import("@/components/SellCarCTA"));
 const PricingCTA = lazy(() => import("@/components/PricingCTA"));
 
 import { useVehicleSearch } from "@/features/listings";
+import { usePopularVehicles } from "@/features/listings/hooks/usePopularVehicles";
 import { useFavorites } from "@/features/favorites";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { BUDGET_OPTIONS } from "@/features/search/types/search.types";
@@ -37,6 +39,7 @@ const Index = () => {
   } = useVehicleSearch();
 
   const { isFavorite, toggleFavorite } = useFavorites();
+  const { vehicles: popularVehicles } = usePopularVehicles({ limit: 12 });
   const { profile: buyerProfile, saveProfile } = useBuyerProfile();
   const profileModalRef = useRef<HTMLButtonElement>(null);
 
@@ -143,6 +146,16 @@ const Index = () => {
         {/* 3. Trust Bar — social proof badges */}
         <Suspense fallback={<div className="h-[56px] sm:h-[64px]" />}>
           <TrustBar />
+        </Suspense>
+
+        {/* Swipe Discovery — mobile only */}
+        <Suspense fallback={null}>
+          <SwipeDiscovery
+            vehicles={popularVehicles}
+            isFavorite={isFavorite}
+            onToggleFavorite={toggleFavorite}
+            onVehicleClick={handleCarClick}
+          />
         </Suspense>
 
         {/* 4. Why AutoRa — trust pillars */}
