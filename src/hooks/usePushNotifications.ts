@@ -56,14 +56,11 @@ export function usePushNotifications() {
     return outputArray.buffer as ArrayBuffer;
   }, []);
 
-  // Register service worker
+  // Get existing service worker registration (managed by vite-plugin-pwa)
   const registerServiceWorker = useCallback(async (): Promise<ServiceWorkerRegistration | null> => {
     try {
-      const registration = await navigator.serviceWorker.register('/sw.js', {
-        scope: '/',
-      });
-      
-      console.log('Service Worker registered:', registration.scope);
+      const registration = await navigator.serviceWorker.ready;
+      console.log('Service Worker ready:', registration.scope);
       return registration;
     } catch (error) {
       console.error('Service Worker registration failed:', error);
