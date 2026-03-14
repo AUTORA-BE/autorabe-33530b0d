@@ -525,6 +525,13 @@ const AdminReports = () => {
                     </span>
                   )}
                 </TabsTrigger>
+                <TabsTrigger value="users" className="rounded-lg text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2">
+                  <Users className="w-4 h-4" />
+                  Utilisateurs
+                  <span className="ml-1 px-1.5 py-0.5 text-xs font-medium rounded-full bg-muted text-muted-foreground">
+                    {users.length}
+                  </span>
+                </TabsTrigger>
                 <TabsTrigger value="history" className="rounded-lg text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2">
                   <History className="w-4 h-4" />
                   Historique
