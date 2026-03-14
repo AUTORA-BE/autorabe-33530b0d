@@ -13,6 +13,7 @@ import { User as SupabaseUser } from "@supabase/supabase-js";
 import { useToast } from "@/hooks/use-toast";
 import { useUnreadMessages, useMessageNotifications } from "@/features/messaging";
 import { useCompareContext } from "@/features/compare";
+import { useFavorites } from "@/features/favorites";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTheme } from "next-themes";
 import NavLink from "./NavLink";
@@ -32,6 +33,7 @@ const Header = () => {
   const { toast } = useToast();
   const { unreadCount, hasUnread } = useUnreadMessages();
   const { compareCount } = useCompareContext();
+  const { favoritesCount } = useFavorites();
   const { theme, setTheme } = useTheme();
   const { language, setLanguage, t } = useLanguage();
   const isAdmin = useIsAdmin(user?.id);
@@ -98,7 +100,7 @@ const Header = () => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
             <NavLink to="/">{t("nav.buy")}</NavLink>
-            <NavLink to="/favorites">
+            <NavLink to="/favorites" badge={favoritesCount > 0 ? favoritesCount : undefined}>
               <span className="flex items-center gap-1.5">
                 <Heart className="w-4 h-4" />
                 {t("nav.favorites")}

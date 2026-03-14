@@ -19,7 +19,7 @@ const SellCarCTA = lazy(() => import("@/components/SellCarCTA"));
 const PricingCTA = lazy(() => import("@/components/PricingCTA"));
 
 import { useVehicleSearch } from "@/features/listings";
-import { useFavorites } from "@/hooks/useFavorites";
+import { useFavorites } from "@/features/favorites";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { BUDGET_OPTIONS } from "@/features/search/types/search.types";
 import { useBuyerProfile, BuyerProfileModal } from "@/features/tco";

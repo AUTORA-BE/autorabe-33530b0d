@@ -29,7 +29,14 @@ const translations: Record<Language, Record<string, string>> = {
     "logout.success": "Déconnexion",
     "logout.description": "Vous avez été déconnecté avec succès",
     
-    // Hero
+    // Favorites
+    "favorites.title": "Mes Favoris",
+    "favorites.vehicleCount": "véhicule sauvegardé",
+    "favorites.clearAll": "Tout supprimer",
+    "favorites.empty": "Aucun favori",
+    "favorites.emptyDescription": "Ajoutez des véhicules à vos favoris en cliquant sur le cœur pour les retrouver facilement ici.",
+    "favorites.discover": "Découvrir les véhicules",
+    
     "hero.badge": "Marché automobile belge",
     "hero.title1": "Trouvez votre prochaine",
     "hero.title2": "voiture en Belgique",
@@ -611,6 +618,14 @@ const translations: Record<Language, Record<string, string>> = {
     "theme.dark": "Donkere modus",
     "logout.success": "Uitloggen",
     "logout.description": "U bent succesvol uitgelogd",
+    
+    // Favorites
+    "favorites.title": "Mijn Favorieten",
+    "favorites.vehicleCount": "opgeslagen voertuig",
+    "favorites.clearAll": "Alles verwijderen",
+    "favorites.empty": "Geen favorieten",
+    "favorites.emptyDescription": "Voeg voertuigen toe aan uw favorieten door op het hartje te klikken om ze hier gemakkelijk terug te vinden.",
+    "favorites.discover": "Voertuigen ontdekken",
     
     // Hero
     "hero.badge": "Belgische automarkt",
@@ -1195,6 +1210,14 @@ const translations: Record<Language, Record<string, string>> = {
     "logout.success": "Abgemeldet",
     "logout.description": "Sie wurden erfolgreich abgemeldet",
     
+    // Favorites
+    "favorites.title": "Meine Favoriten",
+    "favorites.vehicleCount": "gespeichertes Fahrzeug",
+    "favorites.clearAll": "Alle löschen",
+    "favorites.empty": "Keine Favoriten",
+    "favorites.emptyDescription": "Fügen Sie Fahrzeuge zu Ihren Favoriten hinzu, indem Sie auf das Herz klicken, um sie hier leicht wiederzufinden.",
+    "favorites.discover": "Fahrzeuge entdecken",
+    
     // Hero
     "hero.badge": "Belgischer Automarkt",
     "hero.title1": "Finden Sie Ihr nächstes",
@@ -1777,6 +1800,14 @@ const translations: Record<Language, Record<string, string>> = {
     "theme.dark": "Dark mode",
     "logout.success": "Logged out",
     "logout.description": "You have been successfully logged out",
+    
+    // Favorites
+    "favorites.title": "My Favorites",
+    "favorites.vehicleCount": "saved vehicle",
+    "favorites.clearAll": "Clear all",
+    "favorites.empty": "No favorites",
+    "favorites.emptyDescription": "Add vehicles to your favorites by clicking the heart icon to easily find them here.",
+    "favorites.discover": "Discover vehicles",
     
     // Hero
     "hero.badge": "Belgian car market",
