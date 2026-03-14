@@ -248,6 +248,7 @@ const Index = () => {
       </main>
 
       <Footer />
+      </PullToRefresh>
     </div>
   );
 };
