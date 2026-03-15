@@ -45,14 +45,17 @@ const SwipeCard = memo(function SwipeCard({
 
   const handleDragEnd = useCallback(
     (_: any, info: PanInfo) => {
-      if (info.offset.x > SWIPE_THRESHOLD) {
-        animate(x, 400, { duration: 0.3 });
-        setTimeout(onSwipeRight, 200);
-      } else if (info.offset.x < -SWIPE_THRESHOLD) {
-        animate(x, -400, { duration: 0.3 });
-        setTimeout(onSwipeLeft, 200);
+      const vx = info.velocity.x;
+      if (info.offset.x > SWIPE_THRESHOLD || vx > 500) {
+        animate(x, 500, { type: "spring", stiffness: 300, damping: 30 });
+        if (navigator.vibrate) navigator.vibrate(10);
+        setTimeout(onSwipeRight, 180);
+      } else if (info.offset.x < -SWIPE_THRESHOLD || vx < -500) {
+        animate(x, -500, { type: "spring", stiffness: 300, damping: 30 });
+        if (navigator.vibrate) navigator.vibrate(10);
+        setTimeout(onSwipeLeft, 180);
       } else {
-        animate(x, 0, { type: "spring", stiffness: 500, damping: 30 });
+        animate(x, 0, { type: "spring", stiffness: 600, damping: 35 });
       }
     },
     [x, onSwipeLeft, onSwipeRight]
