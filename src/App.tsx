@@ -39,6 +39,7 @@ const Privacy = lazy(() => import("./pages/Privacy"));
 const Legal = lazy(() => import("./pages/Legal"));
 const Contact = lazy(() => import("./pages/Contact"));
 const AdminReports = lazy(() => import("./pages/AdminReports"));
+const Admin = lazy(() => import("./pages/Admin"));
 const CalculateurTCO = lazy(() => import("./pages/CalculateurTCO"));
 const MesAlertes = lazy(() => import("./pages/MesAlertes"));
 const CreerAlerte = lazy(() => import("./pages/CreerAlerte"));
