@@ -89,7 +89,7 @@ const BottomNav = memo(function BottomNav() {
             <Link
               key={tab.to + tab.label}
               to={tab.to}
-              onTouchStart={() => prefetchRoute(tab.to)}
+              onTouchStart={() => { prefetchRoute(tab.to); selectionChanged(); }}
               onMouseEnter={() => prefetchRoute(tab.to)}
               className="relative flex flex-col items-center justify-center gap-0.5 flex-1 h-full group"
               aria-current={isActive ? "page" : undefined}
