@@ -546,8 +546,8 @@ export default function Settings() {
                 <div>
                   <SettingsRow
                     icon={Trash2}
-                    label="Supprimer mon compte"
-                    description="Irréversible – toutes les données seront effacées"
+                    label={t("profile.deleteAccount")}
+                    description={t("profile.deleteDesc")}
                     destructive
                     onClick={() => {}}
                   />
