@@ -510,7 +510,7 @@ export default function Settings() {
               description={t("profile.exportDesc")}
               onClick={async () => {
                 try {
-                  toast.info("Préparation de l'export...");
+                  toast.info(t("profile.exportPreparing"));
                   const { data, error } = await supabase.functions.invoke("export-user-data");
                   if (error) throw error;
                   const blob = new Blob([JSON.stringify(data, null, 2)], {
