@@ -20,6 +20,7 @@ const BottomNav = memo(function BottomNav() {
   const { favoritesCount } = useFavorites();
   const { t } = useLanguage();
   const [user, setUser] = useState<boolean>(false);
+  const { selectionChanged } = useHapticFeedback();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setUser(!!data.session?.user));
