@@ -1,4 +1,4 @@
-/** Belgian TCO data - February 2026 */
+/** Belgian TCO data - March 2026 (updated 15/03/2026) */
 
 import type { FuelType, UsageType, AgeProfile, BonusMalus, Region, InsuranceType, EuroNorm } from '../types/tco.types';
 
