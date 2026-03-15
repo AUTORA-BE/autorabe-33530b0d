@@ -311,14 +311,12 @@ export const vehicleQueries = {
   async getRelated(vehicle: Vehicle, limit: number = 4): Promise<Vehicle[]> {
     const { data, error } = await supabase
       .from('car_listings_public')
-      .select('*')
+      .select(LIST_COLUMNS)
       .neq('id', vehicle.id)
       .or(`brand.eq.${vehicle.brand},fuel_type.ilike.${vehicle.fuelType}`)
       .limit(limit);
 
-    if (error) {
-      throw new Error(error.message);
-    }
+    if (error) throw new Error(error.message);
 
     return (data || []).map(row => mapListingToVehicle(row as VehicleListingRow));
   },
