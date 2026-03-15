@@ -530,6 +530,24 @@ const Auth = () => {
                     </div>
                   )}
 
+                  {/* Phone field for signup */}
+                  {!isLogin && (
+                    <div>
+                      <div className="relative">
+                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                        <Input
+                          type="tel"
+                          placeholder="+32 4XX XX XX XX"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          className="pl-10 h-12 bg-secondary/50 border-border/50 focus:border-primary focus:ring-primary/30 transition-colors"
+                        />
+                      </div>
+                      {errors.phone && (
+                        <p className="text-destructive text-sm mt-1">{errors.phone}</p>
+                      )}
+                    </div>
+
                   <div>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
