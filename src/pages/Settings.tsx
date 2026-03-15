@@ -566,7 +566,7 @@ export default function Settings() {
                     className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                     onClick={async () => {
                       try {
-                        toast.info("Suppression en cours...");
+                        toast.info(t("profile.deleteProgress"));
                         const { error } = await supabase.functions.invoke("delete-account");
                         if (error) throw error;
                         toast.success("Compte supprimé. Au revoir !");
