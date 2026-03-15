@@ -363,7 +363,7 @@ export default function Settings() {
                 onClick={openCustomerPortal}
                 className="mt-3 text-xs text-muted-foreground"
               >
-                Gérer abonnement
+                {t("profile.manageSubscription")}
               </Button>
             ) : (
               <Button
