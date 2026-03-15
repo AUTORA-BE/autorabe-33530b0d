@@ -36,7 +36,7 @@ const Auth = () => {
   
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   // Use auth hooks from features/auth
   const { user, isLoading: authLoading, signIn, signUp, signInWithGoogle, signInWithApple, resetPassword } = useAuth();
