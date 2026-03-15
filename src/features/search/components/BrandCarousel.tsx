@@ -205,11 +205,11 @@ const BrandCarousel = memo(function BrandCarousel({
             ))}
           </CarouselContent>
           <CarouselPrevious 
-            className="-left-2 md:-left-5 bg-card border-border hover:bg-primary hover:text-primary-foreground hover:border-primary h-8 w-8 sm:h-9 sm:w-9" 
+            className="-left-1 md:-left-4 bg-card/80 backdrop-blur-sm border-border/40 hover:bg-card hover:border-primary/40 h-7 w-7 sm:h-8 sm:w-8 shadow-sm" 
             aria-label="Marques précédentes"
           />
           <CarouselNext 
-            className="-right-2 md:-right-5 bg-card border-border hover:bg-primary hover:text-primary-foreground hover:border-primary h-8 w-8 sm:h-9 sm:w-9" 
+            className="-right-1 md:-right-4 bg-card/80 backdrop-blur-sm border-border/40 hover:bg-card hover:border-primary/40 h-7 w-7 sm:h-8 sm:w-8 shadow-sm" 
             aria-label="Marques suivantes"
           />
         </Carousel>
