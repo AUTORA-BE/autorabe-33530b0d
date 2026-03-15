@@ -5,10 +5,13 @@
 
 import { useMemo } from 'react';
 import { useSubscription } from './useSubscription';
+import { useIsAdmin } from '@/hooks/useIsAdmin';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 import {
   FREE_PARTICULIER_LIMIT,
   FREE_MESSAGE_LIMIT,
   FREE_MAX_PHOTOS,
+  SUBSCRIPTION_TIERS,
   type SubscriptionTier,
 } from '../constants/tiers';
 
@@ -42,8 +45,28 @@ export interface FeatureAccess {
  */
 export function useFeatureAccess(): FeatureAccess {
   const { subscribed, tier, isLoading } = useSubscription();
+  const { user } = useAuth();
+  const isAdmin = useIsAdmin(user?.id);
 
   return useMemo<FeatureAccess>(() => {
+    // Admins automatically get Premium access
+    if (!isLoading && isAdmin) {
+      const premiumTier = SUBSCRIPTION_TIERS.premium;
+      return {
+        maxListings: premiumTier.maxListings,
+        messageLimitPerDay: premiumTier.messageLimitPerDay,
+        maxPhotos: premiumTier.maxPhotos,
+        hasDashboard: premiumTier.hasDashboard,
+        showAds: false,
+        requiresTva: false,
+        badge: 'Admin Premium',
+        isPaid: true,
+        isPro: true,
+        tier: premiumTier,
+        isLoading: false,
+      };
+    }
+
     if (isLoading) {
       return {
         maxListings: FREE_PARTICULIER_LIMIT,
@@ -89,5 +112,5 @@ export function useFeatureAccess(): FeatureAccess {
       tier,
       isLoading: false,
     };
-  }, [subscribed, tier, isLoading]);
+  }, [subscribed, tier, isLoading, isAdmin]);
 }

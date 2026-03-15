@@ -20,6 +20,7 @@ import NavLink from "./NavLink";
 import DesktopActions from "./DesktopActions";
 import MobileMenu from "./MobileMenu";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { useAutoPromptPush } from "@/hooks/useAutoPromptPush";
 
 /**
  * Main header component with responsive navigation
@@ -38,6 +39,7 @@ const Header = () => {
   const { language, setLanguage, t } = useLanguage();
   const isAdmin = useIsAdmin(user?.id);
   useMessageNotifications(user?.id);
+  useAutoPromptPush(user?.id);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
