@@ -5,10 +5,13 @@
 
 import { useMemo } from 'react';
 import { useSubscription } from './useSubscription';
+import { useIsAdmin } from '@/hooks/useIsAdmin';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 import {
   FREE_PARTICULIER_LIMIT,
   FREE_MESSAGE_LIMIT,
   FREE_MAX_PHOTOS,
+  SUBSCRIPTION_TIERS,
   type SubscriptionTier,
 } from '../constants/tiers';
 
