@@ -158,7 +158,7 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
       {/* Mobile overlay */}
       {isOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-foreground/40 backdrop-blur-sm z-40 transition-opacity duration-300"
+          className="lg:hidden fixed inset-0 bg-foreground/40 backdrop-blur-sm z-[80] transition-opacity duration-300"
           onClick={onClose}
           aria-hidden="true"
         />
@@ -174,32 +174,34 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
         className={`
-          fixed lg:sticky lg:top-20
-          z-50 lg:z-auto
-          inset-x-0 bottom-0 lg:inset-auto lg:left-auto
-          w-full lg:w-80
-          max-h-[85dvh] lg:max-h-none lg:h-[calc(100vh-5rem)]
-          overflow-hidden lg:overflow-y-auto scrollbar-thin
+          lg:sticky lg:top-20
+          lg:z-auto
+          lg:w-80
+          lg:max-h-none lg:h-[calc(100vh-5rem)]
+          lg:overflow-y-auto scrollbar-thin
           lg:rounded-2xl
-          border-t lg:border border-border
-          bg-card
-          transform transition-transform duration-300 ease-out lg:transform-none
-          rounded-t-3xl lg:rounded-t-2xl
-          ${isOpen ? "translate-y-0 visible" : "translate-y-full lg:translate-y-0 invisible lg:visible pointer-events-none lg:pointer-events-auto"}
+          lg:border border-border
+          lg:bg-card
+          lg:transform-none
+          ${isOpen
+            ? "fixed inset-x-0 bottom-0 z-[85] w-full max-h-[88dvh] overflow-hidden rounded-t-3xl border-t bg-card translate-y-0 visible"
+            : "fixed inset-x-0 bottom-0 z-[85] w-full max-h-[88dvh] overflow-hidden rounded-t-3xl border-t bg-card translate-y-full invisible pointer-events-none lg:translate-y-0 lg:visible lg:pointer-events-auto"
+          }
         `}
         style={{
           background: "hsl(var(--card))",
-          boxShadow: isOpen ? "0 -8px 40px -4px hsl(var(--foreground) / 0.15)" : "0 8px 32px -4px hsl(var(--foreground) / 0.08)",
+          boxShadow: isOpen ? "0 -8px 40px -4px hsl(var(--foreground) / 0.2)" : "0 8px 32px -4px hsl(var(--foreground) / 0.08)",
+          transition: "transform 0.35s cubic-bezier(0.32, 0.72, 0, 1), visibility 0.35s",
         }}
         aria-label="Filtres de recherche"
       >
         {/* Mobile drag handle */}
-        <div className="lg:hidden flex justify-center pt-3 pb-1 sticky top-0 bg-card z-10">
-          <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
+        <div className="lg:hidden flex justify-center pt-3 pb-1 sticky top-0 bg-card z-10 rounded-t-3xl">
+          <div className="w-10 h-1.5 rounded-full bg-muted-foreground/30" />
         </div>
 
         {/* Mobile header — sticky */}
-        <div className="lg:hidden flex justify-between items-center px-5 pb-3 pt-1 sticky top-5 bg-card z-10 border-b border-border/50">
+        <div className="lg:hidden flex justify-between items-center px-5 pb-3 pt-1 sticky top-6 bg-card z-10 border-b border-border/50">
           <h2 className="font-display text-lg font-bold text-foreground">{t("filters.title")}</h2>
           <button
             onClick={onClose}
@@ -211,7 +213,7 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
         </div>
 
         {/* Scrollable content */}
-        <div data-scroll-content className="overflow-y-auto px-5 pt-4 pb-28 lg:pb-5 lg:pt-0 space-y-5 lg:p-5 lg:space-y-5" style={{ maxHeight: "calc(85dvh - 140px)" }}>
+        <div data-scroll-content className="overflow-y-auto overscroll-contain px-5 pt-4 pb-32 lg:pb-5 lg:pt-0 space-y-5 lg:p-5 lg:space-y-5" style={{ maxHeight: "calc(88dvh - 8rem)", WebkitOverflowScrolling: "touch" }}>
 
         {/* Results count */}
         <div
