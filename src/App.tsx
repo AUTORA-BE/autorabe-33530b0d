@@ -136,6 +136,7 @@ const App = () => (
               <Suspense fallback={null}><BottomNav /></Suspense>
               <Suspense fallback={null}><CompareBar /></Suspense>
               <Suspense fallback={null}><CarChatbot /></Suspense>
+              <Suspense fallback={null}><PWAInstallBanner /></Suspense>
             </BrowserRouter>
           </CompareProvider>
         </LanguageProvider>
