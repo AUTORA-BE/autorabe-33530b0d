@@ -403,7 +403,7 @@ export default function Settings() {
             <GlassCard>
               <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
                 <BarChart3 className="w-4 h-4 text-primary" />
-                Statistiques vendeur
+                {t("profile.sellerStats")}
               </h3>
               <div className="grid grid-cols-3 gap-3">
                 {[
