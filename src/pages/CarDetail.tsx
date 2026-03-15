@@ -404,8 +404,43 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
         title={`${car.brand} ${car.model} ${car.year}`}
         description={`${car.brand} ${car.model} ${car.year} - ${formatPrice(car.price)} - ${formatMileage(car.mileage)} - ${car.fuelType} - ${car.location}`}
         image={car.image}
-        url={`https://autora.be/car/${id}`}
+        url={`https://auto-belgium.lovable.app/car/${id}`}
         type="product"
+      />
+      {/* JSON-LD Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Car",
+            name: `${car.brand} ${car.model}`,
+            brand: { "@type": "Brand", name: car.brand },
+            model: car.model,
+            vehicleModelDate: String(car.year),
+            mileageFromOdometer: {
+              "@type": "QuantitativeValue",
+              value: car.mileage,
+              unitCode: "KMT",
+            },
+            fuelType: car.fuelType,
+            vehicleTransmission: car.transmission,
+            image: car.image,
+            offers: {
+              "@type": "Offer",
+              price: car.price,
+              priceCurrency: "EUR",
+              availability: "https://schema.org/InStock",
+              url: `https://auto-belgium.lovable.app/car/${id}`,
+              seller: {
+                "@type": sellerContact ? "Person" : "Organization",
+                name: sellerName,
+              },
+            },
+            vehicleConfiguration: car.euroNorm,
+            description: description.slice(0, 300),
+          }),
+        }}
       />
       <Header />
       <main className="pt-24 pb-28 lg:pb-20">
