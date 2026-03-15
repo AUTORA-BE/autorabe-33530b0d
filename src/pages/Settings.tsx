@@ -363,7 +363,7 @@ export default function Settings() {
                 onClick={openCustomerPortal}
                 className="mt-3 text-xs text-muted-foreground"
               >
-                Gérer abonnement
+                {t("profile.manageSubscription")}
               </Button>
             ) : (
               <Button
@@ -371,7 +371,7 @@ export default function Settings() {
                 className="mt-4 rounded-full px-6 bg-gradient-to-r from-primary to-emerald-500 text-primary-foreground shadow-lg shadow-primary/25 active:scale-[0.97] transition-transform"
               >
                 <Crown className="w-4 h-4 mr-2" />
-                Devenir Premium
+                {t("profile.becomePremium")}
               </Button>
             )}
           </GlassCard>
@@ -380,8 +380,8 @@ export default function Settings() {
           <GlassCard>
             <SettingsRow
               icon={Car}
-              label={`${t("nav.dashboard") || "Mes annonces"} (${totals.listings})`}
-              description={t("nav.sell") || "Poster une nouvelle annonce"}
+              label={`${t("profile.myListings")} (${totals.listings})`}
+              description={t("profile.postNew")}
               onClick={() => navigate("/dashboard")}
             />
             <div className="border-t border-border/20" />
@@ -403,13 +403,13 @@ export default function Settings() {
             <GlassCard>
               <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
                 <BarChart3 className="w-4 h-4 text-primary" />
-                Statistiques vendeur
+                {t("profile.sellerStats")}
               </h3>
               <div className="grid grid-cols-3 gap-3">
                 {[
-                  { label: "Vues", value: totals.views },
-                  { label: "Messages", value: totals.messages },
-                  { label: "Favoris", value: totals.favorites },
+                  { label: t("profile.views"), value: totals.views },
+                  { label: t("profile.messages"), value: totals.messages },
+                  { label: t("profile.favorites"), value: totals.favorites },
                 ].map((stat) => (
                   <div
                     key={stat.label}
@@ -502,15 +502,15 @@ export default function Settings() {
           {/* ─── Data & Privacy ─── */}
           <GlassCard>
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-              Données & sécurité
+              {t("profile.dataSecurity")}
             </h3>
             <SettingsRow
               icon={Download}
-              label="Exporter mes données"
-              description="RGPD – Télécharger en JSON"
+              label={t("profile.exportData")}
+              description={t("profile.exportDesc")}
               onClick={async () => {
                 try {
-                  toast.info("Préparation de l'export...");
+                  toast.info(t("profile.exportPreparing"));
                   const { data, error } = await supabase.functions.invoke("export-user-data");
                   if (error) throw error;
                   const blob = new Blob([JSON.stringify(data, null, 2)], {
@@ -522,16 +522,16 @@ export default function Settings() {
                   a.download = `autora-export-${new Date().toISOString().split("T")[0]}.json`;
                   a.click();
                   URL.revokeObjectURL(url);
-                  toast.success("Export téléchargé");
+                  toast.success(t("profile.exportSuccess"));
                 } catch {
-                  toast.error("Erreur lors de l'export");
+                  toast.error(t("profile.exportError"));
                 }
               }}
             />
             <div className="border-t border-border/20" />
             <SettingsRow
               icon={Cookie}
-              label="Préférences cookies"
+              label={t("profile.cookiePrefs")}
               onClick={() => {
                 localStorage.removeItem(COOKIE_STORAGE_KEY);
                 window.location.reload();
@@ -546,8 +546,8 @@ export default function Settings() {
                 <div>
                   <SettingsRow
                     icon={Trash2}
-                    label="Supprimer mon compte"
-                    description="Irréversible – toutes les données seront effacées"
+                    label={t("profile.deleteAccount")}
+                    description={t("profile.deleteDesc")}
                     destructive
                     onClick={() => {}}
                   />
@@ -555,30 +555,29 @@ export default function Settings() {
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Supprimer définitivement votre compte ?</AlertDialogTitle>
+                  <AlertDialogTitle>{t("profile.deleteConfirmTitle")}</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Cette action est irréversible. Toutes vos données seront supprimées : annonces,
-                    messages, favoris, alertes et profil.
+                    {t("profile.deleteConfirmDesc")}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>Annuler</AlertDialogCancel>
+                  <AlertDialogCancel>{t("profile.deleteCancel")}</AlertDialogCancel>
                   <AlertDialogAction
                     className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                     onClick={async () => {
                       try {
-                        toast.info("Suppression en cours...");
+                        toast.info(t("profile.deleteProgress"));
                         const { error } = await supabase.functions.invoke("delete-account");
                         if (error) throw error;
-                        toast.success("Compte supprimé. Au revoir !");
+                        toast.success(t("profile.deleteSuccess"));
                         await supabase.auth.signOut();
                         navigate("/");
                       } catch {
-                        toast.error("Erreur lors de la suppression du compte");
+                        toast.error(t("profile.deleteError"));
                       }
                     }}
                   >
-                    Oui, supprimer mon compte
+                    {t("profile.deleteConfirm")}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
