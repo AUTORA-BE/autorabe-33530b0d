@@ -2,6 +2,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { ThemeProvider } from "next-themes";
 import { HelmetProvider } from "react-helmet-async";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import App from "./App.tsx";
 import "./index.css";
 
@@ -10,11 +11,13 @@ if (container) {
   const root = createRoot(container);
   root.render(
     <React.StrictMode>
-      <HelmetProvider>
-        <ThemeProvider attribute="class" defaultTheme="dark">
-          <App />
-        </ThemeProvider>
-      </HelmetProvider>
+      <ErrorBoundary>
+        <HelmetProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <App />
+          </ThemeProvider>
+        </HelmetProvider>
+      </ErrorBoundary>
     </React.StrictMode>
   );
 }
