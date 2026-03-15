@@ -1,12 +1,12 @@
 /**
- * Instagram-style bottom navigation bar for mobile
+ * Premium bottom navigation bar for mobile
  * @module shared/components
  */
 
-import { memo, useMemo, useEffect, useState, useCallback } from "react";
+import { memo, useMemo, useEffect, useState } from "react";
 import { Home, PlusCircle, Heart, User, MessageCircle } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useUnreadMessages } from "@/features/messaging";
 import { useFavorites } from "@/features/favorites";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -43,15 +43,45 @@ const BottomNav = memo(function BottomNav() {
 
   return (
     <nav
-      className="md:hidden fixed bottom-0 left-0 right-0 z-[70] bg-card/95 backdrop-blur-xl border-t border-border/50 safe-bottom"
+      className="md:hidden fixed bottom-0 left-0 right-0 z-[70] safe-bottom"
       role="navigation"
       aria-label="Navigation principale"
     >
-      <div className="flex items-center justify-around h-16 px-1">
+      {/* Glass background with top glow line */}
+      <div className="absolute inset-0 bg-card/80 backdrop-blur-2xl border-t border-border/20" />
+      <div className="absolute top-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-primary/25 to-transparent" />
+
+      <div className="relative flex items-center justify-around h-[68px] px-2">
         {tabs.map((tab) => {
           const isActive = tab.to === "/"
             ? location.pathname === "/"
             : location.pathname.startsWith(tab.to);
+
+          if (tab.isCta) {
+            return (
+              <Link
+                key={tab.to + tab.label}
+                to={tab.to}
+                onTouchStart={() => prefetchRoute(tab.to)}
+                className="relative flex flex-col items-center justify-center flex-1 h-full"
+                aria-label={tab.label}
+              >
+                <motion.div
+                  whileTap={{ scale: 0.9 }}
+                  className="relative -mt-5"
+                >
+                  {/* Outer glow ring */}
+                  <div className="absolute -inset-1.5 rounded-full bg-primary/15 blur-md" />
+                  <div className="relative w-[52px] h-[52px] rounded-full bg-gradient-to-br from-primary to-emerald-600 text-primary-foreground flex items-center justify-center shadow-xl shadow-primary/30">
+                    <tab.icon className="w-6 h-6" strokeWidth={2.2} />
+                  </div>
+                </motion.div>
+                <span className="text-[10px] font-semibold text-primary mt-1">
+                  {tab.label}
+                </span>
+              </Link>
+            );
+          }
 
           return (
             <Link
@@ -59,37 +89,63 @@ const BottomNav = memo(function BottomNav() {
               to={tab.to}
               onTouchStart={() => prefetchRoute(tab.to)}
               onMouseEnter={() => prefetchRoute(tab.to)}
-              className={`relative flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-colors ${
-                tab.isCta ? "" : isActive ? "text-primary" : "text-muted-foreground"
-              }`}
+              className="relative flex flex-col items-center justify-center gap-0.5 flex-1 h-full group"
               aria-current={isActive ? "page" : undefined}
             >
-              {tab.isCta ? (
-                <div className="w-11 h-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg shadow-primary/30 -mt-3">
-                  <tab.icon className="w-6 h-6" />
-                </div>
-              ) : (
-                <>
-                  <div className="relative">
-                    <tab.icon className={`w-5 h-5 transition-all ${isActive ? "scale-110" : ""}`} />
+              <motion.div
+                whileTap={{ scale: 0.85 }}
+                className="relative flex flex-col items-center"
+              >
+                <div className="relative">
+                  <tab.icon
+                    className={`w-[22px] h-[22px] transition-all duration-300 ${
+                      isActive
+                        ? "text-primary scale-110"
+                        : "text-muted-foreground group-active:text-foreground"
+                    }`}
+                    strokeWidth={isActive ? 2.4 : 1.8}
+                  />
+
+                  {/* Badge */}
+                  <AnimatePresence>
                     {tab.badge > 0 && (
-                      <span className="absolute -top-1.5 -right-2.5 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold px-1 shadow-sm">
+                      <motion.span
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        exit={{ scale: 0 }}
+                        className="absolute -top-1.5 -right-3 min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-primary text-primary-foreground text-[9px] font-bold px-1 shadow-lg shadow-primary/30"
+                      >
                         {tab.badge > 9 ? "9+" : tab.badge}
-                      </span>
+                      </motion.span>
                     )}
-                  </div>
+                  </AnimatePresence>
+                </div>
+
+                {/* Label */}
+                <span
+                  className={`text-[10px] mt-0.5 transition-colors duration-300 ${
+                    isActive
+                      ? "font-semibold text-primary"
+                      : "font-medium text-muted-foreground"
+                  }`}
+                >
+                  {tab.label}
+                </span>
+
+                {/* Active indicator dot */}
+                <AnimatePresence>
                   {isActive && (
                     <motion.div
                       layoutId="bottomNavIndicator"
-                      className="w-1 h-1 rounded-full bg-primary"
+                      initial={{ opacity: 0, scale: 0 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0 }}
+                      className="w-1 h-1 rounded-full bg-primary shadow-sm shadow-primary/50 mt-0.5"
                       transition={{ type: "spring", stiffness: 500, damping: 30 }}
                     />
                   )}
-                </>
-              )}
-              <span className={`text-[10px] font-medium ${tab.isCta ? "text-primary mt-0.5" : ""}`}>
-                {tab.label}
-              </span>
+                </AnimatePresence>
+              </motion.div>
             </Link>
           );
         })}
