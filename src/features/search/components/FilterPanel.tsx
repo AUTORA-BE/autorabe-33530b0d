@@ -142,6 +142,7 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
 
   const formatPriceLabel = (value: number) => {
     if (value >= 1000000) return "1M+ €";
+    if (value >= 100000) return `${(value / 1000).toFixed(0)}k €`;
     if (value >= 1000) return `${(value / 1000).toFixed(0)}k €`;
     return `${value} €`;
   };
