@@ -577,7 +577,7 @@ export default function Settings() {
                       }
                     }}
                   >
-                    Oui, supprimer mon compte
+                    {t("profile.deleteConfirm")}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
