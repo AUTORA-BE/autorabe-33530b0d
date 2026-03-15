@@ -81,7 +81,7 @@ export function useAuth() {
    */
   const signUp = useCallback(async (credentials: SignupCredentials): Promise<AuthResult> => {
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data: signUpData, error } = await supabase.auth.signUp({
         email: credentials.email,
         password: credentials.password,
         options: {
@@ -103,6 +103,14 @@ export function useAuth() {
           success: false,
           error: { type: 'unknown', message: error.message }
         };
+      }
+
+      // Save phone number to profile if provided
+      if (credentials.phone && signUpData.user) {
+        await supabase
+          .from('profiles')
+          .update({ phone: credentials.phone })
+          .eq('user_id', signUpData.user.id);
       }
 
       return { success: true };
