@@ -16,6 +16,8 @@ input[type="number"] {
 
 @layer base {
   :root {
+    /* Header height compensation for safe-area on PWA standalone */
+    --safe-area-top: env(safe-area-inset-top, 0px);
     --background: 220 20% 97%;
     --foreground: 220 20% 10%;
 
