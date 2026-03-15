@@ -56,7 +56,7 @@ const Auth = () => {
    * Validate form fields
    */
   const validateForm = () => {
-    const newErrors: { email?: string; password?: string; name?: string } = {};
+    const newErrors: { email?: string; password?: string; name?: string; phone?: string } = {};
     
     // Validate email
     try {
@@ -92,6 +92,13 @@ const Auth = () => {
         if (e instanceof z.ZodError) {
           newErrors.name = e.errors[0].message;
         }
+      }
+
+      // Validate Belgian phone number
+      const phoneDigits = phone.replace(/[\s\-\(\)]/g, "");
+      const belgianPhoneRegex = /^\+32\d{8,9}$/;
+      if (!belgianPhoneRegex.test(phoneDigits)) {
+        newErrors.phone = language === "nl" ? "Geldig Belgisch telefoonnummer vereist (+32...)" : "Numéro de téléphone belge valide requis (+32...)";
       }
     }
 
