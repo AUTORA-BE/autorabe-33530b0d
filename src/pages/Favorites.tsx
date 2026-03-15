@@ -117,7 +117,7 @@ const Favorites = () => {
   ];
 
   return (
-    <PullToRefresh onRefresh={refetch}>
+    <PullToRefresh onRefresh={() => { refetch(); }}>
       <div className="page-gradient min-h-screen">
         <Header />
         <main className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-32 pb-24">
