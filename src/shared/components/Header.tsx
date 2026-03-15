@@ -86,7 +86,7 @@ const Header = () => {
             <img
               src={autoraLogo}
               alt="Autora Logo"
-              className={`rounded-2xl object-cover transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 group-active:scale-95 ${
+              className={`rounded-2xl object-cover transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 group-active:scale-95 dark:brightness-110 dark:contrast-110 drop-shadow-sm ${
                 scrolled ? "w-7 h-7 sm:w-8 sm:h-8" : "w-8 h-8 sm:w-10 sm:h-10"
               }`}
             />

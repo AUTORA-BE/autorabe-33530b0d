@@ -54,7 +54,7 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="relative overflow-hidden mt-12 sm:mt-20 border-t border-border/10 pb-20 md:pb-0">
+    <footer className="relative overflow-hidden mt-12 sm:mt-20 border-t border-border/10 pb-24 md:pb-0">
       {/* Subtle gradient bg */}
       <div className="absolute inset-0 bg-[hsl(224,30%,5%)]" />
       <div className="absolute inset-0 bg-gradient-to-b from-background/20 to-transparent" />
