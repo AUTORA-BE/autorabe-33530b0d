@@ -138,7 +138,7 @@ const Auth = () => {
         });
       }
     } else {
-      const result = await signUp({ email, password, fullName });
+      const result = await signUp({ email, password, fullName, phone: phone.replace(/[\s\-\(\)]/g, "") });
       
       if (!result.success && result.error) {
         if (result.error.type === 'user_exists') {
