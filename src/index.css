@@ -16,6 +16,8 @@ input[type="number"] {
 
 @layer base {
   :root {
+    /* Header height compensation for safe-area on PWA standalone */
+    --safe-area-top: env(safe-area-inset-top, 0px);
     --background: 220 20% 97%;
     --foreground: 220 20% 10%;
 
@@ -170,6 +172,17 @@ input[type="number"] {
 
   .safe-top {
     padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  /* PWA standalone: push main content below header + safe area */
+  @media all and (display-mode: standalone) {
+    :root {
+      --sat: env(safe-area-inset-top, 0px);
+    }
+  }
+
+  .pwa-main-offset {
+    padding-top: calc(3.5rem + env(safe-area-inset-top, 0px));
   }
 
   /* Reduce motion for accessibility */
@@ -427,6 +440,18 @@ input[type="number"] {
     to {
       opacity: 1;
       transform: scale(1);
+    }
+  }
+
+  /* PWA standalone: offset all main content for safe-area (notch) */
+  @media all and (display-mode: standalone) {
+    main {
+      scroll-margin-top: var(--safe-area-top, 0px);
+    }
+    /* All pages use pt-24 (6rem) — add safe-area on top */
+    main[class*="pt-24"],
+    main[class*="pt-28"] {
+      padding-top: calc(6rem + var(--safe-area-top, 0px)) !important;
     }
   }
 
