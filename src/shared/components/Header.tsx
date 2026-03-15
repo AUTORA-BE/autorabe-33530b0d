@@ -20,6 +20,7 @@ import NavLink from "./NavLink";
 import DesktopActions from "./DesktopActions";
 import MobileMenu from "./MobileMenu";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { useAutoPromptPush } from "@/hooks/useAutoPromptPush";
 
 /**
  * Main header component with responsive navigation
