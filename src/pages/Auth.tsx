@@ -31,7 +31,7 @@ const Auth = () => {
   const [verificationEmailSent, setVerificationEmailSent] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
-  const [errors, setErrors] = useState<{ email?: string; password?: string; name?: string }>({});
+  const [errors, setErrors] = useState<{ email?: string; password?: string; name?: string; phone?: string }>({});
   
   const navigate = useNavigate();
   const { toast } = useToast();
