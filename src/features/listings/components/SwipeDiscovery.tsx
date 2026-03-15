@@ -78,13 +78,13 @@ const SwipeCard = memo(function SwipeCard({
 
   return (
     <motion.div
-      className="absolute inset-0 rounded-3xl overflow-hidden bg-card border border-border/50 shadow-2xl cursor-grab active:cursor-grabbing touch-manipulation"
-      style={{ x, rotate, zIndex: 10 }}
+      className="absolute inset-0 rounded-3xl overflow-hidden bg-card border border-border/50 shadow-2xl cursor-grab active:cursor-grabbing"
+      style={{ x, rotate, zIndex: 10, touchAction: "pan-y" }}
       drag="x"
       dragConstraints={{ left: 0, right: 0 }}
-      dragElastic={0.9}
+      dragElastic={0.7}
       onDragEnd={handleDragEnd}
-      whileTap={{ scale: 0.98 }}
+      whileTap={{ scale: 0.97 }}
     >
       {/* Image */}
       <div className="relative w-full h-[65%]">
