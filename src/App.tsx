@@ -14,6 +14,7 @@ import ScrollToTop from "@/components/ScrollToTop";
 import ErrorBoundary from "@/components/ErrorBoundary";
 const CompareBar = lazy(() => import("@/features/compare/components/CompareBar"));
 const BottomNav = lazy(() => import("@/shared/components/BottomNav"));
+const CarChatbot = lazy(() => import("@/components/CarChatbot"));
 
 // Lazy-loaded — reduces main bundle unused JS
 const Index = lazy(() => import("./pages/Index"));
