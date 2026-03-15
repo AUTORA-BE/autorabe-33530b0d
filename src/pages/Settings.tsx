@@ -524,7 +524,7 @@ export default function Settings() {
                   URL.revokeObjectURL(url);
                   toast.success(t("profile.exportSuccess"));
                 } catch {
-                  toast.error("Erreur lors de l'export");
+                  toast.error(t("profile.exportError"));
                 }
               }}
             />
