@@ -133,7 +133,7 @@ const Index = () => {
       <Header />
 
       <PullToRefresh onRefresh={async () => { refresh(); }}>
-      <main className="pt-16 sm:pt-20 pb-20 md:pb-0">
+      <main className="pt-20 sm:pt-24 pb-20 md:pb-0">
         {/* 1. Sell banner (dismissable) */}
         <Suspense fallback={<div className="h-[60px] sm:h-[72px]" />}>
           <SellCarBanner />
