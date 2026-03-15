@@ -522,7 +522,7 @@ export default function Settings() {
                   a.download = `autora-export-${new Date().toISOString().split("T")[0]}.json`;
                   a.click();
                   URL.revokeObjectURL(url);
-                  toast.success("Export téléchargé");
+                  toast.success(t("profile.exportSuccess"));
                 } catch {
                   toast.error("Erreur lors de l'export");
                 }
