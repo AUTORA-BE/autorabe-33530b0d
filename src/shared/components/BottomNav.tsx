@@ -64,7 +64,7 @@ const BottomNav = memo(function BottomNav() {
               <Link
                 key={tab.to + tab.label}
                 to={tab.to}
-                onTouchStart={() => prefetchRoute(tab.to)}
+                onTouchStart={() => { prefetchRoute(tab.to); selectionChanged(); }}
                 className="relative flex flex-col items-center justify-center flex-1 h-full"
                 aria-label={tab.label}
               >
