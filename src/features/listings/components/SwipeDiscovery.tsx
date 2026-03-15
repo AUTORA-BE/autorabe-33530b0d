@@ -18,7 +18,7 @@ interface SwipeDiscoveryProps {
   onVehicleClick: (id: string) => void;
 }
 
-const SWIPE_THRESHOLD = 100;
+const SWIPE_THRESHOLD = 80;
 
 const formatPrice = (price: number) =>
   new Intl.NumberFormat("fr-BE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(price);
