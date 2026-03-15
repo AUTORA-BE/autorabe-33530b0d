@@ -502,7 +502,7 @@ export default function Settings() {
           {/* ─── Data & Privacy ─── */}
           <GlassCard>
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-              Données & sécurité
+              {t("profile.dataSecurity")}
             </h3>
             <SettingsRow
               icon={Download}
