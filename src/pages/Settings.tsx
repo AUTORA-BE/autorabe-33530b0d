@@ -371,7 +371,7 @@ export default function Settings() {
                 className="mt-4 rounded-full px-6 bg-gradient-to-r from-primary to-emerald-500 text-primary-foreground shadow-lg shadow-primary/25 active:scale-[0.97] transition-transform"
               >
                 <Crown className="w-4 h-4 mr-2" />
-                Devenir Premium
+                {t("profile.becomePremium")}
               </Button>
             )}
           </GlassCard>
