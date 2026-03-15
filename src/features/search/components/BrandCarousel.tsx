@@ -146,8 +146,8 @@ const BrandCarousel = memo(function BrandCarousel({
                     className={cn(
                       "relative flex flex-col items-center justify-center p-2.5 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl transition-[border-color,box-shadow,transform] duration-300",
                       selectedBrand === brand.name
-                        ? "bg-primary/10 border-2 border-primary shadow-lg shadow-primary/20 ring-2 ring-primary/30 -translate-y-1.5"
-                        : "bg-card border border-border/50 hover:border-primary/60 hover:shadow-xl hover:shadow-primary/15 hover:-translate-y-2 hover:scale-[1.06]"
+                        ? "bg-primary/10 border-2 border-primary shadow-md shadow-primary/15 -translate-y-1"
+                        : "bg-card border border-border/40 hover:border-primary/40 hover:shadow-md hover:-translate-y-1 hover:scale-[1.03]"
                     )}
                   >
                     {/* Shine effect overlay */}
