@@ -3,12 +3,12 @@
 import type { FuelType, UsageType, AgeProfile, BonusMalus, Region, InsuranceType, EuroNorm } from '../types/tco.types';
 
 export const PRIX_CARBURANT: Record<string, number> = {
-  diesel: 1.689,
-  essence95: 1.649,
-  essence98: 1.809,
-  electric_domicile: 0.35,
-  electric_public: 0.55,
-  gpl: 0.749,
+  diesel: 1.720,
+  essence95: 1.750,
+  essence98: 1.816,
+  electric_domicile: 0.36,
+  electric_public: 0.56,
+  gpl: 0.769,
 };
 
 export const FACTEUR_REALITE: Record<UsageType, Record<string, number>> = {
