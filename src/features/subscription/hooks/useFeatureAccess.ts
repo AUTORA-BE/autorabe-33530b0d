@@ -112,5 +112,5 @@ export function useFeatureAccess(): FeatureAccess {
       tier,
       isLoading: false,
     };
-  }, [subscribed, tier, isLoading]);
+  }, [subscribed, tier, isLoading, isAdmin]);
 }
