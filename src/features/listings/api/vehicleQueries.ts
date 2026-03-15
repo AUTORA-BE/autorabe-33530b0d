@@ -293,13 +293,11 @@ export const vehicleQueries = {
   async getPopular(limit: number = 8): Promise<Vehicle[]> {
     const { data, error } = await supabase
       .from('car_listings_public')
-      .select('*')
+      .select(LIST_COLUMNS)
       .order('created_at', { ascending: false })
       .limit(limit);
 
-    if (error) {
-      throw new Error(error.message);
-    }
+    if (error) throw new Error(error.message);
 
     return (data || []).map(row => mapListingToVehicle(row as VehicleListingRow));
   },
