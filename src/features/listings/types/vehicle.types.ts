@@ -10,7 +10,7 @@ export type FuelType = 'diesel' | 'essence' | 'électrique' | 'hybride';
 export type TransmissionType = 'manuelle' | 'automatique';
 
 /** Euro emission norms for LEZ compatibility */
-export type EuroNorm = 'Euro 3' | 'Euro 4' | 'Euro 5' | 'Euro 6' | 'Euro 6b' | 'Euro 6c' | 'Euro 6d';
+export type EuroNorm = 'Euro 1' | 'Euro 2' | 'Euro 3' | 'Euro 4' | 'Euro 5' | 'Euro 6' | 'Euro 6b' | 'Euro 6c' | 'Euro 6d';
 
 /** Vehicle body types */
 export type BodyType = 'Berline' | 'SUV' | 'Citadine' | 'Compacte' | 'Break' | 'Coupé' | 'Cabriolet' | 'Monospace';
