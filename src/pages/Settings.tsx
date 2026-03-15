@@ -569,7 +569,7 @@ export default function Settings() {
                         toast.info(t("profile.deleteProgress"));
                         const { error } = await supabase.functions.invoke("delete-account");
                         if (error) throw error;
-                        toast.success("Compte supprimé. Au revoir !");
+                        toast.success(t("profile.deleteSuccess"));
                         await supabase.auth.signOut();
                         navigate("/");
                       } catch {
