@@ -237,17 +237,12 @@ export const vehicleQueries = {
   async getById(id: string): Promise<VehicleDetail | null> {
     const { data, error } = await supabase
       .from('car_listings_public')
-      .select('*')
+      .select(DETAIL_COLUMNS)
       .eq('id', id)
       .maybeSingle();
 
-    if (error) {
-      throw new Error(error.message);
-    }
-
-    if (!data) {
-      return null;
-    }
+    if (error) throw new Error(error.message);
+    if (!data) return null;
 
     return mapListingToVehicleDetail(data as VehicleListingRow);
   },
