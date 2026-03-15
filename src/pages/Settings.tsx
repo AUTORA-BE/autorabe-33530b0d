@@ -506,8 +506,8 @@ export default function Settings() {
             </h3>
             <SettingsRow
               icon={Download}
-              label="Exporter mes données"
-              description="RGPD – Télécharger en JSON"
+              label={t("profile.exportData")}
+              description={t("profile.exportDesc")}
               onClick={async () => {
                 try {
                   toast.info("Préparation de l'export...");
