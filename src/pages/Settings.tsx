@@ -407,9 +407,9 @@ export default function Settings() {
               </h3>
               <div className="grid grid-cols-3 gap-3">
                 {[
-                  { label: "Vues", value: totals.views },
-                  { label: "Messages", value: totals.messages },
-                  { label: "Favoris", value: totals.favorites },
+                  { label: t("profile.views"), value: totals.views },
+                  { label: t("profile.messages"), value: totals.messages },
+                  { label: t("profile.favorites"), value: totals.favorites },
                 ].map((stat) => (
                   <div
                     key={stat.label}
