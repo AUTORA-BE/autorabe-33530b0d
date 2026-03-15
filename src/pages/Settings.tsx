@@ -573,7 +573,7 @@ export default function Settings() {
                         await supabase.auth.signOut();
                         navigate("/");
                       } catch {
-                        toast.error("Erreur lors de la suppression du compte");
+                        toast.error(t("profile.deleteError"));
                       }
                     }}
                   >
