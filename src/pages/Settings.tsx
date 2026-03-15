@@ -531,7 +531,7 @@ export default function Settings() {
             <div className="border-t border-border/20" />
             <SettingsRow
               icon={Cookie}
-              label="Préférences cookies"
+              label={t("profile.cookiePrefs")}
               onClick={() => {
                 localStorage.removeItem(COOKIE_STORAGE_KEY);
                 window.location.reload();
