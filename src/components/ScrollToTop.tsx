@@ -13,7 +13,7 @@ const ScrollToTop = () => {
   return (
     <button
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-      className="fixed bottom-[8.5rem] right-3 lg:bottom-24 lg:right-6 z-[60] w-10 h-10 lg:w-11 lg:h-11 rounded-full bg-secondary border border-border/50 text-foreground shadow-lg flex items-center justify-center hover:bg-secondary/80 transition-all duration-200 touch-manipulation"
+      className="fixed bottom-[10rem] right-3 lg:bottom-24 lg:right-6 z-[60] w-10 h-10 lg:w-11 lg:h-11 rounded-full bg-secondary border border-border/50 text-foreground shadow-lg flex items-center justify-center hover:bg-secondary/80 transition-all duration-200 touch-manipulation"
       aria-label="Retour en haut"
       style={{
         opacity: visible ? 1 : 0,
