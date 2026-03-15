@@ -192,6 +192,12 @@ export function applyFilters<T>(query: T, filters: VehicleFilters): T {
   return q as T;
 }
 
+/** Explicit columns for list queries — avoids SELECT * overhead */
+const LIST_COLUMNS = 'id,brand,model,year,price,mileage,fuel_type,transmission,euro_norm,location,photos,car_pass_verified,seller_type,boost_level,boost_expires_at' as const;
+
+/** Full columns for detail queries */
+const DETAIL_COLUMNS = 'id,brand,model,year,price,mileage,fuel_type,transmission,euro_norm,location,photos,car_pass_verified,seller_type,boost_level,boost_expires_at,description,body_type,color,power,doors,features,ct_valid,maintenance_book_complete,first_registration,created_at,updated_at,status' as const;
+
 /**
  * Vehicle query functions object
  * Centralized API for all vehicle-related database operations
@@ -199,19 +205,14 @@ export function applyFilters<T>(query: T, filters: VehicleFilters): T {
 export const vehicleQueries = {
   /**
    * Fetches paginated vehicle listings with filters and sorting
-   * @param filters - Filter criteria to apply
-   * @param sortBy - Sort order option
-   * @param page - Page number (0-indexed)
-   * @returns Promise with vehicles array, total count, and hasMore flag
    */
   async list(
     filters: VehicleFilters, 
     sortBy: VehicleSortOption = 'recent',
     page: number = 0
   ): Promise<{ vehicles: Vehicle[]; total: number; hasMore: boolean }> {
-    // Single query: fetch data + count together
     let query = applyFilters(
-      supabase.from('car_listings_public').select('*', { count: 'exact' }),
+      supabase.from('car_listings_public').select(LIST_COLUMNS, { count: 'exact' }),
       filters
     );
     query = applySorting(query, sortBy);
