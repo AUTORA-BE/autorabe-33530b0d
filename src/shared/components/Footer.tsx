@@ -54,7 +54,7 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="relative overflow-hidden mt-12 sm:mt-20 border-t border-border/10 pb-20 md:pb-0">
+    <footer className="relative overflow-hidden mt-12 sm:mt-20 border-t border-border/10 pb-24 md:pb-0">
       {/* Subtle gradient bg */}
       <div className="absolute inset-0 bg-[hsl(224,30%,5%)]" />
       <div className="absolute inset-0 bg-gradient-to-b from-background/20 to-transparent" />
@@ -86,7 +86,7 @@ const Footer = () => {
                 Car-Pass
               </div>
               <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground/60">
-                <Shield className="w-3 h-3 text-emerald-500/70" />
+                <Shield className="w-3 h-3 text-primary/70" />
                 LEZ
               </div>
             </div>
