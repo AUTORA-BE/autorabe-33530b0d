@@ -380,8 +380,8 @@ export default function Settings() {
           <GlassCard>
             <SettingsRow
               icon={Car}
-              label={`${t("nav.dashboard") || "Mes annonces"} (${totals.listings})`}
-              description={t("nav.sell") || "Poster une nouvelle annonce"}
+              label={`${t("profile.myListings")} (${totals.listings})`}
+              description={t("profile.postNew")}
               onClick={() => navigate("/dashboard")}
             />
             <div className="border-t border-border/20" />
