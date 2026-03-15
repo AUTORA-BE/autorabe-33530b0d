@@ -39,6 +39,7 @@ const Privacy = lazy(() => import("./pages/Privacy"));
 const Legal = lazy(() => import("./pages/Legal"));
 const Contact = lazy(() => import("./pages/Contact"));
 const AdminReports = lazy(() => import("./pages/AdminReports"));
+const Admin = lazy(() => import("./pages/Admin"));
 const CalculateurTCO = lazy(() => import("./pages/CalculateurTCO"));
 const MesAlertes = lazy(() => import("./pages/MesAlertes"));
 const CreerAlerte = lazy(() => import("./pages/CreerAlerte"));
@@ -98,6 +99,7 @@ function AppRoutes() {
         <Route path="/compare" element={<PageTransition><Compare /></PageTransition>} />
         <Route path="/dashboard" element={<PageTransition><SellerDashboard /></PageTransition>} />
         <Route path="/dashboard/stats" element={<PageTransition><SellerStats /></PageTransition>} />
+        <Route path="/admin" element={<PageTransition><Admin /></PageTransition>} />
         <Route path="/admin/reports" element={<PageTransition><AdminReports /></PageTransition>} />
         <Route path="/settings" element={<PageTransition><Settings /></PageTransition>} />
         <Route path="/reset-password" element={<PageTransition><ResetPassword /></PageTransition>} />

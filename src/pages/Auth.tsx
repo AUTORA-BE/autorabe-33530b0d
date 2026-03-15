@@ -7,7 +7,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Mail, Lock, User, Eye, EyeOff, Car, ArrowLeft, CheckCircle } from "lucide-react";
+import { Mail, Lock, User, Eye, EyeOff, Car, ArrowLeft, CheckCircle, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -26,16 +26,17 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("+32 ");
   const [showPassword, setShowPassword] = useState(false);
   const [resetEmailSent, setResetEmailSent] = useState(false);
   const [verificationEmailSent, setVerificationEmailSent] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
-  const [errors, setErrors] = useState<{ email?: string; password?: string; name?: string }>({});
+  const [errors, setErrors] = useState<{ email?: string; password?: string; name?: string; phone?: string }>({});
   
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   // Use auth hooks from features/auth
   const { user, isLoading: authLoading, signIn, signUp, signInWithGoogle, signInWithApple, resetPassword } = useAuth();
@@ -56,7 +57,7 @@ const Auth = () => {
    * Validate form fields
    */
   const validateForm = () => {
-    const newErrors: { email?: string; password?: string; name?: string } = {};
+    const newErrors: { email?: string; password?: string; name?: string; phone?: string } = {};
     
     // Validate email
     try {
@@ -92,6 +93,13 @@ const Auth = () => {
         if (e instanceof z.ZodError) {
           newErrors.name = e.errors[0].message;
         }
+      }
+
+      // Validate Belgian phone number
+      const phoneDigits = phone.replace(/[\s\-\(\)]/g, "");
+      const belgianPhoneRegex = /^\+32\d{8,9}$/;
+      if (!belgianPhoneRegex.test(phoneDigits)) {
+        newErrors.phone = language === "nl" ? "Geldig Belgisch telefoonnummer vereist (+32...)" : "Numéro de téléphone belge valide requis (+32...)";
       }
     }
 
@@ -131,7 +139,7 @@ const Auth = () => {
         });
       }
     } else {
-      const result = await signUp({ email, password, fullName });
+      const result = await signUp({ email, password, fullName, phone: phone.replace(/[\s\-\(\)]/g, "") });
       
       if (!result.success && result.error) {
         if (result.error.type === 'user_exists') {
@@ -523,6 +531,24 @@ const Auth = () => {
                     </div>
                   )}
 
+                  {/* Phone field for signup */}
+                  {!isLogin && (
+                    <div>
+                      <div className="relative">
+                        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                        <Input
+                          type="tel"
+                          placeholder="+32 4XX XX XX XX"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          className="pl-10 h-12 bg-secondary/50 border-border/50 focus:border-primary focus:ring-primary/30 transition-colors"
+                        />
+                      </div>
+                      {errors.phone && (
+                        <p className="text-destructive text-sm mt-1">{errors.phone}</p>
+                      )}
+                    </div>
+                  )}
                   <div>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
