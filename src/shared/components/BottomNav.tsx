@@ -12,6 +12,7 @@ import { useFavorites } from "@/features/favorites";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { prefetchRoute } from "@/utils/prefetchRoutes";
+import { useHapticFeedback } from "@/hooks/useHapticFeedback";
 
 const BottomNav = memo(function BottomNav() {
   const location = useLocation();
@@ -19,6 +20,7 @@ const BottomNav = memo(function BottomNav() {
   const { favoritesCount } = useFavorites();
   const { t } = useLanguage();
   const [user, setUser] = useState<boolean>(false);
+  const { selectionChanged } = useHapticFeedback();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setUser(!!data.session?.user));
@@ -62,7 +64,7 @@ const BottomNav = memo(function BottomNav() {
               <Link
                 key={tab.to + tab.label}
                 to={tab.to}
-                onTouchStart={() => prefetchRoute(tab.to)}
+                onTouchStart={() => { prefetchRoute(tab.to); selectionChanged(); }}
                 className="relative flex flex-col items-center justify-center flex-1 h-full"
                 aria-label={tab.label}
               >
@@ -87,7 +89,7 @@ const BottomNav = memo(function BottomNav() {
             <Link
               key={tab.to + tab.label}
               to={tab.to}
-              onTouchStart={() => prefetchRoute(tab.to)}
+              onTouchStart={() => { prefetchRoute(tab.to); selectionChanged(); }}
               onMouseEnter={() => prefetchRoute(tab.to)}
               className="relative flex flex-col items-center justify-center gap-0.5 flex-1 h-full group"
               aria-current={isActive ? "page" : undefined}
