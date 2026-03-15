@@ -555,10 +555,9 @@ export default function Settings() {
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Supprimer définitivement votre compte ?</AlertDialogTitle>
+                  <AlertDialogTitle>{t("profile.deleteConfirmTitle")}</AlertDialogTitle>
                   <AlertDialogDescription>
-                    Cette action est irréversible. Toutes vos données seront supprimées : annonces,
-                    messages, favoris, alertes et profil.
+                    {t("profile.deleteConfirmDesc")}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
