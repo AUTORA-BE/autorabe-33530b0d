@@ -374,7 +374,7 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
         <FilterSection icon={<Calendar className="w-4 h-4 text-primary" aria-hidden="true" />} title={t("filters.year")}>
           <div className="px-1">
             <Slider
-              min={2010}
+              min={1900}
               max={2026}
               step={1}
               value={[filters.yearMin, filters.yearMax]}
@@ -382,7 +382,7 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
                 onFilterChange("yearMin", min);
                 onFilterChange("yearMax", max);
               }}
-              className="my-4"
+              className="my-4 touch-none"
               aria-label="Plage d'années"
             />
             <div className="flex justify-between text-xs font-medium text-muted-foreground">
