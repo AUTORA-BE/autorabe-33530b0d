@@ -75,8 +75,8 @@ const Header = () => {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "glass-panel border-b border-border/50 shadow-sm backdrop-blur-xl py-1 sm:py-2"
-          : "bg-transparent border-b border-transparent py-2.5 sm:py-4"
+          ? "glass-panel border-b border-border/50 shadow-sm backdrop-blur-xl pt-[env(safe-area-inset-top,0px)] py-1 sm:py-2"
+          : "bg-transparent border-b border-transparent pt-[env(safe-area-inset-top,0px)] py-2.5 sm:py-4"
       }`}
     >
       <div className={`container mx-auto px-4 sm:px-6 transition-all duration-300 ${scrolled ? "py-1 sm:py-2" : "py-0"}`}>
