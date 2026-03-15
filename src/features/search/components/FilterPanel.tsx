@@ -142,6 +142,7 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
 
   const formatPriceLabel = (value: number) => {
     if (value >= 1000000) return "1M+ €";
+    if (value >= 100000) return `${(value / 1000).toFixed(0)}k €`;
     if (value >= 1000) return `${(value / 1000).toFixed(0)}k €`;
     return `${value} €`;
   };
@@ -352,14 +353,14 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
           <div className="px-1">
             <Slider
               min={0}
-              max={200000}
+              max={1000000}
               step={5000}
               value={[filters.minPrice, filters.maxPrice]}
               onValueChange={([min, max]) => {
                 onFilterChange("minPrice", min);
                 onFilterChange("maxPrice", max);
               }}
-              className="my-4"
+              className="my-4 touch-none"
               aria-label="Plage de prix"
             />
             <div className="flex justify-between text-xs font-medium text-muted-foreground">
@@ -373,7 +374,7 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
         <FilterSection icon={<Calendar className="w-4 h-4 text-primary" aria-hidden="true" />} title={t("filters.year")}>
           <div className="px-1">
             <Slider
-              min={2010}
+              min={1900}
               max={2026}
               step={1}
               value={[filters.yearMin, filters.yearMax]}
@@ -381,7 +382,7 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
                 onFilterChange("yearMin", min);
                 onFilterChange("yearMax", max);
               }}
-              className="my-4"
+              className="my-4 touch-none"
               aria-label="Plage d'années"
             />
             <div className="flex justify-between text-xs font-medium text-muted-foreground">
@@ -396,14 +397,14 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
           <div className="px-1">
             <Slider
               min={0}
-              max={200000}
+              max={500000}
               step={5000}
               value={[filters.kmMin, filters.kmMax]}
               onValueChange={([min, max]) => {
                 onFilterChange("kmMin", min);
                 onFilterChange("kmMax", max);
               }}
-              className="my-4"
+              className="my-4 touch-none"
               aria-label="Plage de kilométrage"
             />
             <div className="flex justify-between text-xs font-medium text-muted-foreground">

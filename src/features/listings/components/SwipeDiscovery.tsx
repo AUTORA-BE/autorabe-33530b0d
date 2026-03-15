@@ -18,7 +18,7 @@ interface SwipeDiscoveryProps {
   onVehicleClick: (id: string) => void;
 }
 
-const SWIPE_THRESHOLD = 100;
+const SWIPE_THRESHOLD = 80;
 
 const formatPrice = (price: number) =>
   new Intl.NumberFormat("fr-BE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(price);
@@ -45,14 +45,17 @@ const SwipeCard = memo(function SwipeCard({
 
   const handleDragEnd = useCallback(
     (_: any, info: PanInfo) => {
-      if (info.offset.x > SWIPE_THRESHOLD) {
-        animate(x, 400, { duration: 0.3 });
-        setTimeout(onSwipeRight, 200);
-      } else if (info.offset.x < -SWIPE_THRESHOLD) {
-        animate(x, -400, { duration: 0.3 });
-        setTimeout(onSwipeLeft, 200);
+      const vx = info.velocity.x;
+      if (info.offset.x > SWIPE_THRESHOLD || vx > 500) {
+        animate(x, 500, { type: "spring", stiffness: 300, damping: 30 });
+        if (navigator.vibrate) navigator.vibrate(10);
+        setTimeout(onSwipeRight, 180);
+      } else if (info.offset.x < -SWIPE_THRESHOLD || vx < -500) {
+        animate(x, -500, { type: "spring", stiffness: 300, damping: 30 });
+        if (navigator.vibrate) navigator.vibrate(10);
+        setTimeout(onSwipeLeft, 180);
       } else {
-        animate(x, 0, { type: "spring", stiffness: 500, damping: 30 });
+        animate(x, 0, { type: "spring", stiffness: 600, damping: 35 });
       }
     },
     [x, onSwipeLeft, onSwipeRight]
@@ -78,13 +81,13 @@ const SwipeCard = memo(function SwipeCard({
 
   return (
     <motion.div
-      className="absolute inset-0 rounded-3xl overflow-hidden bg-card border border-border/50 shadow-2xl cursor-grab active:cursor-grabbing touch-manipulation"
-      style={{ x, rotate, zIndex: 10 }}
+      className="absolute inset-0 rounded-3xl overflow-hidden bg-card border border-border/50 shadow-2xl cursor-grab active:cursor-grabbing"
+      style={{ x, rotate, zIndex: 10, touchAction: "pan-y" }}
       drag="x"
       dragConstraints={{ left: 0, right: 0 }}
-      dragElastic={0.9}
+      dragElastic={0.7}
       onDragEnd={handleDragEnd}
-      whileTap={{ scale: 0.98 }}
+      whileTap={{ scale: 0.97 }}
     >
       {/* Image */}
       <div className="relative w-full h-[65%]">
