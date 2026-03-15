@@ -28,7 +28,7 @@ export const BUDGET_OPTIONS: BudgetOption[] = [
 /**
  * Euro emission norms available for filtering
  */
-export const EURO_NORMS = ["Euro 4", "Euro 5", "Euro 6", "Euro 6d"] as const;
+export const EURO_NORMS = ["Euro 1", "Euro 2", "Euro 3", "Euro 4", "Euro 5", "Euro 6", "Euro 6d"] as const;
 
 /**
  * Belgian provinces for location filtering

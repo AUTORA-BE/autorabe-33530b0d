@@ -152,12 +152,12 @@ export function useVehicleSearch(options: UseVehicleSearchOptions = {}) {
     if (filters.searchQuery) count++;
     if (filters.brand) count++;
     if (filters.model) count++;
-    if (filters.minPrice > 0 || filters.maxPrice < 200000) count++;
+    if (filters.minPrice > 0 || filters.maxPrice < 1000000) count++;
     if (filters.fuelTypes.length > 0) count++;
     if (filters.transmission) count++;
     if (filters.euroNorm) count++;
-    if (filters.yearMin > 2010 || filters.yearMax < new Date().getFullYear() + 1) count++;
-    if (filters.kmMin > 0 || filters.kmMax < 200000) count++;
+    if (filters.yearMin > 1900 || filters.yearMax < new Date().getFullYear() + 1) count++;
+    if (filters.kmMin > 0 || filters.kmMax < 500000) count++;
     if (filters.lezOnly) count++;
     if (filters.sellerTypeFilter) count++;
     if (filters.bodyType) count++;

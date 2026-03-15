@@ -397,14 +397,14 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
           <div className="px-1">
             <Slider
               min={0}
-              max={200000}
+              max={500000}
               step={5000}
               value={[filters.kmMin, filters.kmMax]}
               onValueChange={([min, max]) => {
                 onFilterChange("kmMin", min);
                 onFilterChange("kmMax", max);
               }}
-              className="my-4"
+              className="my-4 touch-none"
               aria-label="Plage de kilométrage"
             />
             <div className="flex justify-between text-xs font-medium text-muted-foreground">
