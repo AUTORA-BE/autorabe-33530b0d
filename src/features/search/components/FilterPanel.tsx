@@ -566,19 +566,19 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
         </div>{/* end scrollable content */}
 
         {/* Mobile sticky footer CTA */}
-        <div className="lg:hidden fixed bottom-0 inset-x-0 p-4 bg-card border-t border-border/50 safe-bottom z-10"
+        <div className="lg:hidden absolute bottom-0 inset-x-0 p-4 bg-card/95 backdrop-blur-lg border-t border-border/50 safe-bottom z-20"
           style={{ boxShadow: "0 -4px 20px -4px hsl(var(--foreground) / 0.1)" }}
         >
           <div className="flex gap-3">
             <button
               onClick={onReset}
-              className="flex-1 py-3 text-center text-sm font-medium text-muted-foreground rounded-xl border border-border/50 hover:bg-secondary/80 transition-all"
+              className="flex-1 py-3.5 text-center text-sm font-medium text-muted-foreground rounded-xl border border-border/50 hover:bg-secondary/80 transition-all active:scale-[0.97]"
             >
               {t("filters.reset")}
             </button>
             <button
               onClick={onClose}
-              className="flex-[2] py-3 text-center text-sm font-semibold text-primary-foreground rounded-xl btn-primary-gradient"
+              className="flex-[2] py-3.5 text-center text-sm font-semibold text-primary-foreground rounded-xl btn-primary-gradient active:scale-[0.97] transition-transform"
             >
               {resultsCount} {t("filters.vehicles")}
             </button>
