@@ -114,6 +114,7 @@ interface SellCarFormProps {
 export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const queryClient = useQueryClient();
   const [currentStep, setCurrentStep] = useState(1);
   const [photos, setPhotos] = useState<File[]>([]);
   const [photosPreviews, setPhotosPreviews] = useState<string[]>([]);
