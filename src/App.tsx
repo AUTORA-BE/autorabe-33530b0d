@@ -16,6 +16,7 @@ const CompareBar = lazy(() => import("@/features/compare/components/CompareBar")
 const BottomNav = lazy(() => import("@/shared/components/BottomNav"));
 const CarChatbot = lazy(() => import("@/components/CarChatbot"));
 const PWAInstallBanner = lazy(() => import("@/components/PWAInstallBanner"));
+const CookieBanner = lazy(() => import("@/components/CookieBanner"));
 
 // Lazy-loaded — reduces main bundle unused JS
 const Index = lazy(() => import("./pages/Index"));
