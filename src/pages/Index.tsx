@@ -244,6 +244,7 @@ const Index = () => {
                 onRetry={refresh}
                 buyerProfile={buyerProfile}
                 onOpenBuyerProfile={() => profileModalRef.current?.click()}
+                onResetFilters={resetFilters}
               />
             </Suspense>
           </div>
