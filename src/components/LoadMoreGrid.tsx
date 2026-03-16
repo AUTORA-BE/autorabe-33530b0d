@@ -343,9 +343,15 @@ const LoadMoreGrid = ({
           <h3 className="font-display text-lg sm:text-xl font-bold text-foreground mb-2">
             {texts.noVehicles}
           </h3>
-          <p className="text-muted-foreground max-w-md mx-auto text-sm sm:text-base px-4">
+          <p className="text-muted-foreground max-w-md mx-auto text-sm sm:text-base px-4 mb-6">
             {texts.noVehiclesDesc}
           </p>
+          {activeFiltersCount > 0 && onResetFilters && (
+            <Button onClick={onResetFilters} variant="outline" className="gap-2">
+              <RefreshCw className="w-4 h-4" />
+              {language === "nl" ? "Filters resetten" : "Réinitialiser les filtres"}
+            </Button>
+          )}
         </div>
       )}
     </div>
