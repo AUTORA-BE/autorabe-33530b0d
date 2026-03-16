@@ -478,7 +478,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
           toast.error(t('sellForm.error'));
           return;
         }
-        toast.success(t('sellForm.successEdit'));
+        queryClient.invalidateQueries({ queryKey: vehicleKeys.all });
         toast.success(t('sellForm.successEdit'));
         navigate('/dashboard');
       } else {
