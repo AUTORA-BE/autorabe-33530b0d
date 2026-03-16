@@ -495,6 +495,8 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
           toast.error(t('sellForm.error'));
           return;
         }
+        // Invalider le cache React Query
+        queryClient.invalidateQueries({ queryKey: vehicleKeys.all });
         // Supprimer le brouillon après publication
         await clearDraft();
         // Confetti !
