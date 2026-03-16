@@ -27,6 +27,8 @@ interface LoadMoreGridProps {
   buyerProfile?: BuyerProfile | null;
   /** Callback pour ouvrir le modal de profil */
   onOpenBuyerProfile?: () => void;
+  /** Callback to reset all filters */
+  onResetFilters?: () => void;
 }
 
 // Skeleton component for car cards with shimmer effect
