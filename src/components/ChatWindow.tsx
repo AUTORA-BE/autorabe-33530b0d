@@ -213,21 +213,27 @@ export function ChatWindow({
       .update({ last_message_at: new Date().toISOString() })
       .eq('id', conversationId);
 
-    // Trigger push notification for the recipient
+    // Trigger push notification + email notification for the recipient
     if (conversationDetails?.otherUserId) {
-      const senderName = conversationDetails?.otherUserName === 'Utilisateur'
-        ? 'Quelqu\'un'
-        : undefined; // We need the current user's name, fetch from profile or fallback
-      
+      // Push notification (non-blocking)
       supabase.functions.invoke('send-push-notification', {
         body: {
           userId: conversationDetails.otherUserId,
           title: 'Nouveau message',
           body: content.trim().length > 100 ? content.trim().slice(0, 100) + '…' : content.trim(),
         },
-      }).catch(() => {
-        // Push notification failure is non-blocking
-      });
+      }).catch(() => {});
+
+      // Email notification via notify-seller (non-blocking)
+      supabase.functions.invoke('notify-seller', {
+        body: {
+          conversationId,
+          messageContent: content.trim(),
+          senderName: conversationDetails?.otherUserName,
+          carBrand: conversationDetails?.carBrand,
+          carModel: conversationDetails?.carModel,
+        },
+      }).catch(() => {});
     }
   };
 

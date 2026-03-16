@@ -34,11 +34,13 @@ const sellCarSchema = z.object({
   model: z.string().min(1, "Le modèle est obligatoire"),
   year: z.number()
     .min(1900, "L'année doit être supérieure à 1900")
-    .max(new Date().getFullYear() + 1, `L'année ne peut pas dépasser ${new Date().getFullYear() + 1}`),
+    .max(new Date().getFullYear(), `L'année ne peut pas dépasser ${new Date().getFullYear()}`),
   price: z.number()
-    .min(1, "Le prix est obligatoire")
+    .min(100, "Le prix doit être d'au moins 100 €")
     .max(1_000_000, "Le prix ne peut pas dépasser 1 000 000 €"),
-  mileage: z.number().min(0, "Le kilométrage est obligatoire"),
+  mileage: z.number()
+    .min(0, "Le kilométrage ne peut pas être négatif")
+    .max(999_999, "Le kilométrage ne peut pas dépasser 999 999 km"),
   fuel_type: z.string().min(1, "Le carburant est obligatoire"),
   transmission: z.string().min(1, "La transmission est obligatoire"),
   body_type: z.string().min(1, "Le type de carrosserie est obligatoire"),

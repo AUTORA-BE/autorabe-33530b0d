@@ -11,6 +11,32 @@ const logStep = (step: string, details?: unknown) => {
   console.log(`[STRIPE-WEBHOOK] ${step}${details ? ` - ${JSON.stringify(details)}` : ""}`);
 };
 
+const getSupabaseAdmin = () =>
+  createClient(
+    Deno.env.get("SUPABASE_URL") ?? "",
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+    { auth: { persistSession: false } },
+  );
+
+/**
+ * Resolve a Stripe customer email to a Supabase user_id
+ */
+async function resolveUserId(
+  supabaseAdmin: ReturnType<typeof getSupabaseAdmin>,
+  stripe: Stripe,
+  customerId: string | Stripe.Customer | Stripe.DeletedCustomer | null,
+): Promise<string | null> {
+  if (!customerId) return null;
+
+  const id = typeof customerId === "string" ? customerId : customerId.id;
+  const customer = await stripe.customers.retrieve(id);
+  if (customer.deleted || !customer.email) return null;
+
+  const { data } = await supabaseAdmin.auth.admin.listUsers();
+  const user = data?.users?.find((u) => u.email === customer.email);
+  return user?.id ?? null;
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -44,7 +70,12 @@ serve(async (req) => {
 
     logStep("Event received", { type: event.type, id: event.id });
 
+    const supabaseAdmin = getSupabaseAdmin();
+
     switch (event.type) {
+      // ──────────────────────────────────────────────
+      // CHECKOUT COMPLETED → activate boost OR subscription
+      // ──────────────────────────────────────────────
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
         logStep("Checkout completed", {
@@ -54,19 +85,13 @@ serve(async (req) => {
           metadata: session.metadata,
         });
 
-        // Handle boost activation from metadata
+        // --- Boost activation from metadata ---
         const listingId = session.metadata?.listing_id;
         const boostLevel = session.metadata?.boost_level;
         const boostDays = session.metadata?.boost_days;
 
         if (listingId && boostLevel && boostDays) {
           logStep("Activating boost", { listingId, boostLevel, boostDays });
-
-          const supabaseAdmin = createClient(
-            Deno.env.get("SUPABASE_URL") ?? "",
-            Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-            { auth: { persistSession: false } }
-          );
 
           const expiresAt = new Date();
           expiresAt.setDate(expiresAt.getDate() + parseInt(boostDays, 10));
@@ -83,12 +108,50 @@ serve(async (req) => {
           if (updateError) {
             logStep("ERROR activating boost", { error: updateError.message });
           } else {
-            logStep("Boost activated successfully", { listingId, boostLevel, expiresAt: expiresAt.toISOString() });
+            logStep("Boost activated", { listingId, expiresAt: expiresAt.toISOString() });
+          }
+        }
+
+        // --- Subscription activation ---
+        if (session.subscription && session.customer) {
+          const userId = await resolveUserId(supabaseAdmin, stripe, session.customer);
+          if (userId) {
+            const subscription = await stripe.subscriptions.retrieve(
+              typeof session.subscription === "string"
+                ? session.subscription
+                : session.subscription.id,
+            );
+            const productId = subscription.items.data[0]?.price?.product as string;
+            const subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
+
+            const { error: upsertErr } = await supabaseAdmin
+              .from("subscriptions")
+              .upsert(
+                {
+                  user_id: userId,
+                  stripe_customer_id: typeof session.customer === "string" ? session.customer : session.customer.id,
+                  stripe_subscription_id: typeof session.subscription === "string" ? session.subscription : session.subscription.id,
+                  product_id: productId,
+                  status: "active",
+                  current_period_end: subscriptionEnd,
+                  updated_at: new Date().toISOString(),
+                },
+                { onConflict: "user_id" },
+              );
+
+            if (upsertErr) {
+              logStep("ERROR upserting subscription", { error: upsertErr.message });
+            } else {
+              logStep("Subscription activated locally", { userId, productId, subscriptionEnd });
+            }
           }
         }
         break;
       }
 
+      // ──────────────────────────────────────────────
+      // SUBSCRIPTION UPDATED → sync status
+      // ──────────────────────────────────────────────
       case "customer.subscription.created":
       case "customer.subscription.updated": {
         const subscription = event.data.object as Stripe.Subscription;
@@ -97,15 +160,47 @@ serve(async (req) => {
           status: subscription.status,
           customer: subscription.customer,
         });
+
+        const userId = await resolveUserId(supabaseAdmin, stripe, subscription.customer);
+        if (userId) {
+          const productId = subscription.items.data[0]?.price?.product as string;
+          const subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
+
+          await supabaseAdmin.from("subscriptions").upsert(
+            {
+              user_id: userId,
+              stripe_customer_id: typeof subscription.customer === "string" ? subscription.customer : subscription.customer.id,
+              stripe_subscription_id: subscription.id,
+              product_id: productId,
+              status: subscription.status,
+              current_period_end: subscriptionEnd,
+              updated_at: new Date().toISOString(),
+            },
+            { onConflict: "user_id" },
+          );
+          logStep("Subscription synced", { userId, status: subscription.status });
+        }
         break;
       }
 
+      // ──────────────────────────────────────────────
+      // SUBSCRIPTION DELETED → mark cancelled
+      // ──────────────────────────────────────────────
       case "customer.subscription.deleted": {
         const subscription = event.data.object as Stripe.Subscription;
         logStep("Subscription cancelled", {
           id: subscription.id,
           customer: subscription.customer,
         });
+
+        const userId = await resolveUserId(supabaseAdmin, stripe, subscription.customer);
+        if (userId) {
+          await supabaseAdmin
+            .from("subscriptions")
+            .update({ status: "canceled", updated_at: new Date().toISOString() })
+            .eq("user_id", userId);
+          logStep("Subscription marked canceled", { userId });
+        }
         break;
       }
 
@@ -125,6 +220,16 @@ serve(async (req) => {
           customer: invoice.customer,
           amount: invoice.amount_due,
         });
+
+        // Mark subscription as past_due locally
+        const failedUserId = await resolveUserId(supabaseAdmin, stripe, invoice.customer);
+        if (failedUserId) {
+          await supabaseAdmin
+            .from("subscriptions")
+            .update({ status: "past_due", updated_at: new Date().toISOString() })
+            .eq("user_id", failedUserId);
+          logStep("Subscription marked past_due", { userId: failedUserId });
+        }
         break;
       }
 
