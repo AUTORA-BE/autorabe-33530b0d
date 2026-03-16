@@ -108,5 +108,6 @@ export const useFavorites = () => {
     clearFavorites,
     favoritesCount: favoriteIds.length,
     isAuthenticated: !!user,
+    isToggling,
   };
 };
