@@ -140,6 +140,7 @@ const App = () => (
               <Suspense fallback={null}><CompareBar /></Suspense>
               <Suspense fallback={null}><CarChatbot /></Suspense>
               <Suspense fallback={null}><PWAInstallBanner /></Suspense>
+              <Suspense fallback={null}><CookieBanner /></Suspense>
             </BrowserRouter>
           </CompareProvider>
         </LanguageProvider>
