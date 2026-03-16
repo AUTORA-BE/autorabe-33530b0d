@@ -200,7 +200,7 @@ const VehicleGrid = memo(function VehicleGrid({
 
       {/* Grid */}
       {vehicles.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-7">
           {vehicles.map((vehicle, index) => (
             <div
               key={vehicle.id}
