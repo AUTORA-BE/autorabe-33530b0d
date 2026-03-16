@@ -71,8 +71,13 @@ export const useFavorites = () => {
     [favoriteIds],
   );
 
+  const isToggling = addMutation.isPending || removeMutation.isPending;
+
   const toggleFavorite = useCallback(
     (carId: string) => {
+      // Prevent double-click while mutation is in flight
+      if (isToggling) return;
+
       if (user) {
         if (isFavorite(carId)) {
           removeMutation.mutate(carId);
@@ -86,7 +91,7 @@ export const useFavorites = () => {
         );
       }
     },
-    [user, isFavorite, addMutation, removeMutation],
+    [user, isFavorite, addMutation, removeMutation, isToggling],
   );
 
   const clearFavorites = useCallback(() => {
@@ -103,5 +108,6 @@ export const useFavorites = () => {
     clearFavorites,
     favoritesCount: favoriteIds.length,
     isAuthenticated: !!user,
+    isToggling,
   };
 };

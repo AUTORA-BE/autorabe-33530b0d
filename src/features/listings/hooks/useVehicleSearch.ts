@@ -137,7 +137,14 @@ export function useVehicleSearch(options: UseVehicleSearchOptions = {}) {
 
   const updateFilter = useCallback(
     <K extends keyof VehicleFilters>(key: K, value: VehicleFilters[K]) => {
-      setFilters((prev) => ({ ...prev, [key]: value }));
+      setFilters((prev) => {
+        const next = { ...prev, [key]: value };
+        // Auto-reset model when brand changes to prevent impossible combos
+        if (key === 'brand' && value !== prev.brand) {
+          next.model = '';
+        }
+        return next;
+      });
     },
     [],
   );

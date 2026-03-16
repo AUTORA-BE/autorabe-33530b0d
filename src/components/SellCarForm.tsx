@@ -1,6 +1,8 @@
 import { useState, useEffect, lazy, Suspense } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import { useQueryClient } from '@tanstack/react-query';
+import { vehicleKeys } from '@/features/listings/api/vehicleKeys';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -112,6 +114,7 @@ interface SellCarFormProps {
 export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const queryClient = useQueryClient();
   const [currentStep, setCurrentStep] = useState(1);
   const [photos, setPhotos] = useState<File[]>([]);
   const [photosPreviews, setPhotosPreviews] = useState<string[]>([]);
@@ -475,7 +478,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
           toast.error(t('sellForm.error'));
           return;
         }
-        toast.success(t('sellForm.successEdit'));
+        queryClient.invalidateQueries({ queryKey: vehicleKeys.all });
         toast.success(t('sellForm.successEdit'));
         navigate('/dashboard');
       } else {
@@ -492,6 +495,8 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
           toast.error(t('sellForm.error'));
           return;
         }
+        // Invalider le cache React Query
+        queryClient.invalidateQueries({ queryKey: vehicleKeys.all });
         // Supprimer le brouillon après publication
         await clearDraft();
         // Confetti !

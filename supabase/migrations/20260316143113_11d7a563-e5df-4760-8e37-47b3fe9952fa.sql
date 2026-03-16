@@ -1,0 +1,2 @@
+-- Add unique constraint on profiles.phone (skip nulls - only enforce uniqueness on non-null values)
+CREATE UNIQUE INDEX IF NOT EXISTS idx_profiles_phone_unique ON public.profiles (phone) WHERE phone IS NOT NULL;
