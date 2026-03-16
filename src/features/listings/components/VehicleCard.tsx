@@ -125,10 +125,10 @@ const VehicleCard = memo(function VehicleCard({
       role="button"
       tabIndex={0}
       aria-label={`${vehicle.brand} ${vehicle.model} - ${formatPrice(vehicle.price)}`}
-      className={`group relative bg-card rounded-2xl overflow-hidden border transition-[border-color,box-shadow] duration-300 hover:shadow-xl cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
+      className={`group relative bg-card rounded-xl overflow-hidden border transition-all duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
         isBoosted
-          ? "border-amber-400/70 shadow-[0_0_20px_-4px_rgba(251,191,36,0.25)] hover:border-amber-400 hover:shadow-[0_0_30px_-4px_rgba(251,191,36,0.35)]"
-          : "border-border/50 hover:border-primary/30 hover:shadow-primary/5"
+          ? "border-amber-400/70 shadow-md hover:shadow-xl hover:border-amber-400"
+          : "border-border/40 shadow-card hover:shadow-elevated hover:border-primary/20 hover:-translate-y-1"
       }`}
     >
       {/* Sponsored badge */}
