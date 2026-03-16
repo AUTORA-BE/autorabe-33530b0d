@@ -401,10 +401,10 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
   return (
     <div className="page-gradient">
       <SEOHead 
-        title={`${car.brand} ${car.model} ${car.year}`}
-        description={`${car.brand} ${car.model} ${car.year} - ${formatPrice(car.price)} - ${formatMileage(car.mileage)} - ${car.fuelType} - ${car.location}`}
+        title={`${car.brand} ${car.model} ${car.year} — ${formatPrice(car.price)}`}
+        description={`${car.brand} ${car.model} ${car.year} • ${formatPrice(car.price)} • ${formatMileage(car.mileage)} km • ${car.fuelType} • ${car.location}. Annonce vérifiée sur AutoRa.be.`}
         image={car.image}
-        url={`https://auto-belgium.lovable.app/car/${id}`}
+        url={`https://autora.be/car/${id}`}
         type="product"
       />
       {/* JSON-LD Structured Data */}
