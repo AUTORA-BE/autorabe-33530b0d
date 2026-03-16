@@ -229,9 +229,9 @@ const VehicleCard = memo(function VehicleCard({
       </div>
 
       {/* Content */}
-      <div className="p-3 sm:p-4">
+      <div className="p-4 sm:p-5">
         {/* Title */}
-        <div className="flex items-center justify-between mb-1.5 sm:mb-2">
+        <div className="flex items-center justify-between mb-2">
           <h3 className="font-display text-base sm:text-lg font-bold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
             {vehicle.brand} {vehicle.model}
           </h3>
@@ -245,20 +245,20 @@ const VehicleCard = memo(function VehicleCard({
 
         {/* Location */}
         {vehicle.location && (
-          <div className="flex items-center gap-1.5 text-muted-foreground text-xs sm:text-sm mb-2 sm:mb-3">
-            <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0" />
+          <div className="flex items-center gap-1.5 text-muted-foreground text-xs sm:text-sm mb-3">
+            <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
             <span className="line-clamp-1">{vehicle.location}</span>
           </div>
         )}
 
         {/* Specs Grid */}
-        <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
-          <div className="flex items-center gap-1 sm:gap-1.5 text-[11px] sm:text-sm text-muted-foreground">
-            <Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0 text-primary/70" />
+        <div className="grid grid-cols-2 gap-2 sm:gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
+            <Calendar className="w-3.5 h-3.5 flex-shrink-0 text-primary/60" />
             <span>{vehicle.year}</span>
           </div>
-          <div className="flex items-center gap-1 sm:gap-1.5 text-[11px] sm:text-sm text-muted-foreground">
-            <Gauge className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0 text-primary/70" />
+          <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
+            <Gauge className="w-3.5 h-3.5 flex-shrink-0 text-primary/60" />
             <span className="truncate">{formatMileage(vehicle.mileage)} {labels.km}</span>
           </div>
         </div>
