@@ -521,7 +521,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
 
             {/* Subheadline */}
             <motion.p {...fadeUp(0.18)}
-              className="text-sm sm:text-base md:text-lg text-muted-foreground font-medium tracking-wide mb-6 sm:mb-8">
+              className="text-sm sm:text-base md:text-lg text-slate-400 font-medium tracking-wide mb-6 sm:mb-8">
               {t("hero.subtitleTrust")}
             </motion.p>
 
@@ -558,7 +558,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
             ) : (
               <motion.div
                 {...fadeUp(0.35)}
-                className="glass-panel p-3 sm:p-4 md:p-5 max-w-3xl mx-auto ring-1 ring-white/10 overflow-hidden"
+                className="glass-panel p-3 sm:p-4 md:p-5 max-w-3xl mx-auto ring-1 ring-white/10 border border-slate-800 shadow-xl overflow-hidden"
                 role="search"
                 aria-label={t("hero.search")}
               >
@@ -597,7 +597,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
                   <div className="sm:col-span-2 md:col-span-1 flex gap-2 min-w-0 overflow-hidden">
                     <VoiceSearchButton onResult={handleVoiceResult} />
                     <button onClick={handleSearch}
-                      className="btn-primary-gradient flex-1 min-w-0 flex items-center justify-center gap-2 py-4 rounded-md overflow-hidden" aria-label={t("hero.search")}>
+                      className="flex-1 min-w-0 flex items-center justify-center gap-2 py-4 rounded-2xl text-primary-foreground font-semibold bg-gradient-to-r from-emerald-500 to-emerald-600 shadow-lg shadow-emerald-600/30 hover:shadow-xl hover:brightness-110 active:scale-[0.97] transition-all duration-300 overflow-hidden" aria-label={t("hero.search")}>
                       <Search className="w-5 h-5 shrink-0" aria-hidden="true" />
                       <span className="font-semibold text-base truncate">{t("hero.search")}</span>
                     </button>
