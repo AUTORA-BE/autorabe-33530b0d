@@ -71,7 +71,7 @@ const DesktopActions = ({ user, userProfile, onLogout, t, isAdmin }: DesktopActi
       {/* Sell CTA */}
       <Button
         onClick={() => navigate("/sell")}
-        className="rounded-full bg-primary text-primary-foreground font-semibold px-5 shadow-md hover:shadow-xl hover:brightness-110 transition-all duration-300"
+        className="rounded-full bg-gradient-to-r from-emerald-500 to-emerald-600 text-primary-foreground font-semibold px-5 shadow-lg shadow-emerald-600/30 hover:shadow-xl hover:brightness-110 transition-all duration-300"
         size="sm"
       >
         Vendre ma voiture
