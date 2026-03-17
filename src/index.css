@@ -93,7 +93,7 @@ input[type="number"] {
     --popover: 222 25% 11%;
     --popover-foreground: 210 20% 98%;
 
-    --primary: 204 80% 50%;
+    --primary: 160 84% 42%;
     --primary-foreground: 222 30% 7%;
 
     --secondary: 222 20% 16%;
@@ -102,7 +102,7 @@ input[type="number"] {
     --muted: 222 20% 16%;
     --muted-foreground: 215 15% 55%;
 
-    --accent: 204 80% 50%;
+    --accent: 160 84% 42%;
     --accent-foreground: 222 30% 7%;
 
     --destructive: 0 62% 50%;
@@ -110,16 +110,16 @@ input[type="number"] {
 
     --border: 222 20% 16%;
     --input: 222 20% 16%;
-    --ring: 204 80% 50%;
+    --ring: 160 84% 42%;
 
     /* Dark mode custom tokens */
     --glass-bg: 222 25% 11% / 0.6;
     --glass-border: 0 0% 100% / 0.08;
     --gradient-hero: linear-gradient(180deg, hsl(220 30% 6%) 0%, hsl(222 30% 7%) 100%);
     --gradient-section: linear-gradient(180deg, transparent 0%, hsl(220 20% 8% / 0.5) 50%, transparent 100%);
-    --gradient-warm: linear-gradient(135deg, hsl(204 80% 50%), hsl(210 70% 55%), hsl(220 60% 52%));
+    --gradient-warm: linear-gradient(135deg, hsl(160 84% 42%), hsl(160 70% 48%), hsl(155 60% 42%));
     --gradient-subtle: linear-gradient(135deg, hsl(222 25% 9%), hsl(220 20% 10%), hsl(225 18% 9%));
-    --gradient-glow: radial-gradient(ellipse at 30% 0%, hsl(204 80% 50% / 0.05) 0%, transparent 60%);
+    --gradient-glow: radial-gradient(ellipse at 30% 0%, hsl(160 84% 42% / 0.05) 0%, transparent 60%);
     --gradient-page: linear-gradient(
       180deg,
       hsl(220 28% 6%) 0%,
@@ -132,7 +132,7 @@ input[type="number"] {
     );
     --shadow-card: 0 1px 3px 0 hsl(0 0% 0% / 0.3);
     --shadow-elevated: 0 10px 30px -8px hsl(0 0% 0% / 0.4);
-    --shadow-glow-primary: 0 0 50px -15px hsl(204 80% 50% / 0.12);
+    --shadow-glow-primary: 0 0 50px -15px hsl(160 84% 42% / 0.12);
   }
 }
 
