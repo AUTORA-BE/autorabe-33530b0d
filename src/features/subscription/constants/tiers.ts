@@ -4,7 +4,7 @@
  * 
  * Tier structure:
  * - Particulier: Gratuit (3 annonces) | Particulier+ €14.99/mo (illimité, sans pub, dashboard)
- * - Professionnel: Pro €50/mo (10 annonces, dashboard) | Premium €249.99/mo (tout illimité)
+ * - Professionnel: Pro €50/mo (10 annonces, dashboard) | Premium €249/mo (tout illimité)
  * 
  * Pro & Premium require TVA number + appointment verification.
  */

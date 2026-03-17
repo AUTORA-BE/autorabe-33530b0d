@@ -1,64 +1,71 @@
 
 
-# Plan: Harmonisation "Elite Green" & Polish Final
+## Plan: Nettoyage complet et optimisation du site AutoRa
 
-## Résumé
-
-Retour à l'identité verte émeraude (cohérente avec le logo Auto**RA**), remplacement de Poppins par Montserrat pour les titres, correction du prix 249,99€ → 249€, et ajustements visuels (ombres, contraste).
+Voici l'ensemble des corrections et optimisations identifiées, regroupées par priorite.
 
 ---
 
-## Modifications par fichier
+### 1. Fix critique : bug d'affichage des vehicules (race condition)
 
-### 1. `index.html` — Police Montserrat
-- Remplacer le chargement Google Fonts de `Poppins` par `Montserrat:wght@500;600;700;800`
-- Garder `Inter` pour le corps de texte
+Le hook `useVehicleSearch` a un bug ou `debouncedFilters` change de reference objet (sans changer de valeur) apres 300ms, ce qui declenche le reset de `allVehicles` a `[]` sans re-fetch.
 
-### 2. `tailwind.config.ts` — Font family
-- Remplacer `'Poppins'` par `'Montserrat'` dans `fontFamily.display`
-
-### 3. `src/index.css` — Palette "Elite Green"
-Remplacer toutes les valeurs HSL bleues par du vert émeraude :
-
-**Light mode :**
-- `--primary`: `160 84% 30%` (≈ Emerald-600 profond, ~#059669)
-- `--accent`: même valeur
-- `--ring`: même valeur
-- Gradients : mettre à jour les références `204 80% 35%` → `160 84% 30%`
-
-**Dark mode :**
-- `--primary`: `160 84% 42%` (plus lumineux pour le contraste sur fond sombre)
-- `--accent`, `--ring` : idem
-- Gradients dark : mettre à jour
-
-**Ombres :**
-- `--shadow-glow-primary` : remplacer la teinte bleue par la teinte verte
-
-**Headings :**
-- Remplacer `font-family: 'Poppins'` par `font-family: 'Montserrat'` dans la règle `h1-h6`
-
-### 4. `src/components/PricingCTA.tsx` — Prix 249€
-- Remplacer `249,99€` par `249€`
-
-### 5. `src/features/subscription/constants/tiers.ts` — JSDoc
-- Mettre à jour le commentaire `€249.99/mo` → `€249/mo` (le `price: 249` est déjà correct)
-
-### 6. Aucun changement nécessaire sur :
-- **VehicleCard.tsx** : utilise déjà `bg-primary` qui héritera automatiquement du vert
-- **Footer.tsx** : structure 4 colonnes déjà en place
-- **Header/DesktopActions** : le bouton "Vendre" utilise déjà `bg-primary rounded-full`
-- **FilterPanel** : drawer mobile déjà implémenté
-- **overflow-x** : déjà géré dans `index.css`
+**Fichier** : `src/features/listings/hooks/useVehicleSearch.ts`
+- Remplacer la dependance `debouncedFilters` par `JSON.stringify(debouncedFilters)` dans l'effet de reset (ligne 96-99)
 
 ---
 
-## Fichiers impactés (5 fichiers)
+### 2. Supprimer les hooks obsoletes
 
-| Fichier | Changement |
+`useCarListings` et `useInfiniteCarListings` sont des doublons de `useVehicleSearch` mais sans React Query, sans filtres, sans URL sync. Ils sont encore utilises dans :
+- `Favorites.tsx` : utilise `useCarListings` pour recuperer tous les cars puis filtre cote client
+- `CarDetail.tsx` : utilise `useCarListings` pour `allCars` (vehicules similaires)
+
+**Actions** :
+- **Favorites.tsx** : Remplacer `useCarListings` par une requete React Query dediee qui fetch uniquement les vehicules favoris par IDs (bien plus performant que charger toutes les annonces)
+- **CarDetail.tsx** : Utilise deja `useVehicleDetail` pour le detail, remplacer `useCarListings` par `vehicleQueries.getRelated()` qui existe deja
+- **Supprimer** `useCarListings.ts` et `useInfiniteCarListings.ts`
+- **Nettoyer** les barrel exports dans `hooks/index.ts` et `features/listings/index.ts`
+
+---
+
+### 3. Fix du hook conditionnel (violation des regles React)
+
+Dans `useVehicleSearch`, le `useFiltersUrlSync` est appele conditionnellement (ligne 67-70), ce qui viole les regles des hooks React.
+
+**Fix** : Deplacer la condition a l'interieur du hook `useFiltersUrlSync` en ajoutant un parametre `enabled`, ou appeler le hook inconditionnellement et gerer le `syncUrl` en interne.
+
+---
+
+### 4. Double requete API pour count + data
+
+`vehicleQueries.list()` fait 2 requetes Supabase : une pour le count, une pour les data. On peut les fusionner en une seule avec `select('*', { count: 'exact' })`.
+
+**Fichier** : `src/features/listings/api/vehicleQueries.ts`
+- Fusionner count + data en une seule requete
+
+---
+
+### 5. CarCard : supprimer framer-motion inutile
+
+`CarCard` utilise `motion.article` avec `whileHover` et `whileTap` qui ajoutent du poids JS pour chaque carte. Remplacer par CSS `:hover` et `:active` natifs pour la meme UX avec zero JS.
+
+**Fichier** : `src/features/listings/components/CarCard.tsx`
+- Remplacer `motion.article` par `<article>` avec classes CSS `hover:-translate-y-1.5 hover:shadow-xl active:scale-[0.98] transition-all duration-300`
+
+---
+
+### 6. Resume des fichiers a modifier
+
+| Fichier | Action |
 |---|---|
-| `index.html` | Montserrat au lieu de Poppins |
-| `tailwind.config.ts` | `display: ['Montserrat']` |
-| `src/index.css` | Palette verte + headings Montserrat |
-| `src/components/PricingCTA.tsx` | 249,99€ → 249€ |
-| `src/features/subscription/constants/tiers.ts` | Commentaire JSDoc |
+| `useVehicleSearch.ts` | Fix race condition + fix hook conditionnel |
+| `vehicleQueries.ts` | Fusionner count+data en 1 requete |
+| `CarCard.tsx` | Remplacer motion.article par CSS natif |
+| `Favorites.tsx` | Fetch par IDs au lieu de tout charger |
+| `CarDetail.tsx` | Utiliser `vehicleQueries.getRelated()` |
+| `useCarListings.ts` | Supprimer |
+| `useInfiniteCarListings.ts` | Supprimer |
+| `hooks/index.ts` | Nettoyer exports |
+| `features/listings/index.ts` | Nettoyer exports |
 

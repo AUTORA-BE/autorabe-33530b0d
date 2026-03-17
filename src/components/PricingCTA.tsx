@@ -81,7 +81,7 @@ const PricingCTA = () => {
                 <div>
                   <p className="font-bold text-foreground">Premium</p>
                   <p className="text-amber-500 font-extrabold text-2xl leading-none">
-                    249,99€<span className="text-xs font-normal text-muted-foreground">/mois</span>
+                    249€<span className="text-xs font-normal text-muted-foreground">/mois</span>
                   </p>
                 </div>
               </div>
