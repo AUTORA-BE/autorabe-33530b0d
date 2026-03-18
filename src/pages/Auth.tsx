@@ -551,6 +551,33 @@ const Auth = () => {
                       )}
                     </div>
                   )}
+
+                  {/* Garage name + Postal code for signup */}
+                  {!isLogin && (
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="relative">
+                        <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                        <Input
+                          type="text"
+                          placeholder="Nom du garage (facultatif)"
+                          value={garageName}
+                          onChange={(e) => setGarageName(e.target.value)}
+                          className="pl-10 h-12 bg-secondary/50 border-border/50 focus:border-primary focus:ring-primary/30 transition-colors"
+                        />
+                      </div>
+                      <div className="relative">
+                        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                        <Input
+                          type="text"
+                          placeholder="Code postal"
+                          value={postalCode}
+                          onChange={(e) => setPostalCode(e.target.value)}
+                          maxLength={4}
+                          className="pl-10 h-12 bg-secondary/50 border-border/50 focus:border-primary focus:ring-primary/30 transition-colors"
+                        />
+                      </div>
+                    </div>
+                  )}
                   <div>
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
