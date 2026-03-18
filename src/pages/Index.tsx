@@ -17,6 +17,7 @@ import { AnimatePresence } from "framer-motion";
 import { PullToRefresh } from "@/components/PullToRefresh";
 
 const SellCarBanner = lazy(() => import("@/components/SellCarBanner"));
+const EarlyAccessBanner = lazy(() => import("@/components/EarlyAccessBanner"));
 const TrustBar = lazy(() => import("@/components/TrustBar"));
 const BrandCarousel = lazy(() => import("@/features/search/components/BrandCarousel"));
 const FilterPanel = lazy(() => import("@/features/search/components/FilterPanel"));
