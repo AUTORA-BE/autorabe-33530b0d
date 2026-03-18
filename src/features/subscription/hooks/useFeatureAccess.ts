@@ -50,6 +50,24 @@ export function useFeatureAccess(): FeatureAccess {
   const isAdmin = useIsAdmin(user?.id);
 
   return useMemo<FeatureAccess>(() => {
+    // Beta mode: everyone gets Pro features for free
+    if (!isLoading && IS_BETA_MODE) {
+      const proTier = SUBSCRIPTION_TIERS.pro;
+      return {
+        maxListings: proTier.maxListings,
+        messageLimitPerDay: proTier.messageLimitPerDay,
+        maxPhotos: proTier.maxPhotos,
+        hasDashboard: proTier.hasDashboard,
+        showAds: false,
+        requiresTva: false,
+        badge: 'Membre Fondateur 🚀',
+        isPaid: true,
+        isPro: false,
+        tier: proTier,
+        isLoading: false,
+      };
+    }
+
     // Admins automatically get Premium access
     if (!isLoading && isAdmin) {
       const premiumTier = SUBSCRIPTION_TIERS.premium;

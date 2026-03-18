@@ -135,6 +135,11 @@ const Index = () => {
 
       <PullToRefresh onRefresh={async () => { refresh(); }}>
       <main style={{ paddingTop: 'calc(5rem + var(--safe-area-top, 0px))' }} className="pb-20 md:pb-0">
+        {/* 0. Early Access Banner */}
+        <Suspense fallback={null}>
+          <EarlyAccessBanner />
+        </Suspense>
+
         {/* 1. Sell banner (dismissable) */}
         <Suspense fallback={<div className="h-[60px] sm:h-[72px]" />}>
           <SellCarBanner />

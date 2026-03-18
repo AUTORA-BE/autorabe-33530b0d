@@ -71,10 +71,13 @@ const DesktopActions = ({ user, userProfile, onLogout, t, isAdmin }: DesktopActi
       {/* Sell CTA */}
       <Button
         onClick={() => navigate("/sell")}
-        className="rounded-full bg-gradient-to-r from-emerald-500 to-emerald-600 text-primary-foreground font-semibold px-5 shadow-lg shadow-emerald-600/30 hover:shadow-xl hover:brightness-110 transition-all duration-300"
+        className="rounded-full bg-gradient-to-r from-emerald-500 to-emerald-600 text-primary-foreground font-semibold px-5 shadow-lg shadow-emerald-600/30 hover:shadow-xl hover:brightness-110 transition-all duration-300 relative"
         size="sm"
       >
         Vendre ma voiture
+        <span className="absolute -top-2.5 -right-2 px-1.5 py-0.5 rounded-full bg-amber-400 text-[10px] font-bold text-amber-950 leading-none shadow-sm">
+          0€
+        </span>
       </Button>
 
       {user ? (
