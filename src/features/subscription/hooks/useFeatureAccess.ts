@@ -7,6 +7,7 @@ import { useMemo } from 'react';
 import { useSubscription } from './useSubscription';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { useAuth } from '@/features/auth/hooks/useAuth';
+import { IS_BETA_MODE } from '@/config/betaConfig';
 import {
   FREE_PARTICULIER_LIMIT,
   FREE_MESSAGE_LIMIT,
