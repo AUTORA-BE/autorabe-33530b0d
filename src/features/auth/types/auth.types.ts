@@ -29,6 +29,8 @@ export interface LoginCredentials {
 export interface SignupCredentials extends LoginCredentials {
   fullName: string;
   phone?: string;
+  garageName?: string;
+  postalCode?: string;
 }
 
 /**

@@ -467,8 +467,10 @@ export type Database = {
           avatar_url: string | null
           created_at: string
           display_name: string | null
+          garage_name: string | null
           id: string
           phone: string | null
+          postal_code: string | null
           suspended_at: string | null
           suspended_reason: string | null
           updated_at: string
@@ -478,8 +480,10 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           display_name?: string | null
+          garage_name?: string | null
           id?: string
           phone?: string | null
+          postal_code?: string | null
           suspended_at?: string | null
           suspended_reason?: string | null
           updated_at?: string
@@ -489,8 +493,10 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           display_name?: string | null
+          garage_name?: string | null
           id?: string
           phone?: string | null
+          postal_code?: string | null
           suspended_at?: string | null
           suspended_reason?: string | null
           updated_at?: string

@@ -503,8 +503,8 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
         await clearDraft();
         // Confetti !
         setShowConfetti(true);
-        toast.success('🎉 ' + t('sellForm.success'));
-        setTimeout(() => navigate('/dashboard'), 2500);
+        toast.success('🎉 Félicitations ! En tant que membre fondateur, votre annonce est publiée gratuitement (Offre de lancement limitée).', { duration: 5000 });
+        setTimeout(() => navigate('/dashboard'), 3500);
       }
       
     } catch (error) {

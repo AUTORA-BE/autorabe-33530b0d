@@ -7,7 +7,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Mail, Lock, User, Eye, EyeOff, Car, ArrowLeft, CheckCircle, Phone } from "lucide-react";
+import { Mail, Lock, User, Eye, EyeOff, Car, ArrowLeft, CheckCircle, Phone, Building2, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -27,6 +27,8 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("+32 ");
+  const [garageName, setGarageName] = useState("");
+  const [postalCode, setPostalCode] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [resetEmailSent, setResetEmailSent] = useState(false);
   const [verificationEmailSent, setVerificationEmailSent] = useState(false);
@@ -139,7 +141,7 @@ const Auth = () => {
         });
       }
     } else {
-      const result = await signUp({ email, password, fullName, phone: phone.replace(/[\s\-\(\)]/g, "") });
+      const result = await signUp({ email, password, fullName, phone: phone.replace(/[\s\-\(\)]/g, ""), garageName: garageName || undefined, postalCode: postalCode || undefined });
       
       if (!result.success && result.error) {
         if (result.error.type === 'user_exists') {
@@ -547,6 +549,33 @@ const Auth = () => {
                       {errors.phone && (
                         <p className="text-destructive text-sm mt-1">{errors.phone}</p>
                       )}
+                    </div>
+                  )}
+
+                  {/* Garage name + Postal code for signup */}
+                  {!isLogin && (
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="relative">
+                        <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                        <Input
+                          type="text"
+                          placeholder="Nom du garage (facultatif)"
+                          value={garageName}
+                          onChange={(e) => setGarageName(e.target.value)}
+                          className="pl-10 h-12 bg-secondary/50 border-border/50 focus:border-primary focus:ring-primary/30 transition-colors"
+                        />
+                      </div>
+                      <div className="relative">
+                        <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                        <Input
+                          type="text"
+                          placeholder="Code postal"
+                          value={postalCode}
+                          onChange={(e) => setPostalCode(e.target.value)}
+                          maxLength={4}
+                          className="pl-10 h-12 bg-secondary/50 border-border/50 focus:border-primary focus:ring-primary/30 transition-colors"
+                        />
+                      </div>
                     </div>
                   )}
                   <div>

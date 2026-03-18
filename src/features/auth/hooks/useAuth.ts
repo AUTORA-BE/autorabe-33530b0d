@@ -105,12 +105,19 @@ export function useAuth() {
         };
       }
 
-      // Save phone number to profile if provided
-      if (credentials.phone && signUpData.user) {
-        await supabase
-          .from('profiles')
-          .update({ phone: credentials.phone })
-          .eq('user_id', signUpData.user.id);
+      // Save phone, garage_name, postal_code to profile if provided
+      if (signUpData.user) {
+        const profileUpdate: Record<string, string | undefined> = {};
+        if (credentials.phone) profileUpdate.phone = credentials.phone;
+        if (credentials.garageName) profileUpdate.garage_name = credentials.garageName;
+        if (credentials.postalCode) profileUpdate.postal_code = credentials.postalCode;
+        
+        if (Object.keys(profileUpdate).length > 0) {
+          await supabase
+            .from('profiles')
+            .update(profileUpdate)
+            .eq('user_id', signUpData.user.id);
+        }
       }
 
       return { success: true };

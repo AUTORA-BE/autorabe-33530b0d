@@ -17,6 +17,7 @@ import { AnimatePresence } from "framer-motion";
 import { PullToRefresh } from "@/components/PullToRefresh";
 
 const SellCarBanner = lazy(() => import("@/components/SellCarBanner"));
+const EarlyAccessBanner = lazy(() => import("@/components/EarlyAccessBanner"));
 const TrustBar = lazy(() => import("@/components/TrustBar"));
 const BrandCarousel = lazy(() => import("@/features/search/components/BrandCarousel"));
 const FilterPanel = lazy(() => import("@/features/search/components/FilterPanel"));
@@ -134,6 +135,11 @@ const Index = () => {
 
       <PullToRefresh onRefresh={async () => { refresh(); }}>
       <main style={{ paddingTop: 'calc(5rem + var(--safe-area-top, 0px))' }} className="pb-20 md:pb-0">
+        {/* 0. Early Access Banner */}
+        <Suspense fallback={null}>
+          <EarlyAccessBanner />
+        </Suspense>
+
         {/* 1. Sell banner (dismissable) */}
         <Suspense fallback={<div className="h-[60px] sm:h-[72px]" />}>
           <SellCarBanner />
