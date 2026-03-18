@@ -141,7 +141,7 @@ const Auth = () => {
         });
       }
     } else {
-      const result = await signUp({ email, password, fullName, phone: phone.replace(/[\s\-\(\)]/g, "") });
+      const result = await signUp({ email, password, fullName, phone: phone.replace(/[\s\-\(\)]/g, ""), garageName: garageName || undefined, postalCode: postalCode || undefined });
       
       if (!result.success && result.error) {
         if (result.error.type === 'user_exists') {
