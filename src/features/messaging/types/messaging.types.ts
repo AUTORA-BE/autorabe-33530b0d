@@ -103,7 +103,7 @@ export function mapMessageRow(row: MessageRow): Message {
     content: row.content,
     imageUrl: row.image_url,
     replyToId: row.reply_to_id,
-    isRead: row.is_read,
+    isRead: row.is_read ?? false,
     createdAt: row.created_at,
   };
 }
