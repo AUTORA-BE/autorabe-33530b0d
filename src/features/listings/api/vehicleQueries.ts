@@ -260,7 +260,7 @@ export const vehicleQueries = {
       throw new Error(error.message);
     }
 
-    const brands = [...new Set(data?.map(row => row.brand).filter(Boolean))] as string[];
+    const brands = [...new Set(data?.map((row: { brand: string | null }) => row.brand).filter(Boolean))] as string[];
     return brands.sort();
   },
 
