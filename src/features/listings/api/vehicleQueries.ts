@@ -223,7 +223,7 @@ export const vehicleQueries = {
     if (error) throw new Error(error.message);
 
     const total = count ?? 0;
-    const vehicles = (data || []).map(row => mapListingToVehicle(row as VehicleListingRow));
+    const vehicles = (data || []).map((row) => mapListingToVehicle(row as unknown as VehicleListingRow));
     const hasMore = vehicles.length === PAGE_SIZE && (page + 1) * PAGE_SIZE < total;
 
     return { vehicles, total, hasMore };
@@ -260,7 +260,7 @@ export const vehicleQueries = {
       throw new Error(error.message);
     }
 
-    const brands = [...new Set(data?.map(row => row.brand).filter(Boolean))] as string[];
+    const brands = [...new Set(data?.map((row: { brand: string | null }) => row.brand).filter(Boolean))] as string[];
     return brands.sort();
   },
 
@@ -281,7 +281,7 @@ export const vehicleQueries = {
       throw new Error(error.message);
     }
 
-    const models = [...new Set(data?.map(row => row.model).filter(Boolean))] as string[];
+    const models = [...new Set(data?.map((row: { model: string | null }) => row.model).filter(Boolean))] as string[];
     return models.sort();
   },
 
@@ -299,7 +299,7 @@ export const vehicleQueries = {
 
     if (error) throw new Error(error.message);
 
-    return (data || []).map(row => mapListingToVehicle(row as VehicleListingRow));
+    return (data || []).map((row) => mapListingToVehicle(row as unknown as VehicleListingRow));
   },
 
   /**
@@ -318,7 +318,7 @@ export const vehicleQueries = {
 
     if (error) throw new Error(error.message);
 
-    return (data || []).map(row => mapListingToVehicle(row as VehicleListingRow));
+    return (data || []).map((row) => mapListingToVehicle(row as unknown as VehicleListingRow));
   },
 
   /**

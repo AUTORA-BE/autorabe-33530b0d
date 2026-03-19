@@ -153,7 +153,7 @@ export default function TaxChatModal({ vehicle }: TaxChatModalProps) {
   }, [input, isLoading, streamQuestion]);
 
   return (
-    <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { setHasStarted(false); setMessages([]); } }}>
+    <Dialog open={open} onOpenChange={(v: boolean) => { setOpen(v); if (!v) { setHasStarted(false); setMessages([]); } }}>
       <DialogTrigger asChild>
         <Button variant="outline" className="gap-2">
           <Calculator className="w-4 h-4" />
@@ -173,7 +173,7 @@ export default function TaxChatModal({ vehicle }: TaxChatModalProps) {
             <p className="text-sm text-muted-foreground">
               Sélectionnez votre région pour obtenir une estimation personnalisée des taxes (TMC, taxe de circulation, LEZ…).
             </p>
-            <Select value={region} onValueChange={(v) => setRegion(v as Region)}>
+            <Select value={region} onValueChange={(v: string) => setRegion(v as Region)}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>

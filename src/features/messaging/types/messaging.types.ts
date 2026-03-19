@@ -27,7 +27,7 @@ export interface MessageRow {
   content: string;
   image_url?: string | null;
   reply_to_id?: string | null;
-  is_read: boolean;
+  is_read: boolean | null;
   created_at: string;
 }
 
@@ -103,7 +103,7 @@ export function mapMessageRow(row: MessageRow): Message {
     content: row.content,
     imageUrl: row.image_url,
     replyToId: row.reply_to_id,
-    isRead: row.is_read,
+    isRead: row.is_read ?? false,
     createdAt: row.created_at,
   };
 }

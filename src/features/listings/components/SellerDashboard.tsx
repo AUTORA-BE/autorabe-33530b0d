@@ -183,15 +183,15 @@ export default function SellerDashboard() {
   // Status counts
   const statusCounts = useMemo(() => ({
     all: listings.length,
-    approved: listings.filter((l) => l.status === "approved").length,
-    pending: listings.filter((l) => l.status === "pending").length,
-    rejected: listings.filter((l) => l.status === "rejected").length,
-    sold: listings.filter((l) => l.status === "sold").length,
+    approved: listings.filter((l: SellerListing) => l.status === "approved").length,
+    pending: listings.filter((l: SellerListing) => l.status === "pending").length,
+    rejected: listings.filter((l: SellerListing) => l.status === "rejected").length,
+    sold: listings.filter((l: SellerListing) => l.status === "sold").length,
   }), [listings]);
 
   // Filtered listings
   const filteredListings = useMemo(() => 
-    statusFilter === "all" ? listings : listings.filter((l) => l.status === statusFilter),
+    statusFilter === "all" ? listings : listings.filter((l: SellerListing) => l.status === statusFilter),
     [listings, statusFilter]
   );
 
@@ -241,7 +241,7 @@ export default function SellerDashboard() {
   // CSV Export
   const exportToCSV = () => {
     const headers = [t("dashboard.vehicle"), t("dashboard.status"), t("dashboard.price"), t("dashboard.createdAt"), t("dashboard.views"), t("dashboard.messages"), t("dashboard.favorites")];
-    const rows = listings.map((l) => [
+    const rows = listings.map((l: SellerListing) => [
       `${l.brand} ${l.model} ${l.year}`,
       l.status,
       l.price,
@@ -250,7 +250,7 @@ export default function SellerDashboard() {
       l.messages,
       l.favorites,
     ]);
-    const csv = [headers.join(";"), ...rows.map((r) => r.join(";"))].join("\n");
+    const csv = [headers.join(";"), ...rows.map((r: (string | number)[]) => r.join(";"))].join("\n");
     const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");

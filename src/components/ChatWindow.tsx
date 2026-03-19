@@ -69,7 +69,7 @@ export function ChatWindow({
     content: row.content,
     imageUrl: row.image_url,
     replyToId: row.reply_to_id,
-    isRead: row.is_read,
+    isRead: row.is_read ?? false,
     createdAt: row.created_at,
   });
 
@@ -122,7 +122,7 @@ export function ChatWindow({
         return;
       }
 
-      setMessages((data || []).map(row => mapRow(row as MessageRow)));
+      setMessages((data || []).map((row: MessageRow) => mapRow(row)));
       setIsLoading(false);
       
       // Mark messages as read
@@ -149,7 +149,7 @@ export function ChatWindow({
           table: 'messages',
           filter: `conversation_id=eq.${conversationId}`,
         },
-        (payload) => {
+        (payload: { new: MessageRow }) => {
           const newMessage = mapRow(payload.new as MessageRow);
           setMessages((prev) => [...prev, newMessage]);
           
@@ -170,7 +170,7 @@ export function ChatWindow({
           table: 'messages',
           filter: `conversation_id=eq.${conversationId}`,
         },
-        (payload) => {
+        (payload: { new: MessageRow }) => {
           const updated = mapRow(payload.new as MessageRow);
           setMessages((prev) =>
             prev.map((msg) => (msg.id === updated.id ? updated : msg))

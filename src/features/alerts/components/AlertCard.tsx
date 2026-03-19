@@ -49,7 +49,7 @@ const AlertCard = memo(({ alert }: AlertCardProps) => {
         <div className="flex items-center gap-2 shrink-0">
           <Switch
             checked={alert.active}
-            onCheckedChange={(checked) =>
+            onCheckedChange={(checked: boolean) =>
               toggleAlert.mutate({ id: alert.id, active: checked })
             }
           />
