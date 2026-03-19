@@ -170,7 +170,7 @@ export function ChatWindow({
           table: 'messages',
           filter: `conversation_id=eq.${conversationId}`,
         },
-        (payload) => {
+        (payload: { new: MessageRow }) => {
           const updated = mapRow(payload.new as MessageRow);
           setMessages((prev) =>
             prev.map((msg) => (msg.id === updated.id ? updated : msg))
