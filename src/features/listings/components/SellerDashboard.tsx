@@ -241,7 +241,7 @@ export default function SellerDashboard() {
   // CSV Export
   const exportToCSV = () => {
     const headers = [t("dashboard.vehicle"), t("dashboard.status"), t("dashboard.price"), t("dashboard.createdAt"), t("dashboard.views"), t("dashboard.messages"), t("dashboard.favorites")];
-    const rows = listings.map((l) => [
+    const rows = listings.map((l: SellerListing) => [
       `${l.brand} ${l.model} ${l.year}`,
       l.status,
       l.price,
