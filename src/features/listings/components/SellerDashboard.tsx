@@ -183,10 +183,10 @@ export default function SellerDashboard() {
   // Status counts
   const statusCounts = useMemo(() => ({
     all: listings.length,
-    approved: listings.filter((l) => l.status === "approved").length,
-    pending: listings.filter((l) => l.status === "pending").length,
-    rejected: listings.filter((l) => l.status === "rejected").length,
-    sold: listings.filter((l) => l.status === "sold").length,
+    approved: listings.filter((l: SellerListing) => l.status === "approved").length,
+    pending: listings.filter((l: SellerListing) => l.status === "pending").length,
+    rejected: listings.filter((l: SellerListing) => l.status === "rejected").length,
+    sold: listings.filter((l: SellerListing) => l.status === "sold").length,
   }), [listings]);
 
   // Filtered listings
