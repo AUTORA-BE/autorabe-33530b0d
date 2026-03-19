@@ -299,7 +299,7 @@ export const vehicleQueries = {
 
     if (error) throw new Error(error.message);
 
-    return (data || []).map(row => mapListingToVehicle(row as VehicleListingRow));
+    return (data || []).map((row: VehicleListingRow) => mapListingToVehicle(row));
   },
 
   /**
