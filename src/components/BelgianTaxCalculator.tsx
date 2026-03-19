@@ -149,7 +149,7 @@ export default function BelgianTaxCalculator({ powerKw, fuelType = "", euroNorm,
           </div>
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-muted-foreground">Région</label>
-            <Select value={region} onValueChange={(v) => setRegion(v as Region)}>
+            <Select value={region} onValueChange={(v: string) => setRegion(v as Region)}>
               <SelectTrigger className="h-9 text-sm">
                 <SelectValue />
               </SelectTrigger>
