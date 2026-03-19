@@ -173,7 +173,7 @@ export default function TaxChatModal({ vehicle }: TaxChatModalProps) {
             <p className="text-sm text-muted-foreground">
               Sélectionnez votre région pour obtenir une estimation personnalisée des taxes (TMC, taxe de circulation, LEZ…).
             </p>
-            <Select value={region} onValueChange={(v) => setRegion(v as Region)}>
+            <Select value={region} onValueChange={(v: string) => setRegion(v as Region)}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>

@@ -154,7 +154,7 @@ export default function BelgianTaxCalculator({ powerKw, fuelType = "", euroNorm,
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {Object.entries(regionLabels).map(([k, v]) => (
+                {Object.entries(regionLabels).map(([k, v]: [string, string]) => (
                   <SelectItem key={k} value={k}>{v}</SelectItem>
                 ))}
               </SelectContent>

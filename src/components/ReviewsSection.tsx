@@ -54,7 +54,7 @@ const ReviewsSection = ({ carListingId, sellerId }: ReviewsSectionProps) => {
         setReviews(data);
         // Check if user already reviewed
         if (session) {
-          setUserHasReviewed(data.some(r => r.user_id === session.user.id));
+          setUserHasReviewed(data.some((r: Review) => r.user_id === session.user.id));
         }
       }
       setIsLoading(false);
