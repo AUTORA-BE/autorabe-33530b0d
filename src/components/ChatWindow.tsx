@@ -149,7 +149,7 @@ export function ChatWindow({
           table: 'messages',
           filter: `conversation_id=eq.${conversationId}`,
         },
-        (payload) => {
+        (payload: { new: MessageRow }) => {
           const newMessage = mapRow(payload.new as MessageRow);
           setMessages((prev) => [...prev, newMessage]);
           
