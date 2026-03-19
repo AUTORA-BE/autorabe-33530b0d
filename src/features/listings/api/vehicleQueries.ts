@@ -223,7 +223,7 @@ export const vehicleQueries = {
     if (error) throw new Error(error.message);
 
     const total = count ?? 0;
-    const vehicles = (data || []).map(row => mapListingToVehicle(row as VehicleListingRow));
+    const vehicles = (data || []).map((row: VehicleListingRow) => mapListingToVehicle(row));
     const hasMore = vehicles.length === PAGE_SIZE && (page + 1) * PAGE_SIZE < total;
 
     return { vehicles, total, hasMore };
