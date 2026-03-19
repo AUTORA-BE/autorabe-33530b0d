@@ -191,7 +191,7 @@ export default function SellerDashboard() {
 
   // Filtered listings
   const filteredListings = useMemo(() => 
-    statusFilter === "all" ? listings : listings.filter((l) => l.status === statusFilter),
+    statusFilter === "all" ? listings : listings.filter((l: SellerListing) => l.status === statusFilter),
     [listings, statusFilter]
   );
 
