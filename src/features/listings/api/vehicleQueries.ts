@@ -281,7 +281,7 @@ export const vehicleQueries = {
       throw new Error(error.message);
     }
 
-    const models = [...new Set(data?.map(row => row.model).filter(Boolean))] as string[];
+    const models = [...new Set(data?.map((row: { model: string | null }) => row.model).filter(Boolean))] as string[];
     return models.sort();
   },
 
