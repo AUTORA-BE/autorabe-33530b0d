@@ -122,7 +122,7 @@ export function ChatWindow({
         return;
       }
 
-      setMessages((data || []).map(row => mapRow(row as MessageRow)));
+      setMessages((data || []).map((row: MessageRow) => mapRow(row)));
       setIsLoading(false);
       
       // Mark messages as read
