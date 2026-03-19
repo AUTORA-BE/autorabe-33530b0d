@@ -27,7 +27,7 @@ export interface MessageRow {
   content: string;
   image_url?: string | null;
   reply_to_id?: string | null;
-  is_read: boolean;
+  is_read: boolean | null;
   created_at: string;
 }
 
