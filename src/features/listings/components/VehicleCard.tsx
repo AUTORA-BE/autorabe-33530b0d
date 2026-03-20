@@ -221,8 +221,8 @@ const VehicleCard = memo(function VehicleCard({
         </div>
 
         {/* Price Badge */}
-        <div className="absolute bottom-3 left-3 z-10">
-          <span className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg">
+        <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 z-10">
+          <span className="text-base sm:text-2xl font-bold text-white drop-shadow-lg">
             {formatPrice(vehicle.price)}
           </span>
         </div>
