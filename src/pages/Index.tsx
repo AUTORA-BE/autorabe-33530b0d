@@ -220,7 +220,7 @@ const Index = () => {
         </Suspense>
 
         {/* 10. Results section */}
-        <section id="results-section" className="container mx-auto px-4 sm:px-6 pb-12 sm:pb-24">
+        <section id="results-section" className="container mx-auto px-3 sm:px-6 pb-12 sm:pb-24">
           <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
             <FilterPanel
               isOpen={filtersOpen}

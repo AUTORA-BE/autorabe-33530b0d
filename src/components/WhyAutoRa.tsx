@@ -130,7 +130,7 @@ const WhyAutoRa = memo(() => {
             <motion.div
               key={i}
               variants={item}
-              className={`group relative rounded-2xl border p-5 sm:p-7 transition-all duration-300 flex-shrink-0 w-[260px] sm:w-auto snap-center ${
+              className={`group relative rounded-2xl border p-4 sm:p-7 transition-all duration-300 flex-shrink-0 w-[220px] sm:w-auto snap-center ${
                 feature.highlight
                   ? "border-amber-500/30 bg-gradient-to-br from-amber-500/[0.06] via-card to-card hover:border-amber-500/40 hover:shadow-[0_8px_32px_-8px_rgba(245,158,11,0.15)]"
                   : "border-border bg-card hover:border-primary/20 hover:shadow-[var(--shadow-elevated)]"

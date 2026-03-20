@@ -102,7 +102,7 @@ const TrustBar = memo(() => {
           </motion.div>
 
           {/* Regular Badges - Right side */}
-          <div className="flex items-center gap-8 overflow-x-auto w-full lg:w-auto scrollbar-hide pb-2 lg:pb-0 px-2 lg:px-0 snap-x">
+          <div className="flex items-center gap-5 sm:gap-8 overflow-x-auto w-full lg:w-auto scrollbar-hide pb-1 lg:pb-0 px-1 lg:px-0 snap-x">
             {badges.map((badge, i) => (
               <motion.div
                 key={i}
