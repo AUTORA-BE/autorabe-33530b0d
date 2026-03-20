@@ -83,7 +83,7 @@ const TrustBar = memo(() => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-            className="group flex items-center gap-3.5 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-primary/[0.08] to-primary/[0.03] border border-primary/15 w-full lg:w-auto justify-center lg:justify-start transition-all duration-300 hover:shadow-glow hover:border-primary/25"
+            className="group flex items-center gap-2.5 sm:gap-3.5 px-4 sm:px-5 py-2 sm:py-2.5 rounded-2xl bg-gradient-to-r from-primary/[0.08] to-primary/[0.03] border border-primary/15 w-full lg:w-auto justify-center lg:justify-start transition-all duration-300 hover:shadow-glow hover:border-primary/25"
           >
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
               <Award className="w-5 h-5 text-primary" />
