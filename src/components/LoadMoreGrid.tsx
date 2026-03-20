@@ -193,7 +193,7 @@ const LoadMoreGrid = ({
           <div className="h-8 w-48 rounded-xl skeleton-shimmer" />
           <div className="h-10 w-32 rounded-xl skeleton-shimmer" />
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-2.5 sm:gap-6">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <div key={i} className="animate-fade-up" style={{ animationDelay: `${i * 0.08}s` }}>
               <CarCardSkeleton />
@@ -293,7 +293,7 @@ const LoadMoreGrid = ({
       {/* Grid */}
       {cars.length > 0 ? (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-2.5 sm:gap-6">
             {cars.map((car) => (
               <div key={car.id} className="animate-fade-up">
                 <CarCard

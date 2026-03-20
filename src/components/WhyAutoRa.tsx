@@ -78,14 +78,14 @@ const WhyAutoRa = memo(() => {
   ];
 
   return (
-    <section className="py-10 sm:py-24 relative overflow-hidden section-gradient">
+    <section className="py-8 sm:py-24 relative overflow-hidden section-gradient">
       {/* Subtle glow accent */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/[0.04] rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-primary/[0.03] rounded-full blur-3xl pointer-events-none" />
 
       <div className="container mx-auto px-4 sm:px-6 relative">
         {/* Section header */}
-        <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-16">
+        <div className="text-center max-w-2xl mx-auto mb-5 sm:mb-16">
           <motion.span
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -130,7 +130,7 @@ const WhyAutoRa = memo(() => {
             <motion.div
               key={i}
               variants={item}
-              className={`group relative rounded-2xl border p-5 sm:p-7 transition-all duration-300 flex-shrink-0 w-[260px] sm:w-auto snap-center ${
+              className={`group relative rounded-2xl border p-4 sm:p-7 transition-all duration-300 flex-shrink-0 w-[220px] sm:w-auto snap-center ${
                 feature.highlight
                   ? "border-amber-500/30 bg-gradient-to-br from-amber-500/[0.06] via-card to-card hover:border-amber-500/40 hover:shadow-[0_8px_32px_-8px_rgba(245,158,11,0.15)]"
                   : "border-border bg-card hover:border-primary/20 hover:shadow-[var(--shadow-elevated)]"

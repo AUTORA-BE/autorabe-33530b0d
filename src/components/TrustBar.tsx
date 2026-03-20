@@ -75,7 +75,7 @@ const TrustBar = memo(() => {
       <div className="absolute right-1/3 top-0 w-64 h-full bg-primary/[0.02] blur-3xl pointer-events-none" />
 
       <div className="container mx-auto px-4 sm:px-6 relative">
-        <div className="flex flex-col lg:flex-row items-center justify-between py-4 sm:py-5 gap-6 lg:gap-8">
+        <div className="flex flex-col lg:flex-row items-center justify-between py-3 sm:py-5 gap-4 lg:gap-8">
           
           {/* 90% Highlight - Left side */}
           <motion.div
@@ -83,7 +83,7 @@ const TrustBar = memo(() => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-            className="group flex items-center gap-3.5 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-primary/[0.08] to-primary/[0.03] border border-primary/15 w-full lg:w-auto justify-center lg:justify-start transition-all duration-300 hover:shadow-glow hover:border-primary/25"
+            className="group flex items-center gap-2.5 sm:gap-3.5 px-4 sm:px-5 py-2 sm:py-2.5 rounded-2xl bg-gradient-to-r from-primary/[0.08] to-primary/[0.03] border border-primary/15 w-full lg:w-auto justify-center lg:justify-start transition-all duration-300 hover:shadow-glow hover:border-primary/25"
           >
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
               <Award className="w-5 h-5 text-primary" />
@@ -102,7 +102,7 @@ const TrustBar = memo(() => {
           </motion.div>
 
           {/* Regular Badges - Right side */}
-          <div className="flex items-center gap-8 overflow-x-auto w-full lg:w-auto scrollbar-hide pb-2 lg:pb-0 px-2 lg:px-0 snap-x">
+          <div className="flex items-center gap-5 sm:gap-8 overflow-x-auto w-full lg:w-auto scrollbar-hide pb-1 lg:pb-0 px-1 lg:px-0 snap-x">
             {badges.map((badge, i) => (
               <motion.div
                 key={i}

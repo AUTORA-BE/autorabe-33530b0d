@@ -134,7 +134,7 @@ const Index = () => {
       <Header />
 
       <PullToRefresh onRefresh={async () => { refresh(); }}>
-      <main style={{ paddingTop: 'calc(5rem + var(--safe-area-top, 0px))' }} className="pb-20 md:pb-0">
+      <main style={{ paddingTop: 'calc(4rem + var(--safe-area-top, 0px))' }} className="pb-20 md:pb-0">
         {/* 0. Early Access Banner */}
         <Suspense fallback={null}>
           <EarlyAccessBanner />
@@ -220,7 +220,7 @@ const Index = () => {
         </Suspense>
 
         {/* 10. Results section */}
-        <section id="results-section" className="container mx-auto px-4 sm:px-6 pb-12 sm:pb-24">
+        <section id="results-section" className="container mx-auto px-3 sm:px-6 pb-12 sm:pb-24">
           <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
             <FilterPanel
               isOpen={filtersOpen}

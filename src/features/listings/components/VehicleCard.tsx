@@ -158,10 +158,10 @@ const VehicleCard = memo(function VehicleCard({
           onClick={handleFavoriteClick}
           aria-label={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
           aria-pressed={isFavorite}
-          className="absolute top-3 right-3 w-10 h-10 rounded-full bg-white/90 dark:bg-black/50 backdrop-blur-sm flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 shadow-lg touch-manipulation z-10"
+          className="absolute top-2 right-2 sm:top-3 sm:right-3 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/90 dark:bg-black/50 backdrop-blur-sm flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 shadow-lg touch-manipulation z-10"
         >
           <Heart
-            className={`w-5 h-5 transition-colors ${
+            className={`w-4 h-4 sm:w-5 sm:h-5 transition-colors ${
               isFavorite
                 ? "fill-red-500 text-red-500"
                 : "text-muted-foreground hover:text-red-500"
@@ -173,17 +173,17 @@ const VehicleCard = memo(function VehicleCard({
         <button
           onClick={handleCompareClick}
           aria-label={isInCompare(vehicle.id) ? "Retirer du comparateur" : "Ajouter au comparateur"}
-          className={`absolute top-3 right-14 w-10 h-10 rounded-full backdrop-blur-sm flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 shadow-lg touch-manipulation z-10 ${
+          className={`absolute top-2 right-11 sm:top-3 sm:right-14 w-8 h-8 sm:w-10 sm:h-10 rounded-full backdrop-blur-sm flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 shadow-lg touch-manipulation z-10 ${
             isInCompare(vehicle.id)
               ? "bg-primary text-primary-foreground"
               : "bg-white/90 dark:bg-black/50 text-muted-foreground hover:text-primary"
           }`}
         >
-          <Scale className="w-5 h-5" />
+          <Scale className="w-4 h-4 sm:w-5 sm:h-5" />
         </button>
 
         {/* LEZ & CarPass Badges */}
-        <div className="absolute top-3 left-3 flex flex-col gap-2 z-10">
+        <div className="absolute top-2 left-2 sm:top-3 sm:left-3 flex flex-col gap-1 sm:gap-2 z-10">
           <TooltipProvider delayDuration={300}>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -221,18 +221,18 @@ const VehicleCard = memo(function VehicleCard({
         </div>
 
         {/* Price Badge */}
-        <div className="absolute bottom-3 left-3 z-10">
-          <span className="text-xl sm:text-2xl font-bold text-white drop-shadow-lg">
+        <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 z-10">
+          <span className="text-base sm:text-2xl font-bold text-white drop-shadow-lg">
             {formatPrice(vehicle.price)}
           </span>
         </div>
       </div>
 
       {/* Content */}
-      <div className="p-4 sm:p-5">
+      <div className="p-2.5 sm:p-5">
         {/* Title */}
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="font-display text-base sm:text-lg font-bold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
+        <div className="flex items-center justify-between mb-1 sm:mb-2">
+          <h3 className="font-display text-xs sm:text-lg font-bold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
             {vehicle.brand} {vehicle.model}
           </h3>
           {vehicle.sellerType === "professionnel" && (
@@ -245,20 +245,20 @@ const VehicleCard = memo(function VehicleCard({
 
         {/* Location */}
         {vehicle.location && (
-          <div className="flex items-center gap-1.5 text-muted-foreground text-xs sm:text-sm mb-3">
-            <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+          <div className="flex items-center gap-1 sm:gap-1.5 text-muted-foreground text-[10px] sm:text-sm mb-1.5 sm:mb-3">
+            <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0" />
             <span className="line-clamp-1">{vehicle.location}</span>
           </div>
         )}
 
         {/* Specs Grid */}
-        <div className="grid grid-cols-2 gap-2 sm:gap-3">
-          <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
-            <Calendar className="w-3.5 h-3.5 flex-shrink-0 text-primary/60" />
+        <div className="grid grid-cols-2 gap-1 sm:gap-3">
+          <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-sm text-muted-foreground">
+            <Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0 text-primary/60" />
             <span>{vehicle.year}</span>
           </div>
-          <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
-            <Gauge className="w-3.5 h-3.5 flex-shrink-0 text-primary/60" />
+          <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-sm text-muted-foreground">
+            <Gauge className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0 text-primary/60" />
             <span className="truncate">{formatMileage(vehicle.mileage)} {labels.km}</span>
           </div>
         </div>
