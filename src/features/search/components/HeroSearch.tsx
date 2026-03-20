@@ -527,15 +527,15 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
 
             {/* 90% Trust Badge */}
             <motion.div {...fadeUp(0.26)}
-              className="inline-flex flex-col items-center gap-1 px-6 sm:px-8 py-4 sm:py-5 rounded-2xl bg-gradient-to-br from-amber-500/[0.08] via-amber-400/[0.04] to-transparent border border-amber-500/20 backdrop-blur-sm mb-10 sm:mb-14 shadow-[0_8px_32px_-8px_rgba(245,158,11,0.12)]">
-              <div className="flex items-baseline gap-1">
-                <span className="text-4xl sm:text-5xl md:text-6xl font-black text-amber-400 tabular-nums">
+              className="inline-flex flex-col items-center gap-0.5 sm:gap-1 px-5 sm:px-8 py-3 sm:py-5 rounded-2xl bg-gradient-to-br from-amber-500/[0.08] via-amber-400/[0.04] to-transparent border border-amber-500/20 backdrop-blur-sm mb-6 sm:mb-14 shadow-[0_8px_32px_-8px_rgba(245,158,11,0.12)]">
+              <div className="flex items-baseline gap-0.5">
+                <span className="text-3xl sm:text-5xl md:text-6xl font-black text-amber-400 tabular-nums">
                   <AnimatedPercent target={90} />
                 </span>
-                <span className="text-2xl sm:text-3xl font-bold text-amber-400/80">%</span>
+                <span className="text-xl sm:text-3xl font-bold text-amber-400/80">%</span>
               </div>
-              <span className="text-xs sm:text-sm font-bold text-foreground uppercase tracking-wider">{t("hero.trustBadge")}</span>
-              <span className="text-[10px] sm:text-xs text-muted-foreground">{t("hero.trustBadgeSub")}</span>
+              <span className="text-[10px] sm:text-sm font-bold text-foreground uppercase tracking-wider">{t("hero.trustBadge")}</span>
+              <span className="text-[9px] sm:text-xs text-muted-foreground">{t("hero.trustBadgeSub")}</span>
             </motion.div>
 
             {/* Search Box — Mobile: tap to open fullscreen */}
