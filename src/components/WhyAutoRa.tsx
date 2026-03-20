@@ -78,7 +78,7 @@ const WhyAutoRa = memo(() => {
   ];
 
   return (
-    <section className="py-10 sm:py-24 relative overflow-hidden section-gradient">
+    <section className="py-8 sm:py-24 relative overflow-hidden section-gradient">
       {/* Subtle glow accent */}
       <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/[0.04] rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-primary/[0.03] rounded-full blur-3xl pointer-events-none" />
