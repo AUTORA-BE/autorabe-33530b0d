@@ -231,8 +231,8 @@ const VehicleCard = memo(function VehicleCard({
       {/* Content */}
       <div className="p-2.5 sm:p-5">
         {/* Title */}
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="font-display text-base sm:text-lg font-bold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
+        <div className="flex items-center justify-between mb-1 sm:mb-2">
+          <h3 className="font-display text-xs sm:text-lg font-bold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
             {vehicle.brand} {vehicle.model}
           </h3>
           {vehicle.sellerType === "professionnel" && (
