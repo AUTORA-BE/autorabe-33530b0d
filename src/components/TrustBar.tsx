@@ -75,7 +75,7 @@ const TrustBar = memo(() => {
       <div className="absolute right-1/3 top-0 w-64 h-full bg-primary/[0.02] blur-3xl pointer-events-none" />
 
       <div className="container mx-auto px-4 sm:px-6 relative">
-        <div className="flex flex-col lg:flex-row items-center justify-between py-4 sm:py-5 gap-6 lg:gap-8">
+        <div className="flex flex-col lg:flex-row items-center justify-between py-3 sm:py-5 gap-4 lg:gap-8">
           
           {/* 90% Highlight - Left side */}
           <motion.div
