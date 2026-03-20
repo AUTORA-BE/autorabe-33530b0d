@@ -514,7 +514,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
 
             {/* Headline */}
             <motion.h1 {...fadeUp(0.1)}
-              className="font-display text-[2rem] sm:text-5xl md:text-6xl lg:text-7xl font-black text-foreground mb-5 sm:mb-6 leading-[1.1] tracking-tight">
+              className="font-display text-[1.6rem] sm:text-5xl md:text-6xl lg:text-7xl font-black text-foreground mb-3 sm:mb-6 leading-[1.08] tracking-tight">
               {t("hero.titleLine1")}<br />
               <span className="gradient-text">{t("hero.titleLine2")}</span>
             </motion.h1>
