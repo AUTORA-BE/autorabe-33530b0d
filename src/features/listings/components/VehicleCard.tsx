@@ -229,7 +229,7 @@ const VehicleCard = memo(function VehicleCard({
       </div>
 
       {/* Content */}
-      <div className="p-4 sm:p-5">
+      <div className="p-2.5 sm:p-5">
         {/* Title */}
         <div className="flex items-center justify-between mb-2">
           <h3 className="font-display text-base sm:text-lg font-bold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
