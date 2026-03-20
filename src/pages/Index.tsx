@@ -134,7 +134,7 @@ const Index = () => {
       <Header />
 
       <PullToRefresh onRefresh={async () => { refresh(); }}>
-      <main style={{ paddingTop: 'calc(5rem + var(--safe-area-top, 0px))' }} className="pb-20 md:pb-0">
+      <main style={{ paddingTop: 'calc(4rem + var(--safe-area-top, 0px))' }} className="pb-20 md:pb-0">
         {/* 0. Early Access Banner */}
         <Suspense fallback={null}>
           <EarlyAccessBanner />
