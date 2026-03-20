@@ -252,13 +252,13 @@ const VehicleCard = memo(function VehicleCard({
         )}
 
         {/* Specs Grid */}
-        <div className="grid grid-cols-2 gap-2 sm:gap-3">
-          <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
-            <Calendar className="w-3.5 h-3.5 flex-shrink-0 text-primary/60" />
+        <div className="grid grid-cols-2 gap-1 sm:gap-3">
+          <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-sm text-muted-foreground">
+            <Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0 text-primary/60" />
             <span>{vehicle.year}</span>
           </div>
-          <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground">
-            <Gauge className="w-3.5 h-3.5 flex-shrink-0 text-primary/60" />
+          <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-sm text-muted-foreground">
+            <Gauge className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0 text-primary/60" />
             <span className="truncate">{formatMileage(vehicle.mileage)} {labels.km}</span>
           </div>
         </div>
