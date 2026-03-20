@@ -85,7 +85,7 @@ const WhyAutoRa = memo(() => {
 
       <div className="container mx-auto px-4 sm:px-6 relative">
         {/* Section header */}
-        <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-16">
+        <div className="text-center max-w-2xl mx-auto mb-5 sm:mb-16">
           <motion.span
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
