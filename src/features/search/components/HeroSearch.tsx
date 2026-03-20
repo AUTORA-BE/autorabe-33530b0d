@@ -521,7 +521,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
 
             {/* Subheadline */}
             <motion.p {...fadeUp(0.18)}
-              className="text-sm sm:text-base md:text-lg text-slate-400 font-medium tracking-wide mb-6 sm:mb-8">
+              className="text-xs sm:text-base md:text-lg text-slate-400 font-medium tracking-wide mb-4 sm:mb-8">
               {t("hero.subtitleTrust")}
             </motion.p>
 
