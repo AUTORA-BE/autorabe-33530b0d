@@ -473,7 +473,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
   return (
     <>
       <section
-        className="relative min-h-[55vh] sm:min-h-[75vh] flex items-center justify-center pt-8 sm:pt-16 pb-8 sm:pb-16 overflow-hidden"
+        className="relative min-h-[48vh] sm:min-h-[75vh] flex items-center justify-center pt-4 sm:pt-16 pb-6 sm:pb-16 overflow-hidden"
         style={{ contain: "layout style" }}
       >
         {/* Background gradient */}
