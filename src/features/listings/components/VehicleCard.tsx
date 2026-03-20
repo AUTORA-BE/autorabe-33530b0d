@@ -245,8 +245,8 @@ const VehicleCard = memo(function VehicleCard({
 
         {/* Location */}
         {vehicle.location && (
-          <div className="flex items-center gap-1.5 text-muted-foreground text-xs sm:text-sm mb-3">
-            <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+          <div className="flex items-center gap-1 sm:gap-1.5 text-muted-foreground text-[10px] sm:text-sm mb-1.5 sm:mb-3">
+            <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0" />
             <span className="line-clamp-1">{vehicle.location}</span>
           </div>
         )}
