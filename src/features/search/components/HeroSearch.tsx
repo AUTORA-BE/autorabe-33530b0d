@@ -507,7 +507,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
             {/* Badge */}
-            <motion.div {...fadeUp(0)} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-xs sm:text-sm font-semibold mb-8 sm:mb-10 tracking-wide uppercase">
+            <motion.div {...fadeUp(0)} className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-primary/10 text-primary text-[10px] sm:text-sm font-semibold mb-4 sm:mb-10 tracking-wide uppercase">
               <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
               {t("hero.badge")}
             </motion.div>
