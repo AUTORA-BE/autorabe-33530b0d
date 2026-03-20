@@ -158,7 +158,7 @@ const VehicleCard = memo(function VehicleCard({
           onClick={handleFavoriteClick}
           aria-label={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
           aria-pressed={isFavorite}
-          className="absolute top-3 right-3 w-10 h-10 rounded-full bg-white/90 dark:bg-black/50 backdrop-blur-sm flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 shadow-lg touch-manipulation z-10"
+          className="absolute top-2 right-2 sm:top-3 sm:right-3 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/90 dark:bg-black/50 backdrop-blur-sm flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 shadow-lg touch-manipulation z-10"
         >
           <Heart
             className={`w-5 h-5 transition-colors ${
