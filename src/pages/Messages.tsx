@@ -56,7 +56,7 @@ function SwipeableConversation({
         style={{ x }}
         onClick={onClick}
         whileTap={{ scale: 0.98 }}
-        className={`relative z-10 w-full px-4 py-3.5 flex gap-3 items-center transition-colors border-b border-border/20 ${
+        className={`relative z-10 w-full px-3 py-3 flex gap-2.5 items-center transition-colors border-b border-border/20 ${
           isSelected
             ? "bg-primary/[0.06]"
             : hasUnread
