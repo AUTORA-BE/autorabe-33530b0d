@@ -217,7 +217,7 @@ export default function Messages() {
               animate={{ opacity: 1, y: 0 }}
               className="flex items-center justify-between mb-5 mt-2"
             >
-              <h1 className="text-2xl font-bold text-foreground">{t("messages.title")}</h1>
+              <h1 className="text-lg sm:text-2xl font-bold text-foreground">{t("messages.title")}</h1>
               {conversations.length > 0 && (
                 <span className="text-xs text-muted-foreground bg-card/60 backdrop-blur-sm px-3 py-1 rounded-full border border-border/30">
                   {conversations.length}{" "}

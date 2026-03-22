@@ -120,17 +120,17 @@ const BentoSpecs = ({
           variants={item}
           whileHover={{ scale: 1.04, y: -2 }}
           transition={{ type: "spring", stiffness: 400, damping: 25 }}
-          className="col-span-3 group relative overflow-hidden rounded-2xl bg-secondary/60 p-4 cursor-default"
+          className="col-span-3 group relative overflow-hidden rounded-xl sm:rounded-2xl bg-secondary/60 p-3 sm:p-4 cursor-default"
         >
-          <Gauge className="absolute -bottom-2 -right-2 w-14 h-14 text-primary/[0.05] transition-all duration-500 group-hover:scale-110 group-hover:rotate-12" />
+          <Gauge className="absolute -bottom-2 -right-2 w-12 h-12 text-primary/[0.05]" />
           <div className="relative z-10">
-            <div className="w-9 h-9 rounded-xl bg-primary/15 flex items-center justify-center mb-2 transition-all duration-300 group-hover:bg-primary/25 group-hover:shadow-glow">
-              <Gauge className="w-4 h-4 text-primary transition-transform duration-300 group-hover:scale-110" />
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-primary/15 flex items-center justify-center mb-1.5 sm:mb-2">
+              <Gauge className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
             </div>
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground/70 font-medium">
+            <p className="text-[9px] sm:text-[10px] uppercase tracking-wider text-muted-foreground/70 font-medium">
               Kilométrage
             </p>
-            <p className="font-bold text-foreground text-base mt-0.5 leading-tight">
+            <p className="font-bold text-foreground text-sm sm:text-base mt-0.5 leading-tight">
               {formatMileage(mileage)}
             </p>
           </div>

@@ -923,9 +923,9 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                   </h2>
                 </div>
                 {/* Horizontal scroll on mobile, grid on desktop */}
-                <div className="flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 lg:grid lg:grid-cols-4 lg:gap-6 lg:overflow-visible lg:snap-none lg:pb-0">
+                <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-3 -mx-3 px-3 sm:mx-0 sm:px-0 lg:grid lg:grid-cols-4 lg:gap-6 lg:overflow-visible lg:snap-none lg:pb-0">
                   {relatedCars.map((relatedCar, i) => (
-                    <div key={relatedCar.id} className="min-w-[280px] sm:min-w-[300px] lg:min-w-0 snap-start">
+                    <div key={relatedCar.id} className="min-w-[200px] sm:min-w-[300px] lg:min-w-0 snap-start">
                       <ScrollReveal delay={i * 0.08}>
                         <CarCard
                           car={relatedCar}

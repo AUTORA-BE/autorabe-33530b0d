@@ -210,24 +210,12 @@ const Favorites = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05, type: "spring", stiffness: 300, damping: 30 }}
                   >
-                    {/* Swipe on mobile only, normal card on desktop */}
-                    <div className="md:hidden">
-                      <SwipeableCard
-                        car={car}
-                        isFavorite={isFavorite(car.id)}
-                        onToggleFavorite={toggleFavorite}
-                        onClick={(id) => navigate(`/car/${id}`)}
-                        onRemove={handleRemove}
-                      />
-                    </div>
-                    <div className="hidden md:block">
-                      <CarCard
-                        car={car}
-                        isFavorite={isFavorite(car.id)}
-                        onToggleFavorite={toggleFavorite}
-                        onClick={(id) => navigate(`/car/${id}`)}
-                      />
-                    </div>
+                    <CarCard
+                      car={car}
+                      isFavorite={isFavorite(car.id)}
+                      onToggleFavorite={toggleFavorite}
+                      onClick={(id) => navigate(`/car/${id}`)}
+                    />
                   </motion.div>
                 ))}
               </AnimatePresence>
