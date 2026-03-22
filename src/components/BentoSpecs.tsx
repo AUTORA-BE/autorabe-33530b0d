@@ -64,8 +64,8 @@ const BentoSpecs = ({
   if (doors) details.push({ icon: DoorOpen, label: "Portes", value: `${doors}` });
 
   return (
-    <div className="glass-card p-5 sm:p-6">
-      <h2 className="font-display text-lg sm:text-xl font-bold text-foreground mb-5">
+    <div className="glass-card p-3 sm:p-6">
+      <h2 className="font-display text-base sm:text-xl font-bold text-foreground mb-3 sm:mb-5">
         Caractéristiques
       </h2>
 
