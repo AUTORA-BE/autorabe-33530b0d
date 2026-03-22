@@ -77,19 +77,18 @@ const BentoSpecs = ({
             variants={item}
             whileHover={{ scale: 1.02, y: -2 }}
             transition={{ type: "spring", stiffness: 400, damping: 25 }}
-            className="col-span-6 group relative overflow-hidden rounded-2xl bg-primary/10 p-5 cursor-default"
+            className="col-span-6 group relative overflow-hidden rounded-xl sm:rounded-2xl bg-primary/10 p-3 sm:p-5 cursor-default"
           >
-            <MapPin className="absolute -bottom-4 -right-4 w-24 h-24 text-primary/[0.06] transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6" />
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <div className="relative z-10 flex items-center gap-3">
-              <div className="w-11 h-11 rounded-xl bg-primary/20 flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:bg-primary/30 group-hover:shadow-glow">
-                <MapPin className="w-5 h-5 text-primary transition-transform duration-300 group-hover:scale-110" />
+            <MapPin className="absolute -bottom-4 -right-4 w-20 h-20 text-primary/[0.06]" />
+            <div className="relative z-10 flex items-center gap-2.5">
+              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-primary/20 flex items-center justify-center flex-shrink-0">
+                <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
               </div>
               <div>
-                <p className="text-[11px] uppercase tracking-wider text-muted-foreground/70 font-medium">
+                <p className="text-[10px] sm:text-[11px] uppercase tracking-wider text-muted-foreground/70 font-medium">
                   Localisation
                 </p>
-                <p className="font-bold text-foreground text-lg leading-tight">{location}</p>
+                <p className="font-bold text-foreground text-sm sm:text-lg leading-tight">{location}</p>
               </div>
             </div>
           </motion.div>
