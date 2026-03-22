@@ -562,98 +562,81 @@ const AdminReports = () => {
                   <div className="space-y-3">
                     {pendingListings.map(listing => (
                       <Card key={listing.id} className="border-border hover:border-primary/20 transition-colors">
-                        <CardContent className="p-4">
-                          <div className="flex items-start gap-4">
+                        <CardContent className="p-3 sm:p-4">
+                          <div className="flex gap-3">
                             {/* Thumbnail */}
-                            <div className="w-24 h-18 md:w-32 md:h-20 rounded-lg overflow-hidden bg-muted flex-shrink-0">
+                            <div className="w-20 h-16 sm:w-32 sm:h-20 rounded-lg overflow-hidden bg-muted flex-shrink-0">
                               {listing.photos?.[0] ? (
                                 <img src={listing.photos[0]} alt={`${listing.brand} ${listing.model}`} className="w-full h-full object-cover" />
                               ) : (
                                 <div className="w-full h-full flex items-center justify-center">
-                                  <ImageIcon className="w-6 h-6 text-muted-foreground/40" />
+                                  <ImageIcon className="w-5 h-5 text-muted-foreground/40" />
                                 </div>
                               )}
                             </div>
 
                             {/* Info */}
                             <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-1">
-                                <h3 className="font-semibold text-foreground">
+                              <div className="flex items-center gap-1.5 flex-wrap mb-1">
+                                <h3 className="font-semibold text-foreground text-sm">
                                   {listing.brand} {listing.model}
                                 </h3>
-                                <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/30 text-xs">
+                                <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/30 text-[10px]">
                                   En attente
                                 </Badge>
-                                {listing.seller_type && (
-                                  <Badge variant="secondary" className="text-xs capitalize">
-                                    {listing.seller_type}
-                                  </Badge>
-                                )}
                               </div>
 
-                              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground mb-2">
-                                <span className="font-semibold text-foreground text-sm">{formatPrice(listing.price)}</span>
+                              <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-muted-foreground mb-1.5">
+                                <span className="font-semibold text-foreground text-xs">{formatPrice(listing.price)}</span>
                                 <span>{listing.year}</span>
                                 <span>{listing.mileage.toLocaleString("fr-BE")} km</span>
                                 <span className="capitalize">{listing.fuel_type}</span>
-                                <span className="capitalize">{listing.transmission}</span>
-                                {listing.location && <span>📍 {listing.location}</span>}
                               </div>
 
-                              <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                                <span>👤 {listing.contact_name}</span>
-                                <span>✉️ {listing.contact_email}</span>
-                                <span>📅 {format(new Date(listing.created_at), "d MMM yyyy HH:mm", { locale: dateLocale })}</span>
-                              </div>
-
-                              {listing.description && (
-                                <p className="text-xs text-muted-foreground mt-2 line-clamp-2 italic">
-                                  "{listing.description}"
-                                </p>
-                              )}
-                            </div>
-
-                            {/* Actions */}
-                            <div className="flex flex-col gap-2 flex-shrink-0">
-                              <Button
-                                size="sm"
-                                className="gap-1.5 rounded-lg"
-                                onClick={() => handleApproveListing(listing.id)}
-                                disabled={actionLoading}
-                              >
-                                <Check className="w-4 h-4" />
-                                <span className="hidden sm:inline">Approuver</span>
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                className="gap-1.5 rounded-lg text-destructive hover:text-destructive"
-                                onClick={() => handleRejectListing(listing.id)}
-                                disabled={actionLoading}
-                              >
-                                <X className="w-4 h-4" />
-                                <span className="hidden sm:inline">Refuser</span>
-                              </Button>
-                              <div className="flex gap-1">
-                                <Button
-                                  size="icon"
-                                  variant="ghost"
-                                  className="h-8 w-8 rounded-lg"
-                                  onClick={() => window.open(`/car/${listing.id}`, "_blank")}
-                                >
-                                  <Eye className="w-3.5 h-3.5" />
-                                </Button>
-                                <Button
-                                  size="icon"
-                                  variant="ghost"
-                                  className="h-8 w-8 rounded-lg text-destructive"
-                                  onClick={() => handleDeleteListing(listing.id)}
-                                  disabled={actionLoading}
-                                >
-                                  <Trash2 className="w-3.5 h-3.5" />
-                                </Button>
+                              <div className="text-[10px] text-muted-foreground truncate">
+                                👤 {listing.contact_name} · 📅 {format(new Date(listing.created_at), "d MMM", { locale: dateLocale })}
                               </div>
                             </div>
+                          </div>
+
+                          {/* Actions row — always visible below on mobile */}
+                          <div className="flex items-center gap-2 mt-2.5 pt-2 border-t border-border/30">
+                            <Button
+                              size="sm"
+                              className="gap-1 rounded-lg flex-1 h-8 text-xs"
+                              onClick={() => handleApproveListing(listing.id)}
+                              disabled={actionLoading}
+                            >
+                              <Check className="w-3.5 h-3.5" />
+                              Approuver
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="gap-1 rounded-lg flex-1 h-8 text-xs text-destructive hover:text-destructive"
+                              onClick={() => handleRejectListing(listing.id)}
+                              disabled={actionLoading}
+                            >
+                              <X className="w-3.5 h-3.5" />
+                              Refuser
+                            </Button>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-8 w-8 rounded-lg flex-shrink-0"
+                              onClick={() => window.open(`/car/${listing.id}`, "_blank")}
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                            </Button>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-8 w-8 rounded-lg text-destructive flex-shrink-0"
+                              onClick={() => handleDeleteListing(listing.id)}
+                              disabled={actionLoading}
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </Button>
                           </div>
                         </CardContent>
                       </Card>
