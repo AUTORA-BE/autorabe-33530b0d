@@ -209,9 +209,9 @@ export default function Messages() {
     <PullToRefresh onRefresh={refetch}>
       <div className="page-gradient min-h-screen">
         <Header />
-        <main className="pt-24 pb-20">
-          <div className="container mx-auto px-4 max-w-4xl">
-            <BackButton to="/" className="mb-2" />
+        <main className="pt-16 sm:pt-24 pb-20">
+          <div className="container mx-auto px-3 sm:px-4 max-w-4xl">
+            <BackButton to="/" className="mb-1" />
             <motion.div
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
