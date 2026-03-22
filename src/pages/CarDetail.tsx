@@ -443,15 +443,15 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
         }}
       />
       <Header />
-      <main className="pt-24 pb-28 lg:pb-20">
+      <main className="pt-16 sm:pt-24 pb-28 lg:pb-20">
         {/* Breadcrumb */}
-        <motion.div {...fadeUp(0)} className="container mx-auto px-4 sm:px-6 mb-6">
+        <motion.div {...fadeUp(0)} className="container mx-auto px-3 sm:px-6 mb-3 sm:mb-6">
           <button
             onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors group"
+            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors group"
           >
-            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-            Retour aux résultats
+            <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
+            Retour
           </button>
         </motion.div>
 
