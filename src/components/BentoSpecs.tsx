@@ -69,7 +69,7 @@ const BentoSpecs = ({
         Caractéristiques
       </h2>
 
-      <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-6 gap-3 auto-rows-auto">
+      <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-6 gap-2 sm:gap-3 auto-rows-auto">
 
         {/* ── Location — spans full width, hero tile ── */}
         {location && (
