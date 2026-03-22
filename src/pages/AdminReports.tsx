@@ -728,61 +728,42 @@ const AdminReports = () => {
 
                 {/* Reports Table */}
                 <Card>
-                  <CardHeader>
-                    <CardTitle className="text-sm">{t("admin.reportsList")}</CardTitle>
-                    <CardDescription>{filteredReports.length} {t("admin.reportsFound")}</CardDescription>
+                  <CardHeader className="p-3 sm:p-6">
+                    <CardTitle className="text-xs sm:text-sm">{t("admin.reportsList")}</CardTitle>
+                    <CardDescription className="text-[11px] sm:text-sm">{filteredReports.length} {t("admin.reportsFound")}</CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-3 sm:p-6 pt-0 sm:pt-0">
                     {filteredReports.length === 0 ? (
-                      <div className="text-center py-12 text-muted-foreground">
-                        <AlertTriangle className="w-10 h-10 mx-auto mb-3 opacity-40" />
-                        <p className="text-sm">{t("admin.noReports")}</p>
+                      <div className="text-center py-8 text-muted-foreground">
+                        <AlertTriangle className="w-8 h-8 mx-auto mb-2 opacity-40" />
+                        <p className="text-xs sm:text-sm">{t("admin.noReports")}</p>
                       </div>
                     ) : (
-                      <div className="overflow-x-auto">
-                        <Table>
-                          <TableHeader>
-                            <TableRow>
-                              <TableHead>{t("admin.date")}</TableHead>
-                              <TableHead>{t("admin.vehicle")}</TableHead>
-                              <TableHead>Signalé par</TableHead>
-                              <TableHead>{t("admin.reason")}</TableHead>
-                              <TableHead>{t("admin.status")}</TableHead>
-                              <TableHead className="text-right">{t("admin.actions")}</TableHead>
-                            </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                            {filteredReports.map((report) => (
-                              <TableRow key={report.id}>
-                                <TableCell className="whitespace-nowrap text-sm">
-                                  {format(new Date(report.created_at), "dd MMM yyyy", { locale: dateLocale })}
-                                </TableCell>
-                                <TableCell>
-                                  <div className="font-medium text-sm">{report.car_brand} {report.car_model}</div>
-                                  <Button variant="link" size="sm" className="h-auto p-0 text-xs text-muted-foreground" onClick={() => window.open(`/car/${report.car_listing_id}`, "_blank")}>
-                                    {t("admin.viewListing")} <ExternalLink className="w-3 h-3 ml-1" />
-                                  </Button>
-                                </TableCell>
-                                <TableCell>
-                                  <div className="text-sm">{report.reporter_name || "Utilisateur"}</div>
-                                  <span className="text-xs text-muted-foreground font-mono truncate max-w-[120px] block">{report.reporter_email?.slice(0, 8)}…</span>
-                                </TableCell>
-                                <TableCell><Badge variant="secondary" className="text-xs">{getReasonLabel(report.reason)}</Badge></TableCell>
-                                <TableCell>{getStatusBadge(report.status)}</TableCell>
-                                <TableCell className="text-right">
-                                  <div className="flex justify-end gap-1.5">
-                                    <Button variant="outline" size="icon" className="h-8 w-8 rounded-lg" onClick={() => setSelectedReport(report)}>
-                                      <Eye className="w-3.5 h-3.5" />
-                                    </Button>
-                                    <Button variant="outline" size="icon" className="h-8 w-8 rounded-lg text-destructive hover:text-destructive" onClick={() => { setReportToDelete(report); setDeleteDialogOpen(true); }}>
-                                      <Trash2 className="w-3.5 h-3.5" />
-                                    </Button>
-                                  </div>
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
+                      <div className="space-y-2.5">
+                        {filteredReports.map((report) => (
+                          <div key={report.id} className="p-3 rounded-xl bg-secondary/30 border border-border/30 space-y-2">
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="min-w-0">
+                                <p className="font-semibold text-foreground text-sm truncate">{report.car_brand} {report.car_model}</p>
+                                <p className="text-[10px] text-muted-foreground">
+                                  {format(new Date(report.created_at), "dd MMM yyyy", { locale: dateLocale })} · {report.reporter_name || "Utilisateur"}
+                                </p>
+                              </div>
+                              {getStatusBadge(report.status)}
+                            </div>
+                            <div className="flex items-center justify-between gap-2">
+                              <Badge variant="secondary" className="text-[10px]">{getReasonLabel(report.reason)}</Badge>
+                              <div className="flex gap-1.5">
+                                <Button variant="outline" size="icon" className="h-7 w-7 rounded-lg" onClick={() => setSelectedReport(report)}>
+                                  <Eye className="w-3 h-3" />
+                                </Button>
+                                <Button variant="outline" size="icon" className="h-7 w-7 rounded-lg text-destructive hover:text-destructive" onClick={() => { setReportToDelete(report); setDeleteDialogOpen(true); }}>
+                                  <Trash2 className="w-3 h-3" />
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     )}
                   </CardContent>
