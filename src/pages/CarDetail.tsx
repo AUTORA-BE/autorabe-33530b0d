@@ -455,10 +455,10 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
           </button>
         </motion.div>
 
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+        <div className="container mx-auto px-3 sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-6 lg:gap-8">
             {/* Left Column - Images & Details */}
-            <div className="lg:col-span-2 space-y-6">
+            <div className="lg:col-span-2 space-y-3 sm:space-y-6">
               {/* Main Image Gallery with swipe */}
               <motion.div {...fadeUp(0.05)} className="glass-card overflow-hidden">
                 <div
