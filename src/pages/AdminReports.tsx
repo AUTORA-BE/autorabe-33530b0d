@@ -831,59 +831,42 @@ const AdminReports = () => {
                   </CardContent>
                 </Card>
 
-                {/* Actions Table */}
+                {/* Actions list */}
                 <Card>
-                  <CardHeader>
-                    <CardTitle className="text-sm">Historique des actions</CardTitle>
-                    <CardDescription>{filteredActions.length} action{filteredActions.length !== 1 ? "s" : ""}</CardDescription>
+                  <CardHeader className="p-3 sm:p-6">
+                    <CardTitle className="text-xs sm:text-sm">Historique des actions</CardTitle>
+                    <CardDescription className="text-[11px] sm:text-sm">{filteredActions.length} action{filteredActions.length !== 1 ? "s" : ""}</CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-3 sm:p-6 pt-0 sm:pt-0">
                     {actionsLoading ? (
-                      <div className="space-y-3">
+                      <div className="space-y-2">
                         {[1, 2, 3].map(i => (
-                          <div key={i} className="h-12 rounded-xl bg-muted animate-pulse" />
+                          <div key={i} className="h-10 rounded-lg bg-muted animate-pulse" />
                         ))}
                       </div>
                     ) : filteredActions.length === 0 ? (
-                      <div className="text-center py-12 text-muted-foreground">
-                        <History className="w-10 h-10 mx-auto mb-3 opacity-40" />
-                        <p className="text-sm">Aucune action trouvée</p>
+                      <div className="text-center py-8 text-muted-foreground">
+                        <History className="w-8 h-8 mx-auto mb-2 opacity-40" />
+                        <p className="text-xs">Aucune action trouvée</p>
                       </div>
                     ) : (
-                      <div className="overflow-x-auto">
-                        <Table>
-                          <TableHeader>
-                            <TableRow>
-                              <TableHead>Date</TableHead>
-                              <TableHead>Admin</TableHead>
-                              <TableHead>Action</TableHead>
-                              <TableHead>Cible</TableHead>
-                              <TableHead>Raison</TableHead>
-                            </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                            {filteredActions.map((action) => (
-                              <TableRow key={action.id}>
-                                <TableCell className="whitespace-nowrap text-sm">
-                                  {format(new Date(action.created_at), "dd MMM yyyy HH:mm", { locale: dateLocale })}
-                                </TableCell>
-                                <TableCell className="text-sm">{action.admin_name}</TableCell>
-                                <TableCell>
-                                  <Badge variant="secondary" className="text-xs">
-                                    {actionTypeLabels[action.action_type] || action.action_type}
-                                  </Badge>
-                                </TableCell>
-                                <TableCell className="text-sm">
-                                  <span className="text-muted-foreground text-xs">{action.target_type}:</span>{" "}
-                                  <span className="font-mono text-xs">{action.target_id.slice(0, 8)}…</span>
-                                </TableCell>
-                                <TableCell className="text-sm text-muted-foreground max-w-[200px] truncate">
-                                  {action.reason || "—"}
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
+                      <div className="space-y-2">
+                        {filteredActions.map((action) => (
+                          <div key={action.id} className="p-2.5 rounded-lg bg-secondary/30 border border-border/20">
+                            <div className="flex items-center justify-between gap-2 mb-1">
+                              <Badge variant="secondary" className="text-[10px]">
+                                {actionTypeLabels[action.action_type] || action.action_type}
+                              </Badge>
+                              <span className="text-[10px] text-muted-foreground">
+                                {format(new Date(action.created_at), "dd MMM HH:mm", { locale: dateLocale })}
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-muted-foreground truncate">
+                              {action.admin_name} · <span className="font-mono">{action.target_id.slice(0, 8)}…</span>
+                              {action.reason && ` · ${action.reason}`}
+                            </p>
+                          </div>
+                        ))}
                       </div>
                     )}
                   </CardContent>
