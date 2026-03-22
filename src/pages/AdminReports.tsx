@@ -876,109 +876,91 @@ const AdminReports = () => {
               {/* ═══════════════════════════════════════════════ */}
               {/* TAB: Users Management                          */}
               {/* ═══════════════════════════════════════════════ */}
-              <TabsContent value="users" className="mt-0 space-y-6">
+              <TabsContent value="users" className="mt-0 space-y-4">
                 {/* Search */}
-                <div className="relative max-w-sm">
+                <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
-                    placeholder="Rechercher un utilisateur…"
+                    placeholder="Rechercher…"
                     value={userSearch}
                     onChange={(e) => setUserSearch(e.target.value)}
-                    className="pl-10 rounded-lg"
+                    className="pl-10 rounded-lg text-sm"
                   />
                 </div>
 
-                {/* Users Table */}
+                {/* Users cards */}
                 <Card>
-                  <CardHeader>
-                    <CardTitle className="text-sm">Tous les utilisateurs</CardTitle>
-                    <CardDescription>{filteredUsers.length} utilisateur{filteredUsers.length !== 1 ? "s" : ""}</CardDescription>
+                  <CardHeader className="p-3 sm:p-6">
+                    <CardTitle className="text-xs sm:text-sm">Utilisateurs</CardTitle>
+                    <CardDescription className="text-[11px] sm:text-sm">{filteredUsers.length} utilisateur{filteredUsers.length !== 1 ? "s" : ""}</CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-3 sm:p-6 pt-0 sm:pt-0">
                     {usersLoading ? (
-                      <div className="space-y-3">
+                      <div className="space-y-2">
                         {[1, 2, 3].map(i => (
-                          <div key={i} className="h-12 rounded-xl bg-muted animate-pulse" />
+                          <div key={i} className="h-14 rounded-lg bg-muted animate-pulse" />
                         ))}
                       </div>
                     ) : filteredUsers.length === 0 ? (
-                      <div className="text-center py-12 text-muted-foreground">
-                        <Users className="w-10 h-10 mx-auto mb-3 opacity-40" />
-                        <p className="text-sm">Aucun utilisateur trouvé</p>
+                      <div className="text-center py-8 text-muted-foreground">
+                        <Users className="w-8 h-8 mx-auto mb-2 opacity-40" />
+                        <p className="text-xs">Aucun utilisateur trouvé</p>
                       </div>
                     ) : (
-                      <div className="overflow-x-auto">
-                        <Table>
-                          <TableHeader>
-                            <TableRow>
-                              <TableHead>Utilisateur</TableHead>
-                              <TableHead>ID</TableHead>
-                              <TableHead>Inscrit le</TableHead>
-                              <TableHead>Statut</TableHead>
-                              <TableHead className="text-right">Actions</TableHead>
-                            </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                            {filteredUsers.map((u) => (
-                              <TableRow key={u.user_id}>
-                                <TableCell>
-                                  <div className="flex items-center gap-2">
-                                    {u.avatar_url ? (
-                                      <img src={u.avatar_url} alt="" className="w-8 h-8 rounded-full object-cover" />
-                                    ) : (
-                                      <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground">
-                                        {(u.display_name || "?")[0].toUpperCase()}
-                                      </div>
-                                    )}
-                                    <span className="text-sm font-medium">{u.display_name || "Sans nom"}</span>
-                                  </div>
-                                </TableCell>
-                                <TableCell className="font-mono text-xs text-muted-foreground">{u.user_id.slice(0, 8)}…</TableCell>
-                                <TableCell className="text-sm whitespace-nowrap">
-                                  {format(new Date(u.created_at), "dd MMM yyyy", { locale: dateLocale })}
-                                </TableCell>
-                                <TableCell>
-                                  {u.suspended_at ? (
-                                    <Badge variant="destructive" className="text-xs gap-1">
-                                      <Ban className="w-3 h-3" />Suspendu
-                                    </Badge>
-                                  ) : (
-                                    <Badge variant="outline" className="text-xs gap-1 bg-primary/10 text-primary border-primary/30">
-                                      <UserCheck className="w-3 h-3" />Actif
-                                    </Badge>
-                                  )}
-                                </TableCell>
-                                <TableCell className="text-right">
-                                  <div className="flex justify-end gap-1.5">
-                                    {u.suspended_at ? (
-                                      <Button
-                                        size="sm"
-                                        variant="outline"
-                                        className="rounded-lg gap-1.5 text-primary"
-                                        onClick={() => handleUnsuspendUser(u.user_id)}
-                                        disabled={actionLoading}
-                                      >
-                                        <UserCheck className="w-3.5 h-3.5" />
-                                        <span className="hidden sm:inline">Réactiver</span>
-                                      </Button>
-                                    ) : (
-                                      <Button
-                                        size="sm"
-                                        variant="outline"
-                                        className="rounded-lg gap-1.5 text-destructive hover:text-destructive"
-                                        onClick={() => { setUserToSuspend(u); setSuspendDialogOpen(true); }}
-                                        disabled={actionLoading}
-                                      >
-                                        <Ban className="w-3.5 h-3.5" />
-                                        <span className="hidden sm:inline">Suspendre</span>
-                                      </Button>
-                                    )}
-                                  </div>
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
+                      <div className="space-y-2">
+                        {filteredUsers.map((u) => (
+                          <div key={u.user_id} className="flex items-center gap-2.5 p-2.5 rounded-xl bg-secondary/30 border border-border/20">
+                            {/* Avatar */}
+                            {u.avatar_url ? (
+                              <img src={u.avatar_url} alt="" className="w-9 h-9 rounded-full object-cover flex-shrink-0" />
+                            ) : (
+                              <div className="w-9 h-9 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground flex-shrink-0">
+                                {(u.display_name || "?")[0].toUpperCase()}
+                              </div>
+                            )}
+                            {/* Info */}
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-foreground truncate">{u.display_name || "Sans nom"}</p>
+                              <p className="text-[10px] text-muted-foreground">
+                                {format(new Date(u.created_at), "dd MMM yyyy", { locale: dateLocale })}
+                              </p>
+                            </div>
+                            {/* Status + action */}
+                            <div className="flex items-center gap-1.5 flex-shrink-0">
+                              {u.suspended_at ? (
+                                <>
+                                  <Badge variant="destructive" className="text-[10px] gap-0.5 px-1.5">
+                                    <Ban className="w-2.5 h-2.5" />Susp.
+                                  </Badge>
+                                  <Button
+                                    size="icon"
+                                    variant="outline"
+                                    className="h-7 w-7 rounded-lg text-primary"
+                                    onClick={() => handleUnsuspendUser(u.user_id)}
+                                    disabled={actionLoading}
+                                  >
+                                    <UserCheck className="w-3 h-3" />
+                                  </Button>
+                                </>
+                              ) : (
+                                <>
+                                  <Badge variant="outline" className="text-[10px] gap-0.5 px-1.5 bg-primary/10 text-primary border-primary/30">
+                                    <UserCheck className="w-2.5 h-2.5" />Actif
+                                  </Badge>
+                                  <Button
+                                    size="icon"
+                                    variant="outline"
+                                    className="h-7 w-7 rounded-lg text-destructive hover:text-destructive"
+                                    onClick={() => { setUserToSuspend(u); setSuspendDialogOpen(true); }}
+                                    disabled={actionLoading}
+                                  >
+                                    <Ban className="w-3 h-3" />
+                                  </Button>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     )}
                   </CardContent>
