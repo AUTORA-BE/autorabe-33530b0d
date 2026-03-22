@@ -64,12 +64,12 @@ const BentoSpecs = ({
   if (doors) details.push({ icon: DoorOpen, label: "Portes", value: `${doors}` });
 
   return (
-    <div className="glass-card p-5 sm:p-6">
-      <h2 className="font-display text-lg sm:text-xl font-bold text-foreground mb-5">
+    <div className="glass-card p-3 sm:p-6">
+      <h2 className="font-display text-base sm:text-xl font-bold text-foreground mb-3 sm:mb-5">
         Caractéristiques
       </h2>
 
-      <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-6 gap-3 auto-rows-auto">
+      <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-6 gap-2 sm:gap-3 auto-rows-auto">
 
         {/* ── Location — spans full width, hero tile ── */}
         {location && (
@@ -77,19 +77,18 @@ const BentoSpecs = ({
             variants={item}
             whileHover={{ scale: 1.02, y: -2 }}
             transition={{ type: "spring", stiffness: 400, damping: 25 }}
-            className="col-span-6 group relative overflow-hidden rounded-2xl bg-primary/10 p-5 cursor-default"
+            className="col-span-6 group relative overflow-hidden rounded-xl sm:rounded-2xl bg-primary/10 p-3 sm:p-5 cursor-default"
           >
-            <MapPin className="absolute -bottom-4 -right-4 w-24 h-24 text-primary/[0.06] transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6" />
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <div className="relative z-10 flex items-center gap-3">
-              <div className="w-11 h-11 rounded-xl bg-primary/20 flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:bg-primary/30 group-hover:shadow-glow">
-                <MapPin className="w-5 h-5 text-primary transition-transform duration-300 group-hover:scale-110" />
+            <MapPin className="absolute -bottom-4 -right-4 w-20 h-20 text-primary/[0.06]" />
+            <div className="relative z-10 flex items-center gap-2.5">
+              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-primary/20 flex items-center justify-center flex-shrink-0">
+                <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
               </div>
               <div>
-                <p className="text-[11px] uppercase tracking-wider text-muted-foreground/70 font-medium">
+                <p className="text-[10px] sm:text-[11px] uppercase tracking-wider text-muted-foreground/70 font-medium">
                   Localisation
                 </p>
-                <p className="font-bold text-foreground text-lg leading-tight">{location}</p>
+                <p className="font-bold text-foreground text-sm sm:text-lg leading-tight">{location}</p>
               </div>
             </div>
           </motion.div>
@@ -100,19 +99,18 @@ const BentoSpecs = ({
           variants={item}
           whileHover={{ scale: 1.03, y: -3 }}
           transition={{ type: "spring", stiffness: 400, damping: 25 }}
-          className="col-span-3 row-span-2 group relative overflow-hidden rounded-2xl bg-secondary/60 p-5 cursor-default flex flex-col justify-between min-h-[140px]"
+          className="col-span-3 row-span-2 group relative overflow-hidden rounded-xl sm:rounded-2xl bg-secondary/60 p-3 sm:p-5 cursor-default flex flex-col justify-between min-h-[110px] sm:min-h-[140px]"
         >
-          <Calendar className="absolute -bottom-3 -right-3 w-20 h-20 text-primary/[0.05] transition-all duration-500 group-hover:scale-125 group-hover:-rotate-12" />
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <Calendar className="absolute -bottom-3 -right-3 w-16 h-16 text-primary/[0.05]" />
           <div className="relative z-10">
-            <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center mb-3 transition-all duration-300 group-hover:bg-primary/25 group-hover:shadow-glow">
-              <Calendar className="w-5 h-5 text-primary transition-transform duration-300 group-hover:scale-110" />
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-primary/15 flex items-center justify-center mb-2 sm:mb-3">
+              <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
             </div>
-            <p className="text-[11px] uppercase tracking-wider text-muted-foreground/70 font-medium">
+            <p className="text-[10px] sm:text-[11px] uppercase tracking-wider text-muted-foreground/70 font-medium">
               Année
             </p>
           </div>
-          <p className="relative z-10 font-extrabold text-foreground text-3xl leading-tight">
+          <p className="relative z-10 font-extrabold text-foreground text-2xl sm:text-3xl leading-tight">
             {year}
           </p>
         </motion.div>
@@ -122,17 +120,17 @@ const BentoSpecs = ({
           variants={item}
           whileHover={{ scale: 1.04, y: -2 }}
           transition={{ type: "spring", stiffness: 400, damping: 25 }}
-          className="col-span-3 group relative overflow-hidden rounded-2xl bg-secondary/60 p-4 cursor-default"
+          className="col-span-3 group relative overflow-hidden rounded-xl sm:rounded-2xl bg-secondary/60 p-3 sm:p-4 cursor-default"
         >
-          <Gauge className="absolute -bottom-2 -right-2 w-14 h-14 text-primary/[0.05] transition-all duration-500 group-hover:scale-110 group-hover:rotate-12" />
+          <Gauge className="absolute -bottom-2 -right-2 w-12 h-12 text-primary/[0.05]" />
           <div className="relative z-10">
-            <div className="w-9 h-9 rounded-xl bg-primary/15 flex items-center justify-center mb-2 transition-all duration-300 group-hover:bg-primary/25 group-hover:shadow-glow">
-              <Gauge className="w-4 h-4 text-primary transition-transform duration-300 group-hover:scale-110" />
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-primary/15 flex items-center justify-center mb-1.5 sm:mb-2">
+              <Gauge className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
             </div>
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground/70 font-medium">
+            <p className="text-[9px] sm:text-[10px] uppercase tracking-wider text-muted-foreground/70 font-medium">
               Kilométrage
             </p>
-            <p className="font-bold text-foreground text-base mt-0.5 leading-tight">
+            <p className="font-bold text-foreground text-sm sm:text-base mt-0.5 leading-tight">
               {formatMileage(mileage)}
             </p>
           </div>

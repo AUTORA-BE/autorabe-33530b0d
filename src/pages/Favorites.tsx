@@ -120,18 +120,18 @@ const Favorites = () => {
     <PullToRefresh onRefresh={() => { refetch(); }}>
       <div className="page-gradient min-h-screen">
         <Header />
-        <main className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-32 pb-24">
+        <main className="container mx-auto px-3 sm:px-6 pt-16 sm:pt-32 pb-24">
           {/* Immersive header */}
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
-            className="mb-5"
+            className="mb-3 sm:mb-5"
           >
-            <BackButton to="/" className="mb-3" />
+            <BackButton to="/" className="mb-2" />
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground">
+              <div className="flex items-center gap-2">
+                <h1 className="font-display text-lg sm:text-3xl font-bold text-foreground">
                   {t("favorites.title")}
                 </h1>
                 {favoriteCars.length > 0 && (
@@ -201,7 +201,7 @@ const Favorites = () => {
               ))}
             </div>
           ) : sortedCars.length > 0 ? (
-            <div className="space-y-4 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-5 md:space-y-0">
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 md:gap-5">
               <AnimatePresence mode="popLayout">
                 {sortedCars.map((car, i) => (
                   <motion.div
@@ -210,24 +210,12 @@ const Favorites = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05, type: "spring", stiffness: 300, damping: 30 }}
                   >
-                    {/* Swipe on mobile only, normal card on desktop */}
-                    <div className="md:hidden">
-                      <SwipeableCard
-                        car={car}
-                        isFavorite={isFavorite(car.id)}
-                        onToggleFavorite={toggleFavorite}
-                        onClick={(id) => navigate(`/car/${id}`)}
-                        onRemove={handleRemove}
-                      />
-                    </div>
-                    <div className="hidden md:block">
-                      <CarCard
-                        car={car}
-                        isFavorite={isFavorite(car.id)}
-                        onToggleFavorite={toggleFavorite}
-                        onClick={(id) => navigate(`/car/${id}`)}
-                      />
-                    </div>
+                    <CarCard
+                      car={car}
+                      isFavorite={isFavorite(car.id)}
+                      onToggleFavorite={toggleFavorite}
+                      onClick={(id) => navigate(`/car/${id}`)}
+                    />
                   </motion.div>
                 ))}
               </AnimatePresence>

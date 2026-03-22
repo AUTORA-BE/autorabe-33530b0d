@@ -56,7 +56,7 @@ function SwipeableConversation({
         style={{ x }}
         onClick={onClick}
         whileTap={{ scale: 0.98 }}
-        className={`relative z-10 w-full px-4 py-3.5 flex gap-3 items-center transition-colors border-b border-border/20 ${
+        className={`relative z-10 w-full px-3 py-3 flex gap-2.5 items-center transition-colors border-b border-border/20 ${
           isSelected
             ? "bg-primary/[0.06]"
             : hasUnread
@@ -65,7 +65,7 @@ function SwipeableConversation({
         }`}
       >
         {/* Avatar */}
-        <div className="relative w-12 h-12 rounded-full overflow-hidden bg-secondary/50 flex-shrink-0 border border-border/30">
+        <div className="relative w-10 h-10 rounded-full overflow-hidden bg-secondary/50 flex-shrink-0 border border-border/30">
           {conv.carImage ? (
             <img
               src={conv.carImage}
@@ -209,15 +209,15 @@ export default function Messages() {
     <PullToRefresh onRefresh={refetch}>
       <div className="page-gradient min-h-screen">
         <Header />
-        <main className="pt-24 pb-20">
-          <div className="container mx-auto px-4 max-w-4xl">
-            <BackButton to="/" className="mb-2" />
+        <main className="pt-16 sm:pt-24 pb-20">
+          <div className="container mx-auto px-3 sm:px-4 max-w-4xl">
+            <BackButton to="/" className="mb-1" />
             <motion.div
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
               className="flex items-center justify-between mb-5 mt-2"
             >
-              <h1 className="text-2xl font-bold text-foreground">{t("messages.title")}</h1>
+              <h1 className="text-lg sm:text-2xl font-bold text-foreground">{t("messages.title")}</h1>
               {conversations.length > 0 && (
                 <span className="text-xs text-muted-foreground bg-card/60 backdrop-blur-sm px-3 py-1 rounded-full border border-border/30">
                   {conversations.length}{" "}

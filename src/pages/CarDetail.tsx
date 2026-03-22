@@ -443,22 +443,22 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
         }}
       />
       <Header />
-      <main className="pt-24 pb-28 lg:pb-20">
+      <main className="pt-16 sm:pt-24 pb-28 lg:pb-20">
         {/* Breadcrumb */}
-        <motion.div {...fadeUp(0)} className="container mx-auto px-4 sm:px-6 mb-6">
+        <motion.div {...fadeUp(0)} className="container mx-auto px-3 sm:px-6 mb-3 sm:mb-6">
           <button
             onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors group"
+            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors group"
           >
-            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-            Retour aux résultats
+            <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
+            Retour
           </button>
         </motion.div>
 
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+        <div className="container mx-auto px-3 sm:px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-6 lg:gap-8">
             {/* Left Column - Images & Details */}
-            <div className="lg:col-span-2 space-y-6">
+            <div className="lg:col-span-2 space-y-3 sm:space-y-6">
               {/* Main Image Gallery with swipe */}
               <motion.div {...fadeUp(0.05)} className="glass-card overflow-hidden">
                 <div
@@ -568,38 +568,38 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
               </AnimatePresence>
 
               {/* Mobile-only: Title, Price & CTA */}
-              <motion.div {...fadeUp(0.1)} className="lg:hidden glass-card p-4 sm:p-6 space-y-4">
-                <div className="flex items-start justify-between gap-3">
+              <motion.div {...fadeUp(0.1)} className="lg:hidden glass-card p-3 sm:p-6 space-y-2.5 sm:space-y-4">
+                <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground leading-tight truncate">
+                    <h1 className="font-display text-lg sm:text-2xl font-bold text-foreground leading-tight truncate">
                       {car.brand} {car.model}
                     </h1>
-                    <p className="text-xs sm:text-sm text-muted-foreground flex items-center gap-1.5 mt-1">
-                      <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+                    <p className="text-[11px] sm:text-sm text-muted-foreground flex items-center gap-1 mt-0.5">
+                      <MapPin className="w-3 h-3 flex-shrink-0" />
                       <span className="truncate">{car.location}</span>
                     </p>
                   </div>
-                  <div className="flex gap-1.5 flex-shrink-0">
+                  <div className="flex gap-1 flex-shrink-0">
                     <button
                       onClick={() => toggleFavorite(car.id)}
-                      className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all active:scale-90 touch-manipulation ${
+                      className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all active:scale-90 touch-manipulation ${
                         isFavorite(car.id)
                           ? "bg-red-500 text-white shadow-lg shadow-red-500/25"
                           : "bg-secondary text-muted-foreground hover:text-red-500"
                       }`}
                     >
-                      <Heart className={`w-4 h-4 ${isFavorite(car.id) ? "fill-current" : ""}`} />
+                      <Heart className={`w-3.5 h-3.5 ${isFavorite(car.id) ? "fill-current" : ""}`} />
                     </button>
                     <button
                       onClick={handleShare}
-                      className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors active:scale-90 touch-manipulation"
+                      className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors active:scale-90 touch-manipulation"
                     >
-                      <Share2 className="w-4 h-4" />
+                      <Share2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
 
-                <div className="text-2xl sm:text-3xl font-display font-extrabold text-foreground">
+                <div className="text-xl sm:text-3xl font-display font-extrabold text-foreground">
                   {formatPrice(car.price)}
                 </div>
 
@@ -622,53 +622,53 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
               </motion.div>
 
               {/* Mobile FAB buttons */}
-              <div className="lg:hidden fixed bottom-20 right-4 z-50 flex flex-col gap-3 safe-bottom">
+              <div className="lg:hidden fixed bottom-16 right-3 z-50 flex flex-col gap-2 safe-bottom">
                 <motion.button
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.3, type: "spring", stiffness: 400 }}
                   onClick={handleShare}
-                  className="w-12 h-12 rounded-full bg-card border border-border/50 shadow-xl flex items-center justify-center text-muted-foreground active:scale-90 transition-transform"
+                  className="w-10 h-10 rounded-full bg-card border border-border/50 shadow-xl flex items-center justify-center text-muted-foreground active:scale-90 transition-transform"
                   aria-label="Partager"
                 >
-                  <Share2 className="w-5 h-5" />
+                  <Share2 className="w-4 h-4" />
                 </motion.button>
                 <motion.button
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.2, type: "spring", stiffness: 400 }}
                   onClick={() => toggleFavorite(car.id)}
-                  className={`w-12 h-12 rounded-full shadow-xl flex items-center justify-center active:scale-90 transition-transform ${
+                  className={`w-10 h-10 rounded-full shadow-xl flex items-center justify-center active:scale-90 transition-transform ${
                     isFavorite(car.id)
                       ? "bg-red-500 text-white shadow-red-500/30"
                       : "bg-card border border-border/50 text-muted-foreground"
                   }`}
                   aria-label="Favori"
                 >
-                  <Heart className={`w-5 h-5 ${isFavorite(car.id) ? "fill-current" : ""}`} />
+                  <Heart className={`w-4 h-4 ${isFavorite(car.id) ? "fill-current" : ""}`} />
                 </motion.button>
                 <motion.button
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.1, type: "spring", stiffness: 400 }}
                   onClick={() => handleContact("Message")}
-                  className="w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-xl shadow-primary/30 flex items-center justify-center active:scale-90 transition-transform"
+                  className="w-12 h-12 rounded-full bg-primary text-primary-foreground shadow-xl shadow-primary/30 flex items-center justify-center active:scale-90 transition-transform"
                   aria-label="Contacter"
                 >
-                  <MessageCircle className="w-6 h-6" />
+                  <MessageCircle className="w-5 h-5" />
                 </motion.button>
               </div>
 
               {/* Mobile swipeable tabs for specs */}
               {isMobile ? (
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {/* Tab bar */}
-                  <div className="flex gap-1.5 overflow-x-auto scrollbar-hide px-1 py-1 bg-secondary/50 rounded-2xl">
+                  <div className="flex gap-1 overflow-x-auto scrollbar-hide px-0.5 py-0.5 bg-secondary/50 rounded-xl">
                     {["Specs", "Confiance", "Coûts", "Description"].map((tab, i) => (
                       <button
                         key={tab}
                         onClick={() => setMobileTab(i)}
-                        className={`flex-shrink-0 px-4 py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${
+                        className={`flex-shrink-0 px-3 py-2 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
                           mobileTab === i
                             ? "bg-primary text-primary-foreground shadow-sm"
                             : "text-muted-foreground"
@@ -923,9 +923,9 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                   </h2>
                 </div>
                 {/* Horizontal scroll on mobile, grid on desktop */}
-                <div className="flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 lg:grid lg:grid-cols-4 lg:gap-6 lg:overflow-visible lg:snap-none lg:pb-0">
+                <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-3 -mx-3 px-3 sm:mx-0 sm:px-0 lg:grid lg:grid-cols-4 lg:gap-6 lg:overflow-visible lg:snap-none lg:pb-0">
                   {relatedCars.map((relatedCar, i) => (
-                    <div key={relatedCar.id} className="min-w-[280px] sm:min-w-[300px] lg:min-w-0 snap-start">
+                    <div key={relatedCar.id} className="min-w-[200px] sm:min-w-[300px] lg:min-w-0 snap-start">
                       <ScrollReveal delay={i * 0.08}>
                         <CarCard
                           car={relatedCar}
