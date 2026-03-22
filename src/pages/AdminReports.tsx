@@ -490,53 +490,55 @@ const AdminReports = () => {
       <SEOHead title={`${t("admin.title")} - AutoRa`} description="Admin dashboard" />
       <Header />
 
-      <main className="min-h-screen pt-24 pb-12">
-        <div className="container mx-auto px-4 sm:px-6">
+      <main className="min-h-screen pt-16 sm:pt-24 pb-20 sm:pb-12">
+        <div className="container mx-auto px-3 sm:px-6">
           <div className="max-w-6xl mx-auto">
 
             {/* Header */}
-            <div className="mb-6">
-              <BackButton to="/" className="mb-3" />
-              <div className="flex items-center gap-3 mb-1">
-                <Shield className="h-6 w-6 text-primary" />
-                <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{t("admin.title")}</h1>
+            <div className="mb-4 sm:mb-6">
+              <BackButton to="/" className="mb-2" />
+              <div className="flex items-center gap-2 mb-0.5">
+                <Shield className="h-5 w-5 text-primary" />
+                <h1 className="text-xl sm:text-3xl font-bold tracking-tight">{t("admin.title")}</h1>
               </div>
-              <p className="text-sm text-muted-foreground">{t("admin.subtitle")}</p>
+              <p className="text-xs sm:text-sm text-muted-foreground">{t("admin.subtitle")}</p>
             </div>
 
-            {/* Tabs: Pending Listings / Reports */}
+            {/* Tabs */}
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="bg-secondary/50 p-1 rounded-xl mb-6">
-                <TabsTrigger value="pending" className="rounded-lg text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2">
-                  <Clock className="w-4 h-4" />
-                  Annonces en attente
-                  {pendingListings.length > 0 && (
-                    <span className="ml-1 px-1.5 py-0.5 text-xs font-bold rounded-full bg-amber-500 text-white">
-                      {pendingListings.length}
+              <div className="overflow-x-auto scrollbar-hide -mx-3 px-3 sm:mx-0 sm:px-0 mb-4 sm:mb-6">
+                <TabsList className="bg-secondary/50 p-0.5 sm:p-1 rounded-xl inline-flex min-w-max">
+                  <TabsTrigger value="pending" className="rounded-lg text-xs sm:text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm gap-1 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2">
+                    <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                    <span className="hidden sm:inline">Annonces</span>
+                    {pendingListings.length > 0 && (
+                      <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-amber-500 text-white">
+                        {pendingListings.length}
+                      </span>
+                    )}
+                  </TabsTrigger>
+                  <TabsTrigger value="reports" className="rounded-lg text-xs sm:text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm gap-1 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2">
+                    <AlertTriangle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                    <span className="hidden sm:inline">{t("admin.reportsList")}</span>
+                    {reportStats.pending > 0 && (
+                      <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-destructive text-destructive-foreground">
+                        {reportStats.pending}
+                      </span>
+                    )}
+                  </TabsTrigger>
+                  <TabsTrigger value="users" className="rounded-lg text-xs sm:text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm gap-1 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2">
+                    <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                    <span className="hidden sm:inline">Utilisateurs</span>
+                    <span className="px-1.5 py-0.5 text-[10px] font-medium rounded-full bg-muted text-muted-foreground">
+                      {users.length}
                     </span>
-                  )}
-                </TabsTrigger>
-                <TabsTrigger value="reports" className="rounded-lg text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2">
-                  <AlertTriangle className="w-4 h-4" />
-                  {t("admin.reportsList")}
-                  {reportStats.pending > 0 && (
-                    <span className="ml-1 px-1.5 py-0.5 text-xs font-bold rounded-full bg-destructive text-destructive-foreground">
-                      {reportStats.pending}
-                    </span>
-                  )}
-                </TabsTrigger>
-                <TabsTrigger value="users" className="rounded-lg text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2">
-                  <Users className="w-4 h-4" />
-                  Utilisateurs
-                  <span className="ml-1 px-1.5 py-0.5 text-xs font-medium rounded-full bg-muted text-muted-foreground">
-                    {users.length}
-                  </span>
-                </TabsTrigger>
-                <TabsTrigger value="history" className="rounded-lg text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2">
-                  <History className="w-4 h-4" />
-                  Historique
-                </TabsTrigger>
-              </TabsList>
+                  </TabsTrigger>
+                  <TabsTrigger value="history" className="rounded-lg text-xs sm:text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm gap-1 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2">
+                    <History className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                    <span className="hidden sm:inline">Historique</span>
+                  </TabsTrigger>
+                </TabsList>
+              </div>
 
               {/* ═══════════════════════════════════════════════ */}
               {/* TAB: Pending Listings                          */}
@@ -560,98 +562,81 @@ const AdminReports = () => {
                   <div className="space-y-3">
                     {pendingListings.map(listing => (
                       <Card key={listing.id} className="border-border hover:border-primary/20 transition-colors">
-                        <CardContent className="p-4">
-                          <div className="flex items-start gap-4">
+                        <CardContent className="p-3 sm:p-4">
+                          <div className="flex gap-3">
                             {/* Thumbnail */}
-                            <div className="w-24 h-18 md:w-32 md:h-20 rounded-lg overflow-hidden bg-muted flex-shrink-0">
+                            <div className="w-20 h-16 sm:w-32 sm:h-20 rounded-lg overflow-hidden bg-muted flex-shrink-0">
                               {listing.photos?.[0] ? (
                                 <img src={listing.photos[0]} alt={`${listing.brand} ${listing.model}`} className="w-full h-full object-cover" />
                               ) : (
                                 <div className="w-full h-full flex items-center justify-center">
-                                  <ImageIcon className="w-6 h-6 text-muted-foreground/40" />
+                                  <ImageIcon className="w-5 h-5 text-muted-foreground/40" />
                                 </div>
                               )}
                             </div>
 
                             {/* Info */}
                             <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-1">
-                                <h3 className="font-semibold text-foreground">
+                              <div className="flex items-center gap-1.5 flex-wrap mb-1">
+                                <h3 className="font-semibold text-foreground text-sm">
                                   {listing.brand} {listing.model}
                                 </h3>
-                                <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/30 text-xs">
+                                <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/30 text-[10px]">
                                   En attente
                                 </Badge>
-                                {listing.seller_type && (
-                                  <Badge variant="secondary" className="text-xs capitalize">
-                                    {listing.seller_type}
-                                  </Badge>
-                                )}
                               </div>
 
-                              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground mb-2">
-                                <span className="font-semibold text-foreground text-sm">{formatPrice(listing.price)}</span>
+                              <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-muted-foreground mb-1.5">
+                                <span className="font-semibold text-foreground text-xs">{formatPrice(listing.price)}</span>
                                 <span>{listing.year}</span>
                                 <span>{listing.mileage.toLocaleString("fr-BE")} km</span>
                                 <span className="capitalize">{listing.fuel_type}</span>
-                                <span className="capitalize">{listing.transmission}</span>
-                                {listing.location && <span>📍 {listing.location}</span>}
                               </div>
 
-                              <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                                <span>👤 {listing.contact_name}</span>
-                                <span>✉️ {listing.contact_email}</span>
-                                <span>📅 {format(new Date(listing.created_at), "d MMM yyyy HH:mm", { locale: dateLocale })}</span>
-                              </div>
-
-                              {listing.description && (
-                                <p className="text-xs text-muted-foreground mt-2 line-clamp-2 italic">
-                                  "{listing.description}"
-                                </p>
-                              )}
-                            </div>
-
-                            {/* Actions */}
-                            <div className="flex flex-col gap-2 flex-shrink-0">
-                              <Button
-                                size="sm"
-                                className="gap-1.5 rounded-lg"
-                                onClick={() => handleApproveListing(listing.id)}
-                                disabled={actionLoading}
-                              >
-                                <Check className="w-4 h-4" />
-                                <span className="hidden sm:inline">Approuver</span>
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                className="gap-1.5 rounded-lg text-destructive hover:text-destructive"
-                                onClick={() => handleRejectListing(listing.id)}
-                                disabled={actionLoading}
-                              >
-                                <X className="w-4 h-4" />
-                                <span className="hidden sm:inline">Refuser</span>
-                              </Button>
-                              <div className="flex gap-1">
-                                <Button
-                                  size="icon"
-                                  variant="ghost"
-                                  className="h-8 w-8 rounded-lg"
-                                  onClick={() => window.open(`/car/${listing.id}`, "_blank")}
-                                >
-                                  <Eye className="w-3.5 h-3.5" />
-                                </Button>
-                                <Button
-                                  size="icon"
-                                  variant="ghost"
-                                  className="h-8 w-8 rounded-lg text-destructive"
-                                  onClick={() => handleDeleteListing(listing.id)}
-                                  disabled={actionLoading}
-                                >
-                                  <Trash2 className="w-3.5 h-3.5" />
-                                </Button>
+                              <div className="text-[10px] text-muted-foreground truncate">
+                                👤 {listing.contact_name} · 📅 {format(new Date(listing.created_at), "d MMM", { locale: dateLocale })}
                               </div>
                             </div>
+                          </div>
+
+                          {/* Actions row — always visible below on mobile */}
+                          <div className="flex items-center gap-2 mt-2.5 pt-2 border-t border-border/30">
+                            <Button
+                              size="sm"
+                              className="gap-1 rounded-lg flex-1 h-8 text-xs"
+                              onClick={() => handleApproveListing(listing.id)}
+                              disabled={actionLoading}
+                            >
+                              <Check className="w-3.5 h-3.5" />
+                              Approuver
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="gap-1 rounded-lg flex-1 h-8 text-xs text-destructive hover:text-destructive"
+                              onClick={() => handleRejectListing(listing.id)}
+                              disabled={actionLoading}
+                            >
+                              <X className="w-3.5 h-3.5" />
+                              Refuser
+                            </Button>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-8 w-8 rounded-lg flex-shrink-0"
+                              onClick={() => window.open(`/car/${listing.id}`, "_blank")}
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                            </Button>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-8 w-8 rounded-lg text-destructive flex-shrink-0"
+                              onClick={() => handleDeleteListing(listing.id)}
+                              disabled={actionLoading}
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </Button>
                           </div>
                         </CardContent>
                       </Card>
@@ -665,38 +650,38 @@ const AdminReports = () => {
               {/* ═══════════════════════════════════════════════ */}
               <TabsContent value="reports" className="mt-0 space-y-6">
                 {/* Stats Cards */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
                   <Card>
-                    <CardHeader className="pb-2">
-                      <CardDescription>{t("admin.totalReports")}</CardDescription>
-                      <CardTitle className="text-2xl">{reportStats.total}</CardTitle>
+                    <CardHeader className="p-3 sm:pb-2 sm:p-6">
+                      <CardDescription className="text-[11px] sm:text-sm">{t("admin.totalReports")}</CardDescription>
+                      <CardTitle className="text-lg sm:text-2xl">{reportStats.total}</CardTitle>
                     </CardHeader>
                   </Card>
                   <Card className="border-amber-500/20">
-                    <CardHeader className="pb-2">
-                      <CardDescription className="flex items-center gap-1">
-                        <Clock className="w-4 h-4 text-amber-500" />
+                    <CardHeader className="p-3 sm:pb-2 sm:p-6">
+                      <CardDescription className="flex items-center gap-1 text-[11px] sm:text-sm">
+                        <Clock className="w-3 h-3 sm:w-4 sm:h-4 text-amber-500" />
                         {t("admin.pending")}
                       </CardDescription>
-                      <CardTitle className="text-2xl text-amber-600">{reportStats.pending}</CardTitle>
+                      <CardTitle className="text-lg sm:text-2xl text-amber-600">{reportStats.pending}</CardTitle>
                     </CardHeader>
                   </Card>
                   <Card className="border-blue-500/20">
-                    <CardHeader className="pb-2">
-                      <CardDescription className="flex items-center gap-1">
-                        <Eye className="w-4 h-4 text-blue-500" />
+                    <CardHeader className="p-3 sm:pb-2 sm:p-6">
+                      <CardDescription className="flex items-center gap-1 text-[11px] sm:text-sm">
+                        <Eye className="w-3 h-3 sm:w-4 sm:h-4 text-blue-500" />
                         {t("admin.reviewed")}
                       </CardDescription>
-                      <CardTitle className="text-2xl text-blue-600">{reportStats.reviewed}</CardTitle>
+                      <CardTitle className="text-lg sm:text-2xl text-blue-600">{reportStats.reviewed}</CardTitle>
                     </CardHeader>
                   </Card>
                   <Card className="border-primary/20">
-                    <CardHeader className="pb-2">
-                      <CardDescription className="flex items-center gap-1">
-                        <CheckCircle className="w-4 h-4 text-primary" />
+                    <CardHeader className="p-3 sm:pb-2 sm:p-6">
+                      <CardDescription className="flex items-center gap-1 text-[11px] sm:text-sm">
+                        <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />
                         {t("admin.resolved")}
                       </CardDescription>
-                      <CardTitle className="text-2xl text-primary">{reportStats.resolved}</CardTitle>
+                      <CardTitle className="text-lg sm:text-2xl text-primary">{reportStats.resolved}</CardTitle>
                     </CardHeader>
                   </Card>
                 </div>
@@ -743,61 +728,42 @@ const AdminReports = () => {
 
                 {/* Reports Table */}
                 <Card>
-                  <CardHeader>
-                    <CardTitle className="text-sm">{t("admin.reportsList")}</CardTitle>
-                    <CardDescription>{filteredReports.length} {t("admin.reportsFound")}</CardDescription>
+                  <CardHeader className="p-3 sm:p-6">
+                    <CardTitle className="text-xs sm:text-sm">{t("admin.reportsList")}</CardTitle>
+                    <CardDescription className="text-[11px] sm:text-sm">{filteredReports.length} {t("admin.reportsFound")}</CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-3 sm:p-6 pt-0 sm:pt-0">
                     {filteredReports.length === 0 ? (
-                      <div className="text-center py-12 text-muted-foreground">
-                        <AlertTriangle className="w-10 h-10 mx-auto mb-3 opacity-40" />
-                        <p className="text-sm">{t("admin.noReports")}</p>
+                      <div className="text-center py-8 text-muted-foreground">
+                        <AlertTriangle className="w-8 h-8 mx-auto mb-2 opacity-40" />
+                        <p className="text-xs sm:text-sm">{t("admin.noReports")}</p>
                       </div>
                     ) : (
-                      <div className="overflow-x-auto">
-                        <Table>
-                          <TableHeader>
-                            <TableRow>
-                              <TableHead>{t("admin.date")}</TableHead>
-                              <TableHead>{t("admin.vehicle")}</TableHead>
-                              <TableHead>Signalé par</TableHead>
-                              <TableHead>{t("admin.reason")}</TableHead>
-                              <TableHead>{t("admin.status")}</TableHead>
-                              <TableHead className="text-right">{t("admin.actions")}</TableHead>
-                            </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                            {filteredReports.map((report) => (
-                              <TableRow key={report.id}>
-                                <TableCell className="whitespace-nowrap text-sm">
-                                  {format(new Date(report.created_at), "dd MMM yyyy", { locale: dateLocale })}
-                                </TableCell>
-                                <TableCell>
-                                  <div className="font-medium text-sm">{report.car_brand} {report.car_model}</div>
-                                  <Button variant="link" size="sm" className="h-auto p-0 text-xs text-muted-foreground" onClick={() => window.open(`/car/${report.car_listing_id}`, "_blank")}>
-                                    {t("admin.viewListing")} <ExternalLink className="w-3 h-3 ml-1" />
-                                  </Button>
-                                </TableCell>
-                                <TableCell>
-                                  <div className="text-sm">{report.reporter_name || "Utilisateur"}</div>
-                                  <span className="text-xs text-muted-foreground font-mono truncate max-w-[120px] block">{report.reporter_email?.slice(0, 8)}…</span>
-                                </TableCell>
-                                <TableCell><Badge variant="secondary" className="text-xs">{getReasonLabel(report.reason)}</Badge></TableCell>
-                                <TableCell>{getStatusBadge(report.status)}</TableCell>
-                                <TableCell className="text-right">
-                                  <div className="flex justify-end gap-1.5">
-                                    <Button variant="outline" size="icon" className="h-8 w-8 rounded-lg" onClick={() => setSelectedReport(report)}>
-                                      <Eye className="w-3.5 h-3.5" />
-                                    </Button>
-                                    <Button variant="outline" size="icon" className="h-8 w-8 rounded-lg text-destructive hover:text-destructive" onClick={() => { setReportToDelete(report); setDeleteDialogOpen(true); }}>
-                                      <Trash2 className="w-3.5 h-3.5" />
-                                    </Button>
-                                  </div>
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
+                      <div className="space-y-2.5">
+                        {filteredReports.map((report) => (
+                          <div key={report.id} className="p-3 rounded-xl bg-secondary/30 border border-border/30 space-y-2">
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="min-w-0">
+                                <p className="font-semibold text-foreground text-sm truncate">{report.car_brand} {report.car_model}</p>
+                                <p className="text-[10px] text-muted-foreground">
+                                  {format(new Date(report.created_at), "dd MMM yyyy", { locale: dateLocale })} · {report.reporter_name || "Utilisateur"}
+                                </p>
+                              </div>
+                              {getStatusBadge(report.status)}
+                            </div>
+                            <div className="flex items-center justify-between gap-2">
+                              <Badge variant="secondary" className="text-[10px]">{getReasonLabel(report.reason)}</Badge>
+                              <div className="flex gap-1.5">
+                                <Button variant="outline" size="icon" className="h-7 w-7 rounded-lg" onClick={() => setSelectedReport(report)}>
+                                  <Eye className="w-3 h-3" />
+                                </Button>
+                                <Button variant="outline" size="icon" className="h-7 w-7 rounded-lg text-destructive hover:text-destructive" onClick={() => { setReportToDelete(report); setDeleteDialogOpen(true); }}>
+                                  <Trash2 className="w-3 h-3" />
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     )}
                   </CardContent>
@@ -865,59 +831,42 @@ const AdminReports = () => {
                   </CardContent>
                 </Card>
 
-                {/* Actions Table */}
+                {/* Actions list */}
                 <Card>
-                  <CardHeader>
-                    <CardTitle className="text-sm">Historique des actions</CardTitle>
-                    <CardDescription>{filteredActions.length} action{filteredActions.length !== 1 ? "s" : ""}</CardDescription>
+                  <CardHeader className="p-3 sm:p-6">
+                    <CardTitle className="text-xs sm:text-sm">Historique des actions</CardTitle>
+                    <CardDescription className="text-[11px] sm:text-sm">{filteredActions.length} action{filteredActions.length !== 1 ? "s" : ""}</CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-3 sm:p-6 pt-0 sm:pt-0">
                     {actionsLoading ? (
-                      <div className="space-y-3">
+                      <div className="space-y-2">
                         {[1, 2, 3].map(i => (
-                          <div key={i} className="h-12 rounded-xl bg-muted animate-pulse" />
+                          <div key={i} className="h-10 rounded-lg bg-muted animate-pulse" />
                         ))}
                       </div>
                     ) : filteredActions.length === 0 ? (
-                      <div className="text-center py-12 text-muted-foreground">
-                        <History className="w-10 h-10 mx-auto mb-3 opacity-40" />
-                        <p className="text-sm">Aucune action trouvée</p>
+                      <div className="text-center py-8 text-muted-foreground">
+                        <History className="w-8 h-8 mx-auto mb-2 opacity-40" />
+                        <p className="text-xs">Aucune action trouvée</p>
                       </div>
                     ) : (
-                      <div className="overflow-x-auto">
-                        <Table>
-                          <TableHeader>
-                            <TableRow>
-                              <TableHead>Date</TableHead>
-                              <TableHead>Admin</TableHead>
-                              <TableHead>Action</TableHead>
-                              <TableHead>Cible</TableHead>
-                              <TableHead>Raison</TableHead>
-                            </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                            {filteredActions.map((action) => (
-                              <TableRow key={action.id}>
-                                <TableCell className="whitespace-nowrap text-sm">
-                                  {format(new Date(action.created_at), "dd MMM yyyy HH:mm", { locale: dateLocale })}
-                                </TableCell>
-                                <TableCell className="text-sm">{action.admin_name}</TableCell>
-                                <TableCell>
-                                  <Badge variant="secondary" className="text-xs">
-                                    {actionTypeLabels[action.action_type] || action.action_type}
-                                  </Badge>
-                                </TableCell>
-                                <TableCell className="text-sm">
-                                  <span className="text-muted-foreground text-xs">{action.target_type}:</span>{" "}
-                                  <span className="font-mono text-xs">{action.target_id.slice(0, 8)}…</span>
-                                </TableCell>
-                                <TableCell className="text-sm text-muted-foreground max-w-[200px] truncate">
-                                  {action.reason || "—"}
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
+                      <div className="space-y-2">
+                        {filteredActions.map((action) => (
+                          <div key={action.id} className="p-2.5 rounded-lg bg-secondary/30 border border-border/20">
+                            <div className="flex items-center justify-between gap-2 mb-1">
+                              <Badge variant="secondary" className="text-[10px]">
+                                {actionTypeLabels[action.action_type] || action.action_type}
+                              </Badge>
+                              <span className="text-[10px] text-muted-foreground">
+                                {format(new Date(action.created_at), "dd MMM HH:mm", { locale: dateLocale })}
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-muted-foreground truncate">
+                              {action.admin_name} · <span className="font-mono">{action.target_id.slice(0, 8)}…</span>
+                              {action.reason && ` · ${action.reason}`}
+                            </p>
+                          </div>
+                        ))}
                       </div>
                     )}
                   </CardContent>
@@ -927,109 +876,91 @@ const AdminReports = () => {
               {/* ═══════════════════════════════════════════════ */}
               {/* TAB: Users Management                          */}
               {/* ═══════════════════════════════════════════════ */}
-              <TabsContent value="users" className="mt-0 space-y-6">
+              <TabsContent value="users" className="mt-0 space-y-4">
                 {/* Search */}
-                <div className="relative max-w-sm">
+                <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
-                    placeholder="Rechercher un utilisateur…"
+                    placeholder="Rechercher…"
                     value={userSearch}
                     onChange={(e) => setUserSearch(e.target.value)}
-                    className="pl-10 rounded-lg"
+                    className="pl-10 rounded-lg text-sm"
                   />
                 </div>
 
-                {/* Users Table */}
+                {/* Users cards */}
                 <Card>
-                  <CardHeader>
-                    <CardTitle className="text-sm">Tous les utilisateurs</CardTitle>
-                    <CardDescription>{filteredUsers.length} utilisateur{filteredUsers.length !== 1 ? "s" : ""}</CardDescription>
+                  <CardHeader className="p-3 sm:p-6">
+                    <CardTitle className="text-xs sm:text-sm">Utilisateurs</CardTitle>
+                    <CardDescription className="text-[11px] sm:text-sm">{filteredUsers.length} utilisateur{filteredUsers.length !== 1 ? "s" : ""}</CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-3 sm:p-6 pt-0 sm:pt-0">
                     {usersLoading ? (
-                      <div className="space-y-3">
+                      <div className="space-y-2">
                         {[1, 2, 3].map(i => (
-                          <div key={i} className="h-12 rounded-xl bg-muted animate-pulse" />
+                          <div key={i} className="h-14 rounded-lg bg-muted animate-pulse" />
                         ))}
                       </div>
                     ) : filteredUsers.length === 0 ? (
-                      <div className="text-center py-12 text-muted-foreground">
-                        <Users className="w-10 h-10 mx-auto mb-3 opacity-40" />
-                        <p className="text-sm">Aucun utilisateur trouvé</p>
+                      <div className="text-center py-8 text-muted-foreground">
+                        <Users className="w-8 h-8 mx-auto mb-2 opacity-40" />
+                        <p className="text-xs">Aucun utilisateur trouvé</p>
                       </div>
                     ) : (
-                      <div className="overflow-x-auto">
-                        <Table>
-                          <TableHeader>
-                            <TableRow>
-                              <TableHead>Utilisateur</TableHead>
-                              <TableHead>ID</TableHead>
-                              <TableHead>Inscrit le</TableHead>
-                              <TableHead>Statut</TableHead>
-                              <TableHead className="text-right">Actions</TableHead>
-                            </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                            {filteredUsers.map((u) => (
-                              <TableRow key={u.user_id}>
-                                <TableCell>
-                                  <div className="flex items-center gap-2">
-                                    {u.avatar_url ? (
-                                      <img src={u.avatar_url} alt="" className="w-8 h-8 rounded-full object-cover" />
-                                    ) : (
-                                      <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground">
-                                        {(u.display_name || "?")[0].toUpperCase()}
-                                      </div>
-                                    )}
-                                    <span className="text-sm font-medium">{u.display_name || "Sans nom"}</span>
-                                  </div>
-                                </TableCell>
-                                <TableCell className="font-mono text-xs text-muted-foreground">{u.user_id.slice(0, 8)}…</TableCell>
-                                <TableCell className="text-sm whitespace-nowrap">
-                                  {format(new Date(u.created_at), "dd MMM yyyy", { locale: dateLocale })}
-                                </TableCell>
-                                <TableCell>
-                                  {u.suspended_at ? (
-                                    <Badge variant="destructive" className="text-xs gap-1">
-                                      <Ban className="w-3 h-3" />Suspendu
-                                    </Badge>
-                                  ) : (
-                                    <Badge variant="outline" className="text-xs gap-1 bg-primary/10 text-primary border-primary/30">
-                                      <UserCheck className="w-3 h-3" />Actif
-                                    </Badge>
-                                  )}
-                                </TableCell>
-                                <TableCell className="text-right">
-                                  <div className="flex justify-end gap-1.5">
-                                    {u.suspended_at ? (
-                                      <Button
-                                        size="sm"
-                                        variant="outline"
-                                        className="rounded-lg gap-1.5 text-primary"
-                                        onClick={() => handleUnsuspendUser(u.user_id)}
-                                        disabled={actionLoading}
-                                      >
-                                        <UserCheck className="w-3.5 h-3.5" />
-                                        <span className="hidden sm:inline">Réactiver</span>
-                                      </Button>
-                                    ) : (
-                                      <Button
-                                        size="sm"
-                                        variant="outline"
-                                        className="rounded-lg gap-1.5 text-destructive hover:text-destructive"
-                                        onClick={() => { setUserToSuspend(u); setSuspendDialogOpen(true); }}
-                                        disabled={actionLoading}
-                                      >
-                                        <Ban className="w-3.5 h-3.5" />
-                                        <span className="hidden sm:inline">Suspendre</span>
-                                      </Button>
-                                    )}
-                                  </div>
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
+                      <div className="space-y-2">
+                        {filteredUsers.map((u) => (
+                          <div key={u.user_id} className="flex items-center gap-2.5 p-2.5 rounded-xl bg-secondary/30 border border-border/20">
+                            {/* Avatar */}
+                            {u.avatar_url ? (
+                              <img src={u.avatar_url} alt="" className="w-9 h-9 rounded-full object-cover flex-shrink-0" />
+                            ) : (
+                              <div className="w-9 h-9 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground flex-shrink-0">
+                                {(u.display_name || "?")[0].toUpperCase()}
+                              </div>
+                            )}
+                            {/* Info */}
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-foreground truncate">{u.display_name || "Sans nom"}</p>
+                              <p className="text-[10px] text-muted-foreground">
+                                {format(new Date(u.created_at), "dd MMM yyyy", { locale: dateLocale })}
+                              </p>
+                            </div>
+                            {/* Status + action */}
+                            <div className="flex items-center gap-1.5 flex-shrink-0">
+                              {u.suspended_at ? (
+                                <>
+                                  <Badge variant="destructive" className="text-[10px] gap-0.5 px-1.5">
+                                    <Ban className="w-2.5 h-2.5" />Susp.
+                                  </Badge>
+                                  <Button
+                                    size="icon"
+                                    variant="outline"
+                                    className="h-7 w-7 rounded-lg text-primary"
+                                    onClick={() => handleUnsuspendUser(u.user_id)}
+                                    disabled={actionLoading}
+                                  >
+                                    <UserCheck className="w-3 h-3" />
+                                  </Button>
+                                </>
+                              ) : (
+                                <>
+                                  <Badge variant="outline" className="text-[10px] gap-0.5 px-1.5 bg-primary/10 text-primary border-primary/30">
+                                    <UserCheck className="w-2.5 h-2.5" />Actif
+                                  </Badge>
+                                  <Button
+                                    size="icon"
+                                    variant="outline"
+                                    className="h-7 w-7 rounded-lg text-destructive hover:text-destructive"
+                                    onClick={() => { setUserToSuspend(u); setSuspendDialogOpen(true); }}
+                                    disabled={actionLoading}
+                                  >
+                                    <Ban className="w-3 h-3" />
+                                  </Button>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     )}
                   </CardContent>

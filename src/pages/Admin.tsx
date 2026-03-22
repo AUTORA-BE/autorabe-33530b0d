@@ -49,18 +49,18 @@ export default function Admin() {
       <SEOHead title="Administration | AutoRa" description="Tableau de bord d'administration AutoRa" />
       <Header />
       <main className="min-h-screen pt-28 pb-20">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
-              <Shield className="h-6 w-6 text-primary" />
+        <div className="container mx-auto px-3 sm:px-4 max-w-4xl">
+          <div className="flex items-center gap-2.5 mb-5 sm:mb-8">
+            <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-primary/10 flex items-center justify-center">
+              <Shield className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-foreground">Administration</h1>
-              <p className="text-muted-foreground text-sm">Tableau de bord de gestion AutoRa</p>
+              <h1 className="text-xl sm:text-3xl font-bold text-foreground">Administration</h1>
+              <p className="text-muted-foreground text-xs sm:text-sm">Tableau de bord AutoRa</p>
             </div>
           </div>
 
-          <div className="grid sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             {cards.map((card) => (
               <Card
                 key={card.title}
