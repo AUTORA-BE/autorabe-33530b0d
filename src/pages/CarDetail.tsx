@@ -661,14 +661,14 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
 
               {/* Mobile swipeable tabs for specs */}
               {isMobile ? (
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {/* Tab bar */}
-                  <div className="flex gap-1.5 overflow-x-auto scrollbar-hide px-1 py-1 bg-secondary/50 rounded-2xl">
+                  <div className="flex gap-1 overflow-x-auto scrollbar-hide px-0.5 py-0.5 bg-secondary/50 rounded-xl">
                     {["Specs", "Confiance", "Coûts", "Description"].map((tab, i) => (
                       <button
                         key={tab}
                         onClick={() => setMobileTab(i)}
-                        className={`flex-shrink-0 px-4 py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${
+                        className={`flex-shrink-0 px-3 py-2 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
                           mobileTab === i
                             ? "bg-primary text-primary-foreground shadow-sm"
                             : "text-muted-foreground"
