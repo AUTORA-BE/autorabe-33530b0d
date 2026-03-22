@@ -490,53 +490,55 @@ const AdminReports = () => {
       <SEOHead title={`${t("admin.title")} - AutoRa`} description="Admin dashboard" />
       <Header />
 
-      <main className="min-h-screen pt-24 pb-12">
-        <div className="container mx-auto px-4 sm:px-6">
+      <main className="min-h-screen pt-16 sm:pt-24 pb-20 sm:pb-12">
+        <div className="container mx-auto px-3 sm:px-6">
           <div className="max-w-6xl mx-auto">
 
             {/* Header */}
-            <div className="mb-6">
-              <BackButton to="/" className="mb-3" />
-              <div className="flex items-center gap-3 mb-1">
-                <Shield className="h-6 w-6 text-primary" />
-                <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{t("admin.title")}</h1>
+            <div className="mb-4 sm:mb-6">
+              <BackButton to="/" className="mb-2" />
+              <div className="flex items-center gap-2 mb-0.5">
+                <Shield className="h-5 w-5 text-primary" />
+                <h1 className="text-xl sm:text-3xl font-bold tracking-tight">{t("admin.title")}</h1>
               </div>
-              <p className="text-sm text-muted-foreground">{t("admin.subtitle")}</p>
+              <p className="text-xs sm:text-sm text-muted-foreground">{t("admin.subtitle")}</p>
             </div>
 
-            {/* Tabs: Pending Listings / Reports */}
+            {/* Tabs */}
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="bg-secondary/50 p-1 rounded-xl mb-6">
-                <TabsTrigger value="pending" className="rounded-lg text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2">
-                  <Clock className="w-4 h-4" />
-                  Annonces en attente
-                  {pendingListings.length > 0 && (
-                    <span className="ml-1 px-1.5 py-0.5 text-xs font-bold rounded-full bg-amber-500 text-white">
-                      {pendingListings.length}
+              <div className="overflow-x-auto scrollbar-hide -mx-3 px-3 sm:mx-0 sm:px-0 mb-4 sm:mb-6">
+                <TabsList className="bg-secondary/50 p-0.5 sm:p-1 rounded-xl inline-flex min-w-max">
+                  <TabsTrigger value="pending" className="rounded-lg text-xs sm:text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm gap-1 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2">
+                    <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                    <span className="hidden sm:inline">Annonces</span>
+                    {pendingListings.length > 0 && (
+                      <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-amber-500 text-white">
+                        {pendingListings.length}
+                      </span>
+                    )}
+                  </TabsTrigger>
+                  <TabsTrigger value="reports" className="rounded-lg text-xs sm:text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm gap-1 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2">
+                    <AlertTriangle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                    <span className="hidden sm:inline">{t("admin.reportsList")}</span>
+                    {reportStats.pending > 0 && (
+                      <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-destructive text-destructive-foreground">
+                        {reportStats.pending}
+                      </span>
+                    )}
+                  </TabsTrigger>
+                  <TabsTrigger value="users" className="rounded-lg text-xs sm:text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm gap-1 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2">
+                    <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                    <span className="hidden sm:inline">Utilisateurs</span>
+                    <span className="px-1.5 py-0.5 text-[10px] font-medium rounded-full bg-muted text-muted-foreground">
+                      {users.length}
                     </span>
-                  )}
-                </TabsTrigger>
-                <TabsTrigger value="reports" className="rounded-lg text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2">
-                  <AlertTriangle className="w-4 h-4" />
-                  {t("admin.reportsList")}
-                  {reportStats.pending > 0 && (
-                    <span className="ml-1 px-1.5 py-0.5 text-xs font-bold rounded-full bg-destructive text-destructive-foreground">
-                      {reportStats.pending}
-                    </span>
-                  )}
-                </TabsTrigger>
-                <TabsTrigger value="users" className="rounded-lg text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2">
-                  <Users className="w-4 h-4" />
-                  Utilisateurs
-                  <span className="ml-1 px-1.5 py-0.5 text-xs font-medium rounded-full bg-muted text-muted-foreground">
-                    {users.length}
-                  </span>
-                </TabsTrigger>
-                <TabsTrigger value="history" className="rounded-lg text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm gap-2">
-                  <History className="w-4 h-4" />
-                  Historique
-                </TabsTrigger>
-              </TabsList>
+                  </TabsTrigger>
+                  <TabsTrigger value="history" className="rounded-lg text-xs sm:text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm gap-1 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2">
+                    <History className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                    <span className="hidden sm:inline">Historique</span>
+                  </TabsTrigger>
+                </TabsList>
+              </div>
 
               {/* ═══════════════════════════════════════════════ */}
               {/* TAB: Pending Listings                          */}
