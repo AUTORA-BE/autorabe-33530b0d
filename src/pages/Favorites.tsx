@@ -201,7 +201,7 @@ const Favorites = () => {
               ))}
             </div>
           ) : sortedCars.length > 0 ? (
-            <div className="space-y-4 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-5 md:space-y-0">
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2.5 md:gap-5">
               <AnimatePresence mode="popLayout">
                 {sortedCars.map((car, i) => (
                   <motion.div
