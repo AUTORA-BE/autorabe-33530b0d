@@ -622,40 +622,40 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
               </motion.div>
 
               {/* Mobile FAB buttons */}
-              <div className="lg:hidden fixed bottom-20 right-4 z-50 flex flex-col gap-3 safe-bottom">
+              <div className="lg:hidden fixed bottom-16 right-3 z-50 flex flex-col gap-2 safe-bottom">
                 <motion.button
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.3, type: "spring", stiffness: 400 }}
                   onClick={handleShare}
-                  className="w-12 h-12 rounded-full bg-card border border-border/50 shadow-xl flex items-center justify-center text-muted-foreground active:scale-90 transition-transform"
+                  className="w-10 h-10 rounded-full bg-card border border-border/50 shadow-xl flex items-center justify-center text-muted-foreground active:scale-90 transition-transform"
                   aria-label="Partager"
                 >
-                  <Share2 className="w-5 h-5" />
+                  <Share2 className="w-4 h-4" />
                 </motion.button>
                 <motion.button
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.2, type: "spring", stiffness: 400 }}
                   onClick={() => toggleFavorite(car.id)}
-                  className={`w-12 h-12 rounded-full shadow-xl flex items-center justify-center active:scale-90 transition-transform ${
+                  className={`w-10 h-10 rounded-full shadow-xl flex items-center justify-center active:scale-90 transition-transform ${
                     isFavorite(car.id)
                       ? "bg-red-500 text-white shadow-red-500/30"
                       : "bg-card border border-border/50 text-muted-foreground"
                   }`}
                   aria-label="Favori"
                 >
-                  <Heart className={`w-5 h-5 ${isFavorite(car.id) ? "fill-current" : ""}`} />
+                  <Heart className={`w-4 h-4 ${isFavorite(car.id) ? "fill-current" : ""}`} />
                 </motion.button>
                 <motion.button
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.1, type: "spring", stiffness: 400 }}
                   onClick={() => handleContact("Message")}
-                  className="w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-xl shadow-primary/30 flex items-center justify-center active:scale-90 transition-transform"
+                  className="w-12 h-12 rounded-full bg-primary text-primary-foreground shadow-xl shadow-primary/30 flex items-center justify-center active:scale-90 transition-transform"
                   aria-label="Contacter"
                 >
-                  <MessageCircle className="w-6 h-6" />
+                  <MessageCircle className="w-5 h-5" />
                 </motion.button>
               </div>
 
