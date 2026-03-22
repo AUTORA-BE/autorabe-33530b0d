@@ -650,38 +650,38 @@ const AdminReports = () => {
               {/* ═══════════════════════════════════════════════ */}
               <TabsContent value="reports" className="mt-0 space-y-6">
                 {/* Stats Cards */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
                   <Card>
-                    <CardHeader className="pb-2">
-                      <CardDescription>{t("admin.totalReports")}</CardDescription>
-                      <CardTitle className="text-2xl">{reportStats.total}</CardTitle>
+                    <CardHeader className="p-3 sm:pb-2 sm:p-6">
+                      <CardDescription className="text-[11px] sm:text-sm">{t("admin.totalReports")}</CardDescription>
+                      <CardTitle className="text-lg sm:text-2xl">{reportStats.total}</CardTitle>
                     </CardHeader>
                   </Card>
                   <Card className="border-amber-500/20">
-                    <CardHeader className="pb-2">
-                      <CardDescription className="flex items-center gap-1">
-                        <Clock className="w-4 h-4 text-amber-500" />
+                    <CardHeader className="p-3 sm:pb-2 sm:p-6">
+                      <CardDescription className="flex items-center gap-1 text-[11px] sm:text-sm">
+                        <Clock className="w-3 h-3 sm:w-4 sm:h-4 text-amber-500" />
                         {t("admin.pending")}
                       </CardDescription>
-                      <CardTitle className="text-2xl text-amber-600">{reportStats.pending}</CardTitle>
+                      <CardTitle className="text-lg sm:text-2xl text-amber-600">{reportStats.pending}</CardTitle>
                     </CardHeader>
                   </Card>
                   <Card className="border-blue-500/20">
-                    <CardHeader className="pb-2">
-                      <CardDescription className="flex items-center gap-1">
-                        <Eye className="w-4 h-4 text-blue-500" />
+                    <CardHeader className="p-3 sm:pb-2 sm:p-6">
+                      <CardDescription className="flex items-center gap-1 text-[11px] sm:text-sm">
+                        <Eye className="w-3 h-3 sm:w-4 sm:h-4 text-blue-500" />
                         {t("admin.reviewed")}
                       </CardDescription>
-                      <CardTitle className="text-2xl text-blue-600">{reportStats.reviewed}</CardTitle>
+                      <CardTitle className="text-lg sm:text-2xl text-blue-600">{reportStats.reviewed}</CardTitle>
                     </CardHeader>
                   </Card>
                   <Card className="border-primary/20">
-                    <CardHeader className="pb-2">
-                      <CardDescription className="flex items-center gap-1">
-                        <CheckCircle className="w-4 h-4 text-primary" />
+                    <CardHeader className="p-3 sm:pb-2 sm:p-6">
+                      <CardDescription className="flex items-center gap-1 text-[11px] sm:text-sm">
+                        <CheckCircle className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />
                         {t("admin.resolved")}
                       </CardDescription>
-                      <CardTitle className="text-2xl text-primary">{reportStats.resolved}</CardTitle>
+                      <CardTitle className="text-lg sm:text-2xl text-primary">{reportStats.resolved}</CardTitle>
                     </CardHeader>
                   </Card>
                 </div>
