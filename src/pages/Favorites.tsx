@@ -120,18 +120,18 @@ const Favorites = () => {
     <PullToRefresh onRefresh={() => { refetch(); }}>
       <div className="page-gradient min-h-screen">
         <Header />
-        <main className="container mx-auto px-4 sm:px-6 pt-24 sm:pt-32 pb-24">
+        <main className="container mx-auto px-3 sm:px-6 pt-16 sm:pt-32 pb-24">
           {/* Immersive header */}
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
-            className="mb-5"
+            className="mb-3 sm:mb-5"
           >
-            <BackButton to="/" className="mb-3" />
+            <BackButton to="/" className="mb-2" />
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground">
+              <div className="flex items-center gap-2">
+                <h1 className="font-display text-lg sm:text-3xl font-bold text-foreground">
                   {t("favorites.title")}
                 </h1>
                 {favoriteCars.length > 0 && (
