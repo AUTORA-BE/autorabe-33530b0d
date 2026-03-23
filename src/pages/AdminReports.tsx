@@ -4,7 +4,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import type { Json } from "@/integrations/supabase/types";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,14 +15,15 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   AlertTriangle, CheckCircle, Clock, Eye, ExternalLink, Filter, Loader2,
   Shield, Trash2, XCircle, Car, Check, X, ImageIcon, History, CalendarIcon,
-  Users, Ban, UserCheck, Search,
+  Users, Ban, UserCheck, Search, Phone, Mail, MapPin, CheckCheck, ShieldAlert,
+  FileText,
 } from "lucide-react";
 import { format } from "date-fns";
 import { fr, nl, de, enUS } from "date-fns/locale";
@@ -73,9 +74,23 @@ interface PendingListing {
   description: string | null;
 }
 
+interface AdminUser {
+  user_id: string;
+  display_name: string | null;
+  avatar_url: string | null;
+  phone: string | null;
+  garage_name: string | null;
+  postal_code: string | null;
+  suspended_at: string | null;
+  suspended_reason: string | null;
+  created_at: string;
+  listing_count: number;
+}
+
 const AdminReports = () => {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [reports, setReports] = useState<Report[]>([]);
@@ -89,7 +104,7 @@ const AdminReports = () => {
   // Pending listings state
   const [pendingListings, setPendingListings] = useState<PendingListing[]>([]);
   const [pendingLoading, setPendingLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState("pending");
+  const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "pending");
 
   // Admin actions history state
   const [adminActions, setAdminActions] = useState<AdminAction[]>([]);
@@ -99,25 +114,23 @@ const AdminReports = () => {
   const [actionDateTo, setActionDateTo] = useState<string>("");
 
   // Users management state
-  interface AdminUser {
-    user_id: string;
-    display_name: string | null;
-    avatar_url: string | null;
-    suspended_at: string | null;
-    suspended_reason: string | null;
-    created_at: string;
-    listing_count?: number;
-  }
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [usersLoading, setUsersLoading] = useState(false);
   const [userSearch, setUserSearch] = useState("");
   const [suspendDialogOpen, setSuspendDialogOpen] = useState(false);
   const [userToSuspend, setUserToSuspend] = useState<AdminUser | null>(null);
   const [suspendReason, setSuspendReason] = useState("");
+  const [userDetailDialog, setUserDetailDialog] = useState<AdminUser | null>(null);
 
   const dateLocale = language === "fr" ? fr : language === "nl" ? nl : language === "de" ? de : enUS;
 
   useEffect(() => { checkAdminAndFetch(); }, []);
+
+  // Sync tab with URL
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    setSearchParams({ tab });
+  };
 
   const checkAdminAndFetch = async () => {
     try {
@@ -153,7 +166,7 @@ const AdminReports = () => {
         .order("created_at", { ascending: true });
 
       if (error) throw error;
-      setPendingListings((data || []).map(d => ({ ...d, status: d.status ?? 'pending' })));
+      setPendingListings((data || []).map((d: any) => ({ ...d, status: d.status ?? 'pending' })));
     } catch (error) {
       console.error("Error fetching pending listings:", error);
     } finally {
@@ -167,11 +180,12 @@ const AdminReports = () => {
       const { data, error } = await supabase
         .from("admin_actions")
         .select("*")
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .limit(100);
       if (error) throw error;
 
       const actionsWithNames = await Promise.all(
-        (data || []).map(async (action) => {
+        (data || []).map(async (action: any) => {
           const { data: profile } = await supabase
             .from("profiles")
             .select("display_name")
@@ -197,10 +211,24 @@ const AdminReports = () => {
     try {
       const { data, error } = await supabase
         .from("profiles")
-        .select("user_id, display_name, avatar_url, suspended_at, suspended_reason, created_at")
+        .select("user_id, display_name, avatar_url, phone, garage_name, postal_code, suspended_at, suspended_reason, created_at")
         .order("created_at", { ascending: false });
       if (error) throw error;
-      setUsers((data || []).map(p => ({ ...p, listing_count: undefined })));
+
+      // Fetch listing counts
+      const { data: listings } = await supabase
+        .from("car_listings")
+        .select("user_id");
+
+      const countMap: Record<string, number> = {};
+      (listings || []).forEach((l: any) => {
+        countMap[l.user_id] = (countMap[l.user_id] || 0) + 1;
+      });
+
+      setUsers((data || []).map((p: any) => ({
+        ...p,
+        listing_count: countMap[p.user_id] || 0,
+      })));
     } catch (error) {
       console.error("Error fetching users:", error);
     } finally {
@@ -250,10 +278,40 @@ const AdminReports = () => {
     }
   };
 
+  const handleBulkApprove = async () => {
+    if (pendingListings.length === 0) return;
+    if (!window.confirm(`Approuver les ${pendingListings.length} annonces en attente ?`)) return;
+    setActionLoading(true);
+    try {
+      const ids = pendingListings.map(l => l.id);
+      const { error } = await supabase
+        .from("car_listings")
+        .update({ status: "approved" })
+        .in("id", ids);
+      if (error) throw error;
+
+      for (const listing of pendingListings) {
+        sendStatusNotification(listing, "approved");
+      }
+      await logAdminAction("bulk_approve", "car_listing", ids.join(","), undefined, { count: ids.length });
+      setPendingListings([]);
+      toast.success(`${ids.length} annonces approuvées ✓`);
+    } catch (error) {
+      console.error("Error bulk approving:", error);
+      toast.error("Erreur lors de l'approbation groupée");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   const filteredUsers = users.filter(u => {
     if (!userSearch) return true;
     const q = userSearch.toLowerCase();
-    return (u.display_name?.toLowerCase().includes(q)) || u.user_id.toLowerCase().includes(q);
+    return (u.display_name?.toLowerCase().includes(q)) ||
+      u.user_id.toLowerCase().includes(q) ||
+      (u.phone?.toLowerCase().includes(q)) ||
+      (u.garage_name?.toLowerCase().includes(q)) ||
+      (u.postal_code?.includes(q));
   });
 
   const logAdminAction = async (actionType: string, targetType: string, targetId: string, reason?: string, metadata?: Record<string, unknown>) => {
@@ -350,14 +408,14 @@ const AdminReports = () => {
     }
   };
 
-  // ── Reports logic (unchanged) ────────────────────────────────
+  // ── Reports logic ────────────────────────────────
   const fetchReports = async () => {
     try {
       const { data, error } = await supabase.from("reports").select("*").order("created_at", { ascending: false });
       if (error) throw error;
 
       const reportsWithDetails = await Promise.all(
-        (data || []).map(async (report) => {
+        (data || []).map(async (report: any) => {
           const [{ data: carData }, { data: profileData }] = await Promise.all([
             supabase.from("car_listings_public").select("brand, model").eq("id", report.car_listing_id).maybeSingle(),
             supabase.from("profiles").select("display_name").eq("user_id", report.user_id).maybeSingle(),
@@ -453,6 +511,7 @@ const AdminReports = () => {
     approve_listing: "Approbation annonce",
     reject_listing: "Refus annonce",
     delete_listing: "Suppression annonce",
+    bulk_approve: "Approbation groupée",
     suspend_user: "Suspension utilisateur",
     unsuspend_user: "Réactivation utilisateur",
     resolve_report: "Résolution signalement",
@@ -490,13 +549,13 @@ const AdminReports = () => {
       <SEOHead title={`${t("admin.title")} - AutoRa`} description="Admin dashboard" />
       <Header />
 
-      <main className="min-h-screen pt-16 sm:pt-24 pb-20 sm:pb-12">
+      <main className="min-h-screen pt-16 sm:pt-24 pb-24 sm:pb-12">
         <div className="container mx-auto px-3 sm:px-6">
           <div className="max-w-6xl mx-auto">
 
             {/* Header */}
             <div className="mb-4 sm:mb-6">
-              <BackButton to="/" className="mb-2" />
+              <BackButton to="/admin" className="mb-2" />
               <div className="flex items-center gap-2 mb-0.5">
                 <Shield className="h-5 w-5 text-primary" />
                 <h1 className="text-xl sm:text-3xl font-bold tracking-tight">{t("admin.title")}</h1>
@@ -505,7 +564,7 @@ const AdminReports = () => {
             </div>
 
             {/* Tabs */}
-            <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <Tabs value={activeTab} onValueChange={handleTabChange}>
               <div className="overflow-x-auto scrollbar-hide -mx-3 px-3 sm:mx-0 sm:px-0 mb-4 sm:mb-6">
                 <TabsList className="bg-secondary/50 p-0.5 sm:p-1 rounded-xl inline-flex min-w-max">
                   <TabsTrigger value="pending" className="rounded-lg text-xs sm:text-sm data-[state=active]:bg-background data-[state=active]:shadow-sm gap-1 sm:gap-2 px-2.5 sm:px-3 py-1.5 sm:py-2">
@@ -544,6 +603,22 @@ const AdminReports = () => {
               {/* TAB: Pending Listings                          */}
               {/* ═══════════════════════════════════════════════ */}
               <TabsContent value="pending" className="mt-0">
+                {/* Bulk approve button */}
+                {pendingListings.length > 1 && (
+                  <div className="flex justify-end mb-3">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="gap-1.5 rounded-lg text-xs border-primary/30 text-primary hover:bg-primary/10"
+                      onClick={handleBulkApprove}
+                      disabled={actionLoading}
+                    >
+                      <CheckCheck className="w-3.5 h-3.5" />
+                      Tout approuver ({pendingListings.length})
+                    </Button>
+                  </div>
+                )}
+
                 {pendingLoading ? (
                   <div className="space-y-3">
                     {[1, 2, 3].map(i => (
@@ -584,6 +659,9 @@ const AdminReports = () => {
                                 <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/30 text-[10px]">
                                   En attente
                                 </Badge>
+                                {listing.seller_type === "professionnel" && (
+                                  <Badge variant="secondary" className="text-[10px]">Pro</Badge>
+                                )}
                               </div>
 
                               <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-muted-foreground mb-1.5">
@@ -593,13 +671,16 @@ const AdminReports = () => {
                                 <span className="capitalize">{listing.fuel_type}</span>
                               </div>
 
-                              <div className="text-[10px] text-muted-foreground truncate">
-                                👤 {listing.contact_name} · 📅 {format(new Date(listing.created_at), "d MMM", { locale: dateLocale })}
+                              <div className="text-[10px] text-muted-foreground space-y-0.5">
+                                <p className="truncate">👤 {listing.contact_name} · 📧 {listing.contact_email}</p>
+                                <p>📅 {format(new Date(listing.created_at), "d MMM yyyy HH:mm", { locale: dateLocale })}
+                                  {listing.location && ` · 📍 ${listing.location}`}
+                                </p>
                               </div>
                             </div>
                           </div>
 
-                          {/* Actions row — always visible below on mobile */}
+                          {/* Actions row */}
                           <div className="flex items-center gap-2 mt-2.5 pt-2 border-t border-border/30">
                             <Button
                               size="sm"
@@ -648,7 +729,7 @@ const AdminReports = () => {
               {/* ═══════════════════════════════════════════════ */}
               {/* TAB: Reports                                   */}
               {/* ═══════════════════════════════════════════════ */}
-              <TabsContent value="reports" className="mt-0 space-y-6">
+              <TabsContent value="reports" className="mt-0 space-y-4">
                 {/* Stats Cards */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
                   <Card>
@@ -726,7 +807,7 @@ const AdminReports = () => {
                   </CardContent>
                 </Card>
 
-                {/* Reports Table */}
+                {/* Reports List */}
                 <Card>
                   <CardHeader className="p-3 sm:p-6">
                     <CardTitle className="text-xs sm:text-sm">{t("admin.reportsList")}</CardTitle>
@@ -773,7 +854,7 @@ const AdminReports = () => {
               {/* ═══════════════════════════════════════════════ */}
               {/* TAB: Admin Actions History                      */}
               {/* ═══════════════════════════════════════════════ */}
-              <TabsContent value="history" className="mt-0 space-y-6">
+              <TabsContent value="history" className="mt-0 space-y-4">
                 {/* Filters */}
                 <Card>
                   <CardHeader className="pb-3">
@@ -800,30 +881,13 @@ const AdminReports = () => {
                         </Select>
                       </div>
                       <div className="w-full sm:w-auto">
-                        <Input
-                          type="date"
-                          value={actionDateFrom}
-                          onChange={(e) => setActionDateFrom(e.target.value)}
-                          placeholder="Du"
-                          className="rounded-lg w-full sm:w-40"
-                        />
+                        <Input type="date" value={actionDateFrom} onChange={(e) => setActionDateFrom(e.target.value)} placeholder="Du" className="rounded-lg w-full sm:w-40" />
                       </div>
                       <div className="w-full sm:w-auto">
-                        <Input
-                          type="date"
-                          value={actionDateTo}
-                          onChange={(e) => setActionDateTo(e.target.value)}
-                          placeholder="Au"
-                          className="rounded-lg w-full sm:w-40"
-                        />
+                        <Input type="date" value={actionDateTo} onChange={(e) => setActionDateTo(e.target.value)} placeholder="Au" className="rounded-lg w-full sm:w-40" />
                       </div>
                       {(actionTypeFilter !== "all" || actionDateFrom || actionDateTo) && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="rounded-lg"
-                          onClick={() => { setActionTypeFilter("all"); setActionDateFrom(""); setActionDateTo(""); }}
-                        >
+                        <Button variant="ghost" size="sm" className="rounded-lg" onClick={() => { setActionTypeFilter("all"); setActionDateFrom(""); setActionDateTo(""); }}>
                           <X className="w-3 h-3 mr-1" /> Réinitialiser
                         </Button>
                       )}
@@ -881,11 +945,24 @@ const AdminReports = () => {
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
-                    placeholder="Rechercher…"
+                    placeholder="Rechercher par nom, téléphone, garage, code postal…"
                     value={userSearch}
                     onChange={(e) => setUserSearch(e.target.value)}
                     className="pl-10 rounded-lg text-sm"
                   />
+                </div>
+
+                {/* Summary */}
+                <div className="flex gap-2 flex-wrap">
+                  <Badge variant="outline" className="text-[10px] bg-primary/10 text-primary border-primary/30">
+                    {users.filter(u => !u.suspended_at).length} actifs
+                  </Badge>
+                  <Badge variant="outline" className="text-[10px] bg-destructive/10 text-destructive border-destructive/30">
+                    {users.filter(u => u.suspended_at).length} suspendus
+                  </Badge>
+                  <Badge variant="outline" className="text-[10px] bg-muted text-muted-foreground">
+                    {users.filter(u => u.garage_name).length} garages
+                  </Badge>
                 </div>
 
                 {/* Users cards */}
@@ -909,55 +986,78 @@ const AdminReports = () => {
                     ) : (
                       <div className="space-y-2">
                         {filteredUsers.map((u) => (
-                          <div key={u.user_id} className="flex items-center gap-2.5 p-2.5 rounded-xl bg-secondary/30 border border-border/20">
-                            {/* Avatar */}
-                            {u.avatar_url ? (
-                              <img src={u.avatar_url} alt="" className="w-9 h-9 rounded-full object-cover flex-shrink-0" />
-                            ) : (
-                              <div className="w-9 h-9 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground flex-shrink-0">
-                                {(u.display_name || "?")[0].toUpperCase()}
-                              </div>
-                            )}
-                            {/* Info */}
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-foreground truncate">{u.display_name || "Sans nom"}</p>
-                              <p className="text-[10px] text-muted-foreground">
-                                {format(new Date(u.created_at), "dd MMM yyyy", { locale: dateLocale })}
-                              </p>
-                            </div>
-                            {/* Status + action */}
-                            <div className="flex items-center gap-1.5 flex-shrink-0">
-                              {u.suspended_at ? (
-                                <>
-                                  <Badge variant="destructive" className="text-[10px] gap-0.5 px-1.5">
-                                    <Ban className="w-2.5 h-2.5" />Susp.
-                                  </Badge>
-                                  <Button
-                                    size="icon"
-                                    variant="outline"
-                                    className="h-7 w-7 rounded-lg text-primary"
-                                    onClick={() => handleUnsuspendUser(u.user_id)}
-                                    disabled={actionLoading}
-                                  >
-                                    <UserCheck className="w-3 h-3" />
-                                  </Button>
-                                </>
+                          <div
+                            key={u.user_id}
+                            className="p-2.5 rounded-xl bg-secondary/30 border border-border/20 cursor-pointer hover:border-primary/20 transition-colors"
+                            onClick={() => setUserDetailDialog(u)}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              {/* Avatar */}
+                              {u.avatar_url ? (
+                                <img src={u.avatar_url} alt="" className="w-9 h-9 rounded-full object-cover flex-shrink-0" />
                               ) : (
-                                <>
-                                  <Badge variant="outline" className="text-[10px] gap-0.5 px-1.5 bg-primary/10 text-primary border-primary/30">
-                                    <UserCheck className="w-2.5 h-2.5" />Actif
-                                  </Badge>
-                                  <Button
-                                    size="icon"
-                                    variant="outline"
-                                    className="h-7 w-7 rounded-lg text-destructive hover:text-destructive"
-                                    onClick={() => { setUserToSuspend(u); setSuspendDialogOpen(true); }}
-                                    disabled={actionLoading}
-                                  >
-                                    <Ban className="w-3 h-3" />
-                                  </Button>
-                                </>
+                                <div className="w-9 h-9 rounded-full bg-muted flex items-center justify-center text-xs font-bold text-muted-foreground flex-shrink-0">
+                                  {(u.display_name || "?")[0].toUpperCase()}
+                                </div>
                               )}
+                              {/* Info */}
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-1.5">
+                                  <p className="text-sm font-medium text-foreground truncate">{u.display_name || "Sans nom"}</p>
+                                  {u.garage_name && (
+                                    <Badge variant="secondary" className="text-[9px] px-1">Garage</Badge>
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+                                  {u.phone && (
+                                    <span className="flex items-center gap-0.5">
+                                      <Phone className="w-2.5 h-2.5" />{u.phone}
+                                    </span>
+                                  )}
+                                  {u.postal_code && (
+                                    <span className="flex items-center gap-0.5">
+                                      <MapPin className="w-2.5 h-2.5" />{u.postal_code}
+                                    </span>
+                                  )}
+                                  <span className="flex items-center gap-0.5">
+                                    <Car className="w-2.5 h-2.5" />{u.listing_count} annonce{u.listing_count !== 1 ? "s" : ""}
+                                  </span>
+                                </div>
+                              </div>
+                              {/* Status + action */}
+                              <div className="flex items-center gap-1.5 flex-shrink-0">
+                                {u.suspended_at ? (
+                                  <>
+                                    <Badge variant="destructive" className="text-[10px] gap-0.5 px-1.5">
+                                      <Ban className="w-2.5 h-2.5" />Susp.
+                                    </Badge>
+                                    <Button
+                                      size="icon"
+                                      variant="outline"
+                                      className="h-7 w-7 rounded-lg text-primary"
+                                      onClick={(e) => { e.stopPropagation(); handleUnsuspendUser(u.user_id); }}
+                                      disabled={actionLoading}
+                                    >
+                                      <UserCheck className="w-3 h-3" />
+                                    </Button>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Badge variant="outline" className="text-[10px] gap-0.5 px-1.5 bg-primary/10 text-primary border-primary/30">
+                                      <UserCheck className="w-2.5 h-2.5" />Actif
+                                    </Badge>
+                                    <Button
+                                      size="icon"
+                                      variant="outline"
+                                      className="h-7 w-7 rounded-lg text-destructive hover:text-destructive"
+                                      onClick={(e) => { e.stopPropagation(); setUserToSuspend(u); setSuspendDialogOpen(true); }}
+                                      disabled={actionLoading}
+                                    >
+                                      <Ban className="w-3 h-3" />
+                                    </Button>
+                                  </>
+                                )}
+                              </div>
                             </div>
                           </div>
                         ))}
@@ -1058,22 +1158,132 @@ const AdminReports = () => {
             </DialogDescription>
           </DialogHeader>
           <div className="py-2">
-            <label className="text-sm font-medium text-muted-foreground">Raison (optionnelle)</label>
-            <Input
+            <label className="text-sm font-medium text-muted-foreground">Raison (obligatoire)</label>
+            <Textarea
               value={suspendReason}
               onChange={(e) => setSuspendReason(e.target.value)}
               placeholder="Ex: Spam, faux annonces, comportement abusif…"
               className="mt-1.5 rounded-lg"
+              rows={3}
             />
           </div>
           <DialogFooter>
             <Button variant="outline" className="rounded-lg" onClick={() => { setSuspendDialogOpen(false); setUserToSuspend(null); setSuspendReason(""); }}>
               Annuler
             </Button>
-            <Button variant="destructive" className="rounded-lg" onClick={handleSuspendUser} disabled={actionLoading}>
+            <Button variant="destructive" className="rounded-lg" onClick={handleSuspendUser} disabled={actionLoading || !suspendReason.trim()}>
               {actionLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Ban className="w-4 h-4 mr-2" />}
               Suspendre
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* User Detail Dialog */}
+      <Dialog open={!!userDetailDialog} onOpenChange={() => setUserDetailDialog(null)}>
+        <DialogContent className="rounded-2xl max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <ShieldAlert className="w-5 h-5 text-primary" />
+              Détails utilisateur
+            </DialogTitle>
+          </DialogHeader>
+
+          {userDetailDialog && (
+            <div className="space-y-3">
+              {/* Avatar + Name */}
+              <div className="flex items-center gap-3">
+                {userDetailDialog.avatar_url ? (
+                  <img src={userDetailDialog.avatar_url} alt="" className="w-14 h-14 rounded-full object-cover" />
+                ) : (
+                  <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center text-lg font-bold text-muted-foreground">
+                    {(userDetailDialog.display_name || "?")[0].toUpperCase()}
+                  </div>
+                )}
+                <div>
+                  <p className="font-semibold text-foreground">{userDetailDialog.display_name || "Sans nom"}</p>
+                  <p className="text-xs text-muted-foreground font-mono">{userDetailDialog.user_id.slice(0, 12)}…</p>
+                </div>
+              </div>
+
+              {/* Details grid */}
+              <div className="grid grid-cols-2 gap-2">
+                <div className="p-2.5 rounded-lg bg-secondary/50">
+                  <p className="text-[10px] text-muted-foreground flex items-center gap-1"><Phone className="w-3 h-3" />Téléphone</p>
+                  <p className="text-sm font-medium text-foreground">{userDetailDialog.phone || "—"}</p>
+                </div>
+                <div className="p-2.5 rounded-lg bg-secondary/50">
+                  <p className="text-[10px] text-muted-foreground flex items-center gap-1"><MapPin className="w-3 h-3" />Code postal</p>
+                  <p className="text-sm font-medium text-foreground">{userDetailDialog.postal_code || "—"}</p>
+                </div>
+                <div className="p-2.5 rounded-lg bg-secondary/50">
+                  <p className="text-[10px] text-muted-foreground flex items-center gap-1"><Car className="w-3 h-3" />Annonces</p>
+                  <p className="text-sm font-medium text-foreground">{userDetailDialog.listing_count}</p>
+                </div>
+                <div className="p-2.5 rounded-lg bg-secondary/50">
+                  <p className="text-[10px] text-muted-foreground flex items-center gap-1"><CalendarIcon className="w-3 h-3" />Inscrit le</p>
+                  <p className="text-sm font-medium text-foreground">{format(new Date(userDetailDialog.created_at), "dd MMM yyyy", { locale: dateLocale })}</p>
+                </div>
+              </div>
+
+              {userDetailDialog.garage_name && (
+                <div className="p-2.5 rounded-lg bg-primary/5 border border-primary/10">
+                  <p className="text-[10px] text-muted-foreground">Garage / Société</p>
+                  <p className="text-sm font-medium text-foreground">{userDetailDialog.garage_name}</p>
+                </div>
+              )}
+
+              {userDetailDialog.suspended_at && (
+                <div className="p-2.5 rounded-lg bg-destructive/10 border border-destructive/20">
+                  <p className="text-[10px] text-destructive font-medium">⚠️ Suspendu</p>
+                  <p className="text-xs text-muted-foreground">{userDetailDialog.suspended_reason || "Pas de raison"}</p>
+                  <p className="text-[10px] text-muted-foreground mt-1">
+                    Depuis le {format(new Date(userDetailDialog.suspended_at), "dd MMM yyyy HH:mm", { locale: dateLocale })}
+                  </p>
+                </div>
+              )}
+
+              {/* Status badge */}
+              <div className="flex items-center justify-between pt-2 border-t border-border/30">
+                <span className="text-xs text-muted-foreground">Statut</span>
+                {userDetailDialog.suspended_at ? (
+                  <Badge variant="destructive" className="text-xs"><Ban className="w-3 h-3 mr-1" />Suspendu</Badge>
+                ) : (
+                  <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/30"><UserCheck className="w-3 h-3 mr-1" />Actif</Badge>
+                )}
+              </div>
+            </div>
+          )}
+
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button variant="outline" className="rounded-lg" onClick={() => setUserDetailDialog(null)}>
+              Fermer
+            </Button>
+            {userDetailDialog && !userDetailDialog.suspended_at && (
+              <Button
+                variant="destructive"
+                className="rounded-lg"
+                onClick={() => {
+                  setUserToSuspend(userDetailDialog);
+                  setUserDetailDialog(null);
+                  setSuspendDialogOpen(true);
+                }}
+              >
+                <Ban className="w-4 h-4 mr-2" />Suspendre
+              </Button>
+            )}
+            {userDetailDialog && userDetailDialog.suspended_at && (
+              <Button
+                variant="default"
+                className="rounded-lg"
+                onClick={() => {
+                  handleUnsuspendUser(userDetailDialog.user_id);
+                  setUserDetailDialog(null);
+                }}
+              >
+                <UserCheck className="w-4 h-4 mr-2" />Réactiver
+              </Button>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>
