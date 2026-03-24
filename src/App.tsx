@@ -115,6 +115,7 @@ function AppRoutes() {
         <Route path="/pricing" element={<PageTransition><Pricing /></PageTransition>} />
         <Route path="/payment-success" element={<PageTransition><PaymentSuccess /></PageTransition>} />
         <Route path="/payment-canceled" element={<PageTransition><PaymentCanceled /></PageTransition>} />
+        <Route path="/unsubscribe" element={<PageTransition><Unsubscribe /></PageTransition>} />
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
       </Routes>
     </AnimatePresence>
