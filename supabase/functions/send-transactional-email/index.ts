@@ -4,7 +4,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2'
 import { TEMPLATES } from '../_shared/transactional-email-templates/registry.ts'
 
 // Configuration baked in at scaffold time
-const SITE_NAME = "auto-belgium"
+const SITE_NAME = "AutoRa"
 const SENDER_DOMAIN = "notify.autora.be"
 const FROM_DOMAIN = "autora.be"
 
