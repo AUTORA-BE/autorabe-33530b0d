@@ -62,11 +62,22 @@ const Contact = () => {
     setIsSubmitting(true);
     setLastSubmitTime(now);
     try {
+      // Send notification to AutoRa team (existing edge function)
       const { error } = await supabase.functions.invoke("send-contact-email", {
         body: data,
       });
-
       if (error) throw error;
+
+      // Send confirmation email to the user via transactional email system
+      const contactId = crypto.randomUUID();
+      await supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "contact-confirmation",
+          recipientEmail: data.email,
+          idempotencyKey: `contact-confirm-${contactId}`,
+          templateData: { name: data.name, subject: data.subject },
+        },
+      });
 
       setIsSuccess(true);
       form.reset();
