@@ -47,6 +47,7 @@ const CreerAlerte = lazy(() => import("./pages/CreerAlerte"));
 const Pricing = lazy(() => import("./pages/Pricing"));
 const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
 const PaymentCanceled = lazy(() => import("./pages/PaymentCanceled"));
+const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 
 /** Minimal loading fallback shown while lazy chunks load */
 function PageLoader() {
