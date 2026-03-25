@@ -89,13 +89,13 @@ export const PRIMES: Record<Region, Partial<Record<FuelType, number>>> = {
   wallonie: {},
 };
 
-export const FUEL_OPTIONS: { value: FuelType; label: string; icon: string; price: string; badge: string; badgeColor: string }[] = [
-  { value: 'diesel', label: 'Diesel', icon: '🛢️', price: '1.72€/L', badge: 'Plus cher', badgeColor: 'bg-orange-500/20 text-orange-400' },
-  { value: 'essence95', label: 'Essence 95', icon: '⛽', price: '1.75€/L', badge: 'Économique', badgeColor: 'bg-primary/20 text-primary' },
-  { value: 'essence98', label: 'Essence 98', icon: '⛽', price: '1.82€/L', badge: 'Premium', badgeColor: 'bg-blue-500/20 text-blue-400' },
-  { value: 'electric', label: 'Électrique', icon: '🔋', price: '0.36€/kWh', badge: 'Futur', badgeColor: 'bg-primary/20 text-primary' },
-  { value: 'hybridePHEV', label: 'Hybride PHEV', icon: '🔌', price: 'Mix', badge: 'Polyvalent', badgeColor: 'bg-violet-500/20 text-violet-400' },
-  { value: 'hybride', label: 'Hybride HEV', icon: '⚡', price: 'Mix', badge: 'Simple', badgeColor: 'bg-purple-500/20 text-purple-400' },
+export const FUEL_OPTIONS: { value: FuelType; label: string; icon: string; lucideIcon: string; price: string; badge: string; badgeColor: string }[] = [
+  { value: 'diesel', label: 'Diesel B7', icon: '🛢️', lucideIcon: 'Droplets', price: '1.72€/L', badge: 'Plus cher', badgeColor: 'bg-orange-500/20 text-orange-400' },
+  { value: 'essence95', label: 'Essence E10', icon: '⛽', lucideIcon: 'Flame', price: '1.75€/L', badge: 'Économique', badgeColor: 'bg-primary/20 text-primary' },
+  { value: 'essence98', label: 'Essence E98', icon: '⛽', lucideIcon: 'Flame', price: '1.82€/L', badge: 'Premium', badgeColor: 'bg-blue-500/20 text-blue-400' },
+  { value: 'electric', label: 'Électrique', icon: '🔋', lucideIcon: 'Zap', price: '0.36€/kWh', badge: 'Futur', badgeColor: 'bg-primary/20 text-primary' },
+  { value: 'hybridePHEV', label: 'Hybride PHEV', icon: '🔌', lucideIcon: 'PlugZap', price: 'Mix', badge: 'Polyvalent', badgeColor: 'bg-violet-500/20 text-violet-400' },
+  { value: 'hybride', label: 'Hybride HEV', icon: '⚡', lucideIcon: 'BatteryCharging', price: 'Mix', badge: 'Simple', badgeColor: 'bg-purple-500/20 text-purple-400' },
 ];
 
 export const DEFAULT_CONSUMPTION: Record<FuelType, number> = {

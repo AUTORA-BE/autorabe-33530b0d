@@ -16,6 +16,7 @@ import { VoiceSearchSummary, type VoiceFilter } from "@/components/VoiceSearchSu
 import { AnimatePresence } from "framer-motion";
 import { PullToRefresh } from "@/components/PullToRefresh";
 
+const FuelPriceStrip = lazy(() => import("@/components/FuelPriceStrip"));
 const SellCarBanner = lazy(() => import("@/components/SellCarBanner"));
 const EarlyAccessBanner = lazy(() => import("@/components/EarlyAccessBanner"));
 const TrustBar = lazy(() => import("@/components/TrustBar"));
@@ -164,6 +165,13 @@ const Index = () => {
         {/* 3. Trust Bar — social proof badges */}
         <Suspense fallback={<TrustBarSkeleton />}>
           <TrustBar />
+        </Suspense>
+
+        {/* Fuel Price Strip — contextual fuel prices */}
+        <Suspense fallback={<div className="h-12" />}>
+          <ScrollReveal delay={0.05}>
+            <FuelPriceStrip />
+          </ScrollReveal>
         </Suspense>
 
         {/* Swipe Discovery — mobile only */}
