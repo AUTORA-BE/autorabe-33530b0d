@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { Car, TrendingDown, ShieldCheck, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import FuelPriceStrip from '@/components/FuelPriceStrip';
 
 interface TcoHeroProps {
   onStart: () => void;
@@ -43,6 +44,15 @@ const TcoHero = ({ onStart }: TcoHeroProps) => (
       >
         Données officielles Belgique 2026 • Précision&nbsp;90%
       </motion.p>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.6 }}
+        className="mt-4"
+      >
+        <FuelPriceStrip compact />
+      </motion.div>
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
