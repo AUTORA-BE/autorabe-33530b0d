@@ -120,6 +120,18 @@ export function useAuth() {
         }
       }
 
+      // Send welcome email (fire-and-forget)
+      if (signUpData.user) {
+        supabase.functions.invoke('send-transactional-email', {
+          body: {
+            templateName: 'welcome',
+            recipientEmail: credentials.email,
+            idempotencyKey: `welcome-${signUpData.user.id}`,
+            templateData: { name: credentials.fullName },
+          },
+        }).catch(() => {});
+      }
+
       return { success: true };
     } catch (error) {
       return {
