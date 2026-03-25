@@ -1,11 +1,11 @@
 /** Step 1: Fuel type selection with Lucide icons */
 
 import { motion } from 'framer-motion';
-import { Check, Droplets, Flame, Zap, PlugZap, BatteryCharging } from 'lucide-react';
+import { Check, Droplets, Flame, Zap, PlugZap, BatteryCharging, type LucideIcon } from 'lucide-react';
 import { FUEL_OPTIONS } from '../../constants/belgianData';
 import type { FuelType } from '../../types/tco.types';
 
-const ICON_MAP: Record<string, React.ComponentType<{ className?: string; strokeWidth?: number }>> = {
+const ICON_MAP: Record<string, LucideIcon> = {
   Droplets, Flame, Zap, PlugZap, BatteryCharging,
 };
 
