@@ -1,5 +1,5 @@
 /**
- * BrandCarousel component - auto-playing carousel of brand logos
+ * BrandCarousel — minimal, polished brand logos with thin arrows
  * @module features/search/components
  */
 
@@ -9,14 +9,12 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
 
-// Import official brand logos
 import volkswagenLogo from "@/assets/brands/volkswagen.png";
 import bmwLogo from "@/assets/brands/bmw.png";
 import audiLogo from "@/assets/brands/audi.png";
@@ -64,173 +62,100 @@ const BrandCarousel = memo(function BrandCarousel({
 }: BrandCarouselProps) {
   const { t } = useLanguage();
   const [api, setApi] = useState<CarouselApi>();
-  const [current, setCurrent] = useState(0);
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    if (!api) return;
-    // Defer layout-triggering reads to avoid forced reflow during render
-    requestAnimationFrame(() => {
-      setCount(api.scrollSnapList().length);
-      setCurrent(api.selectedScrollSnap());
-    });
-    const onSelect = () => {
-      requestAnimationFrame(() => {
-        setCurrent(api.selectedScrollSnap());
-      });
-    };
-    api.on("select", onSelect);
-    return () => {
-      api.off("select", onSelect);
-    };
-  }, [api]);
-
-  const scrollTo = useCallback(
-    (index: number) => {
-      api?.scrollTo(index);
-    },
-    [api]
-  );
 
   const handleBrandClick = (brandName: string) => {
     if (onBrandFilter) {
       onBrandFilter(selectedBrand === brandName ? "" : brandName);
     }
-    const resultsSection = document.getElementById("results-section");
-    if (resultsSection) {
-      resultsSection.scrollIntoView({ behavior: "smooth" });
-    }
+    document.getElementById("results-section")?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
     <section 
-      className="py-4 sm:py-10 bg-gradient-to-b from-muted/30 to-background"
+      className="py-10 sm:py-16"
       aria-labelledby="brands-title"
       style={{ contain: "layout style" }}
     >
-      <div className="container mx-auto px-4 sm:px-6">
+      <div className="container mx-auto px-6 sm:px-8">
         <h2 
           id="brands-title"
-          className="text-base sm:text-2xl md:text-3xl font-display font-bold text-center mb-3 sm:mb-8 text-foreground"
+          className="font-serif text-lg sm:text-2xl font-light text-center mb-6 sm:mb-10 text-foreground"
         >
           {t("brands.title")}
         </h2>
-        <Carousel
-          setApi={setApi}
-          opts={{
-            align: "start",
-            loop: true,
-          }}
-          plugins={[
-            Autoplay({
-              delay: 2500,
-              stopOnInteraction: true,
-              stopOnMouseEnter: true,
-            }),
-          ]}
-          className="w-full max-w-6xl mx-auto px-10 md:px-14"
-        >
-          <CarouselContent className="-ml-3 sm:-ml-4 overflow-visible">
-            {BRANDS.map((brand) => (
-              <CarouselItem
-                key={brand.name}
-                className="pl-3 sm:pl-4 basis-1/3 sm:basis-1/4 md:basis-1/5 overflow-visible pt-3"
-              >
-                <button
-                  onClick={() => handleBrandClick(brand.name)}
-                  className="group cursor-pointer w-full active:scale-[0.92] transition-transform duration-150"
-                  aria-label={`Filtrer par ${brand.name}`}
-                  aria-pressed={selectedBrand === brand.name}
+        
+        <div className="relative">
+          <Carousel
+            setApi={setApi}
+            opts={{ align: "start", loop: true }}
+            plugins={[
+              Autoplay({ delay: 3000, stopOnInteraction: true, stopOnMouseEnter: true }),
+            ]}
+            className="w-full max-w-5xl mx-auto"
+          >
+            <CarouselContent className="-ml-2 sm:-ml-3">
+              {BRANDS.map((brand) => (
+                <CarouselItem
+                  key={brand.name}
+                  className="pl-2 sm:pl-3 basis-1/4 sm:basis-1/5 md:basis-1/6"
                 >
-                  <div
-                    className={cn(
-                      "relative flex flex-col items-center justify-center p-2.5 sm:p-5 md:p-6 rounded-xl sm:rounded-2xl transition-[border-color,box-shadow,transform] duration-300",
-                      selectedBrand === brand.name
-                        ? "bg-primary/10 border-2 border-primary shadow-md shadow-primary/15 -translate-y-1"
-                        : "bg-card border border-border/40 hover:border-primary/40 hover:shadow-md hover:-translate-y-1 hover:scale-[1.03]"
-                    )}
+                  <button
+                    onClick={() => handleBrandClick(brand.name)}
+                    className="group cursor-pointer w-full active:scale-[0.92] transition-transform duration-150"
+                    aria-label={`Filtrer par ${brand.name}`}
+                    aria-pressed={selectedBrand === brand.name}
                   >
-                    {/* Shine effect overlay */}
-                    <span className="pointer-events-none absolute inset-0 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 overflow-hidden rounded-xl sm:rounded-2xl">
-                      <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out bg-gradient-to-r from-transparent via-white/25 to-transparent" />
-                    </span>
-                    {/* Selection badge */}
-                    {selectedBrand === brand.name && (
-                      <div
-                        className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-4 h-4 sm:w-5 sm:h-5 bg-primary rounded-full flex items-center justify-center animate-scale-in"
-                      >
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
-                        <svg 
-                          className="relative w-2 h-2 sm:w-3 sm:h-3 text-primary-foreground" 
-                          fill="none" 
-                          viewBox="0 0 24 24" 
-                          stroke="currentColor"
-                          aria-hidden="true"
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                    )}
-                    
-                    {/* Brand logo container */}
                     <div
                       className={cn(
-                        "w-14 h-14 sm:w-20 sm:h-20 md:w-24 md:h-24 flex items-center justify-center mb-1.5 sm:mb-3 rounded-lg sm:rounded-xl p-1.5 sm:p-3 transition-all duration-300",
+                        "relative flex flex-col items-center justify-center p-3 sm:p-5 rounded-3xl transition-all duration-300",
                         selectedBrand === brand.name
-                          ? "bg-white dark:bg-white/10 scale-110"
-                          : "bg-white/80 dark:bg-white/5 group-hover:bg-white dark:group-hover:bg-white/10 group-hover:scale-[1.15]"
+                          ? "bg-primary/8 border border-primary/20"
+                          : "border border-transparent hover:border-border/30"
                       )}
                     >
-                      <img 
-                        src={brand.logo} 
-                        alt={`${brand.name} logo officiel`}
-                        className="w-full h-full object-contain drop-shadow-sm group-hover:drop-shadow-md transition-all duration-300"
-                        loading="lazy"
-                        draggable="false"
-                      />
+                      <div className={cn(
+                        "w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center mb-2 sm:mb-3 rounded-2xl p-2 sm:p-3 transition-all duration-300",
+                        "bg-white/80 dark:bg-white/5"
+                      )}>
+                        <img 
+                          src={brand.logo} 
+                          alt={`${brand.name} logo`}
+                          className="w-full h-full object-contain opacity-70 group-hover:opacity-100 transition-opacity duration-300"
+                          loading="lazy"
+                          draggable="false"
+                        />
+                      </div>
+                      
+                      <span className={cn(
+                        "text-[10px] sm:text-xs font-light transition-all duration-300 text-center leading-tight truncate w-full",
+                        selectedBrand === brand.name
+                          ? "text-primary"
+                          : "text-muted-foreground group-hover:text-foreground"
+                      )}>
+                        {brand.name}
+                      </span>
                     </div>
-                    
-                    {/* Brand name */}
-                    <span className={cn(
-                      "text-[10px] sm:text-xs md:text-sm font-medium transition-all duration-300 text-center leading-tight truncate w-full",
-                      selectedBrand === brand.name
-                        ? "text-primary font-semibold"
-                        : "text-muted-foreground group-hover:text-foreground group-hover:font-semibold"
-                    )}>
-                      {brand.name}
-                    </span>
-                  </div>
-                </button>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious 
-            className="-left-1 md:-left-4 bg-card/80 backdrop-blur-sm border-border/40 hover:bg-card hover:border-primary/40 h-7 w-7 sm:h-8 sm:w-8 shadow-sm" 
+                  </button>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
+
+          {/* Thin, minimal navigation arrows */}
+          <button
+            onClick={() => api?.scrollPrev()}
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 w-8 h-8 flex items-center justify-center text-muted-foreground/40 hover:text-foreground transition-colors"
             aria-label="Marques précédentes"
-          />
-          <CarouselNext 
-            className="-right-1 md:-right-4 bg-card/80 backdrop-blur-sm border-border/40 hover:bg-card hover:border-primary/40 h-7 w-7 sm:h-8 sm:w-8 shadow-sm" 
+          >
+            <ChevronLeft className="w-5 h-5" strokeWidth={1} />
+          </button>
+          <button
+            onClick={() => api?.scrollNext()}
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 w-8 h-8 flex items-center justify-center text-muted-foreground/40 hover:text-foreground transition-colors"
             aria-label="Marques suivantes"
-          />
-        </Carousel>
-        
-        {/* Dot indicators */}
-        <div className="flex justify-center items-center gap-[3px] mt-1 h-3" role="tablist">
-          {Array.from({ length: count }).map((_, index) => (
-            <button
-              key={index}
-              onClick={() => scrollTo(index)}
-              role="tab"
-              aria-selected={current === index}
-              className={cn(
-                "h-[3px] min-h-0 p-0 rounded-full transition-all duration-300",
-                current === index
-                  ? "bg-primary w-2.5"
-                  : "w-[3px] bg-muted-foreground/20 hover:bg-muted-foreground/35"
-              )}
-              aria-label={`Aller à la diapositive ${index + 1}`}
-            />
-          ))}
+          >
+            <ChevronRight className="w-5 h-5" strokeWidth={1} />
+          </button>
         </div>
       </div>
     </section>
