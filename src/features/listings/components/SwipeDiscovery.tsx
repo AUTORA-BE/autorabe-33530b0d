@@ -1,14 +1,15 @@
 /**
- * Tinder-style swipe discovery cards for mobile
- * Swipe right → add to favorites, swipe left → skip
+ * Premium Tinder-style swipe discovery for mobile.
+ * Full-bleed luxury cards with glassmorphic actions and haptic feedback.
  * @module features/listings/components
  */
 
 import { useState, useCallback, memo } from "react";
 import { motion, useMotionValue, useTransform, animate, PanInfo } from "framer-motion";
-import { Heart, X, MapPin, Calendar, Gauge, Fuel, Eye } from "lucide-react";
+import { Heart, X, Info, Eye } from "lucide-react";
 import CarImage from "@/components/cars/CarImage";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useHapticFeedback } from "@/hooks/useHapticFeedback";
 import type { Vehicle } from "../types/vehicle.types";
 
 interface SwipeDiscoveryProps {
@@ -18,13 +19,14 @@ interface SwipeDiscoveryProps {
   onVehicleClick: (id: string) => void;
 }
 
-const SWIPE_THRESHOLD = 80;
+const SWIPE_THRESHOLD = 100;
 
 const formatPrice = (price: number) =>
   new Intl.NumberFormat("fr-BE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(price);
 
 const formatKm = (km: number) => new Intl.NumberFormat("fr-BE").format(km);
 
+/* ─── Single swipe card ─── */
 const SwipeCard = memo(function SwipeCard({
   vehicle,
   onSwipeLeft,
@@ -39,119 +41,114 @@ const SwipeCard = memo(function SwipeCard({
   isTop: boolean;
 }) {
   const x = useMotionValue(0);
-  const rotate = useTransform(x, [-200, 200], [-15, 15]);
-  const likeOpacity = useTransform(x, [0, 80], [0, 1]);
-  const nopeOpacity = useTransform(x, [-80, 0], [1, 0]);
+  const rotate = useTransform(x, [-300, 300], [-12, 12]);
+  const likeOpacity = useTransform(x, [0, 100], [0, 1]);
+  const nopeOpacity = useTransform(x, [-100, 0], [1, 0]);
 
   const handleDragEnd = useCallback(
     (_: any, info: PanInfo) => {
       const vx = info.velocity.x;
       if (info.offset.x > SWIPE_THRESHOLD || vx > 500) {
-        animate(x, 500, { type: "spring", stiffness: 300, damping: 30 });
-        if (navigator.vibrate) navigator.vibrate(10);
-        setTimeout(onSwipeRight, 180);
+        animate(x, 600, { type: "spring", stiffness: 250, damping: 28 });
+        setTimeout(onSwipeRight, 200);
       } else if (info.offset.x < -SWIPE_THRESHOLD || vx < -500) {
-        animate(x, -500, { type: "spring", stiffness: 300, damping: 30 });
-        if (navigator.vibrate) navigator.vibrate(10);
-        setTimeout(onSwipeLeft, 180);
+        animate(x, -600, { type: "spring", stiffness: 250, damping: 28 });
+        setTimeout(onSwipeLeft, 200);
       } else {
-        animate(x, 0, { type: "spring", stiffness: 600, damping: 35 });
+        animate(x, 0, { type: "spring", stiffness: 500, damping: 35 });
       }
     },
     [x, onSwipeLeft, onSwipeRight]
   );
 
+  /* Background card (peek behind) */
   if (!isTop) {
     return (
-      <motion.div
-        className="absolute inset-0 rounded-3xl overflow-hidden bg-card border border-border/50"
-        style={{ scale: 0.95, y: 8 }}
-      >
-        <div className="relative w-full h-full">
-          <CarImage
-            src={vehicle.image || "/placeholder.svg"}
-            alt={`${vehicle.brand} ${vehicle.model}`}
-            aspectRatio="3/4"
-            className="w-full h-full object-cover"
-          />
-        </div>
-      </motion.div>
+      <div className="absolute inset-0 rounded-[2rem] overflow-hidden border border-border/10">
+        <CarImage
+          src={vehicle.image || "/placeholder.svg"}
+          alt={`${vehicle.brand} ${vehicle.model}`}
+          aspectRatio="auto"
+          className="w-full h-full"
+        />
+        <div className="absolute inset-0 bg-black/30" />
+      </div>
     );
   }
 
   return (
     <motion.div
-      className="absolute inset-0 rounded-3xl overflow-hidden bg-card border border-border/50 shadow-2xl cursor-grab active:cursor-grabbing"
+      className="absolute inset-0 rounded-[2rem] overflow-hidden border border-white/10 cursor-grab active:cursor-grabbing will-change-transform"
       style={{ x, rotate, zIndex: 10, touchAction: "pan-y" }}
       drag="x"
       dragConstraints={{ left: 0, right: 0 }}
-      dragElastic={0.7}
+      dragElastic={0.8}
       onDragEnd={handleDragEnd}
-      whileTap={{ scale: 0.97 }}
     >
-      {/* Image */}
-      <div className="relative w-full h-[65%]">
-        <CarImage
-          src={vehicle.image || "/placeholder.svg"}
-          alt={`${vehicle.brand} ${vehicle.model}`}
-          aspectRatio="3/4"
-          eager
-          className="w-full h-full object-cover"
-        />
+      {/* Full-bleed image */}
+      <CarImage
+        src={vehicle.image || "/placeholder.svg"}
+        alt={`${vehicle.brand} ${vehicle.model}`}
+        aspectRatio="auto"
+        eager
+        className="w-full h-full"
+      />
 
-        {/* Swipe indicators */}
-        <motion.div
-          className="absolute top-6 right-6 px-4 py-2 rounded-xl border-2 border-primary bg-primary/20 backdrop-blur-sm"
-          style={{ opacity: likeOpacity }}
-        >
-          <span className="text-primary font-black text-xl tracking-wider">LIKE</span>
-        </motion.div>
-        <motion.div
-          className="absolute top-6 left-6 px-4 py-2 rounded-xl border-2 border-destructive bg-destructive/20 backdrop-blur-sm"
-          style={{ opacity: nopeOpacity }}
-        >
-          <span className="text-destructive font-black text-xl tracking-wider">NOPE</span>
-        </motion.div>
+      {/* Swipe overlay indicators */}
+      <motion.div
+        className="absolute top-8 right-6 flex items-center gap-2 px-5 py-2.5 rounded-2xl border border-primary/40 bg-primary/15 backdrop-blur-xl"
+        style={{ opacity: likeOpacity }}
+      >
+        <Heart className="w-5 h-5 text-primary fill-primary" />
+        <span className="text-primary font-semibold text-sm tracking-widest uppercase">Favori</span>
+      </motion.div>
+      <motion.div
+        className="absolute top-8 left-6 flex items-center gap-2 px-5 py-2.5 rounded-2xl border border-destructive/40 bg-destructive/15 backdrop-blur-xl"
+        style={{ opacity: nopeOpacity }}
+      >
+        <X className="w-5 h-5 text-destructive" />
+        <span className="text-destructive font-semibold text-sm tracking-widest uppercase">Passer</span>
+      </motion.div>
 
-        {/* Price overlay */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4 pt-12">
-          <span className="text-3xl font-black text-white drop-shadow-lg">
+      {/* Bottom gradient overlay with vehicle info */}
+      <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent pt-24 pb-6 px-6">
+        <div className="space-y-3" onClick={onClick}>
+          {/* Brand & Model */}
+          <div>
+            <p className="text-white/60 text-xs font-medium tracking-[0.2em] uppercase">
+              {vehicle.brand}
+            </p>
+            <h3 className="text-white text-2xl font-light tracking-tight leading-tight mt-0.5">
+              {vehicle.model}
+            </h3>
+          </div>
+
+          {/* Price */}
+          <p className="text-white text-3xl font-medium tracking-tight">
             {formatPrice(vehicle.price)}
-          </span>
-        </div>
-      </div>
+          </p>
 
-      {/* Info */}
-      <div className="p-4 flex flex-col gap-2" onClick={onClick}>
-        <h3 className="font-display text-xl font-bold text-foreground">
-          {vehicle.brand} {vehicle.model}
-        </h3>
-
-        <div className="grid grid-cols-2 gap-2">
-          <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-            <Calendar className="w-4 h-4 text-primary/70 shrink-0" />
+          {/* Specs row */}
+          <div className="flex items-center gap-4 text-white/50 text-[13px] font-light">
             <span>{vehicle.year}</span>
-          </div>
-          <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-            <Gauge className="w-4 h-4 text-primary/70 shrink-0" />
-            <span className="truncate">{formatKm(vehicle.mileage)} km</span>
-          </div>
-          <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-            <Fuel className="w-4 h-4 text-primary/70 shrink-0" />
+            <span className="w-px h-3 bg-white/20" />
+            <span>{formatKm(vehicle.mileage)} km</span>
+            <span className="w-px h-3 bg-white/20" />
             <span className="capitalize">{vehicle.fuelType}</span>
+            {vehicle.location && (
+              <>
+                <span className="w-px h-3 bg-white/20" />
+                <span className="truncate max-w-[100px]">{vehicle.location}</span>
+              </>
+            )}
           </div>
-          {vehicle.location && (
-            <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-              <MapPin className="w-4 h-4 text-primary/70 shrink-0" />
-              <span className="truncate">{vehicle.location}</span>
-            </div>
-          )}
         </div>
       </div>
     </motion.div>
   );
 });
 
+/* ─── Main component ─── */
 const SwipeDiscovery = memo(function SwipeDiscovery({
   vehicles,
   isFavorite,
@@ -160,18 +157,21 @@ const SwipeDiscovery = memo(function SwipeDiscovery({
 }: SwipeDiscoveryProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const { language } = useLanguage();
+  const haptic = useHapticFeedback();
 
   const handleSwipeRight = useCallback(() => {
+    haptic.notificationSuccess();
     const vehicle = vehicles[currentIndex];
     if (vehicle && !isFavorite(vehicle.id)) {
       onToggleFavorite(vehicle.id);
     }
     setCurrentIndex((prev) => prev + 1);
-  }, [currentIndex, vehicles, isFavorite, onToggleFavorite]);
+  }, [currentIndex, vehicles, isFavorite, onToggleFavorite, haptic]);
 
   const handleSwipeLeft = useCallback(() => {
+    haptic.impactLight();
     setCurrentIndex((prev) => prev + 1);
-  }, []);
+  }, [haptic]);
 
   const handleClick = useCallback(() => {
     const vehicle = vehicles[currentIndex];
@@ -188,48 +188,52 @@ const SwipeDiscovery = memo(function SwipeDiscovery({
 
   const texts = {
     title: language === "nl" ? "Voor jou" : language === "en" ? "For You" : "Pour toi",
-    subtitle: language === "nl" ? "Swipe rechts om toe te voegen aan favorieten" : language === "en" ? "Swipe right to add to favorites" : "Swipe à droite pour ajouter aux favoris",
+    subtitle: language === "nl" ? "Swipe rechts om toe te voegen" : language === "en" ? "Swipe right to add" : "Swipe à droite pour ajouter",
     done: language === "nl" ? "Je hebt alles gezien!" : language === "en" ? "You've seen everything!" : "Tu as tout vu !",
     restart: language === "nl" ? "Opnieuw beginnen" : language === "en" ? "Start over" : "Recommencer",
-    remaining: language === "nl" ? "resterend" : language === "en" ? "remaining" : "restants",
   };
 
   return (
     <section className="py-6 md:hidden">
-      <div className="container mx-auto px-4">
-        {/* Header */}
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-            <Heart className="w-5 h-5 text-primary" />
-          </div>
+      <div className="container mx-auto px-3">
+        {/* Section header */}
+        <div className="flex items-center justify-between mb-4 px-1">
           <div>
-            <h2 className="font-display text-xl font-bold text-foreground">{texts.title}</h2>
-            <p className="text-muted-foreground text-xs">{texts.subtitle}</p>
+            <h2 className="font-display text-lg font-semibold text-foreground tracking-tight">{texts.title}</h2>
+            <p className="text-muted-foreground text-[11px] font-light tracking-wide mt-0.5">{texts.subtitle}</p>
           </div>
+          {!isFinished && (
+            <span className="text-[11px] text-muted-foreground/60 tabular-nums font-light">
+              {currentIndex + 1} / {vehicles.length}
+            </span>
+          )}
         </div>
 
-        {/* Card Stack */}
-        <div className="relative w-full aspect-[3/4] max-h-[480px]">
+        {/* Card stack — full-bleed height */}
+        <div
+          className="relative w-full rounded-[2rem] overflow-hidden"
+          style={{ height: "min(70vh, 520px)" }}
+        >
           {isFinished ? (
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
+              initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="absolute inset-0 rounded-3xl bg-card border border-border/50 flex flex-col items-center justify-center gap-4 p-6"
+              transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute inset-0 rounded-[2rem] bg-card/60 backdrop-blur-2xl border border-border/20 flex flex-col items-center justify-center gap-5 p-8"
             >
-              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                <Eye className="w-8 h-8 text-primary" />
+              <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center">
+                <Eye className="w-6 h-6 text-primary" />
               </div>
-              <p className="text-foreground font-semibold text-lg">{texts.done}</p>
+              <p className="text-foreground font-medium text-base tracking-tight">{texts.done}</p>
               <button
                 onClick={handleReset}
-                className="px-6 py-2.5 rounded-full bg-primary text-primary-foreground font-semibold text-sm shadow-lg shadow-primary/25 active:scale-95 transition-transform"
+                className="px-8 py-3 rounded-full bg-primary text-primary-foreground font-medium text-sm tracking-wide shadow-lg shadow-primary/20 active:scale-95 transition-transform"
               >
                 {texts.restart}
               </button>
             </motion.div>
           ) : (
             <>
-              {/* Next card (behind) */}
               {currentIndex + 1 < vehicles.length && (
                 <SwipeCard
                   key={vehicles[currentIndex + 1].id}
@@ -240,7 +244,6 @@ const SwipeDiscovery = memo(function SwipeDiscovery({
                   isTop={false}
                 />
               )}
-              {/* Current card (top) */}
               <SwipeCard
                 key={vehicles[currentIndex].id}
                 vehicle={vehicles[currentIndex]}
@@ -253,25 +256,29 @@ const SwipeDiscovery = memo(function SwipeDiscovery({
           )}
         </div>
 
-        {/* Action buttons */}
+        {/* Glassmorphic action buttons */}
         {!isFinished && (
-          <div className="flex items-center justify-center gap-6 mt-4">
+          <div className="flex items-center justify-center gap-5 mt-5">
             <button
               onClick={handleSwipeLeft}
-              className="w-14 h-14 rounded-full bg-card border border-border/50 flex items-center justify-center shadow-lg active:scale-90 transition-transform"
+              className="w-14 h-14 rounded-full bg-card/50 backdrop-blur-xl border border-border/20 flex items-center justify-center active:scale-90 transition-transform duration-150"
               aria-label="Passer"
             >
-              <X className="w-7 h-7 text-destructive" />
+              <X className="w-6 h-6 text-muted-foreground" />
             </button>
-            <span className="text-xs text-muted-foreground tabular-nums">
-              {currentIndex + 1}/{vehicles.length}
-            </span>
+            <button
+              onClick={handleClick}
+              className="w-11 h-11 rounded-full bg-card/50 backdrop-blur-xl border border-border/20 flex items-center justify-center active:scale-90 transition-transform duration-150"
+              aria-label="Détails"
+            >
+              <Info className="w-5 h-5 text-muted-foreground" />
+            </button>
             <button
               onClick={handleSwipeRight}
-              className="w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg shadow-primary/30 active:scale-90 transition-transform"
+              className="w-14 h-14 rounded-full bg-primary/15 backdrop-blur-xl border border-primary/25 flex items-center justify-center active:scale-90 transition-transform duration-150"
               aria-label="Ajouter aux favoris"
             >
-              <Heart className="w-7 h-7" />
+              <Heart className="w-6 h-6 text-primary" />
             </button>
           </div>
         )}
