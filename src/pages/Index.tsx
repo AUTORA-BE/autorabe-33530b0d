@@ -17,7 +17,6 @@ import { AnimatePresence } from "framer-motion";
 import { PullToRefresh } from "@/components/PullToRefresh";
 
 const FuelPriceStrip = lazy(() => import("@/components/FuelPriceStrip"));
-const SellCarBanner = lazy(() => import("@/components/SellCarBanner"));
 const EarlyAccessBanner = lazy(() => import("@/components/EarlyAccessBanner"));
 const TrustBar = lazy(() => import("@/components/TrustBar"));
 const BrandCarousel = lazy(() => import("@/features/search/components/BrandCarousel"));
@@ -135,22 +134,17 @@ const Index = () => {
       <Header />
 
       <PullToRefresh onRefresh={async () => { refresh(); }}>
-      <main style={{ paddingTop: 'calc(4rem + var(--safe-area-top, 0px))' }} className="pb-20 md:pb-0">
-        {/* 0. Early Access Banner */}
+      <main style={{ paddingTop: 'calc(4rem + var(--safe-area-top, 0px))' }} className="pb-24 md:pb-0">
+        {/* Early Access Banner — subtle */}
         <Suspense fallback={null}>
           <EarlyAccessBanner />
         </Suspense>
 
-        {/* 1. Sell banner (dismissable) */}
-        <Suspense fallback={<div className="h-[60px] sm:h-[72px]" />}>
-          <SellCarBanner />
-        </Suspense>
-
-        {/* 2. Hero — immersive search + trust */}
+        {/* Hero — serif typography, glassmorphic search */}
         <HeroSearch onSearch={handleSearch} />
 
         {/* Voice search summary */}
-        <div className="container mx-auto px-4 sm:px-6">
+        <div className="container mx-auto px-6 sm:px-8">
           <AnimatePresence>
             {voiceFilters.length > 0 && (
               <VoiceSearchSummary
@@ -162,19 +156,19 @@ const Index = () => {
           </AnimatePresence>
         </div>
 
-        {/* 3. Trust Bar — social proof badges */}
+        {/* Trust Bar — minimal badges */}
         <Suspense fallback={<TrustBarSkeleton />}>
           <TrustBar />
         </Suspense>
 
-        {/* Fuel Price Strip — contextual fuel prices */}
+        {/* Fuel Price Strip */}
         <Suspense fallback={<div className="h-12" />}>
           <ScrollReveal delay={0.05}>
             <FuelPriceStrip />
           </ScrollReveal>
         </Suspense>
 
-        {/* Swipe Discovery — mobile only */}
+        {/* Swipe Discovery — mobile immersive */}
         <Suspense fallback={null}>
           <SwipeDiscovery
             vehicles={popularVehicles}
@@ -184,12 +178,12 @@ const Index = () => {
           />
         </Suspense>
 
-        {/* 4. Why AutoRa — trust pillars */}
+        {/* Why AutoRa — bento grid */}
         <Suspense fallback={<WhyAutoRaSkeleton />}>
           <WhyAutoRa />
         </Suspense>
 
-        {/* 5. Popular vehicles */}
+        {/* Popular vehicles */}
         <Suspense fallback={<CarouselSkeleton />}>
           <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 400px" }}>
             <PopularVehicles
@@ -200,7 +194,7 @@ const Index = () => {
           </div>
         </Suspense>
 
-        {/* 6. Brand carousel */}
+        {/* Brand carousel — thin arrows */}
         <Suspense fallback={<BrandCarouselSkeleton />}>
           <ScrollReveal delay={0.05} direction="left">
             <BrandCarousel 
@@ -210,26 +204,26 @@ const Index = () => {
           </ScrollReveal>
         </Suspense>
 
-        {/* 7. Testimonials */}
+        {/* Testimonials */}
         <Suspense fallback={<TestimonialsSkeleton />}>
           <TestimonialsSection />
         </Suspense>
 
-        {/* 8. Sell Car CTA */}
+        {/* Sell Car CTA */}
         <Suspense fallback={null}>
           <SellCarCTA />
         </Suspense>
 
-        {/* 9. Pricing CTA */}
+        {/* Pricing CTA */}
         <Suspense fallback={null}>
           <ScrollReveal delay={0.1}>
             <PricingCTA />
           </ScrollReveal>
         </Suspense>
 
-        {/* 10. Results section */}
-        <section id="results-section" className="container mx-auto px-3 sm:px-6 pb-12 sm:pb-24">
-          <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
+        {/* Results section */}
+        <section id="results-section" className="container mx-auto px-4 sm:px-8 pb-16 sm:pb-28">
+          <div className="flex flex-col lg:flex-row gap-6 sm:gap-10">
             <FilterPanel
               isOpen={filtersOpen}
               onClose={() => setFiltersOpen(false)}
@@ -275,7 +269,7 @@ const Index = () => {
       <Footer />
       </PullToRefresh>
 
-      {/* Floating buttons — only on homepage, aligned bottom-right & bottom-left */}
+      {/* Floating widgets — single instances */}
       <Suspense fallback={null}>
         <TcoFloatingButton />
       </Suspense>
