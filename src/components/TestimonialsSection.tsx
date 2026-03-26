@@ -1,6 +1,5 @@
 /**
- * Témoignages premium — section de preuve sociale
- * Carousel horizontal mobile, grille desktop
+ * Témoignages — minimal luxury testimonials
  * @module components
  */
 
@@ -11,12 +10,12 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 const container = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.1, delayChildren: 0.15 } },
+  show: { transition: { staggerChildren: 0.1, delayChildren: 0.1 } },
 };
 
 const item = {
-  hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] as const } },
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.25, 0.1, 0.25, 1] as const } },
 };
 
 interface Testimonial {
@@ -68,51 +67,26 @@ const TestimonialsSection = memo(() => {
   const isNl = language === "nl";
 
   return (
-    <section className="py-12 sm:py-24 relative overflow-hidden section-gradient">
-      {/* Ambient glow */}
-      <div className="absolute top-1/3 right-0 w-72 h-72 bg-primary/[0.04] rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-96 h-64 bg-primary/[0.03] rounded-full blur-3xl pointer-events-none" />
-
-      {/* Floating light particles */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-        <div className="testimonial-particle testimonial-particle-1" />
-        <div className="testimonial-particle testimonial-particle-2" />
-        <div className="testimonial-particle testimonial-particle-3" />
-        <div className="testimonial-particle testimonial-particle-4" />
-        <div className="hidden sm:block testimonial-particle testimonial-particle-5" />
-        <div className="hidden sm:block testimonial-particle testimonial-particle-6" />
-      </div>
-
-      <div className="container mx-auto px-4 sm:px-6 relative">
+    <section className="py-16 sm:py-32 relative overflow-hidden">
+      <div className="container mx-auto px-6 sm:px-8 relative">
         {/* Section header */}
-        <div className="text-center max-w-2xl mx-auto mb-8 sm:mb-14">
-          <motion.span
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-5"
-          >
-            <Star className="w-3.5 h-3.5 fill-current" />
-            {isNl ? "Getuigenissen" : "Témoignages"}
-          </motion.span>
-
+        <div className="text-center max-w-xl mx-auto mb-10 sm:mb-16">
           <motion.h2
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 leading-tight tracking-tight"
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="font-serif text-2xl sm:text-3xl md:text-4xl font-light text-foreground mb-4 leading-tight"
           >
             {isNl ? "Wat onze gebruikers zeggen" : "Ce que disent nos utilisateurs"}
           </motion.h2>
 
           <motion.p
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.5, delay: 0.15 }}
-            className="text-muted-foreground text-sm sm:text-base max-w-lg mx-auto"
+            className="text-muted-foreground text-sm font-light max-w-md mx-auto"
           >
             {isNl
               ? "Duizenden Belgen vertrouwen op AutoRa voor hun autoaankoop en -verkoop."
@@ -120,52 +94,49 @@ const TestimonialsSection = memo(() => {
           </motion.p>
         </div>
 
-        {/* Testimonial cards */}
+        {/* Testimonial cards — clean, borderless feel */}
         <motion.div
           variants={container}
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-80px" }}
-          className="flex sm:grid sm:grid-cols-3 gap-4 sm:gap-6 overflow-x-auto sm:overflow-visible scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory pb-2 sm:pb-0"
+          className="flex sm:grid sm:grid-cols-3 gap-5 sm:gap-8 overflow-x-auto sm:overflow-visible scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory pb-2 sm:pb-0"
         >
           {testimonials.map((t, i) => (
             <motion.div
               key={i}
               variants={item}
-              className="group relative rounded-2xl border border-border bg-card p-5 sm:p-7 flex-shrink-0 w-[300px] sm:w-auto snap-center hover:border-primary/20 transition-all duration-300 hover:shadow-[var(--shadow-elevated)]"
+              className="group relative rounded-3xl border border-border/20 bg-card/30 p-7 sm:p-9 flex-shrink-0 w-[300px] sm:w-auto snap-center transition-all duration-300"
             >
-              {/* Quote icon */}
-              <Quote className="w-8 h-8 text-primary/15 mb-4" />
+              {/* Quote icon — very subtle */}
+              <Quote className="w-8 h-8 text-primary/10 mb-6" strokeWidth={1} />
 
               {/* Stars */}
-              <div className="flex gap-0.5 mb-4">
+              <div className="flex gap-0.5 mb-5">
                 {Array.from({ length: t.rating }).map((_, j) => (
-                  <Star key={j} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                  <Star key={j} className="w-3.5 h-3.5 fill-primary/60 text-primary/60" />
                 ))}
               </div>
 
               {/* Quote text */}
-              <p className="text-sm sm:text-base text-foreground leading-relaxed mb-6">
+              <p className="text-sm text-foreground font-light leading-relaxed mb-8">
                 "{isNl ? t.quoteNl : t.quoteFr}"
               </p>
 
-              {/* Author */}
+              {/* Author — minimal */}
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary">
+                <div className="w-9 h-9 rounded-full bg-primary/8 flex items-center justify-center text-xs font-medium text-primary">
                   {t.initials}
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-foreground">
+                  <p className="text-sm font-medium text-foreground">
                     {isNl ? t.nameNl : t.nameFr}
                   </p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-[11px] text-muted-foreground font-light">
                     {isNl ? t.locationNl : t.locationFr}
                   </p>
                 </div>
               </div>
-
-              {/* Hover accent line */}
-              <div className="absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500 rounded-b-2xl" />
             </motion.div>
           ))}
         </motion.div>

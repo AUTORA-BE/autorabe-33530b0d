@@ -1,11 +1,10 @@
 /**
- * HeroSearch component — immersive hero with parallax, premium copy, trust signals & 90% badge
- * On mobile: tap opens fullscreen search modal with suggestions & swipeable filters
+ * HeroSearch — ultra-premium minimal hero with serif typography & glassmorphic search
  * @module features/search/components
  */
 
 import { memo, useState, useEffect, useRef, useCallback } from "react";
-import { Search, ChevronDown, ShieldCheck, FileCheck, Leaf, X, Clock, TrendingUp, ArrowRight } from "lucide-react";
+import { Search, ChevronDown, X, Clock, TrendingUp, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getAllBrands, getModelsByBrand } from "@/utils/carUtils";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -44,65 +43,11 @@ function clearSearchHistory() {
   localStorage.removeItem(HISTORY_KEY);
 }
 
-/* ─── Parallax hook ─── */
-function useParallax(speed = 0.3) {
-  const [offset, setOffset] = useState(0);
-  useEffect(() => {
-    let ticking = false;
-    const handleScroll = () => {
-      if (!ticking) {
-        ticking = true;
-        requestAnimationFrame(() => { setOffset(window.scrollY * speed); ticking = false; });
-      }
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [speed]);
-  return offset;
-}
-
 const fadeUp = (delay: number) => ({
-  initial: { opacity: 0, y: 24 },
+  initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.6, delay, ease: [0.25, 0.1, 0.25, 1] as const },
+  transition: { duration: 0.7, delay, ease: [0.25, 0.1, 0.25, 1] as const },
 });
-
-/* ─── Animated counter ─── */
-function AnimatedPercent({ target }: { target: number }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const [display, setDisplay] = useState(0);
-  const triggered = useRef(false);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting && !triggered.current) {
-        triggered.current = true;
-        const startTime = performance.now();
-        const step = (now: number) => {
-          const progress = Math.min((now - startTime) / 1600, 1);
-          const eased = 1 - Math.pow(1 - progress, 4);
-          setDisplay(Math.round(eased * target));
-          if (progress < 1) requestAnimationFrame(step);
-        };
-        requestAnimationFrame(step);
-      }
-    }, { rootMargin: "-20px" });
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [target]);
-  return <span ref={ref}>{display}</span>;
-}
-
-/* ─── Popular quick-search chips ─── */
-const TRENDING_SEARCHES = [
-  { brand: "Volkswagen", model: "Golf", label: "VW Golf" },
-  { brand: "BMW", model: "Série 3", label: "BMW Série 3" },
-  { brand: "Peugeot", model: "308", label: "Peugeot 308" },
-  { brand: "Audi", model: "A3", label: "Audi A3" },
-  { brand: "Renault", model: "Clio", label: "Renault Clio" },
-  { brand: "Mercedes", model: "Classe A", label: "Mercedes A" },
-];
 
 /* ─── Fullscreen Mobile Search Modal ─── */
 interface FullscreenSearchProps {
@@ -165,7 +110,7 @@ function FullscreenSearch({ isOpen, onClose, brands, onSearch, t }: FullscreenSe
           className="fixed inset-0 z-[80] bg-background flex flex-col safe-top"
         >
           {/* Header */}
-          <div className="flex items-center gap-3 px-4 py-3 border-b border-border/50">
+          <div className="flex items-center gap-3 px-5 py-4 border-b border-border/30">
             <button onClick={onClose} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-secondary transition-colors">
               <X className="w-5 h-5 text-foreground" />
             </button>
@@ -177,13 +122,13 @@ function FullscreenSearch({ isOpen, onClose, brands, onSearch, t }: FullscreenSe
                 value={brand ? `${brand}${model ? ` ${model}` : ""}` : ""}
                 readOnly
                 placeholder={t("hero.search") || "Rechercher une voiture..."}
-                className="w-full pl-10 pr-4 py-3 rounded-2xl bg-secondary text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+                className="w-full pl-10 pr-4 py-3 rounded-2xl bg-secondary/50 text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/20"
               />
             </div>
             {(brand || model || budget > 0) && (
               <button
                 onClick={handleSubmit}
-                className="px-4 py-2.5 rounded-full bg-primary text-primary-foreground text-sm font-semibold shadow-lg shadow-primary/25 active:scale-95 transition-transform"
+                className="px-5 py-2.5 rounded-full bg-primary text-primary-foreground text-sm font-medium active:scale-95 transition-transform"
               >
                 {t("hero.search")}
               </button>
@@ -191,7 +136,7 @@ function FullscreenSearch({ isOpen, onClose, brands, onSearch, t }: FullscreenSe
           </div>
 
           {/* Swipeable filter tabs */}
-          <div className="flex gap-2 px-4 py-3 overflow-x-auto scrollbar-hide">
+          <div className="flex gap-2 px-5 py-4 overflow-x-auto scrollbar-hide">
             {[
               { key: "brand" as const, label: t("filters.brand") || "Marque" },
               { key: "budget" as const, label: t("filters.budget") || "Budget" },
@@ -199,10 +144,10 @@ function FullscreenSearch({ isOpen, onClose, brands, onSearch, t }: FullscreenSe
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+                className={`px-4 py-2 rounded-full text-sm font-light whitespace-nowrap transition-all ${
                   activeTab === tab.key
-                    ? "bg-primary text-primary-foreground shadow-sm"
-                    : "bg-secondary text-muted-foreground"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-secondary/50 text-muted-foreground"
                 }`}
               >
                 {tab.label}
@@ -217,31 +162,29 @@ function FullscreenSearch({ isOpen, onClose, brands, onSearch, t }: FullscreenSe
           </div>
 
           {/* Content */}
-          <div className="flex-1 overflow-y-auto px-4 pb-24">
-            {/* Brand tab */}
+          <div className="flex-1 overflow-y-auto px-5 pb-28">
             {activeTab === "brand" && (
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.2 }}
               >
-                {/* Selected brand → show models */}
                 {brand ? (
                   <div>
                     <button
                       onClick={() => setBrand("")}
-                      className="flex items-center gap-2 text-sm text-primary font-medium mb-3"
+                      className="flex items-center gap-2 text-sm text-primary font-light mb-4"
                     >
                       ← {t("filters.brand") || "Marques"}
                     </button>
-                    <p className="text-xs text-muted-foreground mb-3 uppercase tracking-wide font-medium">
+                    <p className="text-[10px] text-muted-foreground mb-4 uppercase tracking-[0.15em] font-light">
                       {brand} — {t("filters.model") || "Modèle"}
                     </p>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-2 gap-2.5">
                       <button
                         onClick={() => { setModel(""); setActiveTab("budget"); }}
-                        className={`px-4 py-3 rounded-2xl text-sm font-medium text-left transition-all ${
-                          !model ? "bg-primary/10 text-primary border border-primary/20" : "bg-secondary text-foreground"
+                        className={`px-4 py-3.5 rounded-3xl text-sm font-light text-left transition-all ${
+                          !model ? "bg-primary/8 text-primary border border-primary/15" : "bg-secondary/40 text-foreground"
                         }`}
                       >
                         {t("filters.allModels") || "Tous"}
@@ -250,8 +193,8 @@ function FullscreenSearch({ isOpen, onClose, brands, onSearch, t }: FullscreenSe
                         <button
                           key={m}
                           onClick={() => { setModel(m); setActiveTab("budget"); }}
-                          className={`px-4 py-3 rounded-2xl text-sm font-medium text-left transition-all ${
-                            model === m ? "bg-primary/10 text-primary border border-primary/20" : "bg-secondary text-foreground"
+                          className={`px-4 py-3.5 rounded-3xl text-sm font-light text-left transition-all ${
+                            model === m ? "bg-primary/8 text-primary border border-primary/15" : "bg-secondary/40 text-foreground"
                           }`}
                         >
                           {m}
@@ -261,13 +204,19 @@ function FullscreenSearch({ isOpen, onClose, brands, onSearch, t }: FullscreenSe
                   </div>
                 ) : (
                   <div>
-                    {/* Trending searches */}
-                    <p className="text-xs text-muted-foreground mb-3 uppercase tracking-wide font-medium flex items-center gap-1.5">
-                      <TrendingUp className="w-3.5 h-3.5" />
+                    <p className="text-[10px] text-muted-foreground mb-4 uppercase tracking-[0.15em] font-light flex items-center gap-1.5">
+                      <TrendingUp className="w-3 h-3" />
                       Tendances
                     </p>
-                    <div className="flex flex-wrap gap-2 mb-6">
-                      {TRENDING_SEARCHES.map((ts) => (
+                    <div className="flex flex-wrap gap-2.5 mb-8">
+                      {[
+                        { brand: "Volkswagen", model: "Golf", label: "VW Golf" },
+                        { brand: "BMW", model: "Série 3", label: "BMW Série 3" },
+                        { brand: "Peugeot", model: "308", label: "Peugeot 308" },
+                        { brand: "Audi", model: "A3", label: "Audi A3" },
+                        { brand: "Renault", model: "Clio", label: "Renault Clio" },
+                        { brand: "Mercedes", model: "Classe A", label: "Mercedes A" },
+                      ].map((ts) => (
                         <button
                           key={ts.label}
                           onClick={() => {
@@ -275,26 +224,25 @@ function FullscreenSearch({ isOpen, onClose, brands, onSearch, t }: FullscreenSe
                             setModel(ts.model);
                             setActiveTab("budget");
                           }}
-                          className="px-3.5 py-2 rounded-full bg-primary/8 text-primary text-sm font-medium border border-primary/15 active:scale-95 transition-transform"
+                          className="px-4 py-2.5 rounded-full bg-primary/5 text-primary text-sm font-light border border-primary/10 active:scale-95 transition-transform"
                         >
                           {ts.label}
                         </button>
                       ))}
                     </div>
 
-                    {/* All brands */}
-                    <p className="text-xs text-muted-foreground mb-3 uppercase tracking-wide font-medium">
+                    <p className="text-[10px] text-muted-foreground mb-4 uppercase tracking-[0.15em] font-light">
                       {t("filters.brand") || "Marque"}
                     </p>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-2 gap-2.5">
                       {brands.map((b) => (
                         <button
                           key={b}
                           onClick={() => setBrand(b)}
-                          className="px-4 py-3 rounded-2xl bg-secondary text-foreground text-sm font-medium text-left hover:bg-secondary/80 active:scale-[0.98] transition-all flex items-center justify-between"
+                          className="px-4 py-3.5 rounded-3xl bg-secondary/40 text-foreground text-sm font-light text-left active:scale-[0.98] transition-all flex items-center justify-between"
                         >
                           {b}
-                          <ArrowRight className="w-3.5 h-3.5 text-muted-foreground" />
+                          <ArrowRight className="w-3 h-3 text-muted-foreground/50" />
                         </button>
                       ))}
                     </div>
@@ -303,21 +251,20 @@ function FullscreenSearch({ isOpen, onClose, brands, onSearch, t }: FullscreenSe
               </motion.div>
             )}
 
-            {/* Budget tab */}
             {activeTab === "budget" && (
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.2 }}
               >
-                <p className="text-xs text-muted-foreground mb-3 uppercase tracking-wide font-medium">
+                <p className="text-[10px] text-muted-foreground mb-4 uppercase tracking-[0.15em] font-light">
                   {t("filters.budget") || "Budget maximum"}
                 </p>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 gap-2.5">
                   <button
                     onClick={() => setBudget(0)}
-                    className={`px-4 py-3 rounded-2xl text-sm font-medium text-left transition-all ${
-                      budget === 0 ? "bg-primary/10 text-primary border border-primary/20" : "bg-secondary text-foreground"
+                    className={`px-4 py-3.5 rounded-3xl text-sm font-light text-left transition-all ${
+                      budget === 0 ? "bg-primary/8 text-primary border border-primary/15" : "bg-secondary/40 text-foreground"
                     }`}
                   >
                     {t("filters.noBudgetLimit") || "Pas de limite"}
@@ -326,8 +273,8 @@ function FullscreenSearch({ isOpen, onClose, brands, onSearch, t }: FullscreenSe
                     <button
                       key={opt.value}
                       onClick={() => setBudget(opt.value)}
-                      className={`px-4 py-3 rounded-2xl text-sm font-medium text-left transition-all ${
-                        budget === opt.value ? "bg-primary/10 text-primary border border-primary/20" : "bg-secondary text-foreground"
+                      className={`px-4 py-3.5 rounded-3xl text-sm font-light text-left transition-all ${
+                        budget === opt.value ? "bg-primary/8 text-primary border border-primary/15" : "bg-secondary/40 text-foreground"
                       }`}
                     >
                       {opt.label}
@@ -337,28 +284,27 @@ function FullscreenSearch({ isOpen, onClose, brands, onSearch, t }: FullscreenSe
               </motion.div>
             )}
 
-            {/* Search history */}
             {history.length > 0 && (
-              <div className="mt-8">
-                <div className="flex items-center justify-between mb-3">
-                  <p className="text-xs text-muted-foreground uppercase tracking-wide font-medium flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5" />
+              <div className="mt-10">
+                <div className="flex items-center justify-between mb-4">
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-[0.15em] font-light flex items-center gap-1.5">
+                    <Clock className="w-3 h-3" />
                     {t("hero.recentSearches") || "Recherches récentes"}
                   </p>
-                  <button onClick={handleClearHistory} className="text-xs text-destructive font-medium">
+                  <button onClick={handleClearHistory} className="text-[10px] text-destructive font-light">
                     {t("common.clear") || "Effacer"}
                   </button>
                 </div>
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   {history.map((entry, i) => (
                     <button
                       key={i}
                       onClick={() => handleHistoryClick(entry)}
-                      className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl bg-secondary/50 hover:bg-secondary text-left transition-colors"
+                      className="w-full flex items-center gap-3 px-4 py-3.5 rounded-3xl bg-secondary/30 text-left transition-colors"
                     >
-                      <Clock className="w-4 h-4 text-muted-foreground shrink-0" />
+                      <Clock className="w-3.5 h-3.5 text-muted-foreground/50 shrink-0" />
                       <div className="flex-1 min-w-0">
-                        <span className="text-sm font-medium text-foreground">
+                        <span className="text-sm font-light text-foreground">
                           {entry.brand}{entry.model ? ` ${entry.model}` : ""}
                         </span>
                         {entry.budget > 0 && (
@@ -367,7 +313,7 @@ function FullscreenSearch({ isOpen, onClose, brands, onSearch, t }: FullscreenSe
                           </span>
                         )}
                       </div>
-                      <ArrowRight className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                      <ArrowRight className="w-3 h-3 text-muted-foreground/40 shrink-0" />
                     </button>
                   ))}
                 </div>
@@ -376,15 +322,15 @@ function FullscreenSearch({ isOpen, onClose, brands, onSearch, t }: FullscreenSe
           </div>
 
           {/* Bottom CTA */}
-          <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background via-background to-transparent safe-bottom">
+          <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-background via-background to-transparent safe-bottom">
             <button
               onClick={handleSubmit}
-              className="w-full py-4 rounded-2xl bg-primary text-primary-foreground font-semibold text-base shadow-xl shadow-primary/25 active:scale-[0.98] transition-transform flex items-center justify-center gap-2"
+              className="w-full py-4 rounded-3xl bg-primary text-primary-foreground font-medium text-base active:scale-[0.98] transition-transform flex items-center justify-center gap-2"
             >
-              <Search className="w-5 h-5" />
+              <Search className="w-4 h-4" />
               {t("hero.search") || "Rechercher"}
               {(brand || budget > 0) && (
-                <span className="text-sm opacity-80">
+                <span className="text-sm opacity-70 font-light">
                   {[brand, model, budget > 0 ? `< ${budget.toLocaleString("fr-BE")}€` : ""].filter(Boolean).join(" · ")}
                 </span>
               )}
@@ -410,7 +356,6 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
   const [loadingModels, setLoadingModels] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const { t } = useLanguage();
-  const parallaxOffset = useParallax(0.25);
   const isMobile = useIsMobile();
 
   useEffect(() => { setBrands(getAllBrands()); }, []);
@@ -464,157 +409,97 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
     if (e.key === "Enter") handleSearch();
   };
 
-  const trustPills = [
-    { icon: ShieldCheck, label: t("hero.pill.verified") },
-    { icon: FileCheck, label: t("hero.pill.carpass") },
-    { icon: Leaf, label: t("hero.pill.lez") },
-  ];
-
   return (
     <>
       <section
-        className="relative min-h-[48vh] sm:min-h-[75vh] flex items-center justify-center pt-4 sm:pt-16 pb-6 sm:pb-16 overflow-hidden"
+        className="relative flex items-center justify-center pt-8 sm:pt-24 pb-10 sm:pb-24 overflow-hidden"
         style={{ contain: "layout style" }}
       >
-        {/* Background gradient */}
+        {/* Minimal gradient background */}
         <div className="absolute inset-0 hero-gradient" />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.03] via-transparent to-primary/[0.02]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.02] to-transparent" />
 
-        {/* Particles */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-          <div className="hero-particle hero-particle-1" />
-          <div className="hero-particle hero-particle-2" />
-          <div className="hero-particle hero-particle-3" />
-          <div className="hero-particle hero-particle-4" />
-          <div className="hero-particle hero-particle-5" />
-          <div className="hidden sm:block hero-particle hero-particle-6" />
-          <div className="hidden sm:block hero-particle hero-particle-7" />
-          <div className="hidden md:block hero-particle hero-particle-8" />
-        </div>
+        {/* Subtle grid pattern */}
+        <div className="absolute inset-0 opacity-[0.015]"
+          style={{ backgroundImage: `radial-gradient(circle at 1px 1px, hsl(var(--foreground)) 0.5px, transparent 0)`, backgroundSize: "64px 64px" }} />
 
-        {/* Parallax orbs */}
-        <div className="hidden sm:block absolute top-1/4 left-[10%] w-[32rem] h-[32rem] rounded-full blur-[120px]"
-          style={{ background: 'radial-gradient(circle, hsl(160 84% 39% / 0.12), hsl(180 60% 42% / 0.06), transparent)', transform: `translateY(${parallaxOffset * 0.6}px)` }} />
-        <div className="hidden sm:block absolute bottom-[5%] right-[8%] w-[26rem] h-[26rem] rounded-full blur-[100px]"
-          style={{ background: 'radial-gradient(circle, hsl(140 70% 45% / 0.08), hsl(200 50% 50% / 0.04), transparent)', transform: `translateY(${-parallaxOffset * 0.4}px)` }} />
-        <div className="hidden md:block absolute top-[10%] right-[18%] w-72 h-72 rounded-full blur-[80px]"
-          style={{ background: 'radial-gradient(circle, hsl(170 80% 45% / 0.07), hsl(160 60% 50% / 0.03), transparent)', transform: `translateY(${parallaxOffset * 0.8}px)` }} />
+        <div className="container mx-auto px-6 sm:px-8 relative z-10">
+          <div className="max-w-3xl mx-auto text-center">
 
-        {/* Grid pattern */}
-        <div className="absolute inset-0 opacity-[0.02]"
-          style={{ backgroundImage: `radial-gradient(circle at 1px 1px, hsl(var(--foreground)) 1px, transparent 0)`, backgroundSize: "48px 48px", transform: `translateY(${parallaxOffset * 0.1}px)` }} />
-
-        <div className="container mx-auto px-4 sm:px-6 relative z-10">
-          <div className="max-w-4xl mx-auto text-center">
-            {/* Badge */}
-            <motion.div {...fadeUp(0)} className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-primary/10 text-primary text-[10px] sm:text-sm font-semibold mb-4 sm:mb-10 tracking-wide uppercase">
-              <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-              {t("hero.badge")}
-            </motion.div>
-
-            {/* Headline */}
-            <motion.h1 {...fadeUp(0.1)}
-              className="font-display text-[1.6rem] sm:text-5xl md:text-6xl lg:text-7xl font-black text-foreground mb-3 sm:mb-6 leading-[1.08] tracking-tight">
+            {/* Headline — Serif, ultra-thin, generous spacing */}
+            <motion.h1 {...fadeUp(0.05)}
+              className="font-serif text-[1.75rem] sm:text-5xl md:text-6xl font-light text-foreground mb-6 sm:mb-10 leading-[1.15] tracking-tight">
               {t("hero.titleLine1")}<br />
-              <span className="gradient-text">{t("hero.titleLine2")}</span>
+              <span className="text-primary font-normal">{t("hero.titleLine2")}</span>
             </motion.h1>
 
-            {/* Subheadline */}
-            <motion.p {...fadeUp(0.18)}
-              className="text-xs sm:text-base md:text-lg text-slate-400 font-medium tracking-wide mb-4 sm:mb-8">
-              {t("hero.subtitleTrust")}
-            </motion.p>
-
-            {/* 90% Trust Badge */}
-            <motion.div {...fadeUp(0.26)}
-              className="inline-flex flex-col items-center gap-0.5 sm:gap-1 px-5 sm:px-8 py-3 sm:py-5 rounded-2xl bg-gradient-to-br from-amber-500/[0.08] via-amber-400/[0.04] to-transparent border border-amber-500/20 backdrop-blur-sm mb-6 sm:mb-14 shadow-[0_8px_32px_-8px_rgba(245,158,11,0.12)]">
-              <div className="flex items-baseline gap-0.5">
-                <span className="text-3xl sm:text-5xl md:text-6xl font-black text-amber-400 tabular-nums">
-                  <AnimatedPercent target={90} />
-                </span>
-                <span className="text-xl sm:text-3xl font-bold text-amber-400/80">%</span>
-              </div>
-              <span className="text-[10px] sm:text-sm font-bold text-foreground uppercase tracking-wider">{t("hero.trustBadge")}</span>
-              <span className="text-[9px] sm:text-xs text-muted-foreground">{t("hero.trustBadgeSub")}</span>
-            </motion.div>
-
-            {/* Search Box — Mobile: tap to open fullscreen */}
+            {/* Search Box — Glassmorphic, minimal */}
             {isMobile ? (
               <motion.button
-                {...fadeUp(0.35)}
+                {...fadeUp(0.2)}
                 onClick={() => setMobileSearchOpen(true)}
-                className="glass-panel p-4 max-w-3xl mx-auto ring-1 ring-white/10 w-full flex items-center gap-3 active:scale-[0.98] transition-transform"
+                className="w-full p-5 rounded-3xl bg-card/40 backdrop-blur-xl border border-border/20 flex items-center gap-4 active:scale-[0.98] transition-transform"
                 role="search"
                 aria-label={t("hero.search")}
               >
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                  <Search className="w-5 h-5 text-primary" />
+                <div className="w-11 h-11 rounded-2xl bg-primary/8 flex items-center justify-center shrink-0">
+                  <Search className="w-5 h-5 text-primary/70" strokeWidth={1.5} />
                 </div>
-                <span className="text-muted-foreground text-sm text-left flex-1">
+                <span className="text-muted-foreground text-sm font-light text-left flex-1">
                   {t("hero.searchPlaceholder") || "Marque, modèle, budget..."}
                 </span>
                 <VoiceSearchButton onResult={handleVoiceResult} />
               </motion.button>
             ) : (
               <motion.div
-                {...fadeUp(0.35)}
-                className="glass-panel p-3 sm:p-4 md:p-5 max-w-3xl mx-auto ring-1 ring-white/10 border border-slate-800 shadow-xl overflow-hidden"
+                {...fadeUp(0.2)}
+                className="p-4 sm:p-5 rounded-3xl bg-card/40 backdrop-blur-xl border border-border/20 max-w-3xl mx-auto"
                 role="search"
                 aria-label={t("hero.search")}
               >
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                   {/* Brand */}
                   <div className="relative">
                     <select value={selectedBrand} onChange={(e) => setSelectedBrand(e.target.value)} onKeyDown={handleKeyDown}
-                      className="search-input w-full appearance-none cursor-pointer pr-10 text-base py-4 bg-card" aria-label={t("filters.brand")}>
+                      className="w-full appearance-none cursor-pointer pr-10 text-sm font-light py-4 px-4 bg-secondary/30 rounded-2xl border-0 text-foreground focus:outline-none focus:ring-1 focus:ring-primary/20 transition-all" aria-label={t("filters.brand")}>
                       <option value="">{t("filters.brand")}</option>
                       {brands.map((brand) => (<option key={brand} value={brand}>{brand}</option>))}
                     </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
+                    <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50 pointer-events-none" />
                   </div>
 
                   {/* Model */}
                   <div className="relative">
                     <select value={model} onChange={(e) => setModel(e.target.value)} onKeyDown={handleKeyDown}
-                      className="search-input w-full appearance-none cursor-pointer pr-10 text-base py-4 bg-card" disabled={!selectedBrand} aria-label={t("filters.model")}>
+                      className="w-full appearance-none cursor-pointer pr-10 text-sm font-light py-4 px-4 bg-secondary/30 rounded-2xl border-0 text-foreground focus:outline-none focus:ring-1 focus:ring-primary/20 transition-all" disabled={!selectedBrand} aria-label={t("filters.model")}>
                       <option value="">{selectedBrand ? t("filters.allModels") : t("filters.model")}</option>
                       {models.map((m) => (<option key={m} value={m}>{m}</option>))}
                     </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
+                    <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50 pointer-events-none" />
                   </div>
 
                   {/* Budget */}
                   <div className="relative">
                     <select value={selectedBudget} onChange={(e) => setSelectedBudget(Number(e.target.value))} onKeyDown={handleKeyDown}
-                      className="search-input w-full appearance-none cursor-pointer pr-10 text-base py-4 bg-card" aria-label={t("filters.budget")}>
+                      className="w-full appearance-none cursor-pointer pr-10 text-sm font-light py-4 px-4 bg-secondary/30 rounded-2xl border-0 text-foreground focus:outline-none focus:ring-1 focus:ring-primary/20 transition-all" aria-label={t("filters.budget")}>
                       <option value={0}>{t("filters.budget")}</option>
                       {BUDGET_OPTIONS.map((budget) => (<option key={budget.value} value={budget.value}>{budget.label}</option>))}
                     </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
+                    <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50 pointer-events-none" />
                   </div>
 
                   {/* Search & Voice */}
                   <div className="sm:col-span-2 md:col-span-1 flex gap-2 min-w-0 overflow-hidden">
                     <VoiceSearchButton onResult={handleVoiceResult} />
                     <button onClick={handleSearch}
-                      className="flex-1 min-w-0 flex items-center justify-center gap-2 py-4 rounded-2xl text-primary-foreground font-semibold bg-gradient-to-r from-emerald-500 to-emerald-600 shadow-lg shadow-emerald-600/30 hover:shadow-xl hover:brightness-110 active:scale-[0.97] transition-all duration-300 overflow-hidden" aria-label={t("hero.search")}>
-                      <Search className="w-5 h-5 shrink-0" aria-hidden="true" />
-                      <span className="font-semibold text-base truncate">{t("hero.search")}</span>
+                      className="flex-1 min-w-0 flex items-center justify-center gap-2 py-4 rounded-2xl text-primary-foreground font-medium bg-primary hover:brightness-110 active:scale-[0.97] transition-all duration-200 overflow-hidden" aria-label={t("hero.search")}>
+                      <Search className="w-4 h-4 shrink-0" strokeWidth={1.5} aria-hidden="true" />
+                      <span className="font-medium text-sm truncate">{t("hero.search")}</span>
                     </button>
                   </div>
                 </div>
               </motion.div>
             )}
-
-            {/* Trust pills */}
-            <motion.div {...fadeUp(0.5)} className="flex flex-wrap justify-center gap-2.5 sm:gap-5 mt-4 sm:mt-10">
-              {trustPills.map((pill, i) => (
-                <div key={i} className="flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground">
-                  <pill.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
-                  <span>{pill.label}</span>
-                </div>
-              ))}
-            </motion.div>
           </div>
         </div>
       </section>

@@ -1,5 +1,5 @@
 /**
- * "Why AutoRa" trust section with 90% hero card + staggered entrance
+ * "Why AutoRa" — premium bento-grid trust section with ultra-minimal cards
  * @module components
  */
 
@@ -10,12 +10,12 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 const container = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } },
+  show: { transition: { staggerChildren: 0.1, delayChildren: 0.1 } },
 };
 
 const item = {
-  hidden: { opacity: 0, y: 28 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] as const } },
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.25, 0.1, 0.25, 1] as const } },
 };
 
 /** Animated counter for the 90% card */
@@ -78,95 +78,75 @@ const WhyAutoRa = memo(() => {
   ];
 
   return (
-    <section className="py-8 sm:py-24 relative overflow-hidden section-gradient">
-      {/* Subtle glow accent */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/[0.04] rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-primary/[0.03] rounded-full blur-3xl pointer-events-none" />
-
-      <div className="container mx-auto px-4 sm:px-6 relative">
-        {/* Section header */}
-        <div className="text-center max-w-2xl mx-auto mb-5 sm:mb-16">
-          <motion.span
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-5"
-          >
-            <Shield className="w-3.5 h-3.5" />
-            {t("why.badge")}
-          </motion.span>
-
+    <section className="py-16 sm:py-32 relative overflow-hidden">
+      <div className="container mx-auto px-6 sm:px-8 relative">
+        {/* Section header — minimal */}
+        <div className="text-center max-w-xl mx-auto mb-10 sm:mb-20">
           <motion.h2
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 leading-tight tracking-tight"
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="font-serif text-2xl sm:text-3xl md:text-4xl font-light text-foreground mb-4 leading-tight"
           >
             {t("why.title")}
           </motion.h2>
 
           <motion.p
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-60px" }}
             transition={{ duration: 0.5, delay: 0.15 }}
-            className="text-muted-foreground text-sm sm:text-base max-w-lg mx-auto"
+            className="text-muted-foreground text-sm font-light max-w-md mx-auto"
           >
             {t("why.subtitle")}
           </motion.p>
         </div>
 
-        {/* Feature cards */}
+        {/* Bento grid — ultra-clean cards */}
         <motion.div
           variants={container}
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: "-80px" }}
-          className="flex sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 overflow-x-auto sm:overflow-visible scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory pb-2 sm:pb-0"
+          className="flex sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 overflow-x-auto sm:overflow-visible scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory pb-2 sm:pb-0"
         >
           {features.map((feature, i) => (
             <motion.div
               key={i}
               variants={item}
-              className={`group relative rounded-2xl border p-4 sm:p-7 transition-all duration-300 flex-shrink-0 w-[220px] sm:w-auto snap-center ${
+              className={`group relative rounded-3xl border p-6 sm:p-8 transition-all duration-300 flex-shrink-0 w-[240px] sm:w-auto snap-center ${
                 feature.highlight
-                  ? "border-amber-500/30 bg-gradient-to-br from-amber-500/[0.06] via-card to-card hover:border-amber-500/40 hover:shadow-[0_8px_32px_-8px_rgba(245,158,11,0.15)]"
-                  : "border-border bg-card hover:border-primary/20 hover:shadow-[var(--shadow-elevated)]"
+                  ? "border-primary/15 bg-primary/[0.03]"
+                  : "border-border/30 bg-card/30 dark:border-border/10"
               }`}
             >
-              {/* Icon */}
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-5 transition-colors ${
+              {/* Icon — ultra-thin line art */}
+              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-6 ${
                 feature.highlight
-                  ? "bg-gradient-to-br from-amber-500/20 to-amber-600/10 group-hover:from-amber-500/25 group-hover:to-amber-600/15"
-                  : "bg-primary/10 group-hover:bg-primary/15"
+                  ? "bg-primary/8"
+                  : "bg-secondary/40"
               }`}>
-                <feature.icon className={`w-6 h-6 ${feature.highlight ? "text-amber-400" : "text-primary"}`} />
+                <feature.icon className={`w-5 h-5 ${feature.highlight ? "text-primary" : "text-muted-foreground"}`} strokeWidth={1.5} />
               </div>
 
               {/* Counter for the 90% card */}
               {feature.highlight && (
-                <div className="mb-3">
-                  <span className="text-3xl sm:text-4xl font-extrabold text-amber-400">
+                <div className="mb-4">
+                  <span className="text-4xl sm:text-5xl font-light text-primary">
                     <AnimatedCounter target={90} />
-                    <span className="text-xl ml-0.5">%</span>
+                    <span className="text-2xl ml-0.5">%</span>
                   </span>
                 </div>
               )}
 
-              <h3 className="font-display text-base sm:text-lg font-bold text-foreground mb-2">
+              <h3 className="text-base sm:text-lg font-medium text-foreground mb-3">
                 {feature.title}
               </h3>
 
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="text-sm text-muted-foreground font-light leading-relaxed">
                 {feature.desc}
               </p>
-
-              {/* Bottom accent */}
-              <div className={`absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-transparent to-transparent scale-x-0 group-hover:scale-x-100 transition-transform duration-500 rounded-b-2xl ${
-                feature.highlight ? "via-amber-500/40" : "via-primary/30"
-              }`} />
             </motion.div>
           ))}
         </motion.div>

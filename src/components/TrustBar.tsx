@@ -1,10 +1,10 @@
 /**
- * TrustBar — premium horizontal trust strip with elegant badges
+ * TrustBar — minimal, airy trust strip
  * @module components
  */
 
 import { memo, useRef, useState, useEffect } from "react";
-import { ShieldCheck, FileCheck, Leaf, Headphones, Award } from "lucide-react";
+import { ShieldCheck, FileCheck, Leaf, Headphones } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -66,67 +66,29 @@ const TrustBar = memo(() => {
   ];
 
   return (
-    <section className="relative overflow-hidden border-y border-border/30">
-      {/* Gradient background — color fusion */}
-      <div className="absolute inset-0 bg-gradient-to-r from-primary/[0.04] via-card/80 to-primary/[0.03]" />
-      <div className="absolute inset-0 backdrop-blur-sm" />
-      {/* Subtle glow accent */}
-      <div className="absolute left-1/4 top-0 w-48 h-full bg-primary/[0.03] blur-3xl pointer-events-none" />
-      <div className="absolute right-1/3 top-0 w-64 h-full bg-primary/[0.02] blur-3xl pointer-events-none" />
-
-      <div className="container mx-auto px-4 sm:px-6 relative">
-        <div className="flex flex-col lg:flex-row items-center justify-between py-3 sm:py-5 gap-4 lg:gap-8">
-          
-          {/* 90% Highlight - Left side */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-            className="group flex items-center gap-2.5 sm:gap-3.5 px-4 sm:px-5 py-2 sm:py-2.5 rounded-2xl bg-gradient-to-r from-primary/[0.08] to-primary/[0.03] border border-primary/15 w-full lg:w-auto justify-center lg:justify-start transition-all duration-300 hover:shadow-glow hover:border-primary/25"
-          >
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
-              <Award className="w-5 h-5 text-primary" />
-            </div>
-            <div className="leading-tight">
-              <div className="text-lg font-bold text-foreground flex items-baseline gap-1.5">
-                <AnimatedNumber target={90} suffix=" %" duration={1800} />
-                <span className="text-primary text-sm">
-                  {t("trust.certified")}
-                </span>
-              </div>
-              <div className="text-xs text-muted-foreground font-medium">
-                {t("trust.certifiedSub")}
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Regular Badges - Right side */}
-          <div className="flex items-center gap-5 sm:gap-8 overflow-x-auto w-full lg:w-auto scrollbar-hide pb-1 lg:pb-0 px-1 lg:px-0 snap-x">
-            {badges.map((badge, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: i * 0.1 }}
-                className="group flex items-center gap-3 flex-shrink-0 snap-start cursor-default"
-              >
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-secondary/60 to-secondary/30 flex items-center justify-center shrink-0 text-muted-foreground group-hover:text-primary group-hover:from-primary/15 group-hover:to-primary/5 transition-all duration-300">
-                  <badge.icon className="w-4 h-4" />
+    <section className="relative py-6 sm:py-8">
+      <div className="container mx-auto px-6 sm:px-8">
+        <div className="flex items-center gap-6 sm:gap-10 overflow-x-auto scrollbar-hide justify-start sm:justify-center pb-1 snap-x">
+          {badges.map((badge, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 8 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: i * 0.08 }}
+              className="flex items-center gap-3 flex-shrink-0 snap-start"
+            >
+              <badge.icon className="w-4 h-4 text-primary/60" strokeWidth={1.5} />
+              <div className="leading-tight">
+                <div className="text-sm font-medium text-foreground whitespace-nowrap">
+                  {badge.value}
                 </div>
-                <div className="leading-tight">
-                  <div className="text-sm font-semibold text-foreground whitespace-nowrap">
-                    {badge.value}
-                  </div>
-                  <div className="text-xs text-muted-foreground whitespace-nowrap">
-                    {badge.label}
-                  </div>
+                <div className="text-[11px] text-muted-foreground font-light whitespace-nowrap">
+                  {badge.label}
                 </div>
-              </motion.div>
-            ))}
-          </div>
-
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>
