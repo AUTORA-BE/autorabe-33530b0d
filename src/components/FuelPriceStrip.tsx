@@ -73,7 +73,7 @@ const FuelPriceStrip = ({ compact = false }: FuelPriceStripProps) => {
       <div className="container mx-auto px-4 sm:px-6">
         <div
           role="list"
-          className="flex items-stretch gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-none sm:overflow-visible sm:flex-wrap sm:justify-center pb-1"
+          className="flex items-stretch gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide sm:overflow-visible sm:flex-wrap sm:justify-center pb-1"
         >
           {items.map((fuel, i) => {
             const Icon = fuel.icon;
