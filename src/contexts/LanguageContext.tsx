@@ -42,6 +42,8 @@ const translations: Record<Language, Record<string, string>> = {
     "hero.title2": "voiture en Belgique",
     "hero.subtitle": "Des milliers de véhicules vérifiés, avec Car-Pass et compatibilité LEZ garantie",
     "hero.search": "Rechercher",
+    "hero.searchPlaceholder": "Marque, modèle, budget...",
+    "hero.recentSearches": "Recherches récentes",
     "hero.vehicles": "Véhicules",
     "hero.verified": "Car-Pass vérifié",
     "hero.brands": "Marques",
@@ -625,6 +627,9 @@ const translations: Record<Language, Record<string, string>> = {
     "sellForm.saving": "Sauvegarde…",
     "sellForm.draftSaved": "Brouillon sauvegardé",
     "common.back": "Retour",
+    "common.clear": "Effacer",
+    "filters.noBudgetLimit": "Pas de limite",
+    "nav.profile": "Profil",
   },
   nl: {
     // Navigation
@@ -658,6 +663,8 @@ const translations: Record<Language, Record<string, string>> = {
     "hero.title2": "auto in België",
     "hero.subtitle": "Duizenden geverifieerde voertuigen, met Car-Pass en gegarandeerde LEZ-compatibiliteit",
     "hero.search": "Zoeken",
+    "hero.searchPlaceholder": "Merk, model, budget...",
+    "hero.recentSearches": "Recente zoekopdrachten",
     "hero.vehicles": "Voertuigen",
     "hero.verified": "Car-Pass geverifieerd",
     "hero.brands": "Merken",
@@ -1241,6 +1248,9 @@ const translations: Record<Language, Record<string, string>> = {
     "sellForm.saving": "Opslaan…",
     "sellForm.draftSaved": "Concept opgeslagen",
     "common.back": "Terug",
+    "common.clear": "Wissen",
+    "filters.noBudgetLimit": "Geen limiet",
+    "nav.profile": "Profiel",
   },
   de: {
     // Navigation
@@ -1274,6 +1284,8 @@ const translations: Record<Language, Record<string, string>> = {
     "hero.title2": "Auto in Belgien",
     "hero.subtitle": "Tausende verifizierte Fahrzeuge mit Car-Pass und garantierter LEZ-Kompatibilität",
     "hero.search": "Suchen",
+    "hero.searchPlaceholder": "Marke, Modell, Budget...",
+    "hero.recentSearches": "Letzte Suchen",
     "hero.vehicles": "Fahrzeuge",
     "hero.verified": "Car-Pass verifiziert",
     "hero.brands": "Marken",
@@ -1857,6 +1869,9 @@ const translations: Record<Language, Record<string, string>> = {
     "sellForm.saving": "Speichern…",
     "sellForm.draftSaved": "Entwurf gespeichert",
     "common.back": "Zurück",
+    "common.clear": "Löschen",
+    "filters.noBudgetLimit": "Kein Limit",
+    "nav.profile": "Profil",
   },
   en: {
     // Navigation
@@ -1890,6 +1905,8 @@ const translations: Record<Language, Record<string, string>> = {
     "hero.title2": "car in Belgium",
     "hero.subtitle": "Thousands of verified vehicles with Car-Pass and guaranteed LEZ compatibility",
     "hero.search": "Search",
+    "hero.searchPlaceholder": "Brand, model, budget...",
+    "hero.recentSearches": "Recent searches",
     "hero.vehicles": "Vehicles",
     "hero.verified": "Car-Pass verified",
     "hero.brands": "Brands",
@@ -2473,6 +2490,9 @@ const translations: Record<Language, Record<string, string>> = {
     "sellForm.saving": "Saving…",
     "sellForm.draftSaved": "Draft saved",
     "common.back": "Back",
+    "common.clear": "Clear",
+    "filters.noBudgetLimit": "No limit",
+    "nav.profile": "Profile",
   },
 };
 
