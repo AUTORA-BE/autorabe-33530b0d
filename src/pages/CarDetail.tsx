@@ -443,24 +443,24 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
         }}
       />
       <Header />
-      <main className="pt-16 sm:pt-24 pb-28 lg:pb-20">
+      <main className="pt-16 sm:pt-28 pb-28 lg:pb-24">
         {/* Breadcrumb */}
-        <motion.div {...fadeUp(0)} className="container mx-auto px-3 sm:px-6 mb-3 sm:mb-6">
+        <motion.div {...fadeUp(0)} className="container mx-auto px-4 sm:px-8 mb-4 sm:mb-8">
           <button
             onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors group"
+            className="inline-flex items-center gap-2 text-sm font-light text-muted-foreground hover:text-foreground transition-colors group"
           >
-            <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
+            <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" strokeWidth={1.5} />
             Retour
           </button>
         </motion.div>
 
-        <div className="container mx-auto px-3 sm:px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-6 lg:gap-8">
+        <div className="container mx-auto px-4 sm:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8 lg:gap-12">
             {/* Left Column - Images & Details */}
-            <div className="lg:col-span-2 space-y-3 sm:space-y-6">
+            <div className="lg:col-span-2 space-y-4 sm:space-y-8">
               {/* Main Image Gallery with swipe */}
-              <motion.div {...fadeUp(0.05)} className="glass-card overflow-hidden">
+              <motion.div {...fadeUp(0.05)} className="rounded-3xl overflow-hidden bg-card/40 backdrop-blur-xl border border-border/10">
                 <div
                   className="relative aspect-[16/10] sm:aspect-video cursor-pointer group"
                   onClick={() => setFullscreenOpen(true)}
@@ -498,13 +498,13 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                     <>
                       <button
                         onClick={(e) => { e.stopPropagation(); setCurrentImageIndex(prev => prev === 0 ? images.length - 1 : prev - 1); }}
-                        className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-2xl bg-background/80 backdrop-blur-md flex items-center justify-center hover:bg-background transition-all shadow-lg hover:scale-105 active:scale-95 opacity-0 group-hover:opacity-100"
+                        className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-2xl bg-background/60 backdrop-blur-xl flex items-center justify-center hover:bg-background/80 transition-all hover:scale-105 active:scale-95 opacity-0 group-hover:opacity-100"
                       >
                         <ChevronLeft className="w-5 h-5" />
                       </button>
                       <button
                         onClick={(e) => { e.stopPropagation(); setCurrentImageIndex(prev => prev === images.length - 1 ? 0 : prev + 1); }}
-                        className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-2xl bg-background/80 backdrop-blur-md flex items-center justify-center hover:bg-background transition-all shadow-lg hover:scale-105 active:scale-95 opacity-0 group-hover:opacity-100"
+                        className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-2xl bg-background/60 backdrop-blur-xl flex items-center justify-center hover:bg-background/80 transition-all hover:scale-105 active:scale-95 opacity-0 group-hover:opacity-100"
                       >
                         <ChevronRight className="w-5 h-5" />
                       </button>
@@ -513,7 +513,7 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
 
                   {/* Image counter pill */}
                   {images.length > 1 && (
-                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-full bg-background/70 backdrop-blur-md text-xs font-medium text-foreground">
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-background/50 backdrop-blur-xl text-xs font-light text-foreground tracking-wider">
                       {currentImageIndex + 1} / {images.length}
                     </div>
                   )}
@@ -521,14 +521,14 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                   {/* Badges */}
                   <div className="absolute top-3 sm:top-4 left-3 sm:left-4 flex gap-2">
                     {car.isLezCompatible && (
-                      <span className="lez-badge shadow-lg">
-                        <Shield className="w-3 h-3" />
+                      <span className="lez-badge">
+                        <Shield className="w-3 h-3" strokeWidth={1.5} />
                         LEZ OK
                       </span>
                     )}
                     {car.hasCarPass && (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-semibold bg-background/90 backdrop-blur-md text-foreground shadow-lg">
-                        <Shield className="w-4 h-4 text-primary" />
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-xs font-light tracking-wide bg-background/60 backdrop-blur-xl text-foreground border border-border/10">
+                        <Shield className="w-3.5 h-3.5 text-primary" strokeWidth={1.5} />
                         Car-Pass
                       </span>
                     )}
@@ -537,7 +537,7 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
 
                 {/* Thumbnail strip */}
                 {images.length > 1 && (
-                  <div className="p-3 sm:p-4 flex gap-2 sm:gap-3 overflow-x-auto scrollbar-hide">
+                  <div className="p-3 sm:p-5 flex gap-2.5 sm:gap-3 overflow-x-auto scrollbar-hide">
                     {images.map((img: string, idx: number) => (
                       <button
                         key={idx}
@@ -568,38 +568,38 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
               </AnimatePresence>
 
               {/* Mobile-only: Title, Price & CTA */}
-              <motion.div {...fadeUp(0.1)} className="lg:hidden glass-card p-3 sm:p-6 space-y-2.5 sm:space-y-4">
-                <div className="flex items-start justify-between gap-2">
+              <motion.div {...fadeUp(0.1)} className="lg:hidden rounded-3xl bg-card/40 backdrop-blur-xl border border-border/10 p-5 sm:p-8 space-y-4 sm:space-y-5">
+                <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <h1 className="font-display text-lg sm:text-2xl font-bold text-foreground leading-tight truncate">
-                      {car.brand} {car.model}
+                    <h1 className="font-serif text-xl sm:text-2xl font-light text-foreground leading-tight truncate tracking-tight">
+                      {car.brand} <span className="text-primary">{car.model}</span>
                     </h1>
-                    <p className="text-[11px] sm:text-sm text-muted-foreground flex items-center gap-1 mt-0.5">
-                      <MapPin className="w-3 h-3 flex-shrink-0" />
+                    <p className="text-[11px] sm:text-sm font-light text-muted-foreground flex items-center gap-1.5 mt-1">
+                      <MapPin className="w-3 h-3 flex-shrink-0" strokeWidth={1.5} />
                       <span className="truncate">{car.location}</span>
                     </p>
                   </div>
-                  <div className="flex gap-1 flex-shrink-0">
+                  <div className="flex gap-2 flex-shrink-0">
                     <button
                       onClick={() => toggleFavorite(car.id)}
-                      className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all active:scale-90 touch-manipulation ${
+                      className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all active:scale-90 touch-manipulation ${
                         isFavorite(car.id)
-                          ? "bg-red-500 text-white shadow-lg shadow-red-500/25"
-                          : "bg-secondary text-muted-foreground hover:text-red-500"
+                          ? "bg-red-500 text-white"
+                          : "bg-secondary/50 text-muted-foreground hover:text-red-500"
                       }`}
                     >
-                      <Heart className={`w-3.5 h-3.5 ${isFavorite(car.id) ? "fill-current" : ""}`} />
+                      <Heart className={`w-4 h-4 ${isFavorite(car.id) ? "fill-current" : ""}`} strokeWidth={1.5} />
                     </button>
                     <button
                       onClick={handleShare}
-                      className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors active:scale-90 touch-manipulation"
+                      className="w-10 h-10 rounded-2xl bg-secondary/50 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors active:scale-90 touch-manipulation"
                     >
-                      <Share2 className="w-3.5 h-3.5" />
+                      <Share2 className="w-4 h-4" strokeWidth={1.5} />
                     </button>
                   </div>
                 </div>
 
-                <div className="text-xl sm:text-3xl font-display font-extrabold text-foreground">
+                <div className="text-2xl sm:text-3xl font-serif font-light text-foreground tracking-tight">
                   {formatPrice(car.price)}
                 </div>
 
@@ -622,55 +622,56 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
               </motion.div>
 
               {/* Mobile FAB buttons */}
-              <div className="lg:hidden fixed bottom-16 right-3 z-50 flex flex-col gap-2 safe-bottom">
+              <div className="lg:hidden fixed bottom-16 right-4 z-50 flex flex-col gap-2.5 safe-bottom">
                 <motion.button
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.3, type: "spring", stiffness: 400 }}
                   onClick={handleShare}
-                  className="w-10 h-10 rounded-full bg-card border border-border/50 shadow-xl flex items-center justify-center text-muted-foreground active:scale-90 transition-transform"
+                  className="w-11 h-11 rounded-2xl bg-card/60 backdrop-blur-xl border border-border/10 flex items-center justify-center text-muted-foreground active:scale-90 transition-transform"
                   aria-label="Partager"
                 >
-                  <Share2 className="w-4 h-4" />
+                  <Share2 className="w-4 h-4" strokeWidth={1.5} />
                 </motion.button>
                 <motion.button
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.2, type: "spring", stiffness: 400 }}
                   onClick={() => toggleFavorite(car.id)}
-                  className={`w-10 h-10 rounded-full shadow-xl flex items-center justify-center active:scale-90 transition-transform ${
+                  className={`w-11 h-11 rounded-2xl flex items-center justify-center active:scale-90 transition-transform ${
                     isFavorite(car.id)
-                      ? "bg-red-500 text-white shadow-red-500/30"
-                      : "bg-card border border-border/50 text-muted-foreground"
+                      ? "bg-red-500 text-white"
+                      : "bg-card/60 backdrop-blur-xl border border-border/10 text-muted-foreground"
                   }`}
                   aria-label="Favori"
                 >
-                  <Heart className={`w-4 h-4 ${isFavorite(car.id) ? "fill-current" : ""}`} />
+                  <Heart className={`w-4 h-4 ${isFavorite(car.id) ? "fill-current" : ""}`} strokeWidth={1.5} />
                 </motion.button>
                 <motion.button
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.1, type: "spring", stiffness: 400 }}
                   onClick={() => handleContact("Message")}
-                  className="w-12 h-12 rounded-full bg-primary text-primary-foreground shadow-xl shadow-primary/30 flex items-center justify-center active:scale-90 transition-transform"
+                  className="w-13 h-13 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center active:scale-90 transition-transform"
+                  style={{ width: 52, height: 52 }}
                   aria-label="Contacter"
                 >
-                  <MessageCircle className="w-5 h-5" />
+                  <MessageCircle className="w-5 h-5" strokeWidth={1.5} />
                 </motion.button>
               </div>
 
               {/* Mobile swipeable tabs for specs */}
               {isMobile ? (
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {/* Tab bar */}
-                  <div className="flex gap-1 overflow-x-auto scrollbar-hide px-0.5 py-0.5 bg-secondary/50 rounded-xl">
+                  <div className="flex gap-1.5 overflow-x-auto scrollbar-hide px-1 py-1 bg-secondary/30 rounded-2xl backdrop-blur-sm">
                     {["Specs", "Confiance", "Coûts", "Description"].map((tab, i) => (
                       <button
                         key={tab}
                         onClick={() => setMobileTab(i)}
-                        className={`flex-shrink-0 px-3 py-2 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
+                        className={`flex-shrink-0 px-4 py-2.5 rounded-xl text-xs font-light tracking-wide transition-all whitespace-nowrap ${
                           mobileTab === i
-                            ? "bg-primary text-primary-foreground shadow-sm"
+                            ? "bg-primary text-primary-foreground"
                             : "text-muted-foreground"
                         }`}
                       >
@@ -738,9 +739,9 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                       )}
                       {mobileTab === 3 && (
                         <div className="space-y-4">
-                          <div className="glass-card p-5">
-                            <h2 className="font-display text-lg font-bold text-foreground mb-3">Description</h2>
-                            <p className="text-muted-foreground leading-relaxed whitespace-pre-line text-sm">{description}</p>
+                        <div className="rounded-3xl bg-card/40 backdrop-blur-xl border border-border/10 p-6">
+                            <h2 className="font-serif text-lg font-light text-foreground mb-4 tracking-tight">Description</h2>
+                            <p className="text-muted-foreground leading-relaxed whitespace-pre-line text-sm font-light">{description}</p>
                           </div>
                           <ReviewsSection carListingId={id!} sellerId={sellerContact?.user_id} />
                         </div>
@@ -776,9 +777,9 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                     </div>
                   </ScrollReveal>
                   <ScrollReveal delay={0.05}>
-                    <div className="glass-card p-6 sm:p-7">
-                      <h2 className="font-display text-xl font-bold text-foreground mb-4">Description</h2>
-                      <p className="text-muted-foreground leading-relaxed whitespace-pre-line text-sm sm:text-base">{description}</p>
+                    <div className="rounded-3xl bg-card/40 backdrop-blur-xl border border-border/10 p-8 sm:p-10">
+                      <h2 className="font-serif text-2xl font-light text-foreground mb-6 tracking-tight">Description</h2>
+                      <p className="text-muted-foreground leading-[1.8] whitespace-pre-line text-sm sm:text-base font-light">{description}</p>
                     </div>
                   </ScrollReveal>
                   <ScrollReveal delay={0.05}>
@@ -792,87 +793,88 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
             <div className="hidden lg:block">
               <motion.div
                 {...fadeUp(0.15)}
-                className="glass-card p-6 sm:p-7 sticky top-24 space-y-5"
+                className="rounded-3xl bg-card/40 backdrop-blur-xl border border-border/10 p-7 sm:p-8 sticky top-28 space-y-6"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h1 className="font-display text-2xl font-bold text-foreground leading-tight">
-                      {car.brand} {car.model}
+                    <h1 className="font-serif text-2xl font-light text-foreground leading-tight tracking-tight">
+                      {car.brand} <span className="text-primary">{car.model}</span>
                     </h1>
-                    <p className="text-muted-foreground flex items-center gap-1.5 mt-1.5 text-sm">
-                      <MapPin className="w-4 h-4" />
+                    <p className="text-muted-foreground flex items-center gap-1.5 mt-2 text-sm font-light">
+                      <MapPin className="w-4 h-4" strokeWidth={1.5} />
                       {car.location}
                     </p>
                   </div>
                   <div className="flex gap-2">
                     <button
                       onClick={() => toggleFavorite(car.id)}
-                      className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all active:scale-90 ${
+                      className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-all active:scale-90 ${
                         isFavorite(car.id)
-                          ? "bg-red-500 text-white shadow-lg shadow-red-500/25"
-                          : "bg-secondary text-muted-foreground hover:text-red-500"
+                          ? "bg-red-500 text-white"
+                          : "bg-secondary/50 text-muted-foreground hover:text-red-500"
                       }`}
                     >
                       <Heart
                         className={`w-5 h-5 ${isFavorite(car.id) ? "fill-current" : ""}`}
+                        strokeWidth={1.5}
                       />
                     </button>
                     <button
                       onClick={handleShare}
-                      className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors active:scale-90"
+                      className="w-10 h-10 rounded-2xl bg-secondary/50 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors active:scale-90"
                     >
-                      <Share2 className="w-5 h-5" />
+                      <Share2 className="w-5 h-5" strokeWidth={1.5} />
                     </button>
                   </div>
                 </div>
 
-                {/* Price — larger, bolder */}
-                <div className="text-4xl font-display font-extrabold text-foreground">
+                {/* Price */}
+                <div className="text-4xl font-serif font-light text-foreground tracking-tight">
                   {formatPrice(car.price)}
                 </div>
 
                 {/* Divider */}
-                <div className="h-px bg-border" />
+                <div className="h-px bg-border/30" />
 
                 {/* Contact buttons */}
                 <div className="space-y-3">
                   {dbListing && (
                     <Button
                       onClick={() => handleContact("Message")}
-                      className="w-full h-12 btn-primary-gradient text-base"
+                      className="w-full h-13 rounded-2xl btn-primary-gradient text-sm font-light tracking-wide"
                     >
-                      <MessageCircle className="w-5 h-5 mr-2" />
+                      <MessageCircle className="w-4 h-4 mr-2" strokeWidth={1.5} />
                       Envoyer un message
                     </Button>
                   )}
                   <Button
                     onClick={() => handleContact("Appeler")}
                     variant={dbListing ? "outline" : "default"}
-                    className={`w-full h-12 ${!dbListing ? 'btn-primary-gradient' : ''}`}
+                    className={`w-full h-13 rounded-2xl text-sm font-light ${!dbListing ? 'btn-primary-gradient' : 'border-border/30'}`}
                   >
-                    <Phone className="w-5 h-5 mr-2" />
+                    <Phone className="w-4 h-4 mr-2" strokeWidth={1.5} />
                     Appeler le vendeur
                   </Button>
                   <Button
                     onClick={() => handleContact("Email")}
                     variant="outline"
-                    className="w-full h-12"
+                    className="w-full h-13 rounded-2xl text-sm font-light border-border/30"
                   >
-                    <Mail className="w-5 h-5 mr-2" />
+                    <Mail className="w-4 h-4 mr-2" strokeWidth={1.5} />
                     Envoyer un email
                   </Button>
                   <Button
                     onClick={() => handleContact("WhatsApp")}
                     variant="outline"
-                    className="w-full h-12"
+                    className="w-full h-13 rounded-2xl text-sm font-light border-border/30"
                   >
-                    <MessageCircle className="w-5 h-5 mr-2" />
+                    <MessageCircle className="w-4 h-4 mr-2" strokeWidth={1.5} />
                     WhatsApp
                   </Button>
                 </div>
 
                 {/* Divider */}
-                <div className="h-px bg-border" />
+                <div className="h-px bg-border/30" />
 
                 {/* Seller Badge */}
                 <SellerBadge
@@ -882,12 +884,12 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                 />
 
                 {/* Disclaimer */}
-                <p className="text-xs text-muted-foreground text-center leading-relaxed">
+                <p className="text-[11px] text-muted-foreground/60 text-center leading-relaxed font-light">
                   AutoRa n'est pas intermédiaire de paiement. Ne payez jamais avant d'avoir vu le véhicule.
                 </p>
 
                 {/* Report Ad */}
-                <div className="pt-2 border-t border-border flex justify-center">
+                <div className="pt-3 border-t border-border/20 flex justify-center">
                   <ReportAdModal
                     carListingId={id!}
                     carBrand={car.brand}
@@ -897,7 +899,7 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
 
                 {/* Admin Delete */}
                 {isAdmin && (
-                  <div className="pt-2 border-t border-border">
+                  <div className="pt-3 border-t border-border/20">
                     <Button
                       onClick={handleAdminDelete}
                       variant="destructive"
@@ -914,11 +916,11 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
 
           {/* Related Cars */}
           {relatedCars.length > 0 && (
-            <ScrollReveal delay={0.1}>
-              <section className="mt-12 sm:mt-16 lg:mt-20">
-                <div className="flex items-center gap-3 mb-6 sm:mb-8">
-                  <div className="w-1 h-8 rounded-full bg-primary" />
-                  <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground">
+             <ScrollReveal delay={0.1}>
+              <section className="mt-16 sm:mt-24 lg:mt-28">
+                <div className="flex items-center gap-3 mb-8 sm:mb-10">
+                  <div className="w-0.5 h-8 rounded-full bg-primary/40" />
+                  <h2 className="font-serif text-xl sm:text-2xl font-light text-foreground tracking-tight">
                     Véhicules similaires
                   </h2>
                 </div>

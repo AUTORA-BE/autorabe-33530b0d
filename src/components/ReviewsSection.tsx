@@ -175,7 +175,7 @@ const ReviewsSection = ({ carListingId, sellerId }: ReviewsSectionProps) => {
 
   if (isLoading) {
     return (
-      <div className="glass-card p-6">
+      <div className="rounded-3xl bg-card/40 backdrop-blur-xl border border-border/10 p-6 sm:p-8">
         <div className="animate-pulse space-y-4">
           <div className="h-6 bg-secondary rounded w-1/3"></div>
           <div className="h-20 bg-secondary rounded"></div>
@@ -185,15 +185,15 @@ const ReviewsSection = ({ carListingId, sellerId }: ReviewsSectionProps) => {
   }
 
   return (
-    <div className="glass-card p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="font-display text-xl font-bold text-foreground">
+    <div className="rounded-3xl bg-card/40 backdrop-blur-xl border border-border/10 p-6 sm:p-8">
+      <div className="flex items-center justify-between mb-7">
+        <h2 className="font-serif text-lg sm:text-xl font-light text-foreground tracking-tight">
           {t("reviews.title")}
         </h2>
         {reviews.length > 0 && (
           <div className="flex items-center gap-2">
             <StarRating value={Math.round(averageRating)} />
-            <span className="text-muted-foreground">
+            <span className="text-muted-foreground/60 text-sm font-light">
               ({reviews.length} {reviews.length === 1 ? t("reviews.review") : t("reviews.reviews")})
             </span>
           </div>
@@ -202,10 +202,10 @@ const ReviewsSection = ({ carListingId, sellerId }: ReviewsSectionProps) => {
 
       {/* Submit review form */}
       {currentUserId && currentUserId !== sellerId && !userHasReviewed && (
-        <div className="mb-8 p-4 rounded-xl bg-secondary space-y-4">
-          <h3 className="font-semibold text-foreground">{t("reviews.leaveReview")}</h3>
+        <div className="mb-8 p-5 rounded-2xl bg-secondary/20 border border-border/10 space-y-4">
+          <h3 className="font-light text-foreground tracking-tight">{t("reviews.leaveReview")}</h3>
           <div className="flex items-center gap-3">
-            <span className="text-sm text-muted-foreground">{t("reviews.yourRating")}:</span>
+            <span className="text-sm text-muted-foreground/60 font-light">{t("reviews.yourRating")}:</span>
             <StarRating value={rating} interactive />
           </div>
           <Textarea
@@ -227,14 +227,14 @@ const ReviewsSection = ({ carListingId, sellerId }: ReviewsSectionProps) => {
 
       {/* Login prompt */}
       {!currentUserId && (
-        <div className="mb-8 p-4 rounded-xl bg-secondary text-center">
-          <p className="text-muted-foreground">{t("reviews.loginToReview")}</p>
+        <div className="mb-8 p-5 rounded-2xl bg-secondary/20 border border-border/10 text-center">
+          <p className="text-muted-foreground/60 font-light">{t("reviews.loginToReview")}</p>
         </div>
       )}
 
       {/* Reviews list */}
       {reviews.length === 0 ? (
-        <p className="text-muted-foreground text-center py-8">
+        <p className="text-muted-foreground/50 text-center py-10 font-light">
           {t("reviews.noReviews")}
         </p>
       ) : (
@@ -242,12 +242,12 @@ const ReviewsSection = ({ carListingId, sellerId }: ReviewsSectionProps) => {
           {reviews.map((review) => (
             <div
               key={review.id}
-              className="p-4 rounded-xl bg-secondary"
+              className="p-5 rounded-2xl bg-secondary/15 border border-border/5"
             >
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <User className="w-5 h-5 text-primary" />
+                  <div className="w-10 h-10 rounded-2xl bg-primary/8 flex items-center justify-center">
+                    <User className="w-4 h-4 text-primary" strokeWidth={1.5} />
                   </div>
                   <div>
                     <StarRating value={review.rating} />
