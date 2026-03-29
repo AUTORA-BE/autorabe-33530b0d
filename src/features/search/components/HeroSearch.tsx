@@ -419,6 +419,41 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
         <div className="absolute inset-0 hero-gradient" />
         <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.02] to-transparent" />
 
+        {/* Parallax luminous orbs */}
+        <motion.div
+          className="absolute w-[500px] h-[500px] rounded-full opacity-[0.04]"
+          style={{
+            background: "radial-gradient(circle, hsl(var(--primary)) 0%, transparent 70%)",
+            top: "-10%",
+            right: "-10%",
+            filter: "blur(80px)",
+          }}
+          animate={{ y: [0, 30, 0], x: [0, -15, 0], scale: [1, 1.08, 1] }}
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute w-[350px] h-[350px] rounded-full opacity-[0.03]"
+          style={{
+            background: "radial-gradient(circle, hsl(var(--primary)) 0%, transparent 70%)",
+            bottom: "5%",
+            left: "-5%",
+            filter: "blur(60px)",
+          }}
+          animate={{ y: [0, -20, 0], x: [0, 20, 0], scale: [1, 1.12, 1] }}
+          transition={{ duration: 16, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+        />
+        <motion.div
+          className="absolute w-[200px] h-[200px] rounded-full opacity-[0.025]"
+          style={{
+            background: "radial-gradient(circle, hsl(var(--primary)) 0%, transparent 70%)",
+            top: "40%",
+            left: "50%",
+            filter: "blur(50px)",
+          }}
+          animate={{ y: [0, 15, 0], x: [0, -10, 0], scale: [1, 1.15, 1] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 4 }}
+        />
+
         {/* Subtle grid pattern */}
         <div className="absolute inset-0 opacity-[0.015]"
           style={{ backgroundImage: `radial-gradient(circle at 1px 1px, hsl(var(--foreground)) 0.5px, transparent 0)`, backgroundSize: "64px 64px" }} />
