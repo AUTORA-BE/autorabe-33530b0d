@@ -427,11 +427,11 @@ const SwipeDiscovery = memo(function SwipeDiscovery({
               <X className="w-6 h-6 text-muted-foreground" />
             </button>
 
-            {/* Details */}
+            {/* Details (Quick Preview) */}
             <button
-              onClick={handleClick}
+              onClick={handleQuickPreview}
               className="w-11 h-11 rounded-full bg-card/50 backdrop-blur-xl border border-border/20 flex items-center justify-center active:scale-90 transition-transform duration-150"
-              aria-label="Détails"
+              aria-label="Aperçu rapide"
             >
               <Info className="w-5 h-5 text-muted-foreground" />
             </button>
@@ -456,6 +456,15 @@ const SwipeDiscovery = memo(function SwipeDiscovery({
           </div>
         )}
       </div>
+      {/* Quick preview bottom sheet — outside container to use fixed positioning */}
+      <QuickPreviewSheet
+        vehicle={!isFinished ? vehicles[currentIndex] : null}
+        isOpen={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        onViewDetail={onVehicleClick}
+        onToggleFavorite={onToggleFavorite}
+        isFavorite={!isFinished && vehicles[currentIndex] ? isFavorite(vehicles[currentIndex].id) : false}
+      />
     </section>
   );
 });
