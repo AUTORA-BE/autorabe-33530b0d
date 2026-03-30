@@ -18,6 +18,7 @@ import { Heart, X, Info, Eye, Undo2, Share2, Fuel, Calendar, Gauge } from "lucid
 import CarImage from "@/components/cars/CarImage";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useHapticFeedback } from "@/hooks/useHapticFeedback";
+import QuickPreviewSheet from "./QuickPreviewSheet";
 import type { Vehicle } from "../types/vehicle.types";
 
 /* ─── Props ─── */
@@ -210,6 +211,7 @@ const SwipeDiscovery = memo(function SwipeDiscovery({
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [likedCount, setLikedCount] = useState(0);
   const [passedCount, setPassedCount] = useState(0);
+  const [previewOpen, setPreviewOpen] = useState(false);
   const { language } = useLanguage();
   const haptic = useHapticFeedback();
 
@@ -253,6 +255,11 @@ const SwipeDiscovery = memo(function SwipeDiscovery({
     const vehicle = vehicles[currentIndex];
     if (vehicle) onVehicleClick(vehicle.id);
   }, [currentIndex, vehicles, onVehicleClick]);
+
+  const handleQuickPreview = useCallback(() => {
+    haptic.impactLight();
+    setPreviewOpen(true);
+  }, [haptic]);
 
   const handleShare = useCallback(async () => {
     const vehicle = vehicles[currentIndex];
@@ -420,11 +427,11 @@ const SwipeDiscovery = memo(function SwipeDiscovery({
               <X className="w-6 h-6 text-muted-foreground" />
             </button>
 
-            {/* Details */}
+            {/* Details (Quick Preview) */}
             <button
-              onClick={handleClick}
+              onClick={handleQuickPreview}
               className="w-11 h-11 rounded-full bg-card/50 backdrop-blur-xl border border-border/20 flex items-center justify-center active:scale-90 transition-transform duration-150"
-              aria-label="Détails"
+              aria-label="Aperçu rapide"
             >
               <Info className="w-5 h-5 text-muted-foreground" />
             </button>
@@ -449,6 +456,15 @@ const SwipeDiscovery = memo(function SwipeDiscovery({
           </div>
         )}
       </div>
+      {/* Quick preview bottom sheet — outside container to use fixed positioning */}
+      <QuickPreviewSheet
+        vehicle={!isFinished ? vehicles[currentIndex] : null}
+        isOpen={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        onViewDetail={onVehicleClick}
+        onToggleFavorite={onToggleFavorite}
+        isFavorite={!isFinished && vehicles[currentIndex] ? isFavorite(vehicles[currentIndex].id) : false}
+      />
     </section>
   );
 });
