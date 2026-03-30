@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import { 
   Calendar, 
   Gauge, 
@@ -44,6 +45,16 @@ const BentoSpecs = ({
     return `${kw} kW / ${ch} ch`;
   };
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { staggerChildren: 0.06 } },
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 16, scale: 0.97 },
+    show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] } },
+  };
+
   // Build secondary pills
   const details: { icon: React.ElementType; label: string; value: string }[] = [];
   if (power) details.push({ icon: Zap, label: "Puissance", value: formatPower(power) });
@@ -53,121 +64,139 @@ const BentoSpecs = ({
   if (doors) details.push({ icon: DoorOpen, label: "Portes", value: `${doors}` });
 
   return (
-    <div className="rounded-3xl bg-card/40 backdrop-blur-xl border border-border/10 p-5 sm:p-8">
-      <h2 className="font-serif text-base sm:text-xl font-light text-foreground mb-5 sm:mb-7 tracking-tight">
+    <div className="glass-card p-3 sm:p-6">
+      <h2 className="font-display text-base sm:text-xl font-bold text-foreground mb-3 sm:mb-5">
         Caractéristiques
       </h2>
 
-      <div className="grid grid-cols-6 gap-2.5 sm:gap-3 auto-rows-auto">
+      <motion.div variants={container} initial="hidden" animate="show" className="grid grid-cols-6 gap-2 sm:gap-3 auto-rows-auto">
 
         {/* ── Location — spans full width, hero tile ── */}
         {location && (
-          <div
-            className="col-span-6 group relative overflow-hidden rounded-2xl sm:rounded-3xl bg-primary/5 p-4 sm:p-6 cursor-default transition-colors hover:bg-primary/8"
+          <motion.div
+            variants={item}
+            whileHover={{ scale: 1.02, y: -2 }}
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+            className="col-span-6 group relative overflow-hidden rounded-xl sm:rounded-2xl bg-primary/10 p-3 sm:p-5 cursor-default"
           >
-            <MapPin className="absolute -bottom-4 -right-4 w-20 h-20 text-primary/[0.04]" strokeWidth={1} />
-            <div className="relative z-10 flex items-center gap-3">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-primary" strokeWidth={1.5} />
+            <MapPin className="absolute -bottom-4 -right-4 w-20 h-20 text-primary/[0.06]" />
+            <div className="relative z-10 flex items-center gap-2.5">
+              <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-lg sm:rounded-xl bg-primary/20 flex items-center justify-center flex-shrink-0">
+                <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
               </div>
               <div>
-                <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.15em] text-muted-foreground/60 font-light">
+                <p className="text-[10px] sm:text-[11px] uppercase tracking-wider text-muted-foreground/70 font-medium">
                   Localisation
                 </p>
-                <p className="font-light text-foreground text-sm sm:text-lg leading-tight tracking-tight">{location}</p>
+                <p className="font-bold text-foreground text-sm sm:text-lg leading-tight">{location}</p>
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
 
-        {/* ── Year — tall left tile ── */}
-        <div
-          className="col-span-3 row-span-2 group relative overflow-hidden rounded-2xl sm:rounded-3xl bg-secondary/30 p-4 sm:p-6 cursor-default flex flex-col justify-between min-h-[110px] sm:min-h-[140px] transition-colors hover:bg-secondary/40"
+        {/* ── Year — tall left tile (spans 3 cols, 2 rows) ── */}
+        <motion.div
+          variants={item}
+          whileHover={{ scale: 1.03, y: -3 }}
+          transition={{ type: "spring", stiffness: 400, damping: 25 }}
+          className="col-span-3 row-span-2 group relative overflow-hidden rounded-xl sm:rounded-2xl bg-secondary/60 p-3 sm:p-5 cursor-default flex flex-col justify-between min-h-[110px] sm:min-h-[140px]"
         >
-          <Calendar className="absolute -bottom-3 -right-3 w-16 h-16 text-primary/[0.03]" strokeWidth={1} />
+          <Calendar className="absolute -bottom-3 -right-3 w-16 h-16 text-primary/[0.05]" />
           <div className="relative z-10">
-            <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl bg-primary/8 flex items-center justify-center mb-3 sm:mb-4">
-              <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-primary" strokeWidth={1.5} />
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-primary/15 flex items-center justify-center mb-2 sm:mb-3">
+              <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
             </div>
-            <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.15em] text-muted-foreground/60 font-light">
+            <p className="text-[10px] sm:text-[11px] uppercase tracking-wider text-muted-foreground/70 font-medium">
               Année
             </p>
           </div>
-          <p className="relative z-10 font-serif font-light text-foreground text-2xl sm:text-3xl leading-tight tracking-tight">
+          <p className="relative z-10 font-extrabold text-foreground text-2xl sm:text-3xl leading-tight">
             {year}
           </p>
-        </div>
+        </motion.div>
 
         {/* ── Mileage — right top ── */}
-        <div
-          className="col-span-3 group relative overflow-hidden rounded-2xl sm:rounded-3xl bg-secondary/30 p-4 sm:p-5 cursor-default transition-colors hover:bg-secondary/40"
+        <motion.div
+          variants={item}
+          whileHover={{ scale: 1.04, y: -2 }}
+          transition={{ type: "spring", stiffness: 400, damping: 25 }}
+          className="col-span-3 group relative overflow-hidden rounded-xl sm:rounded-2xl bg-secondary/60 p-3 sm:p-4 cursor-default"
         >
-          <Gauge className="absolute -bottom-2 -right-2 w-12 h-12 text-primary/[0.03]" strokeWidth={1} />
+          <Gauge className="absolute -bottom-2 -right-2 w-12 h-12 text-primary/[0.05]" />
           <div className="relative z-10">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-primary/8 flex items-center justify-center mb-2 sm:mb-3">
-              <Gauge className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" strokeWidth={1.5} />
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg sm:rounded-xl bg-primary/15 flex items-center justify-center mb-1.5 sm:mb-2">
+              <Gauge className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
             </div>
-            <p className="text-[9px] sm:text-[10px] uppercase tracking-[0.15em] text-muted-foreground/60 font-light">
+            <p className="text-[9px] sm:text-[10px] uppercase tracking-wider text-muted-foreground/70 font-medium">
               Kilométrage
             </p>
-            <p className="font-light text-foreground text-sm sm:text-base mt-0.5 leading-tight">
+            <p className="font-bold text-foreground text-sm sm:text-base mt-0.5 leading-tight">
               {formatMileage(mileage)}
             </p>
           </div>
-        </div>
+        </motion.div>
 
-        {/* ── Fuel + Transmission ── */}
+        {/* ── Fuel + Transmission — right bottom, side by side sharing 3 cols ── */}
         {[
           { icon: Fuel, label: "Carburant", value: fuelType },
           { icon: Settings2, label: "Boîte", value: transmission },
         ].map((spec) => {
           const Icon = spec.icon;
           return (
-            <div
+            <motion.div
               key={spec.label}
-              className="col-span-3 group relative overflow-hidden rounded-2xl bg-secondary/20 p-4 cursor-default transition-colors hover:bg-secondary/30"
+              variants={item}
+              whileHover={{ scale: 1.05, y: -2 }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}
+              className="col-span-3 sm:col-span-3 group relative overflow-hidden rounded-2xl bg-secondary/40 p-3.5 cursor-default"
             >
-              <div className="relative z-10 flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-primary/8 flex items-center justify-center flex-shrink-0">
-                  <Icon className="w-4 h-4 text-primary" strokeWidth={1.5} />
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400" />
+              <div className="relative z-10 flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:bg-primary/20">
+                  <Icon className="w-4 h-4 text-primary transition-transform duration-300 group-hover:scale-110" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/50 font-light leading-none">
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60 font-medium leading-none">
                     {spec.label}
                   </p>
-                  <p className="font-light text-foreground text-xs mt-1 leading-tight break-words">
+                  <p className="font-semibold text-foreground text-xs mt-0.5 leading-tight break-words">
                     {spec.value}
                   </p>
                 </div>
               </div>
-            </div>
+            </motion.div>
           );
         })}
 
-        {/* ── Extra details ── */}
+        {/* ── Extra details — compact pills, auto-fill remaining space ── */}
         {details.map((spec, i) => {
           const Icon = spec.icon;
+          // Make the first extra detail span wider if odd count
           const isWide = i === 0 && details.length % 2 !== 0;
           return (
-            <div
+            <motion.div
               key={spec.label}
-              className={`${isWide ? "col-span-6" : "col-span-3"} group flex items-center gap-3 rounded-2xl bg-secondary/15 px-4 py-3 cursor-default transition-colors hover:bg-secondary/25`}
+              variants={item}
+              whileHover={{ scale: 1.04, y: -1 }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}
+              className={`${isWide ? "col-span-6" : "col-span-3"} group flex items-center gap-2.5 rounded-xl bg-secondary/30 px-3 py-2.5 cursor-default relative overflow-hidden`}
             >
-              <div className="w-9 h-9 rounded-xl bg-primary/8 flex items-center justify-center flex-shrink-0">
-                <Icon className="w-4 h-4 text-primary" strokeWidth={1.5} />
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400" />
+              <div className="relative z-10 w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 transition-all duration-300 group-hover:bg-primary/20">
+                <Icon className="w-4 h-4 text-primary transition-transform duration-300 group-hover:scale-110" />
               </div>
-              <div className="min-w-0">
-                <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/50 font-light leading-none">
+              <div className="relative z-10 min-w-0">
+                <p className="text-[10px] uppercase tracking-wider text-muted-foreground/60 font-medium leading-none">
                   {spec.label}
                 </p>
-                <p className="font-light text-foreground text-xs mt-1 leading-tight break-words">
+                <p className="font-semibold text-foreground text-xs mt-0.5 leading-tight break-words">
                   {spec.value}
                 </p>
               </div>
-            </div>
+            </motion.div>
           );
         })}
-      </div>
+      </motion.div>
     </div>
   );
 };

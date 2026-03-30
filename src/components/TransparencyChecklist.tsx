@@ -1,4 +1,4 @@
-import { Check, FileCheck, Wrench, FileText } from "lucide-react";
+import { Check, X, FileCheck, Wrench, FileText } from "lucide-react";
 
 interface TransparencyChecklistProps {
   carPassVerified?: boolean | null;
@@ -26,6 +26,7 @@ const TransparencyChecklist = ({
   ];
 
   if (compact) {
+    // Compact version for CarCard
     const verifiedCount = items.filter((item) => item.checked).length;
     if (verifiedCount === 0) return null;
 
@@ -41,7 +42,7 @@ const TransparencyChecklist = ({
             />
           ))}
         </div>
-        <span className="text-xs text-muted-foreground font-light">
+        <span className="text-xs text-muted-foreground">
           {verifiedCount}/3
         </span>
       </div>
@@ -49,16 +50,16 @@ const TransparencyChecklist = ({
   }
 
   return (
-    <div className="rounded-3xl bg-card/40 backdrop-blur-xl border border-border/10 p-6 sm:p-8">
-      <div className="flex items-center gap-4 mb-7">
-        <div className="w-12 h-12 rounded-2xl bg-primary/8 flex items-center justify-center">
-          <FileCheck className="w-5 h-5 text-primary" strokeWidth={1.5} />
+    <div className="glass-card p-6">
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+          <FileCheck className="w-6 h-6 text-primary" />
         </div>
         <div>
-          <h2 className="font-serif text-lg sm:text-xl font-light text-foreground tracking-tight">
+          <h2 className="font-display text-xl font-bold text-foreground">
             Indicateurs de Transparence
           </h2>
-          <p className="text-xs text-muted-foreground/60 font-light mt-0.5">
+          <p className="text-sm text-muted-foreground">
             Informations fournies par le vendeur
           </p>
         </div>
@@ -72,42 +73,41 @@ const TransparencyChecklist = ({
           return (
             <div
               key={index}
-              className={`flex items-center gap-4 p-4 rounded-2xl transition-all ${
+              className={`flex items-center gap-3 p-3 rounded-xl transition-all ${
                 isChecked
-                  ? "bg-primary/5 border border-primary/10"
-                  : "bg-muted/30 border border-transparent"
+                  ? "bg-primary/10"
+                  : "bg-muted/50"
               }`}
             >
               <div
-                className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                className={`w-10 h-10 rounded-lg flex items-center justify-center ${
                   isChecked
-                    ? "bg-primary/10"
-                    : "bg-muted/50"
+                    ? "bg-primary/20"
+                    : "bg-muted"
                 }`}
               >
                 <Icon
-                  className={`w-4 h-4 ${
-                    isChecked ? "text-primary" : "text-muted-foreground/40"
+                  className={`w-5 h-5 ${
+                    isChecked ? "text-primary" : "text-muted-foreground/50"
                   }`}
-                  strokeWidth={1.5}
                 />
               </div>
               <span
-                className={`flex-1 text-sm ${
+                className={`flex-1 ${
                   isChecked
-                    ? "text-foreground font-light"
-                    : "text-muted-foreground/50 line-through font-light"
+                    ? "text-foreground font-medium"
+                    : "text-muted-foreground/70 line-through"
                 }`}
               >
                 {item.label}
               </span>
               {isChecked ? (
-                <div className="w-6 h-6 rounded-full bg-primary/15 flex items-center justify-center">
-                  <Check className="w-3.5 h-3.5 text-primary" strokeWidth={2} />
+                <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+                  <Check className="w-4 h-4 text-white" />
                 </div>
               ) : (
-                <span className="text-[10px] text-muted-foreground/40 font-light tracking-wide">
-                  Non fourni
+                <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
+                  Info non fournie
                 </span>
               )}
             </div>
@@ -115,7 +115,7 @@ const TransparencyChecklist = ({
         })}
       </div>
 
-      <p className="mt-6 text-[10px] text-muted-foreground/40 text-center leading-relaxed font-light tracking-wide">
+      <p className="mt-4 text-xs text-muted-foreground text-center">
         Ces informations sont fournies par le vendeur et n'engagent pas AutoRa.
       </p>
     </div>
