@@ -18,6 +18,7 @@ import { Heart, X, Info, Eye, Undo2, Share2, Fuel, Calendar, Gauge } from "lucid
 import CarImage from "@/components/cars/CarImage";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useHapticFeedback } from "@/hooks/useHapticFeedback";
+import QuickPreviewSheet from "./QuickPreviewSheet";
 import type { Vehicle } from "../types/vehicle.types";
 
 /* ─── Props ─── */
@@ -210,6 +211,7 @@ const SwipeDiscovery = memo(function SwipeDiscovery({
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [likedCount, setLikedCount] = useState(0);
   const [passedCount, setPassedCount] = useState(0);
+  const [previewOpen, setPreviewOpen] = useState(false);
   const { language } = useLanguage();
   const haptic = useHapticFeedback();
 
@@ -253,6 +255,11 @@ const SwipeDiscovery = memo(function SwipeDiscovery({
     const vehicle = vehicles[currentIndex];
     if (vehicle) onVehicleClick(vehicle.id);
   }, [currentIndex, vehicles, onVehicleClick]);
+
+  const handleQuickPreview = useCallback(() => {
+    haptic.impactLight();
+    setPreviewOpen(true);
+  }, [haptic]);
 
   const handleShare = useCallback(async () => {
     const vehicle = vehicles[currentIndex];
