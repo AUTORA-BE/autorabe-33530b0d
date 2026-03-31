@@ -464,6 +464,7 @@ const SwipeDiscovery = memo(function SwipeDiscovery({
         onViewDetail={onVehicleClick}
         onToggleFavorite={onToggleFavorite}
         isFavorite={!isFinished && vehicles[currentIndex] ? isFavorite(vehicles[currentIndex].id) : false}
+        photos={!isFinished && vehicles[currentIndex]?.photos ? vehicles[currentIndex].photos : undefined}
       />
     </section>
   );

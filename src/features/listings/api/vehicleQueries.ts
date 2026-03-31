@@ -46,6 +46,7 @@ export function mapListingToVehicle(listing: VehicleListingRow): Vehicle {
     euroNorm: listing.euro_norm || 'Non spécifié',
     location: listing.location || 'Belgique',
     image: listing.photos?.[0] || DEFAULT_VEHICLE_IMAGE,
+    photos: listing.photos?.length ? listing.photos : [DEFAULT_VEHICLE_IMAGE],
     isLezCompatible,
     hasCarPass: listing.car_pass_verified || false,
     sellerType: listing.seller_type || 'particulier',
