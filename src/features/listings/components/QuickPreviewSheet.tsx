@@ -1,12 +1,13 @@
 /**
  * Bottom-sheet quick preview for a vehicle card.
- * Glassmorphic design, swipe-to-dismiss, with CTA to full detail.
+ * Glassmorphic design, swipe-to-dismiss, with image carousel & CTA.
  * @module features/listings/components
  */
 
-import { memo, useCallback } from "react";
-import { motion, AnimatePresence, useDragControls, type PanInfo } from "framer-motion";
+import { memo, useCallback, useState, useEffect } from "react";
+import { motion, AnimatePresence, type PanInfo } from "framer-motion";
 import { X, Heart, ExternalLink, Calendar, Gauge, Fuel, MapPin, Cog, Shield, ChevronRight } from "lucide-react";
+import useEmblaCarousel from "embla-carousel-react";
 import CarImage from "@/components/cars/CarImage";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useHapticFeedback } from "@/hooks/useHapticFeedback";
@@ -19,6 +20,8 @@ interface QuickPreviewSheetProps {
   onViewDetail: (id: string) => void;
   onToggleFavorite: (id: string) => void;
   isFavorite: boolean;
+  /** Optional array of photo URLs; falls back to vehicle.image */
+  photos?: string[];
 }
 
 const formatPrice = (price: number) =>
@@ -33,9 +36,31 @@ const QuickPreviewSheet = memo(function QuickPreviewSheet({
   onViewDetail,
   onToggleFavorite,
   isFavorite,
+  photos: photosProp,
 }: QuickPreviewSheetProps) {
   const { language } = useLanguage();
   const haptic = useHapticFeedback();
+
+  const images = photosProp?.length ? photosProp : vehicle?.image ? [vehicle.image] : ["/placeholder.svg"];
+
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, containScroll: false });
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    const onSelect = () => setActiveIndex(emblaApi.selectedScrollSnap());
+    emblaApi.on("select", onSelect);
+    onSelect();
+    return () => { emblaApi.off("select", onSelect); };
+  }, [emblaApi]);
+
+  // Reset carousel when vehicle changes
+  useEffect(() => {
+    if (emblaApi && isOpen) {
+      emblaApi.scrollTo(0, true);
+      setActiveIndex(0);
+    }
+  }, [vehicle?.id, isOpen, emblaApi]);
 
   const handleDragEnd = useCallback(
     (_: unknown, info: PanInfo) => {
@@ -57,7 +82,6 @@ const QuickPreviewSheet = memo(function QuickPreviewSheet({
     if (!vehicle) return;
     haptic.impactLight();
     onClose();
-    // Small delay so the sheet animates out first
     setTimeout(() => onViewDetail(vehicle.id), 200);
   }, [vehicle, onViewDetail, onClose, haptic]);
 
@@ -108,19 +132,52 @@ const QuickPreviewSheet = memo(function QuickPreviewSheet({
 
               {/* Scrollable content */}
               <div className="overflow-y-auto max-h-[calc(85vh-2rem)] pb-safe overscroll-contain">
-                {/* Hero image */}
+                {/* Image carousel */}
                 <div className="relative mx-4 rounded-2xl overflow-hidden" style={{ height: "180px" }}>
-                  <CarImage
-                    src={vehicle.image || "/placeholder.svg"}
-                    alt={`${vehicle.brand} ${vehicle.model}`}
-                    aspectRatio="auto"
-                    eager
-                    className="w-full h-full"
-                  />
+                  <div ref={emblaRef} className="overflow-hidden h-full">
+                    <div className="flex h-full">
+                      {images.map((src, i) => (
+                        <div key={i} className="flex-[0_0_100%] min-w-0 h-full">
+                          <CarImage
+                            src={src}
+                            alt={`${vehicle.brand} ${vehicle.model} – ${i + 1}`}
+                            aspectRatio="auto"
+                            eager={i === 0}
+                            className="w-full h-full"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Dot indicators */}
+                  {images.length > 1 && (
+                    <div className="absolute bottom-2.5 inset-x-0 flex justify-center gap-1.5 z-10">
+                      {images.map((_, i) => (
+                        <button
+                          key={i}
+                          onClick={() => emblaApi?.scrollTo(i)}
+                          className={`rounded-full transition-all duration-200 ${
+                            i === activeIndex
+                              ? "w-5 h-1.5 bg-white"
+                              : "w-1.5 h-1.5 bg-white/50"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Photo counter */}
+                  {images.length > 1 && (
+                    <div className="absolute top-3 left-3 px-2 py-0.5 rounded-full bg-black/40 backdrop-blur-md text-white text-[10px] font-medium z-10">
+                      {activeIndex + 1}/{images.length}
+                    </div>
+                  )}
+
                   {/* Close button */}
                   <button
                     onClick={onClose}
-                    className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/30 backdrop-blur-xl flex items-center justify-center active:scale-90 transition-transform"
+                    className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/30 backdrop-blur-xl flex items-center justify-center active:scale-90 transition-transform z-10"
                   >
                     <X className="w-4 h-4 text-white" />
                   </button>
@@ -128,7 +185,6 @@ const QuickPreviewSheet = memo(function QuickPreviewSheet({
 
                 {/* Vehicle info */}
                 <div className="px-5 pt-4 pb-2">
-                  {/* Brand & model */}
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
                       <p className="text-muted-foreground text-[11px] font-medium tracking-[0.2em] uppercase">
@@ -154,7 +210,6 @@ const QuickPreviewSheet = memo(function QuickPreviewSheet({
                     </button>
                   </div>
 
-                  {/* Price */}
                   <p className="text-foreground text-2xl font-semibold tracking-tight mt-2">
                     {formatPrice(vehicle.price)}
                   </p>
