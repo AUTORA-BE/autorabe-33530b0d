@@ -12,6 +12,7 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import PageTransition from "@/components/PageTransition";
 import ScrollToTop from "@/components/ScrollToTop";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 const CompareBar = lazy(() => import("@/features/compare/components/CompareBar"));
 const BottomNav = lazy(() => import("@/shared/components/BottomNav"));
 const CarChatbot = lazy(() => import("@/components/CarChatbot"));
@@ -144,6 +145,7 @@ const App = () => (
               <Suspense fallback={null}><PWAInstallBanner /></Suspense>
               <Suspense fallback={null}><CookieBanner /></Suspense>
             </BrowserRouter>
+            <SpeedInsights />
           </CompareProvider>
         </LanguageProvider>
       </TooltipProvider>
