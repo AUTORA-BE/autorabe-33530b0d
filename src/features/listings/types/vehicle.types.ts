@@ -45,6 +45,8 @@ export interface Vehicle {
   location: string;
   /** Primary image URL */
   image: string;
+  /** All photo URLs (optional, for carousel views) */
+  photos?: string[];
   /** LEZ (Low Emission Zone) compatibility flag */
   isLezCompatible: boolean;
   /** Car-Pass verification status (mandatory in Belgium) */
