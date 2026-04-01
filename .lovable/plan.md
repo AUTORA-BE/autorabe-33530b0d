@@ -1,66 +1,79 @@
 
 
-# Plan : Widget Prix Carburants Belgique -- Intégration Premium
+# Audit de lancement AutoRA — 1er avril 2026
 
-## Contexte
+## 1. Erreurs de build critiques (bloquantes)
 
-AutoRa dispose deja des donnees de prix carburants belges dans `src/features/tco/constants/belgianData.ts` (PRIX_CARBURANT). L'objectif est d'exposer ces donnees de maniere elegante a trois endroits strategiques sans surcharger l'interface.
+7 Edge Functions ne compilent plus à cause d'une version incompatible de `@supabase/supabase-js`.
 
-## Architecture
+**Problème** : `npm:@supabase/supabase-js@2.57.2` n'est pas trouvé dans l'environnement Deno. Cette version est probablement trop récente ou absente du cache.
 
-Trois points d'integration, un seul composant reutilisable :
+**Fichiers concernés** (7) :
+- `check-subscription/index.ts`
+- `customer-portal/index.ts`
+- `delete-account/index.ts`
+- `export-user-data/index.ts`
+- `create-checkout/index.ts`
+- `create-boost-checkout/index.ts`
+- `stripe-webhook/index.ts`
 
-```text
-FuelPriceStrip (composant unique)
-  ├── Homepage : bandeau horizontal sous TrustBar (scroll horizontal mobile)
-  ├── TCO Hero : mini-indicateur contextuel sous le sous-titre
-  └── TCO FuelTypeStep : prix live inline sur chaque carte carburant (deja present)
-```
+**Fix** : Remplacer `npm:@supabase/supabase-js@2.57.2` par `npm:@supabase/supabase-js@2` (résolution flexible) dans ces 7 fichiers — c'est le pattern utilisé par `process-email-queue` qui compile correctement.
 
-## Modifications prevues
+**Bonus** : `process-email-queue` a aussi des erreurs TypeScript (types `never` sur les inserts/rpc). Fix : typer le client Supabase comme `any` ou utiliser des casts explicites pour contourner le typage strict auto-généré.
 
-### 1. Nouveau composant `src/components/FuelPriceStrip.tsx`
+---
 
-Widget horizontal glassmorphique affichant les 4 prix principaux (Diesel B7, Essence E10, Essence E5, Electricite). Design :
+## 2. Fonctionnalités en place (prêtes)
 
-- Fond `bg-card/40 backdrop-blur-xl border border-border/20` -- glassmorphism subtil
-- Icones vectorielles minimalistes Lucide (`Droplets` pour diesel, `Flame` pour essence, `Zap` pour electrique) -- pas d'emojis
-- Typographie : prix en `font-mono text-foreground font-semibold`, labels en `text-[11px] text-muted-foreground`
-- Denomination officielle belge : "Diesel B7", "E10 (95)", "E98", "kWh"
-- Badge discret "MAJ Mars 2026" en `text-[9px]` avec icone `Clock`
-- Skeleton loader anime pendant le premier rendu (simule un delai de 300ms pour l'effet premium)
-- Scroll horizontal `snap-x` sur mobile, flex horizontal centre sur desktop
-- Staggered entrance via `framer-motion` (opacity + translateY)
+| Domaine | Statut |
+|---|---|
+| Authentification (email, Google, Apple) | ✅ |
+| RGPD (cookies, suppression compte, export données) | ✅ |
+| PWA (install banner, push notifications, splash screens) | ✅ |
+| SEO (meta dynamiques, JSON-LD, sitemap, robots.txt) | ✅ |
+| Système de messagerie (chat, typing, online status) | ✅ |
+| Publication d'annonces (formulaire, photos, validation) | ✅ |
+| Calculateur TCO belge | ✅ |
+| Zones LEZ Belgique | ✅ |
+| Recherche et filtres | ✅ |
+| Favoris et alertes | ✅ |
+| Comparateur de véhicules | ✅ |
+| Mode Beta / Early Access (paywall désactivé) | ✅ |
+| Widget prix carburants | ✅ |
+| Swipe Discovery ("Pour toi") | ✅ |
+| Dashboard vendeur | ✅ |
+| Système de boost (Stripe) | ✅ |
+| Multi-langue (FR/NL/EN/DE) | ✅ |
 
-### 2. Integration Homepage (`src/pages/Index.tsx`)
+---
 
-- Ajouter `FuelPriceStrip` en lazy-load entre le TrustBar et le SwipeDiscovery
-- Enveloppe `ScrollReveal` avec direction "up"
-- Fallback skeleton de 48px de hauteur
+## 3. Actions restantes pour le lancement
 
-### 3. Integration TCO Hero (`src/features/tco/components/TcoHero.tsx`)
+### A. Corrections critiques (bloquantes)
+1. **Fixer les imports Supabase** dans les 7 Edge Functions → `npm:@supabase/supabase-js@2`
+2. **Fixer les erreurs TypeScript** dans `process-email-queue` (casts `any`)
+3. **Redéployer** toutes les Edge Functions corrigées
 
-- Ajouter une version compacte (3 prix, inline) sous le texte "Donnees officielles Belgique 2026"
-- Variante `compact` du composant : taille reduite, sans bordure, fond transparent
-- Apparition animee avec delay 0.6s
+### B. Vérifications recommandées (non bloquantes mais importantes)
+4. **Tester le flux d'inscription complet** (email + vérification)
+5. **Vérifier le domaine personnalisé** `autora.be` (DNS, SSL actif)
+6. **Tester le flux de publication d'annonce** de bout en bout (upload photos, validation, affichage)
+7. **Vérifier les notifications push** sur mobile (iOS/Android)
+8. **S'assurer que le CookieBanner** fonctionne correctement dans les 4 langues
 
-### 4. Mise a jour FuelTypeStep (`src/features/tco/components/steps/FuelTypeStep.tsx`)
+### C. Polish optionnel (post-lancement OK)
+9. Confettis au swipe droit dans le "Pour toi"
+10. Harmonisation du design "Elite Green" sur toutes les pages secondaires
+11. Tests de performance (Lighthouse score)
 
-- Remplacer les emojis (🛢️ ⛽ 🔋 🔌 ⚡) par des icones Lucide coherentes (`Droplets`, `Flame`, `Zap`, `PlugZap`, `BatteryCharging`)
-- Mettre a jour le sous-titre : "Prix moyens Belgique -- Mars 2026"
-
-### 5. Mise a jour constantes (`src/features/tco/constants/belgianData.ts`)
-
-- Ajouter un champ `lucideIcon` a chaque entree de `FUEL_OPTIONS` pour remplacer les emojis
-- Conserver les emojis en fallback si necessaire
+---
 
 ## Section technique
 
-| Aspect | Detail |
+| Étape | Détail |
 |---|---|
-| Donnees | Statiques depuis `belgianData.ts`, pas d'appel API |
-| Performance | Lazy-load + Suspense, skeleton 48px, `contentVisibility: auto` |
-| Responsive | `snap-x overflow-x-auto` mobile, `flex-wrap justify-center` desktop |
-| Accessibilite | `aria-label` sur chaque prix, role `list` semantique |
-| Bundle | ~2KB gzip (composant + icones deja presentes) |
+| Fix imports | Rechercher/remplacer `@2.57.2` → `@2` dans 7 fichiers |
+| Fix process-email-queue | Ajouter `as any` sur les appels `supabase.from()` et `supabase.rpc()` |
+| Déploiement | Redéployer les 8 fonctions via `deploy_edge_functions` |
+| Estimation | ~15 minutes de travail |
 
