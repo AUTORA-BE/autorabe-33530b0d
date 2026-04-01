@@ -135,6 +135,7 @@ const Contact = () => {
 
   return (
     <div className="page-gradient">
+      <SEOHead title="Contact" description="Contactez l'équipe AutoRa pour toute question sur l'achat ou la vente de votre véhicule en Belgique." url="https://autora.be/contact" />
       <Header />
       
       <main className="pt-24">

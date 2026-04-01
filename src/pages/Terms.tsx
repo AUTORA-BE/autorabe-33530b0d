@@ -95,6 +95,7 @@ Dernière mise à jour : Janvier 2025`
 
   return (
     <div className="page-gradient">
+      <SEOHead title="Conditions Générales d'Utilisation" description="Conditions générales d'utilisation de la plateforme AutoRa. Lisez nos CGU avant d'utiliser nos services." url="https://autora.be/terms" />
       <Header />
       
       <main className="pt-24">

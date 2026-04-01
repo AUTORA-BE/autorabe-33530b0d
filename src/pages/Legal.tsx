@@ -76,6 +76,7 @@ autoracontact@gmail.com`
 
   return (
     <div className="page-gradient">
+      <SEOHead title="Mentions Légales" description="Mentions légales du site AutoRa. Informations sur l'éditeur, l'hébergement et la propriété intellectuelle." url="https://autora.be/legal" />
       <Header />
       
       <main className="pt-24">
