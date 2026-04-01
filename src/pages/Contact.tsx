@@ -196,7 +196,7 @@ const Contact = () => {
               <Card className="glass-card animate-fade-up" style={{ animationDelay: "0.1s" }}>
                 <CardContent className="pt-6">
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse" />
+                    <div className="w-3 h-3 rounded-full bg-primary animate-pulse" />
                     <span className="text-sm font-medium text-foreground">Réponse rapide</span>
                   </div>
                   <p className="text-sm text-muted-foreground">
