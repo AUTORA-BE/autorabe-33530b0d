@@ -12,6 +12,7 @@ import { Mail, Send, Clock, CheckCircle, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
+import SEOHead from "@/components/SEOHead";
 
 const contactSchema = z.object({
   name: z.string()
@@ -112,8 +113,8 @@ const Contact = () => {
         <main className="pt-24 pb-16">
           <div className="container mx-auto px-6">
             <div className="max-w-2xl mx-auto text-center animate-fade-up">
-              <div className="w-20 h-20 rounded-full bg-green-500/10 flex items-center justify-center mx-auto mb-6">
-                <CheckCircle className="w-10 h-10 text-green-500" />
+              <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
+                <CheckCircle className="w-10 h-10 text-primary" />
               </div>
               <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">
                 Message envoyé !
@@ -134,6 +135,7 @@ const Contact = () => {
 
   return (
     <div className="page-gradient">
+      <SEOHead title="Contact" description="Contactez l'équipe AutoRa pour toute question sur l'achat ou la vente de votre véhicule en Belgique." url="https://autora.be/contact" />
       <Header />
       
       <main className="pt-24">
@@ -194,7 +196,7 @@ const Contact = () => {
               <Card className="glass-card animate-fade-up" style={{ animationDelay: "0.1s" }}>
                 <CardContent className="pt-6">
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse" />
+                    <div className="w-3 h-3 rounded-full bg-primary animate-pulse" />
                     <span className="text-sm font-medium text-foreground">Réponse rapide</span>
                   </div>
                   <p className="text-sm text-muted-foreground">

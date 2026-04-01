@@ -7,6 +7,8 @@
     <loc>https://autora.be/</loc>
     <xhtml:link rel="alternate" hreflang="fr" href="https://autora.be/?lang=fr"/>
     <xhtml:link rel="alternate" hreflang="nl" href="https://autora.be/?lang=nl"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://autora.be/?lang=de"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://autora.be/?lang=en"/>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -37,6 +39,34 @@
     <loc>https://autora.be/contact</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+  </url>
+
+  <!-- Pricing -->
+  <url>
+    <loc>https://autora.be/pricing</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- TCO Calculator -->
+  <url>
+    <loc>https://autora.be/calculateur-tco</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Compare -->
+  <url>
+    <loc>https://autora.be/compare</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Favorites -->
+  <url>
+    <loc>https://autora.be/favorites</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
   </url>
   
   <!-- Legal Pages -->

@@ -1,5 +1,6 @@
 import { Header, Footer } from "@/shared/components";
 import { Shield, Database, Eye, Lock, UserCheck, Globe, Mail, Settings } from "lucide-react";
+import SEOHead from "@/components/SEOHead";
 
 const Privacy = () => {
   const sections = [
@@ -120,6 +121,7 @@ Dernière mise à jour : Janvier 2025`
 
   return (
     <div className="page-gradient">
+      <SEOHead title="Politique de Confidentialité" description="Politique de confidentialité d'AutoRa. Découvrez comment nous protégeons vos données personnelles conformément au RGPD." url="https://autora.be/privacy" />
       <Header />
       
       <main className="pt-24">
