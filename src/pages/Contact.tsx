@@ -113,8 +113,8 @@ const Contact = () => {
         <main className="pt-24 pb-16">
           <div className="container mx-auto px-6">
             <div className="max-w-2xl mx-auto text-center animate-fade-up">
-              <div className="w-20 h-20 rounded-full bg-green-500/10 flex items-center justify-center mx-auto mb-6">
-                <CheckCircle className="w-10 h-10 text-green-500" />
+              <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
+                <CheckCircle className="w-10 h-10 text-primary" />
               </div>
               <h1 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">
                 Message envoyé !
