@@ -1,5 +1,6 @@
 import { Header, Footer } from "@/shared/components";
 import { FileText, Scale, AlertTriangle, Users, CreditCard, Shield, Mail } from "lucide-react";
+import SEOHead from "@/components/SEOHead";
 
 const Terms = () => {
   const sections = [

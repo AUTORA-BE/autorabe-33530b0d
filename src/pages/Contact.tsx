@@ -12,6 +12,7 @@ import { Mail, Send, Clock, CheckCircle, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
+import SEOHead from "@/components/SEOHead";
 
 const contactSchema = z.object({
   name: z.string()

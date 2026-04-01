@@ -1,5 +1,6 @@
 import { Header, Footer } from "@/shared/components";
 import { Shield, Database, Eye, Lock, UserCheck, Globe, Mail, Settings } from "lucide-react";
+import SEOHead from "@/components/SEOHead";
 
 const Privacy = () => {
   const sections = [
