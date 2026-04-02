@@ -5,6 +5,7 @@
  */
 
 import { memo, useCallback, useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence, type PanInfo } from "framer-motion";
 import { X, Heart, ExternalLink, Calendar, Gauge, Fuel, MapPin, Cog, Shield, ChevronRight } from "lucide-react";
 import useEmblaCarousel from "embla-carousel-react";
@@ -97,7 +98,7 @@ const QuickPreviewSheet = memo(function QuickPreviewSheet({
     carPass: language === "nl" ? "Car-Pass" : language === "en" ? "Car-Pass" : "Car-Pass",
   };
 
-  return (
+  const content = (
     <AnimatePresence>
       {isOpen && vehicle && (
         <>
@@ -255,6 +256,9 @@ const QuickPreviewSheet = memo(function QuickPreviewSheet({
       )}
     </AnimatePresence>
   );
+
+  // Portal to document.body to escape ancestor transforms that break fixed positioning
+  return createPortal(content, document.body);
 });
 
 /* ─── Spec item sub-component ─── */
