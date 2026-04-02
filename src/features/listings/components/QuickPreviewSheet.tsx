@@ -98,7 +98,7 @@ const QuickPreviewSheet = memo(function QuickPreviewSheet({
     carPass: language === "nl" ? "Car-Pass" : language === "en" ? "Car-Pass" : "Car-Pass",
   };
 
-  return (
+  const content = (
     <AnimatePresence>
       {isOpen && vehicle && (
         <>
@@ -256,6 +256,9 @@ const QuickPreviewSheet = memo(function QuickPreviewSheet({
       )}
     </AnimatePresence>
   );
+
+  // Portal to document.body to escape ancestor transforms that break fixed positioning
+  return createPortal(content, document.body);
 });
 
 /* ─── Spec item sub-component ─── */
