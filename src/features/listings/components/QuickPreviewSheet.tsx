@@ -5,6 +5,7 @@
  */
 
 import { memo, useCallback, useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence, type PanInfo } from "framer-motion";
 import { X, Heart, ExternalLink, Calendar, Gauge, Fuel, MapPin, Cog, Shield, ChevronRight } from "lucide-react";
 import useEmblaCarousel from "embla-carousel-react";
