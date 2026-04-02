@@ -224,14 +224,19 @@ const Index = () => {
         {/* Results section */}
         <section id="results-section" className="container mx-auto px-4 sm:px-8 pb-16 sm:pb-28">
           <div className="flex flex-col lg:flex-row gap-6 sm:gap-10">
-            <FilterPanel
-              isOpen={filtersOpen}
-              onClose={() => setFiltersOpen(false)}
-              filters={filters}
-              onFilterChange={updateFilter}
-              onReset={resetFilters}
-              resultsCount={totalCount}
-            />
+            {/* Desktop-only inline filter panel */}
+            <div className="hidden lg:block">
+              <Suspense fallback={null}>
+                <FilterPanel
+                  isOpen={filtersOpen}
+                  onClose={() => setFiltersOpen(false)}
+                  filters={filters}
+                  onFilterChange={updateFilter}
+                  onReset={resetFilters}
+                  resultsCount={totalCount}
+                />
+              </Suspense>
+            </div>
 
             <Suspense fallback={<GridSkeleton />}>
               <LoadMoreGrid
@@ -268,6 +273,20 @@ const Index = () => {
 
       <Footer />
       </PullToRefresh>
+
+      {/* Mobile FilterPanel — outside PullToRefresh so fixed positioning works */}
+      <div className="lg:hidden">
+        <Suspense fallback={null}>
+          <FilterPanel
+            isOpen={filtersOpen}
+            onClose={() => setFiltersOpen(false)}
+            filters={filters}
+            onFilterChange={updateFilter}
+            onReset={resetFilters}
+            resultsCount={totalCount}
+          />
+        </Suspense>
+      </div>
 
       {/* Floating widgets — single instances */}
       <Suspense fallback={null}>
