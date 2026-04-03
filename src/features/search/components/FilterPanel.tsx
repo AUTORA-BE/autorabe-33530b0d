@@ -566,7 +566,7 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
         </div>{/* end scrollable content */}
 
         {/* Mobile sticky footer CTA */}
-        <div className="lg:hidden absolute bottom-0 inset-x-0 p-4 bg-card/95 backdrop-blur-lg border-t border-border/50 safe-bottom z-20"
+        <div className="lg:hidden absolute bottom-0 inset-x-0 p-4 bg-card border-t border-border/50 safe-bottom z-20"
           style={{ boxShadow: "0 -4px 20px -4px hsl(var(--foreground) / 0.1)" }}
         >
           <div className="flex gap-3">

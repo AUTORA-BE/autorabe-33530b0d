@@ -112,9 +112,9 @@ const QuickPreviewSheet = memo(function QuickPreviewSheet({
             onClick={onClose}
           />
 
-          {/* Sheet */}
+          {/* Sheet — above backdrop */}
           <motion.div
-            className="fixed bottom-0 inset-x-0 z-50 max-h-[85vh] overflow-hidden"
+            className="fixed bottom-0 inset-x-0 z-[91] max-h-[85vh] overflow-hidden"
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
