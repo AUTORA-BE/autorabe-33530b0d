@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>AutoRa — Hors ligne</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:system-ui,-apple-system,sans-serif;background:#0a0a14;color:#e5e5e5;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:2rem}
+    .container{max-width:360px}
+    .icon{font-size:4rem;margin-bottom:1.5rem}
+    h1{font-size:1.5rem;font-weight:700;margin-bottom:.75rem;color:#fff}
+    p{font-size:.95rem;line-height:1.6;color:#a1a1aa;margin-bottom:1.5rem}
+    button{background:#22c55e;color:#fff;border:none;padding:.75rem 2rem;border-radius:999px;font-size:.95rem;font-weight:600;cursor:pointer;transition:opacity .2s}
+    button:active{opacity:.8}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="icon">📡</div>
+    <h1>Vous êtes hors ligne</h1>
+    <p>Vérifiez votre connexion Internet et réessayez. Vos favoris et recherches récentes seront disponibles dès que vous serez reconnecté.</p>
+    <button onclick="location.reload()">Réessayer</button>
+  </div>
+</body>
+</html>
