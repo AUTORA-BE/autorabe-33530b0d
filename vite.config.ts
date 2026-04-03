@@ -15,14 +15,12 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
     VitePWA({
       registerType: "autoUpdate",
+      devOptions: { enabled: false },
       includeAssets: ["favicon.png", "favicon.ico", "notification.mp3", "sw-push.js"],
       workbox: {
-        // Cache JS/CSS/HTML navigations
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
-        // Runtime caching for API calls and external images
         runtimeCaching: [
           {
-            // Supabase API calls — network first, fallback to cache
             urlPattern: /^https:\/\/jbdsjqoonpieusfvkhyo\.supabase\.co\/rest\/v1\/.*/i,
             handler: "NetworkFirst",
             options: {
@@ -32,7 +30,6 @@ export default defineConfig(({ mode }) => ({
             },
           },
           {
-            // Vehicle images (Supabase storage)
             urlPattern: /^https:\/\/jbdsjqoonpieusfvkhyo\.supabase\.co\/storage\/.*/i,
             handler: "CacheFirst",
             options: {
@@ -42,7 +39,6 @@ export default defineConfig(({ mode }) => ({
             },
           },
           {
-            // Unsplash / external images
             urlPattern: /^https:\/\/images\.unsplash\.com\/.*/i,
             handler: "CacheFirst",
             options: {
@@ -52,7 +48,6 @@ export default defineConfig(({ mode }) => ({
             },
           },
           {
-            // Google Fonts
             urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com\/.*/i,
             handler: "CacheFirst",
             options: {
@@ -62,7 +57,6 @@ export default defineConfig(({ mode }) => ({
             },
           },
         ],
-        // Never cache OAuth redirects
         navigateFallbackDenylist: [/^\/~oauth/],
       },
       manifest: {
@@ -75,13 +69,41 @@ export default defineConfig(({ mode }) => ({
         orientation: "portrait",
         start_url: "/",
         scope: "/",
+        id: "/",
+        lang: "fr-BE",
+        dir: "ltr",
         categories: ["auto", "shopping"],
         icons: [
           { src: "/pwa-icon-192.png", sizes: "192x192", type: "image/png" },
           { src: "/pwa-icon-512.png", sizes: "512x512", type: "image/png" },
           { src: "/pwa-icon-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
         ],
-        screenshots: [],
+        shortcuts: [
+          {
+            name: "Rechercher une voiture",
+            short_name: "Rechercher",
+            url: "/?source=shortcut",
+            icons: [{ src: "/pwa-icon-192.png", sizes: "192x192" }],
+          },
+          {
+            name: "Vendre ma voiture",
+            short_name: "Vendre",
+            url: "/vendre?source=shortcut",
+            icons: [{ src: "/pwa-icon-192.png", sizes: "192x192" }],
+          },
+          {
+            name: "Mes favoris",
+            short_name: "Favoris",
+            url: "/favoris?source=shortcut",
+            icons: [{ src: "/pwa-icon-192.png", sizes: "192x192" }],
+          },
+          {
+            name: "Calculateur TCO",
+            short_name: "TCO",
+            url: "/calculateur-tco?source=shortcut",
+            icons: [{ src: "/pwa-icon-192.png", sizes: "192x192" }],
+          },
+        ],
       },
     }),
   ].filter(Boolean),
