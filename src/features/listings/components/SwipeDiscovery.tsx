@@ -30,7 +30,7 @@ interface SwipeDiscoveryProps {
 }
 
 /* ─── Helpers ─── */
-const SWIPE_THRESHOLD = 90;
+const SWIPE_THRESHOLD = 60;
 
 const formatPrice = (price: number) =>
   new Intl.NumberFormat("fr-BE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(price);
