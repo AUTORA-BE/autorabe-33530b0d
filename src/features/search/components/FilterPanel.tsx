@@ -153,16 +153,16 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
     return `${value} km`;
   };
 
-  return (
-    <>
-      {/* Mobile overlay */}
-      {isOpen && (
-        <div
-          className="lg:hidden fixed inset-0 bg-foreground/40 backdrop-blur-sm z-[80] transition-opacity duration-300"
-          onClick={onClose}
-          aria-hidden="true"
-        />
-      )}
+    return (
+      <>
+        {/* Mobile overlay — separate from filter content, lower z-index */}
+        {isOpen && (
+          <div
+            className="lg:hidden fixed inset-0 bg-foreground/40 z-[80] transition-opacity duration-300"
+            onClick={onClose}
+            aria-hidden="true"
+          />
+        )}
 
       <aside
         ref={(el) => {
