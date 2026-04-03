@@ -30,7 +30,7 @@ interface SwipeDiscoveryProps {
 }
 
 /* ─── Helpers ─── */
-const SWIPE_THRESHOLD = 90;
+const SWIPE_THRESHOLD = 60;
 
 const formatPrice = (price: number) =>
   new Intl.NumberFormat("fr-BE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(price);
@@ -67,14 +67,14 @@ const SwipeCard = memo(function SwipeCard({
   const handleDragEnd = useCallback(
     (_: unknown, info: PanInfo) => {
       const vx = info.velocity.x;
-      if (info.offset.x > SWIPE_THRESHOLD || vx > 400) {
-        animate(x, 500, { type: "spring", stiffness: 300, damping: 30 });
-        setTimeout(onSwipeRight, 180);
-      } else if (info.offset.x < -SWIPE_THRESHOLD || vx < -400) {
-        animate(x, -500, { type: "spring", stiffness: 300, damping: 30 });
-        setTimeout(onSwipeLeft, 180);
+      if (info.offset.x > SWIPE_THRESHOLD || vx > 250) {
+        animate(x, 500, { type: "spring", stiffness: 400, damping: 28 });
+        setTimeout(onSwipeRight, 150);
+      } else if (info.offset.x < -SWIPE_THRESHOLD || vx < -250) {
+        animate(x, -500, { type: "spring", stiffness: 400, damping: 28 });
+        setTimeout(onSwipeLeft, 150);
       } else {
-        animate(x, 0, { type: "spring", stiffness: 600, damping: 30 });
+        animate(x, 0, { type: "spring", stiffness: 500, damping: 25 });
       }
     },
     [x, onSwipeLeft, onSwipeRight],
@@ -106,7 +106,8 @@ const SwipeCard = memo(function SwipeCard({
       style={{ x, rotate, zIndex: 10, touchAction: "pan-y" }}
       drag="x"
       dragConstraints={{ left: 0, right: 0 }}
-      dragElastic={0.7}
+      dragElastic={0.85}
+      dragMomentum={false}
       onDragEnd={handleDragEnd}
       initial={{ scale: 0.95, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
@@ -429,8 +430,11 @@ const SwipeDiscovery = memo(function SwipeDiscovery({
 
             {/* Details (Quick Preview) */}
             <button
-              onClick={handleQuickPreview}
-              className="w-11 h-11 rounded-full bg-card/50 backdrop-blur-xl border border-border/20 flex items-center justify-center active:scale-90 transition-transform duration-150"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleQuickPreview();
+              }}
+              className="w-11 h-11 rounded-full bg-card/50 backdrop-blur-xl border border-border/20 flex items-center justify-center active:scale-90 transition-transform duration-150 relative z-20"
               aria-label="Aperçu rapide"
             >
               <Info className="w-5 h-5 text-muted-foreground" />

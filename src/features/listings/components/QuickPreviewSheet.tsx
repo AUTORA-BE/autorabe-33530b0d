@@ -102,9 +102,9 @@ const QuickPreviewSheet = memo(function QuickPreviewSheet({
     <AnimatePresence>
       {isOpen && vehicle && (
         <>
-          {/* Backdrop */}
+          {/* Backdrop — no blur, just dim */}
           <motion.div
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50"
+            className="fixed inset-0 bg-black/50 z-[90]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -112,9 +112,9 @@ const QuickPreviewSheet = memo(function QuickPreviewSheet({
             onClick={onClose}
           />
 
-          {/* Sheet */}
+          {/* Sheet — above backdrop */}
           <motion.div
-            className="fixed bottom-0 inset-x-0 z-50 max-h-[85vh] overflow-hidden"
+            className="fixed bottom-0 inset-x-0 z-[91] max-h-[85vh] overflow-hidden"
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
