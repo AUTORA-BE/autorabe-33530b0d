@@ -287,6 +287,7 @@ const SwipeDiscovery = memo(function SwipeDiscovery({
   if (vehicles.length === 0) return null;
 
   const isFinished = currentIndex >= vehicles.length;
+  const isLastCard = currentIndex === vehicles.length - 1;
   const progress = vehicles.length > 0 ? (currentIndex / vehicles.length) * 100 : 0;
 
   const t = {
