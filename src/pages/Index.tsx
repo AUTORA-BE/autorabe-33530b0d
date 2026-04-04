@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Header, Footer } from "@/shared/components";
 import { HeroSearch } from "@/features/search";
 import SEOHead from "@/components/SEOHead";
+import { organizationSchema, websiteSchema } from "@/lib/seoSchemas";
 import {
   CarouselSkeleton,
   TrustBarSkeleton,
@@ -130,6 +131,7 @@ const Index = () => {
           ? "AutoRa - De betrouwbare Belgische automarkt. Vind duizenden geverifieerde voertuigen met Car-Pass en gegarandeerde LEZ-compatibiliteit."
           : "AutoRa - La marketplace automobile belge de confiance. Véhicules vérifiés Car-Pass, conformité LEZ garantie et calcul TCO régional."}
         url="https://autora.be"
+        jsonLd={[organizationSchema, websiteSchema]}
       />
       <Header />
 

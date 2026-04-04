@@ -8,6 +8,8 @@ interface SEOHeadProps {
   url?: string;
   type?: string;
   noIndex?: boolean;
+  /** JSON-LD structured data object(s) — rendered as <script type="application/ld+json"> */
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
 }
 
 const SEOHead = ({
@@ -17,6 +19,7 @@ const SEOHead = ({
   url,
   type = "website",
   noIndex = false,
+  jsonLd,
 }: SEOHeadProps) => {
   const { language } = useLanguage();
 
@@ -45,6 +48,11 @@ const SEOHead = ({
   const fullDescription = description || defaultDescriptions[language] || defaultDescriptions.fr;
   const canonicalUrl = url || "https://autora.be";
   const locale = locales[language] || "fr_BE";
+
+  // Normalize jsonLd to array
+  const jsonLdItems = jsonLd
+    ? Array.isArray(jsonLd) ? jsonLd : [jsonLd]
+    : [];
 
   return (
     <Helmet>
@@ -77,6 +85,13 @@ const SEOHead = ({
       <link rel="alternate" hrefLang="de" href={`${canonicalUrl}?lang=de`} />
       <link rel="alternate" hrefLang="en" href={`${canonicalUrl}?lang=en`} />
       <link rel="alternate" hrefLang="x-default" href={canonicalUrl} />
+
+      {/* JSON-LD Structured Data */}
+      {jsonLdItems.map((item, i) => (
+        <script key={i} type="application/ld+json">
+          {JSON.stringify(item)}
+        </script>
+      ))}
     </Helmet>
   );
 };

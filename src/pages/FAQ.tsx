@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback } from "react";
 import { Header, Footer, BackButton } from "@/shared/components";
 import SEOHead from "@/components/SEOHead";
+import { faqSchema } from "@/lib/seoSchemas";
 import { HelpCircle, Search, X, User, ShoppingCart, Car, Shield, CreditCard, Link2, Check, Leaf } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
@@ -218,6 +219,7 @@ const FAQ = () => {
         title={seoTitles[language]}
         description={seoDescriptions[language]}
         url="https://autora.be/faq"
+        jsonLd={faqSchema(faqs.map(f => ({ question: f.question, answer: f.answer })))}
       />
       <Header />
       

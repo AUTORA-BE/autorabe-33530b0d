@@ -1,5 +1,6 @@
 import { Header, Footer, BackButton } from "@/shared/components";
 import SEOHead from "@/components/SEOHead";
+import { localBusinessSchema, breadcrumbSchema } from "@/lib/seoSchemas";
 import { Users, Shield, Car, Award, MapPin, Heart } from "lucide-react";
 
 const About = () => {
@@ -55,6 +56,13 @@ const About = () => {
         title="À propos - AutoRa"
         description="Découvrez AutoRa, la marketplace automobile belge de confiance. Fondée en 2024, nous révolutionnons l'achat et la vente de véhicules en Belgique."
         url="https://autora.be/about"
+        jsonLd={[
+          localBusinessSchema,
+          breadcrumbSchema([
+            { name: "AutoRa", url: "https://autora.be" },
+            { name: "À propos", url: "https://autora.be/about" },
+          ]),
+        ]}
       />
       <Header />
       
