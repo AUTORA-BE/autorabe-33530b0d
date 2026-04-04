@@ -252,7 +252,7 @@ const VehicleCard = memo(function VehicleCard({
         )}
 
         {/* Specs Grid */}
-        <div className="grid grid-cols-2 gap-1 sm:gap-3">
+        <div className="grid grid-cols-2 gap-1 sm:gap-2.5">
           <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-sm text-muted-foreground">
             <Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0 text-primary/60" />
             <span>{vehicle.year}</span>
@@ -261,6 +261,20 @@ const VehicleCard = memo(function VehicleCard({
             <Gauge className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0 text-primary/60" />
             <span className="truncate">{formatMileage(vehicle.mileage)} {labels.km}</span>
           </div>
+          <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-sm text-muted-foreground">
+            <Fuel className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0 text-primary/60" />
+            <span className="truncate capitalize">{vehicle.fuelType}</span>
+          </div>
+          <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-sm text-muted-foreground">
+            <Cog className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0 text-primary/60" />
+            <span className="truncate capitalize">{vehicle.transmission}</span>
+          </div>
+          {vehicle.power && (
+            <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-sm text-muted-foreground">
+              <Zap className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0 text-primary/60" />
+              <span>{vehicle.power} CV</span>
+            </div>
+          )}
         </div>
 
         {/* TCO Match Score */}
