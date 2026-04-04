@@ -1,5 +1,6 @@
 import { Header, Footer, BackButton } from "@/shared/components";
 import SEOHead from "@/components/SEOHead";
+import { localBusinessSchema, breadcrumbSchema } from "@/lib/seoSchemas";
 import { Users, Shield, Car, Award, MapPin, Heart } from "lucide-react";
 
 const About = () => {
