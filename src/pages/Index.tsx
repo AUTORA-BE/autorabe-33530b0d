@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Header, Footer } from "@/shared/components";
 import { HeroSearch } from "@/features/search";
 import SEOHead from "@/components/SEOHead";
+import { organizationSchema, websiteSchema } from "@/lib/seoSchemas";
 import {
   CarouselSkeleton,
   TrustBarSkeleton,

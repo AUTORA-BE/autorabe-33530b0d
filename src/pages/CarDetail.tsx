@@ -37,6 +37,7 @@ import ReviewsSection from "@/components/ReviewsSection";
 import BentoSpecs from "@/components/BentoSpecs";
 import AutoraTransparency from "@/components/AutoraTransparency";
 import SEOHead from "@/components/SEOHead";
+import { vehicleSchema, breadcrumbSchema } from "@/lib/seoSchemas";
 import ReportAdModal from "@/components/ReportAdModal";
 import ScrollReveal from "@/components/ScrollReveal";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
