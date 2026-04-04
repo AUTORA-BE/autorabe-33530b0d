@@ -287,6 +287,7 @@ const SwipeDiscovery = memo(function SwipeDiscovery({
   if (vehicles.length === 0) return null;
 
   const isFinished = currentIndex >= vehicles.length;
+  const isLastCard = currentIndex === vehicles.length - 1;
   const progress = vehicles.length > 0 ? (currentIndex / vehicles.length) * 100 : 0;
 
   const t = {
@@ -334,14 +335,18 @@ const SwipeDiscovery = memo(function SwipeDiscovery({
             {isFinished ? (
               <motion.div
                 key="done"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                initial={{ opacity: 0, scale: 0.6, y: 40 }}
+                animate={{ opacity: 1, scale: [0.6, 1.08, 0.95, 1.03, 1], y: [40, -8, 4, -2, 0] }}
+                transition={{ duration: 0.7, ease: "easeOut", times: [0, 0.4, 0.6, 0.8, 1] }}
                 className="absolute inset-0 rounded-[2rem] bg-card/60 backdrop-blur-2xl border border-border/20 flex flex-col items-center justify-center gap-5 p-8"
               >
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                <motion.div
+                  className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center"
+                  animate={{ scale: [1, 1.15, 1], rotate: [0, -8, 8, 0] }}
+                  transition={{ delay: 0.5, duration: 0.6, ease: "easeInOut" }}
+                >
                   <Eye className="w-7 h-7 text-primary" />
-                </div>
+                </motion.div>
                 <p className="text-foreground font-medium text-base tracking-tight">{t.done}</p>
 
                 {/* Stats summary */}
@@ -403,6 +408,20 @@ const SwipeDiscovery = memo(function SwipeDiscovery({
             >
               {t.tapToView}
             </motion.p>
+          )}
+
+          {/* Last card bounce hint */}
+          {!isFinished && isLastCard && (
+            <motion.div
+              className="absolute top-4 inset-x-0 flex justify-center pointer-events-none z-20"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: [0, -6, 0] }}
+              transition={{ y: { repeat: Infinity, duration: 1.5, ease: "easeInOut" }, opacity: { duration: 0.3 } }}
+            >
+              <span className="px-3 py-1 rounded-full bg-primary/20 backdrop-blur-xl text-primary text-[11px] font-medium tracking-wide">
+                {language === "nl" ? "Laatste!" : language === "en" ? "Last one!" : "Dernière !"}
+              </span>
+            </motion.div>
           )}
         </div>
 
