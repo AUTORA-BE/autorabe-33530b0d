@@ -409,6 +409,20 @@ const SwipeDiscovery = memo(function SwipeDiscovery({
               {t.tapToView}
             </motion.p>
           )}
+
+          {/* Last card bounce hint */}
+          {!isFinished && isLastCard && (
+            <motion.div
+              className="absolute top-4 inset-x-0 flex justify-center pointer-events-none z-20"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: [0, -6, 0] }}
+              transition={{ y: { repeat: Infinity, duration: 1.5, ease: "easeInOut" }, opacity: { duration: 0.3 } }}
+            >
+              <span className="px-3 py-1 rounded-full bg-primary/20 backdrop-blur-xl text-primary text-[11px] font-medium tracking-wide">
+                {language === "nl" ? "Laatste!" : language === "en" ? "Last one!" : "Dernière !"}
+              </span>
+            </motion.div>
+          )}
         </div>
 
         {/* Glassmorphic action buttons */}
