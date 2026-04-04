@@ -275,7 +275,12 @@ const VehicleCard = memo(function VehicleCard({
               <span>{(vehicle as any).power} CV</span>
             </div>
           )}
-        </div>
+          {vehicle.euroNorm && (
+            <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-sm text-muted-foreground">
+              <ShieldCheck className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0 text-primary/60" />
+              <span className="truncate">{vehicle.euroNorm}</span>
+            </div>
+          )}
 
         {/* TCO Match Score */}
         {matchResult && (
