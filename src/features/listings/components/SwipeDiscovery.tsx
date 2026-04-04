@@ -340,9 +340,13 @@ const SwipeDiscovery = memo(function SwipeDiscovery({
                 transition={{ duration: 0.7, ease: "easeOut", times: [0, 0.4, 0.6, 0.8, 1] }}
                 className="absolute inset-0 rounded-[2rem] bg-card/60 backdrop-blur-2xl border border-border/20 flex flex-col items-center justify-center gap-5 p-8"
               >
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                <motion.div
+                  className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center"
+                  animate={{ scale: [1, 1.15, 1], rotate: [0, -8, 8, 0] }}
+                  transition={{ delay: 0.5, duration: 0.6, ease: "easeInOut" }}
+                >
                   <Eye className="w-7 h-7 text-primary" />
-                </div>
+                </motion.div>
                 <p className="text-foreground font-medium text-base tracking-tight">{t.done}</p>
 
                 {/* Stats summary */}
