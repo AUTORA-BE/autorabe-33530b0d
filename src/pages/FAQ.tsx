@@ -219,6 +219,7 @@ const FAQ = () => {
         title={seoTitles[language]}
         description={seoDescriptions[language]}
         url="https://autora.be/faq"
+        jsonLd={faqSchema(faqs.map(f => ({ question: f.question, answer: f.answer })))}
       />
       <Header />
       
