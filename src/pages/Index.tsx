@@ -131,6 +131,7 @@ const Index = () => {
           ? "AutoRa - De betrouwbare Belgische automarkt. Vind duizenden geverifieerde voertuigen met Car-Pass en gegarandeerde LEZ-compatibiliteit."
           : "AutoRa - La marketplace automobile belge de confiance. Véhicules vérifiés Car-Pass, conformité LEZ garantie et calcul TCO régional."}
         url="https://autora.be"
+        jsonLd={[organizationSchema, websiteSchema]}
       />
       <Header />
 
