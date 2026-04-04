@@ -269,10 +269,10 @@ const VehicleCard = memo(function VehicleCard({
             <Cog className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0 text-primary/60" />
             <span className="truncate capitalize">{vehicle.transmission}</span>
           </div>
-          {vehicle.power && (
+          {'power' in vehicle && (vehicle as any).power && (
             <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-sm text-muted-foreground">
               <Zap className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0 text-primary/60" />
-              <span>{vehicle.power} CV</span>
+              <span>{(vehicle as any).power} CV</span>
             </div>
           )}
         </div>
