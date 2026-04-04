@@ -4,7 +4,7 @@
  */
 
 import { memo, useMemo } from "react";
-import { Heart, MapPin, Calendar, Gauge, Shield, CheckCircle, AlertTriangle, Ban, Leaf, Info, Building2, Sparkles, Scale, Fuel, Cog, Zap } from "lucide-react";
+import { Heart, MapPin, Calendar, Gauge, Shield, CheckCircle, AlertTriangle, Ban, Leaf, Info, Building2, Sparkles, Scale, Fuel, Cog, Zap, ShieldCheck } from "lucide-react";
 import { useCompareContext } from "@/features/compare";
 import CarImage from "@/components/cars/CarImage";
 import { Badge } from "@/components/ui/badge";
@@ -273,6 +273,12 @@ const VehicleCard = memo(function VehicleCard({
             <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-sm text-muted-foreground">
               <Zap className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0 text-primary/60" />
               <span>{(vehicle as any).power} CV</span>
+            </div>
+          )}
+          {vehicle.euroNorm && (
+            <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-sm text-muted-foreground">
+              <ShieldCheck className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0 text-primary/60" />
+              <span className="truncate">{vehicle.euroNorm}</span>
             </div>
           )}
         </div>
