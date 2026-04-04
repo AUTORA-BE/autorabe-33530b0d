@@ -335,9 +335,9 @@ const SwipeDiscovery = memo(function SwipeDiscovery({
             {isFinished ? (
               <motion.div
                 key="done"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                initial={{ opacity: 0, scale: 0.6, y: 40 }}
+                animate={{ opacity: 1, scale: [0.6, 1.08, 0.95, 1.03, 1], y: [40, -8, 4, -2, 0] }}
+                transition={{ duration: 0.7, ease: "easeOut", times: [0, 0.4, 0.6, 0.8, 1] }}
                 className="absolute inset-0 rounded-[2rem] bg-card/60 backdrop-blur-2xl border border-border/20 flex flex-col items-center justify-center gap-5 p-8"
               >
                 <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
