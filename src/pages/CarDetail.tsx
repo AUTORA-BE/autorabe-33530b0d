@@ -407,41 +407,29 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
         image={car.image}
         url={`https://autora.be/car/${id}`}
         type="product"
-      />
-      {/* JSON-LD Structured Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Car",
-            name: `${car.brand} ${car.model}`,
-            brand: { "@type": "Brand", name: car.brand },
+        jsonLd={[
+          vehicleSchema({
+            id: id!,
+            brand: car.brand,
             model: car.model,
-            vehicleModelDate: String(car.year),
-            mileageFromOdometer: {
-              "@type": "QuantitativeValue",
-              value: car.mileage,
-              unitCode: "KMT",
-            },
+            year: car.year,
+            mileage: car.mileage,
             fuelType: car.fuelType,
-            vehicleTransmission: car.transmission,
+            transmission: car.transmission,
+            euroNorm: car.euroNorm,
+            price: car.price,
             image: car.image,
-            offers: {
-              "@type": "Offer",
-              price: car.price,
-              priceCurrency: "EUR",
-              availability: "https://schema.org/InStock",
-              url: `https://auto-belgium.lovable.app/car/${id}`,
-              seller: {
-                "@type": sellerContact ? "Person" : "Organization",
-                name: sellerName,
-              },
-            },
-            vehicleConfiguration: car.euroNorm,
-            description: description.slice(0, 300),
+            location: car.location,
+            description,
+            sellerName,
+            sellerType: car.sellerType,
           }),
-        }}
+          breadcrumbSchema([
+            { name: "AutoRa", url: "https://autora.be" },
+            { name: car.brand, url: `https://autora.be/?brand=${car.brand}` },
+            { name: `${car.brand} ${car.model}`, url: `https://autora.be/car/${id}` },
+          ]),
+        ]}
       />
       <Header />
       <main className="pt-16 sm:pt-24 pb-28 lg:pb-20">
