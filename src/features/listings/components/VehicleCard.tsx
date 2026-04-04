@@ -281,6 +281,7 @@ const VehicleCard = memo(function VehicleCard({
               <span className="truncate">{vehicle.euroNorm}</span>
             </div>
           )}
+        </div>
 
         {/* TCO Match Score */}
         {matchResult && (
