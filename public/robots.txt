@@ -14,3 +14,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://autora.be/sitemap.xml
+Sitemap: https://jbdsjqoonpieusfvkhyo.supabase.co/functions/v1/dynamic-sitemap
