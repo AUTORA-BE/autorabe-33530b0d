@@ -40,7 +40,6 @@ import SEOHead from "@/components/SEOHead";
 import { vehicleSchema, breadcrumbSchema } from "@/lib/seoSchemas";
 import ReportAdModal from "@/components/ReportAdModal";
 import ScrollReveal from "@/components/ScrollReveal";
-import Breadcrumbs from "@/components/Breadcrumbs";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useIsMobile } from "@/hooks/use-mobile";
 const VehicleTcoSection = lazy(() => import("@/features/tco/components/VehicleTcoSection"));
