@@ -40,6 +40,7 @@ import SEOHead from "@/components/SEOHead";
 import { vehicleSchema, breadcrumbSchema } from "@/lib/seoSchemas";
 import ReportAdModal from "@/components/ReportAdModal";
 import ScrollReveal from "@/components/ScrollReveal";
+import Breadcrumbs from "@/components/Breadcrumbs";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useIsMobile } from "@/hooks/use-mobile";
 const VehicleTcoSection = lazy(() => import("@/features/tco/components/VehicleTcoSection"));
@@ -435,13 +436,13 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
       <main className="pt-16 sm:pt-24 pb-28 lg:pb-20">
         {/* Breadcrumb */}
         <motion.div {...fadeUp(0)} className="container mx-auto px-3 sm:px-6 mb-3 sm:mb-6">
-          <button
-            onClick={() => navigate(-1)}
-            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors group"
-          >
-            <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
-            Retour
-          </button>
+          <Breadcrumbs
+            items={[
+              { label: "AutoRa", to: "/" },
+              { label: car.brand, to: `/?brand=${car.brand}` },
+              { label: `${car.brand} ${car.model}` },
+            ]}
+          />
         </motion.div>
 
         <div className="container mx-auto px-3 sm:px-6">
