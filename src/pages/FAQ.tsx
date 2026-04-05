@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { useLanguage, Language } from "@/contexts/LanguageContext";
-import Breadcrumbs from "@/components/Breadcrumbs";
 import {
   Accordion,
   AccordionContent,
@@ -227,14 +226,6 @@ const FAQ = () => {
       <main className="pt-24">
         {/* Hero Section */}
         <section className="container mx-auto px-6 py-16 text-center">
-          <div className="flex justify-center mb-4">
-            <Breadcrumbs
-              items={[
-                { label: "AutoRa", to: "/" },
-                { label: "FAQ" },
-              ]}
-            />
-          </div>
           <div className="max-w-3xl mx-auto animate-fade-up">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
               <HelpCircle className="w-4 h-4" />
