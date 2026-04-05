@@ -1,5 +1,6 @@
 /**
- * Visual breadcrumb navigation with JSON-LD structured data
+ * Premium breadcrumb navigation with glassmorphism and JSON-LD structured data
+ * Optimized for mobile (compact, scrollable) and desktop (full display)
  * @module components
  */
 
@@ -27,7 +28,6 @@ export default function Breadcrumbs({ items, className = "" }: BreadcrumbsProps)
 
   return (
     <>
-      {/* JSON-LD (rendered via script tag) */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema(schemaItems)) }}
@@ -35,22 +35,39 @@ export default function Breadcrumbs({ items, className = "" }: BreadcrumbsProps)
 
       <nav
         aria-label="Breadcrumb"
-        className={`flex items-center gap-1 text-sm flex-wrap ${className}`}
+        className={`
+          inline-flex items-center gap-1.5 sm:gap-2
+          px-3 py-1.5 sm:px-4 sm:py-2
+          rounded-full
+          bg-card/60 backdrop-blur-md
+          border border-border/50
+          shadow-sm
+          text-xs sm:text-sm
+          max-w-full overflow-x-auto scrollbar-hide
+          ${className}
+        `}
       >
         {items.map((item, i) => {
           const isLast = i === items.length - 1;
 
           return (
-            <span key={i} className="inline-flex items-center gap-1">
-              {i === 0 && (
-                <Home className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-              )}
+            <span key={i} className="inline-flex items-center gap-1 sm:gap-1.5 shrink-0">
               {i > 0 && (
-                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/60 shrink-0" />
+                <ChevronRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-primary/40 shrink-0" />
               )}
-              {isLast || !item.to ? (
+
+              {i === 0 && item.to ? (
+                <Link
+                  to={item.to}
+                  className="inline-flex items-center gap-1 text-muted-foreground hover:text-primary transition-colors duration-200"
+                  aria-label="Accueil"
+                >
+                  <Home className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                  <span className="hidden sm:inline">{item.label}</span>
+                </Link>
+              ) : isLast || !item.to ? (
                 <span
-                  className="text-foreground font-medium truncate max-w-[180px]"
+                  className="text-foreground font-semibold truncate max-w-[140px] sm:max-w-[220px]"
                   aria-current="page"
                 >
                   {item.label}
@@ -58,7 +75,7 @@ export default function Breadcrumbs({ items, className = "" }: BreadcrumbsProps)
               ) : (
                 <Link
                   to={item.to}
-                  className="text-muted-foreground hover:text-foreground transition-colors truncate max-w-[140px]"
+                  className="text-muted-foreground hover:text-primary transition-colors duration-200 truncate max-w-[100px] sm:max-w-[160px]"
                 >
                   {item.label}
                 </Link>
