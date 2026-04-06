@@ -294,8 +294,11 @@ const LoadMoreGrid = ({
       {cars.length > 0 ? (
         <>
           <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-3 gap-2.5 sm:gap-6">
-            {cars.map((car) => (
-              <div key={car.id} className="animate-fade-up">
+            {cars.map((car, index) => (
+              <div
+                key={car.id}
+                style={index > 5 ? { contentVisibility: "auto", containIntrinsicSize: "auto 380px" } : undefined}
+              >
                 <CarCard
                   car={car}
                   isFavorite={isFavorite(car.id)}
