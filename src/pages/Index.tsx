@@ -29,7 +29,6 @@ const WhyAutoRa = lazy(() => import("@/components/WhyAutoRa"));
 const TestimonialsSection = lazy(() => import("@/components/TestimonialsSection"));
 const SellCarCTA = lazy(() => import("@/components/SellCarCTA"));
 const PricingCTA = lazy(() => import("@/components/PricingCTA"));
-const CarChatbot = lazy(() => import("@/components/CarChatbot"));
 const TcoFloatingButton = lazy(() => import("@/components/TcoFloatingButton"));
 
 import { useVehicleSearch } from "@/features/listings";
@@ -207,21 +206,27 @@ const Index = () => {
         </Suspense>
 
         {/* Testimonials */}
-        <Suspense fallback={<TestimonialsSkeleton />}>
-          <TestimonialsSection />
-        </Suspense>
+        <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 500px" }}>
+          <Suspense fallback={<TestimonialsSkeleton />}>
+            <TestimonialsSection />
+          </Suspense>
+        </div>
 
         {/* Sell Car CTA */}
-        <Suspense fallback={null}>
-          <SellCarCTA />
-        </Suspense>
+        <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 300px" }}>
+          <Suspense fallback={null}>
+            <SellCarCTA />
+          </Suspense>
+        </div>
 
         {/* Pricing CTA */}
-        <Suspense fallback={null}>
-          <ScrollReveal delay={0.1}>
-            <PricingCTA />
-          </ScrollReveal>
-        </Suspense>
+        <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 300px" }}>
+          <Suspense fallback={null}>
+            <ScrollReveal delay={0.1}>
+              <PricingCTA />
+            </ScrollReveal>
+          </Suspense>
+        </div>
 
         {/* Results section */}
         <section id="results-section" className="container mx-auto px-4 sm:px-8 pb-16 sm:pb-28">
@@ -290,12 +295,9 @@ const Index = () => {
         </Suspense>
       </div>
 
-      {/* Floating widgets — single instances */}
+      {/* Floating widgets */}
       <Suspense fallback={null}>
         <TcoFloatingButton />
-      </Suspense>
-      <Suspense fallback={null}>
-        <CarChatbot />
       </Suspense>
     </div>
   );

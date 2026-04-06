@@ -1,5 +1,6 @@
 import { forwardRef, memo, useMemo } from "react";
 import { Calendar, Gauge, MapPin, Heart, GitCompareArrows, Leaf, AlertTriangle, Ban, Info, CheckCircle, Building2, Sparkles } from "lucide-react";
+import CarImage from "@/components/cars/CarImage";
 import { useCompareContext } from "@/features/compare";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useHapticFeedback } from "@/hooks/useHapticFeedback";
@@ -126,11 +127,11 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
       </div>
 
       <div className="relative h-44 sm:h-48 md:h-56 overflow-hidden z-[1]">
-        <img
+        <CarImage
           src={car.image}
           alt={getAltText()}
-          loading="lazy"
-          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.08]"
+          aspectRatio="auto"
+          className="w-full h-full transition-transform duration-700 ease-out group-hover:scale-[1.08]"
         />
         {/* Gradient overlay on hover */}
         <div className="absolute inset-0 bg-gradient-to-t from-foreground/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
