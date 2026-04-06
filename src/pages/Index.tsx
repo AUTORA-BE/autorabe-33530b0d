@@ -295,12 +295,9 @@ const Index = () => {
         </Suspense>
       </div>
 
-      {/* Floating widgets — single instances */}
+      {/* Floating widgets */}
       <Suspense fallback={null}>
         <TcoFloatingButton />
-      </Suspense>
-      <Suspense fallback={null}>
-        <CarChatbot />
       </Suspense>
     </div>
   );
