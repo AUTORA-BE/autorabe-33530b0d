@@ -101,8 +101,7 @@ function AppRoutes() {
         <Route path="/compare" element={<PageTransition><Compare /></PageTransition>} />
         <Route path="/dashboard" element={<PageTransition><SellerDashboard /></PageTransition>} />
         <Route path="/dashboard/stats" element={<PageTransition><SellerStats /></PageTransition>} />
-        <Route path="/admin" element={<PageTransition><Admin /></PageTransition>} />
-        <Route path="/admin/reports" element={<PageTransition><AdminReports /></PageTransition>} />
+        <Route path="/admin/*" element={<PageTransition><AdminLayout /></PageTransition>} />
         <Route path="/settings" element={<PageTransition><Settings /></PageTransition>} />
         <Route path="/reset-password" element={<PageTransition><ResetPassword /></PageTransition>} />
         <Route path="/terms" element={<PageTransition><Terms /></PageTransition>} />
