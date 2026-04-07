@@ -154,6 +154,7 @@ export type Database = {
           photos: string[] | null
           power: number | null
           price: number
+          search_vector: unknown
           seller_type: string | null
           status: string | null
           transmission: string
@@ -190,6 +191,7 @@ export type Database = {
           photos?: string[] | null
           power?: number | null
           price: number
+          search_vector?: unknown
           seller_type?: string | null
           status?: string | null
           transmission: string
@@ -226,6 +228,7 @@ export type Database = {
           photos?: string[] | null
           power?: number | null
           price?: number
+          search_vector?: unknown
           seller_type?: string | null
           status?: string | null
           transmission?: string
@@ -621,6 +624,30 @@ export type Database = {
         }
         Relationships: []
       }
+      rate_limits: {
+        Row: {
+          count: number
+          expires_at: string
+          id: string
+          key: string
+          window_start: string
+        }
+        Insert: {
+          count?: number
+          expires_at: string
+          id?: string
+          key: string
+          window_start?: string
+        }
+        Update: {
+          count?: number
+          expires_at?: string
+          id?: string
+          key?: string
+          window_start?: string
+        }
+        Relationships: []
+      }
       reports: {
         Row: {
           car_listing_id: string
@@ -988,6 +1015,10 @@ export type Database = {
       }
     }
     Functions: {
+      check_rate_limit: {
+        Args: { _key: string; _max_attempts: number; _window_seconds: number }
+        Returns: boolean
+      }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
