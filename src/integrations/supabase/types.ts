@@ -154,6 +154,7 @@ export type Database = {
           photos: string[] | null
           power: number | null
           price: number
+          search_vector: unknown
           seller_type: string | null
           status: string | null
           transmission: string
@@ -190,6 +191,7 @@ export type Database = {
           photos?: string[] | null
           power?: number | null
           price: number
+          search_vector?: unknown
           seller_type?: string | null
           status?: string | null
           transmission: string
@@ -226,6 +228,7 @@ export type Database = {
           photos?: string[] | null
           power?: number | null
           price?: number
+          search_vector?: unknown
           seller_type?: string | null
           status?: string | null
           transmission?: string
