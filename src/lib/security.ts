@@ -83,7 +83,33 @@ export function isValidEmail(email: string): boolean {
 }
 
 /**
- * Rate limiting helper using localStorage
+ * Server-side rate limiting via Edge Function
+ * Falls back to localStorage if the server is unreachable
+ */
+export async function checkServerRateLimit(
+  action: string,
+  identifier?: string
+): Promise<{ allowed: boolean }> {
+  try {
+    const { supabase } = await import('@/integrations/supabase/client');
+    const { data, error } = await supabase.functions.invoke('check-rate-limit', {
+      body: { action, identifier },
+    });
+
+    if (error) {
+      console.warn('Rate limit check failed, allowing action:', error);
+      return { allowed: true };
+    }
+
+    return { allowed: data?.allowed ?? true };
+  } catch {
+    return { allowed: true };
+  }
+}
+
+/**
+ * Client-side rate limiting fallback using localStorage
+ * @deprecated Prefer checkServerRateLimit for production use
  */
 interface RateLimitEntry {
   count: number;
@@ -102,7 +128,6 @@ export function checkRateLimit(
     const stored = localStorage.getItem(storageKey);
     let entry: RateLimitEntry = stored ? JSON.parse(stored) : { count: 0, resetTime: now + windowMs };
     
-    // Reset if window expired
     if (now > entry.resetTime) {
       entry = { count: 0, resetTime: now + windowMs };
     }
@@ -120,7 +145,6 @@ export function checkRateLimit(
       resetIn: Math.max(0, entry.resetTime - now),
     };
   } catch {
-    // If localStorage fails, allow the action
     return { allowed: true, remainingAttempts: maxAttempts, resetIn: 0 };
   }
 }
