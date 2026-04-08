@@ -13,6 +13,7 @@ import { AdminSidebar } from './AdminSidebar';
 const AdminOverview = lazy(() => import('./pages/AdminOverview'));
 const AdminUsersPage = lazy(() => import('./pages/AdminUsersPage'));
 const AdminListingsPage = lazy(() => import('./pages/AdminListingsPage'));
+const AdminConversationsPage = lazy(() => import('./pages/AdminConversationsPage'));
 const AdminReportsPage = lazy(() => import('./pages/AdminReportsPage'));
 const AdminLogsPage = lazy(() => import('./pages/AdminLogsPage'));
 const AdminExportsPage = lazy(() => import('./pages/AdminExportsPage'));
@@ -49,6 +50,7 @@ export default function AdminLayout() {
                 <Route index element={<AdminOverview />} />
                 <Route path="users" element={<AdminUsersPage />} />
                 <Route path="listings" element={<AdminListingsPage />} />
+                <Route path="conversations" element={<AdminConversationsPage />} />
                 <Route path="reports" element={<AdminReportsPage />} />
                 <Route path="logs" element={<AdminLogsPage />} />
                 <Route path="exports" element={<AdminExportsPage />} />
