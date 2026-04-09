@@ -33,6 +33,28 @@ async function logAction(actionType: string, targetId: string, metadata?: Record
   });
 }
 
+async function sendListingStatusEmail(listing: { id: string; contact_email?: string; contact_name?: string; brand?: string; model?: string; year?: number }, status: 'approved' | 'rejected') {
+  if (!listing.contact_email) return;
+  try {
+    await supabase.functions.invoke('send-transactional-email', {
+      body: {
+        templateName: 'listing-status',
+        recipientEmail: listing.contact_email,
+        idempotencyKey: `listing-status-${listing.id}-${status}`,
+        templateData: {
+          contactName: listing.contact_name || undefined,
+          brand: listing.brand || undefined,
+          model: listing.model || undefined,
+          year: listing.year?.toString() || undefined,
+          status,
+        },
+      },
+    });
+  } catch (e) {
+    console.error('Failed to send listing status email:', e);
+  }
+}
+
 export function useAdminListings() {
   const qc = useQueryClient();
 
@@ -41,11 +63,17 @@ export function useAdminListings() {
     queryFn: fetchListings,
   });
 
+  // Helper to get listing data for email
+  const getListingById = (id: string) =>
+    query.data?.find((l) => l.id === id);
+
   const approveMutation = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from('car_listings').update({ status: 'approved' }).eq('id', id);
       if (error) throw error;
       await logAction('approve_listing', id);
+      const listing = getListingById(id);
+      if (listing) await sendListingStatusEmail(listing, 'approved');
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['admin'] });
@@ -58,6 +86,8 @@ export function useAdminListings() {
       const { error } = await supabase.from('car_listings').update({ status: 'rejected' }).eq('id', id);
       if (error) throw error;
       await logAction('reject_listing', id);
+      const listing = getListingById(id);
+      if (listing) await sendListingStatusEmail(listing, 'rejected');
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['admin'] });
@@ -82,6 +112,11 @@ export function useAdminListings() {
       const { error } = await supabase.from('car_listings').update({ status: 'approved' }).in('id', ids);
       if (error) throw error;
       await logAction('bulk_approve', ids.join(','), { count: ids.length });
+      // Send email for each approved listing
+      const listings = ids.map(getListingById).filter(Boolean);
+      await Promise.allSettled(
+        listings.map((l) => sendListingStatusEmail(l!, 'approved'))
+      );
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['admin'] });
