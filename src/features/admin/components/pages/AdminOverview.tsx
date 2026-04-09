@@ -9,6 +9,7 @@ import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Users, Car, AlertTriangle, Clock, MessageSquare, DollarSign, TrendingUp, ShieldAlert } from 'lucide-react';
 import { useAdminStats } from '../../hooks/useAdminStats';
 import { useAdminCharts } from '../../hooks/useAdminCharts';
+import { useAdminRealtime } from '../../hooks/useAdminRealtime';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   ChartContainer,
@@ -33,6 +34,7 @@ const revenueChartConfig: ChartConfig = {
 export default function AdminOverview() {
   const { data: stats, isLoading } = useAdminStats();
   const { data: charts, isLoading: chartsLoading } = useAdminCharts();
+  useAdminRealtime();
 
   if (isLoading || !stats) {
     return (
