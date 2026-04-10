@@ -8,11 +8,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { Search, Check, X, Trash2, Download, Loader2, CheckCheck } from 'lucide-react';
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import { useAdminListings } from '../../hooks/useAdminListings';
 import { exportData } from '../../utils/exportData';
 import type { ExportFormat } from '../../types/admin.types';
@@ -27,6 +27,8 @@ export default function AdminListingsPage() {
   const { data: listings = [], isLoading, approve, reject, remove, bulkApprove, isActing } = useAdminListings();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [rejectDialog, setRejectDialog] = useState<{ open: boolean; listingId: string | null }>({ open: false, listingId: null });
+  const [rejectReason, setRejectReason] = useState('');
 
   const filtered = listings.filter(l => {
     if (statusFilter !== 'all' && l.status !== statusFilter) return false;
@@ -43,6 +45,18 @@ export default function AdminListingsPage() {
       km: l.mileage, carburant: l.fuel_type, statut: l.status, vendeur: l.contact_name,
       localisation: l.location, cree_le: l.created_at,
     })), 'annonces', fmt);
+  };
+
+  const openRejectDialog = (listingId: string) => {
+    setRejectReason('');
+    setRejectDialog({ open: true, listingId });
+  };
+
+  const confirmReject = () => {
+    if (!rejectDialog.listingId || !rejectReason.trim()) return;
+    reject({ id: rejectDialog.listingId, reason: rejectReason.trim() });
+    setRejectDialog({ open: false, listingId: null });
+    setRejectReason('');
   };
 
   return (
@@ -107,7 +121,7 @@ export default function AdminListingsPage() {
                       <Button size="icon" variant="ghost" className="h-7 w-7 text-emerald-500" onClick={() => approve(listing.id)} disabled={isActing}>
                         <Check className="h-3.5 w-3.5" />
                       </Button>
-                      <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={() => reject(listing.id)} disabled={isActing}>
+                      <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={() => openRejectDialog(listing.id)} disabled={isActing}>
                         <X className="h-3.5 w-3.5" />
                       </Button>
                     </>
@@ -122,6 +136,33 @@ export default function AdminListingsPage() {
           {filtered.length === 0 && <p className="text-center text-sm text-muted-foreground py-8">Aucune annonce trouvée</p>}
         </div>
       )}
+
+      {/* Rejection reason dialog */}
+      <Dialog open={rejectDialog.open} onOpenChange={(open) => { if (!open) setRejectDialog({ open: false, listingId: null }); }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Motif de rejet</DialogTitle>
+            <DialogDescription>
+              Indiquez la raison du rejet. Ce motif sera envoyé au vendeur par email.
+            </DialogDescription>
+          </DialogHeader>
+          <Textarea
+            placeholder="Ex : Photos floues, prix incohérent, informations manquantes..."
+            value={rejectReason}
+            onChange={e => setRejectReason(e.target.value)}
+            rows={4}
+            className="resize-none"
+          />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRejectDialog({ open: false, listingId: null })}>
+              Annuler
+            </Button>
+            <Button variant="destructive" onClick={confirmReject} disabled={!rejectReason.trim() || isActing}>
+              Rejeter l'annonce
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
