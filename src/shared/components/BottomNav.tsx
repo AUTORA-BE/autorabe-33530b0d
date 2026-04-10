@@ -39,7 +39,7 @@ const BottomNav = memo(function BottomNav() {
   ], [t, favoritesCount, hasUnread, unreadCount, user]);
 
   // Hide on messaging conversation (fullscreen) and auth page
-  const hiddenRoutes = ["/messages", "/auth"];
+  const hiddenRoutes = ["/messages", "/auth", "/admin"];
   const isHidden = hiddenRoutes.some(r => location.pathname.startsWith(r));
   if (isHidden) return null;
 
