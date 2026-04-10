@@ -33,7 +33,7 @@ async function logAction(actionType: string, targetId: string, metadata?: Record
   });
 }
 
-async function sendListingStatusEmail(listing: { id: string; contact_email?: string; contact_name?: string; brand?: string; model?: string; year?: number }, status: 'approved' | 'rejected') {
+async function sendListingStatusEmail(listing: { id: string; contact_email?: string; contact_name?: string; brand?: string; model?: string; year?: number }, status: 'approved' | 'rejected', reason?: string) {
   if (!listing.contact_email) return;
   try {
     await supabase.functions.invoke('send-transactional-email', {
@@ -47,6 +47,7 @@ async function sendListingStatusEmail(listing: { id: string; contact_email?: str
           model: listing.model || undefined,
           year: listing.year?.toString() || undefined,
           status,
+          reason: reason || undefined,
         },
       },
     });
@@ -63,7 +64,6 @@ export function useAdminListings() {
     queryFn: fetchListings,
   });
 
-  // Helper to get listing data for email
   const getListingById = (id: string) =>
     query.data?.find((l) => l.id === id);
 
@@ -82,12 +82,12 @@ export function useAdminListings() {
   });
 
   const rejectMutation = useMutation({
-    mutationFn: async (id: string) => {
+    mutationFn: async ({ id, reason }: { id: string; reason: string }) => {
       const { error } = await supabase.from('car_listings').update({ status: 'rejected' }).eq('id', id);
       if (error) throw error;
-      await logAction('reject_listing', id);
+      await logAction('reject_listing', id, { reason });
       const listing = getListingById(id);
-      if (listing) await sendListingStatusEmail(listing, 'rejected');
+      if (listing) await sendListingStatusEmail(listing, 'rejected', reason);
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['admin'] });
@@ -112,7 +112,6 @@ export function useAdminListings() {
       const { error } = await supabase.from('car_listings').update({ status: 'approved' }).in('id', ids);
       if (error) throw error;
       await logAction('bulk_approve', ids.join(','), { count: ids.length });
-      // Send email for each approved listing
       const listings = ids.map(getListingById).filter(Boolean);
       await Promise.allSettled(
         listings.map((l) => sendListingStatusEmail(l!, 'approved'))
