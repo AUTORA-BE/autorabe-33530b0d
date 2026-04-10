@@ -11,16 +11,29 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
-import { Search, Check, X, Trash2, Download, Loader2, CheckCheck } from 'lucide-react';
+import { Search, Check, X, Trash2, Download, Loader2, CheckCheck, History, Clock, AlertTriangle } from 'lucide-react';
+import { format } from 'date-fns';
+import { fr } from 'date-fns/locale';
 import { useAdminListings } from '../../hooks/useAdminListings';
+import { useListingHistory } from '../../hooks/useListingHistory';
 import { exportData } from '../../utils/exportData';
 import type { ExportFormat } from '../../types/admin.types';
+import type { AdminListing } from '../../types/admin.types';
 
 const STATUS_COLORS: Record<string, string> = {
   pending: 'bg-amber-500/10 text-amber-500',
   approved: 'bg-emerald-500/10 text-emerald-500',
   rejected: 'bg-destructive/10 text-destructive',
+};
+
+const ACTION_LABELS: Record<string, string> = {
+  approve_listing: 'Approuvée',
+  reject_listing: 'Rejetée',
+  delete_listing: 'Supprimée',
+  bulk_approve: 'Approuvée (lot)',
 };
 
 export default function AdminListingsPage() {
@@ -29,6 +42,9 @@ export default function AdminListingsPage() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [rejectDialog, setRejectDialog] = useState<{ open: boolean; listingId: string | null }>({ open: false, listingId: null });
   const [rejectReason, setRejectReason] = useState('');
+  const [detailListing, setDetailListing] = useState<AdminListing | null>(null);
+
+  const { data: history = [], isLoading: historyLoading } = useListingHistory(detailListing?.id ?? null);
 
   const filtered = listings.filter(l => {
     if (statusFilter !== 'all' && l.status !== statusFilter) return false;
@@ -97,7 +113,7 @@ export default function AdminListingsPage() {
       ) : (
         <div className="space-y-2">
           {filtered.map(listing => (
-            <Card key={listing.id} className="border-border">
+            <Card key={listing.id} className="border-border cursor-pointer hover:bg-muted/30 transition-colors" onClick={() => setDetailListing(listing)}>
               <CardContent className="p-3 flex items-center gap-3">
                 {listing.photos?.[0] ? (
                   <img src={listing.photos[0]} alt="" className="h-12 w-16 rounded-lg object-cover flex-shrink-0" loading="lazy" />
@@ -115,7 +131,7 @@ export default function AdminListingsPage() {
                     {listing.year} · {listing.mileage?.toLocaleString()} km · €{listing.price?.toLocaleString()} · {listing.contact_name}
                   </p>
                 </div>
-                <div className="flex gap-1 flex-shrink-0">
+                <div className="flex gap-1 flex-shrink-0" onClick={e => e.stopPropagation()}>
                   {listing.status === 'pending' && (
                     <>
                       <Button size="icon" variant="ghost" className="h-7 w-7 text-emerald-500" onClick={() => approve(listing.id)} disabled={isActing}>
@@ -163,6 +179,91 @@ export default function AdminListingsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Listing detail sheet with history */}
+      <Sheet open={!!detailListing} onOpenChange={(open) => { if (!open) setDetailListing(null); }}>
+        <SheetContent className="sm:max-w-lg overflow-y-auto">
+          {detailListing && (
+            <>
+              <SheetHeader>
+                <SheetTitle className="flex items-center gap-2">
+                  {detailListing.brand} {detailListing.model}
+                  <Badge className={`text-[10px] ${STATUS_COLORS[detailListing.status || 'pending'] || ''}`}>
+                    {detailListing.status}
+                  </Badge>
+                </SheetTitle>
+              </SheetHeader>
+
+              {/* Listing info */}
+              <div className="mt-4 space-y-3">
+                {detailListing.photos?.[0] && (
+                  <img src={detailListing.photos[0]} alt="" className="w-full h-40 rounded-xl object-cover" />
+                )}
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div><span className="text-muted-foreground">Année :</span> {detailListing.year}</div>
+                  <div><span className="text-muted-foreground">Prix :</span> €{detailListing.price?.toLocaleString()}</div>
+                  <div><span className="text-muted-foreground">Km :</span> {detailListing.mileage?.toLocaleString()}</div>
+                  <div><span className="text-muted-foreground">Carburant :</span> {detailListing.fuel_type}</div>
+                  <div><span className="text-muted-foreground">Vendeur :</span> {detailListing.contact_name}</div>
+                  <div><span className="text-muted-foreground">Lieu :</span> {detailListing.location || '—'}</div>
+                </div>
+                {detailListing.description && (
+                  <p className="text-xs text-muted-foreground line-clamp-3">{detailListing.description}</p>
+                )}
+              </div>
+
+              <Separator className="my-4" />
+
+              {/* Action history */}
+              <div className="space-y-3">
+                <h3 className="text-sm font-semibold flex items-center gap-1.5">
+                  <History className="h-4 w-4 text-primary" />
+                  Historique de modération
+                </h3>
+
+                {historyLoading ? (
+                  <div className="flex justify-center py-4">
+                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                  </div>
+                ) : history.length === 0 ? (
+                  <p className="text-xs text-muted-foreground py-3">Aucune action de modération enregistrée.</p>
+                ) : (
+                  <div className="space-y-2">
+                    {history.map(action => {
+                      const rejectionReason = action.action_type === 'reject_listing'
+                        ? (action.metadata as Record<string, unknown>)?.reason as string | undefined
+                        : undefined;
+
+                      return (
+                        <div key={action.id} className="rounded-lg border border-border p-3 space-y-1.5">
+                          <div className="flex items-center justify-between">
+                            <Badge variant="outline" className={`text-[10px] ${action.action_type === 'reject_listing' ? 'border-destructive/30 text-destructive' : action.action_type.includes('approve') ? 'border-emerald-500/30 text-emerald-500' : 'border-muted-foreground/30 text-muted-foreground'}`}>
+                              {ACTION_LABELS[action.action_type] || action.action_type}
+                            </Badge>
+                            <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                              <Clock className="h-3 w-3" />
+                              {format(new Date(action.created_at), 'dd MMM yyyy HH:mm', { locale: fr })}
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-muted-foreground">
+                            Par <span className="font-medium text-foreground">{action.admin_name}</span>
+                          </p>
+                          {rejectionReason && (
+                            <div className="flex gap-1.5 items-start mt-1 p-2 rounded-md bg-destructive/5 border border-destructive/10">
+                              <AlertTriangle className="h-3.5 w-3.5 text-destructive flex-shrink-0 mt-0.5" />
+                              <p className="text-xs text-destructive">{rejectionReason}</p>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
