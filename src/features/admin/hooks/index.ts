@@ -7,3 +7,4 @@ export { useAuditLogs } from './useAuditLogs';
 export { useAdminCharts } from './useAdminCharts';
 export { useAdminRealtime } from './useAdminRealtime';
 export { useAdminConversations } from './useAdminConversations';
+export { useListingHistory } from './useListingHistory';
