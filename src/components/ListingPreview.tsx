@@ -162,9 +162,9 @@ const ListingPreview = memo(function ListingPreview({ data, photoPreview, photoC
               </Badge>
             )}
             {data.car_pass_verified && (
-              <Badge className="bg-primary/90 text-primary-foreground border-0 backdrop-blur-sm shadow-lg">
+              <Badge className="bg-green-500/90 text-white border-0 backdrop-blur-sm shadow-lg">
                 <CheckCircle className="w-3 h-3 mr-1" />
-                Car-Pass
+                Car-Pass vérifié
               </Badge>
             )}
           </div>
