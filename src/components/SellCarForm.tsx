@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Upload, X, Car, Info, User, Camera, FileCheck, Building2, AlertTriangle, Leaf, CreditCard, ChevronLeft, ChevronRight, Check, FileText, Shield } from 'lucide-react';
+import { PhotoUploadStep } from '@/components/PhotoUploadStep';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -23,8 +24,8 @@ import { useAutoSaveDraft } from '@/features/listings/hooks/useAutoSaveDraft';
 
 const ConfettiCanvas = lazy(() => import('@/components/ConfettiCanvas'));
 
-const MAX_PHOTOS = 10;
-const MAX_PHOTO_SIZE_MB = 5;
+const MAX_PHOTOS = 15;
+const MAX_PHOTO_SIZE_MB = 8;
 const MAX_PHOTO_SIZE_BYTES = MAX_PHOTO_SIZE_MB * 1024 * 1024;
 const MAX_PDF_SIZE_MB = 10;
 const MAX_PDF_SIZE_BYTES = MAX_PDF_SIZE_MB * 1024 * 1024;
