@@ -425,7 +425,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
         return;
       }
 
-      const hasPhotos = photos.length > 0 || existingPhotos.length > 0;
+      const hasPhotos = uploadedPhotoUrls.length > 0;
       if (!hasPhotos) {
         toast.error(t('sellForm.photosRequired'));
         setCurrentStep(2);
@@ -433,11 +433,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
         return;
       }
 
-      let allPhotoUrls = [...existingPhotos];
-      if (photos.length > 0) {
-        const newPhotoUrls = await uploadPhotos(user.id);
-        allPhotoUrls = [...allPhotoUrls, ...newPhotoUrls];
-      }
+      const allPhotoUrls = [...uploadedPhotoUrls];
 
       if (allPhotoUrls.length === 0) {
         toast.error(t('sellForm.errorUpload'));
