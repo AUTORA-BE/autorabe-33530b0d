@@ -51,6 +51,7 @@ const sellCarSchema = z.object({
   euro_norm: z.string().optional(),
   vin: z.string().length(17, "Le VIN doit contenir exactement 17 caractères"),
   first_registration: z.string().optional(),
+  car_pass_date: z.string().optional(),
   description: z.string().optional(),
   contact_name: z.string().min(1, "Le nom de contact est obligatoire"),
   contact_phone: z.string().optional(),
