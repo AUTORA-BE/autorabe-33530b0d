@@ -403,10 +403,38 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
     return uploadedUrls;
   };
 
-  const uploadCarPass = async (userId: string): Promise<void> => {
-    if (!carPassFile) return;
-    const fileName = `${userId}/carpass-${Date.now()}.pdf`;
-    await supabase.storage.from('car-photos').upload(fileName, carPassFile);
+  const uploadCarPassToStorage = async (file: File): Promise<string | null> => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
+
+    const ext = file.name.split('.').pop()?.toLowerCase() || 'pdf';
+    const fileName = `${user.id}/carpass-${Date.now()}.${ext}`;
+
+    let uploadBlob: Blob = file;
+    let contentType = file.type;
+
+    // Compress if image
+    if (file.type.startsWith('image/')) {
+      const { compressImage } = await import('@/utils/compressImage');
+      const { blob } = await compressImage(file, { maxDimension: 1920, quality: 0.82 });
+      uploadBlob = blob;
+      contentType = blob.type;
+    }
+
+    const { error } = await supabase.storage
+      .from('car-pass')
+      .upload(fileName, uploadBlob, {
+        contentType,
+        cacheControl: '31536000',
+      });
+
+    if (error) {
+      console.error('Car-Pass upload error:', error);
+      return null;
+    }
+
+    const { data: urlData } = supabase.storage.from('car-pass').getPublicUrl(fileName);
+    return urlData.publicUrl;
   };
 
   const onSubmit = async (data: SellCarFormData) => {
