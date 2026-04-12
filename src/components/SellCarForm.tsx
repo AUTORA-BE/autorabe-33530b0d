@@ -474,8 +474,22 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
         return;
       }
 
-      // Upload Car-Pass PDF if present
-      await uploadCarPass(user.id);
+      // Car-Pass is now uploaded in real-time via Step 3
+      // Validate Car-Pass is present
+      if (!carPassUrl) {
+        toast.error('Le Car-Pass est obligatoire pour publier l\'annonce.');
+        setCurrentStep(3);
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Validate minimum 3 photos
+      if (allPhotoUrls.length < 3) {
+        toast.error('Ajoutez au moins 3 photos pour publier l\'annonce.');
+        setCurrentStep(2);
+        setIsSubmitting(false);
+        return;
+      }
 
       const listingData = {
         brand: data.brand,
@@ -490,7 +504,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
         power: data.power || null,
         doors: data.doors || 5,
         euro_norm: data.euro_norm || null,
-        vin: data.vin || null,
+        vin: data.vin,
         first_registration: data.first_registration || null,
         description: data.description || null,
         contact_name: data.contact_name,
@@ -498,7 +512,9 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
         contact_email: data.contact_email,
         location: data.location || null,
         photos: allPhotoUrls,
-        car_pass_verified: data.car_pass_verified || false,
+        car_pass_verified: true,
+        car_pass_url: carPassUrl,
+        car_pass_date: data.car_pass_date || null,
         ct_valid: data.ct_valid || false,
         maintenance_book_complete: data.maintenance_book_complete || false,
         seller_type: data.seller_type || 'particulier',
