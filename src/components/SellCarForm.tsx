@@ -1020,57 +1020,11 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
               exit="exit"
               transition={{ duration: 0.3, ease: 'easeInOut' }}
             >
-            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-foreground">
-                  <Camera className="h-5 w-5 text-primary" />
-                  {t('sellForm.photosTitle')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                  {photosPreviews.map((preview, index) => (
-                    <div key={index} className="relative aspect-video rounded-lg overflow-hidden bg-muted group">
-                      <img src={preview} alt={`Photo ${index + 1}`} className="w-full h-full object-cover" />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const photoUrl = photosPreviews[index];
-                          if (existingPhotos.includes(photoUrl)) {
-                            removeExistingPhoto(index);
-                          } else {
-                            removePhoto(index);
-                          }
-                        }}
-                        className="absolute top-2 right-2 p-1 bg-destructive text-destructive-foreground rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                      {index === 0 && (
-                        <span className="absolute bottom-2 left-2 px-2 py-1 bg-primary text-primary-foreground text-xs rounded">
-                          {t('sellForm.photosMain')}
-                        </span>
-                      )}
-                    </div>
-                  ))}
-                  
-                  {(photos.length + existingPhotos.length) < MAX_PHOTOS && (
-                    <label className="aspect-video rounded-lg border-2 border-dashed border-border hover:border-primary transition-colors cursor-pointer flex flex-col items-center justify-center gap-2 bg-muted/50">
-                      <Upload className="h-8 w-8 text-muted-foreground" />
-                      <span className="text-sm text-muted-foreground">{t('sellForm.photosAdd')}</span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        onChange={handlePhotoUpload}
-                        className="hidden"
-                      />
-                    </label>
-                  )}
-                </div>
-                <p className="text-sm text-muted-foreground mt-4">{t('sellForm.photosHint')}</p>
-              </CardContent>
-            </Card>
+              <PhotoUploadStep
+                existingPhotos={existingPhotos}
+                onPhotosChange={handlePhotosChange}
+                t={t}
+              />
             </motion.div>
           )}
 
