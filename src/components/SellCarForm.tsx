@@ -991,6 +991,33 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
                       <FormMessage />
                     </FormItem>
                   )} />
+
+                  <FormField control={form.control} name="vin" render={({ field }) => (
+                    <FormItem className="md:col-span-2 lg:col-span-3">
+                      <FormLabel className="flex items-center gap-2">
+                        {t('sellForm.vin') || 'VIN (numéro de châssis)'} *
+                        {hasValidVin && (
+                          <Badge className="bg-primary/10 text-primary border-0 text-xs animate-in fade-in">
+                            <Check className="w-3 h-3 mr-1" />
+                            Vérifié
+                          </Badge>
+                        )}
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="WVWZZZ3CZWE123456"
+                          maxLength={17}
+                          {...field}
+                          onChange={(e) => field.onChange(e.target.value.toUpperCase().replace(/[^A-HJ-NPR-Z0-9]/g, ''))}
+                          className={`font-mono tracking-widest ${hasValidVin ? 'border-primary/50 ring-1 ring-primary/20' : ''}`}
+                        />
+                      </FormControl>
+                      <p className="text-xs text-muted-foreground">
+                        Le VIN contient 17 caractères alphanumériques. Il se trouve sur la carte grise ou le pare-brise.
+                      </p>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
                 </CardContent>
               </Card>
 
