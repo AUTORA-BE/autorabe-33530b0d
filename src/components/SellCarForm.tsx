@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useQueryClient } from '@tanstack/react-query';
@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Upload, X, Car, Info, User, Camera, FileCheck, Building2, AlertTriangle, Leaf, CreditCard, ChevronLeft, ChevronRight, Check, FileText, Shield } from 'lucide-react';
+import { PhotoUploadStep } from '@/components/PhotoUploadStep';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -23,8 +24,8 @@ import { useAutoSaveDraft } from '@/features/listings/hooks/useAutoSaveDraft';
 
 const ConfettiCanvas = lazy(() => import('@/components/ConfettiCanvas'));
 
-const MAX_PHOTOS = 10;
-const MAX_PHOTO_SIZE_MB = 5;
+const MAX_PHOTOS = 15;
+const MAX_PHOTO_SIZE_MB = 8;
 const MAX_PHOTO_SIZE_BYTES = MAX_PHOTO_SIZE_MB * 1024 * 1024;
 const MAX_PDF_SIZE_MB = 10;
 const MAX_PDF_SIZE_BYTES = MAX_PDF_SIZE_MB * 1024 * 1024;
@@ -121,6 +122,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
   const [photos, setPhotos] = useState<File[]>([]);
   const [photosPreviews, setPhotosPreviews] = useState<string[]>([]);
   const [existingPhotos, setExistingPhotos] = useState<string[]>([]);
+  const [uploadedPhotoUrls, setUploadedPhotoUrls] = useState<string[]>([]);
   const [carPassFile, setCarPassFile] = useState<File | null>(null);
   const [carPassFileName, setCarPassFileName] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -280,6 +282,11 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEditMode]);
 
+  /** Called by PhotoUploadStep when photos change */
+  const handlePhotosChange = useCallback((urls: string[], previews: string[]) => {
+    setUploadedPhotoUrls(urls);
+    setPhotosPreviews(previews);
+  }, []);
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -418,7 +425,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
         return;
       }
 
-      const hasPhotos = photos.length > 0 || existingPhotos.length > 0;
+      const hasPhotos = uploadedPhotoUrls.length > 0;
       if (!hasPhotos) {
         toast.error(t('sellForm.photosRequired'));
         setCurrentStep(2);
@@ -426,11 +433,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
         return;
       }
 
-      let allPhotoUrls = [...existingPhotos];
-      if (photos.length > 0) {
-        const newPhotoUrls = await uploadPhotos(user.id);
-        allPhotoUrls = [...allPhotoUrls, ...newPhotoUrls];
-      }
+      const allPhotoUrls = [...uploadedPhotoUrls];
 
       if (allPhotoUrls.length === 0) {
         toast.error(t('sellForm.errorUpload'));
@@ -559,9 +562,9 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
     onFormDataChange?.(draftFields, photosPreviews[0], photosPreviews.length);
 
     // Auto-save draft — only persist actual uploaded URLs, never base64 data URLs
-    const persistablePhotoUrls = existingPhotos.filter(url => url.startsWith('http'));
+    const persistablePhotoUrls = uploadedPhotoUrls.filter(url => url.startsWith('http'));
     updateDraft(draftFields, persistablePhotoUrls);
-  }, [watchedData, photosPreviews, existingPhotos, onFormDataChange, updateDraft]);
+  }, [watchedData, photosPreviews, uploadedPhotoUrls, onFormDataChange, updateDraft]);
 
   const selectedEuroNorm = form.watch('euro_norm');
   const lezWarning = getLezWarning(selectedEuroNorm);
@@ -575,7 +578,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
       return result;
     }
     if (step === 2) {
-      const hasPhotos = photos.length > 0 || existingPhotos.length > 0;
+      const hasPhotos = uploadedPhotoUrls.length > 0;
       if (!hasPhotos) {
         toast.error('Ajoutez au moins une photo.');
         return false;
@@ -1017,57 +1020,11 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
               exit="exit"
               transition={{ duration: 0.3, ease: 'easeInOut' }}
             >
-            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-foreground">
-                  <Camera className="h-5 w-5 text-primary" />
-                  {t('sellForm.photosTitle')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                  {photosPreviews.map((preview, index) => (
-                    <div key={index} className="relative aspect-video rounded-lg overflow-hidden bg-muted group">
-                      <img src={preview} alt={`Photo ${index + 1}`} className="w-full h-full object-cover" />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const photoUrl = photosPreviews[index];
-                          if (existingPhotos.includes(photoUrl)) {
-                            removeExistingPhoto(index);
-                          } else {
-                            removePhoto(index);
-                          }
-                        }}
-                        className="absolute top-2 right-2 p-1 bg-destructive text-destructive-foreground rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                      >
-                        <X className="h-4 w-4" />
-                      </button>
-                      {index === 0 && (
-                        <span className="absolute bottom-2 left-2 px-2 py-1 bg-primary text-primary-foreground text-xs rounded">
-                          {t('sellForm.photosMain')}
-                        </span>
-                      )}
-                    </div>
-                  ))}
-                  
-                  {(photos.length + existingPhotos.length) < MAX_PHOTOS && (
-                    <label className="aspect-video rounded-lg border-2 border-dashed border-border hover:border-primary transition-colors cursor-pointer flex flex-col items-center justify-center gap-2 bg-muted/50">
-                      <Upload className="h-8 w-8 text-muted-foreground" />
-                      <span className="text-sm text-muted-foreground">{t('sellForm.photosAdd')}</span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        onChange={handlePhotoUpload}
-                        className="hidden"
-                      />
-                    </label>
-                  )}
-                </div>
-                <p className="text-sm text-muted-foreground mt-4">{t('sellForm.photosHint')}</p>
-              </CardContent>
-            </Card>
+              <PhotoUploadStep
+                existingPhotos={existingPhotos}
+                onPhotosChange={handlePhotosChange}
+                t={t}
+              />
             </motion.div>
           )}
 
