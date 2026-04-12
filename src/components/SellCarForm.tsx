@@ -49,7 +49,7 @@ const sellCarSchema = z.object({
   power: z.number().optional(),
   doors: z.number().optional(),
   euro_norm: z.string().optional(),
-  vin: z.string().max(17, "Le VIN doit contenir 17 caractères maximum").optional(),
+  vin: z.string().length(17, "Le VIN doit contenir exactement 17 caractères"),
   first_registration: z.string().optional(),
   description: z.string().optional(),
   contact_name: z.string().min(1, "Le nom de contact est obligatoire"),
@@ -574,7 +574,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
   // Step validation
   const validateStep = async (step: number): Promise<boolean> => {
     if (step === 1) {
-      const result = await form.trigger(['brand', 'model', 'year', 'price', 'mileage', 'fuel_type', 'transmission', 'body_type', 'color', 'contact_name', 'contact_email']);
+      const result = await form.trigger(['brand', 'model', 'year', 'price', 'mileage', 'fuel_type', 'transmission', 'body_type', 'color', 'contact_name', 'contact_email', 'vin']);
       return result;
     }
     if (step === 2) {
