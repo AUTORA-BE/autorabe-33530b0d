@@ -126,6 +126,10 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
   const [uploadedPhotoUrls, setUploadedPhotoUrls] = useState<string[]>([]);
   const [carPassFile, setCarPassFile] = useState<File | null>(null);
   const [carPassFileName, setCarPassFileName] = useState<string>('');
+  const [carPassUrl, setCarPassUrl] = useState<string | null>(null);
+  const [carPassPreview, setCarPassPreview] = useState<string | null>(null);
+  const [carPassUploading, setCarPassUploading] = useState(false);
+  const [carPassError, setCarPassError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(!!editId);
   const [showConfetti, setShowConfetti] = useState(false);
