@@ -133,6 +133,8 @@ export type Database = {
           boost_level: string | null
           boost_warning_sent: boolean | null
           brand: string
+          car_pass_date: string | null
+          car_pass_url: string | null
           car_pass_verified: boolean | null
           color: string
           contact_email: string
@@ -170,6 +172,8 @@ export type Database = {
           boost_level?: string | null
           boost_warning_sent?: boolean | null
           brand: string
+          car_pass_date?: string | null
+          car_pass_url?: string | null
           car_pass_verified?: boolean | null
           color: string
           contact_email: string
@@ -207,6 +211,8 @@ export type Database = {
           boost_level?: string | null
           boost_warning_sent?: boolean | null
           brand?: string
+          car_pass_date?: string | null
+          car_pass_url?: string | null
           car_pass_verified?: boolean | null
           color?: string
           contact_email?: string
