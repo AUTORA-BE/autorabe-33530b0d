@@ -562,9 +562,9 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
     onFormDataChange?.(draftFields, photosPreviews[0], photosPreviews.length);
 
     // Auto-save draft — only persist actual uploaded URLs, never base64 data URLs
-    const persistablePhotoUrls = existingPhotos.filter(url => url.startsWith('http'));
+    const persistablePhotoUrls = uploadedPhotoUrls.filter(url => url.startsWith('http'));
     updateDraft(draftFields, persistablePhotoUrls);
-  }, [watchedData, photosPreviews, existingPhotos, onFormDataChange, updateDraft]);
+  }, [watchedData, photosPreviews, uploadedPhotoUrls, onFormDataChange, updateDraft]);
 
   const selectedEuroNorm = form.watch('euro_norm');
   const lezWarning = getLezWarning(selectedEuroNorm);
@@ -578,7 +578,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
       return result;
     }
     if (step === 2) {
-      const hasPhotos = photos.length > 0 || existingPhotos.length > 0;
+      const hasPhotos = uploadedPhotoUrls.length > 0;
       if (!hasPhotos) {
         toast.error('Ajoutez au moins une photo.');
         return false;
