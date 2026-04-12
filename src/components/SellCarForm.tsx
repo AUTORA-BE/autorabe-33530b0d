@@ -282,6 +282,11 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isEditMode]);
 
+  /** Called by PhotoUploadStep when photos change */
+  const handlePhotosChange = useCallback((urls: string[], previews: string[]) => {
+    setUploadedPhotoUrls(urls);
+    setPhotosPreviews(previews);
+  }, []);
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
