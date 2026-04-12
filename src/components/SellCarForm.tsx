@@ -333,12 +333,10 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
     setPhotosPreviews(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handleCarPassUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (file.type !== 'application/pdf') {
-      toast.error('Seuls les fichiers PDF sont acceptés pour le Car-Pass.');
+  const processCarPassFile = async (file: File) => {
+    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
+    if (!allowedTypes.includes(file.type)) {
+      toast.error('Seuls les fichiers PDF, JPG et PNG sont acceptés pour le Car-Pass.');
       return;
     }
     if (file.size > MAX_PDF_SIZE_BYTES) {
@@ -348,26 +346,61 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
 
     setCarPassFile(file);
     setCarPassFileName(file.name);
-    form.setValue('car_pass_verified', true);
+    setCarPassError(null);
+    setCarPassUploading(true);
+
+    // Generate preview for images
+    if (file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => setCarPassPreview(e.target?.result as string);
+      reader.readAsDataURL(file);
+    } else {
+      setCarPassPreview(null);
+    }
+
+    const url = await uploadCarPassToStorage(file);
+    if (url) {
+      setCarPassUrl(url);
+      form.setValue('car_pass_verified', true);
+      toast.success('Car-Pass uploadé avec succès !');
+    } else {
+      toast.error('Erreur lors de l\'upload du Car-Pass.');
+      setCarPassFile(null);
+      setCarPassFileName('');
+    }
+    setCarPassUploading(false);
+  };
+
+  const handleCarPassUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    processCarPassFile(file);
+    e.target.value = '';
   };
 
   const handleCarPassDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     const file = e.dataTransfer.files?.[0];
     if (!file) return;
+    processCarPassFile(file);
+  };
 
-    if (file.type !== 'application/pdf') {
-      toast.error('Seuls les fichiers PDF sont acceptés pour le Car-Pass.');
-      return;
+  const removeCarPass = async () => {
+    // Try to delete from storage
+    if (carPassUrl) {
+      try {
+        const url = new URL(carPassUrl);
+        const pathParts = url.pathname.split('/car-pass/');
+        if (pathParts[1]) {
+          await supabase.storage.from('car-pass').remove([decodeURIComponent(pathParts[1])]);
+        }
+      } catch { /* ignore */ }
     }
-    if (file.size > MAX_PDF_SIZE_BYTES) {
-      toast.error(`Le fichier dépasse la taille maximale de ${MAX_PDF_SIZE_MB} Mo.`);
-      return;
-    }
-
-    setCarPassFile(file);
-    setCarPassFileName(file.name);
-    form.setValue('car_pass_verified', true);
+    setCarPassFile(null);
+    setCarPassFileName('');
+    setCarPassUrl(null);
+    setCarPassPreview(null);
+    form.setValue('car_pass_verified', false);
   };
 
   const uploadPhotos = async (userId: string): Promise<string[]> => {
