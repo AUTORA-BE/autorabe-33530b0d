@@ -38,6 +38,8 @@ const MAX_PHOTO_SIZE_MB = 8;
 const MAX_PHOTO_SIZE_BYTES = MAX_PHOTO_SIZE_MB * 1024 * 1024;
 
 interface PhotoItem {
+  /** Stable unique ID for sorting */
+  id: string;
   /** Local preview URL (blob or existing URL) */
   preview: string;
   /** Supabase public URL once uploaded */
@@ -49,6 +51,9 @@ interface PhotoItem {
   /** Whether this is an existing photo (from edit mode or draft) */
   isExisting?: boolean;
 }
+
+let photoIdCounter = 0;
+const nextPhotoId = () => `photo-${Date.now()}-${++photoIdCounter}`;
 
 interface PhotoUploadStepProps {
   /** Current photos (existing URLs from edit/draft) */
