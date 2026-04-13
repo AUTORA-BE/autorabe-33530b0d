@@ -68,39 +68,58 @@ interface PhotoUploadStepProps {
 function SortablePhotoTile({
   photo, index, onRemove, t,
 }: { photo: PhotoItem; index: number; onRemove: () => void; t: (k: string) => string }) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: photo.id });
-  const style = { transform: CSS.Transform.toString(transform), transition, zIndex: isDragging ? 50 : undefined, opacity: isDragging ? 0.5 : undefined };
+  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({ id: photo.id });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 50 : undefined,
+  };
 
   return (
-    <div ref={setNodeRef} style={style} className="relative aspect-[4/3] rounded-xl overflow-hidden bg-muted group ring-1 ring-border/50">
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={cn(
+        'relative aspect-[4/3] rounded-xl overflow-hidden bg-muted group ring-1 ring-border/50 touch-manipulation',
+        isDragging && 'opacity-50 scale-105 shadow-xl ring-2 ring-primary',
+      )}
+    >
+      {/* On mobile the whole tile is the drag handle (long-press activates) */}
+      <div
+        ref={setActivatorNodeRef}
+        {...attributes}
+        {...listeners}
+        className="absolute inset-0 z-10 cursor-grab active:cursor-grabbing"
+      />
+
       <img src={photo.preview} alt={`Photo ${index + 1}`} className={cn('w-full h-full object-cover transition-opacity', photo.uploading && 'opacity-60')} />
 
       {photo.uploading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-background/40">
+        <div className="absolute inset-0 flex items-center justify-center bg-background/40 z-20">
           <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
         </div>
       )}
 
       {!photo.uploading && (
         <>
-          {/* Drag handle */}
-          <button type="button" {...attributes} {...listeners} className="absolute top-1.5 left-1.5 p-1 bg-background/70 text-foreground rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 cursor-grab active:cursor-grabbing shadow-md backdrop-blur-sm">
+          {/* Drag handle indicator — always visible on mobile, hover on desktop */}
+          <div className="absolute top-1.5 left-1.5 p-1 bg-background/70 text-foreground rounded-full opacity-70 md:opacity-0 md:group-hover:opacity-100 transition-all duration-200 shadow-md backdrop-blur-sm pointer-events-none z-20">
             <GripVertical className="h-3.5 w-3.5" />
-          </button>
-          {/* Delete button */}
-          <button type="button" onClick={(e) => { e.stopPropagation(); onRemove(); }} className="absolute top-1.5 right-1.5 p-1 bg-destructive/90 text-destructive-foreground rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110 shadow-md">
+          </div>
+          {/* Delete button — z-30 so it's above the drag overlay */}
+          <button type="button" onClick={(e) => { e.stopPropagation(); onRemove(); }} className="absolute top-1.5 right-1.5 p-1.5 bg-destructive/90 text-destructive-foreground rounded-full opacity-80 md:opacity-0 md:group-hover:opacity-100 transition-all duration-200 hover:scale-110 shadow-md z-30">
             <X className="h-3.5 w-3.5" />
           </button>
         </>
       )}
 
       {index === 0 && (
-        <span className="absolute bottom-1.5 left-1.5 px-2 py-0.5 bg-primary text-primary-foreground text-[10px] font-semibold rounded-md shadow-sm">
+        <span className="absolute bottom-1.5 left-1.5 px-2 py-0.5 bg-primary text-primary-foreground text-[10px] font-semibold rounded-md shadow-sm z-20">
           {t('sellForm.photosMain') || 'Principale'}
         </span>
       )}
       {index > 0 && (
-        <span className="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 bg-background/70 text-foreground text-[10px] font-medium rounded backdrop-blur-sm">
+        <span className="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 bg-background/70 text-foreground text-[10px] font-medium rounded backdrop-blur-sm z-20">
           {index + 1}
         </span>
       )}
@@ -116,7 +135,7 @@ export function PhotoUploadStep({ existingPhotos, onPhotosChange, t }: PhotoUplo
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const pointerSensor = useSensor(PointerSensor, { activationConstraint: { distance: 8 } });
-  const touchSensor = useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 5 } });
+  const touchSensor = useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 8 } });
   const sensors = useSensors(pointerSensor, touchSensor);
   const photoIds = useMemo(() => photos.map(p => p.id), [photos]);
 
