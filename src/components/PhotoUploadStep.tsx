@@ -409,6 +409,14 @@ export function PhotoUploadStep({ existingPhotos, onPhotosChange, t }: PhotoUplo
           </DndContext>
         )}
 
+        {/* Mobile reorder hint */}
+        {totalCount > 1 && (
+          <p className="md:hidden text-center text-[11px] text-muted-foreground flex items-center justify-center gap-1.5">
+            <GripVertical className="h-3 w-3" />
+            Maintenez appuyé pour réordonner
+          </p>
+        )}
+
         {/* Tips */}
         <div className="flex items-start gap-2 p-3 rounded-lg bg-muted/50 text-xs text-muted-foreground">
           <Camera className="h-4 w-4 shrink-0 mt-0.5" />
