@@ -66,7 +66,7 @@ interface PhotoUploadStepProps {
 
 export function PhotoUploadStep({ existingPhotos, onPhotosChange, t }: PhotoUploadStepProps) {
   const [photos, setPhotos] = useState<PhotoItem[]>(() =>
-    existingPhotos.map(url => ({ preview: url, url, isExisting: true }))
+    existingPhotos.map(url => ({ id: nextPhotoId(), preview: url, url, isExisting: true }))
   );
   const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
