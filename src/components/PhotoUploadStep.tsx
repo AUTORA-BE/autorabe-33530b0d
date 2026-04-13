@@ -152,7 +152,7 @@ export function PhotoUploadStep({ existingPhotos, onPhotosChange, t }: PhotoUplo
       validFiles.map(file => new Promise<PhotoItem>((resolve) => {
         const reader = new FileReader();
         reader.onload = (e) => {
-          resolve({ preview: e.target?.result as string, uploading: true, progress: 0 });
+          resolve({ id: nextPhotoId(), preview: e.target?.result as string, uploading: true, progress: 0 });
         };
         reader.readAsDataURL(file);
       }))
