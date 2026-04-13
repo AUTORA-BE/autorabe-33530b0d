@@ -356,75 +356,38 @@ export function PhotoUploadStep({ existingPhotos, onPhotosChange, t }: PhotoUplo
           </div>
         )}
 
-        {/* Photo grid */}
+        {/* Photo grid with drag & drop reorder */}
         {totalCount > 0 && (
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
-            {photos.map((photo, index) => (
-              <div
-                key={`${photo.preview.slice(0, 30)}-${index}`}
-                className="relative aspect-[4/3] rounded-xl overflow-hidden bg-muted group ring-1 ring-border/50"
-              >
-                <img
-                  src={photo.preview}
-                  alt={`Photo ${index + 1}`}
-                  className={cn(
-                    'w-full h-full object-cover transition-opacity',
-                    photo.uploading && 'opacity-60'
-                  )}
-                />
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext items={photoIds} strategy={rectSortingStrategy}>
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+                {photos.map((photo, index) => (
+                  <SortablePhotoTile
+                    key={photo.id}
+                    photo={photo}
+                    index={index}
+                    onRemove={() => removePhoto(index)}
+                    t={t}
+                  />
+                ))}
 
-                {/* Upload overlay */}
-                {photo.uploading && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-background/40">
-                    <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                  </div>
-                )}
-
-                {/* Delete button */}
-                {!photo.uploading && (
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      removePhoto(index);
-                    }}
-                    className="absolute top-1.5 right-1.5 p-1 bg-destructive/90 text-destructive-foreground rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110 shadow-md"
-                  >
-                    <X className="h-3.5 w-3.5" />
-                  </button>
-                )}
-
-                {/* Main photo badge */}
-                {index === 0 && (
-                  <span className="absolute bottom-1.5 left-1.5 px-2 py-0.5 bg-primary text-primary-foreground text-[10px] font-semibold rounded-md shadow-sm">
-                    {t('sellForm.photosMain') || 'Principale'}
-                  </span>
-                )}
-
-                {/* Photo number */}
-                {index > 0 && (
-                  <span className="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 bg-background/70 text-foreground text-[10px] font-medium rounded backdrop-blur-sm">
-                    {index + 1}
-                  </span>
+                {/* Add more button in grid */}
+                {totalCount < MAX_PHOTOS && (
+                  <label className="aspect-[4/3] rounded-xl border-2 border-dashed border-border hover:border-primary/50 transition-colors cursor-pointer flex flex-col items-center justify-center gap-1.5 bg-muted/30 hover:bg-muted/50">
+                    <Upload className="h-5 w-5 text-muted-foreground" />
+                    <span className="text-[10px] text-muted-foreground font-medium">Ajouter</span>
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp,image/heic"
+                      multiple
+                      onChange={handleFileInput}
+                      className="hidden"
+                    />
+                  </label>
                 )}
               </div>
-            ))}
-
-            {/* Add more button in grid */}
-            {totalCount < MAX_PHOTOS && (
-              <label className="aspect-[4/3] rounded-xl border-2 border-dashed border-border hover:border-primary/50 transition-colors cursor-pointer flex flex-col items-center justify-center gap-1.5 bg-muted/30 hover:bg-muted/50">
-                <Upload className="h-5 w-5 text-muted-foreground" />
-                <span className="text-[10px] text-muted-foreground font-medium">Ajouter</span>
-                <input
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp,image/heic"
-                  multiple
-                  onChange={handleFileInput}
-                  className="hidden"
-                />
-              </label>
-            )}
-          </div>
+            </SortableContext>
+          </DndContext>
         )}
 
         {/* Tips */}
