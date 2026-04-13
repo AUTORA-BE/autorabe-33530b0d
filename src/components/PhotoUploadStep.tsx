@@ -129,6 +129,18 @@ export function PhotoUploadStep({ existingPhotos, onPhotosChange, t }: PhotoUplo
     onPhotosChange(urls, previews);
   }, [onPhotosChange]);
 
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    setPhotos(prev => {
+      const oldIndex = prev.findIndex(p => p.id === active.id);
+      const newIndex = prev.findIndex(p => p.id === over.id);
+      const reordered = arrayMove(prev, oldIndex, newIndex);
+      notifyParent(reordered);
+      return reordered;
+    });
+  }, [notifyParent]);
+
   const uploadFile = async (file: File, index: number, currentPhotos: PhotoItem[]): Promise<PhotoItem[]> => {
     const { compressImage } = await import('@/utils/compressImage');
     const { data: { user } } = await supabase.auth.getUser();
