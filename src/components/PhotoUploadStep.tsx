@@ -64,12 +64,61 @@ interface PhotoUploadStepProps {
   t: (key: string) => string;
 }
 
+/* ─── Sortable photo tile ─── */
+function SortablePhotoTile({
+  photo, index, onRemove, t,
+}: { photo: PhotoItem; index: number; onRemove: () => void; t: (k: string) => string }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: photo.id });
+  const style = { transform: CSS.Transform.toString(transform), transition, zIndex: isDragging ? 50 : undefined, opacity: isDragging ? 0.5 : undefined };
+
+  return (
+    <div ref={setNodeRef} style={style} className="relative aspect-[4/3] rounded-xl overflow-hidden bg-muted group ring-1 ring-border/50">
+      <img src={photo.preview} alt={`Photo ${index + 1}`} className={cn('w-full h-full object-cover transition-opacity', photo.uploading && 'opacity-60')} />
+
+      {photo.uploading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-background/40">
+          <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+        </div>
+      )}
+
+      {!photo.uploading && (
+        <>
+          {/* Drag handle */}
+          <button type="button" {...attributes} {...listeners} className="absolute top-1.5 left-1.5 p-1 bg-background/70 text-foreground rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 cursor-grab active:cursor-grabbing shadow-md backdrop-blur-sm">
+            <GripVertical className="h-3.5 w-3.5" />
+          </button>
+          {/* Delete button */}
+          <button type="button" onClick={(e) => { e.stopPropagation(); onRemove(); }} className="absolute top-1.5 right-1.5 p-1 bg-destructive/90 text-destructive-foreground rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110 shadow-md">
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </>
+      )}
+
+      {index === 0 && (
+        <span className="absolute bottom-1.5 left-1.5 px-2 py-0.5 bg-primary text-primary-foreground text-[10px] font-semibold rounded-md shadow-sm">
+          {t('sellForm.photosMain') || 'Principale'}
+        </span>
+      )}
+      {index > 0 && (
+        <span className="absolute bottom-1.5 left-1.5 px-1.5 py-0.5 bg-background/70 text-foreground text-[10px] font-medium rounded backdrop-blur-sm">
+          {index + 1}
+        </span>
+      )}
+    </div>
+  );
+}
+
 export function PhotoUploadStep({ existingPhotos, onPhotosChange, t }: PhotoUploadStepProps) {
   const [photos, setPhotos] = useState<PhotoItem[]>(() =>
     existingPhotos.map(url => ({ id: nextPhotoId(), preview: url, url, isExisting: true }))
   );
   const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const pointerSensor = useSensor(PointerSensor, { activationConstraint: { distance: 8 } });
+  const touchSensor = useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 5 } });
+  const sensors = useSensors(pointerSensor, touchSensor);
+  const photoIds = useMemo(() => photos.map(p => p.id), [photos]);
 
   const totalCount = photos.length;
   const uploadedCount = photos.filter(p => p.url || p.isExisting).length;
