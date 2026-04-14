@@ -65,6 +65,8 @@ const SellerProfile = () => {
   const [listings, setListings] = useState<SellerListing[]>([]);
   const [reviews, setReviews] = useState<SellerReview[]>([]);
   const [loading, setLoading] = useState(true);
+  const sellerListingIds = useMemo(() => listings.map(l => l.id), [listings]);
+  const favCounts = useFavoriteCounts(sellerListingIds);
 
   /* Fetch all data in parallel */
   useEffect(() => {
