@@ -39,6 +39,7 @@ const Footer = () => {
       title: language === "nl" ? "Bedrijf" : language === "en" ? "Company" : language === "de" ? "Unternehmen" : "Société",
       links: [
         { to: "/about", label: language === "nl" ? "Over ons" : language === "en" ? "About us" : language === "de" ? "Über uns" : "À propos" },
+        { to: "/services", label: language === "nl" ? "Onze diensten" : language === "en" ? "Our services" : language === "de" ? "Unsere Dienste" : "Nos services" },
         { to: "/contact", label: "Contact" },
         { to: "/faq", label: "FAQ" },
       ],
