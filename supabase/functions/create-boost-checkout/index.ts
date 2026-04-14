@@ -7,16 +7,26 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const BOOST_PRICES: Record<string, { price_id: string; level: string; days: number }> = {
-  premium: {
-    price_id: "price_1T8t06FyYvJx8HZKs8VorS1T",
-    level: "premium",
-    days: 7,
+const BOOST_PRICES: Record<string, { price_id: string; level: string; hours: number }> = {
+  boost_24h: {
+    price_id: "price_1TMBroFyYvJx8HZKFXbGsYW6",
+    level: "boost_24h",
+    hours: 24,
   },
-  ultra: {
-    price_id: "price_1T8t0jFyYvJx8HZKdirmzWBT",
-    level: "ultra",
-    days: 14,
+  boost_48h: {
+    price_id: "price_1TMBsFFyYvJx8HZK5ETOWM6Y",
+    level: "boost_48h",
+    hours: 48,
+  },
+  boost_72h: {
+    price_id: "price_1TMBspFyYvJx8HZKYEFZlqrM",
+    level: "boost_72h",
+    hours: 72,
+  },
+  boost_7d: {
+    price_id: "price_1TMBt6FyYvJx8HZKdcEkN3FQ",
+    level: "boost_7d",
+    hours: 168,
   },
 };
 
@@ -40,31 +50,6 @@ serve(async (req) => {
     const { boostTier, listingId } = await req.json();
     if (!boostTier || !listingId) throw new Error("Missing boostTier or listingId");
 
-    // Standard boost is free — apply directly
-    if (boostTier === "standard") {
-      const supabaseAdmin = createClient(
-        Deno.env.get("SUPABASE_URL") ?? "",
-        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-        { auth: { persistSession: false } }
-      );
-
-      const expiresAt = new Date();
-      expiresAt.setDate(expiresAt.getDate() + 3);
-
-      const { error } = await supabaseAdmin
-        .from("car_listings")
-        .update({ boost_level: "standard", boost_expires_at: expiresAt.toISOString() })
-        .eq("id", listingId)
-        .eq("user_id", user.id);
-
-      if (error) throw new Error(`Failed to apply boost: ${error.message}`);
-
-      return new Response(JSON.stringify({ success: true, free: true }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    // Paid boosts
     const boostConfig = BOOST_PRICES[boostTier];
     if (!boostConfig) throw new Error("Invalid boost tier");
 
@@ -78,7 +63,7 @@ serve(async (req) => {
       customerId = customers.data[0].id;
     }
 
-    const origin = req.headers.get("origin") || "https://auto-belgium.lovable.app";
+    const origin = req.headers.get("origin") || "https://autorabe.lovable.app";
 
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
@@ -90,7 +75,7 @@ serve(async (req) => {
       metadata: {
         listing_id: listingId,
         boost_level: boostConfig.level,
-        boost_days: String(boostConfig.days),
+        boost_hours: String(boostConfig.hours),
         user_id: user.id,
       },
     });

@@ -7,56 +7,78 @@ export interface BoostTier {
   id: string;
   name: string;
   price: number;
-  priceId: string | null;
-  productId: string | null;
+  priceId: string;
+  productId: string;
   days: number;
+  hours: number;
   features: string[];
   icon: string;
   accent: string;
+  popular?: boolean;
 }
 
 export const BOOST_TIERS: BoostTier[] = [
   {
-    id: "standard",
-    name: "Standard",
-    price: 0,
-    priceId: null,
-    productId: null,
-    days: 3,
+    id: "boost_24h",
+    name: "24 heures",
+    price: 4,
+    priceId: "price_1TMBroFyYvJx8HZKFXbGsYW6",
+    productId: "prod_UKrbiBhkECI3jI",
+    days: 1,
+    hours: 24,
     features: [
-      "Mise en avant pendant 3 jours",
+      "En haut des résultats pendant 24h",
       "Badge « Sponsorisé »",
     ],
-    icon: "⭐",
-    accent: "border-border",
+    icon: "⚡",
+    accent: "border-blue-400",
   },
   {
-    id: "premium",
-    name: "Premium",
-    price: 5,
-    priceId: "price_1T8t06FyYvJx8HZKs8VorS1T",
-    productId: "prod_U77EDXIuiJiZjX",
-    days: 7,
+    id: "boost_48h",
+    name: "48 heures",
+    price: 7,
+    priceId: "price_1TMBsFFyYvJx8HZK5ETOWM6Y",
+    productId: "prod_UKrbMXgDMbDw9F",
+    days: 2,
+    hours: 48,
     features: [
-      "En haut des résultats pendant 7 jours",
+      "En haut des résultats pendant 48h",
+      "Badge « Sponsorisé »",
+      "Bordure mise en avant",
+    ],
+    icon: "🚀",
+    accent: "border-violet-400",
+  },
+  {
+    id: "boost_72h",
+    name: "72 heures",
+    price: 10,
+    priceId: "price_1TMBspFyYvJx8HZKYEFZlqrM",
+    productId: "prod_UKrcw5ZCbrnIQV",
+    days: 3,
+    hours: 72,
+    features: [
+      "En haut des résultats pendant 72h",
       "Badge « Sponsorisé » doré",
       "Bordure premium dorée",
     ],
-    icon: "🚀",
+    icon: "🔥",
     accent: "border-amber-400",
+    popular: true,
   },
   {
-    id: "ultra",
-    name: "Ultra",
-    price: 10,
-    priceId: "price_1T8t0jFyYvJx8HZKdirmzWBT",
-    productId: "prod_U77FWLCrfB1Tk6",
-    days: 14,
+    id: "boost_7d",
+    name: "7 jours",
+    price: 18,
+    priceId: "price_1TMBt6FyYvJx8HZKdcEkN3FQ",
+    productId: "prod_UKrcUahu04peY3",
+    days: 7,
+    hours: 168,
     features: [
-      "En haut des résultats pendant 14 jours",
+      "En haut des résultats pendant 7 jours",
       "Badge « Vendeur de confiance »",
-      "Photos HD automatiques",
       "Bordure ultra premium",
+      "Visibilité maximale",
     ],
     icon: "💎",
     accent: "border-primary",
