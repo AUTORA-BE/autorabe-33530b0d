@@ -439,7 +439,7 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
             {/* Left Column - Images & Details */}
             <div className="lg:col-span-2 space-y-3 sm:space-y-6">
               {/* Main Image Gallery with swipe */}
-              <motion.div {...fadeUp(0.05)} className="glass-card overflow-hidden">
+              <motion.div {...fadeUp(0.05)} className="rounded-2xl sm:rounded-3xl overflow-hidden border border-border/20 bg-card shadow-[var(--shadow-card)]">
                 <div
                   className="relative aspect-[16/10] sm:aspect-video cursor-pointer group"
                   onClick={() => setFullscreenOpen(true)}
@@ -450,10 +450,10 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                       src={images[currentImageIndex]}
                       alt={`${car.brand} ${car.model}`}
                       className="absolute inset-0 w-full h-full object-cover"
-                      initial={{ opacity: 0, scale: 1.03 }}
+                      initial={{ opacity: 0, scale: 1.02 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0 }}
-                      transition={{ duration: 0.35 }}
+                      transition={{ duration: 0.3 }}
                       drag="x"
                       dragConstraints={{ left: 0, right: 0 }}
                       dragElastic={0.12}
@@ -477,23 +477,33 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                     <>
                       <button
                         onClick={(e) => { e.stopPropagation(); setCurrentImageIndex(prev => prev === 0 ? images.length - 1 : prev - 1); }}
-                        className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-2xl bg-background/80 backdrop-blur-md flex items-center justify-center hover:bg-background transition-all shadow-lg hover:scale-105 active:scale-95 opacity-0 group-hover:opacity-100"
+                        className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-background/60 backdrop-blur-md flex items-center justify-center hover:bg-background/80 transition-all shadow-lg active:scale-90 opacity-0 group-hover:opacity-100"
                       >
                         <ChevronLeft className="w-5 h-5" />
                       </button>
                       <button
                         onClick={(e) => { e.stopPropagation(); setCurrentImageIndex(prev => prev === images.length - 1 ? 0 : prev + 1); }}
-                        className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-2xl bg-background/80 backdrop-blur-md flex items-center justify-center hover:bg-background transition-all shadow-lg hover:scale-105 active:scale-95 opacity-0 group-hover:opacity-100"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-background/60 backdrop-blur-md flex items-center justify-center hover:bg-background/80 transition-all shadow-lg active:scale-90 opacity-0 group-hover:opacity-100"
                       >
                         <ChevronRight className="w-5 h-5" />
                       </button>
                     </>
                   )}
 
-                  {/* Image counter pill */}
+                  {/* Elegant dot indicators instead of counter */}
                   {images.length > 1 && (
-                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-full bg-background/70 backdrop-blur-md text-xs font-medium text-foreground">
-                      {currentImageIndex + 1} / {images.length}
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-black/30 backdrop-blur-md">
+                      {images.map((_: string, idx: number) => (
+                        <button
+                          key={idx}
+                          onClick={(e) => { e.stopPropagation(); setCurrentImageIndex(idx); }}
+                          className={`rounded-full transition-all duration-200 ${
+                            idx === currentImageIndex
+                              ? "w-5 h-1.5 bg-white"
+                              : "w-1.5 h-1.5 bg-white/40 hover:bg-white/60"
+                          }`}
+                        />
+                      ))}
                     </div>
                   )}
 
