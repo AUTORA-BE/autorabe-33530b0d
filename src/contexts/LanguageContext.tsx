@@ -559,7 +559,7 @@ const translations: Record<Language, Record<string, string>> = {
     "sellForm.belgianInfo": "Informations belges",
     "sellForm.euroNorm": "Norme Euro",
     "sellForm.euroNormHint": "🚗 Zones LEZ en Belgique : Euro 4 = interdit à Bruxelles, Anvers et Gand. Euro 5 Diesel = restrictions progressives. Euro 6 = accès garanti à toutes les LEZ.",
-    "sellForm.vin": "Numéro de châssis (VIN)",
+    
     "sellForm.firstRegistration": "Première immatriculation",
     "sellForm.transparencyTitle": "Indicateurs de Transparence",
     "sellForm.transparencyHint": "Ces informations rassurent les acheteurs et mettent en avant votre annonce.",
@@ -1180,7 +1180,7 @@ const translations: Record<Language, Record<string, string>> = {
     "sellForm.belgianInfo": "Belgische informatie",
     "sellForm.euroNorm": "Euronorm",
     "sellForm.euroNormHint": "🚗 LEZ-zones in België: Euro 4 = verboden in Brussel, Antwerpen en Gent. Euro 5 Diesel = progressieve beperkingen. Euro 6 = gegarandeerde toegang tot alle LEZ.",
-    "sellForm.vin": "Chassisnummer (VIN)",
+    
     "sellForm.firstRegistration": "Eerste inschrijving",
     "sellForm.transparencyTitle": "Transparantie-indicatoren",
     "sellForm.transparencyHint": "Deze informatie stelt kopers gerust en maakt uw advertentie aantrekkelijker.",
@@ -1801,7 +1801,7 @@ const translations: Record<Language, Record<string, string>> = {
     "sellForm.belgianInfo": "Belgische Informationen",
     "sellForm.euroNorm": "Euro-Norm",
     "sellForm.euroNormHint": "🚗 LEZ-Zonen in Belgien: Euro 4 = verboten in Brüssel, Antwerpen und Gent. Euro 5 Diesel = progressive Einschränkungen. Euro 6 = garantierter Zugang zu allen LEZ.",
-    "sellForm.vin": "Fahrgestellnummer (VIN)",
+    
     "sellForm.firstRegistration": "Erstzulassung",
     "sellForm.transparencyTitle": "Transparenz-Indikatoren",
     "sellForm.transparencyHint": "Diese Informationen beruhigen Käufer und heben Ihre Anzeige hervor.",
@@ -2422,7 +2422,7 @@ const translations: Record<Language, Record<string, string>> = {
     "sellForm.belgianInfo": "Belgian information",
     "sellForm.euroNorm": "Euro norm",
     "sellForm.euroNormHint": "🚗 LEZ zones in Belgium: Euro 4 = banned in Brussels, Antwerp and Ghent. Euro 5 Diesel = progressive restrictions. Euro 6 = guaranteed access to all LEZ.",
-    "sellForm.vin": "Chassis number (VIN)",
+    
     "sellForm.firstRegistration": "First registration",
     "sellForm.transparencyTitle": "Transparency indicators",
     "sellForm.transparencyHint": "This information reassures buyers and highlights your listing.",
