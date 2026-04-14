@@ -163,7 +163,6 @@ export type Database = {
           tva_number: string | null
           updated_at: string
           user_id: string
-          vin: string | null
           year: number
         }
         Insert: {
@@ -202,7 +201,6 @@ export type Database = {
           tva_number?: string | null
           updated_at?: string
           user_id: string
-          vin?: string | null
           year: number
         }
         Update: {
@@ -241,7 +239,6 @@ export type Database = {
           tva_number?: string | null
           updated_at?: string
           user_id?: string
-          vin?: string | null
           year?: number
         }
         Relationships: []
