@@ -1,10 +1,12 @@
-import { Building2, User, Shield, AlertCircle } from "lucide-react";
+import { Building2, User, Shield, AlertCircle, ExternalLink } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface SellerBadgeProps {
   sellerType?: string | null;
   sellerName: string;
   tvaNumber?: string | null;
   compact?: boolean;
+  sellerId?: string;
 }
 
 const SellerBadge = ({
@@ -12,6 +14,7 @@ const SellerBadge = ({
   sellerName,
   tvaNumber,
   compact = false,
+  sellerId,
 }: SellerBadgeProps) => {
   const isProfessional = sellerType === "professionnel";
 
@@ -58,6 +61,17 @@ const SellerBadge = ({
 
       {/* Seller Name */}
       <p className="font-semibold text-foreground">{sellerName}</p>
+
+      {/* View profile link */}
+      {sellerId && (
+        <Link
+          to={`/seller/${sellerId}`}
+          className="inline-flex items-center gap-1.5 mt-2 text-sm text-primary hover:text-primary/80 font-medium transition-colors"
+        >
+          Voir le profil
+          <ExternalLink className="w-3.5 h-3.5" strokeWidth={1.5} />
+        </Link>
+      )}
 
       {/* Professional Info */}
       {isProfessional && (

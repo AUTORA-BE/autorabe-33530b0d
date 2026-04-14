@@ -586,6 +586,7 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                   sellerType={dbListing?.seller_type}
                   sellerName={sellerName}
                   tvaNumber={undefined}
+                  sellerId={sellerContact?.user_id}
                 />
 
                 {isAdmin && (
