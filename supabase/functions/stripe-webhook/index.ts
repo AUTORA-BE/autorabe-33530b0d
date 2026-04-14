@@ -89,12 +89,17 @@ serve(async (req) => {
         const listingId = session.metadata?.listing_id;
         const boostLevel = session.metadata?.boost_level;
         const boostDays = session.metadata?.boost_days;
+        const boostHours = session.metadata?.boost_hours;
 
-        if (listingId && boostLevel && boostDays) {
-          logStep("Activating boost", { listingId, boostLevel, boostDays });
+        if (listingId && boostLevel && (boostDays || boostHours)) {
+          logStep("Activating boost", { listingId, boostLevel, boostDays, boostHours });
 
           const expiresAt = new Date();
-          expiresAt.setDate(expiresAt.getDate() + parseInt(boostDays, 10));
+          if (boostHours) {
+            expiresAt.setHours(expiresAt.getHours() + parseInt(boostHours, 10));
+          } else if (boostDays) {
+            expiresAt.setDate(expiresAt.getDate() + parseInt(boostDays, 10));
+          }
 
           const { error: updateError } = await supabaseAdmin
             .from("car_listings")
