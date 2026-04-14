@@ -100,7 +100,7 @@ export const SUBSCRIPTION_TIERS: Record<string, SubscriptionTier> = {
     slug: 'premium',
     price_id: 'price_1TAyExFyYvJx8HZKzy5WhV0l',
     product_id: 'prod_U9Gmx0BN0nenTW',
-    price: 249,
+    price: 250,
     maxListings: null,
     category: 'professionnel',
     requiresTva: true,
