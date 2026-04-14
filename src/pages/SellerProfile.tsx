@@ -387,11 +387,19 @@ const SellerProfile = () => {
                                 <Car className="w-10 h-10 text-muted-foreground/30" />
                               </div>
                             )}
-                            {/* Price badge */}
-                            <div className="absolute bottom-3 left-3 bg-background/90 backdrop-blur-sm border border-border/50 rounded-lg px-3 py-1.5">
-                              <span className="text-sm font-semibold text-foreground">
-                                {listing.price.toLocaleString("fr-BE")} €
-                              </span>
+                            {/* Price & fav count badge */}
+                            <div className="absolute bottom-3 left-3 flex items-center gap-2">
+                              <div className="bg-background/90 backdrop-blur-sm border border-border/50 rounded-lg px-3 py-1.5">
+                                <span className="text-sm font-semibold text-foreground">
+                                  {listing.price.toLocaleString("fr-BE")} €
+                                </span>
+                              </div>
+                              {favCounts[listing.id] > 0 && (
+                                <span className="inline-flex items-center gap-1 px-2 py-1.5 rounded-lg bg-background/90 backdrop-blur-sm border border-border/50 text-xs text-muted-foreground">
+                                  <Heart className="w-3 h-3 fill-red-400 text-red-400" />
+                                  {favCounts[listing.id]}
+                                </span>
+                              )}
                             </div>
                           </div>
 
