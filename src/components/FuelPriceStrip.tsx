@@ -1,36 +1,58 @@
-/** Elegant fuel price widget — Belgian market prices, luxe minimal. */
+/** Elegant fuel price widget — Belgian market prices from database, luxe minimal. */
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Droplets, Flame, Zap } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 import { PRIX_CARBURANT } from '@/features/tco/constants/belgianData';
 
 interface FuelPriceStripProps {
   compact?: boolean;
 }
 
-const FUELS = [
-  { key: 'diesel', label: 'Diesel B7', price: PRIX_CARBURANT.diesel, unit: '€/L', icon: Droplets },
-  { key: 'essence95', label: 'E10 (95)', price: PRIX_CARBURANT.essence95, unit: '€/L', icon: Flame },
-  { key: 'essence98', label: 'E98', price: PRIX_CARBURANT.essence98, unit: '€/L', icon: Flame },
-  { key: 'electric', label: 'Électricité', price: PRIX_CARBURANT.electric_domicile, unit: '€/kWh', icon: Zap },
-];
+interface FuelItem {
+  key: string;
+  label: string;
+  price: number;
+  unit: string;
+  icon: typeof Droplets;
+}
 
 const FuelPriceStrip = ({ compact = false }: FuelPriceStripProps) => {
+  const [fuels, setFuels] = useState<FuelItem[]>([]);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => setLoaded(true), 300);
-    return () => clearTimeout(t);
+    const load = async () => {
+      // Try loading from DB first
+      const { data } = await supabase
+        .from('fuel_prices')
+        .select('diesel, essence95, essence98, electric_home, electric_public')
+        .limit(1)
+        .single();
+
+      const d = data as { diesel: number; essence95: number; essence98: number; electric_home: number; electric_public: number } | null;
+
+      const items: FuelItem[] = [
+        { key: 'diesel', label: 'Diesel B7', price: d?.diesel ?? PRIX_CARBURANT.diesel, unit: '€/L', icon: Droplets },
+        { key: 'essence95', label: 'E10 (95)', price: d?.essence95 ?? PRIX_CARBURANT.essence95, unit: '€/L', icon: Flame },
+        { key: 'essence98', label: 'E98', price: d?.essence98 ?? PRIX_CARBURANT.essence98, unit: '€/L', icon: Flame },
+        { key: 'electric', label: 'Électricité', price: d?.electric_home ?? PRIX_CARBURANT.electric_domicile, unit: '€/kWh', icon: Zap },
+      ];
+
+      setFuels(items);
+      setLoaded(true);
+    };
+    load();
   }, []);
 
-  const items = compact ? FUELS.slice(0, 3) : FUELS;
+  const items = compact ? fuels.slice(0, 3) : fuels;
 
   if (!loaded) {
     return (
       <div className="flex items-center gap-3 justify-center flex-wrap">
-        {items.map((f) => (
-          <div key={f.key} className="rounded-xl skeleton-shimmer h-10 w-24" />
+        {[1, 2, 3, ...(compact ? [] : [4])].map((i) => (
+          <div key={i} className="rounded-xl skeleton-shimmer h-10 w-24" />
         ))}
       </div>
     );
@@ -67,7 +89,6 @@ const FuelPriceStrip = ({ compact = false }: FuelPriceStripProps) => {
   return (
     <div className="py-6 sm:py-8">
       <div className="container mx-auto px-6 sm:px-8">
-        {/* Divider line */}
         <div className="h-px bg-gradient-to-r from-transparent via-border/20 to-transparent mb-6 sm:mb-8" />
 
         <div
@@ -104,7 +125,6 @@ const FuelPriceStrip = ({ compact = false }: FuelPriceStripProps) => {
           })}
         </div>
 
-        {/* Divider line */}
         <div className="h-px bg-gradient-to-r from-transparent via-border/20 to-transparent mt-6 sm:mt-8" />
       </div>
     </div>

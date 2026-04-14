@@ -480,6 +480,42 @@ export type Database = {
           },
         ]
       }
+      fuel_prices: {
+        Row: {
+          created_at: string
+          diesel: number
+          electric_home: number
+          electric_public: number
+          essence95: number
+          essence98: number
+          id: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          diesel?: number
+          electric_home?: number
+          electric_public?: number
+          essence95?: number
+          essence98?: number
+          id?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          diesel?: number
+          electric_home?: number
+          electric_public?: number
+          essence95?: number
+          essence98?: number
+          id?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       listing_drafts: {
         Row: {
           created_at: string
