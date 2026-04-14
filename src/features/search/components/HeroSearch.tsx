@@ -412,12 +412,13 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
   return (
     <>
       <section
-        className="relative flex items-center justify-center pt-8 sm:pt-24 pb-10 sm:pb-24 overflow-hidden"
+        className="relative flex items-center justify-center pt-10 sm:pt-28 pb-12 sm:pb-28 overflow-hidden min-h-[50vh] sm:min-h-[60vh]"
         style={{ contain: "layout style" }}
       >
-        {/* Minimal gradient background */}
+        {/* Multi-layer gradient background */}
         <div className="absolute inset-0 hero-gradient" />
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.02] to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.03] via-transparent to-background/50" />
+        <div className="absolute inset-0 bg-gradient-to-tr from-primary/[0.02] via-transparent to-accent/[0.01]" />
 
         {/* Parallax luminous orbs */}
         <motion.div
@@ -461,12 +462,32 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
         <div className="container mx-auto px-6 sm:px-8 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
 
+            {/* Badge */}
+            <motion.div {...fadeUp(0)}
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/8 border border-primary/15 mb-6 sm:mb-8"
+            >
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
+              </span>
+              <span className="text-xs font-light text-primary tracking-wide">
+                {t("hero.badge") || "Marketplace #1 en Belgique"}
+              </span>
+            </motion.div>
+
             {/* Headline — Serif, ultra-thin, generous spacing */}
-            <motion.h1 {...fadeUp(0.05)}
-              className="font-serif text-[1.75rem] sm:text-5xl md:text-6xl font-light text-foreground mb-6 sm:mb-10 leading-[1.15] tracking-tight">
+            <motion.h1 {...fadeUp(0.08)}
+              className="font-serif text-[2rem] sm:text-5xl md:text-[3.75rem] lg:text-7xl font-light text-foreground mb-4 sm:mb-6 leading-[1.1] tracking-tight">
               {t("hero.titleLine1")}<br />
               <span className="text-primary font-normal">{t("hero.titleLine2")}</span>
             </motion.h1>
+
+            {/* Subtitle */}
+            <motion.p {...fadeUp(0.14)}
+              className="text-sm sm:text-base md:text-lg text-muted-foreground font-light max-w-xl mx-auto mb-8 sm:mb-12 leading-relaxed"
+            >
+              {t("hero.subtitle") || "Véhicules vérifiés Car-Pass · Conformité LEZ garantie · Calcul TCO régional"}
+            </motion.p>
 
             {/* Search Box — Glassmorphic, minimal */}
             {isMobile ? (
