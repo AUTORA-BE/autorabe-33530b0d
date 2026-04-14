@@ -28,8 +28,8 @@ export interface VehicleCardProps {
 const formatPrice = (price: number): string =>
   new Intl.NumberFormat("fr-BE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(price);
 
-const formatMileage = (km: number): string =>
-  new Intl.NumberFormat("fr-BE").format(km);
+const mileageFormatter = new Intl.NumberFormat("fr-BE");
+const formatMileage = (km: number): string => mileageFormatter.format(km);
 
 const lezBadgeConfig = {
   autorise: { text: "LEZ OK", className: "bg-emerald-500/90 text-white border-0", Icon: Leaf },
