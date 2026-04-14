@@ -90,8 +90,6 @@ interface ServiceDetail {
   tagline: string;
   description: string;
   features: string[];
-  price: string;
-  priceNote: string;
   accent: string;
   iconBg: string;
   popular?: boolean;
@@ -113,8 +111,6 @@ const services: ServiceDetail[] = [
       "Conseils personnalisés pour la vente",
       "Retouches photos incluses",
     ],
-    price: "À partir de 89 €",
-    priceNote: "Forfait unique, sans commission sur la vente",
     accent: "border-primary/30 hover:border-primary",
     iconBg: "bg-primary/10 text-primary",
   },
@@ -133,8 +129,6 @@ const services: ServiceDetail[] = [
       "Accompagnement en cas d'anomalie détectée",
       "Validité conforme à la législation belge",
     ],
-    price: "À partir de 29 €",
-    priceNote: "Inclus dans le Pack Mise en Vente sur demande",
     accent: "border-blue-500/30 hover:border-blue-500",
     iconBg: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
     popular: true,
@@ -154,8 +148,6 @@ const services: ServiceDetail[] = [
       "Suivi en temps réel de la livraison",
       "Tarifs transparents, pas de frais cachés",
     ],
-    price: "À partir de 149 €",
-    priceNote: "Tarif variable selon la distance — devis gratuit",
     accent: "border-amber-500/30 hover:border-amber-500",
     iconBg: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
   },
@@ -311,17 +303,11 @@ const Services = () => {
                         </ul>
                       </div>
 
-                      {/* Right — pricing + CTA */}
+                      {/* Right — CTA */}
                       <div className="lg:col-span-2 flex flex-col justify-center lg:items-end">
                         <div className="bg-secondary/50 rounded-2xl p-6 sm:p-8 w-full lg:max-w-[280px] text-center">
-                          <p className="text-sm text-muted-foreground mb-1">
-                            Tarif indicatif
-                          </p>
-                          <p className="font-display text-3xl font-bold text-foreground mb-1">
-                            {service.price}
-                          </p>
-                          <p className="text-xs text-muted-foreground mb-6">
-                            {service.priceNote}
+                          <p className="text-sm text-muted-foreground mb-6">
+                            Recevez un devis personnalisé sans engagement
                           </p>
                           <Button
                             className="w-full gap-2 rounded-xl"
