@@ -8,5 +8,6 @@ export {
   FREE_MESSAGE_LIMIT,
   FREE_MAX_PHOTOS,
   FREE_TIER_FEATURES,
+  EXTRA_LISTING_PRICE,
 } from './constants/tiers';
 export type { SubscriptionTier } from './constants/tiers';
