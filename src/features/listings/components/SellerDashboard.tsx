@@ -547,6 +547,8 @@ export default function SellerDashboard() {
                             <Calendar className="w-3 h-3" />
                             {formatDate(listing.createdAt)}
                           </span>
+                          <BoostCountdown expiresAt={listing.boostExpiresAt} boostLevel={listing.boostLevel} />
+                          </span>
                         </div>
                       </div>
 
