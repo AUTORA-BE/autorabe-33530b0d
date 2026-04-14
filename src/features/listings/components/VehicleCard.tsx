@@ -1,5 +1,5 @@
 /**
- * VehicleCard component for displaying a vehicle listing
+ * VehicleCard component — luxe redesign with larger image, premium badges, refined hierarchy
  * @module features/listings/components
  */
 
@@ -15,56 +15,30 @@ import type { Vehicle } from "../types/vehicle.types";
 import { computeMatchScore } from "@/features/tco/utils/matchScore";
 import type { BuyerProfile } from "@/features/tco/hooks/useBuyerProfile";
 
-/**
- * Props for the VehicleCard component
- */
 export interface VehicleCardProps {
-  /** Vehicle data to display */
   vehicle: Vehicle;
-  /** Whether this vehicle is in the user's favorites */
   isFavorite?: boolean;
-  /** Callback when favorite button is clicked */
   onToggleFavorite?: (vehicleId: string) => void;
-  /** Callback when the card is clicked */
   onClick?: (vehicleId: string) => void;
-  /** Whether to eager-load the image (for LCP) */
   eager?: boolean;
-  /** Profil acheteur pour le TCO Matchmaker (optionnel) */
   buyerProfile?: BuyerProfile | null;
-  /** Nombre public de favoris */
   favoriteCount?: number;
 }
 
-/**
- * Formats a number as currency in EUR
- */
-const formatPrice = (price: number): string => {
-  return new Intl.NumberFormat("fr-BE", {
-    style: "currency",
-    currency: "EUR",
-    maximumFractionDigits: 0,
-  }).format(price);
-};
+const formatPrice = (price: number): string =>
+  new Intl.NumberFormat("fr-BE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(price);
 
-/**
- * Formats mileage with thousand separators
- */
-const formatMileage = (km: number): string => {
-  return new Intl.NumberFormat("fr-BE").format(km);
-};
+const formatMileage = (km: number): string =>
+  new Intl.NumberFormat("fr-BE").format(km);
 
 const lezBadgeConfig = {
-  autorise: { text: "LEZ OK", className: "bg-primary/90 hover:bg-primary text-primary-foreground border-0", Icon: Leaf },
-  alerte: { text: "LEZ", className: "bg-amber-500/90 hover:bg-amber-500 text-white border-0", Icon: AlertTriangle },
-  derogation_requise: { text: "Dérogation", className: "bg-amber-500/90 hover:bg-amber-500 text-white border-0", Icon: AlertTriangle },
-  interdit: { text: "Interdit", className: "bg-red-500/90 hover:bg-red-500 text-white border-0", Icon: Ban },
+  autorise: { text: "LEZ OK", className: "bg-emerald-500/90 text-white border-0", Icon: Leaf },
+  alerte: { text: "LEZ", className: "bg-amber-500/90 text-white border-0", Icon: AlertTriangle },
+  derogation_requise: { text: "Dérogation", className: "bg-amber-500/90 text-white border-0", Icon: AlertTriangle },
+  interdit: { text: "Interdit", className: "bg-red-500/90 text-white border-0", Icon: Ban },
   inconnu: { text: "LEZ ?", className: "bg-muted text-muted-foreground border-0", Icon: Info },
 } as const;
 
-/**
- * VehicleCard displays a single vehicle listing in a card format
- * Includes image, price, specs, and LEZ/CarPass badges
- */
 const VehicleCard = memo(function VehicleCard({
   vehicle,
   isFavorite = false,
@@ -79,7 +53,6 @@ const VehicleCard = memo(function VehicleCard({
   const lezResult = calculerStatutLEZ(vehicle.fuelType, vehicle.euroNorm);
   const lezConfig = lezBadgeConfig[lezResult.global.statut];
 
-  // TCO Matchmaker score
   const matchResult = useMemo(
     () => buyerProfile?.isConfigured ? computeMatchScore(vehicle, buyerProfile) : null,
     [vehicle, buyerProfile],
@@ -90,29 +63,15 @@ const VehicleCard = memo(function VehicleCard({
     onToggleFavorite?.(vehicle.id);
   };
 
-  const handleCardClick = () => {
-    onClick?.(vehicle.id);
-  };
+  const handleCardClick = () => onClick?.(vehicle.id);
 
   const handleCompareClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (isInCompare(vehicle.id)) {
-      removeCompare(vehicle.id);
-    } else {
-      addToCompare(vehicle);
-    }
+    isInCompare(vehicle.id) ? removeCompare(vehicle.id) : addToCompare(vehicle);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      onClick?.(vehicle.id);
-    }
-  };
-
-  const labels = {
-    carPass: "Car-Pass",
-    km: "km",
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick?.(vehicle.id); }
   };
 
   const badgeText = lezResult.global.statut === "alerte"
@@ -128,70 +87,69 @@ const VehicleCard = memo(function VehicleCard({
       role="button"
       tabIndex={0}
       aria-label={`${vehicle.brand} ${vehicle.model} - ${formatPrice(vehicle.price)}`}
-      className={`group relative bg-card rounded-xl overflow-hidden border transition-all duration-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
+      className={`group relative bg-card rounded-2xl overflow-hidden border transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 ${
         isBoosted
-          ? "border-amber-400/70 shadow-md hover:shadow-xl hover:border-amber-400"
-          : "border-border/40 shadow-card hover:shadow-elevated hover:border-primary/20 hover:-translate-y-1"
+          ? "border-amber-400/50 shadow-md hover:shadow-xl"
+          : "border-border/30 shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-elevated)] hover:border-primary/15"
       }`}
     >
       {/* Sponsored badge */}
       {isBoosted && (
         <div className="absolute top-0 right-0 z-20">
-          <div className="bg-gradient-to-l from-amber-500 to-amber-400 text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-bl-xl shadow-lg flex items-center gap-1">
-            <Sparkles className="w-3 h-3" />
+          <div className="bg-gradient-to-l from-amber-500 to-amber-400 text-white text-[9px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-bl-xl shadow-lg flex items-center gap-1">
+            <Sparkles className="w-2.5 h-2.5" />
             Sponsorisé
           </div>
         </div>
       )}
-      {/* Image Container */}
+
+      {/* Image — taller aspect ratio for more visual impact */}
       <div className="relative aspect-[4/3] overflow-hidden bg-muted">
         <CarImage
           src={vehicle.image || "/placeholder.svg"}
           alt={`${vehicle.brand} ${vehicle.model} ${vehicle.year}`}
           aspectRatio="4/3"
           eager={eager}
-          className="transition-transform duration-500 group-hover:scale-105"
+          className="transition-transform duration-500 group-hover:scale-[1.03]"
         />
 
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        {/* Subtle gradient overlay — always visible for readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/5 to-transparent" />
 
-        {/* Favorite Button */}
+        {/* Favorite button */}
         <button
           onClick={handleFavoriteClick}
           aria-label={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
           aria-pressed={isFavorite}
-          className="absolute top-2 right-2 sm:top-3 sm:right-3 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/90 dark:bg-black/50 backdrop-blur-sm flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 shadow-lg touch-manipulation z-10"
+          className="absolute top-2.5 right-2.5 w-9 h-9 rounded-full bg-background/70 backdrop-blur-md flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-90 shadow-lg touch-manipulation z-10"
         >
           <Heart
-            className={`w-4 h-4 sm:w-5 sm:h-5 transition-colors ${
-              isFavorite
-                ? "fill-red-500 text-red-500"
-                : "text-muted-foreground hover:text-red-500"
+            className={`w-4 h-4 transition-colors ${
+              isFavorite ? "fill-red-500 text-red-500" : "text-foreground/70"
             }`}
           />
         </button>
 
-        {/* Compare Button */}
+        {/* Compare button */}
         <button
           onClick={handleCompareClick}
           aria-label={isInCompare(vehicle.id) ? "Retirer du comparateur" : "Ajouter au comparateur"}
-          className={`absolute top-2 right-11 sm:top-3 sm:right-14 w-8 h-8 sm:w-10 sm:h-10 rounded-full backdrop-blur-sm flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95 shadow-lg touch-manipulation z-10 ${
+          className={`absolute top-2.5 right-12 w-9 h-9 rounded-full backdrop-blur-md flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-90 shadow-lg touch-manipulation z-10 ${
             isInCompare(vehicle.id)
               ? "bg-primary text-primary-foreground"
-              : "bg-white/90 dark:bg-black/50 text-muted-foreground hover:text-primary"
+              : "bg-background/70 text-foreground/70"
           }`}
         >
-          <Scale className="w-4 h-4 sm:w-5 sm:h-5" />
+          <Scale className="w-4 h-4" />
         </button>
 
-        {/* LEZ & CarPass Badges */}
-        <div className="absolute top-2 left-2 sm:top-3 sm:left-3 flex flex-col gap-1 sm:gap-2 z-10">
+        {/* Premium trust badges — top left */}
+        <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5 z-10">
           <TooltipProvider delayDuration={300}>
             <Tooltip>
               <TooltipTrigger asChild>
                 <div>
-                  <Badge className={`${lezConfig.className} backdrop-blur-sm shadow-lg cursor-help`}>
+                  <Badge className={`${lezConfig.className} backdrop-blur-md shadow-lg text-[10px] font-semibold px-2 py-0.5`}>
                     <lezConfig.Icon className="w-3 h-3 mr-1" />
                     {badgeText}
                   </Badge>
@@ -203,7 +161,7 @@ const VehicleCard = memo(function VehicleCard({
                   {lezResult.details.map((d) => (
                     <div key={d.ville} className="flex items-center gap-2 text-xs">
                       <span className={`w-2 h-2 rounded-full flex-shrink-0 ${
-                        d.couleur === "green" ? "bg-primary" :
+                        d.couleur === "green" ? "bg-emerald-500" :
                         d.couleur === "orange" ? "bg-amber-500" :
                         d.couleur === "red" ? "bg-red-500" : "bg-muted-foreground"
                       }`} />
@@ -216,37 +174,37 @@ const VehicleCard = memo(function VehicleCard({
             </Tooltip>
           </TooltipProvider>
           {vehicle.hasCarPass && (
-            <Badge className="bg-primary/90 hover:bg-primary text-primary-foreground border-0 backdrop-blur-sm shadow-lg">
-              <CheckCircle className="w-3 h-3 mr-1" />
-              {labels.carPass}
+            <Badge className="bg-primary/90 text-primary-foreground border-0 backdrop-blur-md shadow-lg text-[10px] font-semibold px-2 py-0.5">
+              <ShieldCheck className="w-3 h-3 mr-1" />
+              Car-Pass ✓
             </Badge>
           )}
         </div>
 
-        {/* Price & Favorite Count Badge */}
-        <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 z-10 flex items-center gap-2">
-          <span className="text-base sm:text-2xl font-bold text-white drop-shadow-lg">
+        {/* Price overlay — bottom left on image for visual impact */}
+        <div className="absolute bottom-2.5 left-2.5 z-10 flex items-end gap-2">
+          <span className="text-lg sm:text-xl font-bold text-white drop-shadow-lg tracking-tight">
             {formatPrice(vehicle.price)}
           </span>
           {typeof favoriteCount === "number" && favoriteCount > 0 && (
-            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-white/80 dark:bg-black/50 backdrop-blur-sm text-xs text-muted-foreground shadow-lg">
-              <Heart className="w-3 h-3 fill-red-400 text-red-400" />
+            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-lg bg-white/20 backdrop-blur-md text-[10px] text-white/90 font-medium">
+              <Heart className="w-2.5 h-2.5 fill-red-400 text-red-400" />
               {favoriteCount}
             </span>
           )}
         </div>
       </div>
 
-      {/* Content */}
-      <div className="p-2.5 sm:p-5">
-        {/* Title */}
-        <div className="flex items-center justify-between mb-1 sm:mb-2">
-          <h3 className="font-display text-xs sm:text-lg font-bold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
+      {/* Content — refined spacing */}
+      <div className="p-3 sm:p-4">
+        {/* Title row */}
+        <div className="flex items-center justify-between mb-1">
+          <h3 className="text-sm sm:text-base font-semibold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
             {vehicle.brand} {vehicle.model}
           </h3>
           {vehicle.sellerType === "professionnel" && (
-            <Badge className="bg-primary/10 text-primary border-0 shrink-0 ml-2 text-[10px] sm:text-xs">
-              <Building2 className="w-3 h-3 mr-0.5 sm:mr-1" />
+            <Badge variant="outline" className="text-primary border-primary/20 text-[9px] font-semibold px-1.5 py-0 h-5 ml-2 shrink-0">
+              <Building2 className="w-2.5 h-2.5 mr-0.5" />
               Pro
             </Badge>
           )}
@@ -254,55 +212,40 @@ const VehicleCard = memo(function VehicleCard({
 
         {/* Location */}
         {vehicle.location && (
-          <div className="flex items-center gap-1 sm:gap-1.5 text-muted-foreground text-[10px] sm:text-sm mb-1.5 sm:mb-3">
-            <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0" />
+          <div className="flex items-center gap-1 text-muted-foreground text-[11px] mb-2">
+            <MapPin className="w-3 h-3 flex-shrink-0" strokeWidth={1.5} />
             <span className="line-clamp-1">{vehicle.location}</span>
           </div>
         )}
 
-        {/* Specs Grid */}
-        <div className="grid grid-cols-2 gap-1 sm:gap-2.5">
-          <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-sm text-muted-foreground">
-            <Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0 text-primary/60" />
-            <span>{vehicle.year}</span>
-          </div>
-          <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-sm text-muted-foreground">
-            <Gauge className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0 text-primary/60" />
-            <span className="truncate">{formatMileage(vehicle.mileage)} {labels.km}</span>
-          </div>
-          <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-sm text-muted-foreground">
-            <Fuel className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0 text-primary/60" />
-            <span className="truncate capitalize">{vehicle.fuelType}</span>
-          </div>
-          <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-sm text-muted-foreground">
-            <Cog className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0 text-primary/60" />
-            <span className="truncate capitalize">{vehicle.transmission}</span>
-          </div>
-          {'power' in vehicle && (vehicle as any).power && (
-            <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-sm text-muted-foreground">
-              <Zap className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0 text-primary/60" />
-              <span>{(vehicle as any).power} CV</span>
+        {/* Specs — compact 2-col grid */}
+        <div className="grid grid-cols-2 gap-x-3 gap-y-1">
+          {[
+            { icon: Calendar, value: vehicle.year },
+            { icon: Gauge, value: `${formatMileage(vehicle.mileage)} km` },
+            { icon: Fuel, value: vehicle.fuelType },
+            { icon: Cog, value: vehicle.transmission },
+            ...('power' in vehicle && (vehicle as Record<string, unknown>).power ? [{ icon: Zap, value: `${(vehicle as Record<string, unknown>).power} CV` }] : []),
+            ...(vehicle.euroNorm ? [{ icon: ShieldCheck, value: vehicle.euroNorm }] : []),
+          ].map((spec, i) => (
+            <div key={i} className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+              <spec.icon className="w-3 h-3 flex-shrink-0 text-primary/50" strokeWidth={1.5} />
+              <span className="truncate capitalize">{spec.value}</span>
             </div>
-          )}
-          {vehicle.euroNorm && (
-            <div className="flex items-center gap-1 sm:gap-2 text-[10px] sm:text-sm text-muted-foreground">
-              <ShieldCheck className="w-3 h-3 sm:w-3.5 sm:h-3.5 flex-shrink-0 text-primary/60" />
-              <span className="truncate">{vehicle.euroNorm}</span>
-            </div>
-          )}
+          ))}
         </div>
 
         {/* TCO Match Score */}
         {matchResult && (
-          <div className={`mt-3 flex items-center justify-between rounded-lg px-3 py-2 text-xs font-medium ${
+          <div className={`mt-2.5 flex items-center justify-between rounded-xl px-3 py-1.5 text-[11px] font-medium ${
             matchResult.color === "primary"
-              ? "bg-primary/10 text-primary"
+              ? "bg-primary/8 text-primary"
               : matchResult.color === "amber"
-                ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+                ? "bg-amber-500/8 text-amber-600 dark:text-amber-400"
                 : "bg-muted text-muted-foreground"
           }`}>
             <span className="flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5" />
+              <Sparkles className="w-3 h-3" />
               {matchResult.label}
             </span>
             <span className="font-bold">{matchResult.score}%</span>

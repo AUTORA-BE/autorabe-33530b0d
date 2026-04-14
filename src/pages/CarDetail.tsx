@@ -439,7 +439,7 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
             {/* Left Column - Images & Details */}
             <div className="lg:col-span-2 space-y-3 sm:space-y-6">
               {/* Main Image Gallery with swipe */}
-              <motion.div {...fadeUp(0.05)} className="glass-card overflow-hidden">
+              <motion.div {...fadeUp(0.05)} className="rounded-2xl sm:rounded-3xl overflow-hidden border border-border/20 bg-card shadow-[var(--shadow-card)]">
                 <div
                   className="relative aspect-[16/10] sm:aspect-video cursor-pointer group"
                   onClick={() => setFullscreenOpen(true)}
@@ -450,10 +450,10 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                       src={images[currentImageIndex]}
                       alt={`${car.brand} ${car.model}`}
                       className="absolute inset-0 w-full h-full object-cover"
-                      initial={{ opacity: 0, scale: 1.03 }}
+                      initial={{ opacity: 0, scale: 1.02 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0 }}
-                      transition={{ duration: 0.35 }}
+                      transition={{ duration: 0.3 }}
                       drag="x"
                       dragConstraints={{ left: 0, right: 0 }}
                       dragElastic={0.12}
@@ -477,23 +477,33 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                     <>
                       <button
                         onClick={(e) => { e.stopPropagation(); setCurrentImageIndex(prev => prev === 0 ? images.length - 1 : prev - 1); }}
-                        className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-2xl bg-background/80 backdrop-blur-md flex items-center justify-center hover:bg-background transition-all shadow-lg hover:scale-105 active:scale-95 opacity-0 group-hover:opacity-100"
+                        className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-background/60 backdrop-blur-md flex items-center justify-center hover:bg-background/80 transition-all shadow-lg active:scale-90 opacity-0 group-hover:opacity-100"
                       >
                         <ChevronLeft className="w-5 h-5" />
                       </button>
                       <button
                         onClick={(e) => { e.stopPropagation(); setCurrentImageIndex(prev => prev === images.length - 1 ? 0 : prev + 1); }}
-                        className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 w-11 h-11 rounded-2xl bg-background/80 backdrop-blur-md flex items-center justify-center hover:bg-background transition-all shadow-lg hover:scale-105 active:scale-95 opacity-0 group-hover:opacity-100"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-background/60 backdrop-blur-md flex items-center justify-center hover:bg-background/80 transition-all shadow-lg active:scale-90 opacity-0 group-hover:opacity-100"
                       >
                         <ChevronRight className="w-5 h-5" />
                       </button>
                     </>
                   )}
 
-                  {/* Image counter pill */}
+                  {/* Elegant dot indicators instead of counter */}
                   {images.length > 1 && (
-                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 px-3 py-1.5 rounded-full bg-background/70 backdrop-blur-md text-xs font-medium text-foreground">
-                      {currentImageIndex + 1} / {images.length}
+                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-black/30 backdrop-blur-md">
+                      {images.map((_: string, idx: number) => (
+                        <button
+                          key={idx}
+                          onClick={(e) => { e.stopPropagation(); setCurrentImageIndex(idx); }}
+                          className={`rounded-full transition-all duration-200 ${
+                            idx === currentImageIndex
+                              ? "w-5 h-1.5 bg-white"
+                              : "w-1.5 h-1.5 bg-white/40 hover:bg-white/60"
+                          }`}
+                        />
+                      ))}
                     </div>
                   )}
 
@@ -546,39 +556,39 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                 )}
               </AnimatePresence>
 
-              {/* Mobile-only: Title, Price & CTA */}
-              <motion.div {...fadeUp(0.1)} className="lg:hidden glass-card p-3 sm:p-6 space-y-2.5 sm:space-y-4">
+              {/* Mobile-only: Title, Price & CTA — refined */}
+              <motion.div {...fadeUp(0.1)} className="lg:hidden rounded-2xl border border-border/20 bg-card p-4 space-y-3 shadow-[var(--shadow-card)]">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <h1 className="font-display text-lg sm:text-2xl font-bold text-foreground leading-tight truncate">
+                    <h1 className="text-lg font-semibold text-foreground leading-tight truncate">
                       {car.brand} {car.model}
                     </h1>
-                    <p className="text-[11px] sm:text-sm text-muted-foreground flex items-center gap-1 mt-0.5">
-                      <MapPin className="w-3 h-3 flex-shrink-0" />
+                    <p className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5">
+                      <MapPin className="w-3 h-3 flex-shrink-0" strokeWidth={1.5} />
                       <span className="truncate">{car.location}</span>
                     </p>
                   </div>
-                  <div className="flex gap-1 flex-shrink-0">
+                  <div className="flex gap-1.5 flex-shrink-0">
                     <button
                       onClick={() => toggleFavorite(car.id)}
                       className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all active:scale-90 touch-manipulation ${
                         isFavorite(car.id)
                           ? "bg-red-500 text-white shadow-lg shadow-red-500/25"
-                          : "bg-secondary text-muted-foreground hover:text-red-500"
+                          : "bg-secondary text-muted-foreground"
                       }`}
                     >
                       <Heart className={`w-3.5 h-3.5 ${isFavorite(car.id) ? "fill-current" : ""}`} />
                     </button>
                     <button
                       onClick={handleShare}
-                      className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors active:scale-90 touch-manipulation"
+                      className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground transition-colors active:scale-90 touch-manipulation"
                     >
                       <Share2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
 
-                <div className="text-xl sm:text-3xl font-display font-extrabold text-foreground">
+                <div className="text-2xl font-bold text-foreground tracking-tight">
                   {formatPrice(car.price)}
                 </div>
 
@@ -590,68 +600,62 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                 />
 
                 {isAdmin && (
-                  <Button
-                    onClick={handleAdminDelete}
-                    variant="destructive"
-                    className="w-full h-11 mt-2"
-                  >
+                  <Button onClick={handleAdminDelete} variant="destructive" className="w-full h-11 mt-2">
                     <Trash2 className="w-4 h-4 mr-2" />
                     Supprimer (Admin)
                   </Button>
                 )}
               </motion.div>
 
-              {/* Mobile FAB buttons */}
-              <div className="lg:hidden fixed bottom-16 right-3 z-50 flex flex-col gap-2 safe-bottom">
-                <motion.button
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.3, type: "spring", stiffness: 400 }}
-                  onClick={handleShare}
-                  className="w-10 h-10 rounded-full bg-card border border-border/50 shadow-xl flex items-center justify-center text-muted-foreground active:scale-90 transition-transform"
-                  aria-label="Partager"
+              {/* Mobile floating contact bar — luxe bottom bar */}
+              <div className="lg:hidden fixed bottom-[68px] left-0 right-0 z-50 px-3 pb-1 safe-bottom">
+                <motion.div
+                  initial={{ y: 60, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.3, type: "spring", stiffness: 300, damping: 25 }}
+                  className="flex items-center gap-2 p-2 rounded-2xl bg-card/90 backdrop-blur-xl border border-border/20 shadow-2xl"
                 >
-                  <Share2 className="w-4 h-4" />
-                </motion.button>
-                <motion.button
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.2, type: "spring", stiffness: 400 }}
-                  onClick={() => toggleFavorite(car.id)}
-                  className={`w-10 h-10 rounded-full shadow-xl flex items-center justify-center active:scale-90 transition-transform ${
-                    isFavorite(car.id)
-                      ? "bg-red-500 text-white shadow-red-500/30"
-                      : "bg-card border border-border/50 text-muted-foreground"
-                  }`}
-                  aria-label="Favori"
-                >
-                  <Heart className={`w-4 h-4 ${isFavorite(car.id) ? "fill-current" : ""}`} />
-                </motion.button>
-                <motion.button
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.1, type: "spring", stiffness: 400 }}
-                  onClick={() => handleContact("Message")}
-                  className="w-12 h-12 rounded-full bg-primary text-primary-foreground shadow-xl shadow-primary/30 flex items-center justify-center active:scale-90 transition-transform"
-                  aria-label="Contacter"
-                >
-                  <MessageCircle className="w-5 h-5" />
-                </motion.button>
+                  <button
+                    onClick={handleShare}
+                    className="w-10 h-10 rounded-xl bg-secondary/60 flex items-center justify-center text-muted-foreground active:scale-90 transition-transform touch-manipulation"
+                    aria-label="Partager"
+                  >
+                    <Share2 className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => toggleFavorite(car.id)}
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center active:scale-90 transition-transform touch-manipulation ${
+                      isFavorite(car.id)
+                        ? "bg-red-500 text-white"
+                        : "bg-secondary/60 text-muted-foreground"
+                    }`}
+                    aria-label="Favori"
+                  >
+                    <Heart className={`w-4 h-4 ${isFavorite(car.id) ? "fill-current" : ""}`} />
+                  </button>
+                  <button
+                    onClick={() => handleContact("Message")}
+                    className="flex-1 h-10 rounded-xl bg-primary text-primary-foreground text-sm font-semibold flex items-center justify-center gap-2 active:scale-[0.98] transition-transform shadow-lg shadow-primary/20 touch-manipulation"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    Contacter
+                  </button>
+                </motion.div>
               </div>
 
               {/* Mobile swipeable tabs for specs */}
               {isMobile ? (
                 <div className="space-y-3">
-                  {/* Tab bar */}
-                  <div className="flex gap-1 overflow-x-auto scrollbar-hide px-0.5 py-0.5 bg-secondary/50 rounded-xl">
+                  {/* Tab bar — refined pills */}
+                  <div className="flex gap-1.5 overflow-x-auto scrollbar-hide p-1 bg-secondary/40 rounded-2xl">
                     {["Specs", "Confiance", "Coûts", "Description"].map((tab, i) => (
                       <button
                         key={tab}
                         onClick={() => setMobileTab(i)}
-                        className={`flex-shrink-0 px-3 py-2 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
+                        className={`flex-shrink-0 px-4 py-2 rounded-xl text-xs font-medium transition-all whitespace-nowrap ${
                           mobileTab === i
-                            ? "bg-primary text-primary-foreground shadow-sm"
-                            : "text-muted-foreground"
+                            ? "bg-background text-foreground shadow-sm"
+                            : "text-muted-foreground hover:text-foreground"
                         }`}
                       >
                         {tab}

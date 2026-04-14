@@ -1,5 +1,6 @@
 /**
  * Header component with navigation, user menu, and language selector
+ * Shrinks elegantly on scroll for immersive mobile experience
  * @module shared/components
  */
 
@@ -22,9 +23,6 @@ import MobileMenu from "./MobileMenu";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useAutoPromptPush } from "@/hooks/useAutoPromptPush";
 
-/**
- * Main header component with responsive navigation
- */
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [user, setUser] = useState<SupabaseUser | null>(null);
@@ -43,7 +41,7 @@ const Header = () => {
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -77,24 +75,24 @@ const Header = () => {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "glass-panel border-b border-border/50 shadow-sm backdrop-blur-xl"
+          ? "bg-background/80 backdrop-blur-xl border-b border-border/30 shadow-sm"
           : "bg-transparent border-b border-transparent"
       }`}
       style={{ paddingTop: 'var(--safe-area-top, env(safe-area-inset-top, 0px))' }}
     >
-      <div className={`container mx-auto px-3 sm:px-6 transition-all duration-300 ${scrolled ? "py-1 sm:py-2" : "py-2 sm:py-3"}`}>
+      <div className={`container mx-auto px-4 sm:px-6 transition-all duration-300 ${scrolled ? "py-1.5 sm:py-2" : "py-2.5 sm:py-3"}`}>
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 sm:gap-3 group">
+          <Link to="/" className="flex items-center gap-2 group">
             <img
               src={autoraLogo}
               alt="Autora Logo"
-              className={`rounded-2xl object-cover transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 group-active:scale-95 dark:brightness-110 dark:contrast-110 drop-shadow-sm ${
-                scrolled ? "w-7 h-7 sm:w-8 sm:h-8" : "w-8 h-8 sm:w-10 sm:h-10"
+              className={`rounded-2xl object-cover transition-all duration-300 group-hover:scale-105 dark:brightness-110 drop-shadow-sm ${
+                scrolled ? "w-7 h-7" : "w-8 h-8 sm:w-9 sm:h-9"
               }`}
             />
-            <span className={`font-display font-bold tracking-wider transition-all duration-300 group-hover:tracking-[0.2em] ${
-              scrolled ? "text-lg" : "text-xl"
+            <span className={`font-semibold tracking-wider transition-all duration-300 ${
+              scrolled ? "text-base" : "text-lg sm:text-xl"
             }`}>
               <span className="text-foreground">Auto</span><span className="text-primary">RA</span>
             </span>
@@ -136,27 +134,27 @@ const Header = () => {
           {/* Desktop Actions */}
           <DesktopActions user={user} userProfile={userProfile} onLogout={handleLogout} t={t} isAdmin={isAdmin} />
 
-          {/* Mobile: minimal actions (theme + hamburger for extra menu) */}
-          <div className="md:hidden flex items-center gap-1.5">
+          {/* Mobile: theme toggle + hamburger */}
+          <div className="md:hidden flex items-center gap-1">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="text-muted-foreground hover:text-foreground rounded-2xl w-9 h-9"
+              className="text-muted-foreground hover:text-foreground rounded-xl w-9 h-9"
             >
-              {theme === "dark" ? <Sun className="w-4.5 h-4.5" /> : <Moon className="w-4.5 h-4.5" />}
+              {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </Button>
             <button
-              className="p-2 text-foreground rounded-2xl hover:bg-secondary transition-colors"
+              className="w-9 h-9 flex items-center justify-center text-foreground rounded-xl hover:bg-secondary/60 transition-colors"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Menu"
             >
-              <Menu className="w-5 h-5" />
+              <Menu className="w-5 h-5" strokeWidth={1.8} />
             </button>
           </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu (now a drawer — renders via portal-like AnimatePresence) */}
         <MobileMenu
           isOpen={mobileMenuOpen}
           onClose={() => setMobileMenuOpen(false)}
