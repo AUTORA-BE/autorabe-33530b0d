@@ -57,6 +57,7 @@ const SellerProfile = () => {
   const { userId } = useParams<{ userId: string }>();
   const navigate = useNavigate();
   const { t, language } = useLanguage();
+  const { toast } = useToast();
   const dateLocale = language === "fr" ? fr : language === "nl" ? nl : enUS;
 
   const [profile, setProfile] = useState<SellerProfile | null>(null);
