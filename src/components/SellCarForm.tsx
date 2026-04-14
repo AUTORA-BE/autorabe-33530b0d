@@ -193,6 +193,52 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
     }
   });
 
+  // Pre-fill seller info from user profile
+  useEffect(() => {
+    if (isEditMode) return; // Don't override in edit mode
+    const prefill = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('display_name, phone, garage_name, postal_code')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (!profile) return;
+
+      const currentValues = form.getValues();
+
+      // Pre-fill contact name from profile display_name or garage_name
+      if (!currentValues.contact_name) {
+        form.setValue('contact_name', profile.garage_name || profile.display_name || '');
+      }
+
+      // Pre-fill email from auth user
+      if (!currentValues.contact_email) {
+        form.setValue('contact_email', user.email || '');
+      }
+
+      // Pre-fill phone
+      if (!currentValues.contact_phone && profile.phone) {
+        form.setValue('contact_phone', profile.phone);
+      }
+
+      // Pre-fill location from postal code
+      if (!currentValues.location && profile.postal_code) {
+        form.setValue('location', profile.postal_code);
+      }
+
+      // If garage_name exists, default to professionnel
+      if (profile.garage_name && !currentValues.seller_type) {
+        form.setValue('seller_type', 'professionnel');
+      }
+    };
+    prefill();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEditMode]);
+
   // Load existing listing data for edit mode
   useEffect(() => {
     if (!editId) return;
