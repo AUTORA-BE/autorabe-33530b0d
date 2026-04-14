@@ -18,7 +18,7 @@ import { AnimatePresence } from "framer-motion";
 import { PullToRefresh } from "@/components/PullToRefresh";
 
 const FuelPriceStrip = lazy(() => import("@/components/FuelPriceStrip"));
-const LiveStatsStrip = lazy(() => import("@/components/LiveStatsStrip"));
+
 const EarlyAccessBanner = lazy(() => import("@/components/EarlyAccessBanner"));
 const TrustBar = lazy(() => import("@/components/TrustBar"));
 const BrandCarousel = lazy(() => import("@/features/search/components/BrandCarousel"));
