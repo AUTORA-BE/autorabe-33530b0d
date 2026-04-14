@@ -1,13 +1,14 @@
 /**
- * Pricing page for seller subscriptions
+ * Pricing page for seller subscriptions — 5-column comparison layout
  * @module pages
  */
 
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Check, Crown, Rocket, Settings, User, Star, Sparkles, ArrowRight, Shield, Zap, Building2 } from 'lucide-react';
+import { Check, Crown, Rocket, Settings, User, Star, Sparkles, ArrowRight, Shield, Zap, Building2, Phone, X, CalendarCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Header, Footer, BackButton } from '@/shared/components';
 import { useSubscription, SUBSCRIPTION_TIERS, FREE_PARTICULIER_LIMIT, FREE_TIER_FEATURES } from '@/features/subscription';
 import { useAuth } from '@/features/auth';
@@ -15,29 +16,97 @@ import { useToast } from '@/hooks/use-toast';
 import SEOHead from '@/components/SEOHead';
 import { motion } from 'framer-motion';
 
-const tierIcons: Record<string, React.ReactNode> = {
-  particulier_plus: <User className="h-6 w-6" />,
-  pro: <Rocket className="h-6 w-6" />,
-  premium: <Crown className="h-6 w-6" />,
-};
+interface TierCard {
+  key: string;
+  name: string;
+  subtitle: string;
+  price: string;
+  priceSuffix: string;
+  features: string[];
+  accent: string;
+  icon: React.ReactNode;
+  badge?: string;
+  badgeColor?: string;
+  cta: 'subscribe' | 'verify' | 'contact' | 'free';
+  priceId?: string;
+  slug?: string;
+}
 
-const tierAccents: Record<string, string> = {
-  particulier_plus: 'border-border',
-  pro: 'border-primary ring-2 ring-primary/20',
-  premium: 'border-amber-400 ring-2 ring-amber-400/20',
-};
-
-const tierGradients: Record<string, string> = {
-  particulier_plus: 'from-muted/50 to-muted/30',
-  pro: 'from-primary/10 to-primary/5',
-  premium: 'from-amber-500/10 to-amber-400/5',
-};
-
-const tierBtnVariants: Record<string, 'default' | 'outline'> = {
-  particulier_plus: 'outline',
-  pro: 'default',
-  premium: 'outline',
-};
+const TIER_CARDS: TierCard[] = [
+  {
+    key: 'free',
+    name: 'Gratuit',
+    subtitle: 'Vendeurs occasionnels',
+    price: '0€',
+    priceSuffix: 'pour toujours',
+    features: FREE_TIER_FEATURES,
+    accent: 'border-border',
+    icon: <User className="h-5 w-5" />,
+    cta: 'free',
+  },
+  {
+    key: 'boost',
+    name: 'Boost',
+    subtitle: 'Vendeurs réguliers',
+    price: '20€',
+    priceSuffix: '/mois',
+    features: SUBSCRIPTION_TIERS.boost.features,
+    accent: 'border-blue-500/40 ring-1 ring-blue-500/20',
+    icon: <Zap className="h-5 w-5" />,
+    cta: 'subscribe',
+    priceId: SUBSCRIPTION_TIERS.boost.price_id,
+    slug: 'boost',
+  },
+  {
+    key: 'pro',
+    name: 'Pro Garage',
+    subtitle: 'Garages & professionnels',
+    price: '50€',
+    priceSuffix: '/mois HTVA',
+    features: SUBSCRIPTION_TIERS.pro.features,
+    accent: 'border-primary ring-2 ring-primary/20',
+    icon: <Rocket className="h-5 w-5" />,
+    badge: 'Populaire',
+    badgeColor: 'bg-primary text-primary-foreground',
+    cta: 'verify',
+    priceId: SUBSCRIPTION_TIERS.pro.price_id,
+    slug: 'pro',
+  },
+  {
+    key: 'premium',
+    name: 'Premium',
+    subtitle: 'Performance maximale',
+    price: '250€',
+    priceSuffix: '/mois HTVA',
+    features: SUBSCRIPTION_TIERS.premium.features,
+    accent: 'border-amber-400 ring-2 ring-amber-400/20',
+    icon: <Crown className="h-5 w-5" />,
+    badge: 'Performance max',
+    badgeColor: 'bg-amber-500 text-white border-0',
+    cta: 'verify',
+    priceId: SUBSCRIPTION_TIERS.premium.price_id,
+    slug: 'premium',
+  },
+  {
+    key: 'boss',
+    name: 'BOSS',
+    subtitle: 'Concessions & groupes',
+    price: 'Sur mesure',
+    priceSuffix: '',
+    features: [
+      'Multi-concessions',
+      'Volume d\'annonces illimité',
+      'API & intégration stock DMS',
+      'Account manager VIP dédié',
+      'Formation équipe incluse',
+      'SLA & support contractuel',
+      'Tableau de bord groupe',
+    ],
+    accent: 'border-foreground/20 ring-1 ring-foreground/10',
+    icon: <Building2 className="h-5 w-5" />,
+    cta: 'contact',
+  },
+];
 
 export default function Pricing() {
   const [searchParams] = useSearchParams();
@@ -53,6 +122,7 @@ export default function Pricing() {
     openCustomerPortal,
     checkSubscription,
   } = useSubscription();
+  const [verifyModal, setVerifyModal] = useState(false);
 
   useEffect(() => {
     if (searchParams.get('success') === 'true') {
@@ -77,14 +147,54 @@ export default function Pricing() {
     }
   };
 
-  const particulierTiers = Object.entries(SUBSCRIPTION_TIERS).filter(([, t]) => t.category === 'particulier');
-  const proTiers = Object.entries(SUBSCRIPTION_TIERS).filter(([, t]) => t.category === 'professionnel');
+  const renderCta = (card: TierCard) => {
+    const isCurrentPlan = currentTier?.slug === card.slug;
+
+    if (isCurrentPlan) {
+      return (
+        <Button variant="outline" className="w-full rounded-xl h-12" onClick={handleManage}>
+          <Settings className="h-4 w-4 mr-2" /> Gérer mon plan
+        </Button>
+      );
+    }
+
+    switch (card.cta) {
+      case 'free':
+        return (
+          <Button variant="outline" className="w-full rounded-xl h-12" onClick={() => navigate('/sell')}>
+            Commencer gratuitement <ArrowRight className="h-4 w-4 ml-2" />
+          </Button>
+        );
+      case 'subscribe':
+        return (
+          <Button className="w-full rounded-xl h-12 font-semibold" onClick={() => handleSubscribe(card.priceId!)} disabled={isLoading}>
+            {isLoading ? 'Chargement...' : "S'abonner"} {!isLoading && <ArrowRight className="h-4 w-4 ml-2" />}
+          </Button>
+        );
+      case 'verify':
+        return (
+          <Button
+            variant="outline"
+            className="w-full rounded-xl h-12 font-semibold border-primary text-primary hover:bg-primary/10"
+            onClick={() => setVerifyModal(true)}
+          >
+            <CalendarCheck className="h-4 w-4 mr-2" /> Demander une vérification
+          </Button>
+        );
+      case 'contact':
+        return (
+          <Button variant="outline" className="w-full rounded-xl h-12 font-semibold" onClick={() => navigate('/contact')}>
+            <Phone className="h-4 w-4 mr-2" /> Nous contacter
+          </Button>
+        );
+    }
+  };
 
   return (
     <div className="page-gradient">
       <SEOHead
-        title="Abonnements Vendeurs | AutoRa"
-        description="Choisissez votre abonnement vendeur AutoRa. Publiez vos annonces, obtenez le badge Pro et des statistiques avancées."
+        title="Tarifs & Abonnements | AutoRa"
+        description="Découvrez les offres AutoRa : Gratuit, Boost, Pro Garage, Premium et BOSS. Vendez vos voitures en Belgique avec le plan adapté à vos besoins."
       />
       <Header />
       <main className="min-h-screen pt-28 pb-20">
@@ -100,14 +210,14 @@ export default function Pricing() {
           >
             <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-semibold mb-6">
               <Sparkles className="h-4 w-4" />
-              Tarifs simples, sans surprise
+              5 formules pour chaque profil
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-5 leading-tight">
-              Vendez plus,<br />
-              <span className="text-primary">vendez mieux.</span>
+              Le plan idéal pour<br />
+              <span className="text-primary">chaque vendeur.</span>
             </h1>
             <p className="text-muted-foreground text-lg max-w-xl mx-auto">
-              Commencez gratuitement avec {FREE_PARTICULIER_LIMIT} annonces. Passez Pro quand votre activité décolle.
+              Du particulier occasionnel au groupe automobile, trouvez l'offre qui vous correspond.
             </p>
           </motion.div>
 
@@ -132,194 +242,64 @@ export default function Pricing() {
             </motion.div>
           )}
 
-          {/* ─── SECTION PARTICULIER ─── */}
-          <div className="max-w-5xl mx-auto mb-20">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="h-10 w-10 rounded-xl bg-muted flex items-center justify-center">
-                <User className="h-5 w-5 text-muted-foreground" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-foreground">Particuliers</h2>
-                <p className="text-sm text-muted-foreground">Pour les vendeurs occasionnels et réguliers</p>
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-6">
-              {/* Free tier */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1, duration: 0.5 }}
-                className="rounded-2xl border border-border bg-card p-8 flex flex-col"
-              >
-                <div className="mb-6">
-                  <h3 className="text-xl font-bold text-foreground mb-1">Gratuit</h3>
-                  <div className="mt-3">
-                    <span className="text-5xl font-extrabold text-foreground">0€</span>
-                    <span className="text-muted-foreground text-sm ml-1">pour toujours</span>
-                  </div>
-                </div>
-                <ul className="space-y-3 flex-1">
-                  {FREE_TIER_FEATURES.map((f) => (
-                    <li key={f} className="flex items-start gap-2.5 text-sm">
-                      <Check className="h-4 w-4 mt-0.5 shrink-0 text-primary" />
-                      <span className="text-foreground">{f}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Button variant="outline" className="w-full rounded-xl h-12 mt-6" onClick={() => navigate('/sell')}>
-                  Commencer gratuitement
-                  <ArrowRight className="h-4 w-4 ml-2" />
-                </Button>
-              </motion.div>
-
-              {/* Particulier+ */}
-              {particulierTiers.map(([key, tier], idx) => {
-                const isCurrentPlan = currentTier?.slug === tier.slug;
-                return (
-                  <motion.div
-                    key={key}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2, duration: 0.5 }}
-                    className={`rounded-2xl border bg-card p-8 flex flex-col ${isCurrentPlan ? 'ring-2 ring-primary border-primary' : tierAccents[key]}`}
-                  >
-                    <div className="mb-6">
-                      {isCurrentPlan && <Badge variant="secondary" className="mb-2">Votre plan</Badge>}
-                      <h3 className="text-xl font-bold text-foreground mb-1">{tier.name}</h3>
-                      <div className="mt-3">
-                        <span className="text-5xl font-extrabold text-foreground">
-                          {tier.price % 1 === 0 ? tier.price : tier.price.toFixed(2).replace('.', ',')}€
-                        </span>
-                        <span className="text-muted-foreground text-sm ml-1">/mois</span>
-                      </div>
+          {/* ─── 5 TIER GRID ─── */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5 max-w-[1400px] mx-auto mb-16">
+            {TIER_CARDS.map((card, idx) => {
+              const isCurrentPlan = currentTier?.slug === card.slug;
+              return (
+                <motion.div
+                  key={card.key}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.08, duration: 0.5 }}
+                  className={`relative rounded-2xl border bg-card flex flex-col transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${card.accent} ${isCurrentPlan ? 'ring-2 ring-primary' : ''}`}
+                >
+                  {/* Badge */}
+                  {card.badge && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+                      <Badge className={`${card.badgeColor} gap-1 shadow-sm`}>
+                        <Star className="h-3 w-3" /> {card.badge}
+                      </Badge>
                     </div>
-                    <ul className="space-y-3 flex-1">
-                      {tier.features.map((f) => (
-                        <li key={f} className="flex items-start gap-2.5 text-sm">
-                          <Check className="h-4 w-4 mt-0.5 shrink-0 text-primary" />
-                          <span className="text-foreground">{f}</span>
+                  )}
+                  {isCurrentPlan && (
+                    <div className="absolute top-3 right-3">
+                      <Badge variant="secondary" className="text-[10px]">Actif</Badge>
+                    </div>
+                  )}
+
+                  {/* Header */}
+                  <div className="px-5 pt-7 pb-4">
+                    <div className="h-10 w-10 rounded-xl bg-muted flex items-center justify-center mb-3 text-muted-foreground">
+                      {card.icon}
+                    </div>
+                    <h3 className="text-lg font-bold text-foreground">{card.name}</h3>
+                    <p className="text-xs text-muted-foreground mt-0.5">{card.subtitle}</p>
+                    <div className="mt-4">
+                      <span className="text-3xl font-extrabold text-foreground">{card.price}</span>
+                      {card.priceSuffix && <span className="text-muted-foreground text-sm ml-1">{card.priceSuffix}</span>}
+                    </div>
+                  </div>
+
+                  {/* Features */}
+                  <div className="px-5 py-4 flex-1 border-t border-border/50">
+                    <ul className="space-y-2.5">
+                      {card.features.map((f) => (
+                        <li key={f} className="flex items-start gap-2 text-sm">
+                          <Check className="h-3.5 w-3.5 mt-0.5 shrink-0 text-primary" />
+                          <span className="text-foreground leading-snug">{f}</span>
                         </li>
                       ))}
                     </ul>
-                    <div className="mt-6">
-                      {isCurrentPlan ? (
-                        <Button variant="outline" className="w-full rounded-xl h-12" onClick={handleManage}>
-                          <Settings className="h-4 w-4 mr-2" /> Gérer
-                        </Button>
-                      ) : (
-                        <Button variant="default" className="w-full rounded-xl h-12 font-semibold" onClick={() => handleSubscribe(tier.price_id)} disabled={isLoading}>
-                          {isLoading ? 'Chargement...' : 'Choisir ce plan'}
-                          {!isLoading && <ArrowRight className="h-4 w-4 ml-2" />}
-                        </Button>
-                      )}
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </div>
+                  </div>
 
-          {/* ─── SECTION PROFESSIONNEL ─── */}
-          <div className="max-w-5xl mx-auto mb-16">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                <Building2 className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-foreground">Professionnels & Garages</h2>
-                <p className="text-sm text-muted-foreground">Numéro TVA requis · Rendez-vous de vérification</p>
-              </div>
-            </div>
-            <p className="text-sm text-muted-foreground mb-8 ml-[3.25rem]">
-              Les abonnements garage nécessitent un numéro de TVA valide et un rendez-vous de vérification avec notre équipe.
-            </p>
-
-            <div className="grid md:grid-cols-2 gap-6">
-              {proTiers.map(([key, tier], idx) => {
-                const isCurrentPlan = currentTier?.slug === tier.slug;
-                const isPremium = key === 'premium';
-                return (
-                  <motion.div
-                    key={key}
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 + idx * 0.1, duration: 0.5 }}
-                    className={`relative rounded-2xl border bg-card overflow-hidden flex flex-col transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${tierAccents[key]} ${isCurrentPlan ? 'ring-2 ring-primary' : ''}`}
-                  >
-                    {/* Gradient header */}
-                    <div className={`bg-gradient-to-br ${tierGradients[key]} px-6 pt-8 pb-6`}>
-                      {tier.popular && (
-                        <div className="absolute top-4 right-4">
-                          <Badge className="bg-primary text-primary-foreground gap-1">
-                            <Star className="h-3 w-3" /> Populaire
-                          </Badge>
-                        </div>
-                      )}
-                      {isPremium && (
-                        <div className="absolute top-4 right-4">
-                          <Badge className="bg-amber-500 text-white border-0 gap-1">
-                            <Zap className="h-3 w-3" /> Performance max
-                          </Badge>
-                        </div>
-                      )}
-                      {isCurrentPlan && (
-                        <div className="absolute top-4 left-4">
-                          <Badge variant="secondary">Votre plan</Badge>
-                        </div>
-                      )}
-
-                      <div className={`h-12 w-12 rounded-xl flex items-center justify-center mb-4 ${isPremium ? 'bg-amber-500/20 text-amber-500' : 'bg-primary/10 text-primary'}`}>
-                        {tierIcons[key]}
-                      </div>
-                      <h3 className="text-2xl font-bold text-foreground">{tier.name}</h3>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {tier.maxListings ? `${tier.maxListings} annonces simultanées` : 'Annonces illimitées'}
-                      </p>
-
-                      <div className="mt-5">
-                        <span className="text-5xl font-extrabold text-foreground">
-                          {tier.price % 1 === 0 ? tier.price : tier.price.toFixed(2).replace('.', ',')}€
-                        </span>
-                        <span className="text-muted-foreground text-sm ml-1">/mois</span>
-                      </div>
-                      <p className="text-xs text-muted-foreground mt-1">HTVA · TVA belge 21% applicable</p>
-                    </div>
-
-                    {/* Features */}
-                    <div className="px-6 py-6 flex-1">
-                      <ul className="space-y-3">
-                        {tier.features.map((feature) => (
-                          <li key={feature} className="flex items-start gap-2.5 text-sm">
-                            <Check className={`h-4 w-4 mt-0.5 shrink-0 ${isPremium ? 'text-amber-500' : 'text-primary'}`} />
-                            <span className="text-foreground">{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    {/* CTA */}
-                    <div className="px-6 pb-6">
-                      {isCurrentPlan ? (
-                        <Button variant="outline" className="w-full rounded-xl h-12" onClick={handleManage}>
-                          <Settings className="h-4 w-4 mr-2" /> Gérer
-                        </Button>
-                      ) : (
-                        <Button
-                          variant={isPremium ? 'outline' : tierBtnVariants[key]}
-                          className={`w-full rounded-xl h-12 font-semibold ${isPremium ? 'border-amber-500 text-amber-600 hover:bg-amber-500/10 dark:text-amber-400' : ''}`}
-                          onClick={() => handleSubscribe(tier.price_id)}
-                          disabled={isLoading}
-                        >
-                          {isLoading ? 'Chargement...' : 'Choisir ce plan'}
-                          {!isLoading && <ArrowRight className="h-4 w-4 ml-2" />}
-                        </Button>
-                      )}
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </div>
+                  {/* CTA */}
+                  <div className="px-5 pb-5">
+                    {renderCta(card)}
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
 
           {/* Trust indicators */}
@@ -327,7 +307,7 @@ export default function Pricing() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6 }}
-            className="flex flex-wrap justify-center gap-8 mt-16 text-muted-foreground text-sm"
+            className="flex flex-wrap justify-center gap-8 mt-8 text-muted-foreground text-sm"
           >
             <div className="flex items-center gap-2">
               <Shield className="h-4 w-4" />
@@ -345,6 +325,60 @@ export default function Pricing() {
         </div>
       </main>
       <Footer />
+
+      {/* Verification modal for Pro / Premium / BOSS */}
+      <Dialog open={verifyModal} onOpenChange={setVerifyModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <div className="mx-auto h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-2">
+              <Shield className="h-7 w-7 text-primary" />
+            </div>
+            <DialogTitle className="text-center text-xl">Vérification requise</DialogTitle>
+            <DialogDescription className="text-center">
+              Pour garantir la sécurité et la confiance sur AutoRa, les comptes professionnels sont vérifiés manuellement.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="rounded-xl bg-muted/50 p-4 space-y-3">
+              <div className="flex items-start gap-3">
+                <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                  <span className="text-xs font-bold text-primary">1</span>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">Prenez rendez-vous</p>
+                  <p className="text-xs text-muted-foreground">Notre équipe vous contactera pour fixer un créneau de 15 minutes.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                  <span className="text-xs font-bold text-primary">2</span>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">Vérification des documents</p>
+                  <p className="text-xs text-muted-foreground">Numéro TVA, adresse du garage, pièce d'identité du gérant.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="h-7 w-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                  <span className="text-xs font-bold text-primary">3</span>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">Activation du compte</p>
+                  <p className="text-xs text-muted-foreground">Votre abonnement est activé sous 24-48h après validation.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <DialogFooter className="flex-col gap-2 sm:flex-col">
+            <Button className="w-full rounded-xl h-12 font-semibold" onClick={() => { setVerifyModal(false); navigate('/contact'); }}>
+              <CalendarCheck className="h-4 w-4 mr-2" /> Prendre rendez-vous
+            </Button>
+            <Button variant="ghost" className="w-full" onClick={() => setVerifyModal(false)}>
+              Plus tard
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
