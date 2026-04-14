@@ -18,6 +18,7 @@ import { AnimatePresence } from "framer-motion";
 import { PullToRefresh } from "@/components/PullToRefresh";
 
 const FuelPriceStrip = lazy(() => import("@/components/FuelPriceStrip"));
+const LiveStatsStrip = lazy(() => import("@/components/LiveStatsStrip"));
 const EarlyAccessBanner = lazy(() => import("@/components/EarlyAccessBanner"));
 const TrustBar = lazy(() => import("@/components/TrustBar"));
 const BrandCarousel = lazy(() => import("@/features/search/components/BrandCarousel"));
@@ -156,6 +157,13 @@ const Index = () => {
             )}
           </AnimatePresence>
         </div>
+
+        {/* Live Stats — real-time counters from DB */}
+        <Suspense fallback={<div className="h-48 sm:h-56" />}>
+          <ScrollReveal delay={0.05}>
+            <LiveStatsStrip />
+          </ScrollReveal>
+        </Suspense>
 
         {/* Trust Bar — minimal badges */}
         <Suspense fallback={<TrustBarSkeleton />}>
