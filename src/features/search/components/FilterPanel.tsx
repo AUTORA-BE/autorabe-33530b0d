@@ -367,8 +367,8 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
               aria-label="Plage de prix"
             />
             <div className="flex justify-between text-xs font-medium text-muted-foreground">
-              <span className="px-2 py-1 rounded-lg bg-secondary/60">{formatPriceLabel(filters.minPrice)}</span>
-              <span className="px-2 py-1 rounded-lg bg-secondary/60">{formatPriceLabel(filters.maxPrice)}</span>
+              <span className="px-2.5 py-1.5 rounded-lg bg-background border border-border/50">{formatPriceLabel(filters.minPrice)}</span>
+              <span className="px-2.5 py-1.5 rounded-lg bg-background border border-border/50">{formatPriceLabel(filters.maxPrice)}</span>
             </div>
           </div>
         </FilterSection>
@@ -389,8 +389,8 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
               aria-label="Plage d'années"
             />
             <div className="flex justify-between text-xs font-medium text-muted-foreground">
-              <span className="px-2 py-1 rounded-lg bg-secondary/60">{filters.yearMin}</span>
-              <span className="px-2 py-1 rounded-lg bg-secondary/60">{filters.yearMax}</span>
+              <span className="px-2.5 py-1.5 rounded-lg bg-background border border-border/50">{filters.yearMin}</span>
+              <span className="px-2.5 py-1.5 rounded-lg bg-background border border-border/50">{filters.yearMax}</span>
             </div>
           </div>
         </FilterSection>
@@ -411,8 +411,8 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
               aria-label="Plage de kilométrage"
             />
             <div className="flex justify-between text-xs font-medium text-muted-foreground">
-              <span className="px-2 py-1 rounded-lg bg-secondary/60">{formatKmLabel(filters.kmMin)}</span>
-              <span className="px-2 py-1 rounded-lg bg-secondary/60">{formatKmLabel(filters.kmMax)}</span>
+              <span className="px-2.5 py-1.5 rounded-lg bg-background border border-border/50">{formatKmLabel(filters.kmMin)}</span>
+              <span className="px-2.5 py-1.5 rounded-lg bg-background border border-border/50">{formatKmLabel(filters.kmMax)}</span>
             </div>
           </div>
         </FilterSection>
