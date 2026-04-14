@@ -158,12 +158,6 @@ const Index = () => {
           </AnimatePresence>
         </div>
 
-        {/* Live Stats — real-time counters from DB */}
-        <Suspense fallback={<div className="h-48 sm:h-56" />}>
-          <ScrollReveal delay={0.05}>
-            <LiveStatsStrip />
-          </ScrollReveal>
-        </Suspense>
 
         {/* Trust Bar — minimal badges */}
         <Suspense fallback={<TrustBarSkeleton />}>
