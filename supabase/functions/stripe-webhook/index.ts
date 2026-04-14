@@ -58,15 +58,18 @@ serve(async (req) => {
     const body = await req.text();
     let event: Stripe.Event;
 
-    if (webhookSecret) {
-      const signature = req.headers.get("stripe-signature");
-      if (!signature) throw new Error("No stripe-signature header");
-      event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
-      logStep("Webhook signature verified");
-    } else {
-      event = JSON.parse(body) as Stripe.Event;
-      logStep("WARNING: No webhook secret configured, skipping signature verification");
+    if (!webhookSecret) {
+      logStep("ERROR: STRIPE_WEBHOOK_SECRET not configured");
+      return new Response(JSON.stringify({ error: "Webhook secret not configured" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
+
+    const signature = req.headers.get("stripe-signature");
+    if (!signature) throw new Error("No stripe-signature header");
+    event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
+    logStep("Webhook signature verified");
 
     logStep("Event received", { type: event.type, id: event.id });
 
