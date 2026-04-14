@@ -129,6 +129,62 @@ const SellerProfile = () => {
 
   const displayName = profile?.garage_name || profile?.display_name || "Vendeur";
 
+  const [contacting, setContacting] = useState(false);
+
+  const handleContact = useCallback(async () => {
+    if (!userId) return;
+    setContacting(true);
+
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      toast({ title: language === "nl" ? "Log in om te contacteren" : "Connectez-vous pour contacter", description: language === "nl" ? "U moet ingelogd zijn" : "Vous devez être connecté" });
+      setContacting(false);
+      navigate("/auth");
+      return;
+    }
+
+    if (session.user.id === userId) {
+      toast({ title: language === "nl" ? "Dat bent u zelf" : "C'est votre propre profil" });
+      setContacting(false);
+      return;
+    }
+
+    // Check if conversation already exists with this seller (without a specific listing)
+    const { data: existing } = await supabase
+      .from("conversations")
+      .select("id")
+      .eq("buyer_id", session.user.id)
+      .eq("seller_id", userId)
+      .maybeSingle();
+
+    if (existing) {
+      navigate(`/messages?conversation=${existing.id}`);
+      setContacting(false);
+      return;
+    }
+
+    // Create new conversation
+    const { data: newConv, error } = await supabase
+      .from("conversations")
+      .insert({
+        buyer_id: session.user.id,
+        seller_id: userId,
+        car_brand: displayName,
+        car_model: language === "nl" ? "Profiel" : "Profil",
+      })
+      .select("id")
+      .single();
+
+    if (error || !newConv) {
+      toast({ title: language === "nl" ? "Fout" : "Erreur", description: language === "nl" ? "Kan gesprek niet aanmaken" : "Impossible de créer la conversation", variant: "destructive" });
+      setContacting(false);
+      return;
+    }
+
+    navigate(`/messages?conversation=${newConv.id}`);
+    setContacting(false);
+  }, [userId, navigate, toast, language, displayName]);
+
   if (loading) return <SellerProfileSkeleton />;
   if (!profile) {
     return (
