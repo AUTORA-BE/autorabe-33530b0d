@@ -3,16 +3,17 @@
  * Route: /seller/:userId
  */
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Header, Footer } from "@/shared/components";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Star, MapPin, Phone, Mail, Calendar, ArrowLeft, Car, MessageSquare, Info, Shield, Clock, ExternalLink } from "lucide-react";
+import { Star, MapPin, Phone, Mail, Calendar, ArrowLeft, Car, MessageSquare, Info, Shield, Clock, ExternalLink, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { fr, nl, enUS } from "date-fns/locale";
 import { motion } from "framer-motion";
@@ -56,6 +57,7 @@ const SellerProfile = () => {
   const { userId } = useParams<{ userId: string }>();
   const navigate = useNavigate();
   const { t, language } = useLanguage();
+  const { toast } = useToast();
   const dateLocale = language === "fr" ? fr : language === "nl" ? nl : enUS;
 
   const [profile, setProfile] = useState<SellerProfile | null>(null);
@@ -126,6 +128,62 @@ const SellerProfile = () => {
     : "";
 
   const displayName = profile?.garage_name || profile?.display_name || "Vendeur";
+
+  const [contacting, setContacting] = useState(false);
+
+  const handleContact = useCallback(async () => {
+    if (!userId) return;
+    setContacting(true);
+
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      toast({ title: language === "nl" ? "Log in om te contacteren" : "Connectez-vous pour contacter", description: language === "nl" ? "U moet ingelogd zijn" : "Vous devez être connecté" });
+      setContacting(false);
+      navigate("/auth");
+      return;
+    }
+
+    if (session.user.id === userId) {
+      toast({ title: language === "nl" ? "Dat bent u zelf" : "C'est votre propre profil" });
+      setContacting(false);
+      return;
+    }
+
+    // Check if conversation already exists with this seller (without a specific listing)
+    const { data: existing } = await supabase
+      .from("conversations")
+      .select("id")
+      .eq("buyer_id", session.user.id)
+      .eq("seller_id", userId)
+      .maybeSingle();
+
+    if (existing) {
+      navigate(`/messages?conversation=${existing.id}`);
+      setContacting(false);
+      return;
+    }
+
+    // Create new conversation
+    const { data: newConv, error } = await supabase
+      .from("conversations")
+      .insert({
+        buyer_id: session.user.id,
+        seller_id: userId,
+        car_brand: displayName,
+        car_model: language === "nl" ? "Profiel" : "Profil",
+      })
+      .select("id")
+      .single();
+
+    if (error || !newConv) {
+      toast({ title: language === "nl" ? "Fout" : "Erreur", description: language === "nl" ? "Kan gesprek niet aanmaken" : "Impossible de créer la conversation", variant: "destructive" });
+      setContacting(false);
+      return;
+    }
+
+    navigate(`/messages?conversation=${newConv.id}`);
+    setContacting(false);
+  }, [userId, navigate, toast, language, displayName]);
 
   if (loading) return <SellerProfileSkeleton />;
   if (!profile) {
@@ -237,6 +295,21 @@ const SellerProfile = () => {
                     <Shield className="w-3.5 h-3.5" strokeWidth={1.5} />
                     {language === "nl" ? "Geverifieerd" : "Vérifié"}
                   </span>
+                </div>
+
+                {/* Contact button */}
+                <div className="mt-5 flex justify-center sm:justify-start">
+                  <Button
+                    onClick={handleContact}
+                    disabled={contacting}
+                    className="btn-primary-gradient rounded-xl px-6 py-3 h-auto text-sm font-semibold shadow-md"
+                  >
+                    <MessageSquare className="w-4 h-4 mr-2" strokeWidth={1.5} />
+                    {contacting
+                      ? (language === "nl" ? "Even geduld..." : "Chargement...")
+                      : (language === "nl" ? "Contacteer verkoper" : "Contacter le vendeur")
+                    }
+                  </Button>
                 </div>
               </div>
             </div>
