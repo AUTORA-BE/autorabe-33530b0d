@@ -1,5 +1,6 @@
 /**
  * Hook to check if user has reached their listing limit
+ * Admins have unlimited listings.
  * @module features/subscription/hooks
  */
 
@@ -17,7 +18,8 @@ interface ListingLimitState {
 }
 
 /**
- * Checks the user's active listing count against their plan limit
+ * Checks the user's active listing count against their plan limit.
+ * Admin users always get unlimited publishing rights.
  */
 export function useListingLimit() {
   const { subscribed, tier, isLoading: subLoading } = useSubscription();
@@ -34,6 +36,30 @@ export function useListingLimit() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         setState({ isLoading: false, activeCount: 0, maxAllowed: FREE_PARTICULIER_LIMIT, canPublish: true, sellerType: null });
+        return;
+      }
+
+      // Check if user is admin — admins get unlimited listings
+      const { data: isAdmin } = await supabase.rpc('has_role', {
+        _user_id: user.id,
+        _role: 'admin' as any,
+      });
+
+      if (isAdmin) {
+        // Count for display purposes only
+        const { count } = await supabase
+          .from('car_listings')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', user.id)
+          .in('status', ['pending', 'approved']);
+
+        setState({
+          isLoading: false,
+          activeCount: count ?? 0,
+          maxAllowed: null, // unlimited
+          canPublish: true,
+          sellerType: 'admin',
+        });
         return;
       }
 
