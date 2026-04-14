@@ -27,6 +27,7 @@ const PopularVehicles = lazy(() => import("@/features/listings/components/Popula
 const SwipeDiscovery = lazy(() => import("@/features/listings/components/SwipeDiscovery"));
 const LoadMoreGrid = lazy(() => import("@/components/LoadMoreGrid"));
 const WhyAutoRa = lazy(() => import("@/components/WhyAutoRa"));
+const ExpertServices = lazy(() => import("@/components/ExpertServices"));
 const TestimonialsSection = lazy(() => import("@/components/TestimonialsSection"));
 const SellCarCTA = lazy(() => import("@/components/SellCarCTA"));
 const PricingCTA = lazy(() => import("@/components/PricingCTA"));
