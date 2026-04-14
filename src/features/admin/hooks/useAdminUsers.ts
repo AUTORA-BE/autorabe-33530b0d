@@ -113,10 +113,15 @@ export function useAdminUsers() {
           })
           .eq('id', existing[0].id);
         if (error) throw error;
-      } else {
-        // Need to insert via admin — subscriptions table only allows service_role insert
-        // We'll use an edge function or RPC. For now, log the action.
-        throw new Error('Aucun abonnement existant. Créez-en un via Stripe.');
+      } else if (productId) {
+        const { error } = await supabase.from('subscriptions')
+          .insert({
+            user_id: userId,
+            product_id: productId,
+            status: 'active',
+            current_period_end: periodEnd,
+          });
+        if (error) throw error;
       }
       await logAction('update_subscription', userId, `Product: ${productId}, End: ${periodEnd}`);
     },
