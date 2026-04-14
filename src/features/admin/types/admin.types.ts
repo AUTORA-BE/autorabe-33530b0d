@@ -26,6 +26,9 @@ export interface AdminUser {
   suspended_reason: string | null;
   created_at: string;
   listing_count: number;
+  subscription_product_id: string | null;
+  subscription_status: string | null;
+  subscription_end: string | null;
 }
 
 export interface AdminListing {
