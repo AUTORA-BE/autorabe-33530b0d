@@ -492,7 +492,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
             {/* Search Box — Glassmorphic, minimal */}
             {isMobile ? (
               <motion.button
-                {...fadeUp(0.2)}
+                {...fadeUp(0.25)}
                 onClick={() => setMobileSearchOpen(true)}
                 className="w-full p-5 rounded-3xl bg-card/40 backdrop-blur-xl border border-border/20 flex items-center gap-4 active:scale-[0.98] transition-transform"
                 role="search"
@@ -508,7 +508,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
               </motion.button>
             ) : (
               <motion.div
-                {...fadeUp(0.2)}
+                {...fadeUp(0.25)}
                 className="p-4 sm:p-5 rounded-3xl bg-card/40 backdrop-blur-xl border border-border/20 max-w-3xl mx-auto"
                 role="search"
                 aria-label={t("hero.search")}
