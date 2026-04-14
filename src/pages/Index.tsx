@@ -231,7 +231,7 @@ const Index = () => {
         </div>
 
         {/* Results section */}
-        <section id="results-section" className="container mx-auto px-4 sm:px-8 pb-16 sm:pb-28">
+        <section id="results-section" className="container mx-auto px-6 sm:px-8 pb-20 sm:pb-32">
           <div className="flex flex-col lg:flex-row gap-6 sm:gap-10">
             {/* Desktop-only inline filter panel */}
             <div className="hidden lg:block">

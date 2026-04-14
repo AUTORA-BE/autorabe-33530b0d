@@ -1,8 +1,8 @@
-/** Elegant fuel price widget — Belgian market prices (glassmorphic, responsive). */
+/** Elegant fuel price widget — Belgian market prices, luxe minimal. */
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Droplets, Flame, Zap, Clock } from 'lucide-react';
+import { Droplets, Flame, Zap } from 'lucide-react';
 import { PRIX_CARBURANT } from '@/features/tco/constants/belgianData';
 
 interface FuelPriceStripProps {
@@ -28,12 +28,9 @@ const FuelPriceStrip = ({ compact = false }: FuelPriceStripProps) => {
 
   if (!loaded) {
     return (
-      <div className={`flex items-center gap-3 ${compact ? 'justify-center' : 'justify-center flex-wrap'}`}>
+      <div className="flex items-center gap-3 justify-center flex-wrap">
         {items.map((f) => (
-          <div
-            key={f.key}
-            className={`rounded-xl skeleton-shimmer ${compact ? 'h-6 w-20' : 'h-12 w-28'}`}
-          />
+          <div key={f.key} className="rounded-xl skeleton-shimmer h-10 w-24" />
         ))}
       </div>
     );
@@ -56,7 +53,6 @@ const FuelPriceStrip = ({ compact = false }: FuelPriceStripProps) => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 + i * 0.07 }}
               className="inline-flex items-center gap-1.5 text-muted-foreground"
-              aria-label={`${fuel.label} : ${fuel.price.toFixed(2)} ${fuel.unit}`}
             >
               <Icon className="w-3 h-3 text-primary/70" strokeWidth={1.5} />
               <span className="text-xs font-medium text-foreground/80">{fuel.price.toFixed(2)}</span>
@@ -69,8 +65,11 @@ const FuelPriceStrip = ({ compact = false }: FuelPriceStripProps) => {
   }
 
   return (
-    <div className="w-full py-4 sm:py-6">
-      <div className="container mx-auto px-4 sm:px-6">
+    <div className="py-6 sm:py-8">
+      <div className="container mx-auto px-6 sm:px-8">
+        {/* Divider line */}
+        <div className="h-px bg-gradient-to-r from-transparent via-border/20 to-transparent mb-6 sm:mb-8" />
+
         <div
           role="list"
           className="flex items-stretch gap-3 overflow-x-auto snap-x snap-mandatory scrollbar-hide sm:overflow-visible sm:flex-wrap sm:justify-center pb-1"
@@ -81,41 +80,32 @@ const FuelPriceStrip = ({ compact = false }: FuelPriceStripProps) => {
               <motion.div
                 key={fuel.key}
                 role="listitem"
-                initial={{ opacity: 0, y: 14 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.08, duration: 0.4 }}
-                aria-label={`${fuel.label} : ${fuel.price.toFixed(2)} ${fuel.unit}`}
-                className="snap-center shrink-0 flex items-center gap-3 px-4 py-3 rounded-2xl
-                  bg-card/40 backdrop-blur-xl border border-border/20
-                  hover:border-primary/30 transition-colors duration-200"
+                transition={{ delay: i * 0.06, duration: 0.5 }}
+                className="snap-center shrink-0 flex items-center gap-3 px-5 py-3.5 rounded-2xl
+                  bg-card/30 backdrop-blur-sm border border-border/15
+                  hover:border-primary/20 transition-all duration-300"
               >
-                <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
-                  <Icon className="w-4 h-4 text-primary" strokeWidth={1.5} />
+                <div className="w-8 h-8 rounded-xl bg-primary/[0.06] border border-primary/10 flex items-center justify-center">
+                  <Icon className="w-4 h-4 text-primary/70" strokeWidth={1.5} />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[11px] text-muted-foreground leading-none mb-0.5">{fuel.label}</span>
+                  <span className="text-[11px] text-muted-foreground leading-none mb-0.5 font-light">{fuel.label}</span>
                   <div className="flex items-baseline gap-1">
-                    <span className="font-mono text-foreground font-semibold text-sm leading-none">
+                    <span className="font-mono text-foreground font-medium text-sm leading-none">
                       {fuel.price.toFixed(fuel.key === 'electric' ? 2 : 3)}
                     </span>
-                    <span className="text-[10px] text-muted-foreground/60">{fuel.unit}</span>
+                    <span className="text-[10px] text-muted-foreground/50">{fuel.unit}</span>
                   </div>
                 </div>
               </motion.div>
             );
           })}
-
-          {/* Update badge */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="snap-center shrink-0 flex items-center gap-1 px-3 self-center"
-          >
-            <Clock className="w-2.5 h-2.5 text-muted-foreground/50" strokeWidth={1.5} />
-            <span className="text-[9px] text-muted-foreground/50 whitespace-nowrap">MAJ Mars 2026</span>
-          </motion.div>
         </div>
+
+        {/* Divider line */}
+        <div className="h-px bg-gradient-to-r from-transparent via-border/20 to-transparent mt-6 sm:mt-8" />
       </div>
     </div>
   );

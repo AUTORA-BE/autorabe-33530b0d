@@ -72,14 +72,14 @@ const BrandCarousel = memo(function BrandCarousel({
 
   return (
     <section 
-      className="py-10 sm:py-16"
+      className="py-12 sm:py-20"
       aria-labelledby="brands-title"
       style={{ contain: "layout style" }}
     >
       <div className="container mx-auto px-6 sm:px-8">
         <h2 
           id="brands-title"
-          className="font-serif text-lg sm:text-2xl font-light text-center mb-6 sm:mb-10 text-foreground"
+          className="font-serif text-2xl sm:text-3xl lg:text-4xl font-light text-center mb-8 sm:mb-12 text-foreground"
         >
           {t("brands.title")}
         </h2>

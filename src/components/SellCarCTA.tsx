@@ -36,14 +36,14 @@ const SellCarCTA = memo(() => {
   ];
 
   return (
-    <section className="container mx-auto px-6 sm:px-8 py-16 sm:py-28">
-      <div className="relative overflow-hidden rounded-3xl border border-border/20 bg-card/20">
-        <div className="relative px-6 py-16 sm:px-16 sm:py-24">
+    <section className="container mx-auto px-6 sm:px-8 py-20 sm:py-32">
+      <div className="relative overflow-hidden rounded-3xl border border-border/15 bg-card/15">
+        <div className="relative px-8 py-20 sm:px-16 sm:py-28">
           <div className="max-w-2xl mx-auto">
             {/* Headline */}
             <motion.h2
               {...fadeUp(0.05)}
-              className="font-serif text-center text-2xl sm:text-3xl md:text-4xl font-light text-foreground mb-5 leading-[1.15]"
+              className="font-serif text-center text-3xl sm:text-4xl lg:text-5xl font-light text-foreground mb-5 leading-[1.15]"
             >
               {isNl ? (
                 <>Verkoop uw auto <span className="text-primary">in 3 minuten</span></>

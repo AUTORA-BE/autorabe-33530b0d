@@ -1,14 +1,14 @@
 /**
- * PopularVehicles component - horizontal carousel of trending vehicles
- * Uses CarCard for visual consistency with the main search grid
+ * PopularVehicles — horizontal carousel with luxe minimal header
  * @module features/listings/components
  */
 
 import { useRef, memo } from "react";
-import { ChevronLeft, ChevronRight, TrendingUp, Car } from "lucide-react";
+import { ChevronLeft, ChevronRight, Car } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { motion } from "framer-motion";
 import CarCard from "./CarCard";
 import { usePopularVehicles } from "../hooks/usePopularVehicles";
 import { CarCardSkeleton } from "@/components/skeletons/HomeSkeleton";
@@ -31,17 +31,16 @@ const PopularVehicles = memo(function PopularVehicles({
 
   const texts = {
     noListings: language === "nl" ? "Geen advertenties beschikbaar" : language === "en" ? "No listings available" : "Aucune annonce disponible",
-    beFirst: language === "nl" ? "Wees de eerste om een advertentie te plaatsen op AutoRa en bereik duizenden potentiële kopers." : language === "en" ? "Be the first to post a listing on AutoRa and reach thousands of potential buyers." : "Soyez le premier à publier une annonce sur AutoRa et touchez des milliers d'acheteurs potentiels.",
+    beFirst: language === "nl" ? "Wees de eerste om een advertentie te plaatsen op AutoRa." : language === "en" ? "Be the first to post a listing on AutoRa." : "Soyez le premier à publier une annonce sur AutoRa.",
     postListing: language === "nl" ? "Een advertentie plaatsen" : language === "en" ? "Post a listing" : "Publier une annonce",
-    popular: language === "nl" ? "Populaire Auto's" : language === "en" ? "Popular Cars" : "Voitures Populaires",
-    mostSearched: language === "nl" ? "De meest gezochte voertuigen deze week" : language === "en" ? "The most searched vehicles this week" : "Les véhicules les plus recherchés cette semaine",
+    popular: language === "nl" ? "Populaire auto's" : language === "en" ? "Popular cars" : "Voitures populaires",
+    mostSearched: language === "nl" ? "De meest gezochte voertuigen deze week" : language === "en" ? "Most searched vehicles this week" : "Les véhicules les plus recherchés cette semaine",
   };
 
   const scroll = (direction: "left" | "right") => {
     if (scrollRef.current) {
-      const scrollAmount = 360;
       scrollRef.current.scrollBy({
-        left: direction === "left" ? -scrollAmount : scrollAmount,
+        left: direction === "left" ? -360 : 360,
         behavior: "smooth",
       });
     }
@@ -49,19 +48,19 @@ const PopularVehicles = memo(function PopularVehicles({
 
   if (!isLoading && vehicles.length === 0) {
     return (
-      <section className="py-12 sm:py-16 overflow-hidden" aria-labelledby="popular-vehicles-title">
-        <div className="container mx-auto px-4 sm:px-6">
-          <div className="text-center py-10 sm:py-12">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center">
-              <Car className="w-8 h-8 sm:w-10 sm:h-10 text-primary" aria-hidden="true" />
+      <section className="py-20 sm:py-28 overflow-hidden">
+        <div className="container mx-auto px-6 sm:px-8">
+          <div className="text-center py-10">
+            <div className="w-16 h-16 mx-auto mb-6 rounded-2xl bg-primary/[0.06] border border-primary/10 flex items-center justify-center">
+              <Car className="w-7 h-7 text-primary/60" strokeWidth={1.5} />
             </div>
-            <h2 id="popular-vehicles-title" className="font-display text-xl sm:text-2xl md:text-3xl font-bold text-foreground mb-4">
+            <h2 className="font-serif text-2xl sm:text-3xl font-light text-foreground mb-3">
               {texts.noListings}
             </h2>
-            <p className="text-muted-foreground max-w-md mx-auto mb-8 text-sm sm:text-base px-4">
+            <p className="text-muted-foreground text-sm font-light max-w-md mx-auto mb-8">
               {texts.beFirst}
             </p>
-            <Button onClick={() => navigate("/sell")} className="btn-primary-gradient">
+            <Button onClick={() => navigate("/sell")} className="rounded-full h-12 px-8 font-medium text-sm">
               {texts.postListing}
             </Button>
           </div>
@@ -71,39 +70,54 @@ const PopularVehicles = memo(function PopularVehicles({
   }
 
   return (
-    <section className="py-8 sm:py-16 overflow-hidden" aria-labelledby="popular-vehicles-heading">
-      <div className="container mx-auto px-4 sm:px-6">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-5 sm:mb-10">
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-              <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-primary" aria-hidden="true" />
-            </div>
-            <div>
-              <h2 id="popular-vehicles-heading" className="font-display text-xl sm:text-2xl md:text-3xl font-bold text-foreground">
-                {texts.popular}
-              </h2>
-              <p className="text-muted-foreground text-xs sm:text-sm mt-0.5 sm:mt-1">
-                {texts.mostSearched}
-              </p>
-            </div>
+    <section className="py-16 sm:py-24 overflow-hidden">
+      <div className="container mx-auto px-6 sm:px-8">
+        {/* Header — luxe minimal */}
+        <div className="flex items-end justify-between mb-8 sm:mb-12">
+          <div>
+            <motion.p
+              initial={{ opacity: 0, y: 6 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-[11px] uppercase tracking-[0.25em] text-primary/70 font-medium mb-3"
+            >
+              {language === "nl" ? "Trending" : language === "en" ? "Trending" : "Tendances"}
+            </motion.p>
+            <motion.h2
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.05 }}
+              className="font-serif text-2xl sm:text-3xl lg:text-4xl font-light text-foreground leading-tight"
+            >
+              {texts.popular}
+            </motion.h2>
+            <motion.p
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="text-muted-foreground text-sm font-light mt-2"
+            >
+              {texts.mostSearched}
+            </motion.p>
           </div>
 
           {vehicles.length > 3 && (
             <div className="hidden sm:flex items-center gap-2">
               <button
                 onClick={() => scroll("left")}
-                aria-label="Défiler vers la gauche"
-                className="w-10 h-10 rounded-xl bg-secondary hover:bg-secondary/80 flex items-center justify-center transition-colors group touch-manipulation"
+                className="w-10 h-10 rounded-full border border-border/20 flex items-center justify-center text-muted-foreground/50 hover:text-foreground hover:border-primary/20 transition-all"
+                aria-label="Précédent"
               >
-                <ChevronLeft className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
+                <ChevronLeft className="w-4 h-4" strokeWidth={1.5} />
               </button>
               <button
                 onClick={() => scroll("right")}
-                aria-label="Défiler vers la droite"
-                className="w-10 h-10 rounded-xl bg-secondary hover:bg-secondary/80 flex items-center justify-center transition-colors group touch-manipulation"
+                className="w-10 h-10 rounded-full border border-border/20 flex items-center justify-center text-muted-foreground/50 hover:text-foreground hover:border-primary/20 transition-all"
+                aria-label="Suivant"
               >
-                <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
+                <ChevronRight className="w-4 h-4" strokeWidth={1.5} />
               </button>
             </div>
           )}
@@ -111,9 +125,9 @@ const PopularVehicles = memo(function PopularVehicles({
 
         {/* Carousel */}
         {isLoading ? (
-          <div className="flex gap-4 sm:gap-6 overflow-hidden" role="status" aria-label="Chargement">
+          <div className="flex gap-5 overflow-hidden">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="flex-shrink-0 w-[280px] sm:w-[320px] md:w-[350px]">
+              <div key={i} className="flex-shrink-0 w-[300px] sm:w-[340px]">
                 <CarCardSkeleton />
               </div>
             ))}
@@ -121,18 +135,11 @@ const PopularVehicles = memo(function PopularVehicles({
         ) : (
           <div
             ref={scrollRef}
-            className="flex gap-4 sm:gap-6 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-4 -mx-4 px-4 sm:-mx-6 sm:px-6"
-            style={{
-              scrollbarWidth: "none",
-              msOverflowStyle: "none",
-              WebkitOverflowScrolling: "touch",
-            }}
+            className="flex gap-5 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-4 -mx-6 px-6 sm:-mx-8 sm:px-8"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch" }}
           >
             {vehicles.map((vehicle) => (
-              <div
-                key={vehicle.id}
-                className="flex-shrink-0 w-[280px] sm:w-[320px] md:w-[350px] snap-start"
-              >
+              <div key={vehicle.id} className="flex-shrink-0 w-[300px] sm:w-[340px] snap-start">
                 <CarCard
                   car={vehicle}
                   isFavorite={isFavorite(vehicle.id)}

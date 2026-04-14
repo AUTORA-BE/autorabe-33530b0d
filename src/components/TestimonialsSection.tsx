@@ -210,39 +210,38 @@ const TestimonialsSection = memo(() => {
   const { title, subtitle } = sectionTitles[language] || sectionTitles.fr;
 
   return (
-    <section className="py-16 sm:py-28 relative overflow-hidden">
-      {/* Background glow */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/[0.02] to-transparent pointer-events-none" />
+    <section className="py-20 sm:py-32 relative overflow-hidden">
+      {/* Ambient glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-primary/[0.02] blur-[100px] pointer-events-none" />
 
-      <div className="container mx-auto px-4 sm:px-8 relative">
+      <div className="container mx-auto px-6 sm:px-8 relative">
         {/* Header */}
-        <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
+        <div className="text-center max-w-xl mx-auto mb-12 sm:mb-16">
+          <motion.p
+            initial={{ opacity: 0, y: 6 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/8 border border-amber-500/15 mb-5"
+            className="text-[11px] uppercase tracking-[0.25em] text-primary/70 font-medium mb-5"
           >
-            <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-            <span className="text-xs font-light text-amber-600 dark:text-amber-400 tracking-wide">4.9/5</span>
-          </motion.div>
+            4.9/5 ★
+          </motion.p>
 
           <motion.h2
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.05 }}
-            className="font-serif text-2xl sm:text-3xl md:text-4xl font-light text-foreground mb-4 leading-tight"
+            transition={{ duration: 0.7, delay: 0.05 }}
+            className="font-serif text-3xl sm:text-4xl lg:text-5xl font-light text-foreground mb-5 leading-[1.15]"
           >
             {title}
           </motion.h2>
 
           <motion.p
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-muted-foreground text-sm sm:text-base font-light max-w-lg mx-auto"
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-muted-foreground text-sm sm:text-base font-light"
           >
             {subtitle}
           </motion.p>
