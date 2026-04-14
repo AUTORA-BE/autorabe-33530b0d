@@ -187,6 +187,11 @@ const Index = () => {
           <WhyAutoRa />
         </Suspense>
 
+        {/* Expert Services */}
+        <Suspense fallback={null}>
+          <ExpertServices />
+        </Suspense>
+
         {/* Popular vehicles */}
         <Suspense fallback={<CarouselSkeleton />}>
           <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 400px" }}>
