@@ -31,6 +31,8 @@ export interface VehicleCardProps {
   eager?: boolean;
   /** Profil acheteur pour le TCO Matchmaker (optionnel) */
   buyerProfile?: BuyerProfile | null;
+  /** Nombre public de favoris */
+  favoriteCount?: number;
 }
 
 /**
@@ -70,6 +72,7 @@ const VehicleCard = memo(function VehicleCard({
   onClick,
   eager = false,
   buyerProfile,
+  favoriteCount,
 }: VehicleCardProps) {
   const { addToCompare, removeFromCompare: removeCompare, isInCompare } = useCompareContext();
   const { language } = useLanguage();
@@ -220,11 +223,17 @@ const VehicleCard = memo(function VehicleCard({
           )}
         </div>
 
-        {/* Price Badge */}
-        <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 z-10">
+        {/* Price & Favorite Count Badge */}
+        <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 z-10 flex items-center gap-2">
           <span className="text-base sm:text-2xl font-bold text-white drop-shadow-lg">
             {formatPrice(vehicle.price)}
           </span>
+          {typeof favoriteCount === "number" && favoriteCount > 0 && (
+            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-white/80 dark:bg-black/50 backdrop-blur-sm text-xs text-muted-foreground shadow-lg">
+              <Heart className="w-3 h-3 fill-red-400 text-red-400" />
+              {favoriteCount}
+            </span>
+          )}
         </div>
       </div>
 

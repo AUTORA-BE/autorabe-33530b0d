@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import type { BuyerProfile } from "@/features/tco/hooks/useBuyerProfile";
+import { useFavoriteCounts } from "@/features/favorites/hooks/useFavoriteCounts";
 
 interface LoadMoreGridProps {
   cars: Car[];
@@ -85,6 +86,8 @@ const LoadMoreGrid = ({
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const prevFiltersCount = useRef(activeFiltersCount);
+  const listingIds = useMemo(() => cars.map(c => c.id), [cars]);
+  const favCounts = useFavoriteCounts(listingIds);
 
   // Haptic feedback when filter count changes
   useEffect(() => {
@@ -305,6 +308,7 @@ const LoadMoreGrid = ({
                   onToggleFavorite={onToggleFavorite}
                   onClick={onCarClick}
                   buyerProfile={buyerProfile}
+                  favoriteCount={favCounts[car.id]}
                 />
               </div>
             ))}

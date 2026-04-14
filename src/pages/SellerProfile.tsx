@@ -10,13 +10,14 @@ import { Header, Footer } from "@/shared/components";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Star, MapPin, Phone, Mail, Calendar, ArrowLeft, Car, MessageSquare, Info, Shield, Clock, ExternalLink, Send } from "lucide-react";
+import { Star, MapPin, Phone, Mail, Calendar, ArrowLeft, Car, MessageSquare, Info, Shield, Clock, ExternalLink, Send, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { fr, nl, enUS } from "date-fns/locale";
 import { motion } from "framer-motion";
+import { useFavoriteCounts } from "@/features/favorites/hooks/useFavoriteCounts";
 
 /* ---------- types ---------- */
 interface SellerProfile {
@@ -64,6 +65,8 @@ const SellerProfile = () => {
   const [listings, setListings] = useState<SellerListing[]>([]);
   const [reviews, setReviews] = useState<SellerReview[]>([]);
   const [loading, setLoading] = useState(true);
+  const sellerListingIds = useMemo(() => listings.map(l => l.id), [listings]);
+  const favCounts = useFavoriteCounts(sellerListingIds);
 
   /* Fetch all data in parallel */
   useEffect(() => {
@@ -384,11 +387,19 @@ const SellerProfile = () => {
                                 <Car className="w-10 h-10 text-muted-foreground/30" />
                               </div>
                             )}
-                            {/* Price badge */}
-                            <div className="absolute bottom-3 left-3 bg-background/90 backdrop-blur-sm border border-border/50 rounded-lg px-3 py-1.5">
-                              <span className="text-sm font-semibold text-foreground">
-                                {listing.price.toLocaleString("fr-BE")} €
-                              </span>
+                            {/* Price & fav count badge */}
+                            <div className="absolute bottom-3 left-3 flex items-center gap-2">
+                              <div className="bg-background/90 backdrop-blur-sm border border-border/50 rounded-lg px-3 py-1.5">
+                                <span className="text-sm font-semibold text-foreground">
+                                  {listing.price.toLocaleString("fr-BE")} €
+                                </span>
+                              </div>
+                              {favCounts[listing.id] > 0 && (
+                                <span className="inline-flex items-center gap-1 px-2 py-1.5 rounded-lg bg-background/90 backdrop-blur-sm border border-border/50 text-xs text-muted-foreground">
+                                  <Heart className="w-3 h-3 fill-red-400 text-red-400" />
+                                  {favCounts[listing.id]}
+                                </span>
+                              )}
                             </div>
                           </div>
 
