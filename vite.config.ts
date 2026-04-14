@@ -16,9 +16,13 @@ export default defineConfig(({ mode }) => ({
     VitePWA({
       registerType: "autoUpdate",
       devOptions: { enabled: false },
-      includeAssets: ["favicon.png", "favicon.ico", "notification.mp3", "sw-push.js"],
+      includeAssets: ["favicon.png", "favicon.ico", "notification.mp3", "sw-push.js", "offline.html"],
       workbox: {
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
+        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
+        skipWaiting: true,
+        clientsClaim: true,
+        cleanupOutdatedCaches: true,
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/jbdsjqoonpieusfvkhyo\.supabase\.co\/rest\/v1\/.*/i,
@@ -57,7 +61,8 @@ export default defineConfig(({ mode }) => ({
             },
           },
         ],
-        navigateFallbackDenylist: [/^\/~oauth/],
+        navigateFallback: "/offline.html",
+        navigateFallbackDenylist: [/^\/~oauth/, /^\/api/],
       },
       manifest: {
         name: "AutoRa — Marketplace automobile belge",
@@ -67,16 +72,26 @@ export default defineConfig(({ mode }) => ({
         background_color: "#0a0a14",
         display: "standalone",
         orientation: "portrait",
-        start_url: "/",
+        start_url: "/?utm_source=pwa",
         scope: "/",
         id: "/",
         lang: "fr-BE",
         dir: "ltr",
         categories: ["auto", "shopping"],
+        prefer_related_applications: false,
         icons: [
           { src: "/pwa-icon-192.png", sizes: "192x192", type: "image/png" },
           { src: "/pwa-icon-512.png", sizes: "512x512", type: "image/png" },
           { src: "/pwa-icon-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+        ],
+        screenshots: [
+          {
+            src: "/pwa-icon-512.png",
+            sizes: "512x512",
+            type: "image/png",
+            form_factor: "narrow",
+            label: "AutoRa — Marketplace automobile belge",
+          },
         ],
         shortcuts: [
           {
@@ -88,13 +103,13 @@ export default defineConfig(({ mode }) => ({
           {
             name: "Vendre ma voiture",
             short_name: "Vendre",
-            url: "/vendre?source=shortcut",
+            url: "/sell?source=shortcut",
             icons: [{ src: "/pwa-icon-192.png", sizes: "192x192" }],
           },
           {
             name: "Mes favoris",
             short_name: "Favoris",
-            url: "/favoris?source=shortcut",
+            url: "/favorites?source=shortcut",
             icons: [{ src: "/pwa-icon-192.png", sizes: "192x192" }],
           },
           {
