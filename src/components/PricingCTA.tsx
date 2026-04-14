@@ -13,12 +13,12 @@ const PricingCTA = () => {
   const isNl = language === "nl";
 
   return (
-    <section className="container mx-auto px-6 sm:px-8 py-10 sm:py-24">
-      <div className="relative overflow-hidden rounded-3xl bg-card/20 border border-border/20">
-        <div className="relative px-6 py-12 sm:px-16 sm:py-20">
+    <section className="container mx-auto px-6 sm:px-8 py-20 sm:py-32">
+      <div className="relative overflow-hidden rounded-3xl bg-card/15 border border-border/15">
+        <div className="relative px-8 py-20 sm:px-16 sm:py-28">
           {/* Header */}
-          <div className="text-center max-w-xl mx-auto mb-10 sm:mb-16">
-            <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-light text-foreground mb-4 leading-tight">
+          <div className="text-center max-w-xl mx-auto mb-12 sm:mb-20">
+            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-light text-foreground mb-5 leading-[1.15]">
               {isNl ? "Verkoop sneller met een Pro-plan" : "Vendez plus vite avec un plan\u00a0Pro"}
             </h2>
             <p className="text-muted-foreground text-sm font-light max-w-md mx-auto">
