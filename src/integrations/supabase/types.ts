@@ -1058,6 +1058,37 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_seller_public_listings: {
+        Args: { _seller_id: string }
+        Returns: {
+          body_type: string
+          boost_expires_at: string
+          boost_level: string
+          brand: string
+          car_pass_verified: boolean
+          color: string
+          created_at: string
+          ct_valid: boolean
+          description: string
+          doors: number
+          euro_norm: string
+          features: string[]
+          first_registration: string
+          fuel_type: string
+          id: string
+          location: string
+          maintenance_book_complete: boolean
+          mileage: number
+          model: string
+          photos: string[]
+          power: number
+          price: number
+          seller_type: string
+          status: string
+          transmission: string
+          year: number
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
