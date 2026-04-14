@@ -4,7 +4,7 @@
  * @module features/listings/components
  */
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -14,6 +14,7 @@ import {
   Car,
   TrendingUp,
   Calendar,
+  Timer,
   BarChart3,
   Pencil,
   Trash2,
@@ -117,6 +118,48 @@ function isLezCompatible(euroNorm: string | null, fuelType: string): boolean {
   if (norm.includes("euro6c") && fuel === "diesel") return true;
   
   return false;
+}
+
+/**
+ * Format remaining boost time as a human-readable countdown
+ */
+function useBoostCountdown(expiresAt: string | null): string | null {
+  const [, setTick] = useState(0);
+
+  useEffect(() => {
+    if (!expiresAt) return;
+    const id = setInterval(() => setTick((t) => t + 1), 60_000);
+    return () => clearInterval(id);
+  }, [expiresAt]);
+
+  if (!expiresAt) return null;
+  const diff = new Date(expiresAt).getTime() - Date.now();
+  if (diff <= 0) return null;
+
+  const hours = Math.floor(diff / 3_600_000);
+  const minutes = Math.floor((diff % 3_600_000) / 60_000);
+
+  if (hours >= 24) {
+    const days = Math.floor(hours / 24);
+    const remHours = hours % 24;
+    return `${days}j ${remHours}h`;
+  }
+  return `${hours}h ${minutes}min`;
+}
+
+/**
+ * Small component to display boost countdown inside a listing row
+ */
+function BoostCountdown({ expiresAt, boostLevel }: { expiresAt: string | null; boostLevel: string }) {
+  const remaining = useBoostCountdown(expiresAt);
+  if (!remaining || boostLevel === "none") return null;
+
+  return (
+    <span className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-600 dark:text-amber-400">
+      <Timer className="w-3 h-3" />
+      {remaining}
+    </span>
+  );
 }
 
 /**
@@ -504,6 +547,7 @@ export default function SellerDashboard() {
                             <Calendar className="w-3 h-3" />
                             {formatDate(listing.createdAt)}
                           </span>
+                          <BoostCountdown expiresAt={listing.boostExpiresAt} boostLevel={listing.boostLevel} />
                         </div>
                       </div>
 
