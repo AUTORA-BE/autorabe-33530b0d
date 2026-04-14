@@ -182,7 +182,10 @@ export type VehicleSortOption =
   | 'year-desc' 
   | 'year-asc' 
   | 'km-asc' 
-  | 'km-desc';
+  | 'km-desc'
+  | 'favorites'
+  | 'views'
+  | 'interactions';
 
 /**
  * Database listing row from Supabase
