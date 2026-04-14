@@ -14,17 +14,7 @@ export function useAdminRealtime() {
   useEffect(() => {
     const channel = supabase
       .channel('admin-overview-realtime')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'reports' },
-        (payload) => {
-          qc.invalidateQueries({ queryKey: ['admin', 'stats'] });
-          qc.invalidateQueries({ queryKey: ['admin', 'reports'] });
-          if (payload.eventType === 'INSERT') {
-            toast.warning('🚨 Nouveau signalement reçu', { duration: 5000 });
-          }
-        }
-      )
+      
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'car_listings' },
