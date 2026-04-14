@@ -556,39 +556,39 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                 )}
               </AnimatePresence>
 
-              {/* Mobile-only: Title, Price & CTA */}
-              <motion.div {...fadeUp(0.1)} className="lg:hidden glass-card p-3 sm:p-6 space-y-2.5 sm:space-y-4">
+              {/* Mobile-only: Title, Price & CTA — refined */}
+              <motion.div {...fadeUp(0.1)} className="lg:hidden rounded-2xl border border-border/20 bg-card p-4 space-y-3 shadow-[var(--shadow-card)]">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <h1 className="font-display text-lg sm:text-2xl font-bold text-foreground leading-tight truncate">
+                    <h1 className="text-lg font-semibold text-foreground leading-tight truncate">
                       {car.brand} {car.model}
                     </h1>
-                    <p className="text-[11px] sm:text-sm text-muted-foreground flex items-center gap-1 mt-0.5">
-                      <MapPin className="w-3 h-3 flex-shrink-0" />
+                    <p className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5">
+                      <MapPin className="w-3 h-3 flex-shrink-0" strokeWidth={1.5} />
                       <span className="truncate">{car.location}</span>
                     </p>
                   </div>
-                  <div className="flex gap-1 flex-shrink-0">
+                  <div className="flex gap-1.5 flex-shrink-0">
                     <button
                       onClick={() => toggleFavorite(car.id)}
                       className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all active:scale-90 touch-manipulation ${
                         isFavorite(car.id)
                           ? "bg-red-500 text-white shadow-lg shadow-red-500/25"
-                          : "bg-secondary text-muted-foreground hover:text-red-500"
+                          : "bg-secondary text-muted-foreground"
                       }`}
                     >
                       <Heart className={`w-3.5 h-3.5 ${isFavorite(car.id) ? "fill-current" : ""}`} />
                     </button>
                     <button
                       onClick={handleShare}
-                      className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors active:scale-90 touch-manipulation"
+                      className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground transition-colors active:scale-90 touch-manipulation"
                     >
                       <Share2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
 
-                <div className="text-xl sm:text-3xl font-display font-extrabold text-foreground">
+                <div className="text-2xl font-bold text-foreground tracking-tight">
                   {formatPrice(car.price)}
                 </div>
 
@@ -600,11 +600,7 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                 />
 
                 {isAdmin && (
-                  <Button
-                    onClick={handleAdminDelete}
-                    variant="destructive"
-                    className="w-full h-11 mt-2"
-                  >
+                  <Button onClick={handleAdminDelete} variant="destructive" className="w-full h-11 mt-2">
                     <Trash2 className="w-4 h-4 mr-2" />
                     Supprimer (Admin)
                   </Button>
