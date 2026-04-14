@@ -49,6 +49,7 @@ const Pricing = lazy(() => import("./pages/Pricing"));
 const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
 const PaymentCanceled = lazy(() => import("./pages/PaymentCanceled"));
 const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
+const Services = lazy(() => import("./pages/Services"));
 
 /** Minimal loading fallback shown while lazy chunks load */
 function PageLoader() {
@@ -117,6 +118,7 @@ function AppRoutes() {
         <Route path="/payment-success" element={<PageTransition><PaymentSuccess /></PageTransition>} />
         <Route path="/payment-canceled" element={<PageTransition><PaymentCanceled /></PageTransition>} />
         <Route path="/unsubscribe" element={<PageTransition><Unsubscribe /></PageTransition>} />
+        <Route path="/services" element={<PageTransition><Services /></PageTransition>} />
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
       </Routes>
     </AnimatePresence>
