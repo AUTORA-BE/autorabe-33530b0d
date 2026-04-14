@@ -206,27 +206,65 @@ const DETAIL_COLUMNS = 'id,brand,model,year,price,mileage,fuel_type,transmission
 export const vehicleQueries = {
   /**
    * Fetches paginated vehicle listings with filters and sorting
+   * For popularity sorts (favorites/views/interactions), fetches a larger set
+   * and sorts client-side using the get_listing_popularity RPC.
    */
   async list(
     filters: VehicleFilters, 
     sortBy: VehicleSortOption = 'recent',
     page: number = 0
   ): Promise<{ vehicles: Vehicle[]; total: number; hasMore: boolean }> {
+    const isPopularitySort = ['favorites', 'views', 'interactions'].includes(sortBy);
+
     let query = applyFilters(
       supabase.from('car_listings_public').select(LIST_COLUMNS, { count: 'exact' }),
       filters
     );
-    query = applySorting(query, sortBy);
+    
+    if (isPopularitySort) {
+      // For popularity sorts: always boost first, then we'll re-sort by popularity
+      query = query.order('boost_level', { ascending: false, nullsFirst: false });
+      query = query.order('created_at', { ascending: false });
+    } else {
+      query = applySorting(query, sortBy);
+    }
     query = query.range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
 
     const { data, count, error } = await query;
-
     if (error) throw new Error(error.message);
 
     const total = count ?? 0;
-    const vehicles = (data || []).map((row) => mapListingToVehicle(row as unknown as VehicleListingRow));
-    const hasMore = vehicles.length === PAGE_SIZE && (page + 1) * PAGE_SIZE < total;
+    let vehicles = (data || []).map((row) => mapListingToVehicle(row as unknown as VehicleListingRow));
 
+    // For popularity sorts, fetch counts and re-sort
+    if (isPopularitySort && vehicles.length > 0) {
+      const ids = vehicles.map(v => v.id);
+      const { data: popData } = await supabase.rpc('get_listing_popularity', {
+        listing_ids: ids,
+      } as any);
+
+      if (popData) {
+        const popMap: Record<string, { favorites: number; views: number; interactions: number }> = {};
+        for (const row of popData as any[]) {
+          popMap[row.listing_id] = {
+            favorites: Number(row.favorite_count),
+            views: Number(row.view_count),
+            interactions: Number(row.interaction_count),
+          };
+        }
+
+        // Separate boosted and non-boosted, sort non-boosted by popularity
+        const boosted = vehicles.filter(v => v.isBoosted);
+        const nonBoosted = vehicles.filter(v => !v.isBoosted);
+
+        const sortKey = sortBy === 'favorites' ? 'favorites' : sortBy === 'views' ? 'views' : 'interactions';
+        nonBoosted.sort((a, b) => (popMap[b.id]?.[sortKey] || 0) - (popMap[a.id]?.[sortKey] || 0));
+
+        vehicles = [...boosted, ...nonBoosted];
+      }
+    }
+
+    const hasMore = vehicles.length === PAGE_SIZE && (page + 1) * PAGE_SIZE < total;
     return { vehicles, total, hasMore };
   },
 
