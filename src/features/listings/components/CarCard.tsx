@@ -109,13 +109,26 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
 
   const lezBadge = getLezBadgeInfo(car.euroNorm, car.fuelType);
 
+  const isBoosted = car.isBoosted;
+
   return (
     <article
       ref={ref}
-      className="rounded-2xl overflow-hidden bg-card border border-border/50 group cursor-pointer touch-target relative hover:-translate-y-1.5 active:scale-[0.98] transition-all duration-300 ease-out"
+      className={`rounded-2xl overflow-hidden bg-card border group cursor-pointer touch-target relative hover:-translate-y-1.5 active:scale-[0.98] transition-all duration-300 ease-out ${
+        isBoosted ? "border-amber-400/70 shadow-md" : "border-border/50"
+      }`}
       style={{ contain: "layout style paint" }}
       onClick={handleClick}
     >
+      {/* Sponsored badge */}
+      {isBoosted && (
+        <div className="absolute top-0 right-0 z-30">
+          <div className="bg-gradient-to-l from-amber-500 to-amber-400 text-white text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-bl-xl shadow-lg flex items-center gap-1">
+            <Sparkles className="w-3 h-3" />
+            Sponsorisé
+          </div>
+        </div>
+      )}
       {/* Gradient border glow on hover */}
       <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-primary/20 via-transparent to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-0" />
       <div className="absolute inset-0 rounded-2xl bg-card z-0" />

@@ -1040,6 +1040,15 @@ export type Database = {
           favorite_count: number
         }[]
       }
+      get_listing_popularity: {
+        Args: { listing_ids: string[] }
+        Returns: {
+          favorite_count: number
+          interaction_count: number
+          listing_id: string
+          view_count: number
+        }[]
+      }
       get_seller_contact: {
         Args: { listing_id: string }
         Returns: {

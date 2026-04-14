@@ -103,6 +103,9 @@ const LoadMoreGrid = ({
     { value: "price-desc", label: language === "nl" ? "Prijs aflopend" : "Prix décroissant" },
     { value: "year-desc", label: language === "nl" ? "Jaar aflopend" : "Année décroissante" },
     { value: "km-asc", label: language === "nl" ? "Km oplopend" : "Kilométrage croissant" },
+    { value: "favorites", label: language === "nl" ? "Meest favoriet" : "Plus de favoris" },
+    { value: "views", label: language === "nl" ? "Meest bekeken" : "Plus de vues" },
+    { value: "interactions", label: language === "nl" ? "Meest interacties" : "Plus d'interactions" },
   ];
 
   // Intersection observer for infinite scroll
