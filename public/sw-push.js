@@ -1,56 +1,54 @@
-// AutoRa Push Notification Service Worker
-const CACHE_NAME = 'autora-v1';
+// AutoRa Push & Offline Service Worker
+const OFFLINE_CACHE = 'autora-offline-v2';
+const OFFLINE_URL = '/offline.html';
 
-// Install event
+// Pre-cache offline page on install
 self.addEventListener('install', (event) => {
-  console.log('[SW] Service Worker installed');
+  event.waitUntil(
+    caches.open(OFFLINE_CACHE).then((cache) => cache.add(OFFLINE_URL))
+  );
   self.skipWaiting();
 });
 
-// Activate event
+// Clean old caches on activate
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Service Worker activated');
-  event.waitUntil(self.clients.claim());
+  event.waitUntil(
+    caches.keys().then((keys) =>
+      Promise.all(
+        keys.filter((k) => k !== OFFLINE_CACHE).map((k) => caches.delete(k))
+      )
+    ).then(() => self.clients.claim())
+  );
 });
 
-// Push event - handle incoming push notifications
+// Serve offline page when navigation fails
+self.addEventListener('fetch', (event) => {
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request).catch(() => caches.match(OFFLINE_URL))
+    );
+  }
+});
+
+// Push notification handler
 self.addEventListener('push', (event) => {
-  console.log('[SW] Push received:', event);
-  
-  let data = {
+  const defaults = {
     title: 'AutoRa',
-    body: 'Vous avez un nouveau message',
-    icon: '/favicon.png',
+    body: 'Vous avez une nouvelle notification',
+    icon: '/pwa-icon-192.png',
     badge: '/favicon.png',
-    tag: 'autora-message',
-    data: {
-      url: '/messages'
-    }
+    tag: 'autora-notification',
+    data: { url: '/messages' },
   };
-  
+
+  let data = defaults;
   try {
     if (event.data) {
       const payload = event.data.json();
-      data = {
-        title: payload.title || data.title,
-        body: payload.body || data.body,
-        icon: payload.icon || data.icon,
-        badge: payload.badge || data.badge,
-        tag: payload.tag || data.tag,
-        data: payload.data || data.data,
-        image: payload.image,
-        vibrate: [200, 100, 200],
-        requireInteraction: true,
-        actions: [
-          { action: 'open', title: 'Ouvrir' },
-          { action: 'close', title: 'Fermer' }
-        ]
-      };
+      data = { ...defaults, ...payload };
     }
-  } catch (e) {
-    console.error('[SW] Error parsing push data:', e);
-  }
-  
+  } catch (_) {}
+
   event.waitUntil(
     self.registration.showNotification(data.title, {
       body: data.body,
@@ -59,44 +57,31 @@ self.addEventListener('push', (event) => {
       tag: data.tag,
       data: data.data,
       image: data.image,
-      vibrate: data.vibrate,
-      requireInteraction: data.requireInteraction,
-      actions: data.actions
+      vibrate: [200, 100, 200],
+      actions: [
+        { action: 'open', title: 'Ouvrir' },
+        { action: 'close', title: 'Fermer' },
+      ],
     })
   );
 });
 
-// Notification click event
+// Notification click
 self.addEventListener('notificationclick', (event) => {
-  console.log('[SW] Notification clicked:', event.action);
-  
   event.notification.close();
-  
-  if (event.action === 'close') {
-    return;
-  }
-  
-  const urlToOpen = event.notification.data?.url || '/messages';
-  
-  event.waitUntil(
-    self.clients.matchAll({ type: 'window', includeUncontrolled: true })
-      .then((clientList) => {
-        // Check if there's already a window open
-        for (const client of clientList) {
-          if (client.url.includes(self.location.origin) && 'focus' in client) {
-            client.navigate(urlToOpen);
-            return client.focus();
-          }
-        }
-        // Open new window if none exists
-        if (self.clients.openWindow) {
-          return self.clients.openWindow(urlToOpen);
-        }
-      })
-  );
-});
+  if (event.action === 'close') return;
 
-// Handle notification close
-self.addEventListener('notificationclose', (event) => {
-  console.log('[SW] Notification closed');
+  const url = event.notification.data?.url || '/';
+
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients) => {
+      for (const client of clients) {
+        if (client.url.includes(self.location.origin) && 'focus' in client) {
+          client.navigate(url);
+          return client.focus();
+        }
+      }
+      return self.clients.openWindow(url);
+    })
+  );
 });
