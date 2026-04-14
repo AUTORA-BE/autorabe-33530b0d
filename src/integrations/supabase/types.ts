@@ -1033,6 +1033,13 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
+      get_favorite_counts: {
+        Args: { listing_ids: string[] }
+        Returns: {
+          car_listing_id: string
+          favorite_count: number
+        }[]
+      }
       get_seller_contact: {
         Args: { listing_id: string }
         Returns: {
