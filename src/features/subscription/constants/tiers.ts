@@ -98,8 +98,8 @@ export const SUBSCRIPTION_TIERS: Record<string, SubscriptionTier> = {
   premium: {
     name: 'Premium',
     slug: 'premium',
-    price_id: 'price_1TAyExFyYvJx8HZKzy5WhV0l',
-    product_id: 'prod_U9Gmx0BN0nenTW',
+    price_id: 'price_1TM8OVFyYvJx8HZKsANQJFDl',
+    product_id: 'prod_UKo0UuUbuB5vdq',
     price: 250,
     maxListings: null,
     category: 'professionnel',
