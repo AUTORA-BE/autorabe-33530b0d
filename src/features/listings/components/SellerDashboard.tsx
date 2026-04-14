@@ -548,7 +548,6 @@ export default function SellerDashboard() {
                             {formatDate(listing.createdAt)}
                           </span>
                           <BoostCountdown expiresAt={listing.boostExpiresAt} boostLevel={listing.boostLevel} />
-                          </span>
                         </div>
                       </div>
 
