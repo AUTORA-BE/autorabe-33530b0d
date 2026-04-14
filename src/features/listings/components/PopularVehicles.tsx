@@ -3,7 +3,7 @@
  * @module features/listings/components
  */
 
-import { useRef, memo } from "react";
+import { useRef, memo, useMemo } from "react";
 import { ChevronLeft, ChevronRight, Car } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -12,6 +12,7 @@ import { motion } from "framer-motion";
 import CarCard from "./CarCard";
 import { usePopularVehicles } from "../hooks/usePopularVehicles";
 import { CarCardSkeleton } from "@/components/skeletons/HomeSkeleton";
+import { useFavoriteCounts } from "@/features/favorites/hooks/useFavoriteCounts";
 
 export interface PopularVehiclesProps {
   isFavorite: (vehicleId: string) => boolean;
@@ -28,6 +29,8 @@ const PopularVehicles = memo(function PopularVehicles({
   const { vehicles, isLoading } = usePopularVehicles();
   const navigate = useNavigate();
   const { language } = useLanguage();
+  const listingIds = useMemo(() => vehicles.map(v => v.id), [vehicles]);
+  const favCounts = useFavoriteCounts(listingIds);
 
   const texts = {
     noListings: language === "nl" ? "Geen advertenties beschikbaar" : language === "en" ? "No listings available" : "Aucune annonce disponible",
@@ -145,6 +148,7 @@ const PopularVehicles = memo(function PopularVehicles({
                   isFavorite={isFavorite(vehicle.id)}
                   onToggleFavorite={onToggleFavorite}
                   onClick={onVehicleClick}
+                  favoriteCount={favCounts[vehicle.id]}
                 />
               </div>
             ))}
