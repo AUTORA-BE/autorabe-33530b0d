@@ -298,14 +298,14 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
 
         {/* Body Type */}
         <FilterSection icon={<Car className="w-4 h-4 text-primary" aria-hidden="true" />} title={t("filters.bodyType")}>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2.5">
             {[
               { id: "Berline", label: t("filters.bodySedan"), Icon: CarFront },
               { id: "SUV", label: t("filters.bodySUV"), Icon: Truck },
-              { id: "Citadine", label: t("filters.bodyCity"), Icon: CircleDot },
-              { id: "Compacte", label: t("filters.bodyCompact"), Icon: Car },
+              { id: "Citadine", label: t("filters.bodyCity"), Icon: Car },
+              { id: "Compacte", label: t("filters.bodyCompact"), Icon: CircleDot },
               { id: "Break", label: t("filters.bodyWagon"), Icon: RectangleHorizontal },
-              { id: "Coupé", label: t("filters.bodyCoupe"), Icon: Sparkles },
+              { id: "Coupé", label: t("filters.bodyCoupe"), Icon: Cone },
               { id: "Cabriolet", label: t("filters.bodyConvertible"), Icon: Sun },
               { id: "Monospace", label: t("filters.bodyMPV"), Icon: Users },
             ].map(({ id, label, Icon }) => (
@@ -315,15 +315,15 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
                   onFilterChange("bodyType", filters.bodyType === id ? "" : id)
                 }
                 aria-pressed={filters.bodyType === id}
-                className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+                className={`flex items-center gap-2.5 px-3.5 py-3 rounded-xl text-sm font-medium transition-all duration-200 border ${
                   filters.bodyType === id
-                    ? "bg-primary text-primary-foreground shadow-md"
-                    : "bg-secondary/60 text-muted-foreground hover:bg-secondary hover:text-foreground"
+                    ? "bg-primary text-primary-foreground border-primary shadow-md"
+                    : "bg-background border-border/50 text-muted-foreground hover:border-primary/30 hover:text-foreground"
                 }`}
-                style={filters.bodyType === id ? { boxShadow: "0 4px 12px -2px hsl(var(--primary) / 0.4)" } : undefined}
+                style={filters.bodyType === id ? { boxShadow: "0 4px 14px -3px hsl(var(--primary) / 0.35)" } : undefined}
               >
-                <Icon className="w-4 h-4 shrink-0" />
-                {label}
+                <Icon className="w-[18px] h-[18px] shrink-0" strokeWidth={1.5} />
+                <span className="truncate">{label}</span>
               </button>
             ))}
           </div>
