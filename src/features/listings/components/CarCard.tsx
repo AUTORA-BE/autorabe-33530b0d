@@ -19,6 +19,8 @@ export interface CarCardProps {
   onClick?: (carId: string) => void;
   /** Profil acheteur pour le TCO Matchmaker (optionnel) */
   buyerProfile?: BuyerProfile | null;
+  /** Nombre public de favoris pour cette annonce */
+  favoriteCount?: number;
 }
 
 const lezBadgeConfig = {
