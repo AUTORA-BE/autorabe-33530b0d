@@ -143,9 +143,9 @@ const ExpertServices = memo(() => {
                 variant="ghost"
                 size="sm"
                 className="group/btn gap-2 px-0 text-primary hover:text-primary hover:bg-transparent font-semibold"
-                onClick={() => navigate("/contact")}
+                onClick={() => navigate("/services")}
               >
-                {t("Nous contacter", "Contacteer ons", "Contact us")}
+                {t("En savoir plus", "Meer info", "Learn more")}
                 <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
               </Button>
             </motion.div>
