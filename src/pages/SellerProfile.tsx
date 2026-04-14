@@ -10,13 +10,14 @@ import { Header, Footer } from "@/shared/components";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Star, MapPin, Phone, Mail, Calendar, ArrowLeft, Car, MessageSquare, Info, Shield, Clock, ExternalLink, Send } from "lucide-react";
+import { Star, MapPin, Phone, Mail, Calendar, ArrowLeft, Car, MessageSquare, Info, Shield, Clock, ExternalLink, Send, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { fr, nl, enUS } from "date-fns/locale";
 import { motion } from "framer-motion";
+import { useFavoriteCounts } from "@/features/favorites/hooks/useFavoriteCounts";
 
 /* ---------- types ---------- */
 interface SellerProfile {
