@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import type { BuyerProfile } from "@/features/tco/hooks/useBuyerProfile";
+import { useFavoriteCounts } from "@/features/favorites/hooks/useFavoriteCounts";
 
 interface LoadMoreGridProps {
   cars: Car[];
@@ -305,6 +306,7 @@ const LoadMoreGrid = ({
                   onToggleFavorite={onToggleFavorite}
                   onClick={onCarClick}
                   buyerProfile={buyerProfile}
+                  favoriteCount={favCounts[car.id]}
                 />
               </div>
             ))}
