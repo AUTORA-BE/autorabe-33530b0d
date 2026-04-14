@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect, useRef, useCallback, memo, forwardRef } from "react";
-import { Fuel, Calendar, Gauge, Settings2, Leaf, X, ChevronDown, Euro, Car, MapPin, Building2, User, CarFront, Truck, CircleDot, RectangleHorizontal, Sparkles, Sun, Users, Palette, Cone } from "lucide-react";
+import { Fuel, Calendar, Gauge, Settings2, Leaf, X, ChevronDown, Euro, Car, MapPin, Building2, User, CarFront, Truck, CircleDot, RectangleHorizontal, Sun, Users, Palette, Cone, Droplets, Zap, FlaskConical, Cog } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getAllBrands, getModelsByBrand } from "@/utils/carUtils";
@@ -122,15 +122,15 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
   };
 
   const fuelTypes = [
-    { id: "essence", label: t("filters.gasoline") },
-    { id: "diesel", label: t("filters.diesel") },
-    { id: "hybride", label: t("filters.hybrid") },
-    { id: "electrique", label: t("filters.electric") },
+    { id: "essence", label: t("filters.gasoline"), Icon: Droplets },
+    { id: "diesel", label: t("filters.diesel"), Icon: Fuel },
+    { id: "hybride", label: t("filters.hybrid"), Icon: FlaskConical },
+    { id: "electrique", label: t("filters.electric"), Icon: Zap },
   ];
 
   const transmissions = [
-    { id: "manuelle", label: t("filters.manual") },
-    { id: "automatique", label: t("filters.automatic") },
+    { id: "manuelle", label: t("filters.manual"), Icon: Cog },
+    { id: "automatique", label: t("filters.automatic"), Icon: Settings2 },
   ];
 
   const toggleFuel = (fuelId: string) => {
@@ -331,20 +331,21 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
 
         {/* Fuel Type */}
         <FilterSection icon={<Fuel className="w-4 h-4 text-primary" aria-hidden="true" />} title={t("filters.fuel")}>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2.5">
             {fuelTypes.map((fuel) => (
               <button
                 key={fuel.id}
                 onClick={() => toggleFuel(fuel.id)}
                 aria-pressed={filters.fuelTypes.includes(fuel.id)}
-                className={`px-3 py-2.5 rounded-xl text-sm font-medium text-center transition-all duration-200 ${
+                className={`flex items-center gap-2.5 px-3.5 py-3 rounded-xl text-sm font-medium transition-all duration-200 border ${
                   filters.fuelTypes.includes(fuel.id)
-                    ? "bg-primary text-primary-foreground shadow-md"
-                    : "bg-secondary/60 text-muted-foreground hover:bg-secondary hover:text-foreground"
+                    ? "bg-primary text-primary-foreground border-primary shadow-md"
+                    : "bg-background border-border/50 text-muted-foreground hover:border-primary/30 hover:text-foreground"
                 }`}
-                style={filters.fuelTypes.includes(fuel.id) ? { boxShadow: "0 4px 12px -2px hsl(var(--primary) / 0.4)" } : undefined}
+                style={filters.fuelTypes.includes(fuel.id) ? { boxShadow: "0 4px 14px -3px hsl(var(--primary) / 0.35)" } : undefined}
               >
-                {fuel.label}
+                <fuel.Icon className="w-[18px] h-[18px] shrink-0" strokeWidth={1.5} />
+                <span className="truncate">{fuel.label}</span>
               </button>
             ))}
           </div>
@@ -366,8 +367,8 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
               aria-label="Plage de prix"
             />
             <div className="flex justify-between text-xs font-medium text-muted-foreground">
-              <span className="px-2 py-1 rounded-lg bg-secondary/60">{formatPriceLabel(filters.minPrice)}</span>
-              <span className="px-2 py-1 rounded-lg bg-secondary/60">{formatPriceLabel(filters.maxPrice)}</span>
+              <span className="px-2.5 py-1.5 rounded-lg bg-background border border-border/50">{formatPriceLabel(filters.minPrice)}</span>
+              <span className="px-2.5 py-1.5 rounded-lg bg-background border border-border/50">{formatPriceLabel(filters.maxPrice)}</span>
             </div>
           </div>
         </FilterSection>
@@ -388,8 +389,8 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
               aria-label="Plage d'années"
             />
             <div className="flex justify-between text-xs font-medium text-muted-foreground">
-              <span className="px-2 py-1 rounded-lg bg-secondary/60">{filters.yearMin}</span>
-              <span className="px-2 py-1 rounded-lg bg-secondary/60">{filters.yearMax}</span>
+              <span className="px-2.5 py-1.5 rounded-lg bg-background border border-border/50">{filters.yearMin}</span>
+              <span className="px-2.5 py-1.5 rounded-lg bg-background border border-border/50">{filters.yearMax}</span>
             </div>
           </div>
         </FilterSection>
@@ -410,8 +411,8 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
               aria-label="Plage de kilométrage"
             />
             <div className="flex justify-between text-xs font-medium text-muted-foreground">
-              <span className="px-2 py-1 rounded-lg bg-secondary/60">{formatKmLabel(filters.kmMin)}</span>
-              <span className="px-2 py-1 rounded-lg bg-secondary/60">{formatKmLabel(filters.kmMax)}</span>
+              <span className="px-2.5 py-1.5 rounded-lg bg-background border border-border/50">{formatKmLabel(filters.kmMin)}</span>
+              <span className="px-2.5 py-1.5 rounded-lg bg-background border border-border/50">{formatKmLabel(filters.kmMax)}</span>
             </div>
           </div>
         </FilterSection>
@@ -466,7 +467,7 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
 
         {/* Seller Type */}
         <FilterSection icon={<Building2 className="w-4 h-4 text-primary" aria-hidden="true" />} title={t("filters.sellerType")}>
-          <div className="flex gap-2">
+          <div className="grid grid-cols-2 gap-2.5">
             {[
               { id: "particulier", label: t("filters.sellerPrivate"), Icon: User },
               { id: "professionnel", label: t("filters.sellerPro"), Icon: Building2 },
@@ -480,15 +481,15 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
                   )
                 }
                 aria-pressed={filters.sellerTypeFilter === id}
-                className={`flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+                className={`flex items-center justify-center gap-2.5 px-3.5 py-3 rounded-xl text-sm font-medium transition-all duration-200 border ${
                   filters.sellerTypeFilter === id
-                    ? "bg-primary text-primary-foreground shadow-md"
-                    : "bg-secondary/60 text-muted-foreground hover:bg-secondary hover:text-foreground"
+                    ? "bg-primary text-primary-foreground border-primary shadow-md"
+                    : "bg-background border-border/50 text-muted-foreground hover:border-primary/30 hover:text-foreground"
                 }`}
-                style={filters.sellerTypeFilter === id ? { boxShadow: "0 4px 12px -2px hsl(var(--primary) / 0.4)" } : undefined}
+                style={filters.sellerTypeFilter === id ? { boxShadow: "0 4px 14px -3px hsl(var(--primary) / 0.35)" } : undefined}
               >
-                <Icon className="w-4 h-4 shrink-0" />
-                {label}
+                <Icon className="w-[18px] h-[18px] shrink-0" strokeWidth={1.5} />
+                <span className="truncate">{label}</span>
               </button>
             ))}
           </div>
@@ -496,7 +497,7 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
 
         {/* Transmission */}
         <FilterSection icon={<Settings2 className="w-4 h-4 text-primary" aria-hidden="true" />} title={t("filters.transmission")}>
-          <div className="flex gap-2">
+          <div className="grid grid-cols-2 gap-2.5">
             {transmissions.map((trans) => (
               <button
                 key={trans.id}
@@ -507,14 +508,15 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
                   )
                 }
                 aria-pressed={filters.transmission === trans.id}
-                className={`flex-1 px-3 py-2.5 rounded-xl text-sm font-medium text-center transition-all duration-200 ${
+                className={`flex items-center justify-center gap-2.5 px-3.5 py-3 rounded-xl text-sm font-medium transition-all duration-200 border ${
                   filters.transmission === trans.id
-                    ? "bg-primary text-primary-foreground shadow-md"
-                    : "bg-secondary/60 text-muted-foreground hover:bg-secondary hover:text-foreground"
+                    ? "bg-primary text-primary-foreground border-primary shadow-md"
+                    : "bg-background border-border/50 text-muted-foreground hover:border-primary/30 hover:text-foreground"
                 }`}
-                style={filters.transmission === trans.id ? { boxShadow: "0 4px 12px -2px hsl(var(--primary) / 0.4)" } : undefined}
+                style={filters.transmission === trans.id ? { boxShadow: "0 4px 14px -3px hsl(var(--primary) / 0.35)" } : undefined}
               >
-                {trans.label}
+                <trans.Icon className="w-[18px] h-[18px] shrink-0" strokeWidth={1.5} />
+                <span className="truncate">{trans.label}</span>
               </button>
             ))}
           </div>
@@ -522,7 +524,7 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
 
         {/* Euro Norm */}
         <FilterSection icon={<Leaf className="w-4 h-4 text-primary" aria-hidden="true" />} title={t("filters.euroNorm")}>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2.5">
             {EURO_NORMS.map((norm) => (
               <button
                 key={norm}
@@ -530,13 +532,14 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
                   onFilterChange("euroNorm", filters.euroNorm === norm ? "" : norm)
                 }
                 aria-pressed={filters.euroNorm === norm}
-                className={`px-3 py-2.5 rounded-xl text-sm font-medium text-center transition-all duration-200 ${
+                className={`flex items-center justify-center gap-2 px-3.5 py-3 rounded-xl text-sm font-medium transition-all duration-200 border ${
                   filters.euroNorm === norm
-                    ? "bg-primary text-primary-foreground shadow-md"
-                    : "bg-secondary/60 text-muted-foreground hover:bg-secondary hover:text-foreground"
+                    ? "bg-primary text-primary-foreground border-primary shadow-md"
+                    : "bg-background border-border/50 text-muted-foreground hover:border-primary/30 hover:text-foreground"
                 }`}
-                style={filters.euroNorm === norm ? { boxShadow: "0 4px 12px -2px hsl(var(--primary) / 0.4)" } : undefined}
+                style={filters.euroNorm === norm ? { boxShadow: "0 4px 14px -3px hsl(var(--primary) / 0.35)" } : undefined}
               >
+                <Leaf className="w-[16px] h-[16px] shrink-0" strokeWidth={1.5} />
                 {norm}
               </button>
             ))}
