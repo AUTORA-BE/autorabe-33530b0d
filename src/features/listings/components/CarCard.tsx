@@ -206,7 +206,13 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
         </div>
 
         {/* Price Badge — glassmorphism */}
-        <div className="absolute bottom-3 right-3">
+        <div className="absolute bottom-3 right-3 flex items-center gap-2">
+          {typeof favoriteCount === "number" && favoriteCount > 0 && (
+            <span className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-2xl bg-background/80 backdrop-blur-md text-sm text-muted-foreground border border-white/10" style={{ boxShadow: "0 4px 16px -4px hsl(var(--foreground) / 0.1)" }}>
+              <Heart className="w-3.5 h-3.5 text-red-400 fill-red-400" />
+              {favoriteCount}
+            </span>
+          )}
           <span
             className="inline-block px-3 py-2 rounded-2xl bg-background/80 backdrop-blur-md font-display text-lg font-bold text-foreground border border-white/10"
             style={{ boxShadow: "0 4px 16px -4px hsl(var(--foreground) / 0.15)" }}
