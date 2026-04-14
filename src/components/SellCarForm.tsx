@@ -49,7 +49,7 @@ const sellCarSchema = z.object({
   power: z.number().optional(),
   doors: z.number().optional(),
   euro_norm: z.string().optional(),
-  vin: z.string().length(17, "Le VIN doit contenir exactement 17 caractères"),
+  
   first_registration: z.string().optional(),
   car_pass_date: z.string().optional(),
   description: z.string().optional(),
@@ -97,7 +97,6 @@ export interface SellCarFormWatchData {
   seller_type?: string;
   car_pass_verified?: boolean;
   description?: string;
-  vin?: string;
   ct_valid?: boolean;
   maintenance_book_complete?: boolean;
   power?: number;
@@ -278,7 +277,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
           power: data.power || undefined,
           doors: data.doors || 5,
           euro_norm: data.euro_norm || undefined,
-          vin: data.vin || undefined,
+          
           first_registration: data.first_registration || undefined,
           description: data.description || undefined,
           contact_name: data.contact_name,
@@ -583,7 +582,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
         power: data.power || null,
         doors: data.doors || 5,
         euro_norm: data.euro_norm || null,
-        vin: data.vin,
+        
         first_registration: data.first_registration || null,
         description: data.description || null,
         contact_name: data.contact_name,
@@ -675,7 +674,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
       seller_type: watchedData.seller_type,
       car_pass_verified: watchedData.car_pass_verified,
       description: watchedData.description,
-      vin: watchedData.vin,
+      
       ct_valid: watchedData.ct_valid,
       maintenance_book_complete: watchedData.maintenance_book_complete,
       power: watchedData.power,
@@ -696,13 +695,11 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
 
   const selectedEuroNorm = form.watch('euro_norm');
   const lezWarning = getLezWarning(selectedEuroNorm);
-  const watchedVin = form.watch('vin');
-  const hasValidVin = watchedVin && watchedVin.length === 17;
 
   // Step validation
   const validateStep = async (step: number): Promise<boolean> => {
     if (step === 1) {
-      const result = await form.trigger(['brand', 'model', 'year', 'price', 'mileage', 'fuel_type', 'transmission', 'body_type', 'color', 'contact_name', 'contact_email', 'vin']);
+      const result = await form.trigger(['brand', 'model', 'year', 'price', 'mileage', 'fuel_type', 'transmission', 'body_type', 'color', 'contact_name', 'contact_email']);
       return result;
     }
     if (step === 2) {
@@ -1038,32 +1035,6 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
                     </FormItem>
                   )} />
 
-                  <FormField control={form.control} name="vin" render={({ field }) => (
-                    <FormItem className="md:col-span-2 lg:col-span-3">
-                      <FormLabel className="flex items-center gap-2">
-                        {t('sellForm.vin') || 'VIN (numéro de châssis)'} *
-                        {hasValidVin && (
-                          <Badge className="bg-primary/10 text-primary border-0 text-xs animate-in fade-in">
-                            <Check className="w-3 h-3 mr-1" />
-                            Vérifié
-                          </Badge>
-                        )}
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="WVWZZZ3CZWE123456"
-                          maxLength={17}
-                          {...field}
-                          onChange={(e) => field.onChange(e.target.value.toUpperCase().replace(/[^A-HJ-NPR-Z0-9]/g, ''))}
-                          className={`font-mono tracking-widest ${hasValidVin ? 'border-primary/50 ring-1 ring-primary/20' : ''}`}
-                        />
-                      </FormControl>
-                      <p className="text-xs text-muted-foreground">
-                        Le VIN contient 17 caractères alphanumériques. Il se trouve sur la carte grise ou le pare-brise.
-                      </p>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
                 </CardContent>
               </Card>
 

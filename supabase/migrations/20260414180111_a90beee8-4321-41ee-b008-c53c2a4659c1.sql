@@ -1,0 +1,1 @@
+ALTER TABLE public.car_listings DROP COLUMN IF EXISTS vin;

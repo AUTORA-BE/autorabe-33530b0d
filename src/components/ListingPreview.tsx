@@ -23,7 +23,7 @@ interface ListingPreviewData {
   seller_type?: string;
   car_pass_verified?: boolean;
   description?: string;
-  vin?: string;
+  
   ct_valid?: boolean;
   maintenance_book_complete?: boolean;
   power?: number;
@@ -82,7 +82,7 @@ function computeAdQuality(data: ListingPreviewData, photoCount: number): { score
   else tips.push("Rédigez une description détaillée (+100 car.)");
 
   // Documents & confiance (25 pts)
-  if (data.vin && data.vin.length === 17) score += 8; else tips.push("Ajoutez le VIN pour plus de confiance");
+  
   if (data.car_pass_verified) score += 7;
   if (data.ct_valid) score += 5;
   if (data.maintenance_book_complete) score += 5;

@@ -17,7 +17,7 @@ const CarChatbot = forwardRef<HTMLDivElement>(function CarChatbot(_props, ref) {
     {
       role: "assistant",
       content:
-        "Bonjour ! Je suis l'assistant AutoRa. Je peux vous aider à trouver votre prochaine voiture, répondre à vos questions automobiles ou rechercher un véhicule par numéro de châssis (VIN). Comment puis-je vous aider ?",
+        "Bonjour ! Je suis l'assistant AutoRa. Je peux vous aider à trouver votre prochaine voiture ou répondre à vos questions automobiles. Comment puis-je vous aider ?",
     },
   ]);
   const [input, setInput] = useState("");
@@ -138,7 +138,7 @@ const CarChatbot = forwardRef<HTMLDivElement>(function CarChatbot(_props, ref) {
 
   const quickActions = [
     { icon: Car, label: "Trouver une voiture", query: "Je cherche une voiture électrique avec un budget de 40 000€" },
-    { icon: Search, label: "Recherche VIN", query: "Peux-tu m'expliquer comment fonctionne un numéro de châssis VIN ?" },
+    { icon: Search, label: "Comparer", query: "Peux-tu comparer une Peugeot 308 et une Volkswagen Golf ?" },
   ];
 
   return (
