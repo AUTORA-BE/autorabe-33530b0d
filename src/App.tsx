@@ -34,6 +34,7 @@ const FAQ = lazy(() => import("./pages/FAQ"));
 const Compare = lazy(() => import("./pages/Compare"));
 const SellerDashboard = lazy(() => import("./pages/SellerDashboard"));
 const SellerStats = lazy(() => import("./pages/SellerStats"));
+const SellerProfile = lazy(() => import("./pages/SellerProfile"));
 const Settings = lazy(() => import("./pages/Settings"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Terms = lazy(() => import("./pages/Terms"));
@@ -101,6 +102,7 @@ function AppRoutes() {
         <Route path="/compare" element={<PageTransition><Compare /></PageTransition>} />
         <Route path="/dashboard" element={<PageTransition><SellerDashboard /></PageTransition>} />
         <Route path="/dashboard/stats" element={<PageTransition><SellerStats /></PageTransition>} />
+        <Route path="/seller/:userId" element={<PageTransition><SellerProfile /></PageTransition>} />
         <Route path="/admin/*" element={<PageTransition><AdminLayout /></PageTransition>} />
         <Route path="/settings" element={<PageTransition><Settings /></PageTransition>} />
         <Route path="/reset-password" element={<PageTransition><ResetPassword /></PageTransition>} />
