@@ -82,14 +82,9 @@ const SellerProfile = () => {
 
       if (profileRes.data) setProfile(profileRes.data as SellerProfile);
 
-      // Filter listings that belong to this seller via car_listings (we query approved ones)
-      // Since car_listings_public doesn't expose user_id, we query car_listings directly for this seller
+      // Use the secure RPC function to get seller listings without exposing sensitive columns
       const { data: sellerListings } = await supabase
-        .from("car_listings")
-        .select("id, brand, model, year, price, mileage, fuel_type, transmission, photos, location, created_at")
-        .eq("user_id", userId)
-        .eq("status", "approved")
-        .order("created_at", { ascending: false });
+        .rpc("get_seller_public_listings", { _seller_id: userId });
 
       if (sellerListings) setListings(sellerListings as SellerListing[]);
 

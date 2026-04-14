@@ -145,6 +145,26 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Validate that the caller is using the service_role key
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const token = authHeader.replace("Bearer ", "");
+    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    
+    // Only allow service_role key (internal calls only)
+    if (token !== serviceRoleKey) {
+      return new Response(JSON.stringify({ error: "Forbidden" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const { vehicle } = (await req.json()) as { vehicle: VehiclePayload };
     if (!vehicle?.id) {
       return new Response(JSON.stringify({ error: "Missing vehicle data" }), {
@@ -155,8 +175,23 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+      serviceRoleKey
     );
+
+    // Validate that the vehicle actually exists in the database
+    const { data: realVehicle, error: vehicleError } = await supabase
+      .from("car_listings")
+      .select("id")
+      .eq("id", vehicle.id)
+      .eq("status", "approved")
+      .maybeSingle();
+
+    if (vehicleError || !realVehicle) {
+      return new Response(JSON.stringify({ error: "Vehicle not found or not approved" }), {
+        status: 404,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     // Fetch all active alerts
     const { data: alerts, error: alertsError } = await supabase
