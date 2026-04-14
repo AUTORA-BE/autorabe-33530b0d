@@ -72,8 +72,8 @@ export const SUBSCRIPTION_TIERS: Record<string, SubscriptionTier> = {
   pro: {
     name: 'Pro',
     slug: 'pro',
-    price_id: 'price_1T0s6eFyYvJx8HZKD5O9QOcF',
-    product_id: 'prod_TypmmKAPYE3m1t',
+    price_id: 'price_1TM8CrFyYvJx8HZKEnPfyuAW',
+    product_id: 'prod_UKno1VUDM4yfzP',
     price: 50,
     maxListings: 10,
     popular: true,
