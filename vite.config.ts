@@ -119,6 +119,7 @@ export default defineConfig(({ mode }) => ({
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
           'vendor-query': ['@tanstack/react-query'],
           'vendor-motion': ['framer-motion'],
+          'vendor-icons': ['lucide-react'],
           'vendor-supabase': ['@supabase/supabase-js'],
         },
       },

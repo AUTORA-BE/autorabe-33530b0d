@@ -1,11 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ChevronUp } from "lucide-react";
 
 const ScrollToTop = () => {
   const [visible, setVisible] = useState(false);
+  const ticking = useRef(false);
 
   useEffect(() => {
-    const onScroll = () => setVisible(window.scrollY > 400);
+    const onScroll = () => {
+      if (!ticking.current) {
+        ticking.current = true;
+        requestAnimationFrame(() => {
+          setVisible(window.scrollY > 400);
+          ticking.current = false;
+        });
+      }
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
