@@ -296,6 +296,21 @@ const SellerProfile = () => {
                     {language === "nl" ? "Geverifieerd" : "Vérifié"}
                   </span>
                 </div>
+
+                {/* Contact button */}
+                <div className="mt-5 flex justify-center sm:justify-start">
+                  <Button
+                    onClick={handleContact}
+                    disabled={contacting}
+                    className="btn-primary-gradient rounded-xl px-6 py-3 h-auto text-sm font-semibold shadow-md"
+                  >
+                    <MessageSquare className="w-4 h-4 mr-2" strokeWidth={1.5} />
+                    {contacting
+                      ? (language === "nl" ? "Even geduld..." : "Chargement...")
+                      : (language === "nl" ? "Contacteer verkoper" : "Contacter le vendeur")
+                    }
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
