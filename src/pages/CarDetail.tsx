@@ -607,42 +607,40 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                 )}
               </motion.div>
 
-              {/* Mobile FAB buttons */}
-              <div className="lg:hidden fixed bottom-16 right-3 z-50 flex flex-col gap-2 safe-bottom">
-                <motion.button
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.3, type: "spring", stiffness: 400 }}
-                  onClick={handleShare}
-                  className="w-10 h-10 rounded-full bg-card border border-border/50 shadow-xl flex items-center justify-center text-muted-foreground active:scale-90 transition-transform"
-                  aria-label="Partager"
+              {/* Mobile floating contact bar — luxe bottom bar */}
+              <div className="lg:hidden fixed bottom-[68px] left-0 right-0 z-50 px-3 pb-1 safe-bottom">
+                <motion.div
+                  initial={{ y: 60, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.3, type: "spring", stiffness: 300, damping: 25 }}
+                  className="flex items-center gap-2 p-2 rounded-2xl bg-card/90 backdrop-blur-xl border border-border/20 shadow-2xl"
                 >
-                  <Share2 className="w-4 h-4" />
-                </motion.button>
-                <motion.button
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.2, type: "spring", stiffness: 400 }}
-                  onClick={() => toggleFavorite(car.id)}
-                  className={`w-10 h-10 rounded-full shadow-xl flex items-center justify-center active:scale-90 transition-transform ${
-                    isFavorite(car.id)
-                      ? "bg-red-500 text-white shadow-red-500/30"
-                      : "bg-card border border-border/50 text-muted-foreground"
-                  }`}
-                  aria-label="Favori"
-                >
-                  <Heart className={`w-4 h-4 ${isFavorite(car.id) ? "fill-current" : ""}`} />
-                </motion.button>
-                <motion.button
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.1, type: "spring", stiffness: 400 }}
-                  onClick={() => handleContact("Message")}
-                  className="w-12 h-12 rounded-full bg-primary text-primary-foreground shadow-xl shadow-primary/30 flex items-center justify-center active:scale-90 transition-transform"
-                  aria-label="Contacter"
-                >
-                  <MessageCircle className="w-5 h-5" />
-                </motion.button>
+                  <button
+                    onClick={handleShare}
+                    className="w-10 h-10 rounded-xl bg-secondary/60 flex items-center justify-center text-muted-foreground active:scale-90 transition-transform touch-manipulation"
+                    aria-label="Partager"
+                  >
+                    <Share2 className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => toggleFavorite(car.id)}
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center active:scale-90 transition-transform touch-manipulation ${
+                      isFavorite(car.id)
+                        ? "bg-red-500 text-white"
+                        : "bg-secondary/60 text-muted-foreground"
+                    }`}
+                    aria-label="Favori"
+                  >
+                    <Heart className={`w-4 h-4 ${isFavorite(car.id) ? "fill-current" : ""}`} />
+                  </button>
+                  <button
+                    onClick={() => handleContact("Message")}
+                    className="flex-1 h-10 rounded-xl bg-primary text-primary-foreground text-sm font-semibold flex items-center justify-center gap-2 active:scale-[0.98] transition-transform shadow-lg shadow-primary/20 touch-manipulation"
+                  >
+                    <MessageCircle className="w-4 h-4" />
+                    Contacter
+                  </button>
+                </motion.div>
               </div>
 
               {/* Mobile swipeable tabs for specs */}
