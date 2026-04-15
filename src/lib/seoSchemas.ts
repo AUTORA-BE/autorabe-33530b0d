@@ -142,3 +142,77 @@ export const localBusinessSchema = {
   },
   priceRange: "€€",
 };
+
+/** ItemList schema for search results / popular vehicles */
+export function itemListSchema(
+  items: { name: string; url: string; position: number }[]
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: items.map((item) => ({
+      "@type": "ListItem",
+      position: item.position,
+      name: item.name,
+      url: item.url,
+    })),
+  };
+}
+
+/** AggregateOffer schema for homepage */
+export function aggregateOfferSchema(opts: {
+  lowPrice: number;
+  highPrice: number;
+  offerCount: number;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "AggregateOffer",
+    priceCurrency: "EUR",
+    lowPrice: opts.lowPrice,
+    highPrice: opts.highPrice,
+    offerCount: opts.offerCount,
+    url: SITE_URL,
+  };
+}
+
+/** HowTo schema for guide pages */
+export function howToSchema(guide: {
+  name: string;
+  description: string;
+  steps: { name: string; text: string }[];
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: guide.name,
+    description: guide.description,
+    step: guide.steps.map((s, i) => ({
+      "@type": "HowToStep",
+      position: i + 1,
+      name: s.name,
+      text: s.text,
+    })),
+  };
+}
+
+/** Article schema for guide/blog pages */
+export function articleSchema(article: {
+  title: string;
+  description: string;
+  url: string;
+  datePublished: string;
+  dateModified?: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: article.title,
+    description: article.description,
+    url: article.url,
+    datePublished: article.datePublished,
+    dateModified: article.dateModified || article.datePublished,
+    author: organizationSchema,
+    publisher: organizationSchema,
+  };
+}
