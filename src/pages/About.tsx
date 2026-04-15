@@ -53,8 +53,8 @@ const About = () => {
   return (
     <div className="page-gradient">
       <SEOHead 
-        title="À propos - AutoRa"
-        description="Découvrez AutoRa, la marketplace automobile belge de confiance. Fondée en 2024, nous révolutionnons l'achat et la vente de véhicules en Belgique."
+        title="À propos d'AutoRa — Marketplace auto belge de confiance"
+        description="Découvrez AutoRa, la marketplace automobile belge fondée en 2024. Véhicules vérifiés Car-Pass, conformité LEZ garantie et transparence totale."
         url="https://autora.be/about"
         jsonLd={[
           localBusinessSchema,

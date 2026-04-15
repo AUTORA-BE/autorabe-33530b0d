@@ -193,8 +193,10 @@ export default function Pricing() {
   return (
     <div className="page-gradient">
       <SEOHead
-        title="Tarifs & Abonnements | AutoRa"
-        description="Découvrez les offres AutoRa : Gratuit, Boost, Pro Garage, Premium et BOSS. Vendez vos voitures en Belgique avec le plan adapté à vos besoins."
+        title="Tarifs & Abonnements vendeurs"
+        description="Comparez les 5 offres AutoRa : Gratuit, Boost (20€/mois), Pro Garage (50€), Premium (250€) et BOSS (sur mesure). Vendez vos voitures en Belgique avec le plan idéal."
+        url="https://autora.be/pricing"
+      />
       />
       <Header />
       <main className="min-h-screen pt-28 pb-20">
