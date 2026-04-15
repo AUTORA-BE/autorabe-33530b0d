@@ -15,8 +15,8 @@ const CalculateurTCO = () => {
   return (
     <>
       <SEOHead
-        title="Calculateur TCO - Coût Réel Voiture 5 ans"
-        description="Calculez le vrai coût de votre voiture : achat, carburant, entretien, assurance, taxes. Données officielles Belgique 2026. Gratuit et précis."
+        title="Calculateur TCO Belgique — Coût réel voiture sur 5 ans"
+        description="Calculez le vrai coût de votre voiture en Belgique : achat, carburant, entretien, assurance, taxes régionales (Wallonie, Bruxelles, Flandre). Données 2026. Gratuit."
         url="https://autora.be/calculateur-tco"
       />
       <Header />

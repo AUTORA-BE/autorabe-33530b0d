@@ -50,6 +50,9 @@ const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
 const PaymentCanceled = lazy(() => import("./pages/PaymentCanceled"));
 const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 const Services = lazy(() => import("./pages/Services"));
+const GuideLEZ = lazy(() => import("./pages/guides/GuideLEZ"));
+const GuideCarPass = lazy(() => import("./pages/guides/GuideCarPass"));
+const GuideAchatOccasion = lazy(() => import("./pages/guides/GuideAchatOccasion"));
 
 /** Minimal loading fallback shown while lazy chunks load */
 function PageLoader() {
@@ -119,6 +122,9 @@ function AppRoutes() {
         <Route path="/payment-canceled" element={<PageTransition><PaymentCanceled /></PageTransition>} />
         <Route path="/unsubscribe" element={<PageTransition><Unsubscribe /></PageTransition>} />
         <Route path="/services" element={<PageTransition><Services /></PageTransition>} />
+        <Route path="/guide/lez-belgique" element={<PageTransition><GuideLEZ /></PageTransition>} />
+        <Route path="/guide/car-pass" element={<PageTransition><GuideCarPass /></PageTransition>} />
+        <Route path="/guide/acheter-voiture-occasion" element={<PageTransition><GuideAchatOccasion /></PageTransition>} />
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
       </Routes>
     </AnimatePresence>
