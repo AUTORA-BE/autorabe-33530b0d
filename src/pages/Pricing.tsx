@@ -197,7 +197,6 @@ export default function Pricing() {
         description="Comparez les 5 offres AutoRa : Gratuit, Boost (20€/mois), Pro Garage (50€), Premium (250€) et BOSS (sur mesure). Vendez vos voitures en Belgique avec le plan idéal."
         url="https://autora.be/pricing"
       />
-      />
       <Header />
       <main className="min-h-screen pt-28 pb-20">
         <div className="container mx-auto px-4">
