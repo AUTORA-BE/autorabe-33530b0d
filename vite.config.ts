@@ -61,7 +61,7 @@ export default defineConfig(({ mode }) => ({
             },
           },
         ],
-        navigateFallback: "/offline.html",
+        navigateFallback: "/index.html",
         navigateFallbackDenylist: [/^\/~oauth/, /^\/api/],
       },
       manifest: {
