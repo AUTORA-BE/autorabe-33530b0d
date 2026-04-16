@@ -41,6 +41,7 @@ const Footer = () => {
         { to: "/about", label: language === "nl" ? "Over ons" : language === "en" ? "About us" : language === "de" ? "Über uns" : "À propos" },
         { to: "/services", label: language === "nl" ? "Onze diensten" : language === "en" ? "Our services" : language === "de" ? "Unsere Dienste" : "Nos services" },
         { to: "/contact", label: "Contact" },
+        { to: "/blog", label: "Blog" },
         { to: "/faq", label: "FAQ" },
       ],
     },
