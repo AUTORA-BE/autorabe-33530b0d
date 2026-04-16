@@ -53,6 +53,8 @@ const Services = lazy(() => import("./pages/Services"));
 const GuideLEZ = lazy(() => import("./pages/guides/GuideLEZ"));
 const GuideCarPass = lazy(() => import("./pages/guides/GuideCarPass"));
 const GuideAchatOccasion = lazy(() => import("./pages/guides/GuideAchatOccasion"));
+const Blog = lazy(() => import("./pages/Blog"));
+const BlogArticle = lazy(() => import("./pages/blog/BlogArticle"));
 
 /** Minimal loading fallback shown while lazy chunks load */
 function PageLoader() {
@@ -125,6 +127,8 @@ function AppRoutes() {
         <Route path="/guide/lez-belgique" element={<PageTransition><GuideLEZ /></PageTransition>} />
         <Route path="/guide/car-pass" element={<PageTransition><GuideCarPass /></PageTransition>} />
         <Route path="/guide/acheter-voiture-occasion" element={<PageTransition><GuideAchatOccasion /></PageTransition>} />
+        <Route path="/blog" element={<PageTransition><Blog /></PageTransition>} />
+        <Route path="/blog/:slug" element={<PageTransition><BlogArticle /></PageTransition>} />
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
       </Routes>
     </AnimatePresence>
