@@ -4,7 +4,7 @@
  */
 
 import { memo, useState, useEffect, useRef, useCallback } from "react";
-import { Search, ChevronDown, X, Clock, TrendingUp, ArrowRight } from "lucide-react";
+import { Search, ChevronDown, X, Clock, TrendingUp, ArrowRight, ShieldCheck, MapPin, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getAllBrands, getModelsByBrand } from "@/utils/carUtils";
 import { useLanguage } from "@/contexts/LanguageContext";
