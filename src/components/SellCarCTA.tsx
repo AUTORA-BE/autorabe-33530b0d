@@ -37,9 +37,36 @@ const SellCarCTA = memo(() => {
 
   return (
     <section className="container mx-auto px-6 sm:px-8 py-20 sm:py-32">
-      <div className="relative overflow-hidden rounded-3xl border border-border/15 bg-card/15">
+      <motion.div
+        {...fadeUp(0)}
+        className="relative overflow-hidden rounded-3xl border border-border/40 bg-card/60 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-shadow duration-500"
+      >
+        {/* Premium ambient glow */}
+        <div className="absolute inset-0 pointer-events-none opacity-60">
+          <div className="absolute -top-32 -right-24 w-[420px] h-[420px] rounded-full blur-3xl"
+            style={{ background: "radial-gradient(circle, hsl(var(--primary) / 0.08) 0%, transparent 70%)" }} />
+          <div className="absolute -bottom-32 -left-24 w-[360px] h-[360px] rounded-full blur-3xl"
+            style={{ background: "radial-gradient(circle, hsl(var(--primary) / 0.05) 0%, transparent 70%)" }} />
+        </div>
+        {/* Subtle top accent line */}
+        <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+
         <div className="relative px-8 py-20 sm:px-16 sm:py-28">
           <div className="max-w-2xl mx-auto">
+            {/* Eyebrow badge */}
+            <motion.div
+              {...fadeUp(0.02)}
+              className="flex justify-center mb-6"
+            >
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-[11px] font-light text-primary tracking-wide">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary" />
+                </span>
+                {isNl ? "Voor particulieren — gratis" : "Pour particuliers — gratuit"}
+              </span>
+            </motion.div>
+
             {/* Headline */}
             <motion.h2
               {...fadeUp(0.05)}
@@ -54,23 +81,23 @@ const SellCarCTA = memo(() => {
 
             <motion.p
               {...fadeUp(0.1)}
-              className="text-muted-foreground text-sm font-light text-center max-w-lg mx-auto mb-14"
+              className="text-muted-foreground text-sm sm:text-base font-light text-center max-w-lg mx-auto mb-14 leading-relaxed"
             >
               {isNl
                 ? "Bereik duizenden kopers in België. Uw advertentie wordt automatisch geverifieerd."
                 : "Touchez des milliers d'acheteurs en Belgique. Votre annonce est vérifiée automatiquement."}
             </motion.p>
 
-            {/* Steps — minimal */}
+            {/* Steps — premium with hover lift */}
             <motion.div
               {...fadeUp(0.15)}
               className="grid grid-cols-3 gap-4 sm:gap-8 mb-14 max-w-md mx-auto"
             >
               {steps.map((step, i) => (
-                <div key={i} className="flex flex-col items-center text-center gap-3">
-                  <div className="relative w-14 h-14 rounded-3xl bg-primary/5 flex items-center justify-center">
-                    <step.icon className="w-5 h-5 text-primary/70" strokeWidth={1.5} />
-                    <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary text-primary-foreground text-[10px] font-medium flex items-center justify-center">
+                <div key={i} className="group flex flex-col items-center text-center gap-3">
+                  <div className="relative w-14 h-14 rounded-3xl bg-primary/10 border border-primary/15 flex items-center justify-center shadow-sm transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_12px_28px_-8px_hsl(var(--primary)/0.4)] group-hover:border-primary/30">
+                    <step.icon className="w-5 h-5 text-primary" strokeWidth={1.5} />
+                    <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-primary text-primary-foreground text-[10px] font-medium flex items-center justify-center shadow-md">
                       {step.num}
                     </span>
                   </div>
@@ -88,7 +115,7 @@ const SellCarCTA = memo(() => {
             >
               {benefits.map((b, i) => (
                 <div key={i} className="flex items-center gap-2.5 text-sm text-foreground font-light">
-                  <CheckCircle2 className="w-4 h-4 text-primary/60 shrink-0" strokeWidth={1.5} />
+                  <CheckCircle2 className="w-4 h-4 text-primary shrink-0" strokeWidth={1.8} />
                   <span>{isNl ? b.nl : b.fr}</span>
                 </div>
               ))}
@@ -99,7 +126,7 @@ const SellCarCTA = memo(() => {
               <Button
                 size="lg"
                 onClick={() => navigate("/sell")}
-                className="rounded-full h-13 px-10 font-medium text-sm transition-all group active:scale-[0.97]"
+                className="rounded-full h-13 px-10 font-semibold text-sm group active:scale-[0.97] shadow-[0_8px_24px_-8px_hsl(var(--primary)/0.5)] hover:shadow-[0_14px_36px_-8px_hsl(var(--primary)/0.6)] hover:-translate-y-0.5 transition-all duration-300"
               >
                 {isNl ? "Start mijn advertentie" : "Publier mon annonce"}
                 <ArrowRight className="h-4 w-4 ml-2 transition-transform group-hover:translate-x-1" />
@@ -110,7 +137,7 @@ const SellCarCTA = memo(() => {
             </motion.div>
           </div>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 });
