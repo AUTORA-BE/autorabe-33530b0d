@@ -489,17 +489,17 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
               {t("hero.subtitle") || "Véhicules vérifiés Car-Pass · Conformité LEZ garantie · Calcul TCO régional"}
             </motion.p>
 
-            {/* Search Box — Glassmorphic, minimal */}
+            {/* Search Box — Glassmorphic, premium */}
             {isMobile ? (
               <motion.button
                 {...fadeUp(0.25)}
                 onClick={() => setMobileSearchOpen(true)}
-                className="w-full p-5 rounded-3xl bg-card/40 backdrop-blur-xl border border-border/20 flex items-center gap-4 active:scale-[0.98] transition-transform"
+                className="w-full p-5 rounded-3xl bg-card/60 backdrop-blur-xl border border-border/40 shadow-lg hover:shadow-2xl hover:border-primary/30 flex items-center gap-4 active:scale-[0.98] transition-all duration-300"
                 role="search"
                 aria-label={t("hero.search")}
               >
-                <div className="w-11 h-11 rounded-2xl bg-primary/8 flex items-center justify-center shrink-0">
-                  <Search className="w-5 h-5 text-primary/70" strokeWidth={1.5} />
+                <div className="w-11 h-11 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
+                  <Search className="w-5 h-5 text-primary" strokeWidth={1.5} />
                 </div>
                 <span className="text-muted-foreground text-sm font-light text-left flex-1">
                   {t("hero.searchPlaceholder") || "Marque, modèle, budget..."}
@@ -509,53 +509,74 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
             ) : (
               <motion.div
                 {...fadeUp(0.25)}
-                className="p-4 sm:p-5 rounded-3xl bg-card/40 backdrop-blur-xl border border-border/20 max-w-3xl mx-auto"
+                className="p-4 sm:p-5 rounded-3xl bg-card/60 backdrop-blur-xl border border-border/40 shadow-xl hover:shadow-2xl transition-shadow duration-500 max-w-3xl mx-auto"
                 role="search"
                 aria-label={t("hero.search")}
               >
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                   {/* Brand */}
-                  <div className="relative">
+                  <div className="relative group">
                     <select value={selectedBrand} onChange={(e) => setSelectedBrand(e.target.value)} onKeyDown={handleKeyDown}
-                      className="w-full appearance-none cursor-pointer pr-10 text-sm font-light py-4 px-4 bg-secondary/30 rounded-2xl border-0 text-foreground focus:outline-none focus:ring-1 focus:ring-primary/20 transition-all" aria-label={t("filters.brand")}>
+                      className="w-full appearance-none cursor-pointer pr-10 text-sm font-light py-4 px-4 bg-secondary/40 hover:bg-secondary/60 rounded-2xl border-0 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-200" aria-label={t("filters.brand")}>
                       <option value="">{t("filters.brand")}</option>
                       {brands.map((brand) => (<option key={brand} value={brand}>{brand}</option>))}
                     </select>
-                    <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50 pointer-events-none" />
+                    <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60 pointer-events-none transition-transform group-hover:translate-y-0 group-focus-within:rotate-180" />
                   </div>
 
                   {/* Model */}
-                  <div className="relative">
+                  <div className="relative group">
                     <select value={model} onChange={(e) => setModel(e.target.value)} onKeyDown={handleKeyDown}
-                      className="w-full appearance-none cursor-pointer pr-10 text-sm font-light py-4 px-4 bg-secondary/30 rounded-2xl border-0 text-foreground focus:outline-none focus:ring-1 focus:ring-primary/20 transition-all" disabled={!selectedBrand} aria-label={t("filters.model")}>
+                      className="w-full appearance-none cursor-pointer pr-10 text-sm font-light py-4 px-4 bg-secondary/40 hover:bg-secondary/60 rounded-2xl border-0 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed" disabled={!selectedBrand} aria-label={t("filters.model")}>
                       <option value="">{selectedBrand ? t("filters.allModels") : t("filters.model")}</option>
                       {models.map((m) => (<option key={m} value={m}>{m}</option>))}
                     </select>
-                    <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50 pointer-events-none" />
+                    <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60 pointer-events-none" />
                   </div>
 
                   {/* Budget */}
-                  <div className="relative">
+                  <div className="relative group">
                     <select value={selectedBudget} onChange={(e) => setSelectedBudget(Number(e.target.value))} onKeyDown={handleKeyDown}
-                      className="w-full appearance-none cursor-pointer pr-10 text-sm font-light py-4 px-4 bg-secondary/30 rounded-2xl border-0 text-foreground focus:outline-none focus:ring-1 focus:ring-primary/20 transition-all" aria-label={t("filters.budget")}>
+                      className="w-full appearance-none cursor-pointer pr-10 text-sm font-light py-4 px-4 bg-secondary/40 hover:bg-secondary/60 rounded-2xl border-0 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all duration-200" aria-label={t("filters.budget")}>
                       <option value={0}>{t("filters.budget")}</option>
                       {BUDGET_OPTIONS.map((budget) => (<option key={budget.value} value={budget.value}>{budget.label}</option>))}
                     </select>
-                    <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50 pointer-events-none" />
+                    <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60 pointer-events-none" />
                   </div>
 
                   {/* Search & Voice */}
                   <div className="sm:col-span-2 md:col-span-1 flex gap-2 min-w-0 overflow-hidden">
                     <VoiceSearchButton onResult={handleVoiceResult} />
                     <button onClick={handleSearch}
-                      className="flex-1 min-w-0 flex items-center justify-center gap-2 py-4 rounded-2xl text-primary-foreground font-medium bg-primary hover:brightness-110 active:scale-[0.97] transition-all duration-200 overflow-hidden" aria-label={t("hero.search")}>
-                      <Search className="w-4 h-4 shrink-0" strokeWidth={1.5} aria-hidden="true" />
-                      <span className="font-medium text-sm truncate">{t("hero.search")}</span>
+                      className="flex-1 min-w-0 flex items-center justify-center gap-2 py-4 rounded-2xl text-primary-foreground font-semibold bg-primary hover:brightness-110 active:scale-[0.97] transition-all duration-200 overflow-hidden shadow-[0_8px_24px_-8px_hsl(var(--primary)/0.5)] hover:shadow-[0_12px_32px_-6px_hsl(var(--primary)/0.6)] hover:-translate-y-0.5" aria-label={t("hero.search")}>
+                      <Search className="w-4 h-4 shrink-0" strokeWidth={2} aria-hidden="true" />
+                      <span className="text-sm truncate">{t("hero.search")}</span>
                     </button>
                   </div>
                 </div>
               </motion.div>
             )}
+
+            {/* Trust micro-row — premium belge signals */}
+            <motion.div
+              {...fadeUp(0.35)}
+              className="mt-6 sm:mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-[11px] sm:text-xs text-muted-foreground font-light"
+            >
+              <span className="inline-flex items-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-primary" strokeWidth={1.8} />
+                {t("hero.trustCarpass") || "Car-Pass vérifié"}
+              </span>
+              <span className="hidden sm:inline-block w-px h-3 bg-border" />
+              <span className="inline-flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-primary" strokeWidth={1.8} />
+                {t("hero.trustLez") || "LEZ Belgique"}
+              </span>
+              <span className="hidden sm:inline-block w-px h-3 bg-border" />
+              <span className="inline-flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-primary" strokeWidth={1.8} />
+                {t("hero.trustBelgian") || "100% belge"}
+              </span>
+            </motion.div>
           </div>
         </div>
       </section>
