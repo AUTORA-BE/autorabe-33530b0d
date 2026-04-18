@@ -1,278 +1,152 @@
 <div align="center">
 
-  <img src="https://via.placeholder.com/220x80/22c55e/ffffff?text=Autora.be" alt="AutoRA.be" width="220" />
+  <img src="public/pwa-icon-192.png" alt="AutoRA.be" width="96" />
 
   <h1>AutoRA.be</h1>
   <h3>La nouvelle façon de trouver sa prochaine voiture en Belgique</h3>
 
+  <p><strong>🇧🇪 Private Beta MVP — v1.0.0-beta.1</strong></p>
+
 </div>
 
-## Ce que nous faisons différemment
+---
 
-AutoRA.be est né d'un constat simple : acheter ou vendre une voiture d'occasion en Belgique doit être **clair**, **fiable** et **agréable**.
+## 🧪 Private Beta — Instructions pour testeurs
 
-Nous mettons l'accent sur :
-- Des véhicules vérifiés **LEZ** et **Car-Pass**
-- Une recherche rapide et intelligente
-- Une interface pensée pour les Belges (FR / NL / DE / EN)
-- La tranquillité d'esprit grâce au signalement facile et à la modération active
+> Bienvenue ! Vous testez la version pré-lancement d'AutoRA.be.
+> Votre feedback nous aide à finaliser la plateforme avant l'ouverture publique.
 
-## Ce que tu peux faire aujourd'hui
+### 🔗 Accès
 
-- Chercher par marque, modèle, budget, année, kilométrage ou compatibilité LEZ
-- Découvrir les annonces avec photos nettes et détails complets
-- Signaler une annonce en 2 clics si quelque chose cloche
-- Passer en 4 langues en un clic
-- Naviguer facilement sur mobile ou ordinateur
+- **Application** : https://autora.be
+- **Aperçu Lovable** : https://autorabe.lovable.app
 
-## Fonctionnalités phares
+### ✅ Ce qu'il faut tester en priorité
 
-- Filtres intelligents (marque → modèles suggérés automatiquement)
-- Slider des marques avec logos officiels HD
-- Page détail véhicule claire et complète
-- Signalement intégré + dashboard de modération
-- Navigation fluide (scroll progressif, retour en haut automatique)
-- Expérience mobile irréprochable
-- Conformité RGPD (cookie banner + mentions légales)
+1. **Création de compte** (email + Google) — vérification du téléphone +32 obligatoire
+2. **Recherche** — filtres marque/modèle/budget/km, persistance dans l'URL, partage d'une recherche
+3. **Page véhicule** — galerie photos, badges Car-Pass / LEZ, contact vendeur
+4. **Mise en vente** (`/sell`) — wizard 3 étapes, upload photos (max 15), Car-Pass obligatoire
+5. **Messagerie** temps réel — typing indicator, lecture, partage d'image
+6. **Favoris & Comparateur** — jusqu'à 3 véhicules
+7. **PWA** — installation sur iOS (Safari → Partager → Sur l'écran d'accueil) et Android (menu navigateur → Installer)
+8. **Mobile / Tablette / Desktop** — testez sur Galaxy Tab S10 Ultra, iPhone, et PC
+9. **Mode hors ligne** — coupez votre wifi : la page offline élégante doit s'afficher
+10. **Multilingue** — bascule FR / NL / DE / EN
 
-## Installation rapide (pour développeurs)
+### 🐛 Comment remonter un bug
+
+- **Email** : beta@autora.be (ou via le formulaire `/contact`)
+- **Captures d'écran bienvenues** — précisez l'appareil, le navigateur et l'URL exacte
+- **Erreurs console** : ouvrez les DevTools (F12) et copiez le message rouge
+
+### ⚠️ Connu / en cours
+
+- Stripe est en **mode Beta gratuit** : tous les comptes ont accès aux fonctions Pro sans paiement
+- Le seed de 25 annonces de démo n'est pas encore inséré (à venir)
+- Les emails transactionnels passent par `notify.autora.be`
+
+---
+
+## ⚙️ Sécurité repo (à faire manuellement)
+
+> **Important** : le fichier `.env` est généré automatiquement par Lovable Cloud
+> et **ne doit jamais être versionné**. Si vous travaillez en local après un
+> `git clone`, exécutez ces commandes une seule fois :
 
 ```bash
-git clone https://github.com/54gtjx8c8b-png/AutoRA.git
-cd AutoRA
+# 1. Retirer .env du tracking git (garde le fichier local)
+git rm --cached .env
+
+# 2. Vérifier que .gitignore ignore bien tous les fichiers d'env
+echo -e "\n# Local env files\n.env\n.env.*\n!.env.example" >> .gitignore
+
+# 3. Commit
+git add .gitignore
+git commit -m "chore(security): untrack .env and ignore env files"
+```
+
+Sur Lovable, le fichier `.env` est régénéré automatiquement à chaque session — il
+n'est jamais exposé publiquement via la preview ou la production.
+
+---
+
+## 🚀 Installation locale (développeurs)
+
+```bash
+git clone https://github.com/AUTORA-BE/Autorabe.git
+cd Autorabe
 npm install
 npm run dev
 ```
 
+L'app démarre sur `http://localhost:8080`.
+
 ---
 
-## 🏗️ Architecture
-
-Le projet suit une architecture **Feature Folders** qui organise le code par domaine fonctionnel plutôt que par type technique.
+## 🏗️ Architecture (Feature Folders)
 
 ```
 src/
-├── features/           # Domaines fonctionnels
-│   ├── auth/           # Authentification
-│   ├── listings/       # Annonces véhicules
-│   ├── messaging/      # Messagerie temps réel
-│   └── search/         # Recherche et filtres
-├── shared/             # Ressources transversales
-│   ├── components/     # Composants de layout (Header, Footer)
-│   └── hooks/          # Hooks génériques (useDebounce, useLocalStorage)
-├── components/         # Composants UI (shadcn/ui)
-├── pages/              # Pages de l'application
-├── hooks/              # Hooks globaux
-├── contexts/           # Contextes React (Language, Compare)
-└── integrations/       # Intégrations externes (Supabase)
+├── features/           # Domaines fonctionnels autonomes
+│   ├── auth/           # Connexion, profils, vérification téléphone
+│   ├── listings/       # Annonces, wizard de vente, dashboard vendeur
+│   ├── messaging/      # Chat temps réel (Supabase Realtime)
+│   ├── search/         # Hero, filtres, persistance URL
+│   ├── favorites/      # Favoris + compteur public
+│   ├── compare/        # Comparateur 3 véhicules
+│   ├── tco/            # Calculateur TCO 5 ans
+│   ├── alerts/         # Alertes intelligentes (email + push)
+│   ├── admin/          # Modération, stats, gestion users
+│   └── subscription/   # Abonnements Stripe (5 paliers)
+├── shared/             # Layout (Header, Footer, BottomNav) + hooks génériques
+├── components/         # shadcn/ui + composants transverses
+├── pages/              # Routes principales (lazy-loaded)
+└── integrations/       # Supabase client (auto-généré)
 ```
 
 ---
 
-## 📁 Features
+## 🛠️ Stack technique
 
-Chaque feature est autonome et contient ses propres composants, hooks, types et requêtes API.
-
-### `/features/auth`
-
-Gestion de l'authentification et des profils utilisateurs.
-
-```
-auth/
-├── hooks/
-│   ├── useAuth.ts              # Connexion, inscription, déconnexion
-│   ├── useUserProfile.ts       # Gestion des profils
-│   └── usePasswordValidation.ts # Validation temps réel des mots de passe
-├── types/
-│   └── auth.types.ts           # Types AuthUser, LoginCredentials, etc.
-└── index.ts                    # Barrel export
-```
-
-**Utilisation :**
-```typescript
-import { useAuth, useUserProfile } from '@/features/auth';
-
-const { user, signIn, signOut, isLoading } = useAuth();
-```
+| Couche | Technologie |
+|---|---|
+| Framework | React 18 + Vite + TypeScript strict |
+| UI | Tailwind CSS + shadcn/ui + Framer Motion |
+| State | TanStack React Query (staleTime 5 min) |
+| Routing | React Router v6 (BrowserRouter, SPA fallback géré par Lovable) |
+| Backend | Lovable Cloud (Supabase) — Auth, DB, Storage, Realtime, Edge Functions |
+| Paiements | Stripe (5 paliers d'abonnement + boosts d'annonces) |
+| Emails | Resend via `notify.autora.be` (6 templates React Email) |
+| PWA | vite-plugin-pwa (autoUpdate, runtime cache, offline page premium) |
+| AI | Lovable AI Gateway (Gemini Flash pour conseiller fiscal) |
+| i18n | FR / NL / DE / EN |
 
 ---
 
-### `/features/listings`
+## 🎨 Design system "Elite Green"
 
-Gestion des annonces de véhicules.
-
-```
-listings/
-├── api/
-│   └── vehicleQueries.ts       # Requêtes Supabase centralisées
-├── components/
-│   ├── VehicleCard.tsx         # Carte véhicule
-│   ├── VehicleGrid.tsx         # Grille de véhicules
-│   └── PopularVehicles.tsx     # Section véhicules populaires
-├── hooks/
-│   ├── useVehicleSearch.ts     # Recherche avec filtres
-│   ├── useVehicleDetail.ts     # Détails d'un véhicule
-│   └── usePopularVehicles.ts   # Véhicules les plus vus
-├── types/
-│   └── vehicle.types.ts        # Types Vehicle, VehicleFilters, etc.
-└── index.ts
-```
-
-**Utilisation :**
-```typescript
-import { useVehicleSearch, VehicleCard } from '@/features/listings';
-
-const { vehicles, isLoading, filters } = useVehicleSearch();
-```
+- **Palette** : noir profond (`#0A0A0B`), Emerald-600 primaire, glassmorphism premium
+- **Typographie** : Playfair Display (titres) + Inter (corps)
+- **Mode sombre par défaut** (avec toggle clair)
+- **Animations** : Framer Motion 200-300 ms, micro-interactions raffinées
+- **Mobile-first** : safe-areas iOS, targets 44 px, BottomNav blur, drawers via portails
 
 ---
 
-### `/features/messaging`
-
-Système de messagerie temps réel entre acheteurs et vendeurs.
-
-```
-messaging/
-├── hooks/
-│   ├── useConversations.ts     # Liste des conversations
-│   ├── useTypingIndicator.ts   # Indicateur de saisie
-│   ├── useOnlineStatus.ts      # Statut de présence
-│   └── useUnreadMessages.ts    # Compteur de messages non lus
-├── types/
-│   └── messaging.types.ts      # Types Conversation, Message, etc.
-└── index.ts
-```
-
-**Utilisation :**
-```typescript
-import { useConversations, useUnreadMessages } from '@/features/messaging';
-
-const { conversations, isLoading } = useConversations(userId);
-const { unreadCount } = useUnreadMessages(userId);
-```
-
----
-
-### `/features/search`
-
-Composants et logique de recherche.
-
-```
-search/
-├── components/
-│   ├── HeroSearch.tsx          # Barre de recherche principale
-│   ├── FilterPanel.tsx         # Panneau de filtres
-│   └── BrandCarousel.tsx       # Carrousel des marques
-├── types/
-│   └── search.types.ts         # Types SearchFilters, SearchState
-└── index.ts
-```
-
----
-
-## 🔧 Shared
-
-Ressources réutilisables à travers toute l'application.
-
-### `/shared/components`
-
-Composants de mise en page globaux.
-
-```typescript
-import { Header, Footer } from '@/shared/components';
-```
-
-### `/shared/hooks`
-
-Hooks utilitaires génériques.
-
-```typescript
-import { useDebounce, useLocalStorage } from '@/shared/hooks';
-
-const debouncedValue = useDebounce(searchTerm, 300);
-const [theme, setTheme] = useLocalStorage('theme', 'light');
-```
-
----
-
-## 📊 State Management
-
-### React Query (TanStack Query)
-
-Gestion de l'état serveur avec configuration optimisée :
-
-```typescript
-// Configuration globale (App.tsx)
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 5 * 60 * 1000,    // 5 minutes
-      gcTime: 10 * 60 * 1000,      // 10 minutes
-      refetchOnWindowFocus: false,
-      retry: 1,
-    },
-  },
-});
-```
-
-### Contextes React
-
-- **LanguageContext** : Internationalisation (FR, NL, EN)
-- **CompareContext** : Comparaison de véhicules
-
----
-
-## 🗄️ Couche API
-
-Les interactions avec la base de données sont centralisées dans des fichiers `*Queries.ts` :
-
-```typescript
-// features/listings/api/vehicleQueries.ts
-export async function fetchVehicles(filters: VehicleFilters): Promise<Vehicle[]> {
-  const { data, error } = await supabase
-    .from('car_listings_public')
-    .select('*')
-    .order('created_at', { ascending: false });
-
-  if (error) throw error;
-  return data.map(mapToVehicle);
-}
-```
-
----
-
-## 🛠️ Standards de Développement
+## 📊 Standards de développement
 
 | Règle | Description |
-|-------|-------------|
-| **TypeScript strict** | Aucun type `any`, interfaces typées |
-| **JSDoc** | Documentation systématique des fonctions exportées |
-| **Barrel exports** | Chaque feature expose via `index.ts` |
-| **Tokens sémantiques** | Utiliser `bg-primary` plutôt que couleurs directes |
+|---|---|
+| TypeScript strict | Aucun `any`, JSDoc systématique |
+| Tokens sémantiques | `bg-primary` plutôt que couleurs littérales |
+| Barrel exports | Chaque feature expose via `index.ts` |
+| Requêtes explicites | `LIST_COLUMNS` plutôt que `select('*')` |
+| Sécurité | RLS Supabase sur toutes les tables, `has_role()` pour les admins |
 
 ---
 
-## 🚀 Stack Technique
+## 📜 Licence & contact
 
-| Technologie | Usage |
-|-------------|-------|
-| **React 18** | Framework UI |
-| **TypeScript** | Typage statique |
-| **Vite** | Build tool |
-| **Tailwind CSS** | Styling |
-| **shadcn/ui** | Composants UI |
-| **React Query** | État serveur |
-| **React Router** | Routing |
-| **Supabase** | Backend (Auth, DB, Realtime) |
-| **Framer Motion** | Animations |
-
----
-
-## 📝 Conventions de Nommage
-
-| Type | Convention | Exemple |
-|------|------------|---------|
-| Composants | PascalCase | `VehicleCard.tsx` |
-| Hooks | camelCase avec `use` | `useVehicleSearch.ts` |
-| Types | PascalCase | `vehicle.types.ts` |
-| API | camelCase avec suffixe | `vehicleQueries.ts` |
+© 2026 AutoRA.be — tous droits réservés.
+Pour toute question : **support@autora.be**
