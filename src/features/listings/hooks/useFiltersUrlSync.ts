@@ -25,6 +25,7 @@ const PARAM_KEYS = {
   lezOnly: 'lez',
   sellerType: 'seller',
   bodyType: 'body',
+  province: 'prov',
   sort: 'sort',
 } as const;
 

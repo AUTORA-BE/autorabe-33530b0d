@@ -135,6 +135,8 @@ export interface VehicleFilters {
   bodyType: string;
   /** Filter by vehicle color */
   color: string;
+  /** Filter by Belgian province (matched against location field server-side) */
+  province: string;
 }
 /**
  * Default filter values
@@ -156,6 +158,7 @@ export const defaultVehicleFilters: VehicleFilters = {
   sellerTypeFilter: "",
   bodyType: "",
   color: "",
+  province: "",
 };
 
 /**

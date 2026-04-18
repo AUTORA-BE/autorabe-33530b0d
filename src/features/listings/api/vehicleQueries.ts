@@ -190,8 +190,40 @@ export function applyFilters<T>(query: T, filters: VehicleFilters): T {
     q = q.ilike('body_type', filters.bodyType);
   }
 
+  // Color filter
+  if (filters.color) {
+    q = q.ilike('color', filters.color);
+  }
+
+  // Province filter — matches against the free-text `location` column
+  // We build a list of representative cities + the province name itself
+  // and use a single OR with ilike for fuzzy matching (case + accents tolerant).
+  if (filters.province) {
+    const cities = PROVINCE_CITIES[filters.province] || [filters.province];
+    const conditions = cities.map((c) => `location.ilike.%${c}%`).join(',');
+    q = q.or(conditions);
+  }
+
   return q as T;
 }
+
+/**
+ * Mapping province ID → list of representative cities/keywords
+ * Used to filter the free-text `location` column server-side.
+ */
+const PROVINCE_CITIES: Record<string, string[]> = {
+  bruxelles: ['bruxelles', 'brussel', 'brussels', 'ixelles', 'uccle', 'schaerbeek', 'anderlecht', 'molenbeek', 'etterbeek', 'forest', 'jette', 'woluwe', 'evere', 'auderghem'],
+  anvers: ['anvers', 'antwerpen', 'antwerp', 'malines', 'mechelen', 'turnhout', 'lierre', 'lier', 'geel', 'mortsel'],
+  'brabant-flamand': ['louvain', 'leuven', 'vilvorde', 'vilvoorde', 'hal', 'halle', 'tirlemont', 'tienen', 'diest', 'aerschot', 'aarschot'],
+  'brabant-wallon': ['wavre', 'nivelles', 'ottignies', 'louvain-la-neuve', 'jodoigne', 'tubize', 'braine-l\'alleud', 'rixensart', 'genappe'],
+  'flandre-occidentale': ['bruges', 'brugge', 'courtrai', 'kortrijk', 'ostende', 'oostende', 'roulers', 'roeselare', 'ypres', 'ieper', 'furnes', 'veurne', 'menin', 'menen'],
+  'flandre-orientale': ['gand', 'gent', 'alost', 'aalst', 'saint-nicolas', 'sint-niklaas', 'termonde', 'dendermonde', 'audenarde', 'oudenaarde', 'renaix', 'ronse', 'eeklo'],
+  hainaut: ['mons', 'charleroi', 'tournai', 'la louvière', 'la louviere', 'mouscron', 'soignies', 'ath', 'binche', 'thuin', 'chimay'],
+  liege: ['liège', 'liege', 'verviers', 'huy', 'seraing', 'herstal', 'spa', 'eupen', 'malmedy', 'waremme', 'visé', 'vise'],
+  limbourg: ['hasselt', 'genk', 'tongres', 'tongeren', 'saint-trond', 'sint-truiden', 'bilzen', 'lommel', 'maaseik', 'beringen'],
+  luxembourg: ['arlon', 'bastogne', 'marche-en-famenne', 'neufchâteau', 'neufchateau', 'virton', 'durbuy', 'libramont', 'saint-hubert'],
+  namur: ['namur', 'dinant', 'philippeville', 'gembloux', 'andenne', 'ciney', 'rochefort', 'florennes'],
+};
 
 /** Explicit columns for list queries — avoids SELECT * overhead */
 const LIST_COLUMNS = 'id,brand,model,year,price,mileage,fuel_type,transmission,euro_norm,location,photos,car_pass_verified,seller_type,boost_level,boost_expires_at' as const;
