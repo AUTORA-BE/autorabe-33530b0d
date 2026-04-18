@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { prefetchRoute } from "@/utils/prefetchRoutes";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import { motion, AnimatePresence } from "framer-motion";
+import { createPortal } from "react-dom";
+import { useEffect } from "react";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -43,7 +45,17 @@ const MobileMenu = ({
 }: MobileMenuProps) => {
   const handleLink = () => onClose();
 
-  return (
+  // Lock body scroll while menu is open
+  useEffect(() => {
+    if (!isOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prev; };
+  }, [isOpen]);
+
+  if (typeof document === "undefined") return null;
+
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
         <>
@@ -53,8 +65,9 @@ const MobileMenu = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="md:hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-[80]"
+            className="md:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-[90]"
             onClick={onClose}
+            aria-hidden="true"
           />
 
           {/* Drawer panel */}
@@ -63,8 +76,11 @@ const MobileMenu = ({
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="md:hidden fixed top-0 right-0 bottom-0 w-[85%] max-w-[360px] bg-background/98 backdrop-blur-2xl z-[81] flex flex-col shadow-2xl border-l border-border/20"
+            className="md:hidden fixed top-0 right-0 bottom-0 w-[88%] max-w-[380px] bg-background/98 backdrop-blur-2xl z-[91] flex flex-col shadow-2xl border-l border-border/20"
             style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Menu de navigation"
           >
             {/* Drawer header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-border/20">
@@ -201,7 +217,8 @@ const MobileMenu = ({
           </motion.div>
         </>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body,
   );
 };
 
