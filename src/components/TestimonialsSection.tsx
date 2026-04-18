@@ -85,21 +85,21 @@ const testimonials: Testimonial[] = [
   },
 ];
 
-function StarRating({ rating }: { rating: number }) {
+const StarRating = memo(function StarRating({ rating }: { rating: number }) {
   return (
     <div className="flex gap-0.5">
       {Array.from({ length: 5 }).map((_, i) => (
         <Star
           key={i}
-          className={`w-3.5 h-3.5 ${
-            i < rating ? "fill-amber-400 text-amber-400" : "fill-muted text-muted"
+          className={`w-4 h-4 ${
+            i < rating ? "fill-primary text-primary" : "text-muted-foreground/30"
           }`}
-          strokeWidth={0}
+          strokeWidth={1.5}
         />
       ))}
     </div>
   );
-}
+});
 
 const slideVariants = {
   enter: (dir: number) => ({ x: dir > 0 ? 80 : -80, opacity: 0, scale: 0.96 }),
