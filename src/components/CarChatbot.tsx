@@ -154,9 +154,15 @@ const CarChatbot = forwardRef<HTMLDivElement>(function CarChatbot(_props, ref) {
         <MessageCircle className="w-5 h-5 lg:w-6 lg:h-6" />
       </button>
 
-      {/* Chat Window */}
+      {/* Chat Window — mobile: full-width sheet from bottom; tablet: centered; desktop: bottom-right */}
       {isOpen && (
-        <div className="fixed bottom-[5.5rem] right-3 lg:bottom-6 lg:right-6 z-50 w-[calc(100vw-1.5rem)] sm:w-[380px] h-[65vh] sm:h-[600px] max-h-[75vh] glass-card flex flex-col overflow-hidden animate-scale-in rounded-2xl">
+        <div
+          className="fixed z-[70] glass-card flex flex-col overflow-hidden animate-scale-in rounded-2xl
+                     inset-x-3 bottom-[5.5rem] h-[70dvh] max-h-[640px]
+                     sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:bottom-6 sm:w-[440px] sm:h-[640px] sm:max-h-[80dvh]
+                     md:w-[480px] md:h-[680px]
+                     lg:left-auto lg:right-6 lg:translate-x-0 lg:w-[400px] lg:h-[620px]"
+        >
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-border/50 bg-primary/5">
             <div className="flex items-center gap-3">
