@@ -230,25 +230,6 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
         {/* Divider */}
         <div className="h-px w-full" style={{ background: "hsl(var(--border) / 0.5)" }} />
 
-        {/* Province Select */}
-        <FilterSection icon={<MapPin className="w-4 h-4 text-primary" aria-hidden="true" />} title="Province">
-          <div className="relative">
-            <select
-              value={filters.searchQuery || ""}
-              onChange={(e) => onFilterChange("searchQuery", e.target.value)}
-              className="w-full appearance-none cursor-pointer pr-10 px-4 py-3 rounded-xl text-sm bg-secondary/60 border border-border/50 text-foreground transition-all focus:outline-none focus:ring-2 focus:ring-primary/30"
-              aria-label="Sélectionner une province"
-            >
-              {BELGIAN_PROVINCES.map((province) => (
-                <option key={province.id} value={province.id}>
-                  {province.label}
-                </option>
-              ))}
-            </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
-          </div>
-        </FilterSection>
-
         {/* Brand Select */}
         <FilterSection icon={<Settings2 className="w-4 h-4 text-primary" aria-hidden="true" />} title={t("filters.brand")}>
           <div className="relative">
