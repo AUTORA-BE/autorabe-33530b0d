@@ -25,6 +25,7 @@ const PARAM_KEYS = {
   lezOnly: 'lez',
   sellerType: 'seller',
   bodyType: 'body',
+  province: 'prov',
   sort: 'sort',
 } as const;
 
@@ -56,6 +57,7 @@ export function parseFiltersFromParams(params: URLSearchParams): {
     sellerTypeFilter: params.get(PARAM_KEYS.sellerType) || d.sellerTypeFilter,
     bodyType: params.get(PARAM_KEYS.bodyType) || d.bodyType,
     color: params.get('color') || d.color,
+    province: params.get(PARAM_KEYS.province) || d.province,
   };
 
   const sortBy = (params.get(PARAM_KEYS.sort) as VehicleSortOption) || 'recent';
@@ -85,6 +87,8 @@ function filtersToParams(filters: VehicleFilters, sortBy: VehicleSortOption): UR
   if (filters.lezOnly) params.set(PARAM_KEYS.lezOnly, '1');
   if (filters.sellerTypeFilter) params.set(PARAM_KEYS.sellerType, filters.sellerTypeFilter);
   if (filters.bodyType) params.set(PARAM_KEYS.bodyType, filters.bodyType);
+  if (filters.color) params.set('color', filters.color);
+  if (filters.province) params.set(PARAM_KEYS.province, filters.province);
   if (sortBy !== 'recent') params.set(PARAM_KEYS.sort, sortBy);
 
   return params;

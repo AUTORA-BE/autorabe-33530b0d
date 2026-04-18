@@ -446,6 +446,28 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
         {/* Divider */}
         <div className="h-px w-full" style={{ background: "hsl(var(--border) / 0.5)" }} />
 
+        {/* Province (Belgian regions) */}
+        <FilterSection icon={<MapPin className="w-4 h-4 text-primary" aria-hidden="true" />} title={t("filters.province") || "Province"}>
+          <div className="relative">
+            <select
+              value={filters.province}
+              onChange={(e) => onFilterChange("province", e.target.value)}
+              className="w-full appearance-none cursor-pointer pr-10 px-4 py-3 rounded-xl text-sm bg-secondary/60 border border-border/50 text-foreground transition-all focus:outline-none focus:ring-2 focus:ring-primary/30"
+              aria-label="Sélectionner une province"
+            >
+              {BELGIAN_PROVINCES.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.label}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+          </div>
+        </FilterSection>
+
+        {/* Divider */}
+        <div className="h-px w-full" style={{ background: "hsl(var(--border) / 0.5)" }} />
+
         {/* Seller Type */}
         <FilterSection icon={<Building2 className="w-4 h-4 text-primary" aria-hidden="true" />} title={t("filters.sellerType")}>
           <div className="grid grid-cols-2 gap-2.5">
