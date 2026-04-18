@@ -32,7 +32,7 @@ if (container) {
     <React.StrictMode>
       <ErrorBoundary>
         <HelmetProvider>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
             <App />
           </ThemeProvider>
         </HelmetProvider>

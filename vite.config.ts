@@ -68,6 +68,7 @@ export default defineConfig(({ mode }) => ({
         name: "AutoRa — Marketplace automobile belge",
         short_name: "AutoRa",
         description: "Trouvez votre prochaine voiture en Belgique. Véhicules vérifiés Car-Pass, conformité LEZ garantie.",
+        version: "1.0.0-beta.1",
         theme_color: "#0a0a14",
         background_color: "#0a0a14",
         display: "standalone",
