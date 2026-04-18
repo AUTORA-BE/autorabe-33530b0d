@@ -168,6 +168,8 @@ export function useVehicleSearch(options: UseVehicleSearchOptions = {}) {
     if (filters.lezOnly) count++;
     if (filters.sellerTypeFilter) count++;
     if (filters.bodyType) count++;
+    if (filters.color) count++;
+    if (filters.province) count++;
     return count;
   }, [filters]);
 
