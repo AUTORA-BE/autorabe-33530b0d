@@ -160,8 +160,8 @@ const CarChatbot = forwardRef<HTMLDivElement>(function CarChatbot(_props, ref) {
           className="fixed z-[70] glass-card flex flex-col overflow-hidden animate-scale-in rounded-2xl
                      inset-x-3 bottom-[5.5rem] h-[70dvh] max-h-[640px]
                      sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:bottom-6 sm:w-[440px] sm:h-[640px] sm:max-h-[80dvh]
-                     md:w-[480px] md:h-[680px]
-                     lg:left-auto lg:right-6 lg:translate-x-0 lg:w-[400px] lg:h-[620px]"
+                     md:w-[520px] md:h-[700px] md:max-h-[82dvh]
+                     lg:left-auto lg:right-6 lg:translate-x-0 lg:w-[420px] lg:h-[640px]"
         >
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-border/50 bg-primary/5">
