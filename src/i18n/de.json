@@ -72,6 +72,7 @@
   "filters.transmission": "Getriebe",
   "filters.euroNorm": "Euro-Norm (LEZ)",
   "filters.lezOnly": "Nur LEZ-kompatibel",
+  "filters.province": "Provinz",
   "filters.reset": "Filter zurücksetzen",
   "filters.allModels": "Alle Modelle",
   "filters.selectBrandFirst": "Wählen Sie zuerst eine Marke",
