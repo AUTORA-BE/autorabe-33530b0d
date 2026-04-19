@@ -72,6 +72,7 @@
   "filters.transmission": "Transmissie",
   "filters.euroNorm": "Euronorm (LEZ)",
   "filters.lezOnly": "Alleen LEZ-compatibel",
+  "filters.province": "Provincie",
   "filters.reset": "Filters resetten",
   "filters.allModels": "Alle modellen",
   "filters.selectBrandFirst": "Selecteer eerst een merk",

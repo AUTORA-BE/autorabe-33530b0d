@@ -72,6 +72,7 @@
   "filters.transmission": "Boîte de vitesse",
   "filters.euroNorm": "Norme Euro (LEZ)",
   "filters.lezOnly": "Compatible LEZ uniquement",
+  "filters.province": "Province",
   "filters.reset": "Réinitialiser les filtres",
   "filters.allModels": "Tous les modèles",
   "filters.selectBrandFirst": "Sélectionnez d'abord une marque",
