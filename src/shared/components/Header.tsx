@@ -106,8 +106,8 @@ const Header = () => {
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-6">
+          {/* Desktop Navigation (lg+ to give tablets the hamburger drawer) */}
+          <nav className="hidden lg:flex items-center gap-6">
             <NavLink to="/">{t("nav.buy")}</NavLink>
             <NavLink to="/favorites" badge={favoritesCount > 0 ? favoritesCount : undefined}>
               <span className="flex items-center gap-1.5">
@@ -142,8 +142,8 @@ const Header = () => {
           {/* Desktop Actions */}
           <DesktopActions user={user} userProfile={userProfile} onLogout={handleLogout} t={t} isAdmin={isAdmin} />
 
-          {/* Mobile: theme toggle + hamburger */}
-          <div className="md:hidden flex items-center gap-1">
+          {/* Mobile + Tablet: theme toggle + hamburger (lg breakpoint to cover Galaxy Tab) */}
+          <div className="lg:hidden flex items-center gap-1.5">
             <Button
               variant="ghost"
               size="icon"
