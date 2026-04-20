@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import { Header, Footer, BackButton } from "@/shared/components";
+import SEOHead from "@/components/SEOHead";
 import { useCompareContext } from "@/features/compare";
 import { Link, useSearchParams } from "react-router-dom";
 import { 
@@ -355,6 +356,11 @@ const Compare = () => {
 
   return (
     <div className="page-gradient">
+      <SEOHead
+        title="Comparer des voitures d'occasion en Belgique"
+        description="Comparez jusqu'à 3 voitures d'occasion côte à côte : prix, kilométrage, consommation, LEZ, Car-Pass. Faites le meilleur choix sur AutoRa."
+        url="https://autora.be/compare"
+      />
       <Header />
       
       <main className="pt-24">

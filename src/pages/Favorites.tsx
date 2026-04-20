@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence, useMotionValue, useTransform, PanInfo } from "framer-motion";
 import { Header, Footer, BackButton } from "@/shared/components";
+import SEOHead from "@/components/SEOHead";
 import { CarCard, type Vehicle } from "@/features/listings";
 import { useFavorites } from "@/features/favorites";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -119,6 +120,12 @@ const Favorites = () => {
   return (
     <PullToRefresh onRefresh={() => { refetch(); }}>
       <div className="page-gradient min-h-screen">
+        <SEOHead
+          title="Mes favoris"
+          description="Retrouvez toutes les voitures d'occasion que vous avez ajoutées à vos favoris sur AutoRa."
+          url="https://autora.be/favorites"
+          noIndex
+        />
         <Header />
         <main className="container mx-auto px-3 sm:px-6 pt-16 sm:pt-32 pb-24">
           {/* Immersive header */}
