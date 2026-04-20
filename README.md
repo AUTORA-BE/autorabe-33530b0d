@@ -1,152 +1,167 @@
-<div align="center">
+# 🚗 AutoRA.be — Premium Belgian Car Marketplace
 
-  <img src="public/pwa-icon-192.png" alt="AutoRA.be" width="96" />
+Marketplace automobile belge premium pour acheter et vendre des voitures d'occasion vérifiées Car-Pass, avec compatibilité LEZ garantie, calculateur TCO et simulateurs de taxes régionales (Wallonie / Bruxelles / Flandre).
 
-  <h1>AutoRA.be</h1>
-  <h3>La nouvelle façon de trouver sa prochaine voiture en Belgique</h3>
-
-  <p><strong>🇧🇪 Private Beta MVP — v1.0.0-beta.1</strong></p>
-
-</div>
+> **Status** : Private Beta — v1.0.0-beta.1
+> **Live** : [autora.be](https://autora.be) · [www.autora.be](https://www.autora.be)
+> **Stack** : React 18 · Vite 5 · TypeScript strict · Tailwind · shadcn/ui · Supabase · TanStack Query · Framer Motion · PWA
 
 ---
 
-## 🧪 Private Beta — Instructions pour testeurs
+## ✨ Fonctionnalités
 
-> Bienvenue ! Vous testez la version pré-lancement d'AutoRA.be.
-> Votre feedback nous aide à finaliser la plateforme avant l'ouverture publique.
-
-### 🔗 Accès
-
-- **Application** : https://autora.be
-- **Aperçu Lovable** : https://autorabe.lovable.app
-
-### ✅ Ce qu'il faut tester en priorité
-
-1. **Création de compte** (email + Google) — vérification du téléphone +32 obligatoire
-2. **Recherche** — filtres marque/modèle/budget/km, persistance dans l'URL, partage d'une recherche
-3. **Page véhicule** — galerie photos, badges Car-Pass / LEZ, contact vendeur
-4. **Mise en vente** (`/sell`) — wizard 3 étapes, upload photos (max 15), Car-Pass obligatoire
-5. **Messagerie** temps réel — typing indicator, lecture, partage d'image
-6. **Favoris & Comparateur** — jusqu'à 3 véhicules
-7. **PWA** — installation sur iOS (Safari → Partager → Sur l'écran d'accueil) et Android (menu navigateur → Installer)
-8. **Mobile / Tablette / Desktop** — testez sur Galaxy Tab S10 Ultra, iPhone, et PC
-9. **Mode hors ligne** — coupez votre wifi : la page offline élégante doit s'afficher
-10. **Multilingue** — bascule FR / NL / DE / EN
-
-### 🐛 Comment remonter un bug
-
-- **Email** : beta@autora.be (ou via le formulaire `/contact`)
-- **Captures d'écran bienvenues** — précisez l'appareil, le navigateur et l'URL exacte
-- **Erreurs console** : ouvrez les DevTools (F12) et copiez le message rouge
-
-### ⚠️ Connu / en cours
-
-- Stripe est en **mode Beta gratuit** : tous les comptes ont accès aux fonctions Pro sans paiement
-- Le seed de 25 annonces de démo n'est pas encore inséré (à venir)
-- Les emails transactionnels passent par `notify.autora.be`
+- 🔍 Recherche avancée + filtres dynamiques (marque, modèle, prix, LEZ, province, Euro Norm…)
+- 💬 Messagerie temps réel (Supabase Realtime, typing/présence, partage d'image)
+- ⭐ Favoris + Comparaison (jusqu'à 3 véhicules) + Alertes intelligentes
+- 📊 Calculateur TCO 5 ans (prix carburants belges en temps réel)
+- 🇧🇪 Conformité belge : Car-Pass obligatoire, badges LEZ, distinction Pro/Particulier
+- 💳 Stripe : abonnements 5 paliers + boost annonces (24h–7j)
+- 🌍 4 langues : FR, NL, DE, EN
+- 📱 PWA installable (offline, push notifications, splash screens iOS)
+- 🤖 Conseiller fiscal IA (Lovable AI Gateway)
 
 ---
 
-## ⚙️ Sécurité repo (à faire manuellement)
-
-> **Important** : le fichier `.env` est généré automatiquement par Lovable Cloud
-> et **ne doit jamais être versionné**. Si vous travaillez en local après un
-> `git clone`, exécutez ces commandes une seule fois :
+## 🚀 Quick Start
 
 ```bash
-# 1. Retirer .env du tracking git (garde le fichier local)
-git rm --cached .env
-
-# 2. Vérifier que .gitignore ignore bien tous les fichiers d'env
-echo -e "\n# Local env files\n.env\n.env.*\n!.env.example" >> .gitignore
-
-# 3. Commit
-git add .gitignore
-git commit -m "chore(security): untrack .env and ignore env files"
-```
-
-Sur Lovable, le fichier `.env` est régénéré automatiquement à chaque session — il
-n'est jamais exposé publiquement via la preview ou la production.
-
----
-
-## 🚀 Installation locale (développeurs)
-
-```bash
-git clone https://github.com/AUTORA-BE/Autorabe.git
-cd Autorabe
 npm install
-npm run dev
+npm run dev          # http://localhost:8080
+npm run build
+npm run lint
 ```
-
-L'app démarre sur `http://localhost:8080`.
 
 ---
 
-## 🏗️ Architecture (Feature Folders)
+## 🔐 Variables d'environnement
+
+`.env` est **auto-géré par Lovable Cloud** — ne jamais l'éditer.
+
+| Variable | Description |
+|---|---|
+| `VITE_SUPABASE_URL` | URL Supabase |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | Clé anon publique (sûre côté client) |
+| `VITE_SUPABASE_PROJECT_ID` | ID projet Supabase |
+
+### Secrets backend (Edge Functions)
+
+Configurés dans **Lovable Cloud → Settings → Secrets** :
+
+| Secret | Usage |
+|---|---|
+| `STRIPE_SECRET_KEY` / `STRIPE_WEBHOOK_SECRET` | Paiements + abonnements |
+| `RESEND_API_KEY` | Emails transactionnels |
+| `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` | Push notifications |
+| `LOVABLE_API_KEY` | AI Gateway (Gemini, GPT) |
+
+---
+
+## 🏗 Architecture
 
 ```
 src/
-├── features/           # Domaines fonctionnels autonomes
-│   ├── auth/           # Connexion, profils, vérification téléphone
-│   ├── listings/       # Annonces, wizard de vente, dashboard vendeur
-│   ├── messaging/      # Chat temps réel (Supabase Realtime)
-│   ├── search/         # Hero, filtres, persistance URL
-│   ├── favorites/      # Favoris + compteur public
-│   ├── compare/        # Comparateur 3 véhicules
-│   ├── tco/            # Calculateur TCO 5 ans
-│   ├── alerts/         # Alertes intelligentes (email + push)
-│   ├── admin/          # Modération, stats, gestion users
-│   └── subscription/   # Abonnements Stripe (5 paliers)
-├── shared/             # Layout (Header, Footer, BottomNav) + hooks génériques
-├── components/         # shadcn/ui + composants transverses
-├── pages/              # Routes principales (lazy-loaded)
-└── integrations/       # Supabase client (auto-généré)
+├── features/          # Modules feature-based (auth, listings, messaging, search, tco, admin…)
+│   └── <feature>/{api, components, hooks, types, index.ts}
+├── shared/            # Composants/hooks transverses
+├── components/        # UI shadcn + composants legacy
+├── pages/             # Routes React Router
+├── integrations/supabase/   # Client + types auto-générés (NE PAS ÉDITER)
+├── lib/               # Utils (security, seoSchemas, lezData)
+└── i18n/              # Traductions FR/NL/DE/EN
+
+supabase/
+├── functions/         # Edge Functions Deno
+└── migrations/        # SQL migrations versionnées
+```
+
+### Standards
+
+- TypeScript strict — aucun `any`
+- Colonnes explicites dans Supabase (jamais `select('*')`)
+- RLS systématique, rôle admin via RPC `has_role`
+- React Query `staleTime: 5min`
+- Lazy loading routes + composants lourds
+- Bundle splitting (`vendor-react`, `vendor-query`, `vendor-motion`, etc.)
+
+---
+
+## 🔒 Sécurité
+
+- ✅ HIBP Password Check + Email confirmation activés
+- ✅ CSP stricte dans `index.html`
+- ✅ Rate limiting serveur via edge function
+- ✅ Aucune PII (email/téléphone) exposée publiquement
+- ✅ Stripe webhooks signés
+- ✅ GDPR : cookie banner, droit à l'oubli, export JSON
+
+---
+
+## 🔍 SEO
+
+- React Helmet Async sur toutes les pages publiques
+- Open Graph + Twitter + canonical + hreflang FR/NL/DE/EN
+- JSON-LD : `Organization`, `WebSite`, `Vehicle`+`Offer`, `BreadcrumbList`, `FAQPage`
+- Sitemap dynamique via edge function `dynamic-sitemap`
+
+---
+
+## 📱 PWA
+
+- Manifest complet + icônes 192/512/maskable
+- Splash screens iOS multi-résolutions
+- Service Worker auto-désactivé en preview Lovable (`src/main.tsx`)
+- Runtime caching : NetworkFirst (API), CacheFirst (images/fonts)
+
+---
+
+## 🚢 Déploiement
+
+### Lovable Cloud (actuel)
+
+```
+1. Cliquer "Publish" en haut à droite
+2. Frontend → bouton Update pour mise en prod
+3. Backend (Edge Functions, migrations) → déploiement automatique
+```
+
+Custom domain : `autora.be` + `www.autora.be` (Project Settings → Domains). SPA fallback inclus.
+
+### Vercel (optionnel)
+
+```bash
+npm run build           # → /dist
+# Vercel : Build = npm run build, Output = dist
+# Env : VITE_SUPABASE_URL, VITE_SUPABASE_PUBLISHABLE_KEY, VITE_SUPABASE_PROJECT_ID
+# vercel.json : { "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }] }
 ```
 
 ---
 
-## 🛠️ Stack technique
+## ✅ Checklist Private Beta
 
-| Couche | Technologie |
+| Catégorie | Status |
 |---|---|
-| Framework | React 18 + Vite + TypeScript strict |
-| UI | Tailwind CSS + shadcn/ui + Framer Motion |
-| State | TanStack React Query (staleTime 5 min) |
-| Routing | React Router v6 (BrowserRouter, SPA fallback géré par Lovable) |
-| Backend | Lovable Cloud (Supabase) — Auth, DB, Storage, Realtime, Edge Functions |
-| Paiements | Stripe (5 paliers d'abonnement + boosts d'annonces) |
-| Emails | Resend via `notify.autora.be` (6 templates React Email) |
-| PWA | vite-plugin-pwa (autoUpdate, runtime cache, offline page premium) |
-| AI | Lovable AI Gateway (Gemini Flash pour conseiller fiscal) |
-| i18n | FR / NL / DE / EN |
+| HIBP + email confirmation | ✅ |
+| RLS sur toutes les tables | ✅ |
+| Aucune PII publique | ✅ |
+| 25 annonces démo (toutes provinces) | ✅ |
+| Compte démo `demo@autora.be` / `AutoRADemo2026!` | ✅ |
+| 4 langues complètes | ✅ |
+| SEOHead sur toutes les pages | ✅ |
+| JSON-LD Vehicle/Organization | ✅ |
+| Sitemap + robots.txt | ✅ |
+| PWA + offline + splash iOS | ✅ |
+| Lighthouse mobile ≥ 90 | ⏳ à valider |
+| Tests E2E (signup → publication → message) | ⏳ à valider |
 
 ---
 
-## 🎨 Design system "Elite Green"
+## 📚 Liens
 
-- **Palette** : noir profond (`#0A0A0B`), Emerald-600 primaire, glassmorphism premium
-- **Typographie** : Playfair Display (titres) + Inter (corps)
-- **Mode sombre par défaut** (avec toggle clair)
-- **Animations** : Framer Motion 200-300 ms, micro-interactions raffinées
-- **Mobile-first** : safe-areas iOS, targets 44 px, BottomNav blur, drawers via portails
+- [Lovable Docs](https://docs.lovable.dev/)
+- [Supabase Docs](https://supabase.com/docs)
+- [Schema.org Vehicle](https://schema.org/Car)
 
 ---
 
-## 📊 Standards de développement
-
-| Règle | Description |
-|---|---|
-| TypeScript strict | Aucun `any`, JSDoc systématique |
-| Tokens sémantiques | `bg-primary` plutôt que couleurs littérales |
-| Barrel exports | Chaque feature expose via `index.ts` |
-| Requêtes explicites | `LIST_COLUMNS` plutôt que `select('*')` |
-| Sécurité | RLS Supabase sur toutes les tables, `has_role()` pour les admins |
-
----
-
-## 📜 Licence & contact
-
-© 2026 AutoRA.be — tous droits réservés.
-Pour toute question : **support@autora.be**
+🇧🇪 *Premium Belgian car marketplace — Built with care.*
