@@ -97,7 +97,14 @@ export default function BelgianTaxCalculator({ powerKw, fuelType = "", euroNorm,
           </div>
         </div>
 
-        {kw > 0 && (
+        {kw > 0 && isLoading && (
+          <div className="flex items-center justify-center py-6 text-muted-foreground text-xs gap-2">
+            <Loader2 className="w-4 h-4 animate-spin" />
+            Chargement des barèmes…
+          </div>
+        )}
+
+        {kw > 0 && !isLoading && (
           <>
             {/* Fiscal CV badge */}
             <div className="flex items-center gap-2">
