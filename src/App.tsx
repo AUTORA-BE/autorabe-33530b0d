@@ -6,7 +6,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { CompareProvider } from "@/features/compare";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import PageTransition from "@/components/PageTransition";
@@ -91,45 +91,89 @@ function ScrollToTopOnNavigate() {
   return null;
 }
 
-/** Routes wrapper — no AnimatePresence to reduce style/layout cost */
+/** Detect browser preferred language for root redirect */
+function detectLang(): "fr" | "nl" | "de" | "en" {
+  const saved = localStorage.getItem("language");
+  if (saved && ["fr", "nl", "de", "en"].includes(saved)) return saved as "fr" | "nl" | "de" | "en";
+  const browser = navigator.language.split("-")[0];
+  if (browser === "nl") return "nl";
+  if (browser === "de") return "de";
+  if (browser === "en") return "en";
+  return "fr";
+}
+
+/** All app routes, used both at root and under /:lang/* for SEO */
+function AppPages() {
+  return (
+    <Routes>
+      <Route path="/" element={<PageTransition><Index /></PageTransition>} />
+      <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
+      {/* Vehicle detail accepts UUID or SEO slug ending with UUID */}
+      <Route path="/car/:id" element={<PageTransition><CarDetail /></PageTransition>} />
+      <Route path="/voiture/:id" element={<PageTransition><CarDetail /></PageTransition>} />
+      <Route path="/auto/:id" element={<PageTransition><CarDetail /></PageTransition>} />
+      <Route path="/favorites" element={<PageTransition><Favorites /></PageTransition>} />
+      <Route path="/favoris" element={<PageTransition><Favorites /></PageTransition>} />
+      <Route path="/favorieten" element={<PageTransition><Favorites /></PageTransition>} />
+      <Route path="/favoriten" element={<PageTransition><Favorites /></PageTransition>} />
+      <Route path="/sell" element={<PageTransition><SellCar /></PageTransition>} />
+      <Route path="/vendre" element={<PageTransition><SellCar /></PageTransition>} />
+      <Route path="/verkopen" element={<PageTransition><SellCar /></PageTransition>} />
+      <Route path="/verkaufen" element={<PageTransition><SellCar /></PageTransition>} />
+      <Route path="/messages" element={<PageTransition><Messages /></PageTransition>} />
+      <Route path="/about" element={<PageTransition><About /></PageTransition>} />
+      <Route path="/a-propos" element={<PageTransition><About /></PageTransition>} />
+      <Route path="/over-ons" element={<PageTransition><About /></PageTransition>} />
+      <Route path="/ueber-uns" element={<PageTransition><About /></PageTransition>} />
+      <Route path="/faq" element={<PageTransition><FAQ /></PageTransition>} />
+      <Route path="/compare" element={<PageTransition><Compare /></PageTransition>} />
+      <Route path="/dashboard" element={<PageTransition><SellerDashboard /></PageTransition>} />
+      <Route path="/dashboard/stats" element={<PageTransition><SellerStats /></PageTransition>} />
+      <Route path="/seller/:userId" element={<PageTransition><SellerProfile /></PageTransition>} />
+      <Route path="/admin/*" element={<PageTransition><AdminLayout /></PageTransition>} />
+      <Route path="/settings" element={<PageTransition><Settings /></PageTransition>} />
+      <Route path="/reset-password" element={<PageTransition><ResetPassword /></PageTransition>} />
+      <Route path="/terms" element={<PageTransition><Terms /></PageTransition>} />
+      <Route path="/privacy" element={<PageTransition><Privacy /></PageTransition>} />
+      <Route path="/legal" element={<PageTransition><Legal /></PageTransition>} />
+      <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
+      <Route path="/kontakt" element={<PageTransition><Contact /></PageTransition>} />
+      <Route path="/calculateur-tco" element={<PageTransition><CalculateurTCO /></PageTransition>} />
+      <Route path="/mes-alertes" element={<PageTransition><MesAlertes /></PageTransition>} />
+      <Route path="/mes-alertes/creer" element={<PageTransition><CreerAlerte /></PageTransition>} />
+      <Route path="/pricing" element={<PageTransition><Pricing /></PageTransition>} />
+      <Route path="/tarifs" element={<PageTransition><Pricing /></PageTransition>} />
+      <Route path="/prijzen" element={<PageTransition><Pricing /></PageTransition>} />
+      <Route path="/preise" element={<PageTransition><Pricing /></PageTransition>} />
+      <Route path="/payment-success" element={<PageTransition><PaymentSuccess /></PageTransition>} />
+      <Route path="/payment-canceled" element={<PageTransition><PaymentCanceled /></PageTransition>} />
+      <Route path="/unsubscribe" element={<PageTransition><Unsubscribe /></PageTransition>} />
+      <Route path="/services" element={<PageTransition><Services /></PageTransition>} />
+      <Route path="/diensten" element={<PageTransition><Services /></PageTransition>} />
+      <Route path="/dienste" element={<PageTransition><Services /></PageTransition>} />
+      <Route path="/guide/lez-belgique" element={<PageTransition><GuideLEZ /></PageTransition>} />
+      <Route path="/guide/car-pass" element={<PageTransition><GuideCarPass /></PageTransition>} />
+      <Route path="/guide/acheter-voiture-occasion" element={<PageTransition><GuideAchatOccasion /></PageTransition>} />
+      <Route path="/blog" element={<PageTransition><Blog /></PageTransition>} />
+      <Route path="/blog/:slug" element={<PageTransition><BlogArticle /></PageTransition>} />
+      <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
+    </Routes>
+  );
+}
+
+/** Routes wrapper — supports /:lang/* SEO prefix in parallel with legacy URLs */
 function AppRoutes() {
   const location = useLocation();
   return (
     <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<PageTransition><Index /></PageTransition>} />
-        <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
-        <Route path="/car/:id" element={<PageTransition><CarDetail /></PageTransition>} />
-        <Route path="/favorites" element={<PageTransition><Favorites /></PageTransition>} />
-        <Route path="/sell" element={<PageTransition><SellCar /></PageTransition>} />
-        <Route path="/messages" element={<PageTransition><Messages /></PageTransition>} />
-        <Route path="/about" element={<PageTransition><About /></PageTransition>} />
-        <Route path="/faq" element={<PageTransition><FAQ /></PageTransition>} />
-        <Route path="/compare" element={<PageTransition><Compare /></PageTransition>} />
-        <Route path="/dashboard" element={<PageTransition><SellerDashboard /></PageTransition>} />
-        <Route path="/dashboard/stats" element={<PageTransition><SellerStats /></PageTransition>} />
-        <Route path="/seller/:userId" element={<PageTransition><SellerProfile /></PageTransition>} />
-        <Route path="/admin/*" element={<PageTransition><AdminLayout /></PageTransition>} />
-        <Route path="/settings" element={<PageTransition><Settings /></PageTransition>} />
-        <Route path="/reset-password" element={<PageTransition><ResetPassword /></PageTransition>} />
-        <Route path="/terms" element={<PageTransition><Terms /></PageTransition>} />
-        <Route path="/privacy" element={<PageTransition><Privacy /></PageTransition>} />
-        <Route path="/legal" element={<PageTransition><Legal /></PageTransition>} />
-        <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
-        <Route path="/calculateur-tco" element={<PageTransition><CalculateurTCO /></PageTransition>} />
-        <Route path="/mes-alertes" element={<PageTransition><MesAlertes /></PageTransition>} />
-        <Route path="/mes-alertes/creer" element={<PageTransition><CreerAlerte /></PageTransition>} />
-        <Route path="/pricing" element={<PageTransition><Pricing /></PageTransition>} />
-        <Route path="/payment-success" element={<PageTransition><PaymentSuccess /></PageTransition>} />
-        <Route path="/payment-canceled" element={<PageTransition><PaymentCanceled /></PageTransition>} />
-        <Route path="/unsubscribe" element={<PageTransition><Unsubscribe /></PageTransition>} />
-        <Route path="/services" element={<PageTransition><Services /></PageTransition>} />
-        <Route path="/guide/lez-belgique" element={<PageTransition><GuideLEZ /></PageTransition>} />
-        <Route path="/guide/car-pass" element={<PageTransition><GuideCarPass /></PageTransition>} />
-        <Route path="/guide/acheter-voiture-occasion" element={<PageTransition><GuideAchatOccasion /></PageTransition>} />
-        <Route path="/blog" element={<PageTransition><Blog /></PageTransition>} />
-        <Route path="/blog/:slug" element={<PageTransition><BlogArticle /></PageTransition>} />
-        <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
+      <Routes location={location} key={location.pathname.replace(/^\/(fr|nl|de|en)(?=\/|$)/, "")}>
+        {/* Localized prefix mirrors all routes */}
+        <Route path="/fr/*" element={<AppPages />} />
+        <Route path="/nl/*" element={<AppPages />} />
+        <Route path="/de/*" element={<AppPages />} />
+        <Route path="/en/*" element={<AppPages />} />
+        {/* Legacy / unprefixed routes still work */}
+        <Route path="/*" element={<AppPages />} />
       </Routes>
     </AnimatePresence>
   );
