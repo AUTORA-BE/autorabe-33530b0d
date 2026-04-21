@@ -3,10 +3,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calculator, Euro, Leaf, Info } from "lucide-react";
+import { Calculator, Euro, Leaf, Info, Loader2 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-
-type Region = "bruxelles" | "wallonie" | "flandre";
+import {
+  useTaxBrackets,
+  computeFiscalCV,
+  computeTmcFromDb,
+  computeAnnualTaxFromDb,
+  type Region,
+} from "@/features/admin/hooks/useTaxBrackets";
 
 interface BelgianTaxCalculatorProps {
   powerKw?: number | null;
@@ -16,97 +21,27 @@ interface BelgianTaxCalculatorProps {
 }
 
 /**
- * Belgian TMC (Taxe de Mise en Circulation) + annual tax estimator
- * Based on Belgian fiscal rules per region
+ * Belgian TMC + annual tax estimator.
+ * Brackets are fetched from Supabase (admin-editable, no redeploy needed).
  */
-
-// TMC brackets by fiscal CV (Wallonie & Bruxelles use similar progressive scales)
-function computeFiscalCV(kw: number): number {
-  // Belgian fiscal CV formula: roughly (kw * 0.00458) ^ 2 mapped to CV brackets
-  // Simplified: 1 CV per ~7.35 kW for < 70kW, then diminishing
-  if (kw <= 70) return Math.max(1, Math.round(kw / 7.35));
-  return Math.round(kw / 6.5);
-}
-
-function computeTMC(fiscalCV: number, region: Region, age: number): number {
-  // TMC decreases with vehicle age, fully exempt after 25 years in some regions
-  let baseTMC = 0;
-
-  // Progressive scale (simplified Belgian 2025 rates)
-  if (fiscalCV <= 4) baseTMC = 61.50;
-  else if (fiscalCV <= 6) baseTMC = 123.00;
-  else if (fiscalCV <= 8) baseTMC = 495.00;
-  else if (fiscalCV <= 10) baseTMC = 867.00;
-  else if (fiscalCV <= 11) baseTMC = 1239.00;
-  else if (fiscalCV <= 14) baseTMC = 2478.00;
-  else if (fiscalCV <= 17) baseTMC = 4957.00;
-  else baseTMC = 4957.00 + (fiscalCV - 17) * 500;
-
-  // Age reduction
-  if (region === "flandre") {
-    // Flanders: fixed BIV based on CO2 (simplified as kW proxy)
-    if (age >= 1) baseTMC *= Math.max(0, 1 - age * 0.05);
-  } else {
-    // Brussels & Wallonia: age reduction
-    if (age >= 1 && age < 2) baseTMC *= 0.85;
-    else if (age >= 2 && age < 3) baseTMC *= 0.70;
-    else if (age >= 3 && age < 4) baseTMC *= 0.55;
-    else if (age >= 4 && age < 5) baseTMC *= 0.40;
-    else if (age >= 5) baseTMC *= 0.25;
-  }
-
-  return Math.round(baseTMC);
-}
-
-function computeAnnualTax(fiscalCV: number, region: Region, fuelType: string): number {
-  // Annual tax (taxe de circulation) based on fiscal CV
-  let base = 0;
-
-  if (fuelType.toLowerCase().includes("lectrique") || fuelType.toLowerCase().includes("electric")) {
-    // Electric vehicles: minimal or zero
-    if (region === "flandre") return 0;
-    return 85; // Flat minimum in Wallonia/Brussels
-  }
-
-  // Progressive scale (simplified 2025 rates)
-  if (fiscalCV <= 4) base = 85;
-  else if (fiscalCV <= 6) base = 149;
-  else if (fiscalCV <= 8) base = 262;
-  else if (fiscalCV <= 10) base = 421;
-  else if (fiscalCV <= 11) base = 543;
-  else if (fiscalCV <= 14) base = 867;
-  else if (fiscalCV <= 17) base = 1239;
-  else base = 1239 + (fiscalCV - 17) * 200;
-
-  // Diesel surcharge in Brussels
-  if (region === "bruxelles" && fuelType.toLowerCase().includes("diesel")) {
-    base *= 1.15;
-  }
-
-  // LPG surcharge
-  if (fuelType.toLowerCase().includes("gpl") || fuelType.toLowerCase().includes("lpg")) {
-    base += fiscalCV * 10;
-  }
-
-  return Math.round(base);
-}
-
 export default function BelgianTaxCalculator({ powerKw, fuelType = "", euroNorm, year }: BelgianTaxCalculatorProps) {
   const [region, setRegion] = useState<Region>("bruxelles");
   const [manualKw, setManualKw] = useState<string>(powerKw?.toString() || "");
+
+  const { data, isLoading } = useTaxBrackets();
 
   const kw = parseInt(manualKw) || powerKw || 0;
   const vehicleAge = year ? new Date().getFullYear() - year : 0;
 
   const { fiscalCV, tmc, annualTax } = useMemo(() => {
-    if (kw <= 0) return { fiscalCV: 0, tmc: 0, annualTax: 0 };
+    if (kw <= 0 || !data) return { fiscalCV: 0, tmc: 0, annualTax: 0 };
     const cv = computeFiscalCV(kw);
     return {
       fiscalCV: cv,
-      tmc: computeTMC(cv, region, vehicleAge),
-      annualTax: computeAnnualTax(cv, region, fuelType),
+      tmc: computeTmcFromDb(data.tmc, data.ages, region, cv, vehicleAge),
+      annualTax: computeAnnualTaxFromDb(data.annual, region, cv, fuelType),
     };
-  }, [kw, region, vehicleAge, fuelType]);
+  }, [kw, region, vehicleAge, fuelType, data]);
 
   const regionLabels: Record<Region, string> = {
     bruxelles: "Bruxelles-Capitale",
@@ -162,7 +97,14 @@ export default function BelgianTaxCalculator({ powerKw, fuelType = "", euroNorm,
           </div>
         </div>
 
-        {kw > 0 && (
+        {kw > 0 && isLoading && (
+          <div className="flex items-center justify-center py-6 text-muted-foreground text-xs gap-2">
+            <Loader2 className="w-4 h-4 animate-spin" />
+            Chargement des barèmes…
+          </div>
+        )}
+
+        {kw > 0 && !isLoading && (
           <>
             {/* Fiscal CV badge */}
             <div className="flex items-center gap-2">

@@ -19,6 +19,7 @@ const AdminLogsPage = lazy(() => import('./pages/AdminLogsPage'));
 const AdminExportsPage = lazy(() => import('./pages/AdminExportsPage'));
 const AdminStatsPage = lazy(() => import('./pages/AdminStatsPage'));
 const AdminFuelPricesPage = lazy(() => import('./pages/AdminFuelPricesPage'));
+const AdminTaxBracketsPage = lazy(() => import('./pages/AdminTaxBracketsPage'));
 
 function PageFallback() {
   return (
@@ -58,6 +59,7 @@ export default function AdminLayout() {
                 <Route path="exports" element={<AdminExportsPage />} />
                 <Route path="stats" element={<AdminStatsPage />} />
                 <Route path="fuel-prices" element={<AdminFuelPricesPage />} />
+                <Route path="tax-brackets" element={<AdminTaxBracketsPage />} />
                 <Route path="*" element={<Navigate to="/admin" replace />} />
               </Routes>
             </Suspense>
