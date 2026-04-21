@@ -126,6 +126,120 @@ export type Database = {
         }
         Relationships: []
       }
+      belgian_annual_tax_brackets: {
+        Row: {
+          base_amount: number
+          created_at: string
+          cv_max: number
+          cv_min: number
+          diesel_surcharge_pct: number
+          electric_amount: number
+          id: string
+          lpg_surcharge_per_cv: number
+          notes: string | null
+          region: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          base_amount: number
+          created_at?: string
+          cv_max: number
+          cv_min: number
+          diesel_surcharge_pct?: number
+          electric_amount?: number
+          id?: string
+          lpg_surcharge_per_cv?: number
+          notes?: string | null
+          region: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          base_amount?: number
+          created_at?: string
+          cv_max?: number
+          cv_min?: number
+          diesel_surcharge_pct?: number
+          electric_amount?: number
+          id?: string
+          lpg_surcharge_per_cv?: number
+          notes?: string | null
+          region?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
+      belgian_tmc_age_reductions: {
+        Row: {
+          age_max_years: number | null
+          age_min_years: number
+          coefficient: number
+          created_at: string
+          id: string
+          region: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          age_max_years?: number | null
+          age_min_years: number
+          coefficient: number
+          created_at?: string
+          id?: string
+          region: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          age_max_years?: number | null
+          age_min_years?: number
+          coefficient?: number
+          created_at?: string
+          id?: string
+          region?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
+      belgian_tmc_brackets: {
+        Row: {
+          base_amount: number
+          created_at: string
+          cv_max: number
+          cv_min: number
+          id: string
+          notes: string | null
+          region: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          base_amount: number
+          created_at?: string
+          cv_max: number
+          cv_min: number
+          id?: string
+          notes?: string | null
+          region: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          base_amount?: number
+          created_at?: string
+          cv_max?: number
+          cv_min?: number
+          id?: string
+          notes?: string | null
+          region?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       car_listings: {
         Row: {
           body_type: string
