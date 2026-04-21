@@ -46,8 +46,17 @@ const SEOHead = ({
 
   const fullTitle = title ? `${title} | AutoRa` : defaultTitles[language] || defaultTitles.fr;
   const fullDescription = description || defaultDescriptions[language] || defaultDescriptions.fr;
-  const canonicalUrl = url || "https://autora.be";
   const locale = locales[language] || "fr_BE";
+
+  // Build canonical + hreflang URLs from current path
+  const SITE = "https://autora.be";
+  const currentPath =
+    typeof window !== "undefined" ? window.location.pathname : "/";
+  const stripLang = (p: string) => p.replace(/^\/(?:fr|nl|de|en)(?=\/|$)/, "") || "/";
+  const pathNoLang = stripLang(currentPath);
+  const canonicalUrl = url || `${SITE}/${language}${pathNoLang === "/" ? "" : pathNoLang}`;
+  const altFor = (lng: string) =>
+    `${SITE}/${lng}${pathNoLang === "/" ? "" : pathNoLang}`;
 
   // Normalize jsonLd to array
   const jsonLdItems = jsonLd
@@ -79,12 +88,12 @@ const SEOHead = ({
       {/* Canonical */}
       <link rel="canonical" href={canonicalUrl} />
       
-      {/* Alternate languages */}
-      <link rel="alternate" hrefLang="fr" href={`${canonicalUrl}?lang=fr`} />
-      <link rel="alternate" hrefLang="nl" href={`${canonicalUrl}?lang=nl`} />
-      <link rel="alternate" hrefLang="de" href={`${canonicalUrl}?lang=de`} />
-      <link rel="alternate" hrefLang="en" href={`${canonicalUrl}?lang=en`} />
-      <link rel="alternate" hrefLang="x-default" href={canonicalUrl} />
+      {/* Alternate languages — real localized URLs */}
+      <link rel="alternate" hrefLang="fr" href={altFor("fr")} />
+      <link rel="alternate" hrefLang="nl" href={altFor("nl")} />
+      <link rel="alternate" hrefLang="de" href={altFor("de")} />
+      <link rel="alternate" hrefLang="en" href={altFor("en")} />
+      <link rel="alternate" hrefLang="x-default" href={altFor("fr")} />
 
       {/* JSON-LD Structured Data */}
       {jsonLdItems.map((item, i) => (

@@ -12,6 +12,10 @@ Allow: /
 
 User-agent: *
 Allow: /
+Allow: /fr/
+Allow: /nl/
+Allow: /de/
+Allow: /en/
 
 Sitemap: https://autora.be/sitemap.xml
 Sitemap: https://jbdsjqoonpieusfvkhyo.supabase.co/functions/v1/dynamic-sitemap
