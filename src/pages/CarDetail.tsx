@@ -54,7 +54,11 @@ const fadeUp = (delay: number) => ({
 });
 
 const CarDetail = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id: idOrSlug } = useParams<{ id: string }>();
+  // Support both raw UUIDs and SEO slugs ending with the UUID
+  const id = idOrSlug
+    ? (idOrSlug.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)?.[0] ?? idOrSlug)
+    : undefined;
   const navigate = useNavigate();
   const { toast } = useToast();
   const { isFavorite, toggleFavorite } = useFavorites();

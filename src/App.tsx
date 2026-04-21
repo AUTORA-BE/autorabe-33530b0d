@@ -6,7 +6,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { CompareProvider } from "@/features/compare";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import PageTransition from "@/components/PageTransition";
@@ -89,17 +89,6 @@ function ScrollToTopOnNavigate() {
     prefetchCriticalRoutes();
   }, []);
   return null;
-}
-
-/** Detect browser preferred language for root redirect */
-function detectLang(): "fr" | "nl" | "de" | "en" {
-  const saved = localStorage.getItem("language");
-  if (saved && ["fr", "nl", "de", "en"].includes(saved)) return saved as "fr" | "nl" | "de" | "en";
-  const browser = navigator.language.split("-")[0];
-  if (browser === "nl") return "nl";
-  if (browser === "de") return "de";
-  if (browser === "en") return "en";
-  return "fr";
 }
 
 /** All app routes, used both at root and under /:lang/* for SEO */
