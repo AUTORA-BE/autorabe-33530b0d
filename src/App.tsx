@@ -172,11 +172,11 @@ const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <LanguageProvider>
-          <CompareProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
+        <BrowserRouter>
+          <LanguageProvider>
+            <CompareProvider>
+              <Toaster />
+              <Sonner />
               <Suspense fallback={<PageLoader />}>
                 <ScrollToTopOnNavigate />
                 <ErrorBoundary>
@@ -189,10 +189,10 @@ const App = () => (
               <Suspense fallback={null}><CarChatbot /></Suspense>
               <Suspense fallback={null}><PWAInstallBanner /></Suspense>
               <Suspense fallback={null}><CookieBanner /></Suspense>
-            </BrowserRouter>
-            <SpeedInsights />
-          </CompareProvider>
-        </LanguageProvider>
+              <SpeedInsights />
+            </CompareProvider>
+          </LanguageProvider>
+        </BrowserRouter>
       </TooltipProvider>
       {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
