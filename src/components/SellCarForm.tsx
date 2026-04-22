@@ -614,13 +614,10 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
         toast.success(t('sellForm.successEdit'));
         navigate('/dashboard');
       } else {
-        const { error } = await supabase
-          .from('car_listings')
-          .insert({
-            user_id: user.id,
-            status: 'pending',
-            ...listingData,
-          });
+        // Publication via edge function sécurisée (seule voie autorisée)
+        const { error } = await supabase.functions.invoke('create-listing', {
+          body: listingData,
+        });
 
         if (error) {
           console.error('Insert error:', error);
