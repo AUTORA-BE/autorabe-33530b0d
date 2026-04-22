@@ -23,6 +23,7 @@ const NAV_ITEMS = [
   { title: 'Statistiques', path: '/admin/stats', icon: BarChart3 },
   { title: 'Prix carburants', path: '/admin/fuel-prices', icon: Fuel },
   { title: 'Barèmes fiscaux', path: '/admin/tax-brackets', icon: Calculator },
+  { title: 'Audit LEZ', path: '/admin/lez-audit', icon: ShieldCheck },
   { title: 'Logs d\'activité', path: '/admin/logs', icon: ScrollText },
   { title: 'Exports', path: '/admin/exports', icon: Download },
 ];
