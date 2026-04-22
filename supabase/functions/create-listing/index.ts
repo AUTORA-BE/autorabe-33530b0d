@@ -93,7 +93,39 @@ Deno.serve(async (req) => {
       });
     }
 
-    // 4. Insertion via service_role (seule voie autorisée)
+    // 4. Anti-doublon — même user, même voiture (marque/modèle/année, km ±500),
+    //    annonce active (pending ou approved) dans les 90 derniers jours
+    const kmMin = Math.max(0, payload.mileage - 500);
+    const kmMax = payload.mileage + 500;
+    const since = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
+
+    const { data: dupes, error: dupeError } = await admin
+      .from('car_listings')
+      .select('id, mileage, created_at, status')
+      .eq('user_id', user.id)
+      .ilike('brand', payload.brand)
+      .ilike('model', payload.model)
+      .eq('year', payload.year)
+      .gte('mileage', kmMin)
+      .lte('mileage', kmMax)
+      .in('status', ['pending', 'approved'])
+      .gte('created_at', since)
+      .limit(1);
+
+    if (dupeError) {
+      console.error('[create-listing] Dupe check error:', dupeError);
+    } else if (dupes && dupes.length > 0) {
+      return new Response(
+        JSON.stringify({
+          error: 'Une annonce identique existe déjà (même marque, modèle, année et kilométrage). Modifiez l\'annonce existante plutôt que d\'en créer une nouvelle.',
+          duplicateId: dupes[0].id,
+          code: 'DUPLICATE_LISTING',
+        }),
+        { status: 409, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      );
+    }
+
+    // 5. Insertion via service_role (seule voie autorisée)
     const { data, error } = await admin
       .from('car_listings')
       .insert({
