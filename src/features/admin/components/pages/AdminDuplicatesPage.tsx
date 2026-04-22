@@ -112,13 +112,13 @@ export default function AdminDuplicatesPage() {
   async function logAction(actionType: string, targetId: string, metadata?: Record<string, unknown>) {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
-    await supabase.from('admin_actions').insert({
+    await supabase.from('admin_actions').insert([{
       admin_id: user.id,
       action_type: actionType,
       target_type: 'car_listing',
       target_id: targetId,
-      metadata: metadata ?? {},
-    });
+      metadata: (metadata ?? {}) as never,
+    }]);
   }
 
   async function closeListing(id: string) {
@@ -200,7 +200,7 @@ export default function AdminDuplicatesPage() {
             <Card key={group.key}>
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2 flex-wrap">
-                  <AlertTriangle className="h-4 w-4 text-amber-500" />
+                  <AlertTriangle className="h-4 w-4 text-warning" />
                   {group.brand} {group.model} ({group.year})
                   <Badge variant="outline" className="font-normal">
                     ~{group.mileageBucket.toLocaleString('fr-BE')} km
