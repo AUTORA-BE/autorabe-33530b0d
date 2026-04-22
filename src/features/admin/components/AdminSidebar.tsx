@@ -5,7 +5,7 @@
 
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
-  LayoutDashboard, Users, Car, AlertTriangle, ScrollText, Download, LogOut, MessageSquare, BarChart3, Fuel, Calculator, ShieldCheck,
+  LayoutDashboard, Users, Car, AlertTriangle, ScrollText, Download, LogOut, MessageSquare, BarChart3, Fuel, Calculator, ShieldCheck, Copy,
 } from 'lucide-react';
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarGroupContent,
@@ -18,6 +18,7 @@ const NAV_ITEMS = [
   { title: 'Vue d\'ensemble', path: '/admin', icon: LayoutDashboard },
   { title: 'Utilisateurs', path: '/admin/users', icon: Users },
   { title: 'Annonces', path: '/admin/listings', icon: Car },
+  { title: 'Doublons', path: '/admin/duplicates', icon: Copy },
   { title: 'Conversations', path: '/admin/conversations', icon: MessageSquare },
   { title: 'Signalements', path: '/admin/reports', icon: AlertTriangle },
   { title: 'Statistiques', path: '/admin/stats', icon: BarChart3 },
