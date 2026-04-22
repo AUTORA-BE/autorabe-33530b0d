@@ -301,3 +301,42 @@ export function calculerStatutLEZ(fuelType: string, euroNorm: string): LezResult
 
   return { global, details };
 }
+
+/**
+ * Vérifie si un véhicule est compatible LEZ (au moins 1 ville l'autorise sans dérogation).
+ * Règle simple : Euro 6+ (essence ou diesel), électrique ou hybride → compatible.
+ */
+export function isLezCompatible(fuelType: string | null | undefined, euroNorm: string | null | undefined): boolean {
+  if (!fuelType) return false;
+  const fuel = normaliserCarburant(fuelType);
+  if (fuel === 'electric' || fuel === 'hybride') return true;
+  if (!euroNorm) return false;
+  const norm = normaliserNormeEuro(euroNorm);
+  if (!norm) return false;
+  // Euro 6 et variantes = compatibles partout
+  if (norm === 'euro6' || norm === 'euro6d' || norm === 'euro6d_temp') return true;
+  // Euro 4/5 essence = compatibles (pas diesel à Bruxelles)
+  if (fuel === 'essence' && (norm === 'euro4' || norm === 'euro5')) return true;
+  return false;
+}
+
+/**
+ * Vérifie la cohérence d'un flag stocké vs la règle calculée.
+ * Retourne null si OK, ou un objet décrivant l'incohérence.
+ */
+export function auditLezFlag(params: {
+  fuelType: string | null | undefined;
+  euroNorm: string | null | undefined;
+  storedFlag: boolean | null | undefined;
+}): { expected: boolean; actual: boolean; reason: string } | null {
+  const expected = isLezCompatible(params.fuelType, params.euroNorm);
+  const actual = !!params.storedFlag;
+  if (expected === actual) return null;
+  return {
+    expected,
+    actual,
+    reason: expected
+      ? "Marquée non-LEZ alors qu'Euro 6+ ou électrique/hybride"
+      : "Marquée LEZ alors que la norme Euro est insuffisante",
+  };
+}
