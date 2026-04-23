@@ -61,8 +61,14 @@ const buildVehicleSlug = (v: { id: string; brand?: string | null; model?: string
   return parts.length ? `${parts.join("-")}-${v.id}` : v.id;
 };
 
-Deno.serve(async () => {
+Deno.serve(async (req) => {
   try {
+    const url = new URL(req.url);
+    const langParam = url.searchParams.get("lang");
+    const filterLang: Lang | null =
+      langParam && (LANGS as readonly string[]).includes(langParam) ? (langParam as Lang) : null;
+    const targetLangs: readonly Lang[] = filterLang ? [filterLang] : LANGS;
+
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
@@ -70,7 +76,7 @@ Deno.serve(async () => {
     const { data: listings } = await supabase
       .from("car_listings_public")
       .select("id, brand, model, year, location, updated_at")
-      .eq("status", "active")
+      .eq("status", "approved")
       .order("updated_at", { ascending: false })
       .limit(5000);
 
@@ -79,11 +85,11 @@ Deno.serve(async () => {
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
 `;
 
-    // Static pages: emit one entry per language with full alternates
+    // Static pages
     for (const [canonical, meta] of Object.entries(META)) {
       const paths = PATH_MAP[canonical];
       if (!paths) continue;
-      for (const lang of LANGS) {
+      for (const lang of targetLangs) {
         const localized = paths[lang];
         const loc = `${SITE_URL}/${lang}${localized === "/" ? "" : localized}`;
         xml += `  <url>
@@ -102,14 +108,14 @@ Deno.serve(async () => {
       }
     }
 
-    // Dynamic vehicle pages: one entry per language per vehicle, with SEO slug
+    // Vehicle pages
     if (listings) {
       for (const listing of listings) {
         const lastmod = listing.updated_at
           ? new Date(listing.updated_at).toISOString().split("T")[0]
           : new Date().toISOString().split("T")[0];
         const slug = buildVehicleSlug(listing);
-        for (const lang of LANGS) {
+        for (const lang of targetLangs) {
           const loc = `${SITE_URL}/${lang}${CAR_SEG[lang]}/${slug}`;
           xml += `  <url>
     <loc>${loc}</loc>
@@ -134,6 +140,7 @@ Deno.serve(async () => {
       headers: {
         "Content-Type": "application/xml; charset=utf-8",
         "Cache-Control": "public, max-age=3600, s-maxage=3600",
+        "Access-Control-Allow-Origin": "*",
       },
     });
   } catch (error) {
