@@ -3,6 +3,7 @@ import { Header, Footer, BackButton } from "@/shared/components";
 import SEOHead from "@/components/SEOHead";
 import { useCompareContext } from "@/features/compare";
 import { Link, useSearchParams } from "react-router-dom";
+import { useLocalizedVehicleHref, useLocalizedHref } from "@/lib/useLocalizedHref";
 import { 
   GitCompareArrows, 
   X, 
@@ -172,6 +173,8 @@ function ScoreCard({ score }: { score: VehicleScore }) {
 
 const Compare = () => {
   const { compareList, removeFromCompare, clearCompare, addToCompare } = useCompareContext();
+  const vehicleHref = useLocalizedVehicleHref();
+  const localized = useLocalizedHref();
   const [searchParams] = useSearchParams();
   const [copied, setCopied] = useState(false);
   const [loadingShared, setLoadingShared] = useState(false);
@@ -432,7 +435,7 @@ const Compare = () => {
                         >
                           {/* Vehicle image + remove */}
                           <div className="relative">
-                            <Link to={`/car/${car.id}`}>
+                            <Link to={vehicleHref(car)}>
                               <div className="aspect-[16/10] overflow-hidden">
                                 <img
                                   src={car.image}
@@ -519,7 +522,7 @@ const Compare = () => {
                             </Badge>
 
                             {/* CTA */}
-                            <Link to={`/car/${car.id}`}>
+                            <Link to={vehicleHref(car)}>
                               <Button variant="outline" className="w-full rounded-xl mt-1">
                                 Voir l'annonce
                               </Button>
@@ -532,7 +535,7 @@ const Compare = () => {
                     {/* Add vehicle slot */}
                     {compareList.length < 3 && (
                       <Link
-                        to="/"
+                        to={localized("/")}
                         ref={(el) => { cardRefs.current[compareList.length] = el as HTMLDivElement | null; }}
                         className="snap-center shrink-0 w-[85vw] max-w-[340px] rounded-2xl border-2 border-dashed border-border flex flex-col items-center justify-center min-h-[200px] hover:border-primary/50 transition-colors"
                       >
@@ -575,7 +578,7 @@ const Compare = () => {
                         >
                           <X className="w-4 h-4" />
                         </button>
-                        <Link to={`/car/${car.id}`} className="block group">
+                        <Link to={vehicleHref(car)} className="block group">
                           <div className="aspect-video rounded-xl overflow-hidden mb-3 border border-border">
                             <img
                               src={car.image}

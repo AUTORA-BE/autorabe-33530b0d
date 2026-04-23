@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header, Footer } from "@/shared/components";
+import { useLocalizedVehicleHref } from "@/lib/useLocalizedHref";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import {
@@ -67,6 +68,7 @@ const COLORS = ['#3b82f6', '#ef4444', '#22c55e', '#f59e0b', '#8b5cf6', '#ec4899'
 
 const SellerStats = () => {
   const navigate = useNavigate();
+  const vehicleHref = useLocalizedVehicleHref();
   const { t, language } = useLanguage();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -616,7 +618,7 @@ const SellerStats = () => {
                       <div
                         key={listing.id}
                         className="flex items-center gap-4 p-4 rounded-xl bg-secondary/50 hover:bg-secondary transition-colors cursor-pointer"
-                        onClick={() => navigate(`/car/${listing.id}`)}
+                        onClick={() => navigate(vehicleHref(listing))}
                       >
                         <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-sm">
                           {index + 1}

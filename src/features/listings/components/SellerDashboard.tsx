@@ -6,6 +6,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLocalizedVehicleHref } from "@/lib/useLocalizedHref";
 import { motion } from "framer-motion";
 import {
   Eye,
@@ -200,6 +201,7 @@ function KpiCard({ icon: Icon, label, value, color, loading }: KpiCardProps) {
  */
 export default function SellerDashboard() {
   const navigate = useNavigate();
+  const vehicleHref = useLocalizedVehicleHref();
   const { t, language } = useLanguage();
   const [chartPeriod, setChartPeriod] = useState<ChartPeriod>(30);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
@@ -478,7 +480,7 @@ export default function SellerDashboard() {
                     <motion.div
                       key={listing.id}
                       variants={listItemVariants}
-                      onClick={() => navigate(`/car/${listing.id}`)}
+                      onClick={() => navigate(vehicleHref(listing))}
                       className={`group relative flex items-center gap-4 p-3 rounded-xl border-2 bg-card hover:shadow-sm transition-all cursor-pointer ${
                         listing.boostLevel === "ultra" && listing.boostExpiresAt && new Date(listing.boostExpiresAt) > new Date()
                           ? "border-primary shadow-md"

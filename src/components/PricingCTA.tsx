@@ -8,6 +8,7 @@ import { ArrowRight, Check, Crown, Rocket, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useLocalizedHref } from "@/lib/useLocalizedHref";
 
 const fadeUp = (delay: number) => ({
   initial: { opacity: 0, y: 20 },
@@ -18,6 +19,7 @@ const fadeUp = (delay: number) => ({
 
 const PricingCTA = () => {
   const { language } = useLanguage();
+  const localized = useLocalizedHref();
   const isNl = language === "nl";
 
   return (
@@ -137,7 +139,7 @@ const PricingCTA = () => {
 
           {/* CTA */}
           <motion.div {...fadeUp(0.25)} className="text-center">
-            <Link to="/pricing">
+            <Link to={localized("/pricing")}>
               <Button
                 size="lg"
                 className="rounded-full h-13 px-10 font-semibold text-sm group active:scale-[0.97] shadow-[0_8px_24px_-8px_hsl(var(--primary)/0.5)] hover:shadow-[0_14px_36px_-8px_hsl(var(--primary)/0.6)] hover:-translate-y-0.5 transition-all duration-300"

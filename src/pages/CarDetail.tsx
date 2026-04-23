@@ -42,6 +42,7 @@ import ReportAdModal from "@/components/ReportAdModal";
 import ScrollReveal from "@/components/ScrollReveal";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useLocalizedVehicleHref } from "@/lib/useLocalizedHref";
 const VehicleTcoSection = lazy(() => import("@/features/tco/components/VehicleTcoSection"));
 const BelgianTaxCalculator = lazy(() => import("@/components/BelgianTaxCalculator"));
 const TaxChatModal = lazy(() => import("@/components/TaxChatModal"));
@@ -60,6 +61,7 @@ const CarDetail = () => {
     ? (idOrSlug.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)?.[0] ?? idOrSlug)
     : undefined;
   const navigate = useNavigate();
+  const vehicleHref = useLocalizedVehicleHref();
   const { toast } = useToast();
   const { isFavorite, toggleFavorite } = useFavorites();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -919,7 +921,10 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                           car={relatedCar}
                           isFavorite={isFavorite(relatedCar.id)}
                           onToggleFavorite={toggleFavorite}
-                          onClick={(id) => navigate(`/car/${id}`)}
+                          onClick={(id) => {
+                            const r = relatedCars.find((x) => x.id === id);
+                            navigate(vehicleHref(r ?? { id }));
+                          }}
                         />
                       </ScrollReveal>
                     </div>

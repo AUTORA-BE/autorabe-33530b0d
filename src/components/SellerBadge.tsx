@@ -1,5 +1,6 @@
 import { Building2, User, Shield, AlertCircle, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useLocalizedHref } from "@/lib/useLocalizedHref";
 
 interface SellerBadgeProps {
   sellerType?: string | null;
@@ -17,6 +18,7 @@ const SellerBadge = ({
   sellerId,
 }: SellerBadgeProps) => {
   const isProfessional = sellerType === "professionnel";
+  const localized = useLocalizedHref();
 
   if (compact) {
     return (
@@ -65,7 +67,7 @@ const SellerBadge = ({
       {/* View profile link */}
       {sellerId && (
         <Link
-          to={`/seller/${sellerId}`}
+          to={localized(`/seller/${sellerId}`)}
           className="inline-flex items-center gap-1.5 mt-2 text-sm text-primary hover:text-primary/80 font-medium transition-colors"
         >
           Voir le profil

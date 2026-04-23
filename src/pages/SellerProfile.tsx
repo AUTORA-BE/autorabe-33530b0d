@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Header, Footer } from "@/shared/components";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useLocalizedVehicleHref } from "@/lib/useLocalizedHref";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Star, MapPin, Phone, Mail, Calendar, ArrowLeft, Car, MessageSquare, Info, Shield, Clock, ExternalLink, Send, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -57,6 +58,7 @@ interface SellerReview {
 const SellerProfile = () => {
   const { userId } = useParams<{ userId: string }>();
   const navigate = useNavigate();
+  const vehicleHref = useLocalizedVehicleHref();
   const { t, language } = useLanguage();
   const { toast } = useToast();
   const dateLocale = language === "fr" ? fr : language === "nl" ? nl : enUS;
@@ -365,7 +367,7 @@ const SellerProfile = () => {
                         transition={{ duration: 0.35, delay: i * 0.05 }}
                       >
                         <Link
-                          to={`/car/${listing.id}`}
+                          to={vehicleHref(listing)}
                           className="group block rounded-2xl overflow-hidden border border-border/50 bg-card/80 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 hover:shadow-lg"
                         >
                           {/* Image */}

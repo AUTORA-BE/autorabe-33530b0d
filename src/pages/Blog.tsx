@@ -7,8 +7,10 @@ import { blogArticles } from "@/data/blogArticles";
 import { articleSchema, breadcrumbSchema } from "@/lib/seoSchemas";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useLocalizedHref } from "@/lib/useLocalizedHref";
 
 const Blog = () => {
+  const localized = useLocalizedHref();
   const jsonLd = [
     breadcrumbSchema([
       { name: "Accueil", url: "https://autora.be" },
@@ -49,7 +51,7 @@ const Blog = () => {
           {/* Article grid */}
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {blogArticles.map((article) => (
-              <Link key={article.slug} to={`/blog/${article.slug}`} className="group">
+              <Link key={article.slug} to={localized(`/blog/${article.slug}`)} className="group">
                 <Card className="h-full overflow-hidden border-border/40 bg-card/60 backdrop-blur-sm transition-all duration-300 group-hover:border-primary/40 group-hover:shadow-lg group-hover:shadow-primary/5">
                   <div className="aspect-[16/9] overflow-hidden">
                     <img
