@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { Heart, MessageCircle, HelpCircle, GitCompareArrows, LayoutDashboard, Settings, LogOut, User, Mail, Bell, ShieldCheck, Home, Car, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { prefetchRoute } from "@/utils/prefetchRoutes";
+import { useLocalizedHref } from "@/lib/useLocalizedHref";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import { motion, AnimatePresence } from "framer-motion";
 import { createPortal } from "react-dom";
