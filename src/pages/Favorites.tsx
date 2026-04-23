@@ -14,6 +14,7 @@ import { mapListingToVehicle } from "@/features/listings/api/vehicleQueries";
 import type { VehicleListingRow } from "@/features/listings/types/vehicle.types";
 import { PullToRefresh } from "@/components/PullToRefresh";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { useLocalizedVehicleHref } from "@/lib/useLocalizedHref";
 
 type SortMode = "price" | "year" | "brand";
 
@@ -221,7 +222,10 @@ const Favorites = () => {
                       car={car}
                       isFavorite={isFavorite(car.id)}
                       onToggleFavorite={toggleFavorite}
-                      onClick={(id) => navigate(`/car/${id}`)}
+                      onClick={(id) => {
+                        const c = favoriteCars?.find((x) => x.id === id);
+                        navigate(vehicleHref(c ?? { id }));
+                      }}
                     />
                   </motion.div>
                 ))}

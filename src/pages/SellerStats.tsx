@@ -616,7 +616,7 @@ const SellerStats = () => {
                       <div
                         key={listing.id}
                         className="flex items-center gap-4 p-4 rounded-xl bg-secondary/50 hover:bg-secondary transition-colors cursor-pointer"
-                        onClick={() => navigate(`/car/${listing.id}`)}
+                        onClick={() => navigate(vehicleHref(listing))}
                       >
                         <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold text-sm">
                           {index + 1}

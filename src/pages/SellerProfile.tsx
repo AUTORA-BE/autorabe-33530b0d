@@ -365,7 +365,7 @@ const SellerProfile = () => {
                         transition={{ duration: 0.35, delay: i * 0.05 }}
                       >
                         <Link
-                          to={`/car/${listing.id}`}
+                          to={vehicleHref(listing)}
                           className="group block rounded-2xl overflow-hidden border border-border/50 bg-card/80 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 hover:shadow-lg"
                         >
                           {/* Image */}

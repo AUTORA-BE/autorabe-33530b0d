@@ -919,7 +919,10 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                           car={relatedCar}
                           isFavorite={isFavorite(relatedCar.id)}
                           onToggleFavorite={toggleFavorite}
-                          onClick={(id) => navigate(`/car/${id}`)}
+                          onClick={(id) => {
+                            const r = relatedCars.find((x) => x.id === id);
+                            navigate(vehicleHref(r ?? { id }));
+                          }}
                         />
                       </ScrollReveal>
                     </div>

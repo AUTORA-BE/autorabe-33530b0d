@@ -478,7 +478,7 @@ export default function SellerDashboard() {
                     <motion.div
                       key={listing.id}
                       variants={listItemVariants}
-                      onClick={() => navigate(`/car/${listing.id}`)}
+                      onClick={() => navigate(vehicleHref(listing))}
                       className={`group relative flex items-center gap-4 p-3 rounded-xl border-2 bg-card hover:shadow-sm transition-all cursor-pointer ${
                         listing.boostLevel === "ultra" && listing.boostExpiresAt && new Date(listing.boostExpiresAt) > new Date()
                           ? "border-primary shadow-md"
