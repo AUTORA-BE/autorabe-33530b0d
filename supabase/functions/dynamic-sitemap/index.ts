@@ -70,7 +70,7 @@ Deno.serve(async () => {
     const { data: listings } = await supabase
       .from("car_listings_public")
       .select("id, brand, model, year, location, updated_at")
-      .eq("status", "active")
+      .eq("status", "approved")
       .order("updated_at", { ascending: false })
       .limit(5000);
 
