@@ -3,6 +3,7 @@ import { Header, Footer, BackButton } from "@/shared/components";
 import SEOHead from "@/components/SEOHead";
 import { useCompareContext } from "@/features/compare";
 import { Link, useSearchParams } from "react-router-dom";
+import { useLocalizedVehicleHref, useLocalizedHref } from "@/lib/useLocalizedHref";
 import { 
   GitCompareArrows, 
   X, 
