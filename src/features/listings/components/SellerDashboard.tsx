@@ -6,6 +6,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLocalizedVehicleHref } from "@/lib/useLocalizedHref";
 import { motion } from "framer-motion";
 import {
   Eye,

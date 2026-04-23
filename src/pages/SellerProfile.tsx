@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Header, Footer } from "@/shared/components";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useLocalizedVehicleHref } from "@/lib/useLocalizedHref";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Star, MapPin, Phone, Mail, Calendar, ArrowLeft, Car, MessageSquare, Info, Shield, Clock, ExternalLink, Send, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
