@@ -80,6 +80,7 @@ function SwipeableCard({
 
 const Favorites = () => {
   const navigate = useNavigate();
+  const vehicleHref = useLocalizedVehicleHref();
   const { favorites, isFavorite, toggleFavorite, clearFavorites } = useFavorites();
   const { t } = useLanguage();
   const [sortMode, setSortMode] = useState<SortMode>("price");

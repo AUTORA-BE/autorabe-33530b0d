@@ -57,6 +57,7 @@ interface SellerReview {
 const SellerProfile = () => {
   const { userId } = useParams<{ userId: string }>();
   const navigate = useNavigate();
+  const vehicleHref = useLocalizedVehicleHref();
   const { t, language } = useLanguage();
   const { toast } = useToast();
   const dateLocale = language === "fr" ? fr : language === "nl" ? nl : enUS;

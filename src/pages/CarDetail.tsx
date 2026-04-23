@@ -60,6 +60,7 @@ const CarDetail = () => {
     ? (idOrSlug.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)?.[0] ?? idOrSlug)
     : undefined;
   const navigate = useNavigate();
+  const vehicleHref = useLocalizedVehicleHref();
   const { toast } = useToast();
   const { isFavorite, toggleFavorite } = useFavorites();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);

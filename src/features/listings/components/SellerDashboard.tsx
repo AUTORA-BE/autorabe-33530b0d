@@ -200,6 +200,7 @@ function KpiCard({ icon: Icon, label, value, color, loading }: KpiCardProps) {
  */
 export default function SellerDashboard() {
   const navigate = useNavigate();
+  const vehicleHref = useLocalizedVehicleHref();
   const { t, language } = useLanguage();
   const [chartPeriod, setChartPeriod] = useState<ChartPeriod>(30);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
