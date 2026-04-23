@@ -45,6 +45,7 @@ const MobileMenu = ({
   isAdmin,
 }: MobileMenuProps) => {
   const handleLink = () => onClose();
+  const localized = useLocalizedHref();
 
   // Lock body scroll while menu is open
   useEffect(() => {
