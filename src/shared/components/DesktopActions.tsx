@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "next-themes";
 import { useLanguage, getLanguageLabel } from "@/contexts/LanguageContext";
+import { useLocalizedHref } from "@/lib/useLocalizedHref";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import {
   DropdownMenu,
@@ -30,6 +31,8 @@ const DesktopActions = ({ user, userProfile, onLogout, t, isAdmin }: DesktopActi
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
   const { language, setLanguage } = useLanguage();
+  const localized = useLocalizedHref();
+  const go = (p: string) => navigate(localized(p));
 
   return (
     <div className="hidden lg:flex items-center gap-2">

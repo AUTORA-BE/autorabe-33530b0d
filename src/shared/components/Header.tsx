@@ -22,6 +22,7 @@ import DesktopActions from "./DesktopActions";
 import MobileMenu from "./MobileMenu";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useAutoPromptPush } from "@/hooks/useAutoPromptPush";
+import { useLocalizedHref } from "@/lib/useLocalizedHref";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -36,6 +37,7 @@ const Header = () => {
   const { theme, setTheme } = useTheme();
   const { language, setLanguage, t } = useLanguage();
   const isAdmin = useIsAdmin(user?.id);
+  const localized = useLocalizedHref();
   useMessageNotifications(user?.id);
   useAutoPromptPush(user?.id);
 
@@ -83,7 +85,7 @@ const Header = () => {
       <div className={`container mx-auto px-4 sm:px-6 transition-all duration-300 ${scrolled ? "py-1.5 sm:py-2" : "py-2.5 sm:py-3"}`}>
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group">
+          <Link to={localized("/")} className="flex items-center gap-2 group">
             <img
               src={autoraLogo}
               alt="Autora Logo"
