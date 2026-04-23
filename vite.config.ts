@@ -67,7 +67,7 @@ export default defineConfig(({ mode }) => ({
       manifest: {
         name: "AutoRa — Marketplace automobile belge",
         short_name: "AutoRa",
-        description: "Trouvez votre prochaine voiture en Belgique. Véhicules vérifiés Car-Pass, conformité LEZ garantie. Version 1.0.0-beta.1",
+        description: "Trouvez votre prochaine voiture en Belgique. Véhicules vérifiés Car-Pass, conformité LEZ garantie. Version 1.0.0-beta.2 — Anti-doublons & modération renforcée",
         theme_color: "#0a0a14",
         background_color: "#0a0a14",
         display: "standalone",

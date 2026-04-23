@@ -1,5 +1,5 @@
 // AutoRa Push & Offline Service Worker
-const OFFLINE_CACHE = 'autora-offline-v2';
+const OFFLINE_CACHE = 'autora-offline-v3';
 const OFFLINE_URL = '/offline.html';
 
 // Pre-cache offline page on install
