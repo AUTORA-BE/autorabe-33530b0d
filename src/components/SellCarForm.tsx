@@ -117,6 +117,8 @@ interface SellCarFormProps {
 
 export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
   const navigate = useNavigate();
+  const localized = useLocalizedHref();
+  const pricingHref = localized("/pricing");
   const { t } = useLanguage();
   const queryClient = useQueryClient();
   const [currentStep, setCurrentStep] = useState(1);
