@@ -99,7 +99,7 @@ const MobileMenu = ({
             <nav className="flex-1 overflow-y-auto px-4 py-4 space-y-1">
               {/* CTA Vendre */}
               <Link
-                to="/sell"
+                to={localized("/sell")}
                 onMouseEnter={() => prefetchRoute("/sell")}
                 className="flex items-center justify-center gap-2 py-3 px-5 rounded-2xl bg-primary text-primary-foreground font-semibold text-sm shadow-lg shadow-primary/20 hover:brightness-110 transition-all active:scale-[0.98] mb-3"
                 onClick={handleLink}
@@ -110,15 +110,15 @@ const MobileMenu = ({
 
               <div className="h-px bg-border/30 my-2" />
 
-              <Link to="/" className={menuLinkClass} onClick={handleLink}>
+              <Link to={localized("/")} className={menuLinkClass} onClick={handleLink}>
                 <Home className="w-4.5 h-4.5 text-primary/70" />
                 {t("nav.buy")}
               </Link>
-              <Link to="/favorites" onMouseEnter={() => prefetchRoute("/favorites")} className={menuLinkClass} onClick={handleLink}>
+              <Link to={localized("/favorites")} onMouseEnter={() => prefetchRoute("/favorites")} className={menuLinkClass} onClick={handleLink}>
                 <Heart className="w-4.5 h-4.5 text-primary/70" />
                 {t("nav.favorites")}
               </Link>
-              <Link to="/compare" onMouseEnter={() => prefetchRoute("/compare")} className={menuLinkClass} onClick={handleLink}>
+              <Link to={localized("/compare")} onMouseEnter={() => prefetchRoute("/compare")} className={menuLinkClass} onClick={handleLink}>
                 <GitCompareArrows className="w-4.5 h-4.5 text-primary/70" />
                 {t("nav.compare")}
                 {compareCount > 0 && (
@@ -127,11 +127,11 @@ const MobileMenu = ({
                   </span>
                 )}
               </Link>
-              <Link to="/faq" onMouseEnter={() => prefetchRoute("/faq")} className={menuLinkClass} onClick={handleLink}>
+              <Link to={localized("/faq")} onMouseEnter={() => prefetchRoute("/faq")} className={menuLinkClass} onClick={handleLink}>
                 <HelpCircle className="w-4.5 h-4.5 text-primary/70" />
                 {t("nav.faq")}
               </Link>
-              <Link to="/contact" onMouseEnter={() => prefetchRoute("/contact")} className={menuLinkClass} onClick={handleLink}>
+              <Link to={localized("/contact")} onMouseEnter={() => prefetchRoute("/contact")} className={menuLinkClass} onClick={handleLink}>
                 <Mail className="w-4.5 h-4.5 text-primary/70" />
                 Contact
               </Link>
@@ -139,11 +139,11 @@ const MobileMenu = ({
               {user && (
                 <>
                   <div className="h-px bg-border/30 my-2" />
-                  <Link to="/mes-alertes" onMouseEnter={() => prefetchRoute("/mes-alertes")} className={menuLinkClass} onClick={handleLink}>
+                  <Link to={localized("/mes-alertes")} onMouseEnter={() => prefetchRoute("/mes-alertes")} className={menuLinkClass} onClick={handleLink}>
                     <Bell className="w-4.5 h-4.5 text-primary/70" />
                     {language === "nl" ? "Mijn meldingen" : "Mes alertes"}
                   </Link>
-                  <Link to="/messages" onMouseEnter={() => prefetchRoute("/messages")} className={menuLinkClass} onClick={handleLink}>
+                  <Link to={localized("/messages")} onMouseEnter={() => prefetchRoute("/messages")} className={menuLinkClass} onClick={handleLink}>
                     <MessageCircle className="w-4.5 h-4.5 text-primary/70" />
                     {t("nav.messages")}
                     {hasUnread && (
@@ -183,17 +183,17 @@ const MobileMenu = ({
 
               {user ? (
                 <div className="space-y-0.5">
-                  <Link to="/dashboard" onMouseEnter={() => prefetchRoute("/dashboard")} className={menuLinkClass} onClick={handleLink}>
+                  <Link to={localized("/dashboard")} onMouseEnter={() => prefetchRoute("/dashboard")} className={menuLinkClass} onClick={handleLink}>
                     <LayoutDashboard className="w-4.5 h-4.5 text-primary/70" />
                     {t("nav.dashboard")}
                   </Link>
                   {isAdmin && (
-                    <Link to="/admin/reports" className={menuLinkClass} onClick={handleLink}>
+                    <Link to={localized("/admin/reports")} className={menuLinkClass} onClick={handleLink}>
                       <ShieldCheck className="w-4.5 h-4.5 text-primary" />
                       Admin Dashboard
                     </Link>
                   )}
-                  <Link to="/settings" onMouseEnter={() => prefetchRoute("/settings")} className={menuLinkClass} onClick={handleLink}>
+                  <Link to={localized("/settings")} onMouseEnter={() => prefetchRoute("/settings")} className={menuLinkClass} onClick={handleLink}>
                     <Settings className="w-4.5 h-4.5 text-primary/70" />
                     {t("nav.settings")}
                   </Link>
