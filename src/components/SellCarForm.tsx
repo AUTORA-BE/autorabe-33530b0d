@@ -21,6 +21,7 @@ import { toast } from 'sonner';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useListingLimit } from '@/features/subscription';
 import { useAutoSaveDraft } from '@/features/listings/hooks/useAutoSaveDraft';
+import { useLocalizedHref } from '@/lib/useLocalizedHref';
 
 const ConfettiCanvas = lazy(() => import('@/components/ConfettiCanvas'));
 
@@ -786,7 +787,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
                 Supprimez une annonce existante ou passez à un plan supérieur pour continuer.
               </p>
             </div>
-            <Link to="/pricing">
+            <Link to={pricingHref}>
               <Button size="sm" className="shrink-0">
                 <CreditCard className="h-4 w-4 mr-2" />
                 Voir les plans

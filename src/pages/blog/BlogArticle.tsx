@@ -7,12 +7,14 @@ import { getArticleBySlug } from "@/data/blogArticles";
 import { articleSchema, breadcrumbSchema } from "@/lib/seoSchemas";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useLocalizedHref } from "@/lib/useLocalizedHref";
 
 const BlogArticle = () => {
   const { slug } = useParams<{ slug: string }>();
   const article = slug ? getArticleBySlug(slug) : undefined;
+  const localized = useLocalizedHref();
 
-  if (!article) return <Navigate to="/blog" replace />;
+  if (!article) return <Navigate to={localized("/blog")} replace />;
 
   const jsonLd = [
     breadcrumbSchema([
@@ -53,7 +55,7 @@ const BlogArticle = () => {
         <article className="max-w-3xl mx-auto px-4 sm:px-6">
           {/* Back link */}
           <Link
-            to="/blog"
+            to={localized("/blog")}
             className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-primary transition-colors mb-6"
           >
             <ArrowLeft className="w-4 h-4" /> Retour au blog
