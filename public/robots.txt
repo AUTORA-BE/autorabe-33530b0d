@@ -18,4 +18,8 @@ Allow: /de/
 Allow: /en/
 
 Sitemap: https://autora.be/sitemap.xml
-Sitemap: https://jbdsjqoonpieusfvkhyo.supabase.co/functions/v1/dynamic-sitemap
+Sitemap: https://jbdsjqoonpieusfvkhyo.supabase.co/functions/v1/sitemap-index
+Sitemap: https://jbdsjqoonpieusfvkhyo.supabase.co/functions/v1/dynamic-sitemap?lang=fr
+Sitemap: https://jbdsjqoonpieusfvkhyo.supabase.co/functions/v1/dynamic-sitemap?lang=nl
+Sitemap: https://jbdsjqoonpieusfvkhyo.supabase.co/functions/v1/dynamic-sitemap?lang=de
+Sitemap: https://jbdsjqoonpieusfvkhyo.supabase.co/functions/v1/dynamic-sitemap?lang=en

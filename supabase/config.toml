@@ -39,3 +39,7 @@ project_id = "jbdsjqoonpieusfvkhyo"
     verify_jwt = false
   [functions.handle-email-suppression]
     verify_jwt = false
+  [functions.dynamic-sitemap]
+    verify_jwt = false
+  [functions.sitemap-index]
+    verify_jwt = false
