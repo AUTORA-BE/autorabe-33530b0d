@@ -1,58 +1,55 @@
 
 
-## Prochaine étape recommandée — URLs SEO multilingues
+## Recommandation finale avant lancement — Audit sécurité + SEO multilingue
 
-Maintenant que les grilles fiscales sont en DB et que le polish Beta est terminé, le **plus gros levier restant** avant le lancement public c'est le **SEO multilingue**. Aujourd'hui Google.be voit `autora.be/` en une seule langue, alors que ton marché cible est 60% NL / 35% FR / 5% DE.
+Avant d'ouvrir AutoRa au public belge, il y a **deux chantiers critiques** qui auront le plus d'impact. Je recommande de les faire dans cet ordre :
 
-## Plan en 3 étapes (priorité décroissante)
+---
 
-### Étape 1 — URLs préfixées par langue (gros impact SEO)
-Refactor du routing pour passer de `/voiture/:id` à `/fr/voiture/:id`, `/nl/auto/:id`, `/de/auto/:id`.
+### 🔒 Priorité 1 — Audit sécurité complet (~30 min, risque ZÉRO de casser quoi que ce soit)
 
-- Ajouter un paramètre `:lang` racine dans `App.tsx` (React Router)
-- Détecter la langue depuis l'URL au boot (au lieu de localStorage seul)
-- Redirection automatique `/` → `/fr/` (ou langue navigateur)
-- Mettre à jour `LanguageContext` pour synchroniser URL ↔ langue
-- Mettre à jour tous les `<Link>` et `navigate()` pour préfixer la langue active
-- Slugs traduits pour les routes clés : `/recherche` (FR) / `/zoeken` (NL) / `/suche` (DE)
+C'est **non négociable** avant un lancement public. Tu manipules des données personnelles belges (RGPD), des paiements Stripe, et des annonces avec photos. Un trou de sécurité au lancement = perte de confiance immédiate.
 
-### Étape 2 — Hreflang + sitemap multilingue
-- `SEOHead` : générer dynamiquement les balises `<link rel="alternate" hreflang>` vers les vraies URLs traduites (pas `?lang=`)
-- Edge function `dynamic-sitemap` : émettre une entrée par langue × annonce avec `<xhtml:link rel="alternate">` pour chaque alternative
-- `robots.txt` : autoriser les 3 préfixes
+**Ce que je vais faire :**
+1. **Scan automatique Supabase** (`supabase--linter` + `security--run_security_scan`) pour détecter :
+   - Tables sans RLS ou avec policies trop permissives
+   - Fonctions sans `search_path` figé (vecteur d'injection)
+   - Colonnes sensibles exposées
+2. **Revue manuelle** des policies critiques : `car_listings`, `profiles`, `messages`, `favorites`, `user_roles`
+3. **Vérification edge functions** : toutes ont bien la validation JWT + CORS + rate-limiting
+4. **Check des secrets** : pas de clés hardcodées, `SUPABASE_SERVICE_ROLE_KEY` jamais exposée côté client
+5. **Rapport final** avec actions correctives priorisées (si nécessaire)
 
-### Étape 3 — Slugs SEO sur les fiches véhicule
-Passer de `/fr/voiture/uuid-abc-123` à `/fr/voiture/bmw-serie-3-2020-bruxelles-uuid-abc-123` :
-- Helper `buildVehicleSlug(vehicle, lang)` côté client
-- Route accepte `:slug` et extrait l'UUID en fin de chaîne (rétrocompat avec anciennes URLs)
-- Boost massif sur Google pour les requêtes "BMW Série 3 Bruxelles"
+---
 
-## Détails techniques
+### 🌍 Priorité 2 — SEO multilingue (URLs `/fr/`, `/nl/`, `/de/`) (~1h30)
 
-| Fichier | Changement |
-|---------|-----------|
-| `src/App.tsx` | Wrapper `<Route path="/:lang/*">` + redirect racine |
-| `src/contexts/LanguageContext.tsx` | Lire/écrire `useParams().lang`, garder localStorage en fallback |
-| `src/shared/components/Header.tsx`, `BottomNav.tsx`, `Footer.tsx` | Tous les liens passent par un helper `localizedPath(path, lang)` |
-| `src/components/SEOHead.tsx` | Générer hreflang vers `https://autora.be/{lang}/{path}` au lieu de `?lang=` |
-| `src/lib/routes.ts` (nouveau) | Map des slugs traduits par langue |
-| `src/utils/vehicleSlug.ts` (nouveau) | `buildSlug()` + `extractIdFromSlug()` |
-| `supabase/functions/dynamic-sitemap/index.ts` | Émettre 3 entrées par véhicule + alternates |
-| `public/robots.txt` | Confirmer Allow: /fr/ /nl/ /de/ |
+Ton marché cible est **60% NL / 35% FR / 5% DE**. Aujourd'hui Google.be voit `autora.be/` comme un seul site FR. Sans préfixes de langue, tu perds 65% de ton potentiel d'indexation dès le jour 1.
 
-## Estimation
-- Étape 1 : ~45 min, risque modéré (touche tous les composants de navigation)
-- Étape 2 : ~20 min, risque faible
-- Étape 3 : ~25 min, risque faible (rétrocompat assurée)
+**Plan déjà détaillé dans `.lovable/plan.md`** — résumé :
 
-**Total : ~1h30 pour une refonte SEO complète.** Après ça, tu peux soumettre le sitemap à Google Search Console et tu seras indexable proprement dans les 3 langues belges.
+| Étape | Impact | Risque |
+|-------|--------|--------|
+| URLs préfixées `/fr/voiture/...`, `/nl/auto/...`, `/de/auto/...` | 🔥 Énorme SEO | Modéré (touche tout le routing) |
+| Hreflang + sitemap multilingue côté edge function | 🔥 Indexation Google | Faible |
+| Slugs SEO (`/fr/voiture/bmw-serie-3-bruxelles-uuid`) | ✅ Rankings ciblés | Faible (rétrocompat UUID) |
 
-## Alternatives si tu préfères un autre angle
+---
 
-- **Tester l'app end-to-end** (inscription → annonce → message) avant tout chantier SEO
-- **Créer 2-3 pages de contenu SEO** (guides LEZ, Car-Pass, achat occasion) — quick win complémentaire
-- **Brancher le calculateur fiscal sur la fiche véhicule** (pré-remplir CV/région/année depuis l'annonce) — UX boost
-- **Configurer le domaine custom autora.be** + Google Search Console — action manuelle 15 min
+### 🎯 Quick wins complémentaires (optionnels, ~30 min chacun)
 
-Dis-moi laquelle tu veux attaquer.
+- **Test end-to-end manuel** : inscription → publication annonce → message → favoris → paiement boost (en mode test Stripe)
+- **Google Search Console** : connecter `autora.be`, soumettre le sitemap, vérifier l'indexation
+- **Page `/status`** publique : afficher l'état des services (utile en cas d'incident jour 1)
+- **Monitoring erreurs** : vérifier que les edge functions logguent bien dans `audit_logs` ou Supabase logs
+
+---
+
+## Ma recommandation concrète
+
+**Commençons par l'audit sécurité maintenant** (30 min, zéro risque, garantit que tu peux lancer sans honte). Si tout est clean, on enchaîne sur le SEO multilingue dans la foulée.
+
+Si tu veux, je peux aussi te préparer une **checklist de lancement** (test E2E + Search Console + monitoring) pour le jour J.
+
+**Dis-moi : on attaque l'audit sécurité, le SEO multilingue, ou les deux d'affilée ?**
 
