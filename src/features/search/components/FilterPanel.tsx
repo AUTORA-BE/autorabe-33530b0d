@@ -112,6 +112,88 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
     };
   }, [isOpen]);
 
+  // ── Accessibility: focus trap + Escape + restore focus ──
+  // Only active on mobile (drawer mode). On lg+ the panel is sticky,
+  // not modal, so trapping focus would be wrong.
+  const closeButtonRef = useRef<HTMLButtonElement | null>(null);
+  const previouslyFocusedRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!isOpen) return;
+    // Skip trap on desktop — sticky sidebar, not a modal.
+    const isMobile = window.matchMedia("(max-width: 1023px)").matches;
+    if (!isMobile) return;
+
+    previouslyFocusedRef.current = document.activeElement as HTMLElement | null;
+
+    // Focus the close button on next frame so the drawer transition
+    // doesn't fight with the focus call.
+    const focusFrame = requestAnimationFrame(() => {
+      closeButtonRef.current?.focus();
+    });
+
+    const getFocusable = (): HTMLElement[] => {
+      const root = drawerInternalRef.current;
+      if (!root) return [];
+      const selector = [
+        'a[href]',
+        'button:not([disabled])',
+        'input:not([disabled]):not([type="hidden"])',
+        'select:not([disabled])',
+        'textarea:not([disabled])',
+        '[tabindex]:not([tabindex="-1"])',
+      ].join(',');
+      return Array.from(root.querySelectorAll<HTMLElement>(selector)).filter(
+        (el) => el.offsetParent !== null || el === document.activeElement,
+      );
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        onClose();
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const focusable = getFocusable();
+      if (focusable.length === 0) {
+        e.preventDefault();
+        return;
+      }
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+
+      // If focus escaped the drawer entirely, pull it back in.
+      if (!active || !drawerInternalRef.current?.contains(active)) {
+        e.preventDefault();
+        first.focus();
+        return;
+      }
+
+      if (e.shiftKey && active === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      cancelAnimationFrame(focusFrame);
+      document.removeEventListener("keydown", handleKeyDown);
+      // Restore focus to the trigger that opened the drawer.
+      const prev = previouslyFocusedRef.current;
+      if (prev && typeof prev.focus === "function" && document.contains(prev)) {
+        prev.focus();
+      }
+    };
+  }, [isOpen, onClose]);
+
   // Fetch models when brand changes
   useEffect(() => {
     const fetchModels = async () => {
@@ -207,7 +289,11 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
           boxShadow: isOpen ? "0 -8px 40px -4px hsl(var(--foreground) / 0.2)" : "0 8px 32px -4px hsl(var(--foreground) / 0.08)",
           transition: "transform 0.35s cubic-bezier(0.32, 0.72, 0, 1), visibility 0.35s",
         }}
+        role="dialog"
+        aria-modal={isOpen ? "true" : undefined}
+        aria-labelledby="filter-panel-title"
         aria-label="Filtres de recherche"
+        tabIndex={-1}
       >
         {/* Mobile drag handle */}
         <div className="lg:hidden flex justify-center pt-3 pb-1 sticky top-0 bg-card z-10 rounded-t-3xl">
@@ -216,10 +302,11 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
 
         {/* Mobile header — sticky */}
         <div className="lg:hidden flex justify-between items-center px-5 pb-3 pt-1 sticky top-6 bg-card z-10 border-b border-border/50">
-          <h2 className="font-display text-lg font-bold text-foreground">{t("filters.title")}</h2>
+          <h2 id="filter-panel-title" className="font-display text-lg font-bold text-foreground">{t("filters.title")}</h2>
           <button
+            ref={closeButtonRef}
             onClick={onClose}
-            className="p-2 hover:bg-secondary/80 rounded-xl transition-colors"
+            className="p-2 hover:bg-secondary/80 rounded-xl transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
             aria-label="Fermer les filtres"
           >
             <X className="w-5 h-5" />
