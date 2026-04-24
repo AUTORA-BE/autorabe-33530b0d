@@ -112,6 +112,88 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
     };
   }, [isOpen]);
 
+  // ── Accessibility: focus trap + Escape + restore focus ──
+  // Only active on mobile (drawer mode). On lg+ the panel is sticky,
+  // not modal, so trapping focus would be wrong.
+  const closeButtonRef = useRef<HTMLButtonElement | null>(null);
+  const previouslyFocusedRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!isOpen) return;
+    // Skip trap on desktop — sticky sidebar, not a modal.
+    const isMobile = window.matchMedia("(max-width: 1023px)").matches;
+    if (!isMobile) return;
+
+    previouslyFocusedRef.current = document.activeElement as HTMLElement | null;
+
+    // Focus the close button on next frame so the drawer transition
+    // doesn't fight with the focus call.
+    const focusFrame = requestAnimationFrame(() => {
+      closeButtonRef.current?.focus();
+    });
+
+    const getFocusable = (): HTMLElement[] => {
+      const root = drawerInternalRef.current;
+      if (!root) return [];
+      const selector = [
+        'a[href]',
+        'button:not([disabled])',
+        'input:not([disabled]):not([type="hidden"])',
+        'select:not([disabled])',
+        'textarea:not([disabled])',
+        '[tabindex]:not([tabindex="-1"])',
+      ].join(',');
+      return Array.from(root.querySelectorAll<HTMLElement>(selector)).filter(
+        (el) => el.offsetParent !== null || el === document.activeElement,
+      );
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        onClose();
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const focusable = getFocusable();
+      if (focusable.length === 0) {
+        e.preventDefault();
+        return;
+      }
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+
+      // If focus escaped the drawer entirely, pull it back in.
+      if (!active || !drawerInternalRef.current?.contains(active)) {
+        e.preventDefault();
+        first.focus();
+        return;
+      }
+
+      if (e.shiftKey && active === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      cancelAnimationFrame(focusFrame);
+      document.removeEventListener("keydown", handleKeyDown);
+      // Restore focus to the trigger that opened the drawer.
+      const prev = previouslyFocusedRef.current;
+      if (prev && typeof prev.focus === "function" && document.contains(prev)) {
+        prev.focus();
+      }
+    };
+  }, [isOpen, onClose]);
+
   // Fetch models when brand changes
   useEffect(() => {
     const fetchModels = async () => {
