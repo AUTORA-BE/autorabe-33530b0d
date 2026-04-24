@@ -47,6 +47,7 @@ const Index = () => {
   const [voiceFilters, setVoiceFilters] = useState<VoiceFilter[]>([]);
   const navigate = useNavigate();
   const { language } = useLanguage();
+  const isMobile = useIsMobile();
 
   const { 
     cars, isLoading, isLoadingMore, hasMore, loadMore, totalCount,
