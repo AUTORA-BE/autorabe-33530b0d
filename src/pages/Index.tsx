@@ -255,7 +255,7 @@ const Index = () => {
         <section id="results-section" className="container mx-auto px-6 sm:px-8 pb-20 sm:pb-32">
           <div className="flex flex-col lg:flex-row gap-6 sm:gap-10">
             {/* Single FilterPanel instance to avoid mobile/PWA double-mount glitches */}
-            {!isMobile && (
+            {isDesktopFiltersViewport && (
               <div className="hidden lg:block">
                 <Suspense fallback={null}>
                   <FilterPanel
@@ -307,7 +307,7 @@ const Index = () => {
       </PullToRefresh>
 
       {/* Mobile FilterPanel — outside PullToRefresh so fixed positioning works */}
-      {isMobile && (
+      {!isDesktopFiltersViewport && (
         <div className="lg:hidden">
           <Suspense fallback={null}>
             <FilterPanel
