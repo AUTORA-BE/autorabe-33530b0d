@@ -260,9 +260,9 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
           if (typeof ref === "function") ref(el);
           else if (ref) (ref as React.MutableRefObject<HTMLElement | null>).current = el;
         }}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
+        onTouchStart={undefined}
+        onTouchMove={undefined}
+        onTouchEnd={undefined}
         className={`
           lg:sticky lg:top-20
           lg:z-auto
