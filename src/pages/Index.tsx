@@ -56,6 +56,15 @@ const Index = () => {
     activeFiltersCount, error, refresh,
   } = useVehicleSearch();
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mediaQuery = window.matchMedia("(min-width: 1024px)");
+    const handleChange = () => setIsDesktopFiltersViewport(mediaQuery.matches);
+    handleChange();
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
+
   const { isFavorite, toggleFavorite } = useFavorites();
   const { vehicles: popularVehicles } = usePopularVehicles({ limit: 12 });
   const { profile: buyerProfile, saveProfile } = useBuyerProfile();
