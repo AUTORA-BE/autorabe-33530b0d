@@ -244,19 +244,21 @@ const Index = () => {
         {/* Results section */}
         <section id="results-section" className="container mx-auto px-6 sm:px-8 pb-20 sm:pb-32">
           <div className="flex flex-col lg:flex-row gap-6 sm:gap-10">
-            {/* Desktop-only inline filter panel */}
-            <div className="hidden lg:block">
-              <Suspense fallback={null}>
-                <FilterPanel
-                  isOpen={filtersOpen}
-                  onClose={() => setFiltersOpen(false)}
-                  filters={filters}
-                  onFilterChange={updateFilter}
-                  onReset={resetFilters}
-                  resultsCount={totalCount}
-                />
-              </Suspense>
-            </div>
+            {/* Single FilterPanel instance to avoid mobile/PWA double-mount glitches */}
+            {!isMobile && (
+              <div className="hidden lg:block">
+                <Suspense fallback={null}>
+                  <FilterPanel
+                    isOpen={filtersOpen}
+                    onClose={() => setFiltersOpen(false)}
+                    filters={filters}
+                    onFilterChange={updateFilter}
+                    onReset={resetFilters}
+                    resultsCount={totalCount}
+                  />
+                </Suspense>
+              </div>
+            )}
 
             <Suspense fallback={<GridSkeleton />}>
               <LoadMoreGrid
