@@ -280,14 +280,15 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
           lg:bg-card
           lg:transform-none
           ${isOpen
-            ? "fixed inset-x-0 bottom-0 z-[85] w-full max-h-[88dvh] overflow-hidden rounded-t-3xl border-t bg-card translate-y-0 visible"
-            : "fixed inset-x-0 bottom-0 z-[85] w-full max-h-[88dvh] overflow-hidden rounded-t-3xl border-t bg-card translate-y-full invisible pointer-events-none lg:translate-y-0 lg:visible lg:pointer-events-auto"
+            ? "fixed inset-0 z-[85] w-full h-[100dvh] overflow-hidden border-0 bg-card translate-y-0 visible"
+            : "fixed inset-0 z-[85] w-full h-[100dvh] overflow-hidden border-0 bg-card translate-y-full invisible pointer-events-none lg:translate-y-0 lg:visible lg:pointer-events-auto"
           }
         `}
         style={{
           background: "hsl(var(--card))",
           boxShadow: isOpen ? "0 -8px 40px -4px hsl(var(--foreground) / 0.2)" : "0 8px 32px -4px hsl(var(--foreground) / 0.08)",
           transition: "transform 0.35s cubic-bezier(0.32, 0.72, 0, 1), visibility 0.35s",
+          paddingTop: "env(safe-area-inset-top, 0px)",
         }}
         role="dialog"
         aria-modal={isOpen ? "true" : undefined}
