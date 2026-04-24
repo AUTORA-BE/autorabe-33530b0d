@@ -98,6 +98,20 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
     touchDeltaY.current = 0;
   }, [onClose]);
 
+  // Mark body so other fixed UI (BottomNav, FAB chat, scroll-to-top)
+  // can hide themselves while the mobile filter drawer is open.
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    if (isOpen) {
+      document.body.dataset.filterOpen = "true";
+    } else {
+      delete document.body.dataset.filterOpen;
+    }
+    return () => {
+      delete document.body.dataset.filterOpen;
+    };
+  }, [isOpen]);
+
   // Fetch models when brand changes
   useEffect(() => {
     const fetchModels = async () => {
