@@ -1,4 +1,4 @@
-import { useState, lazy, Suspense, useCallback, useRef } from "react";
+import { useState, lazy, Suspense, useCallback, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header, Footer } from "@/shared/components";
 import { HeroSearch } from "@/features/search";
@@ -16,7 +16,6 @@ import ScrollReveal from "@/components/ScrollReveal";
 import { VoiceSearchSummary, type VoiceFilter } from "@/components/VoiceSearchSummary";
 import { AnimatePresence } from "framer-motion";
 import { PullToRefresh } from "@/components/PullToRefresh";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 const FuelPriceStrip = lazy(() => import("@/components/FuelPriceStrip"));
 
@@ -45,9 +44,11 @@ import { useBuyerProfile, BuyerProfileModal } from "@/features/tco";
 const Index = () => {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [voiceFilters, setVoiceFilters] = useState<VoiceFilter[]>([]);
+  const [isDesktopFiltersViewport, setIsDesktopFiltersViewport] = useState(() =>
+    typeof window !== "undefined" ? window.matchMedia("(min-width: 1024px)").matches : true,
+  );
   const navigate = useNavigate();
   const { language } = useLanguage();
-  const isMobile = useIsMobile();
 
   const { 
     cars, isLoading, isLoadingMore, hasMore, loadMore, totalCount,
