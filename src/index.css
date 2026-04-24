@@ -8,9 +8,18 @@ input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-input[type="number"] {
-  -moz-appearance: textfield;
+
+/* Hide floating mobile UI (BottomNav, FAB chatbot, scroll-to-top)
+   while the mobile filter drawer is open to prevent overlap. */
+@media (max-width: 1023px) {
+  body[data-filter-open="true"] [data-hide-on-filter] {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    transition: opacity 0.2s ease;
+  }
 }
+
 
 
 
