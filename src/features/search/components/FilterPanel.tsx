@@ -290,13 +290,8 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
         aria-label="Filtres de recherche"
         tabIndex={-1}
       >
-        {/* Mobile drag handle */}
-        <div className="lg:hidden flex justify-center pt-3 pb-1 sticky top-0 bg-card z-10 rounded-t-3xl">
-          <div className="w-10 h-1.5 rounded-full bg-muted-foreground/30" />
-        </div>
-
-        {/* Mobile header — sticky */}
-        <div className="lg:hidden flex justify-between items-center px-5 pb-3 pt-1 sticky top-6 bg-card z-10 border-b border-border/50">
+        {/* Mobile header — sticky at top of fullscreen drawer */}
+        <div className="lg:hidden flex justify-between items-center px-5 py-3 sticky top-0 bg-card z-10 border-b border-border/50">
           <h2 id="filter-panel-title" className="font-display text-lg font-bold text-foreground">{t("filters.title")}</h2>
           <button
             ref={closeButtonRef}
@@ -309,7 +304,7 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
         </div>
 
         {/* Scrollable content */}
-        <div data-scroll-content className="overflow-y-auto overscroll-contain px-5 pt-4 pb-32 lg:pb-5 lg:pt-0 space-y-5 lg:p-5 lg:space-y-5" style={{ maxHeight: "calc(88dvh - 8rem)", WebkitOverflowScrolling: "touch" }}>
+        <div data-scroll-content className="overflow-y-auto overscroll-contain px-5 pt-4 pb-32 lg:pb-5 lg:pt-0 space-y-5 lg:p-5 lg:space-y-5" style={{ maxHeight: "calc(100dvh - 4rem)", WebkitOverflowScrolling: "touch" }}>
 
         {/* Results count */}
         <div
