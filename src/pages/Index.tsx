@@ -297,18 +297,20 @@ const Index = () => {
       </PullToRefresh>
 
       {/* Mobile FilterPanel — outside PullToRefresh so fixed positioning works */}
-      <div className="lg:hidden">
-        <Suspense fallback={null}>
-          <FilterPanel
-            isOpen={filtersOpen}
-            onClose={() => setFiltersOpen(false)}
-            filters={filters}
-            onFilterChange={updateFilter}
-            onReset={resetFilters}
-            resultsCount={totalCount}
-          />
-        </Suspense>
-      </div>
+      {isMobile && (
+        <div className="lg:hidden">
+          <Suspense fallback={null}>
+            <FilterPanel
+              isOpen={filtersOpen}
+              onClose={() => setFiltersOpen(false)}
+              filters={filters}
+              onFilterChange={updateFilter}
+              onReset={resetFilters}
+              resultsCount={totalCount}
+            />
+          </Suspense>
+        </div>
+      )}
 
       {/* Floating widgets */}
       <Suspense fallback={null}>
