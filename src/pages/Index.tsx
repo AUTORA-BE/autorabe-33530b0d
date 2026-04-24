@@ -16,6 +16,7 @@ import ScrollReveal from "@/components/ScrollReveal";
 import { VoiceSearchSummary, type VoiceFilter } from "@/components/VoiceSearchSummary";
 import { AnimatePresence } from "framer-motion";
 import { PullToRefresh } from "@/components/PullToRefresh";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const FuelPriceStrip = lazy(() => import("@/components/FuelPriceStrip"));
 
