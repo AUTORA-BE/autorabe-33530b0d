@@ -47,6 +47,7 @@ const BottomNav = memo(function BottomNav() {
 
   return (
     <nav
+      data-hide-on-filter
       className="md:hidden fixed bottom-0 left-0 right-0 z-[70] safe-bottom"
       role="navigation"
       aria-label="Navigation principale"

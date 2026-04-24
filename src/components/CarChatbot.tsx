@@ -145,6 +145,7 @@ const CarChatbot = forwardRef<HTMLDivElement>(function CarChatbot(_props, ref) {
     <div ref={ref}>
       {/* Chat Button */}
       <button
+        data-hide-on-filter
         onClick={() => setIsOpen(true)}
         className={`fixed bottom-[5.5rem] right-3 lg:bottom-6 lg:right-6 z-[60] w-11 h-11 lg:w-14 lg:h-14 rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/30 flex items-center justify-center transition-all hover:scale-110 active:scale-95 ${
           isOpen ? "hidden" : ""
