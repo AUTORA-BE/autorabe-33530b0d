@@ -289,7 +289,11 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
           boxShadow: isOpen ? "0 -8px 40px -4px hsl(var(--foreground) / 0.2)" : "0 8px 32px -4px hsl(var(--foreground) / 0.08)",
           transition: "transform 0.35s cubic-bezier(0.32, 0.72, 0, 1), visibility 0.35s",
         }}
+        role="dialog"
+        aria-modal={isOpen ? "true" : undefined}
+        aria-labelledby="filter-panel-title"
         aria-label="Filtres de recherche"
+        tabIndex={-1}
       >
         {/* Mobile drag handle */}
         <div className="lg:hidden flex justify-center pt-3 pb-1 sticky top-0 bg-card z-10 rounded-t-3xl">
@@ -298,10 +302,11 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
 
         {/* Mobile header — sticky */}
         <div className="lg:hidden flex justify-between items-center px-5 pb-3 pt-1 sticky top-6 bg-card z-10 border-b border-border/50">
-          <h2 className="font-display text-lg font-bold text-foreground">{t("filters.title")}</h2>
+          <h2 id="filter-panel-title" className="font-display text-lg font-bold text-foreground">{t("filters.title")}</h2>
           <button
+            ref={closeButtonRef}
             onClick={onClose}
-            className="p-2 hover:bg-secondary/80 rounded-xl transition-colors"
+            className="p-2 hover:bg-secondary/80 rounded-xl transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-card"
             aria-label="Fermer les filtres"
           >
             <X className="w-5 h-5" />
