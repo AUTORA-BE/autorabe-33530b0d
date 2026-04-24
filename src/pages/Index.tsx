@@ -1,4 +1,4 @@
-import { useState, lazy, Suspense, useCallback, useRef } from "react";
+import { useState, lazy, Suspense, useCallback, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header, Footer } from "@/shared/components";
 import { HeroSearch } from "@/features/search";
@@ -44,6 +44,9 @@ import { useBuyerProfile, BuyerProfileModal } from "@/features/tco";
 const Index = () => {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [voiceFilters, setVoiceFilters] = useState<VoiceFilter[]>([]);
+  const [isDesktopFiltersViewport, setIsDesktopFiltersViewport] = useState(() =>
+    typeof window !== "undefined" ? window.matchMedia("(min-width: 1024px)").matches : true,
+  );
   const navigate = useNavigate();
   const { language } = useLanguage();
 
@@ -52,6 +55,15 @@ const Index = () => {
     filters, updateFilter, resetFilters, sortBy, setSortBy,
     activeFiltersCount, error, refresh,
   } = useVehicleSearch();
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mediaQuery = window.matchMedia("(min-width: 1024px)");
+    const handleChange = () => setIsDesktopFiltersViewport(mediaQuery.matches);
+    handleChange();
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
 
   const { isFavorite, toggleFavorite } = useFavorites();
   const { vehicles: popularVehicles } = usePopularVehicles({ limit: 12 });
@@ -242,19 +254,21 @@ const Index = () => {
         {/* Results section */}
         <section id="results-section" className="container mx-auto px-6 sm:px-8 pb-20 sm:pb-32">
           <div className="flex flex-col lg:flex-row gap-6 sm:gap-10">
-            {/* Desktop-only inline filter panel */}
-            <div className="hidden lg:block">
-              <Suspense fallback={null}>
-                <FilterPanel
-                  isOpen={filtersOpen}
-                  onClose={() => setFiltersOpen(false)}
-                  filters={filters}
-                  onFilterChange={updateFilter}
-                  onReset={resetFilters}
-                  resultsCount={totalCount}
-                />
-              </Suspense>
-            </div>
+            {/* Single FilterPanel instance to avoid mobile/PWA double-mount glitches */}
+            {isDesktopFiltersViewport && (
+              <div className="hidden lg:block">
+                <Suspense fallback={null}>
+                  <FilterPanel
+                    isOpen={filtersOpen}
+                    onClose={() => setFiltersOpen(false)}
+                    filters={filters}
+                    onFilterChange={updateFilter}
+                    onReset={resetFilters}
+                    resultsCount={totalCount}
+                  />
+                </Suspense>
+              </div>
+            )}
 
             <Suspense fallback={<GridSkeleton />}>
               <LoadMoreGrid
@@ -293,18 +307,20 @@ const Index = () => {
       </PullToRefresh>
 
       {/* Mobile FilterPanel — outside PullToRefresh so fixed positioning works */}
-      <div className="lg:hidden">
-        <Suspense fallback={null}>
-          <FilterPanel
-            isOpen={filtersOpen}
-            onClose={() => setFiltersOpen(false)}
-            filters={filters}
-            onFilterChange={updateFilter}
-            onReset={resetFilters}
-            resultsCount={totalCount}
-          />
-        </Suspense>
-      </div>
+      {!isDesktopFiltersViewport && (
+        <div className="lg:hidden">
+          <Suspense fallback={null}>
+            <FilterPanel
+              isOpen={filtersOpen}
+              onClose={() => setFiltersOpen(false)}
+              filters={filters}
+              onFilterChange={updateFilter}
+              onReset={resetFilters}
+              resultsCount={totalCount}
+            />
+          </Suspense>
+        </div>
+      )}
 
       {/* Floating widgets */}
       <Suspense fallback={null}>

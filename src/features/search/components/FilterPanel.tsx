@@ -100,15 +100,28 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
 
   // Mark body so other fixed UI (BottomNav, FAB chat, scroll-to-top)
   // can hide themselves while the mobile filter drawer is open.
+  // Also lock background scroll on mobile/PWA while the modal is open.
   useEffect(() => {
-    if (typeof document === "undefined") return;
-    if (isOpen) {
+    if (typeof document === "undefined" || typeof window === "undefined") return;
+
+    const isMobileViewport = window.matchMedia("(max-width: 1023px)").matches;
+    const previousOverflow = document.body.style.overflow;
+    const previousTouchAction = document.body.style.touchAction;
+
+    if (isOpen && isMobileViewport) {
       document.body.dataset.filterOpen = "true";
+      document.body.style.overflow = "hidden";
+      document.body.style.touchAction = "none";
     } else {
       delete document.body.dataset.filterOpen;
+      document.body.style.overflow = previousOverflow;
+      document.body.style.touchAction = previousTouchAction;
     }
+
     return () => {
       delete document.body.dataset.filterOpen;
+      document.body.style.overflow = previousOverflow;
+      document.body.style.touchAction = previousTouchAction;
     };
   }, [isOpen]);
 
