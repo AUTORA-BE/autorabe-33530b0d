@@ -43,7 +43,15 @@ import { BUDGET_OPTIONS } from "@/features/search/types/search.types";
 import { useBuyerProfile, BuyerProfileModal } from "@/features/tco";
 
 const Index = () => {
-  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [filtersOpen, _setFiltersOpen] = useState(false);
+  const setFiltersOpen = useCallback((v: boolean | ((p: boolean) => boolean)) => {
+    _setFiltersOpen((prev) => {
+      const next = typeof v === "function" ? v(prev) : v;
+      // eslint-disable-next-line no-console
+      console.log("[FILTERS] setFiltersOpen", prev, "→", next, "viewport=", typeof window !== "undefined" ? window.innerWidth : "?");
+      return next;
+    });
+  }, []);
   const [voiceFilters, setVoiceFilters] = useState<VoiceFilter[]>([]);
   const [isDesktopFiltersViewport, setIsDesktopFiltersViewport] = useState(() =>
     typeof window !== "undefined" ? window.matchMedia("(min-width: 1024px)").matches : true,
