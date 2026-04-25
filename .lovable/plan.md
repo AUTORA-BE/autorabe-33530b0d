@@ -1,55 +1,55 @@
+## Objectif
 
+Ajouter un mode debug activable qui affiche en surimpression :
+- Le breakpoint actif (mobile / tablet / desktop) et la largeur exacte du viewport
+- L'état d'ouverture du `FilterPanel` (`isOpen`)
+- Quelle instance est montée (mobile vs desktop) selon `isDesktopFiltersViewport`
+- Un compteur du nombre d'instances `FilterPanel` réellement présentes dans le DOM (pour confirmer qu'il n'y a pas de double-mount)
 
-## Recommandation finale avant lancement — Audit sécurité + SEO multilingue
+Cela permet de vérifier visuellement, sur mobile/PWA, que le filtre s'ouvre toujours en **modale unique plein écran** et qu'aucune instance fantôme n'est rendue.
 
-Avant d'ouvrir AutoRa au public belge, il y a **deux chantiers critiques** qui auront le plus d'impact. Je recommande de les faire dans cet ordre :
+## Activation
 
----
+Le mode debug s'active de 3 façons (aucune en prod par défaut) :
+1. Param URL : `?debug=1`
+2. `localStorage.setItem('autora:debug', '1')`
+3. Raccourci clavier : `Ctrl+Shift+D` (toggle + persistance localStorage)
 
-### 🔒 Priorité 1 — Audit sécurité complet (~30 min, risque ZÉRO de casser quoi que ce soit)
+## Composant créé
 
-C'est **non négociable** avant un lancement public. Tu manipules des données personnelles belges (RGPD), des paiements Stripe, et des annonces avec photos. Un trou de sécurité au lancement = perte de confiance immédiate.
+`src/components/DebugOverlay.tsx` — petit panneau fixe en bas à gauche, z-index très haut (`z-[200]`), arrière-plan semi-opaque, monospace, n'intercepte pas les clics (`pointer-events-none`).
 
-**Ce que je vais faire :**
-1. **Scan automatique Supabase** (`supabase--linter` + `security--run_security_scan`) pour détecter :
-   - Tables sans RLS ou avec policies trop permissives
-   - Fonctions sans `search_path` figé (vecteur d'injection)
-   - Colonnes sensibles exposées
-2. **Revue manuelle** des policies critiques : `car_listings`, `profiles`, `messages`, `favorites`, `user_roles`
-3. **Vérification edge functions** : toutes ont bien la validation JWT + CORS + rate-limiting
-4. **Check des secrets** : pas de clés hardcodées, `SUPABASE_SERVICE_ROLE_KEY` jamais exposée côté client
-5. **Rapport final** avec actions correctives priorisées (si nécessaire)
+Affiche en temps réel :
+```text
+viewport: 1032 × 825
+breakpoint: tablet (md)
+lg+ (≥1024): false  →  mobile FilterPanel mounted
+filtersOpen: true
+FilterPanel in DOM: 1  ✓
+body scroll-lock: on
+safe-area-top: 0px
+```
 
----
+Le compteur DOM utilise `document.querySelectorAll('[data-filter-panel-root]').length` rafraîchi via `requestAnimationFrame` quand `filtersOpen` change.
 
-### 🌍 Priorité 2 — SEO multilingue (URLs `/fr/`, `/nl/`, `/de/`) (~1h30)
+## Modifications
 
-Ton marché cible est **60% NL / 35% FR / 5% DE**. Aujourd'hui Google.be voit `autora.be/` comme un seul site FR. Sans préfixes de langue, tu perds 65% de ton potentiel d'indexation dès le jour 1.
+1. **`src/components/DebugOverlay.tsx`** (nouveau) — composant overlay + hook `useDebugMode()` qui gère URL/localStorage/raccourci.
 
-**Plan déjà détaillé dans `.lovable/plan.md`** — résumé :
+2. **`src/features/search/components/FilterPanel.tsx`** — ajouter `data-filter-panel-root` et `data-filter-variant="mobile|desktop"` sur le conteneur racine, pour que l'overlay puisse les compter.
 
-| Étape | Impact | Risque |
-|-------|--------|--------|
-| URLs préfixées `/fr/voiture/...`, `/nl/auto/...`, `/de/auto/...` | 🔥 Énorme SEO | Modéré (touche tout le routing) |
-| Hreflang + sitemap multilingue côté edge function | 🔥 Indexation Google | Faible |
-| Slugs SEO (`/fr/voiture/bmw-serie-3-bruxelles-uuid`) | ✅ Rankings ciblés | Faible (rétrocompat UUID) |
+3. **`src/pages/Index.tsx`** — monter `<DebugOverlay filtersOpen={filtersOpen} isDesktopFiltersViewport={isDesktopFiltersViewport} />` à la fin du JSX.
 
----
+4. **`src/App.tsx`** (vérifié si besoin) — rien à changer ; l'overlay vit uniquement sur la home pour ce premier jet. Si tu veux le globaliser, on pourra le déplacer dans `App.tsx` plus tard.
 
-### 🎯 Quick wins complémentaires (optionnels, ~30 min chacun)
+## Validation manuelle après build
 
-- **Test end-to-end manuel** : inscription → publication annonce → message → favoris → paiement boost (en mode test Stripe)
-- **Google Search Console** : connecter `autora.be`, soumettre le sitemap, vérifier l'indexation
-- **Page `/status`** publique : afficher l'état des services (utile en cas d'incident jour 1)
-- **Monitoring erreurs** : vérifier que les edge functions logguent bien dans `audit_logs` ou Supabase logs
+- Ouvrir `/?debug=1` sur mobile/PWA → vérifier `FilterPanel in DOM: 1` et `mobile FilterPanel mounted`.
+- Cliquer sur "Filtres" → `filtersOpen: true`, toujours `1` instance, `body scroll-lock: on`.
+- Redimensionner au-dessus de 1024px → bascule vers `desktop`, toujours `1` instance.
+- `Ctrl+Shift+D` pour masquer/afficher.
 
----
+## Notes
 
-## Ma recommandation concrète
-
-**Commençons par l'audit sécurité maintenant** (30 min, zéro risque, garantit que tu peux lancer sans honte). Si tout est clean, on enchaîne sur le SEO multilingue dans la foulée.
-
-Si tu veux, je peux aussi te préparer une **checklist de lancement** (test E2E + Search Console + monitoring) pour le jour J.
-
-**Dis-moi : on attaque l'audit sécurité, le SEO multilingue, ou les deux d'affilée ?**
-
+- L'overlay n'apparaît jamais sans activation explicite — zéro impact prod.
+- `pointer-events-none` garantit qu'il ne perturbe pas le tap sur la modale.

@@ -302,6 +302,8 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
         aria-labelledby="filter-panel-title"
         aria-label="Filtres de recherche"
         tabIndex={-1}
+        data-filter-panel-root=""
+        data-filter-open={isOpen ? "true" : "false"}
       >
         {/* Mobile header — sticky at top of fullscreen drawer */}
         <div className="lg:hidden flex justify-between items-center px-5 py-3 sticky top-0 bg-card z-10 border-b border-border/50">

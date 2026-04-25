@@ -16,6 +16,7 @@ import ScrollReveal from "@/components/ScrollReveal";
 import { VoiceSearchSummary, type VoiceFilter } from "@/components/VoiceSearchSummary";
 import { AnimatePresence } from "framer-motion";
 import { PullToRefresh } from "@/components/PullToRefresh";
+import { DebugOverlay } from "@/components/DebugOverlay";
 
 const FuelPriceStrip = lazy(() => import("@/components/FuelPriceStrip"));
 
@@ -256,7 +257,7 @@ const Index = () => {
           <div className="flex flex-col lg:flex-row gap-6 sm:gap-10">
             {/* Single FilterPanel instance to avoid mobile/PWA double-mount glitches */}
             {isDesktopFiltersViewport && (
-              <div className="hidden lg:block">
+              <div className="hidden lg:block" data-filter-variant="desktop">
                 <Suspense fallback={null}>
                   <FilterPanel
                     isOpen={filtersOpen}
@@ -308,7 +309,7 @@ const Index = () => {
 
       {/* Mobile FilterPanel — outside PullToRefresh so fixed positioning works */}
       {!isDesktopFiltersViewport && (
-        <div className="lg:hidden">
+        <div className="lg:hidden" data-filter-variant="mobile">
           <Suspense fallback={null}>
             <FilterPanel
               isOpen={filtersOpen}
@@ -326,6 +327,9 @@ const Index = () => {
       <Suspense fallback={null}>
         <TcoFloatingButton />
       </Suspense>
+
+      {/* Debug overlay — activable via ?debug=1 ou Ctrl+Shift+D */}
+      <DebugOverlay filtersOpen={filtersOpen} isDesktopFiltersViewport={isDesktopFiltersViewport} />
     </div>
   );
 };
