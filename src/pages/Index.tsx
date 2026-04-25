@@ -309,7 +309,7 @@ const Index = () => {
 
       {/* Mobile FilterPanel — outside PullToRefresh so fixed positioning works */}
       {!isDesktopFiltersViewport && (
-        <div className="lg:hidden">
+        <div className="lg:hidden" data-filter-variant="mobile">
           <Suspense fallback={null}>
             <FilterPanel
               isOpen={filtersOpen}
@@ -327,6 +327,9 @@ const Index = () => {
       <Suspense fallback={null}>
         <TcoFloatingButton />
       </Suspense>
+
+      {/* Debug overlay — activable via ?debug=1 ou Ctrl+Shift+D */}
+      <DebugOverlay filtersOpen={filtersOpen} isDesktopFiltersViewport={isDesktopFiltersViewport} />
     </div>
   );
 };
