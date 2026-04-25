@@ -80,12 +80,12 @@ export function DebugOverlay({ filtersOpen, isDesktopFiltersViewport }: DebugOve
       const nodes = document.querySelectorAll<HTMLElement>("[data-filter-panel-root]");
       setPanelCount(nodes.length);
       setVariants(
-        Array.from(nodes).map(
-          (n) =>
-            (n.getAttribute("data-filter-variant") ||
-              (n.classList.contains("hidden") ? "hidden" : "visible")) +
-            (n.getAttribute("data-filter-open") === "true" ? ":open" : ""),
-        ),
+        Array.from(nodes).map((n) => {
+          const wrapper = n.closest<HTMLElement>("[data-filter-variant]");
+          const variant = wrapper?.getAttribute("data-filter-variant") || "?";
+          const open = n.getAttribute("data-filter-open") === "true" ? ":open" : "";
+          return variant + open;
+        }),
       );
       setBodyLocked(document.body.style.overflow === "hidden");
       const probe = getComputedStyle(document.documentElement).getPropertyValue("--safe-area-top").trim();
