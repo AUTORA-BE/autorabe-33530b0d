@@ -17,8 +17,15 @@ export function useDebugMode(): [boolean, (v: boolean) => void] {
     if (typeof window === "undefined") return false;
     try {
       const params = new URLSearchParams(window.location.search);
-      if (params.get("debug") === "1") return true;
-      return window.localStorage.getItem(STORAGE_KEY) === "1";
+      const hash = window.location.hash || "";
+      const fromUrl = params.get("debug") === "1" || hash.includes("debug");
+      const fromStorage = window.localStorage.getItem(STORAGE_KEY) === "1";
+      // Persist immediately so the router's history.replaceState
+      // (which strips ?debug=1) doesn't lose the activation.
+      if (fromUrl) {
+        try { window.localStorage.setItem(STORAGE_KEY, "1"); } catch { /* ignore */ }
+      }
+      return fromUrl || fromStorage;
     } catch {
       return false;
     }
