@@ -257,7 +257,7 @@ const Index = () => {
           <div className="flex flex-col lg:flex-row gap-6 sm:gap-10">
             {/* Single FilterPanel instance to avoid mobile/PWA double-mount glitches */}
             {isDesktopFiltersViewport && (
-              <div className="hidden lg:block">
+              <div className="hidden lg:block" data-filter-variant="desktop">
                 <Suspense fallback={null}>
                   <FilterPanel
                     isOpen={filtersOpen}
