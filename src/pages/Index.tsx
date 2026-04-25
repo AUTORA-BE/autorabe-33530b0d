@@ -1,4 +1,5 @@
 import { useState, lazy, Suspense, useCallback, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { Header, Footer } from "@/shared/components";
 import { HeroSearch } from "@/features/search";
@@ -307,21 +308,25 @@ const Index = () => {
       <Footer />
       </PullToRefresh>
 
-      {/* Mobile FilterPanel — outside PullToRefresh so fixed positioning works */}
-      {!isDesktopFiltersViewport && (
-        <div className="lg:hidden" data-filter-variant="mobile">
-          <Suspense fallback={null}>
-            <FilterPanel
-              isOpen={filtersOpen}
-              onClose={() => setFiltersOpen(false)}
-              filters={filters}
-              onFilterChange={updateFilter}
-              onReset={resetFilters}
-              resultsCount={totalCount}
-            />
-          </Suspense>
-        </div>
-      )}
+      {/* Mobile FilterPanel — portaled into <body> to escape any
+          parent transform/will-change stacking context (PageTransition,
+          PullToRefresh) which would otherwise trap position:fixed. */}
+      {!isDesktopFiltersViewport && typeof document !== "undefined" &&
+        createPortal(
+          <div className="lg:hidden" data-filter-variant="mobile">
+            <Suspense fallback={null}>
+              <FilterPanel
+                isOpen={filtersOpen}
+                onClose={() => setFiltersOpen(false)}
+                filters={filters}
+                onFilterChange={updateFilter}
+                onReset={resetFilters}
+                resultsCount={totalCount}
+              />
+            </Suspense>
+          </div>,
+          document.body,
+        )}
 
       {/* Floating widgets */}
       <Suspense fallback={null}>
