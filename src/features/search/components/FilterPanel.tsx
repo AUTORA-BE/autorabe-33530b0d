@@ -108,10 +108,29 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
     const previousOverflow = document.body.style.overflow;
     const previousTouchAction = document.body.style.touchAction;
 
+    // Inert siblings: hide everything in <body> from AT/keyboard except
+    // the FilterPanel root itself (and ignore script/style nodes).
+    // This is the WAI-ARIA contract for a true modal dialog.
+    const inertedNodes: Array<{ el: HTMLElement; prevAriaHidden: string | null; prevInert: string | null }> = [];
+
     if (isOpen && isMobileViewport) {
       document.body.dataset.filterOpen = "true";
       document.body.style.overflow = "hidden";
       document.body.style.touchAction = "none";
+
+      const panelRoot = drawerInternalRef.current;
+      Array.from(document.body.children).forEach((child) => {
+        if (!(child instanceof HTMLElement)) return;
+        if (panelRoot && (child === panelRoot || child.contains(panelRoot))) return;
+        if (child.tagName === "SCRIPT" || child.tagName === "STYLE") return;
+        inertedNodes.push({
+          el: child,
+          prevAriaHidden: child.getAttribute("aria-hidden"),
+          prevInert: child.getAttribute("inert"),
+        });
+        child.setAttribute("aria-hidden", "true");
+        child.setAttribute("inert", "");
+      });
     } else {
       delete document.body.dataset.filterOpen;
       document.body.style.overflow = previousOverflow;
@@ -122,6 +141,13 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
       delete document.body.dataset.filterOpen;
       document.body.style.overflow = previousOverflow;
       document.body.style.touchAction = previousTouchAction;
+      // Restore aria-hidden / inert on every sibling we touched.
+      inertedNodes.forEach(({ el, prevAriaHidden, prevInert }) => {
+        if (prevAriaHidden === null) el.removeAttribute("aria-hidden");
+        else el.setAttribute("aria-hidden", prevAriaHidden);
+        if (prevInert === null) el.removeAttribute("inert");
+        else el.setAttribute("inert", prevInert);
+      });
     };
   }, [isOpen]);
 
