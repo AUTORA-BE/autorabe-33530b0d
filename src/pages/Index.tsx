@@ -1,4 +1,5 @@
 import { useState, lazy, Suspense, useCallback, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import { Header, Footer } from "@/shared/components";
 import { HeroSearch } from "@/features/search";
