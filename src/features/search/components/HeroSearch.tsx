@@ -12,6 +12,7 @@ import { BUDGET_OPTIONS } from "../types/search.types";
 import { VoiceSearchButton } from "@/components/VoiceSearchButton";
 import { parseVoiceTranscript } from "@/lib/voiceEntityDetection";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 
 /* ─── localStorage search history ─── */
 const HISTORY_KEY = "autora_search_history";
@@ -357,6 +358,8 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const { t } = useLanguage();
   const isMobile = useIsMobile();
+  const prefersReduced = useReducedMotion();
+  const showOrbs = !isMobile && !prefersReduced;
 
   useEffect(() => { setBrands(getAllBrands()); }, []);
 
