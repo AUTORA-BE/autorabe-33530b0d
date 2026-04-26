@@ -193,15 +193,17 @@ const Index = () => {
           </ScrollReveal>
         </Suspense>
 
-        {/* Swipe Discovery — mobile immersive */}
-        <Suspense fallback={null}>
-          <SwipeDiscovery
-            vehicles={popularVehicles}
-            isFavorite={isFavorite}
-            onToggleFavorite={toggleFavorite}
-            onVehicleClick={handleCarClick}
-          />
-        </Suspense>
+        {/* Swipe Discovery — mobile only, deferred to avoid loading framer-motion-heavy chunk on desktop */}
+        {!isDesktopFiltersViewport && (
+          <Suspense fallback={null}>
+            <SwipeDiscovery
+              vehicles={popularVehicles}
+              isFavorite={isFavorite}
+              onToggleFavorite={toggleFavorite}
+              onVehicleClick={handleCarClick}
+            />
+          </Suspense>
+        )}
 
         {/* Why AutoRa — bento grid */}
         <Suspense fallback={<WhyAutoRaSkeleton />}>
