@@ -1055,6 +1055,8 @@ export type Database = {
           boost_expires_at: string | null
           boost_level: string | null
           brand: string | null
+          car_pass_date: string | null
+          car_pass_url: string | null
           car_pass_verified: boolean | null
           color: string | null
           created_at: string | null
@@ -1073,10 +1075,13 @@ export type Database = {
           photos: string[] | null
           power: number | null
           price: number | null
+          search_vector: unknown
           seller_type: string | null
           status: string | null
           transmission: string | null
+          tva_number: string | null
           updated_at: string | null
+          user_id: string | null
           year: number | null
         }
         Insert: {
@@ -1084,6 +1089,8 @@ export type Database = {
           boost_expires_at?: string | null
           boost_level?: string | null
           brand?: string | null
+          car_pass_date?: string | null
+          car_pass_url?: string | null
           car_pass_verified?: boolean | null
           color?: string | null
           created_at?: string | null
@@ -1102,10 +1109,13 @@ export type Database = {
           photos?: string[] | null
           power?: number | null
           price?: number | null
+          search_vector?: unknown
           seller_type?: string | null
           status?: string | null
           transmission?: string | null
+          tva_number?: string | null
           updated_at?: string | null
+          user_id?: string | null
           year?: number | null
         }
         Update: {
@@ -1113,6 +1123,8 @@ export type Database = {
           boost_expires_at?: string | null
           boost_level?: string | null
           brand?: string | null
+          car_pass_date?: string | null
+          car_pass_url?: string | null
           car_pass_verified?: boolean | null
           color?: string | null
           created_at?: string | null
@@ -1131,10 +1143,13 @@ export type Database = {
           photos?: string[] | null
           power?: number | null
           price?: number | null
+          search_vector?: unknown
           seller_type?: string | null
           status?: string | null
           transmission?: string | null
+          tva_number?: string | null
           updated_at?: string | null
+          user_id?: string | null
           year?: number | null
         }
         Relationships: []
@@ -1196,6 +1211,42 @@ export type Database = {
           view_count: number
         }[]
       }
+      get_public_listing: {
+        Args: { _listing_id: string }
+        Returns: {
+          body_type: string
+          boost_expires_at: string
+          boost_level: string
+          brand: string
+          car_pass_date: string
+          car_pass_url: string
+          car_pass_verified: boolean
+          color: string
+          created_at: string
+          ct_valid: boolean
+          description: string
+          doors: number
+          euro_norm: string
+          features: string[]
+          first_registration: string
+          fuel_type: string
+          id: string
+          location: string
+          maintenance_book_complete: boolean
+          mileage: number
+          model: string
+          photos: string[]
+          power: number
+          price: number
+          seller_type: string
+          status: string
+          transmission: string
+          tva_number: string
+          updated_at: string
+          user_id: string
+          year: number
+        }[]
+      }
       get_seller_contact: {
         Args: { listing_id: string }
         Returns: {
@@ -1235,6 +1286,10 @@ export type Database = {
           transmission: string
           year: number
         }[]
+      }
+      has_conversation_with_listing: {
+        Args: { _listing_id: string; _user_id: string }
+        Returns: boolean
       }
       has_role: {
         Args: {
