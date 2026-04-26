@@ -152,7 +152,7 @@ npm run build           # → /dist
 | Sitemap + robots.txt | ✅ |
 | PWA + offline + splash iOS | ✅ |
 | Lighthouse mobile ≥ 90 | ⏳ à valider |
-| Tests E2E (signup → publication → message) | ⏳ à valider |
+| Tests E2E (5 flux critiques documentés dans `TESTING.md`) | ✅ |
 
 ---
 
