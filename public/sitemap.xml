@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
+    <loc>https://jbdsjqoonpieusfvkhyo.supabase.co/functions/v1/sitemap-index</loc>
+  </sitemap>
+  <sitemap>
     <loc>https://jbdsjqoonpieusfvkhyo.supabase.co/functions/v1/dynamic-sitemap?lang=fr</loc>
   </sitemap>
   <sitemap>
