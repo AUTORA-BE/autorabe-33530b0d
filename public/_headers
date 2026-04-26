@@ -1,0 +1,29 @@
+# Long cache for hashed Vite assets (immutable bundles)
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Static images and icons
+/*.png
+  Cache-Control: public, max-age=2592000
+/*.jpg
+  Cache-Control: public, max-age=2592000
+/*.svg
+  Cache-Control: public, max-age=2592000
+/*.webp
+  Cache-Control: public, max-age=2592000
+/*.ico
+  Cache-Control: public, max-age=2592000
+/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+
+# Service worker / manifest must revalidate
+/sw.js
+  Cache-Control: public, max-age=0, must-revalidate
+/manifest.webmanifest
+  Cache-Control: public, max-age=3600
+
+# HTML — short cache, always revalidate
+/
+  Cache-Control: public, max-age=0, must-revalidate
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate

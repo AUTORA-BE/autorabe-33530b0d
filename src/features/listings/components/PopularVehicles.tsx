@@ -141,7 +141,7 @@ const PopularVehicles = memo(function PopularVehicles({
             className="flex gap-5 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-4 -mx-6 px-6 sm:-mx-8 sm:px-8"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch" }}
           >
-            {vehicles.map((vehicle) => (
+            {vehicles.map((vehicle, idx) => (
               <div key={vehicle.id} className="flex-shrink-0 w-[300px] sm:w-[340px] snap-start">
                 <CarCard
                   car={vehicle}
@@ -149,6 +149,7 @@ const PopularVehicles = memo(function PopularVehicles({
                   onToggleFavorite={onToggleFavorite}
                   onClick={onVehicleClick}
                   favoriteCount={favCounts[vehicle.id]}
+                  eager={idx === 0}
                 />
               </div>
             ))}

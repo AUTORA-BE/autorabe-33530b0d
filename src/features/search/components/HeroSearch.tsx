@@ -12,6 +12,7 @@ import { BUDGET_OPTIONS } from "../types/search.types";
 import { VoiceSearchButton } from "@/components/VoiceSearchButton";
 import { parseVoiceTranscript } from "@/lib/voiceEntityDetection";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 
 /* ─── localStorage search history ─── */
 const HISTORY_KEY = "autora_search_history";
@@ -357,6 +358,8 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const { t } = useLanguage();
   const isMobile = useIsMobile();
+  const prefersReduced = useReducedMotion();
+  const showOrbs = !isMobile && !prefersReduced;
 
   useEffect(() => { setBrands(getAllBrands()); }, []);
 
@@ -420,40 +423,44 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
         <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.03] via-transparent to-background/50" />
         <div className="absolute inset-0 bg-gradient-to-tr from-primary/[0.02] via-transparent to-accent/[0.01]" />
 
-        {/* Parallax luminous orbs */}
-        <motion.div
-          className="absolute w-[500px] h-[500px] rounded-full opacity-[0.04]"
-          style={{
-            background: "radial-gradient(circle, hsl(var(--primary)) 0%, transparent 70%)",
-            top: "-10%",
-            right: "-10%",
-            filter: "blur(80px)",
-          }}
-          animate={{ y: [0, 30, 0], x: [0, -15, 0], scale: [1, 1.08, 1] }}
-          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          className="absolute w-[350px] h-[350px] rounded-full opacity-[0.03]"
-          style={{
-            background: "radial-gradient(circle, hsl(var(--primary)) 0%, transparent 70%)",
-            bottom: "5%",
-            left: "-5%",
-            filter: "blur(60px)",
-          }}
-          animate={{ y: [0, -20, 0], x: [0, 20, 0], scale: [1, 1.12, 1] }}
-          transition={{ duration: 16, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-        />
-        <motion.div
-          className="absolute w-[200px] h-[200px] rounded-full opacity-[0.025]"
-          style={{
-            background: "radial-gradient(circle, hsl(var(--primary)) 0%, transparent 70%)",
-            top: "40%",
-            left: "50%",
-            filter: "blur(50px)",
-          }}
-          animate={{ y: [0, 15, 0], x: [0, -10, 0], scale: [1, 1.15, 1] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 4 }}
-        />
+        {/* Parallax luminous orbs — desktop only, skipped under reduced-motion to free main thread on mobile */}
+        {showOrbs && (
+          <>
+            <motion.div
+              className="absolute w-[500px] h-[500px] rounded-full opacity-[0.04]"
+              style={{
+                background: "radial-gradient(circle, hsl(var(--primary)) 0%, transparent 70%)",
+                top: "-10%",
+                right: "-10%",
+                filter: "blur(80px)",
+              }}
+              animate={{ y: [0, 30, 0], x: [0, -15, 0], scale: [1, 1.08, 1] }}
+              transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <motion.div
+              className="absolute w-[350px] h-[350px] rounded-full opacity-[0.03]"
+              style={{
+                background: "radial-gradient(circle, hsl(var(--primary)) 0%, transparent 70%)",
+                bottom: "5%",
+                left: "-5%",
+                filter: "blur(60px)",
+              }}
+              animate={{ y: [0, -20, 0], x: [0, 20, 0], scale: [1, 1.12, 1] }}
+              transition={{ duration: 16, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+            />
+            <motion.div
+              className="absolute w-[200px] h-[200px] rounded-full opacity-[0.025]"
+              style={{
+                background: "radial-gradient(circle, hsl(var(--primary)) 0%, transparent 70%)",
+                top: "40%",
+                left: "50%",
+                filter: "blur(50px)",
+              }}
+              animate={{ y: [0, 15, 0], x: [0, -10, 0], scale: [1, 1.15, 1] }}
+              transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 4 }}
+            />
+          </>
+        )}
 
         {/* Subtle grid pattern */}
         <div className="absolute inset-0 opacity-[0.015]"
