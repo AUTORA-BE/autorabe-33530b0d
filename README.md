@@ -145,7 +145,7 @@ npm run build           # → /dist
 | RLS sur toutes les tables | ✅ |
 | Aucune PII publique | ✅ |
 | 25 annonces démo (toutes provinces) | ✅ |
-| Compte démo `demo@autora.be` / `AutoRADemo2026!` | ✅ |
+| Compte démo (sur demande via [contact](https://autora.be/contact)) | ✅ |
 | 4 langues complètes | ✅ |
 | SEOHead sur toutes les pages | ✅ |
 | JSON-LD Vehicle/Organization | ✅ |
