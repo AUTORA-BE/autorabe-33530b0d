@@ -21,6 +21,8 @@ export interface CarCardProps {
   buyerProfile?: BuyerProfile | null;
   /** Nombre public de favoris pour cette annonce */
   favoriteCount?: number;
+  /** Charger l'image en priorité (LCP) — utiliser uniquement pour la 1ʳᵉ carte visible */
+  eager?: boolean;
 }
 
 const lezBadgeConfig = {
@@ -41,7 +43,7 @@ const getLezBadgeInfo = (euroNorm: string, fuelType: string) => {
   return { config, badgeText, details: result.details };
 };
 
-const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = false, onToggleFavorite, onClick, buyerProfile, favoriteCount }, ref) => {
+const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = false, onToggleFavorite, onClick, buyerProfile, favoriteCount, eager = false }, ref) => {
   const { addToCompare, removeFromCompare, isInCompare, canAddMore } = useCompareContext();
   const { t, language } = useLanguage();
   const { impactLight, notificationSuccess, selectionChanged } = useHapticFeedback();
@@ -146,6 +148,7 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
           src={car.image}
           alt={getAltText()}
           aspectRatio="auto"
+          eager={eager}
           className="w-full h-full transition-transform duration-700 ease-out group-hover:scale-[1.08]"
         />
         {/* Gradient overlay on hover */}
