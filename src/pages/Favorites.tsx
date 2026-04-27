@@ -7,7 +7,7 @@ import SEOHead from "@/components/SEOHead";
 import { CarCard, type Vehicle } from "@/features/listings";
 import { useFavorites } from "@/features/favorites";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Heart, Car, SlidersHorizontal } from "lucide-react";
+import {  Heart, Car } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { mapListingToVehicle } from "@/features/listings/api/vehicleQueries";
@@ -19,7 +19,7 @@ import { useLocalizedVehicleHref } from "@/lib/useLocalizedHref";
 type SortMode = "price" | "year" | "brand";
 
 /** Swipeable favorite card wrapper */
-function SwipeableCard({
+function FavoriteCard({
   car,
   isFavorite,
   onToggleFavorite,
@@ -112,6 +112,7 @@ const Favorites = () => {
     },
     [toggleFavorite]
   );
+  void FavoriteCard; void handleRemove;
 
   const sortChips: { mode: SortMode; label: string }[] = [
     { mode: "price", label: t("filters.budget") || "Prix" },

@@ -29,8 +29,6 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
-  TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -67,7 +65,7 @@ function computeScores(vehicles: Vehicle[]): Map<string, VehicleScore> {
   if (vehicles.length === 0) return new Map();
 
   const maxPrice = Math.max(...vehicles.map((v) => v.price), 1);
-  const maxMileage = Math.max(...vehicles.map((v) => v.mileage), 1);
+  // const _maxMileage = Math.max(...vehicles.map((v) => v.mileage), 1);
   const currentYear = new Date().getFullYear();
 
   const rawScores = vehicles.map((v) => {
@@ -177,7 +175,7 @@ const Compare = () => {
   const localized = useLocalizedHref();
   const [searchParams] = useSearchParams();
   const [copied, setCopied] = useState(false);
-  const [loadingShared, setLoadingShared] = useState(false);
+  const [_loadingShared, setLoadingShared] = useState(false);
   const [activeCardIndex, setActiveCardIndex] = useState(0);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);

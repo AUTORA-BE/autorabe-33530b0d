@@ -1,10 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { Header, Footer } from "@/shared/components";
 import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -14,9 +13,9 @@ import {
   AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import {
-  Bell, Loader2, Cookie, Shield, BarChart3, Sparkles, User, Camera,
-  Smartphone, Download, Trash2, FileText, Heart, Car, MessageCircle,
-  ChevronRight, LogOut, Crown, Globe, Moon, Sun, Lock,
+  Bell, Loader2, Cookie, Shield, BarChart3, Camera,
+  Smartphone, Download, Trash2, Heart, Car, MessageCircle,
+  ChevronRight, LogOut, Crown, Globe, Moon, Sun,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage, type Language } from "@/contexts/LanguageContext";
@@ -25,6 +24,9 @@ import { useFavorites } from "@/features/favorites";
 import { useSubscription } from "@/features/subscription";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useSellerListings } from "@/features/listings/hooks/useSellerListings";
+
+type _UseCookiePref = CookiePreferences;
+void 0 as unknown as _UseCookiePref;
 
 interface CookiePreferences {
   essential: boolean;

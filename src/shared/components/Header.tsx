@@ -49,7 +49,7 @@ const Header = () => {
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => setUser(session?.user ?? null)
+      (_event, session) => setUser(session?.user ?? null)
     );
     supabase.auth.getSession().then(({ data: { session } }) => setUser(session?.user ?? null));
     return () => subscription.unsubscribe();

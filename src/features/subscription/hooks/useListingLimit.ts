@@ -7,7 +7,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useSubscription } from './useSubscription';
-import { FREE_PARTICULIER_LIMIT, SUBSCRIPTION_TIERS } from '../constants/tiers';
+import {  FREE_PARTICULIER_LIMIT } from '../constants/tiers';
 
 interface ListingLimitState {
   isLoading: boolean;

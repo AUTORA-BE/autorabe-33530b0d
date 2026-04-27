@@ -7,7 +7,7 @@ import { SellCarForm } from "@/components/SellCarForm";
 import type { SellCarFormWatchData } from "@/components/SellCarForm";
 import ListingPreview from "@/components/ListingPreview";
 import { Button } from "@/components/ui/button";
-import { Car, Shield, Clock, CheckCircle, Lock } from "lucide-react";
+import {  Car, Shield, Clock, CheckCircle } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSubscription } from "@/features/subscription";
 
@@ -17,7 +17,7 @@ export default function SellCar() {
   const editId = searchParams.get("edit");
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const { t } = useLanguage();
-  const { subscribed, isLoading: subLoading, tier } = useSubscription();
+  const { isLoading: subLoading } = useSubscription();
 
   // Live preview state
   const [previewData, setPreviewData] = useState<SellCarFormWatchData>({});
@@ -58,7 +58,7 @@ export default function SellCar() {
 
   // Check if user needs a subscription (free tier has 3 listings limit, handled elsewhere)
   // For Pro/Premium tiers requiring TVA, we gate access
-  const needsSubscription = isAuthenticated && !subscribed && !editId;
+  // const _needsSubscription = isAuthenticated && !subscribed && !editId;
 
   return (
     <div className="page-gradient">

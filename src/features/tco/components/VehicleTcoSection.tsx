@@ -10,11 +10,9 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
 
 import {
-  PRIX_CARBURANT, FACTEUR_REALITE, ENTRETIEN_BASE,
-  ASSURANCE_RC, COEFF_BONUS, MULT_COUVERTURE,
+  PRIX_CARBURANT, FACTEUR_REALITE,
   TAXE_REGION, DEPRECIATION,
 } from "../constants/belgianData";
 import type { FuelType as TcoFuelType, Region } from "../types/tco.types";

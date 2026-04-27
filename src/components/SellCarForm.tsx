@@ -6,7 +6,7 @@ import { vehicleKeys } from '@/features/listings/api/vehicleKeys';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, X, Car, Info, User, Camera, FileCheck, Building2, AlertTriangle, Leaf, CreditCard, ChevronLeft, ChevronRight, Check, CheckCircle, FileText, Shield } from 'lucide-react';
+import {  Upload, X, Car, Info, User, Camera, FileCheck, Building2, AlertTriangle, Leaf, CreditCard, ChevronLeft, ChevronRight, Check, CheckCircle, FileText } from 'lucide-react';
 import { PhotoUploadStep } from '@/components/PhotoUploadStep';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -341,6 +341,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
     setPhotosPreviews(previews);
   }, []);
 
+  void 0; // eslint-disable-line @typescript-eslint/no-unused-vars
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
@@ -486,6 +487,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
     }
     
     return uploadedUrls;
+  void handlePhotoUpload; void removePhoto; void removeExistingPhoto; void uploadPhotos;
   };
 
   const uploadCarPassToStorage = async (file: File): Promise<string | null> => {

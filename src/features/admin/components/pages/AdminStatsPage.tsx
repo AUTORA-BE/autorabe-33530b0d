@@ -15,7 +15,7 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from '@/components/ui/chart';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, FunnelChart, Cell } from 'recharts';
+import {  BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell } from 'recharts';
 import { TrendingUp, Clock, CheckCircle, Users, Crown } from 'lucide-react';
 import { useAdminAdvancedStats } from '../../hooks/useAdminAdvancedStats';
 
@@ -26,6 +26,7 @@ const funnelConfig: ChartConfig = {
 const retentionConfig: ChartConfig = {
   percentage: { label: 'Rétention (%)', color: 'hsl(217, 91%, 60%)' },
 };
+void retentionConfig;
 
 const FUNNEL_COLORS = [
   'hsl(var(--primary))',
@@ -137,7 +138,7 @@ export default function AdminStatsPage() {
                 <CartesianGrid strokeDasharray="3 3" className="stroke-border/40" horizontal={false} />
                 <XAxis type="number" tick={{ fontSize: 10 }} tickLine={false} axisLine={false} />
                 <YAxis dataKey="step" type="category" tick={{ fontSize: 11 }} tickLine={false} axisLine={false} width={120} />
-                <ChartTooltip content={<ChartTooltipContent formatter={(value, name, item) => `${value} (${(item as any)?.payload?.rate ?? 0}%)`} />} />
+                <ChartTooltip content={<ChartTooltipContent formatter={(value, _name, item) => `${value} (${(item as any)?.payload?.rate ?? 0}%)`} />} />
                 <Bar dataKey="count" radius={[0, 4, 4, 0]}>
                   {data.funnel.map((_, i) => (
                     <Cell key={i} fill={FUNNEL_COLORS[i % FUNNEL_COLORS.length]} />

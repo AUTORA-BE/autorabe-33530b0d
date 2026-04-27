@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { FileCheck, ClipboardCheck, AlertTriangle, CheckCircle2 } from "lucide-react";
+import {  FileCheck, AlertTriangle, CheckCircle2 } from "lucide-react";
 
 interface AutoraTransparencyProps {
   carPassVerified?: boolean | null;

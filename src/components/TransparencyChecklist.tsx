@@ -1,4 +1,4 @@
-import { Check, X, FileCheck, Wrench, FileText } from "lucide-react";
+import {  Check, FileCheck, Wrench, FileText } from "lucide-react";
 
 interface TransparencyChecklistProps {
   carPassVerified?: boolean | null;

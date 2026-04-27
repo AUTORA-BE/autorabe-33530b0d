@@ -1,18 +1,12 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { lazy, Suspense } from "react";
-import { useState, useEffect, useCallback } from "react";
+import {  useState, useEffect } from "react";
 import type { Tables } from "@/integrations/supabase/types";
 import {
-  ArrowLeft,
   Heart,
   Share2,
   MapPin,
-  Calendar,
-  Gauge,
-  Fuel,
-  Settings2,
   Shield,
-  Leaf,
   Phone,
   Mail,
   MessageCircle,
@@ -35,7 +29,7 @@ import LezWidget from "@/components/LezWidget";
 import SellerBadge from "@/components/SellerBadge";
 import ReviewsSection from "@/components/ReviewsSection";
 import BentoSpecs from "@/components/BentoSpecs";
-import AutoraTransparency from "@/components/AutoraTransparency";
+import _AutoraTransparency from "@/components/AutoraTransparency";
 import SEOHead from "@/components/SEOHead";
 import { vehicleSchema, breadcrumbSchema } from "@/lib/seoSchemas";
 import ReportAdModal from "@/components/ReportAdModal";

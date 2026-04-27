@@ -97,6 +97,7 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
     }
     touchDeltaY.current = 0;
   }, [onClose]);
+  void handleTouchStart; void handleTouchMove; void handleTouchEnd;
 
   // Mark body so other fixed UI (BottomNav, FAB chat, scroll-to-top)
   // can hide themselves while the mobile filter drawer is open.

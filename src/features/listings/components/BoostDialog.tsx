@@ -64,8 +64,8 @@ function BoostSuccessAnimation() {
   );
 }
 
-export default function BoostDialog({ open, onOpenChange, listingId, listingName, onBoostApplied }: BoostDialogProps) {
-  const { t } = useLanguage();
+export default function BoostDialog({ open, onOpenChange, listingId, listingName }: BoostDialogProps) {
+  const {  } = useLanguage();
   const [selectedTier, setSelectedTier] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);

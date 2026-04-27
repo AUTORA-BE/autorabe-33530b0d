@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence, useMotionValue, useTransform, PanInfo } from "framer-motion";
-import { MessageCircle, Car, Archive, Trash2 } from "lucide-react";
+import {  motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
+import {  MessageCircle, Car, Archive } from "lucide-react";
 import { PullToRefresh } from "@/components/PullToRefresh";
 import { Header, Footer, BackButton } from "@/shared/components";
 import { ChatWindow } from "@/components/ChatWindow";
@@ -258,7 +258,7 @@ export default function Messages() {
                 <div className="lg:col-span-1 rounded-[20px] bg-card/40 backdrop-blur-xl border border-border/30 overflow-hidden flex flex-col shadow-lg shadow-foreground/[0.03]">
                   <div className="overflow-y-auto flex-1">
                     <AnimatePresence>
-                      {conversations.map((conv, i) => (
+                      {conversations.map((conv, _i) => (
                         <SwipeableConversation
                           key={conv.id}
                           conv={conv}

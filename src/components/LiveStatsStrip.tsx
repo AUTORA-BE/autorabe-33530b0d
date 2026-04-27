@@ -4,7 +4,7 @@
  */
 
 import { memo, useRef, useState, useEffect } from "react";
-import { Car, Users, Eye, MessageCircle, TrendingUp, Zap } from "lucide-react";
+import {  Car, Users, Eye, TrendingUp, Zap } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";

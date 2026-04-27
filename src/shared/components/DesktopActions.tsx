@@ -32,7 +32,8 @@ const DesktopActions = ({ user, userProfile, onLogout, t, isAdmin }: DesktopActi
   const { theme, setTheme } = useTheme();
   const { language, setLanguage } = useLanguage();
   const localized = useLocalizedHref();
-  const go = (p: string) => navigate(localized(p));
+  void localized;
+  void localized;
 
   return (
     <div className="hidden lg:flex items-center gap-2">

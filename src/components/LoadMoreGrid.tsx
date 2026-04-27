@@ -1,6 +1,6 @@
 import { useEffect, useRef, useCallback, useMemo } from "react";
 import { CarCard, type Car } from "@/features/listings";
-import { SlidersHorizontal, ChevronDown, AlertCircle, RefreshCw, Share2, Check, Sparkles } from "lucide-react";
+import {  SlidersHorizontal, ChevronDown, AlertCircle, RefreshCw, Share2, Sparkles } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";

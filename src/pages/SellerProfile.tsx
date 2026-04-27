@@ -11,7 +11,7 @@ import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocalizedVehicleHref } from "@/lib/useLocalizedHref";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Star, MapPin, Phone, Mail, Calendar, ArrowLeft, Car, MessageSquare, Info, Shield, Clock, ExternalLink, Send, Heart } from "lucide-react";
+import {    Star, MapPin, Phone, Calendar, ArrowLeft, Car, MessageSquare, Info, Shield, Clock, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
@@ -59,7 +59,7 @@ const SellerProfile = () => {
   const { userId } = useParams<{ userId: string }>();
   const navigate = useNavigate();
   const vehicleHref = useLocalizedVehicleHref();
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
   const { toast } = useToast();
   const dateLocale = language === "fr" ? fr : language === "nl" ? nl : enUS;
 
@@ -76,7 +76,7 @@ const SellerProfile = () => {
     const load = async () => {
       setLoading(true);
 
-      const [profileRes, listingsRes, reviewsRes] = await Promise.all([
+      const [profileRes, _listingsRes, _reviewsRes] = await Promise.all([
         supabase.from("profiles").select("user_id, display_name, avatar_url, garage_name, phone, postal_code, created_at").eq("user_id", userId).single(),
         supabase.from("car_listings_public").select("id, brand, model, year, price, mileage, fuel_type, transmission, photos, location, created_at").eq("seller_type", "professionnel").order("created_at", { ascending: false }),
         supabase.from("reviews").select("id, user_id, rating, comment, created_at"),

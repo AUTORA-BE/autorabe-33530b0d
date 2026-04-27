@@ -157,7 +157,7 @@ const RATE_LIMIT_MS = 60_000;
 
 // ─── Page Component ───────────────────────────────────────────
 const Services = () => {
-  const { t } = useLanguage();
+  const {  } = useLanguage();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [lastSubmitTime, setLastSubmitTime] = useState(0);
@@ -253,7 +253,7 @@ const Services = () => {
             viewport={{ once: true, margin: "-60px" }}
             className="space-y-10 lg:space-y-14 max-w-5xl mx-auto"
           >
-            {services.map((service, idx) => (
+            {services.map((service, _idx) => (
               <motion.div key={service.id} variants={item}>
                 <Card
                   className={`relative overflow-hidden border-2 transition-all duration-300 ${service.accent}`}

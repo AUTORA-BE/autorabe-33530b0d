@@ -13,7 +13,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { prefetchRoute } from "@/utils/prefetchRoutes";
 import { useHapticFeedback } from "@/hooks/useHapticFeedback";
-import { useLocalizedHref } from "@/lib/useLocalizedHref";
+
 
 const BottomNav = memo(function BottomNav() {
   const location = useLocation();
@@ -22,7 +22,7 @@ const BottomNav = memo(function BottomNav() {
   const { t } = useLanguage();
   const [user, setUser] = useState<boolean>(false);
   const { selectionChanged } = useHapticFeedback();
-  const localized = useLocalizedHref();
+  // const _localized = useLocalizedHref();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setUser(!!data.session?.user));

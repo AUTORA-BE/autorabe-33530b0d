@@ -114,8 +114,8 @@ async function fetchAdvancedStats(): Promise<AdvancedStats> {
 
   // Count views per seller
   const viewsPerSeller = new Map<string, number>();
-  const listingToSeller = new Map<string, string>();
-  listings.forEach((l) => {
+  // const _listingToSeller = new Map<string, string>();
+  listings.forEach((_l) => {
     // We don't have listing id in views join, so approximate via viewer
   });
   // Approximate: count views where viewer_id is not the seller

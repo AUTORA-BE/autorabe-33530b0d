@@ -11,7 +11,6 @@ import {
   ArrowLeft,
   TrendingUp,
   TrendingDown,
-  Calendar,
   Car,
   PieChart,
   Activity
@@ -32,11 +31,9 @@ import {
   Bar,
   PieChart as RePieChart,
   Pie,
-  Cell,
-  LineChart,
-  Line
+  Cell
 } from "recharts";
-import { format, subDays, eachDayOfInterval, startOfDay, eachWeekOfInterval, eachMonthOfInterval, startOfWeek, startOfMonth } from "date-fns";
+import {   format, subDays, eachDayOfInterval, startOfDay, eachWeekOfInterval, startOfWeek } from "date-fns";
 import { fr, nl, enGB } from "date-fns/locale";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -74,7 +71,7 @@ const SellerStats = () => {
   const [loading, setLoading] = useState(true);
   const [listingsStats, setListingsStats] = useState<ListingStats[]>([]);
   const [dailyStats, setDailyStats] = useState<DailyStats[]>([]);
-  const [weeklyStats, setWeeklyStats] = useState<WeeklyStats[]>([]);
+  const [_weeklyStats, setWeeklyStats] = useState<WeeklyStats[]>([]);
   const [chartPeriod, setChartPeriod] = useState<7 | 30 | 90>(30);
   const [totals, setTotals] = useState({ views: 0, favorites: 0, viewsChange: 0, favoritesChange: 0 });
 
@@ -84,7 +81,7 @@ const SellerStats = () => {
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      (_event, session) => {
         setUser(session?.user ?? null);
         if (!session?.user) {
           navigate("/auth");
@@ -526,7 +523,7 @@ const SellerStats = () => {
                           dataKey="value"
                           label={({ name, percent }) => `${name.substring(0, 15)}... ${(percent * 100).toFixed(0)}%`}
                         >
-                          {pieData.map((entry, index) => (
+                          {pieData.map((_entry, index) => (
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                           ))}
                         </Pie>
