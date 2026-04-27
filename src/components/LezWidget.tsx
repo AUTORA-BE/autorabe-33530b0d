@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Shield, Leaf, AlertTriangle, Ban, ExternalLink, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import {
   Dialog,
@@ -172,8 +171,8 @@ function LezGlobalAlert({ result }: { result: LezResultat }) {
 const LezWidget = ({ euroNorm, fuelType, compact = false }: LezWidgetProps) => {
   const [showModal, setShowModal] = useState(false);
   const result = calculerStatutLEZ(fuelType || "", euroNorm || "");
-  const colors = statusColors[result.global.couleur];
-  const Icon = statusIcon(result.global.statut);
+  const _colors = statusColors[result.global.couleur];
+  const _Icon = statusIcon(result.global.statut);
 
   if (compact) {
     return <LezCompactBadge result={result} />;

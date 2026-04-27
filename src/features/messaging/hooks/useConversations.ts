@@ -4,9 +4,9 @@
  * @module features/messaging/hooks
  */
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import {  useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import type { Conversation, ConversationRow, mapConversationRow } from '../types/messaging.types';
+import type {  Conversation, ConversationRow } from '../types/messaging.types';
 
 interface UseConversationsResult {
   /** List of conversations */

@@ -22,7 +22,7 @@ const BottomNav = memo(function BottomNav() {
   const { t } = useLanguage();
   const [user, setUser] = useState<boolean>(false);
   const { selectionChanged } = useHapticFeedback();
-  const localized = useLocalizedHref();
+  const _localized = useLocalizedHref();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setUser(!!data.session?.user));

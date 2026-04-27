@@ -22,8 +22,8 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   AlertTriangle, CheckCircle, Clock, Eye, ExternalLink, Filter, Loader2,
   Shield, Trash2, XCircle, Car, Check, X, ImageIcon, History, CalendarIcon,
-  Users, Ban, UserCheck, Search, Phone, Mail, MapPin, CheckCheck, ShieldAlert,
-  FileText,
+  Users, Ban, UserCheck, Search, Phone, _Mail, MapPin, CheckCheck, ShieldAlert,
+  _FileText,
 } from "lucide-react";
 import { format } from "date-fns";
 import { fr, nl, de, enUS } from "date-fns/locale";

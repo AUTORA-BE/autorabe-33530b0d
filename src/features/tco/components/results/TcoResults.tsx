@@ -43,7 +43,7 @@ const breakdownItems = (b: TcoBreakdown) => [
   { key: 'depreciation', label: 'Dépréciation', icon: TrendingDown, value: b.depreciation, color: CHART_COLORS[4], annual: Math.round(b.depreciation / 5) },
 ];
 
-const TcoResults = ({ formData, breakdown, alternatives, onReset, onBack }: Props) => {
+const TcoResults = ({ _formData, breakdown, alternatives, onReset, onBack }: Props) => {
   const chartData = breakdownItems(breakdown).map(i => ({ name: i.label, value: i.value }));
   if (breakdown.prime > 0) chartData.push({ name: 'Prime', value: -breakdown.prime });
 

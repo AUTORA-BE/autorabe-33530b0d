@@ -10,7 +10,7 @@ import {
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarGroupContent,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarHeader, SidebarFooter,
-  SidebarTrigger, useSidebar,
+  _SidebarTrigger, useSidebar,
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 

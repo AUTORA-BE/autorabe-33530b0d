@@ -25,7 +25,7 @@ import {
   MoreHorizontal,
   CheckCircle2,
   Leaf,
-  Shield,
+  _Shield,
   FileCheck,
   Rocket,
 } from "lucide-react";

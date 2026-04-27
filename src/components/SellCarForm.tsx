@@ -6,7 +6,7 @@ import { vehicleKeys } from '@/features/listings/api/vehicleKeys';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, X, Car, Info, User, Camera, FileCheck, Building2, AlertTriangle, Leaf, CreditCard, ChevronLeft, ChevronRight, Check, CheckCircle, FileText, Shield } from 'lucide-react';
+import {  Upload, X, Car, Info, User, Camera, FileCheck, Building2, AlertTriangle, Leaf, CreditCard, ChevronLeft, ChevronRight, Check, CheckCircle, FileText } from 'lucide-react';
 import { PhotoUploadStep } from '@/components/PhotoUploadStep';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -341,7 +341,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
     setPhotosPreviews(previews);
   }, []);
 
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const _handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
 
@@ -368,12 +368,12 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
     });
   };
 
-  const removePhoto = (index: number) => {
+  const _removePhoto = (index: number) => {
     setPhotos(prev => prev.filter((_, i) => i !== index));
     setPhotosPreviews(prev => prev.filter((_, i) => i !== index));
   };
 
-  const removeExistingPhoto = (index: number) => {
+  const _removeExistingPhoto = (index: number) => {
     const photoUrl = photosPreviews[index];
     if (existingPhotos.includes(photoUrl)) {
       setExistingPhotos(prev => prev.filter(p => p !== photoUrl));
@@ -451,7 +451,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
     form.setValue('car_pass_verified', false);
   };
 
-  const uploadPhotos = async (userId: string): Promise<string[]> => {
+  const _uploadPhotos = async (userId: string): Promise<string[]> => {
     const { compressImage } = await import("@/utils/compressImage");
     const uploadedUrls: string[] = [];
     

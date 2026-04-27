@@ -6,7 +6,7 @@
 
 import { memo, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Shield, ExternalLink, ChevronRight } from "lucide-react";
+import {  Shield, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 

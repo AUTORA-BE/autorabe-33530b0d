@@ -3,7 +3,7 @@
  * @module features/search/components
  */
 
-import { useState, useEffect, useCallback, memo } from "react";
+import {   useState, memo } from "react";
 import Autoplay from "embla-carousel-autoplay";
 import {
   Carousel,

@@ -1,6 +1,6 @@
 /** Step 5: Region & Insurance */
 
-import { TAXE_REGION, PRIMES } from '../../constants/belgianData';
+import {  TAXE_REGION } from '../../constants/belgianData';
 import type { TcoFormData, Region, InsuranceType } from '../../types/tco.types';
 
 interface Props {

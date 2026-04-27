@@ -4,7 +4,7 @@
  */
 
 import { memo, useMemo } from "react";
-import { Heart, MapPin, Calendar, Gauge, Shield, CheckCircle, AlertTriangle, Ban, Leaf, Info, Building2, Sparkles, Scale, Fuel, Cog, Zap, ShieldCheck } from "lucide-react";
+import {   Heart, MapPin, Calendar, Gauge, AlertTriangle, Ban, Leaf, Info, Building2, Sparkles, Scale, Fuel, Cog, Zap, ShieldCheck } from "lucide-react";
 import { useCompareContext } from "@/features/compare";
 import CarImage from "@/components/cars/CarImage";
 import { Badge } from "@/components/ui/badge";
@@ -49,7 +49,7 @@ const VehicleCard = memo(function VehicleCard({
   favoriteCount,
 }: VehicleCardProps) {
   const { addToCompare, removeFromCompare: removeCompare, isInCompare } = useCompareContext();
-  const { language } = useLanguage();
+  const { _language } = useLanguage();
   const lezResult = calculerStatutLEZ(vehicle.fuelType, vehicle.euroNorm);
   const lezConfig = lezBadgeConfig[lezResult.global.statut];
 

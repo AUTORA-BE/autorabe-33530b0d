@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { Slider } from '@/components/ui/slider';
 import { Input } from '@/components/ui/input';
-import { DEFAULT_CONSUMPTION, EURO_NORMS } from '../../constants/belgianData';
-import type { TcoFormData, EuroNorm } from '../../types/tco.types';
+import {  EURO_NORMS } from '../../constants/belgianData';
+import type {  TcoFormData } from '../../types/tco.types';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { HelpCircle } from 'lucide-react';
 

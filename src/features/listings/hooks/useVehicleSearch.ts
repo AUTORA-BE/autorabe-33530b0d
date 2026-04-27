@@ -10,7 +10,7 @@
 
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { vehicleQueries, PAGE_SIZE } from '../api/vehicleQueries';
+import {  vehicleQueries } from '../api/vehicleQueries';
 import { vehicleKeys } from '../api/vehicleKeys';
 import type {
   Vehicle,
@@ -22,7 +22,7 @@ import { useDebounce } from '@/shared/hooks/useDebounce';
 import { useFiltersUrlSync } from './useFiltersUrlSync';
 
 /** @deprecated Utilisez vehicleKeys à la place */
-const VEHICLE_QUERY_KEY = 'vehicles';
+const _VEHICLE_QUERY_KEY = 'vehicles';
 
 interface UseVehicleSearchOptions {
   /** Initial filter overrides */

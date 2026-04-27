@@ -38,7 +38,7 @@ type ContactFormData = z.infer<typeof contactSchema>;
 const RATE_LIMIT_MS = 60_000;
 
 const Contact = () => {
-  const { t } = useLanguage();
+  const { _t } = useLanguage();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [lastSubmitTime, setLastSubmitTime] = useState(0);

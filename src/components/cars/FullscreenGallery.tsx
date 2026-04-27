@@ -2,7 +2,7 @@
  * Fullscreen photo gallery with swipe gestures, keyboard nav, and pinch-to-zoom
  */
 import { memo, useState, useCallback, useEffect, useRef } from "react";
-import { motion, AnimatePresence, type PanInfo, useMotionValue, useTransform } from "framer-motion";
+import {  motion, AnimatePresence, type PanInfo, useMotionValue } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 

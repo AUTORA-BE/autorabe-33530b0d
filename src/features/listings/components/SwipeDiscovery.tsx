@@ -5,7 +5,7 @@
  * @module features/listings/components
  */
 
-import { useState, useCallback, useRef, memo } from "react";
+import {  useState, useCallback, memo } from "react";
 import {
   motion,
   useMotionValue,

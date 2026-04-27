@@ -4,7 +4,7 @@
  */
 
 import { memo, useRef } from "react";
-import { Shield, Leaf, FileCheck, Zap, Globe, Calculator, ChevronLeft, ChevronRight } from "lucide-react";
+import {   Shield, Leaf, FileCheck, Zap, Globe, Calculator } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -114,7 +114,7 @@ const WhyAutoRa = memo(() => {
     "The Belgian car marketplace that puts transparency first."
   );
 
-  const scroll = (dir: "left" | "right") => {
+  const _scroll = (dir: "left" | "right") => {
     if (!scrollRef.current) return;
     const amount = scrollRef.current.offsetWidth * 0.75;
     scrollRef.current.scrollBy({ left: dir === "right" ? amount : -amount, behavior: "smooth" });

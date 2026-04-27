@@ -9,12 +9,12 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Header, Footer } from "@/shared/components";
 import SEOHead from "@/components/SEOHead";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {  Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-  Shield, Users, Car, AlertTriangle, Loader2, Clock, CheckCircle,
-  TrendingUp, Eye, ArrowRight, Activity, ShieldAlert, MessageSquare,
+  Shield, Users, Car, AlertTriangle, Loader2, Clock, _CheckCircle,
+  _TrendingUp, _Eye, ArrowRight, Activity, ShieldAlert, _MessageSquare,
 } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -33,7 +33,7 @@ interface DashboardStats {
 export default function Admin() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [_isAdmin, setIsAdmin] = useState(false);
   const [stats, setStats] = useState<DashboardStats>({
     totalUsers: 0, totalListings: 0, pendingListings: 0, approvedListings: 0,
     pendingReports: 0, totalReports: 0, suspendedUsers: 0, recentActions: [],

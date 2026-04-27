@@ -46,13 +46,13 @@ export function ChatWindow({
   const [replyTo, setReplyTo] = useState<ReplyToMessage | null>(null);
 
   // Typing indicator hook
-  const { isOtherTyping, handleTyping: sendTypingIndicator, stopTyping } = useTypingIndicator(
+  const { isOtherTyping, handleTyping: sendTypingIndicator, _stopTyping } = useTypingIndicator(
     conversationId,
     currentUserId
   );
 
   // Online status - we'll track this via presence when details are loaded
-  const [isOnline, setIsOnline] = useState(false);
+  const [isOnline, _setIsOnline] = useState(false);
 
   // Scroll to bottom
   const scrollToBottom = useCallback(() => {

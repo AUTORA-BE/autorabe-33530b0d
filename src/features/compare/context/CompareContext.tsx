@@ -2,7 +2,7 @@
  * Compare context for global vehicle comparison state
  * @module features/compare/context/CompareContext
  */
-import React, { createContext, useContext, ReactNode } from "react";
+import _React, { createContext, useContext, ReactNode } from "react";
 import { useCompare } from "../hooks/useCompare";
 import type { Vehicle } from "@/features/listings/types/vehicle.types";
 
