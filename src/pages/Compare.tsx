@@ -29,8 +29,6 @@ import {
   Table,
   TableBody,
   TableCell,
-  _TableHead,
-  _TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";

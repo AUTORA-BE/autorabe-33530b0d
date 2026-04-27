@@ -12,8 +12,7 @@ import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 import {
-  PRIX_CARBURANT, FACTEUR_REALITE, _ENTRETIEN_BASE,
-  _ASSURANCE_RC, _COEFF_BONUS, _MULT_COUVERTURE,
+  PRIX_CARBURANT, FACTEUR_REALITE,
   TAXE_REGION, DEPRECIATION,
 } from "../constants/belgianData";
 import type { FuelType as TcoFuelType, Region } from "../types/tco.types";

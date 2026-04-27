@@ -11,7 +11,6 @@ import {
   ArrowLeft,
   TrendingUp,
   TrendingDown,
-  _Calendar,
   Car,
   PieChart,
   Activity
@@ -32,9 +31,7 @@ import {
   Bar,
   PieChart as RePieChart,
   Pie,
-  Cell,
-  _LineChart,
-  _Line
+  Cell
 } from "recharts";
 import {   format, subDays, eachDayOfInterval, startOfDay, eachWeekOfInterval, startOfWeek } from "date-fns";
 import { fr, nl, enGB } from "date-fns/locale";

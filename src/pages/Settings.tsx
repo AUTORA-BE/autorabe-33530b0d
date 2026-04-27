@@ -13,9 +13,9 @@ import {
   AlertDialogTitle, AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import {
-  Bell, Loader2, Cookie, Shield, BarChart3, _Sparkles, _User, Camera,
-  Smartphone, Download, Trash2, _FileText, Heart, Car, MessageCircle,
-  ChevronRight, LogOut, Crown, Globe, Moon, Sun, _Lock,
+  Bell, Loader2, Cookie, Shield, BarChart3, Camera,
+  Smartphone, Download, Trash2, Heart, Car, MessageCircle,
+  ChevronRight, LogOut, Crown, Globe, Moon, Sun,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage, type Language } from "@/contexts/LanguageContext";

@@ -13,8 +13,7 @@ import {  Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
-  Shield, Users, Car, AlertTriangle, Loader2, Clock, _CheckCircle,
-  _TrendingUp, _Eye, ArrowRight, Activity, ShieldAlert, _MessageSquare,
+  Shield, Users, Car, AlertTriangle, Loader2, Clock, ArrowRight, Activity, ShieldAlert,
 } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";

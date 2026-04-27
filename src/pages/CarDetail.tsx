@@ -3,16 +3,10 @@ import { lazy, Suspense } from "react";
 import {  useState, useEffect } from "react";
 import type { Tables } from "@/integrations/supabase/types";
 import {
-  _ArrowLeft,
   Heart,
   Share2,
   MapPin,
-  _Calendar,
-  _Gauge,
-  _Fuel,
-  _Settings2,
   Shield,
-  _Leaf,
   Phone,
   Mail,
   MessageCircle,
