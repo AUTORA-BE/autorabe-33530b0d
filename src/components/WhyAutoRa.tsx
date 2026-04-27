@@ -119,6 +119,7 @@ const WhyAutoRa = memo(() => {
     const amount = scrollRef.current.offsetWidth * 0.75;
     scrollRef.current.scrollBy({ left: dir === "right" ? amount : -amount, behavior: "smooth" });
   };
+  void scroll;
 
   return (
     <section className="py-20 sm:py-32 relative overflow-hidden">

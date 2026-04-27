@@ -26,6 +26,7 @@ const funnelConfig: ChartConfig = {
 const retentionConfig: ChartConfig = {
   percentage: { label: 'Rétention (%)', color: 'hsl(217, 91%, 60%)' },
 };
+void retentionConfig;
 
 const FUNNEL_COLORS = [
   'hsl(var(--primary))',

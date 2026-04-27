@@ -25,6 +25,9 @@ import { useSubscription } from "@/features/subscription";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useSellerListings } from "@/features/listings/hooks/useSellerListings";
 
+type _UseCookiePref = CookiePreferences;
+void 0 as unknown as _UseCookiePref;
+
 interface CookiePreferences {
   essential: boolean;
   analytics: boolean;

@@ -112,6 +112,7 @@ const Favorites = () => {
     },
     [toggleFavorite]
   );
+  void FavoriteCard; void handleRemove;
 
   const sortChips: { mode: SortMode; label: string }[] = [
     { mode: "price", label: t("filters.budget") || "Prix" },

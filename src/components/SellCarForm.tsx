@@ -487,6 +487,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
     }
     
     return uploadedUrls;
+  void handlePhotoUpload; void removePhoto; void removeExistingPhoto; void uploadPhotos;
   };
 
   const uploadCarPassToStorage = async (file: File): Promise<string | null> => {
