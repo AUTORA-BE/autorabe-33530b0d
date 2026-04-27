@@ -18,6 +18,7 @@ const BottomNav = lazy(() => import("@/shared/components/BottomNav"));
 const CarChatbot = lazy(() => import("@/components/CarChatbot"));
 const PWAInstallBanner = lazy(() => import("@/components/PWAInstallBanner"));
 const CookieBanner = lazy(() => import("@/components/CookieBanner"));
+const HelpButton = lazy(() => import("@/shared/components/HelpButton"));
 
 // Lazy-loaded — reduces main bundle unused JS
 const Index = lazy(() => import("./pages/Index"));
