@@ -25,7 +25,7 @@ import { useSubscription } from "@/features/subscription";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useSellerListings } from "@/features/listings/hooks/useSellerListings";
 
-interface _CookiePreferences {
+interface CookiePreferences {
   essential: boolean;
   analytics: boolean;
   personalization: boolean;

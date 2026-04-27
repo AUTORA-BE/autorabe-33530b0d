@@ -17,7 +17,7 @@ export default function SellCar() {
   const editId = searchParams.get("edit");
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const { t } = useLanguage();
-  const { subscribed, isLoading: subLoading } = useSubscription();
+  const { isLoading: subLoading } = useSubscription();
 
   // Live preview state
   const [previewData, setPreviewData] = useState<SellCarFormWatchData>({});
