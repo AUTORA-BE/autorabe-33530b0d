@@ -6,7 +6,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 const SellCarBanner = () => {
   const navigate = useNavigate();
-  const { _t, language } = useLanguage();
+  const { language } = useLanguage();
   const [isVisible, setIsVisible] = useState(true);
   const [isDismissed, setIsDismissed] = useState(false);
   const [isExiting, setIsExiting] = useState(false);

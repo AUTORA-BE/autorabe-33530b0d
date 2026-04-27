@@ -17,7 +17,7 @@ export default function SellCar() {
   const editId = searchParams.get("edit");
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const { t } = useLanguage();
-  const { subscribed, isLoading: subLoading, _tier } = useSubscription();
+  const { subscribed, isLoading: subLoading } = useSubscription();
 
   // Live preview state
   const [previewData, setPreviewData] = useState<SellCarFormWatchData>({});
@@ -58,7 +58,7 @@ export default function SellCar() {
 
   // Check if user needs a subscription (free tier has 3 listings limit, handled elsewhere)
   // For Pro/Premium tiers requiring TVA, we gate access
-  const _needsSubscription = isAuthenticated && !subscribed && !editId;
+  // const _needsSubscription = isAuthenticated && !subscribed && !editId;
 
   return (
     <div className="page-gradient">

@@ -9,7 +9,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Shield, Mail, MapPin } from "lucide-react";
 
 const Footer = () => {
-  const { language, setLanguage, _t } = useLanguage();
+  const { language, setLanguage } = useLanguage();
   const currentYear = new Date().getFullYear();
 
   const columns = [

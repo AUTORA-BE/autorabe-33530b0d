@@ -59,7 +59,7 @@ const SellerProfile = () => {
   const { userId } = useParams<{ userId: string }>();
   const navigate = useNavigate();
   const vehicleHref = useLocalizedVehicleHref();
-  const { _t, language } = useLanguage();
+  const { language } = useLanguage();
   const { toast } = useToast();
   const dateLocale = language === "fr" ? fr : language === "nl" ? nl : enUS;
 

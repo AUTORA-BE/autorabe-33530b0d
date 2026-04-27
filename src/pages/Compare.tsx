@@ -67,7 +67,7 @@ function computeScores(vehicles: Vehicle[]): Map<string, VehicleScore> {
   if (vehicles.length === 0) return new Map();
 
   const maxPrice = Math.max(...vehicles.map((v) => v.price), 1);
-  const _maxMileage = Math.max(...vehicles.map((v) => v.mileage), 1);
+  // const _maxMileage = Math.max(...vehicles.map((v) => v.mileage), 1);
   const currentYear = new Date().getFullYear();
 
   const rawScores = vehicles.map((v) => {

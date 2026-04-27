@@ -46,7 +46,7 @@ export function ChatWindow({
   const [replyTo, setReplyTo] = useState<ReplyToMessage | null>(null);
 
   // Typing indicator hook
-  const { isOtherTyping, handleTyping: sendTypingIndicator, _stopTyping } = useTypingIndicator(
+  const { isOtherTyping, handleTyping: sendTypingIndicator } = useTypingIndicator(
     conversationId,
     currentUserId
   );

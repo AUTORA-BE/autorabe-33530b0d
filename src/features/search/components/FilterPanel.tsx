@@ -63,14 +63,14 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
   const touchDeltaY = useRef(0);
   const drawerInternalRef = useRef<HTMLElement | null>(null);
 
-  const _handleTouchStart = useCallback((e: React.TouchEvent) => {
+  // const _handleTouchStart = useCallback((e: React.TouchEvent) => {
     const scrollEl = drawerInternalRef.current?.querySelector("[data-scroll-content]") as HTMLElement | null;
     if (scrollEl && scrollEl.scrollTop > 0) return;
     touchStartY.current = e.touches[0].clientY;
     touchDeltaY.current = 0;
   }, []);
 
-  const _handleTouchMove = useCallback((e: React.TouchEvent) => {
+  // const _handleTouchMove = useCallback((e: React.TouchEvent) => {
     if (touchStartY.current === null) return;
     const delta = e.touches[0].clientY - touchStartY.current;
     if (delta < 0) { touchDeltaY.current = 0; return; }
@@ -81,7 +81,7 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
     }
   }, []);
 
-  const _handleTouchEnd = useCallback(() => {
+  // const _handleTouchEnd = useCallback(() => {
     if (touchStartY.current === null) return;
     touchStartY.current = null;
     if (drawerInternalRef.current) {

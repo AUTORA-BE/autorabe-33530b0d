@@ -19,7 +19,7 @@ import { useLocalizedVehicleHref } from "@/lib/useLocalizedHref";
 type SortMode = "price" | "year" | "brand";
 
 /** Swipeable favorite card wrapper */
-function _SwipeableCard({
+function ({
   car,
   isFavorite,
   onToggleFavorite,
@@ -106,7 +106,7 @@ const Favorites = () => {
     return a.brand.localeCompare(b.brand);
   });
 
-  const _handleRemove = useCallback(
+  // const _handleRemove = useCallback(
     (id: string) => {
       toggleFavorite(id);
     },

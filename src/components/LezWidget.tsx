@@ -171,8 +171,8 @@ function LezGlobalAlert({ result }: { result: LezResultat }) {
 const LezWidget = ({ euroNorm, fuelType, compact = false }: LezWidgetProps) => {
   const [showModal, setShowModal] = useState(false);
   const result = calculerStatutLEZ(fuelType || "", euroNorm || "");
-  const _colors = statusColors[result.global.couleur];
-  const _Icon = statusIcon(result.global.statut);
+  // const _colors = statusColors[result.global.couleur];
+  // const _Icon = statusIcon(result.global.statut);
 
   if (compact) {
     return <LezCompactBadge result={result} />;

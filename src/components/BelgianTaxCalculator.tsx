@@ -24,7 +24,7 @@ interface BelgianTaxCalculatorProps {
  * Belgian TMC + annual tax estimator.
  * Brackets are fetched from Supabase (admin-editable, no redeploy needed).
  */
-export default function BelgianTaxCalculator({ powerKw, fuelType = "", _euroNorm, year }: BelgianTaxCalculatorProps) {
+export default function BelgianTaxCalculator({ powerKw, fuelType = "", year }: BelgianTaxCalculatorProps) {
   const [region, setRegion] = useState<Region>("bruxelles");
   const [manualKw, setManualKw] = useState<string>(powerKw?.toString() || "");
 

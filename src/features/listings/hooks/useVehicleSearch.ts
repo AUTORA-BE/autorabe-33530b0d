@@ -22,7 +22,7 @@ import { useDebounce } from '@/shared/hooks/useDebounce';
 import { useFiltersUrlSync } from './useFiltersUrlSync';
 
 /** @deprecated Utilisez vehicleKeys à la place */
-const _VEHICLE_QUERY_KEY = 'vehicles';
+// const _VEHICLE_QUERY_KEY = 'vehicles';
 
 interface UseVehicleSearchOptions {
   /** Initial filter overrides */

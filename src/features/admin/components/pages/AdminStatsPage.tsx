@@ -23,8 +23,7 @@ const funnelConfig: ChartConfig = {
   count: { label: 'Utilisateurs', color: 'hsl(var(--primary))' },
 };
 
-const _retentionConfig: ChartConfig = {
-  percentage: { label: 'Rétention (%)', color: 'hsl(217, 91%, 60%)' },
+const   percentage: { label: 'Rétention (%)', color: 'hsl(217, 91%, 60%)' },
 };
 
 const FUNNEL_COLORS = [

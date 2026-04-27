@@ -49,7 +49,7 @@ const VehicleCard = memo(function VehicleCard({
   favoriteCount,
 }: VehicleCardProps) {
   const { addToCompare, removeFromCompare: removeCompare, isInCompare } = useCompareContext();
-  const { _language } = useLanguage();
+  const {  } = useLanguage();
   const lezResult = calculerStatutLEZ(vehicle.fuelType, vehicle.euroNorm);
   const lezConfig = lezBadgeConfig[lezResult.global.statut];
 

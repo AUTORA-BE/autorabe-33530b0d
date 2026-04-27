@@ -341,7 +341,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
     setPhotosPreviews(previews);
   }, []);
 
-  const _handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // const _handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
 
@@ -368,12 +368,12 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
     });
   };
 
-  const _removePhoto = (index: number) => {
+  // const _removePhoto = (index: number) => {
     setPhotos(prev => prev.filter((_, i) => i !== index));
     setPhotosPreviews(prev => prev.filter((_, i) => i !== index));
   };
 
-  const _removeExistingPhoto = (index: number) => {
+  // const _removeExistingPhoto = (index: number) => {
     const photoUrl = photosPreviews[index];
     if (existingPhotos.includes(photoUrl)) {
       setExistingPhotos(prev => prev.filter(p => p !== photoUrl));
@@ -451,7 +451,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
     form.setValue('car_pass_verified', false);
   };
 
-  const _uploadPhotos = async (userId: string): Promise<string[]> => {
+  // const _uploadPhotos = async (userId: string): Promise<string[]> => {
     const { compressImage } = await import("@/utils/compressImage");
     const uploadedUrls: string[] = [];
     
