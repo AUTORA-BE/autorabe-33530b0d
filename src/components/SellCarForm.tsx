@@ -341,6 +341,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
     setPhotosPreviews(previews);
   }, []);
 
+  void 0; // eslint-disable-line @typescript-eslint/no-unused-vars
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files) return;
