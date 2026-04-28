@@ -80,8 +80,8 @@ const PricingCTA = () => {
                 </div>
                 <div>
                   <p className="font-medium text-foreground">Pro</p>
-                  <p className="hidden sm:block text-primary font-light text-2xl leading-none">
-                    50€<span className="text-xs font-light text-muted-foreground">/mois</span>
+                  <p className="text-xs font-light text-muted-foreground mt-1">
+                    {isNl ? "Voor garages" : "Pour garages"}
                   </p>
                 </div>
               </div>
@@ -116,8 +116,8 @@ const PricingCTA = () => {
                 </div>
                 <div>
                   <p className="font-medium text-foreground">Premium</p>
-                  <p className="hidden sm:block text-primary font-light text-2xl leading-none">
-                    250€<span className="text-xs font-light text-muted-foreground">/mois</span>
+                  <p className="text-xs font-light text-muted-foreground mt-1">
+                    {isNl ? "Voor concessies" : "Pour concessions"}
                   </p>
                 </div>
               </div>
