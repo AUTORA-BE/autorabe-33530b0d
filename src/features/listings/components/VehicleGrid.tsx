@@ -52,6 +52,7 @@ interface SortOption {
 }
 
 const SORT_OPTIONS: SortOption[] = [
+  { value: "interactions", labels: { nl: "Populair", en: "Popular", fr: "Populaire" } },
   { value: "recent", labels: { nl: "Meest recent", en: "Most recent", fr: "Plus récentes" } },
   { value: "price-asc", labels: { nl: "Prijs oplopend", en: "Price ascending", fr: "Prix croissant" } },
   { value: "price-desc", labels: { nl: "Prijs aflopend", en: "Price descending", fr: "Prix décroissant" } },
