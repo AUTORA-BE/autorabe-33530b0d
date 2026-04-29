@@ -114,7 +114,7 @@ export function useVehicleSearch(options: UseVehicleSearchOptions = {}) {
         setAllVehicles((prev) => [...prev, ...data.vehicles]);
       }
       setHasMoreStable(data.hasMore);
-      totalRef.current = data.total;
+      if (data.total > 0) totalRef.current = data.total;
       setIsLoadingMore(false);
     }
   }, [data, page]);
