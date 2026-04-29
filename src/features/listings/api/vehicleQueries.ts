@@ -248,8 +248,12 @@ export const vehicleQueries = {
   ): Promise<{ vehicles: Vehicle[]; total: number; hasMore: boolean }> {
     const isPopularitySort = ['favorites', 'views', 'interactions'].includes(sortBy);
 
+    // Only request count on first page; subsequent pages skip it to avoid
+    // a full COUNT scan on every "load more" call. Use 'planned' (planner
+    // estimate) which is much faster than 'exact' on large filtered sets.
+    const countMode = page === 0 ? 'planned' : undefined;
     let query = applyFilters(
-      supabase.from('car_listings_public').select(LIST_COLUMNS, { count: 'exact' }),
+      supabase.from('car_listings_public').select(LIST_COLUMNS, countMode ? { count: countMode } : undefined),
       filters
     );
     
