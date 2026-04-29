@@ -23,6 +23,10 @@ if (isPreviewHost || isInIframe) {
   navigator.serviceWorker?.getRegistrations().then((registrations) => {
     registrations.forEach((r) => r.unregister());
   });
+  // Purge tout cache PWA résiduel qui pourrait servir une ancienne version du preview
+  if (typeof caches !== "undefined") {
+    caches.keys().then((keys) => keys.forEach((k) => caches.delete(k)));
+  }
 }
 
 const container = document.getElementById("root");
