@@ -300,7 +300,11 @@ export const vehicleQueries = {
       }
     }
 
-    const hasMore = vehicles.length === PAGE_SIZE && (page + 1) * PAGE_SIZE < total;
+    // hasMore: when count is unknown (page > 0), infer from page fill.
+    const hasMore =
+      total > 0
+        ? vehicles.length === PAGE_SIZE && (page + 1) * PAGE_SIZE < total
+        : vehicles.length === PAGE_SIZE;
     return { vehicles, total, hasMore };
   },
 
