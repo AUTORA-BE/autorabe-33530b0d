@@ -83,14 +83,14 @@ export function useVehicleSearch(options: UseVehicleSearchOptions = {}) {
     [debouncedFiltersKey, sortBy, page],
   );
 
+  // Popularity-based sorts use longer cache (counts evolve slowly)
+  const isPopularitySort = sortBy === 'favorites' || sortBy === 'views' || sortBy === 'interactions';
+
   const {
     data,
     isLoading: isInitialLoading,
     error: queryError,
     refetch,
-  // Popularity-based sorts use longer cache (counts evolve slowly)
-  const isPopularitySort = sortBy === 'favorites' || sortBy === 'views' || sortBy === 'interactions';
-
   } = useQuery({
     queryKey,
     queryFn: () => vehicleQueries.list(debouncedFilters, sortBy, page),
