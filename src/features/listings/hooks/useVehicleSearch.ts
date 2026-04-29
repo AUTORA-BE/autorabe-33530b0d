@@ -88,11 +88,14 @@ export function useVehicleSearch(options: UseVehicleSearchOptions = {}) {
     isLoading: isInitialLoading,
     error: queryError,
     refetch,
+  // Popularity-based sorts use longer cache (counts evolve slowly)
+  const isPopularitySort = sortBy === 'favorites' || sortBy === 'views' || sortBy === 'interactions';
+
   } = useQuery({
     queryKey,
     queryFn: () => vehicleQueries.list(debouncedFilters, sortBy, page),
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
+    staleTime: isPopularitySort ? 10 * 60 * 1000 : 5 * 60 * 1000,
+    gcTime: isPopularitySort ? 20 * 60 * 1000 : 10 * 60 * 1000,
     refetchOnWindowFocus: false,
     retry: 1,
   });
