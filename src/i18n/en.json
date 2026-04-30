@@ -574,5 +574,16 @@
   "common.back": "Back",
   "common.clear": "Clear",
   "filters.noBudgetLimit": "No limit",
-  "nav.profile": "Profile"
+  "nav.profile": "Profile",
+  "nav.garage": "My Garage",
+  "common.cancel": "Cancel",
+  "garage.title": "My Garage",
+  "garage.tabs.favorites": "Favorites",
+  "garage.tabs.history": "History",
+  "garage.history.empty": "No vehicles viewed yet",
+  "garage.history.emptyDescription": "Cars you view will appear here so you can find them again easily.",
+  "garage.history.itemsLabel": "viewed vehicles",
+  "garage.history.clear": "Clear history",
+  "garage.history.clearConfirmTitle": "Clear history?",
+  "garage.history.clearConfirm": "This will permanently remove all your views. Your favorites are not affected."
 }

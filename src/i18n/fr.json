@@ -574,5 +574,16 @@
   "common.back": "Retour",
   "common.clear": "Effacer",
   "filters.noBudgetLimit": "Pas de limite",
-  "nav.profile": "Profil"
+  "nav.profile": "Profil",
+  "nav.garage": "Mon Garage",
+  "common.cancel": "Annuler",
+  "garage.title": "Mon Garage",
+  "garage.tabs.favorites": "Favoris",
+  "garage.tabs.history": "Historique",
+  "garage.history.empty": "Aucun véhicule consulté",
+  "garage.history.emptyDescription": "Les voitures que vous consultez apparaîtront ici pour les retrouver facilement.",
+  "garage.history.itemsLabel": "véhicules consultés",
+  "garage.history.clear": "Effacer l'historique",
+  "garage.history.clearConfirmTitle": "Effacer l'historique ?",
+  "garage.history.clearConfirm": "Cette action supprime définitivement toutes vos vues. Vos favoris ne sont pas affectés."
 }

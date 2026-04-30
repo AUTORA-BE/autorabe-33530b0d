@@ -574,5 +574,16 @@
   "common.back": "Zurück",
   "common.clear": "Löschen",
   "filters.noBudgetLimit": "Kein Limit",
-  "nav.profile": "Profil"
+  "nav.profile": "Profil",
+  "nav.garage": "Meine Garage",
+  "common.cancel": "Abbrechen",
+  "garage.title": "Meine Garage",
+  "garage.tabs.favorites": "Favoriten",
+  "garage.tabs.history": "Verlauf",
+  "garage.history.empty": "Keine Fahrzeuge angesehen",
+  "garage.history.emptyDescription": "Fahrzeuge, die Sie ansehen, erscheinen hier zum einfachen Wiederfinden.",
+  "garage.history.itemsLabel": "angesehene Fahrzeuge",
+  "garage.history.clear": "Verlauf löschen",
+  "garage.history.clearConfirmTitle": "Verlauf löschen?",
+  "garage.history.clearConfirm": "Diese Aktion entfernt alle Ihre Aufrufe dauerhaft. Ihre Favoriten bleiben unberührt."
 }

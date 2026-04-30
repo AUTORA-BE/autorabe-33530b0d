@@ -1,121 +1,80 @@
-## Objectif
+## Page « Mon Garage »
 
-Verrouiller les 3 angles morts détectés par le scan avant l'annonce publique d'AutoRa.be. Une seule migration SQL atomique, zéro impact UX/frontend (les buckets restent accessibles via URL directe, seul le **listing global** est bloqué).
+Une page personnelle unifiée, accessible aux utilisateurs connectés, qui regroupe en deux onglets :
+- **Favoris** — voitures sauvegardées (réutilise la logique existante)
+- **Historique** — voitures consultées récemment (nouveau)
 
----
+### Routes (multilingues)
+- `/garage` (FR), `/mijn-garage` (NL), `/my-garage` (EN), `/meine-garage` (DE)
+- Protégée : redirection vers `/auth` si non connecté
 
-## 1. Realtime — empêcher l'écoute croisée des conversations 🔴
+### Onglet « Favoris »
+Reprend l'expérience actuelle de `/favorites` :
+- Grille 2 colonnes mobile / 3-4 desktop
+- Chips de tri (Prix, Année, Marque)
+- Empty state avec CTA « Découvrir »
+- Compteur cœur animé
 
-**Problème** : Tout utilisateur connecté peut s'abonner à n'importe quel topic Realtime et intercepter messages/typing/presence d'autres acheteurs-vendeurs.
+### Onglet « Historique de vues » (nouveau)
+- Liste des 50 dernières voitures consultées par l'utilisateur connecté
+- Triées par date de vue décroissante (la plus récente en haut)
+- Déduplication : une voiture n'apparaît qu'une fois (sa vue la plus récente)
+- Chaque carte affiche un petit timestamp relatif (« il y a 2h », « hier »)
+- Bouton « Effacer l'historique » (avec confirmation)
+- Empty state dédié : « Vous n'avez pas encore consulté de véhicule »
+- Les voitures supprimées/non approuvées sont automatiquement filtrées
 
-**Fix** :
-- Activer RLS sur `realtime.messages`.
-- Créer une policy qui n'autorise un client à recevoir un broadcast que sur les topics correspondant à une conversation où il est `buyer_id` ou `seller_id`.
-- Convention de topic côté front : `conversation:{conversation_id}` (à aligner si différent dans `useConversations`).
+### Backend (Lovable Cloud)
 
-## 2. Fonctions SECURITY DEFINER — révoquer EXECUTE sur l'interne
+**Politique RLS sur `car_views`** : ajouter une policy pour que les utilisateurs puissent lire leurs propres vues (`viewer_id = auth.uid()`) — actuellement seuls les vendeurs peuvent voir les vues sur leurs annonces.
 
-Audit des 15 fonctions DEFINER du schéma `public` :
+**RPC `get_user_view_history(_limit int)`** (SECURITY DEFINER) :
+- Retourne pour l'utilisateur courant les annonces vues récemment (jointure avec `car_listings_public`)
+- Garde uniquement la dernière vue par voiture (DISTINCT ON)
+- Filtre `status = 'approved'`
+- Limite paramétrable (défaut 50)
+- Retourne les colonnes standard (LIST_COLUMNS) + `last_viewed_at`
 
-| Fonction | Rôle | Action |
-|---|---|---|
-| `get_favorite_counts`, `get_listing_popularity`, `get_public_listing`, `get_seller_public_listings`, `has_role`, `is_user_suspended`, `has_conversation_with_listing`, `get_seller_contact` | API publique légitime | Garder accessible à `anon` + `authenticated` |
-| `check_rate_limit` | Edge functions only | **REVOKE** de `anon`, `authenticated` |
-| `enqueue_email`, `read_email_batch`, `delete_email`, `move_to_dlq` | Queue interne (pgmq) | **REVOKE** de `anon`, `authenticated` |
-| `handle_new_user_profile`, `handle_new_user_preferences` | Triggers signup | **REVOKE** de `anon`, `authenticated` |
+**RPC `clear_user_view_history()`** : supprime toutes les `car_views` où `viewer_id = auth.uid()`.
 
-→ Ces 7 fonctions ne sont appelées que par `service_role` ou par des triggers, jamais depuis le client.
+### Navigation & accès
+- **BottomNav mobile** : remplacer l'icône « Favoris » (cœur) par « Garage » (icône `Warehouse` ou `Garage`) qui pointe vers la nouvelle page. Le badge affiche `favoritesCount`.
+- **Header desktop** : même remplacement.
+- **Redirection** : l'ancienne route `/favorites` redirige vers `/garage?tab=favorites` pour préserver les liens existants.
+- **Onglet par défaut** : `?tab=favorites` (ou `history`), persisté dans l'URL pour partage / retour arrière.
 
-## 3. Storage — bloquer le listing global des buckets publics
+### Composants à créer
+```
+src/pages/MyGarage.tsx              (page principale avec tabs)
+src/features/garage/
+  ├─ hooks/useViewHistory.ts        (React Query, RPC)
+  ├─ hooks/useClearHistory.ts       (mutation)
+  ├─ components/GarageTabs.tsx      (Tabs shadcn, deux contenus)
+  ├─ components/HistoryList.tsx     (grille + timestamps relatifs)
+  └─ index.ts
+```
 
-**Problème** : 5 buckets publics (`avatars`, `brand-logos`, `car-photos`, `chat-images`, `vehicle-photos`) ont une policy SELECT trop large : un client peut **lister** tous les fichiers, y compris ceux d'annonces brouillon ou supprimées.
-
-**Fix** : Les fichiers restent **lisibles via URL directe** (donc le frontend continue de marcher sans changement), mais on supprime la possibilité de **lister** le contenu via l'API. Pour `chat-images` qui est privé par nature, on restreint le SELECT au propriétaire du dossier + admin.
+### Détails techniques
 
 ```text
-avatars        → SELECT public uniquement par chemin connu (pas de listing)
-brand-logos    → idem
-car-photos     → idem
-vehicle-photos → idem
-chat-images    → SELECT scopé à l'uid du dossier + admin
+MyGarage
+├── Header + BackButton
+├── Tabs (Favoris | Historique)
+│   ├── Tab Favoris  → réutilise la logique de Favorites.tsx
+│   └── Tab Historique
+│       ├── useViewHistory() → RPC get_user_view_history
+│       ├── CarCard + badge "il y a Xh"
+│       └── Bouton "Effacer l'historique"
+└── Footer
 ```
 
-## 4. Bonus inclus dans la même passe
+- **Cache React Query** : `staleTime` 2 min pour l'historique (évolue souvent), 5 min pour favoris
+- **i18n** : ajouter clés `garage.title`, `garage.tabs.favorites`, `garage.tabs.history`, `garage.history.empty`, `garage.history.clear`, `garage.history.clearConfirm`, `garage.history.viewedAgo` dans FR/NL/DE/EN
+- **SEO** : `noIndex` (page privée)
+- **Mobile-first** : safe-area, tabs collantes sous le header, pull-to-refresh sur les deux onglets
+- **Animations** : Framer Motion 200-300ms cohérentes avec l'identité Elite Green
 
-- **HIBP** : activer `password_hibp_enabled` (rejet des mots de passe leakés au signup).
-- **Confirmer** que `verify_jwt` reste actif sur toutes les edge functions sauf celles publiques (sitemap, unsubscribe, webhook stripe).
-
----
-
-## Détails techniques
-
-**Migration unique** `supabase/migrations/<ts>_pre_launch_security_hardening.sql` :
-
-```sql
--- 1. Realtime RLS
-ALTER TABLE realtime.messages ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users only subscribe to their conversations"
-ON realtime.messages FOR SELECT TO authenticated
-USING (
-  EXISTS (
-    SELECT 1 FROM public.conversations c
-    WHERE 'conversation:' || c.id::text = realtime.topic()
-      AND (c.buyer_id = auth.uid() OR c.seller_id = auth.uid())
-  )
-);
-
--- 2. Revoke EXECUTE on internal DEFINER functions
-REVOKE EXECUTE ON FUNCTION public.check_rate_limit(text,int,int) FROM anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.enqueue_email(text,jsonb) FROM anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.read_email_batch(text,int,int) FROM anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.delete_email(text,bigint) FROM anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.move_to_dlq(text,text,bigint,jsonb) FROM anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.handle_new_user_profile() FROM anon, authenticated;
-REVOKE EXECUTE ON FUNCTION public.handle_new_user_preferences() FROM anon, authenticated;
-
--- 3. Storage: drop overly-broad SELECT, replace with scoped policies
-DROP POLICY "Anyone can view avatars" ON storage.objects;
-DROP POLICY "Anyone can view car photos" ON storage.objects;
-DROP POLICY "Anyone can view chat images" ON storage.objects;
-DROP POLICY "Brand logos are publicly accessible" ON storage.objects;
-DROP POLICY "Vehicle photos are publicly accessible" ON storage.objects;
-
--- Public read via direct URL still works because storage.objects SELECT
--- is bypassed when accessed through public bucket CDN URLs.
--- We re-create policies that allow read but block listing (no LIST grant).
-CREATE POLICY "Public read avatars (no list)" ON storage.objects FOR SELECT TO public
-  USING (bucket_id = 'avatars' AND name IS NOT NULL);
-CREATE POLICY "Public read brand-logos (no list)" ON storage.objects FOR SELECT TO public
-  USING (bucket_id = 'brand-logos' AND name IS NOT NULL);
-CREATE POLICY "Public read car-photos (no list)" ON storage.objects FOR SELECT TO public
-  USING (bucket_id = 'car-photos' AND name IS NOT NULL);
-CREATE POLICY "Public read vehicle-photos (no list)" ON storage.objects FOR SELECT TO public
-  USING (bucket_id = 'vehicle-photos' AND name IS NOT NULL);
-
--- chat-images: read scoped to uid folder + admins
-CREATE POLICY "Owners read their chat images" ON storage.objects FOR SELECT TO authenticated
-  USING (bucket_id = 'chat-images' AND auth.uid()::text = (storage.foldername(name))[1]);
-CREATE POLICY "Admins read all chat images" ON storage.objects FOR SELECT TO authenticated
-  USING (bucket_id = 'chat-images' AND has_role(auth.uid(), 'admin'::app_role));
-```
-
-**Côté frontend** : aucun changement nécessaire (les `getPublicUrl` continuent de fonctionner). Si une vue admin liste explicitement des fichiers via `.list()`, on adaptera après vérification.
-
-**Étapes post-migration** :
-1. Activer HIBP via `configure_auth({ password_hibp_enabled: true })`.
-2. Re-run security scan pour confirmer que les 3 catégories passent.
-3. Marquer les findings restants comme résolus dans le tracker.
-4. Smoke test : ouverture d'une conversation, envoi d'un message, affichage d'une photo d'annonce, upload avatar.
-
----
-
-## Ce que ça ne change PAS
-
-- Aucun écran utilisateur modifié.
-- Toutes les photos publiques restent accessibles via leur URL CDN.
-- Les fonctions publiques (`get_public_listing`, etc.) restent appelables anonymement.
-- Aucun impact mesurable sur les performances.
-
-## Risque résiduel après ce patch
-
-Faible. Les warnings restants seront uniquement des fonctions DEFINER **légitimement** publiques (RPC marketplace) — ils peuvent être ignorés dans le scanner avec une note dans la security memory.
+### Hors périmètre
+- Pas de statistiques (vues par jour, etc.) — déjà couvert côté vendeur
+- Pas de notifications sur changement de prix d'une voiture vue (peut être une feature future via Smart Alerts)
+- Pas de tri avancé sur l'historique (la chronologie inverse suffit)
