@@ -574,5 +574,16 @@
   "common.back": "Terug",
   "common.clear": "Wissen",
   "filters.noBudgetLimit": "Geen limiet",
-  "nav.profile": "Profiel"
+  "nav.profile": "Profiel",
+  "nav.garage": "Mijn Garage",
+  "common.cancel": "Annuleren",
+  "garage.title": "Mijn Garage",
+  "garage.tabs.favorites": "Favorieten",
+  "garage.tabs.history": "Geschiedenis",
+  "garage.history.empty": "Geen voertuigen bekeken",
+  "garage.history.emptyDescription": "Auto's die u bekijkt verschijnen hier om ze gemakkelijk terug te vinden.",
+  "garage.history.itemsLabel": "bekeken voertuigen",
+  "garage.history.clear": "Geschiedenis wissen",
+  "garage.history.clearConfirmTitle": "Geschiedenis wissen?",
+  "garage.history.clearConfirm": "Deze actie verwijdert al uw weergaven definitief. Uw favorieten blijven ongewijzigd."
 }
