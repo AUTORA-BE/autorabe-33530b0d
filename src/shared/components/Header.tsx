@@ -111,10 +111,10 @@ const Header = () => {
           {/* Desktop Navigation (lg+ to give tablets the hamburger drawer) */}
           <nav className="hidden lg:flex items-center gap-6">
             <NavLink to="/">{t("nav.buy")}</NavLink>
-            <NavLink to="/favorites" badge={favoritesCount > 0 ? favoritesCount : undefined}>
+            <NavLink to={user ? "/garage" : "/auth"} badge={favoritesCount > 0 ? favoritesCount : undefined}>
               <span className="flex items-center gap-1.5">
                 <Heart className="w-4 h-4" />
-                {t("nav.favorites")}
+                {t("nav.garage")}
               </span>
             </NavLink>
             <NavLink to="/compare" badge={compareCount}>
