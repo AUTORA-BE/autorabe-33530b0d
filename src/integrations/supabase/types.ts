@@ -1187,6 +1187,7 @@ export type Database = {
         Args: { _key: string; _max_attempts: number; _window_seconds: number }
         Returns: boolean
       }
+      clear_user_view_history: { Args: never; Returns: number }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
@@ -1284,6 +1285,39 @@ export type Database = {
           seller_type: string
           status: string
           transmission: string
+          year: number
+        }[]
+      }
+      get_user_view_history: {
+        Args: { _limit?: number }
+        Returns: {
+          body_type: string
+          boost_expires_at: string
+          boost_level: string
+          brand: string
+          car_pass_verified: boolean
+          color: string
+          created_at: string
+          ct_valid: boolean
+          description: string
+          doors: number
+          euro_norm: string
+          features: string[]
+          first_registration: string
+          fuel_type: string
+          id: string
+          last_viewed_at: string
+          location: string
+          maintenance_book_complete: boolean
+          mileage: number
+          model: string
+          photos: string[]
+          power: number
+          price: number
+          seller_type: string
+          status: string
+          transmission: string
+          updated_at: string
           year: number
         }[]
       }
