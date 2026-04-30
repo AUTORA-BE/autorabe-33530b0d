@@ -153,9 +153,20 @@ const VehicleGrid = memo(function VehicleGrid({
           <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground">
             {labels.available}
           </h2>
-          <p className="text-muted-foreground mt-1 text-sm sm:text-base">
-            {startItem}-{endItem} {labels.of} {totalItems} {labels.vehicles}
-          </p>
+          <div className="flex items-center gap-2 mt-1 flex-wrap">
+            <p className="text-muted-foreground text-sm sm:text-base">
+              {startItem}-{endItem} {labels.of} {totalItems} {labels.vehicles}
+            </p>
+            {sortBy === "interactions" && (
+              <span
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium border border-primary/20 animate-fade-in"
+                aria-label={language === "nl" ? "Gesorteerd op populariteit" : language === "de" ? "Sortiert nach Beliebtheit" : language === "en" ? "Sorted by popularity" : "Trié par popularité"}
+              >
+                <Flame className="w-3.5 h-3.5" strokeWidth={1.75} aria-hidden="true" />
+                {language === "nl" ? "Populair" : language === "de" ? "Beliebt" : language === "en" ? "Popular" : "Populaire"}
+              </span>
+            )}
+          </div>
         </div>
 
         <div className="flex items-center gap-3 w-full sm:w-auto">
