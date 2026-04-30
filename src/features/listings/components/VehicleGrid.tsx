@@ -52,12 +52,12 @@ interface SortOption {
 }
 
 const SORT_OPTIONS: SortOption[] = [
-  { value: "interactions", labels: { nl: "Populair", en: "Popular", fr: "Populaire" } },
-  { value: "recent", labels: { nl: "Meest recent", en: "Most recent", fr: "Plus récentes" } },
-  { value: "price-asc", labels: { nl: "Prijs oplopend", en: "Price ascending", fr: "Prix croissant" } },
-  { value: "price-desc", labels: { nl: "Prijs aflopend", en: "Price descending", fr: "Prix décroissant" } },
-  { value: "year-desc", labels: { nl: "Jaar aflopend", en: "Year descending", fr: "Année décroissante" } },
-  { value: "km-asc", labels: { nl: "Km oplopend", en: "Mileage ascending", fr: "Kilométrage croissant" } },
+  { value: "interactions", labels: { nl: "Populair", en: "Popular", fr: "Populaire", de: "Beliebt" } },
+  { value: "recent", labels: { nl: "Meest recent", en: "Most recent", fr: "Plus récentes", de: "Neueste" } },
+  { value: "price-asc", labels: { nl: "Prijs oplopend", en: "Price ascending", fr: "Prix croissant", de: "Preis aufsteigend" } },
+  { value: "price-desc", labels: { nl: "Prijs aflopend", en: "Price descending", fr: "Prix décroissant", de: "Preis absteigend" } },
+  { value: "year-desc", labels: { nl: "Jaar aflopend", en: "Year descending", fr: "Année décroissante", de: "Jahr absteigend" } },
+  { value: "km-asc", labels: { nl: "Km oplopend", en: "Mileage ascending", fr: "Kilométrage croissant", de: "Kilometerstand aufsteigend" } },
 ];
 
 /**
