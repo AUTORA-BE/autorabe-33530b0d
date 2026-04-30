@@ -4,7 +4,7 @@
  */
 
 import { memo, useEffect, useRef } from "react";
-import { SlidersHorizontal, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { SlidersHorizontal, ChevronDown, ChevronLeft, ChevronRight, Flame } from "lucide-react";
 import VehicleCard from "./VehicleCard";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { Vehicle, VehicleSortOption } from "../types/vehicle.types";
