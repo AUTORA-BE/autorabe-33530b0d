@@ -28,6 +28,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const Auth = lazy(() => import("./pages/Auth"));
 const CarDetail = lazy(() => import("./pages/CarDetail"));
 const Favorites = lazy(() => import("./pages/Favorites"));
+const MyGarage = lazy(() => import("./pages/MyGarage"));
 const SellCar = lazy(() => import("./pages/SellCar"));
 const Messages = lazy(() => import("./pages/Messages"));
 const About = lazy(() => import("./pages/About"));
@@ -106,6 +107,10 @@ function AppPages() {
       <Route path="/favoris" element={<PageTransition><Favorites /></PageTransition>} />
       <Route path="/favorieten" element={<PageTransition><Favorites /></PageTransition>} />
       <Route path="/favoriten" element={<PageTransition><Favorites /></PageTransition>} />
+      <Route path="/garage" element={<PageTransition><MyGarage /></PageTransition>} />
+      <Route path="/mijn-garage" element={<PageTransition><MyGarage /></PageTransition>} />
+      <Route path="/my-garage" element={<PageTransition><MyGarage /></PageTransition>} />
+      <Route path="/meine-garage" element={<PageTransition><MyGarage /></PageTransition>} />
       <Route path="/sell" element={<PageTransition><SellCar /></PageTransition>} />
       <Route path="/vendre" element={<PageTransition><SellCar /></PageTransition>} />
       <Route path="/verkopen" element={<PageTransition><SellCar /></PageTransition>} />
