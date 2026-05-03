@@ -54,9 +54,9 @@ const calendarLEZ: Record<string, VilleCalendar> = {
       euro3: { statut: 'interdit' },        // interdit depuis 2019
       euro4: { statut: 'interdit' },        // interdit depuis 2020
       euro5: { statut: 'interdit' },        // interdit depuis 2021
-      euro6: { statut: 'interdit' },        // interdit depuis 01/01/2025 (Euro 6a/b/c non-6d)
-      euro6d_temp: { statut: 'autorise', jusque: 2028 }, // interdit dès 01/01/2028
-      euro6d: { statut: 'autorise', jusque: 2031 },      // interdit dès 01/01/2031
+      euro6: { statut: 'autorise', jusque: null },     // ⚠️ vérifier sur lez.brussels pour dates futures
+      euro6d_temp: { statut: 'autorise', jusque: null },
+      euro6d: { statut: 'autorise', jusque: null },
     },
     // Source : lez.brussels — essence (restrictions plus tardives que diesel)
     essence: {

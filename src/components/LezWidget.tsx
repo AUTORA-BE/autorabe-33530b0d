@@ -274,23 +274,36 @@ const LezWidget = ({ euroNorm, fuelType, compact = false }: LezWidgetProps) => {
               <strong>🔌 Électrique & Hybride :</strong> Toujours autorisé dans toutes les zones.
             </div>
 
-            <div className="flex gap-2">
+            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-700 dark:text-amber-400">
+              ⚠️ Ces informations sont <strong>indicatives</strong>. Les règles LEZ évoluent régulièrement — vérifiez toujours votre situation sur les sites officiels ci-dessous.
+            </div>
+
+            <div className="grid grid-cols-3 gap-2">
               <Button
                 variant="outline"
                 size="sm"
-                className="flex-1 text-xs"
+                className="text-xs"
                 onClick={() => window.open("https://www.lez.brussels/", "_blank")}
               >
-                LEZ Bruxelles
+                Bruxelles
                 <ExternalLink className="w-3 h-3 ml-1" />
               </Button>
               <Button
                 variant="outline"
                 size="sm"
-                className="flex-1 text-xs"
-                onClick={() => window.open("https://www.slimnaarantwerpen.be/en/LEZ", "_blank")}
+                className="text-xs"
+                onClick={() => window.open("https://www.slimnaarantwerpen.be/nl/lez", "_blank")}
               >
-                LEZ Anvers
+                Anvers
+                <ExternalLink className="w-3 h-3 ml-1" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-xs"
+                onClick={() => window.open("https://stad.gent/nl/mobiliteit-openbare-werken/lez", "_blank")}
+              >
+                Gand
                 <ExternalLink className="w-3 h-3 ml-1" />
               </Button>
             </div>
