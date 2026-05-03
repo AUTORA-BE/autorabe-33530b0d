@@ -93,6 +93,27 @@ Deno.serve(async (req) => {
       });
     }
 
+    // 3b. Rate limit — 10 annonces / jour / user (anti-spam)
+    const { data: rlAllowed, error: rlError } = await admin.rpc('check_rate_limit', {
+      _key: `listing_create:${user.id}`,
+      _max_attempts: 10,
+      _window_seconds: 86400,
+    });
+    if (rlError) {
+      console.warn('[create-listing] Rate limit check failed, allowing:', rlError);
+    } else if (rlAllowed === false) {
+      return new Response(
+        JSON.stringify({
+          error: 'Limite de 10 annonces par jour atteinte. Réessayez demain.',
+          code: 'RATE_LIMIT_EXCEEDED',
+        }),
+        {
+          status: 429,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Retry-After': '86400' },
+        },
+      );
+    }
+
     // 4. Anti-doublon — même user, même voiture (marque/modèle/année, km ±500),
     //    annonce active (pending ou approved) dans les 90 derniers jours
     const kmMin = Math.max(0, payload.mileage - 500);
