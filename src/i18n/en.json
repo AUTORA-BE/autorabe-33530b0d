@@ -589,5 +589,13 @@
   "garage.history.itemsLabel": "viewed vehicles",
   "garage.history.clear": "Clear history",
   "garage.history.clearConfirmTitle": "Clear history?",
-  "garage.history.clearConfirm": "This will permanently remove all your views. Your favorites are not affected."
+  "garage.history.clearConfirm": "This will permanently remove all your views. Your favorites are not affected.",
+  "carDetail.description.title": "Description",
+  "carDetail.description.shortBadge": "Short description",
+  "carDetail.description.empty": "No description provided by the seller.",
+  "carDetail.description.readMore": "Read more",
+  "carDetail.description.readLess": "Show less",
+  "carDetail.equipment.title": "Equipment & Options",
+  "carDetail.similar.title": "Similar listings",
+  "reviews.noComment": "No comment left"
 }
