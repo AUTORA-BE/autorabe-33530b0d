@@ -16,6 +16,9 @@ import {
   TAXE_REGION, DEPRECIATION,
 } from "../constants/belgianData";
 import type { FuelType as TcoFuelType, Region } from "../types/tco.types";
+import {
+  useTaxBrackets, computeFiscalCV, computeAnnualTaxFromDb,
+} from "@/features/admin/hooks/useTaxBrackets";
 
 /* ─── helpers ─── */
 
@@ -86,8 +89,10 @@ function computeTco(
   fuel: TcoFuelType,
   year: number,
   inputs: TcoInputs,
+  fiscalCv: number,
+  annualBrackets?: ReturnType<typeof useTaxBrackets>['data'] extends { annual: infer A } ? A : never,
 ): TcoResult {
-  const age = 2026 - year;
+  const age = new Date().getFullYear() - year;
   const totalKm = inputs.kmPerYear * 5;
 
   // Fuel cost
@@ -97,7 +102,7 @@ function computeTco(
   const conso = defaultConsumption(fuel) * facteur;
 
   if (fuel === "electric") {
-    const coutKwh = 0.30; // charge domicile
+    const coutKwh = 0.8 * PRIX_CARBURANT.electric_domicile + 0.2 * PRIX_CARBURANT.electric_public;
     carburant = (totalKm / 100) * conso * coutKwh;
   } else {
     const prixL = fuel === "hybridePHEV" ? PRIX_CARBURANT.essence95 : (PRIX_CARBURANT[fuel] ?? 1.75);
@@ -111,8 +116,10 @@ function computeTco(
   // Insurance
   const assurance = inputs.insuranceAnnual * 5;
 
-  // Tax
-  const taxeAn = TAXE_REGION[inputs.region]?.[fuel] ?? 200;
+  // Tax — CV-aware via Supabase brackets, fallback to flat constant
+  const taxeAn = (annualBrackets && fiscalCv > 0)
+    ? computeAnnualTaxFromDb(annualBrackets, inputs.region, fiscalCv, fuel)
+    : (TAXE_REGION[inputs.region]?.[fuel] ?? 200);
   const taxe = taxeAn * 5;
 
   // Depreciation
@@ -139,6 +146,15 @@ export default function VehicleTcoSection({ price, fuelType, year, mileage, powe
   const [isOpen, setIsOpen] = useState(false);
   const fuel = useMemo(() => mapFuelType(fuelType), [fuelType]);
 
+  const { data: taxData } = useTaxBrackets();
+
+  // power is in HP → convert to kW → compute fiscal CV for accurate tax bracket lookup
+  const fiscalCv = useMemo(() => {
+    if (!power) return 0;
+    const kw = Math.round(power * 0.7355);
+    return computeFiscalCV(kw);
+  }, [power]);
+
   const [inputs, setInputs] = useState<TcoInputs>({
     kmPerYear: 15000,
     region: "bruxelles",
@@ -149,7 +165,10 @@ export default function VehicleTcoSection({ price, fuelType, year, mileage, powe
     setInputs(prev => ({ ...prev, [key]: val }));
   }, []);
 
-  const result = useMemo(() => computeTco(price, fuel, year, inputs), [price, fuel, year, inputs]);
+  const result = useMemo(
+    () => computeTco(price, fuel, year, inputs, fiscalCv, taxData?.annual),
+    [price, fuel, year, inputs, fiscalCv, taxData]
+  );
 
   const DONUT_COLORS = ["#3b82f6", "#f59e0b", "#f97316", "#10b981", "#8b5cf6", "#ef4444"];
 

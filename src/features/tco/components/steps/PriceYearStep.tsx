@@ -13,8 +13,11 @@ interface Props {
 
 const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
 
+const CURRENT_YEAR = new Date().getFullYear();
+const MIN_YEAR = CURRENT_YEAR - 16;
+
 const PriceYearStep = ({ formData, updateField }: Props) => {
-  const age = 2026 - formData.year;
+  const age = CURRENT_YEAR - formData.year;
   const entretienEstime = Math.round(ENTRETIEN_BASE[formData.fuelType] * (1 + age * 0.05));
 
   const [priceInput, setPriceInput] = useState(String(formData.price));
@@ -68,26 +71,26 @@ const PriceYearStep = ({ formData, updateField }: Props) => {
               value={yearInput}
               onChange={e => setYearInput(e.target.value)}
               onBlur={() => {
-                const v = clamp(Number(yearInput) || 2022, 2010, 2026);
+                const v = clamp(Number(yearInput) || CURRENT_YEAR - 4, MIN_YEAR, CURRENT_YEAR);
                 updateField('year', v);
                 setYearInput(String(v));
               }}
-              min={2010}
-              max={2026}
+              min={MIN_YEAR}
+              max={CURRENT_YEAR}
               className="w-28 text-center text-2xl font-bold tabular-nums h-12"
             />
           </div>
           <Slider
             value={[formData.year]}
             onValueChange={([v]) => { updateField('year', v); setYearInput(String(v)); }}
-            min={2010}
-            max={2026}
+            min={MIN_YEAR}
+            max={CURRENT_YEAR}
             step={1}
             className="[&_[role=slider]]:border-primary [&_[role=slider]]:bg-background [&_span:first-child>span]:bg-primary"
           />
           <div className="flex justify-between text-xs text-muted-foreground mt-2">
-            <span>2010</span>
-            <span>2026</span>
+            <span>{MIN_YEAR}</span>
+            <span>{CURRENT_YEAR}</span>
           </div>
         </div>
 

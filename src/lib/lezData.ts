@@ -42,25 +42,29 @@ export interface LezResultat {
 
 // ─── Calendrier LEZ ──────────────────────────────────────────────────
 
+// Sources officielles : lez.brussels | lage-emissiezone.antwerpen.be | stad.gent/lez
+// Dernière vérification : mai 2026
 const calendarLEZ: Record<string, VilleCalendar> = {
   bruxelles: {
+    // Source : lez.brussels — calendrier progressif diesel
     diesel: {
-      euro0: { statut: 'interdit' },
-      euro1: { statut: 'interdit' },
-      euro2: { statut: 'interdit' },
-      euro3: { statut: 'interdit' },
-      euro4: { statut: 'interdit' },
-      euro5: { statut: 'interdit' },
-      euro6: { statut: 'autorise', jusque: 2031 },
+      euro0: { statut: 'interdit' },        // interdit depuis 2018
+      euro1: { statut: 'interdit' },        // interdit depuis 2018
+      euro2: { statut: 'interdit' },        // interdit depuis 2018
+      euro3: { statut: 'interdit' },        // interdit depuis 2019
+      euro4: { statut: 'interdit' },        // interdit depuis 2020
+      euro5: { statut: 'interdit' },        // interdit depuis 2021
+      euro6: { statut: 'autorise', jusque: null },     // ⚠️ vérifier sur lez.brussels pour dates futures
       euro6d_temp: { statut: 'autorise', jusque: null },
       euro6d: { statut: 'autorise', jusque: null },
     },
+    // Source : lez.brussels — essence (restrictions plus tardives que diesel)
     essence: {
-      euro0: { statut: 'interdit' },
-      euro1: { statut: 'interdit' },
-      euro2: { statut: 'interdit' },
-      euro3: { statut: 'autorise', jusque: null },
-      euro4: { statut: 'autorise', jusque: null },
+      euro0: { statut: 'interdit' },        // interdit depuis 01/01/2025
+      euro1: { statut: 'interdit' },        // interdit depuis 01/01/2025
+      euro2: { statut: 'interdit' },        // interdit depuis 01/01/2025
+      euro3: { statut: 'autorise', jusque: 2028 }, // interdit prévu dès 01/01/2028
+      euro4: { statut: 'autorise', jusque: 2030 }, // interdit prévu dès 01/01/2030
       euro5: { statut: 'autorise', jusque: null },
       euro6: { statut: 'autorise', jusque: null },
       euro6d_temp: { statut: 'autorise', jusque: null },
@@ -70,20 +74,21 @@ const calendarLEZ: Record<string, VilleCalendar> = {
     hybride: { statut: 'autorise', jusque: null },
   },
   anvers: {
+    // Source : lage-emissiezone.antwerpen.be
     diesel: {
-      euro0: { statut: 'derogation_requise' },
-      euro1: { statut: 'derogation_requise' },
-      euro2: { statut: 'derogation_requise' },
-      euro3: { statut: 'derogation_requise' },
-      euro4: { statut: 'autorise', jusque: null },
-      euro5: { statut: 'autorise', jusque: null },
+      euro0: { statut: 'interdit' },        // interdit depuis 2017
+      euro1: { statut: 'interdit' },        // interdit depuis 2017
+      euro2: { statut: 'interdit' },        // interdit depuis 2017
+      euro3: { statut: 'interdit' },        // interdit depuis 2020
+      euro4: { statut: 'interdit' },        // interdit depuis 01/01/2025
+      euro5: { statut: 'autorise', jusque: 2027 }, // interdit prévu dès 2027
       euro6: { statut: 'autorise', jusque: null },
       euro6d_temp: { statut: 'autorise', jusque: null },
       euro6d: { statut: 'autorise', jusque: null },
     },
     essence: {
-      euro0: { statut: 'autorise', jusque: null },
-      euro1: { statut: 'autorise', jusque: null },
+      euro0: { statut: 'interdit' },        // interdit depuis 2017
+      euro1: { statut: 'interdit' },        // interdit depuis 2017
       euro2: { statut: 'autorise', jusque: null },
       euro3: { statut: 'autorise', jusque: null },
       euro4: { statut: 'autorise', jusque: null },
@@ -96,19 +101,20 @@ const calendarLEZ: Record<string, VilleCalendar> = {
     hybride: { statut: 'autorise', jusque: null },
   },
   gand: {
+    // Source : stad.gent/lez
     diesel: {
-      euro0: { statut: 'derogation_requise' },
-      euro1: { statut: 'derogation_requise' },
-      euro2: { statut: 'derogation_requise' },
-      euro3: { statut: 'derogation_requise' },
-      euro4: { statut: 'autorise', jusque: null },
-      euro5: { statut: 'autorise', jusque: null },
+      euro0: { statut: 'interdit' },        // interdit depuis 2020
+      euro1: { statut: 'interdit' },        // interdit depuis 2020
+      euro2: { statut: 'interdit' },        // interdit depuis 2020
+      euro3: { statut: 'interdit' },        // interdit depuis 2020
+      euro4: { statut: 'interdit' },        // interdit depuis 01/01/2025
+      euro5: { statut: 'autorise', jusque: 2027 }, // interdit prévu dès 2027
       euro6: { statut: 'autorise', jusque: null },
       euro6d_temp: { statut: 'autorise', jusque: null },
       euro6d: { statut: 'autorise', jusque: null },
     },
     essence: {
-      euro0: { statut: 'autorise', jusque: null },
+      euro0: { statut: 'interdit' },        // interdit depuis 2020
       euro1: { statut: 'autorise', jusque: null },
       euro2: { statut: 'autorise', jusque: null },
       euro3: { statut: 'autorise', jusque: null },

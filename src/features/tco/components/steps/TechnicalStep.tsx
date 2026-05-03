@@ -124,14 +124,14 @@ const TechnicalStep = ({ formData, updateField }: Props) => {
               value={consoInput}
               onChange={e => setConsoInput(e.target.value)}
               onBlur={() => {
-                const min = isElectric ? 10 : 2;
-                const max = isElectric ? 30 : 20;
+                const min = isElectric ? 12 : 2;
+                const max = isElectric ? 25 : 20;
                 const v = clamp(Math.round((Number(consoInput) || 6.5) * 10) / 10, min, max);
                 updateField('consumption', v);
                 setConsoInput(String(v));
               }}
-              min={isElectric ? 10 : 2}
-              max={isElectric ? 30 : 20}
+              min={isElectric ? 12 : 2}
+              max={isElectric ? 25 : 20}
               step={0.1}
               className="w-24 text-center text-2xl font-bold tabular-nums h-12"
             />
@@ -140,8 +140,8 @@ const TechnicalStep = ({ formData, updateField }: Props) => {
           <Slider
             value={[formData.consumption * 10]}
             onValueChange={([v]) => { const val = v / 10; updateField('consumption', val); setConsoInput(String(val)); }}
-            min={isElectric ? 100 : 20}
-            max={isElectric ? 300 : 200}
+            min={isElectric ? 120 : 20}
+            max={isElectric ? 250 : 200}
             step={1}
             className="[&_[role=slider]]:border-primary [&_[role=slider]]:bg-background [&_span:first-child>span]:bg-primary"
           />
