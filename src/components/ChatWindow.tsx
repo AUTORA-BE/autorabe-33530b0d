@@ -232,14 +232,9 @@ export function ChatWindow({
       }).catch(() => {});
 
       // Email notification via notify-seller (non-blocking)
+      // Server now resolves message content + recipient from conversationId.
       supabase.functions.invoke('notify-seller', {
-        body: {
-          conversationId,
-          messageContent: content.trim(),
-          senderName: conversationDetails?.otherUserName,
-          carBrand: conversationDetails?.carBrand,
-          carModel: conversationDetails?.carModel,
-        },
+        body: { conversationId },
       }).catch(() => {});
     }
   };
