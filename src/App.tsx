@@ -43,6 +43,7 @@ const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Terms = lazy(() => import("./pages/Terms"));
 const Privacy = lazy(() => import("./pages/Privacy"));
 const Legal = lazy(() => import("./pages/Legal"));
+const Cookies = lazy(() => import("./pages/Cookies"));
 const Contact = lazy(() => import("./pages/Contact"));
 const AdminLayout = lazy(() => import("./features/admin/components/AdminLayout"));
 const CalculateurTCO = lazy(() => import("./pages/CalculateurTCO"));
@@ -133,6 +134,7 @@ function AppPages() {
       <Route path="/terms" element={<PageTransition><Terms /></PageTransition>} />
       <Route path="/privacy" element={<PageTransition><Privacy /></PageTransition>} />
       <Route path="/legal" element={<PageTransition><Legal /></PageTransition>} />
+      <Route path="/cookies" element={<PageTransition><Cookies /></PageTransition>} />
       <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
       <Route path="/kontakt" element={<PageTransition><Contact /></PageTransition>} />
       <Route path="/calculateur-tco" element={<PageTransition><CalculateurTCO /></PageTransition>} />
