@@ -53,6 +53,25 @@ serve(async (req) => {
     const boostConfig = BOOST_PRICES[boostTier];
     if (!boostConfig) throw new Error("Invalid boost tier");
 
+    // ── Ownership check: caller must own the listing being boosted ──
+    const supabaseAdminCheck = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+    );
+    const { data: ownedListing, error: ownErr } = await supabaseAdminCheck
+      .from("car_listings")
+      .select("id")
+      .eq("id", listingId)
+      .eq("user_id", user.id)
+      .eq("status", "approved")
+      .maybeSingle();
+    if (ownErr || !ownedListing) {
+      return new Response(JSON.stringify({ error: "Forbidden: you do not own this listing" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
       apiVersion: "2025-08-27.basil",
     });
