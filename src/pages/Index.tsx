@@ -124,7 +124,7 @@ const Index = () => {
     switch (type) {
       case 'brand': updateFilter("brand", ""); break;
       case 'model': updateFilter("searchQuery", ""); break;
-      case 'budget': updateFilter("maxPrice", 200000); break;
+      case 'budget': updateFilter("maxPrice", 1000000); break;
       case 'mileage': updateFilter("kmMax", 200000); break;
       case 'fuel': updateFilter("fuelTypes", []); break;
       case 'transmission': updateFilter("transmission", ""); break;
