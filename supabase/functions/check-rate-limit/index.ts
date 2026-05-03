@@ -28,7 +28,11 @@ Deno.serve(async (req) => {
       login: { max: 10, window: 900 },
       signup: { max: 5, window: 3600 },
       message: { max: 30, window: 3600 },
+      message_send: { max: 30, window: 3600 },
       report: { max: 5, window: 3600 },
+      // Bloc 9 — beta hardening
+      listing_create: { max: 10, window: 86400 },   // 10 annonces / jour / user
+      password_reset: { max: 3, window: 3600 },     // 3 reset / heure / email
     };
 
     const config = limits[action] || { max: 20, window: 3600 };
