@@ -143,12 +143,14 @@ const Auth = () => {
           });
         }
       } else {
+        trackEvent(EVENTS.LOGIN_COMPLETED, { method: "email" });
         toast({
           title: t("auth.welcome"),
           description: t("auth.loginSuccess"),
         });
       }
     } else {
+      trackEvent(EVENTS.SIGNUP_STARTED, { method: "email", account_type: accountType });
       const result = await signUp({
         email,
         password,
@@ -173,6 +175,7 @@ const Auth = () => {
           });
         }
       } else {
+        trackEvent(EVENTS.SIGNUP_COMPLETED, { method: "email", account_type: accountType });
         setVerificationEmailSent(true);
         toast({
           title: t("auth.verificationEmailSent"),
