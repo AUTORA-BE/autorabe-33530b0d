@@ -7,10 +7,6 @@ const corsHeaders = {
 
 interface NotifySellerRequest {
   conversationId: string;
-  messageContent: string;
-  senderName?: string;
-  carBrand?: string;
-  carModel?: string;
 }
 
 Deno.serve(async (req) => {
@@ -19,13 +15,38 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { conversationId, messageContent, senderName, carBrand, carModel }: NotifySellerRequest = await req.json();
+    // ── Auth required: only conversation participants can trigger ──
+    const authHeader = req.headers.get("Authorization") || "";
+    const token = authHeader.replace("Bearer ", "").trim();
+    if (!token) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
-    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+    const supabaseAdmin = createClient(supabaseUrl, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "");
+    const supabaseAuth = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY") ?? "");
 
-    // Get conversation details
+    const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims?.sub) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+    const callerId = claimsData.claims.sub;
+
+    const { conversationId }: NotifySellerRequest = await req.json();
+    if (!conversationId) {
+      return new Response(JSON.stringify({ error: "conversationId required" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+
+    // Get conversation details + verify caller is a participant
     const { data: conversation, error: convError } = await supabaseAdmin
       .from("conversations")
       .select("seller_id, buyer_id, car_brand, car_model")
@@ -33,30 +54,58 @@ Deno.serve(async (req) => {
       .single();
 
     if (convError || !conversation) {
-      throw new Error("Conversation not found");
+      return new Response(JSON.stringify({ error: "Conversation not found" }), {
+        status: 404,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
     }
 
-    // Rate limit — max 30 notifications/h par seller (anti-spam, évite tempête mails)
+    if (callerId !== conversation.buyer_id && callerId !== conversation.seller_id) {
+      return new Response(JSON.stringify({ error: "Forbidden" }), {
+        status: 403,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+
+    // ── Lookup the latest message server-side (don't trust caller content) ──
+    const { data: lastMsg } = await supabaseAdmin
+      .from("messages")
+      .select("content, sender_id")
+      .eq("conversation_id", conversationId)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .single();
+
+    if (!lastMsg) {
+      return new Response(JSON.stringify({ success: true, skipped: true, reason: "no_message" }), {
+        status: 200,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+
+    // Determine recipient: notify the OTHER participant (not the sender)
+    const recipientId = lastMsg.sender_id === conversation.seller_id ? conversation.buyer_id : conversation.seller_id;
+
+    // Rate limit per recipient (anti-spam)
     const { data: rlAllowed, error: rlError } = await supabaseAdmin.rpc("check_rate_limit", {
-      _key: `message_send:${conversation.seller_id}`,
+      _key: `message_send:${recipientId}`,
       _max_attempts: 30,
       _window_seconds: 3600,
     });
     if (rlError) {
       console.warn("[notify-seller] Rate limit check failed, allowing:", rlError);
     } else if (rlAllowed === false) {
-      console.log(`[notify-seller] Rate limit exceeded for seller ${conversation.seller_id}, skipping notification`);
       return new Response(JSON.stringify({ success: true, skipped: true, reason: "rate_limit" }), {
         status: 200,
         headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
 
-    // Check if seller has email notifications enabled
+    // Check if recipient has email notifications enabled
     const { data: preferences } = await supabaseAdmin
       .from("user_preferences")
       .select("email_notifications_enabled")
-      .eq("user_id", conversation.seller_id)
+      .eq("user_id", recipientId)
       .single();
 
     if (preferences && !preferences.email_notifications_enabled) {
@@ -66,31 +115,33 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Get seller's email
-    const { data: sellerData, error: sellerError } = await supabaseAdmin.auth.admin.getUserById(
-      conversation.seller_id
-    );
-
-    if (sellerError || !sellerData?.user?.email) {
-      throw new Error("Seller email not found");
+    // Get recipient's email
+    const { data: recipientData, error: recipientError } = await supabaseAdmin.auth.admin.getUserById(recipientId);
+    if (recipientError || !recipientData?.user?.email) {
+      throw new Error("Recipient email not found");
     }
 
-    const sellerEmail = sellerData.user.email;
+    // Get sender's display name
+    const { data: senderProfile } = await supabaseAdmin
+      .from("profiles")
+      .select("display_name")
+      .eq("user_id", lastMsg.sender_id)
+      .single();
+    const senderName = senderProfile?.display_name || "Un acheteur";
+
     const vehicleName = (conversation.car_brand && conversation.car_model)
       ? `${conversation.car_brand} ${conversation.car_model}`
       : "votre véhicule";
 
-    // Send via transactional email system
+    // Cap message preview length
+    const messagePreview = String(lastMsg.content).slice(0, 300);
+
     await supabaseAdmin.functions.invoke("send-transactional-email", {
       body: {
         templateName: "seller-notification",
-        recipientEmail: sellerEmail,
+        recipientEmail: recipientData.user.email,
         idempotencyKey: `seller-notify-${conversationId}-${Date.now()}`,
-        templateData: {
-          vehicleName,
-          messagePreview: messageContent,
-          senderName: senderName || "Un acheteur",
-        },
+        templateData: { vehicleName, messagePreview, senderName },
       },
     });
 
@@ -100,12 +151,9 @@ Deno.serve(async (req) => {
     });
   } catch (error: any) {
     console.error("Error in notify-seller function:", error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      }
-    );
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { "Content-Type": "application/json", ...corsHeaders },
+    });
   }
 });

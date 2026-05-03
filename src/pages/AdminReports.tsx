@@ -332,15 +332,9 @@ const AdminReports = () => {
 
   const sendStatusNotification = async (listing: PendingListing, status: "approved" | "rejected") => {
     try {
+      // Server-side resolves seller email from listingId (anti-phishing).
       await supabase.functions.invoke("notify-listing-status", {
-        body: {
-          sellerEmail: listing.contact_email,
-          sellerName: listing.contact_name,
-          brand: listing.brand,
-          model: listing.model,
-          year: listing.year,
-          status,
-        },
+        body: { listingId: listing.id, status },
       });
     } catch (err) {
       console.error("Failed to send status notification email:", err);

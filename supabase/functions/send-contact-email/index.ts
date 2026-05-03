@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 
@@ -46,6 +47,29 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    // ── Server-side rate limit per IP (3 / hour) — cannot be bypassed ──
+    const supabaseAdmin = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+    );
+    const ip = (req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "unknown")
+      .split(",")[0]
+      .trim();
+    const { data: rlAllowed } = await supabaseAdmin.rpc("check_rate_limit", {
+      _key: `contact_form_ip:${ip}`,
+      _max_attempts: 3,
+      _window_seconds: 3600,
+    });
+    if (rlAllowed === false) {
+      return new Response(
+        JSON.stringify({ error: "Trop de demandes. Réessayez dans une heure." }),
+        {
+          status: 429,
+          headers: { "Content-Type": "application/json", "Retry-After": "3600", ...corsHeaders },
+        }
+      );
+    }
+
     const { name, email, subject, message }: ContactFormData = await req.json();
 
     // Validate input

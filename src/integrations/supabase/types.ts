@@ -1228,6 +1228,42 @@ export type Database = {
           favorite_count: number
         }[]
       }
+      get_listing_for_buyer: {
+        Args: { _listing_id: string }
+        Returns: {
+          body_type: string
+          boost_expires_at: string
+          boost_level: string
+          brand: string
+          car_pass_date: string
+          car_pass_url: string
+          car_pass_verified: boolean
+          color: string
+          created_at: string
+          ct_valid: boolean
+          description: string
+          doors: number
+          euro_norm: string
+          features: string[]
+          first_registration: string
+          fuel_type: string
+          id: string
+          location: string
+          maintenance_book_complete: boolean
+          mileage: number
+          model: string
+          photos: string[]
+          power: number
+          price: number
+          seller_type: string
+          status: string
+          transmission: string
+          tva_number: string
+          updated_at: string
+          user_id: string
+          year: number
+        }[]
+      }
       get_listing_popularity: {
         Args: { listing_ids: string[] }
         Returns: {
