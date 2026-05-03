@@ -707,6 +707,10 @@ const Auth = () => {
                   >
                     {authLoading ? t("auth.loading") : isLogin ? t("auth.submit") : t("auth.submitSignup")}
                   </Button>
+
+                  <p className="text-center text-xs text-muted-foreground mt-2">
+                    {t("auth.secureNotice")}
+                  </p>
                 </form>
 
                 {/* Toggle Login/Signup */}
