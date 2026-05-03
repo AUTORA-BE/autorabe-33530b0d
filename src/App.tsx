@@ -6,7 +6,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { CompareProvider } from "@/features/compare";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import PageTransition from "@/components/PageTransition";
@@ -27,7 +27,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 // Lazy-loaded pages for reduced initial bundle size
 const Auth = lazy(() => import("./pages/Auth"));
 const CarDetail = lazy(() => import("./pages/CarDetail"));
-const Favorites = lazy(() => import("./pages/Favorites"));
+// Legacy /favorites routes redirect to /garage
 const MyGarage = lazy(() => import("./pages/MyGarage"));
 const SellCar = lazy(() => import("./pages/SellCar"));
 const Messages = lazy(() => import("./pages/Messages"));
@@ -103,10 +103,10 @@ function AppPages() {
       <Route path="/car/:id" element={<PageTransition><CarDetail /></PageTransition>} />
       <Route path="/voiture/:id" element={<PageTransition><CarDetail /></PageTransition>} />
       <Route path="/auto/:id" element={<PageTransition><CarDetail /></PageTransition>} />
-      <Route path="/favorites" element={<PageTransition><Favorites /></PageTransition>} />
-      <Route path="/favoris" element={<PageTransition><Favorites /></PageTransition>} />
-      <Route path="/favorieten" element={<PageTransition><Favorites /></PageTransition>} />
-      <Route path="/favoriten" element={<PageTransition><Favorites /></PageTransition>} />
+      <Route path="/favorites" element={<Navigate to="/garage" replace />} />
+      <Route path="/favoris" element={<Navigate to="/garage" replace />} />
+      <Route path="/favorieten" element={<Navigate to="/mijn-garage" replace />} />
+      <Route path="/favoriten" element={<Navigate to="/meine-garage" replace />} />
       <Route path="/garage" element={<PageTransition><MyGarage /></PageTransition>} />
       <Route path="/mijn-garage" element={<PageTransition><MyGarage /></PageTransition>} />
       <Route path="/my-garage" element={<PageTransition><MyGarage /></PageTransition>} />

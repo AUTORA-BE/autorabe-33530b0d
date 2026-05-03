@@ -7,7 +7,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Mail, Lock, User, Eye, EyeOff, Car, ArrowLeft, CheckCircle, Phone, Building2, MapPin } from "lucide-react";
+import { Mail, Lock, User, Eye, EyeOff, ArrowLeft, CheckCircle, Phone, Building2, MapPin, ShieldCheck, BadgeCheck, MapPinned } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -23,6 +23,7 @@ const Auth = () => {
   // Form state
   const [isLogin, setIsLogin] = useState(true);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [accountType, setAccountType] = useState<"private" | "pro">("private");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
@@ -48,11 +49,18 @@ const Auth = () => {
   const emailSchema = z.string().email(t("auth.invalidEmail"));
   const nameSchema = z.string().min(2, t("auth.nameMin"));
 
-  // Redirect authenticated users
+  // Redirect authenticated users (admin → /admin, others → home)
   useEffect(() => {
-    if (user) {
-      navigate("/dashboard");
-    }
+    if (!user) return;
+    (async () => {
+      const { data } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .eq("role", "admin")
+        .maybeSingle();
+      navigate(data ? "/admin" : "/");
+    })();
   }, [user, navigate]);
 
   /**

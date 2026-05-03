@@ -159,11 +159,6 @@ const Index = () => {
 
       <PullToRefresh onRefresh={async () => { refresh(); }}>
       <main style={{ paddingTop: 'calc(4rem + var(--safe-area-top, 0px))' }} className="pb-24 md:pb-0">
-        {/* Early Access Banner — subtle */}
-        <Suspense fallback={null}>
-          <EarlyAccessBanner />
-        </Suspense>
-
         {/* Hero — serif typography, glassmorphic search */}
         <HeroSearch onSearch={handleSearch} />
 

@@ -1,80 +1,85 @@
-## Page « Mon Garage »
 
-Une page personnelle unifiée, accessible aux utilisateurs connectés, qui regroupe en deux onglets :
-- **Favoris** — voitures sauvegardées (réutilise la logique existante)
-- **Historique** — voitures consultées récemment (nouveau)
+# Audit AutoRA & plan « Grand Lancement »
 
-### Routes (multilingues)
-- `/garage` (FR), `/mijn-garage` (NL), `/my-garage` (EN), `/meine-garage` (DE)
-- Protégée : redirection vers `/auth` si non connecté
+Objectif : livrer un site propre, cohérent et premium, prêt pour un lancement public proche. On supprime toute trace de "Beta", on corrige les incohérences, on refond la home et la page connexion, on pose les fondations de différenciation.
 
-### Onglet « Favoris »
-Reprend l'expérience actuelle de `/favorites` :
-- Grille 2 colonnes mobile / 3-4 desktop
-- Chips de tri (Prix, Année, Marque)
-- Empty state avec CTA « Découvrir »
-- Compteur cœur animé
+---
 
-### Onglet « Historique de vues » (nouveau)
-- Liste des 50 dernières voitures consultées par l'utilisateur connecté
-- Triées par date de vue décroissante (la plus récente en haut)
-- Déduplication : une voiture n'apparaît qu'une fois (sa vue la plus récente)
-- Chaque carte affiche un petit timestamp relatif (« il y a 2h », « hier »)
-- Bouton « Effacer l'historique » (avec confirmation)
-- Empty state dédié : « Vous n'avez pas encore consulté de véhicule »
-- Les voitures supprimées/non approuvées sont automatiquement filtrées
+## 1. Incohérences détectées (à corriger)
 
-### Backend (Lovable Cloud)
+### Page Auth (`/auth`)
+- Doublon textuel : `hero.title1` (« Trouvez votre prochaine ») suivi de `auth.findIdealCar` (« Trouvez votre voiture idéale ») = « Trouvez votre… Trouvez votre… ».
+- Stats codées en dur (« 15K+ véhicules », « 98% Car-Pass ») non vérifiables → on les remplace par des compteurs DB live.
+- Champs Garage / Code postal toujours visibles, même pour un acheteur particulier → confusion.
+- Placeholders « Nom du garage (facultatif) » et « Code postal » non traduits NL/DE/EN.
+- Logo `Car` + « AutoRa » → incohérent avec le branding officiel `AutoRA` (RA en Emerald) du Header.
+- Redirection post-login → `/dashboard` (page vendeur) pour TOUS les users, y compris acheteurs.
 
-**Politique RLS sur `car_views`** : ajouter une policy pour que les utilisateurs puissent lire leurs propres vues (`viewer_id = auth.uid()`) — actuellement seuls les vendeurs peuvent voir les vues sur leurs annonces.
+### Page d'accueil (`/`)
+- Deux jeux de titres hero (`hero.title1/2` vs `hero.titleLine1/2`) = dette i18n.
+- Mention « Beta » dans Header + `EarlyAccessBanner` → à retirer entièrement.
+- Témoignages fictifs en boucle (vu en session replay) → érodent la confiance.
+- Pas de USP visible above-the-fold.
+- Aucun KPI réel (annonces, vendeurs, villes).
 
-**RPC `get_user_view_history(_limit int)`** (SECURITY DEFINER) :
-- Retourne pour l'utilisateur courant les annonces vues récemment (jointure avec `car_listings_public`)
-- Garde uniquement la dernière vue par voiture (DISTINCT ON)
-- Filtre `status = 'approved'`
-- Limite paramétrable (défaut 50)
-- Retourne les colonnes standard (LIST_COLUMNS) + `last_viewed_at`
+### Reste du site
+- `/favorites` (legacy) coexiste avec `/garage` → redirect manquant.
+- `useIsAdmin` et `useAdminAuth` font la même requête `has_role` → fusion possible.
+- Console : warning OAuth `Unknown message type: authorization_response` (non bloquant).
+- `EarlyAccessBanner` à retirer (cohérence "lancement").
 
-**RPC `clear_user_view_history()`** : supprime toutes les `car_views` où `viewer_id = auth.uid()`.
+---
 
-### Navigation & accès
-- **BottomNav mobile** : remplacer l'icône « Favoris » (cœur) par « Garage » (icône `Warehouse` ou `Garage`) qui pointe vers la nouvelle page. Le badge affiche `favoritesCount`.
-- **Header desktop** : même remplacement.
-- **Redirection** : l'ancienne route `/favorites` redirige vers `/garage?tab=favorites` pour préserver les liens existants.
-- **Onglet par défaut** : `?tab=favorites` (ou `history`), persisté dans l'URL pour partage / retour arrière.
+## 2. Plan d'exécution (3 batchs livrés d'un coup)
 
-### Composants à créer
-```
-src/pages/MyGarage.tsx              (page principale avec tabs)
-src/features/garage/
-  ├─ hooks/useViewHistory.ts        (React Query, RPC)
-  ├─ hooks/useClearHistory.ts       (mutation)
-  ├─ components/GarageTabs.tsx      (Tabs shadcn, deux contenus)
-  ├─ components/HistoryList.tsx     (grille + timestamps relatifs)
-  └─ index.ts
-```
+### Batch 1 — Page Auth refresh (cohérence + confiance)
+- Refonte hero gauche : titre unique « La marketplace auto belge — vérifiée, transparente, locale ». Suppression des stats fictives → 3 pills `Car-Pass vérifié` · `LEZ Belgique` · `Pro & Particuliers`.
+- Logo Auth = identique Header (Auto blanc + RA Emerald, sans icône Car).
+- Toggle « Acheteur / Vendeur Pro » au-dessus du formulaire signup → champs Garage/Code postal affichés **uniquement si Pro**.
+- Sous-titre signup honnête et orienté lancement : « Rejoignez la nouvelle référence belge de la voiture d'occasion. »
+- Redirection post-login intelligente : admin → `/admin`, sinon → `/`.
+- Mini-rassureur sous le bouton : « Connexion sécurisée • Aucune donnée revendue • RGPD ».
+- i18n FR/NL/DE/EN : nouvelles clés (`auth.heroTitle`, `auth.heroSubtitle`, `auth.rolePrivate`, `auth.rolePro`, `auth.garageNamePlaceholder`, `auth.postalCodePlaceholder`, `auth.secureNotice`).
 
-### Détails techniques
+### Batch 2 — Home « grand lancement »
+- Hero unifié, une seule paire de clés `hero.headline` / `hero.subheadline`.
+- **Suppression du badge Beta** dans Header + retrait `EarlyAccessBanner`.
+- Trust strip réelle alimentée par compteurs DB (annonces approuvées, vendeurs, villes couvertes) via un petit RPC public `get_marketplace_stats`.
+- Section USP « Pourquoi AutoRA » : 4 cards bento Lucide stroke 1.5 — Car-Pass automatique, LEZ par région, TCO 5 ans, Match IA belge.
+- Témoignages fictifs masqués tant qu'on n'a pas ≥ 5 avis réels — remplacés par carrousel « Dernières annonces vérifiées ».
+- Section différenciation **Made for Belgium** : carte LEZ, simulateur taxe régionale 1 clic, badges Car-Pass.
+- Double CTA above-the-fold : Acheteur (Recherche) / Vendeur (Estimer ma voiture en 60 s).
 
-```text
-MyGarage
-├── Header + BackButton
-├── Tabs (Favoris | Historique)
-│   ├── Tab Favoris  → réutilise la logique de Favorites.tsx
-│   └── Tab Historique
-│       ├── useViewHistory() → RPC get_user_view_history
-│       ├── CarCard + badge "il y a Xh"
-│       └── Bouton "Effacer l'historique"
-└── Footer
-```
+### Batch 3 — Clean technique
+- Redirect `/favorites*` → `/garage`.
+- Fusion `useIsAdmin` + `useAdminAuth` → un seul `useAdminRole`.
+- Suppression des clés i18n legacy `hero.title1/2`.
+- Suppression `EarlyAccessBanner` du bundle.
+- Filtrage du warning OAuth résiduel.
+- Vérification `<link rel="canonical">` dynamique sur toutes les routes.
 
-- **Cache React Query** : `staleTime` 2 min pour l'historique (évolue souvent), 5 min pour favoris
-- **i18n** : ajouter clés `garage.title`, `garage.tabs.favorites`, `garage.tabs.history`, `garage.history.empty`, `garage.history.clear`, `garage.history.clearConfirm`, `garage.history.viewedAgo` dans FR/NL/DE/EN
-- **SEO** : `noIndex` (page privée)
-- **Mobile-first** : safe-area, tabs collantes sous le header, pull-to-refresh sur les deux onglets
-- **Animations** : Framer Motion 200-300ms cohérentes avec l'identité Elite Green
+---
 
-### Hors périmètre
-- Pas de statistiques (vues par jour, etc.) — déjà couvert côté vendeur
-- Pas de notifications sur changement de prix d'une voiture vue (peut être une feature future via Smart Alerts)
-- Pas de tri avancé sur l'historique (la chronologie inverse suffit)
+## 3. Idées différenciantes (votre projet « millionaire »)
+
+| Feature | Pourquoi ça différencie |
+|---|---|
+| **Estimation IA gratuite en 60 s** (Gemini Flash + comps DB) | Aucun concurrent BE ne l'offre gratuitement, hook viral |
+| **Car-Pass automatique** (upload PDF → OCR Gemini → score transparence) | Élimine la friction n°1 du marché belge |
+| **Score « Bon Match »** acheteur/voiture (TCO + LEZ + budget + usage) | Recommandation, pas simple filtre |
+| **Garage virtuel** (favoris + historique + alertes + estimations) | Rétention même sans achat |
+| **Carte LEZ live** + alerte « bannie d'ici X années » | Personne ne le fait clairement en BE |
+| **Badge "AutoRA Verified Pro"** payant (KYC garage) | Revenu récurrent + premium trust |
+| **Mode "Vendre en 48 h"** (photo studio + boost + visites filtrées) | Service à forte marge |
+| **Programme parrainage acheteur** (50 € si transaction via AutoRA) | Acquisition virale |
+| **Rapport PDF "Confiance AutoRA"** par mail à chaque visite | Différenciation perçue + SEO partagé |
+
+→ Ces features feront l'objet d'un Batch 4 dédié (R&D produit) une fois le refresh validé.
+
+---
+
+## 4. Décisions à confirmer
+- ✅ Aucune mention "Beta" — confirmé.
+- OK pour **masquer les témoignages fictifs** tant qu'on n'a pas ≥ 5 vrais avis ?
+- OK pour **toggle Acheteur/Pro** au signup (au lieu d'afficher tous les champs) ?
+- Je propose d'enchaîner directement Batch 1 + 2 + 3 pour un rendu visible immédiat. Confirmez et je lance.
