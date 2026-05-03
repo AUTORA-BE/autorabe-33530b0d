@@ -1196,6 +1196,7 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
+      get_active_cities_count: { Args: never; Returns: number }
       get_favorite_counts: {
         Args: { listing_ids: string[] }
         Returns: {

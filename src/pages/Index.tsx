@@ -33,6 +33,7 @@ const WhyAutoRa = lazy(() => import("@/components/WhyAutoRa"));
 const TestimonialsSection = lazy(() => import("@/components/TestimonialsSection"));
 const SellCarCTA = lazy(() => import("@/components/SellCarCTA"));
 const PricingCTA = lazy(() => import("@/components/PricingCTA"));
+const HomeFAQ = lazy(() => import("@/components/HomeFAQ"));
 const TcoFloatingButton = lazy(() => import("@/components/TcoFloatingButton"));
 
 import { useVehicleSearch } from "@/features/listings";
@@ -247,6 +248,13 @@ const Index = () => {
             <ScrollReveal delay={0.1}>
               <PricingCTA />
             </ScrollReveal>
+          </Suspense>
+        </div>
+
+        {/* Home FAQ — trust + SEO */}
+        <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 600px" }}>
+          <Suspense fallback={null}>
+            <HomeFAQ />
           </Suspense>
         </div>
 

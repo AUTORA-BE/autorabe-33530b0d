@@ -1,44 +1,70 @@
+# Finalisation Grand Launch — 3 vagues d'un coup
 
-# Finalisation « Grand Lancement » — ce qui reste
+## Vague 1 — Page d'accueil premium
 
-J'ai déjà livré dans le batch précédent :
-- ✅ Suppression du badge "Beta" du Header
-- ✅ Suppression du `EarlyAccessBanner` de la home
-- ✅ Redirect `/favorites*` → `/garage` (multi-langue)
-- ✅ Refonte hero gauche page Auth (logo AutoRA cohérent, suppression stats fictives 15K+/98%, 3 pills Car-Pass/LEZ/Pro&Particuliers)
-- ✅ Logo mobile Auth unifié (suppression icône Car parasite)
-- ✅ Redirection post-login intelligente (admin → `/admin`, sinon → `/`)
-- ✅ Nouvelles clés i18n FR/NL/DE/EN : `auth.heroTitle`, `auth.heroSubtitle`, `auth.proAndPrivate`
+**HeroSearch (`src/features/search/components/HeroSearch.tsx`)**
+- Headline serif Playfair plus impactante: "L'automobile belge, sans compromis."
+- Sub: "Car-Pass vérifié · LEZ conforme · Vendeurs locaux"
+- 3 trust chips sous la barre de recherche (Car-Pass / LEZ / Pro & Particuliers), Lucide stroke 1.5
+- Traduction des nouvelles clés dans fr/nl/de/en
 
-## Reste à faire (ce batch)
+**Compteurs réels (`src/components/LiveStatsStrip.tsx`)**
+- Garder les requêtes existantes (déjà branchées sur `car_listings_public`, `profiles_public`, `car_views`)
+- Remplacer la valeur fake "99% Uptime" par un compteur réel: nombre de villes uniques couvertes (RPC ou query distinct sur `car_listings.location`)
+- Ajouter une nouvelle RPC `get_active_cities_count()` (SECURITY DEFINER, public)
 
-### Auth — toggle Acheteur/Pro
-- Ajouter un toggle 2 boutons en haut du formulaire signup (`Particulier` / `Vendeur Pro`) avec état actif Emerald.
-- Conditionner l'affichage des champs **Nom du garage + Code postal** à `accountType === "pro"` uniquement.
-- Remplacer les placeholders FR codés en dur par `t("auth.garageNamePlaceholder")` / `t("auth.postalCodePlaceholder")`.
-- Mini-rassureur sous le bouton submit : « Connexion sécurisée • Aucune donnée revendue • RGPD ».
-- Nouvelles clés i18n × 4 langues : `auth.rolePrivate`, `auth.rolePro`, `auth.garageNamePlaceholder`, `auth.postalCodePlaceholder`, `auth.secureNotice`.
+**WhyAutoRa (`src/components/WhyAutoRa.tsx`)**
+- Vérifier que les 4 cartes mettent en avant: Car-Pass obligatoire · Bon Match IA · TMC/LEZ intégré · Conseiller fiscal IA
+- Ajuster textes i18n si besoin
 
-### Home — retirer témoignages fictifs
-- Commenter / retirer le bloc `<TestimonialsSection />` dans `src/pages/Index.tsx` tant qu'on n'a pas ≥ 5 vrais avis (réactivable en 1 ligne).
-- Supprimer le skeleton `TestimonialsSkeleton` du tableau d'imports.
+## Vague 2 — Cohérence & nettoyage
 
-### Hero — nettoyage clés legacy
-- Supprimer les clés inutilisées `hero.title1` / `hero.title2` / `auth.findIdealCar` / `auth.heroDesc` des 4 fichiers i18n (la home utilise `hero.titleLine1/2`).
+**Refactor admin hook**
+- `src/hooks/useIsAdmin.ts` → simple re-export de `useAdminAuth` (ou wrapper autour de la même RPC) pour supprimer la duplication
 
-### Technique — fusion hooks admin
-- Remplacer `src/hooks/useIsAdmin.ts` par un ré-export de `src/features/admin/hooks/useAdminAuth.ts` (single source of truth, plus de double requête `has_role`).
-- Vérifier que les 4 consommateurs (`Settings`, `CarDetail`, `Header`, `useFeatureAccess`) restent fonctionnels.
+**i18n purge**
+- Supprimer clés mortes dans fr/nl/de/en: `hero.title1`, `hero.title2`, `auth.findIdealCar`, anciennes `auth.heroDesc` non référencées
+- Vérifier via `rg` avant suppression
 
-### Files touchés (estimation)
-- `src/pages/Auth.tsx` (toggle + placeholders i18n + notice)
-- `src/pages/Index.tsx` (retrait Testimonials)
-- `src/i18n/{fr,nl,de,en}.json` (5 clés ajoutées, 4 supprimées)
-- `src/hooks/useIsAdmin.ts` (ré-export)
+**Routes obsolètes (`src/App.tsx`)**
+- Confirmer que `/favorites` redirige vers `/garage`
+- Supprimer route `/early-access` si présente
+- Supprimer import du composant `EarlyAccessBanner` partout
 
-### Pas dans ce batch (volontairement)
-- Section USP "Made for Belgium" cards bento → batch 2 dédié pour ne pas exploser le scope.
-- Trust strip avec compteurs DB live → nécessite nouveau RPC `get_marketplace_stats`, batch 2.
-- Estimation IA, score Bon Match, PDF Confiance → batch 4 R&D.
+## Vague 3 — Confiance & conversion
 
-Confirme et j'enchaîne tout en une passe.
+**Badge "Vendeur vérifié"**
+- Sur `VehicleCard`, afficher badge Emerald-600 quand `seller_type = 'professionnel'` et profil complété (garage_name + phone)
+
+**Section FAQ home (lazy)**
+- Ajouter `<HomeFAQ />` dans `Index.tsx` après `PricingCTA`
+- 4 questions clés réutilisées de `/faq` (Car-Pass, LEZ, frais cachés, vendeur Pro vs Particulier)
+- Schema.org `FAQPage` injecté via `SEOHead`
+
+**Skeleton sync**
+- Vérifier `HomeSkeleton.tsx` → ajouter skeleton FAQ pour éviter CLS
+
+**Meta OG**
+- `Index.tsx` SEOHead: ajouter image OG `https://autora.be/og-home.jpg`, description orientée Belgique (déjà en place, vérifier)
+
+## Détails techniques
+
+- Nouvelle RPC SQL:
+  ```sql
+  CREATE OR REPLACE FUNCTION public.get_active_cities_count()
+  RETURNS integer LANGUAGE sql STABLE SECURITY DEFINER SET search_path=public AS $$
+    SELECT COUNT(DISTINCT location)::integer
+    FROM car_listings WHERE status='approved' AND location IS NOT NULL
+  $$;
+  GRANT EXECUTE ON FUNCTION public.get_active_cities_count() TO anon, authenticated;
+  ```
+- Composant nouveau: `src/components/HomeFAQ.tsx`
+- Pas de breaking change DB; pas de nouvelle table
+
+## Hors scope
+
+- Vrais témoignages (attendre signups)
+- Programme parrainage
+- App mobile native
+
+J'enchaîne dès validation.

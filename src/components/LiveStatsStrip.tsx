@@ -4,7 +4,7 @@
  */
 
 import { memo, useRef, useState, useEffect } from "react";
-import {  Car, Users, Eye, TrendingUp, Zap } from "lucide-react";
+import { Car, Users, Eye, TrendingUp, MapPin } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -60,7 +60,7 @@ function AnimatedCounter({
 
 /** Fetch live stats from the database */
 async function fetchLiveStats() {
-  const [listings, profiles, views] = await Promise.all([
+  const [listings, profiles, views, cities] = await Promise.all([
     supabase
       .from("car_listings_public")
       .select("id", { count: "exact", head: true }),
@@ -70,12 +70,14 @@ async function fetchLiveStats() {
     supabase
       .from("car_views")
       .select("id", { count: "exact", head: true }),
+    supabase.rpc("get_active_cities_count" as never),
   ]);
 
   return {
     listings: listings.count ?? 0,
     users: profiles.count ?? 0,
     views: views.count ?? 0,
+    cities: (cities.data as number | null) ?? 0,
   };
 }
 
@@ -136,16 +138,16 @@ const LiveStatsStrip = memo(() => {
       bgColor: "bg-violet-500/10",
     },
     {
-      icon: Zap,
-      value: 99,
-      suffix: "%",
+      icon: MapPin,
+      value: stats?.cities ?? 0,
+      suffix: "",
       label: isNl
-        ? "Uptime garantie"
+        ? "Steden gedekt"
         : isDe
-        ? "Uptime-Garantie"
+        ? "Abgedeckte Städte"
         : isEn
-        ? "Uptime guarantee"
-        : "Uptime garanti",
+        ? "Cities covered"
+        : "Villes couvertes",
       color: "text-amber-500",
       bgColor: "bg-amber-500/10",
     },
