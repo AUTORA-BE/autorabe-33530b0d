@@ -35,80 +35,32 @@ async function generateVAPIDHeaders(
   vapidPrivateKey: string
 ): Promise<{ authorization: string; cryptoKey: string }> {
   const audience = new URL(endpoint).origin;
-  const expiration = Math.floor(Date.now() / 1000) + 12 * 60 * 60; // 12 hours
-  
-  const header = {
-    alg: "ES256",
-    typ: "JWT",
-  };
-  
-  const payload = {
-    aud: audience,
-    exp: expiration,
-    sub: "mailto:autoracontact@gmail.com",
-  };
-  
-  // Base64url encode header and payload
-  const headerB64 = btoa(JSON.stringify(header))
-    .replace(/=/g, "")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_");
-  const payloadB64 = btoa(JSON.stringify(payload))
-    .replace(/=/g, "")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_");
-  
+  const expiration = Math.floor(Date.now() / 1000) + 12 * 60 * 60;
+
+  const header = { alg: "ES256", typ: "JWT" };
+  const payload = { aud: audience, exp: expiration, sub: "mailto:autoracontact@gmail.com" };
+
+  const headerB64 = btoa(JSON.stringify(header)).replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
+  const payloadB64 = btoa(JSON.stringify(payload)).replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
   const unsignedToken = `${headerB64}.${payloadB64}`;
-  
-  // Import private key
+
   const privateKeyBytes = urlBase64ToUint8Array(vapidPrivateKey);
-  
-  // Create raw key (prepend 0x04 for uncompressed point format)
   const publicKeyBytes = urlBase64ToUint8Array(vapidPublicKey);
-  
-  // For ES256, we need to convert the raw key to proper format
+
   const jwkPrivate = {
     kty: "EC",
     crv: "P-256",
-    x: btoa(String.fromCharCode(...publicKeyBytes.slice(1, 33)))
-      .replace(/=/g, "")
-      .replace(/\+/g, "-")
-      .replace(/\//g, "_"),
-    y: btoa(String.fromCharCode(...publicKeyBytes.slice(33, 65)))
-      .replace(/=/g, "")
-      .replace(/\+/g, "-")
-      .replace(/\//g, "_"),
-    d: btoa(String.fromCharCode(...privateKeyBytes))
-      .replace(/=/g, "")
-      .replace(/\+/g, "-")
-      .replace(/\//g, "_"),
+    x: btoa(String.fromCharCode(...publicKeyBytes.slice(1, 33))).replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_"),
+    y: btoa(String.fromCharCode(...publicKeyBytes.slice(33, 65))).replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_"),
+    d: btoa(String.fromCharCode(...privateKeyBytes)).replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_"),
   };
-  
-  const key = await crypto.subtle.importKey(
-    "jwk",
-    jwkPrivate,
-    { name: "ECDSA", namedCurve: "P-256" },
-    false,
-    ["sign"]
-  );
-  
-  // Sign the token
-  const signature = await crypto.subtle.sign(
-    { name: "ECDSA", hash: "SHA-256" },
-    key,
-    new TextEncoder().encode(unsignedToken)
-  );
-  
-  // Convert signature to base64url (convert from IEEE P1363 to raw r||s)
-  const signatureB64 = btoa(String.fromCharCode(...new Uint8Array(signature)))
-    .replace(/=/g, "")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_");
-  
-  const jwt = `${unsignedToken}.${signatureB64}`;
-  
+
+  const key = await crypto.subtle.importKey("jwk", jwkPrivate, { name: "ECDSA", namedCurve: "P-256" }, false, ["sign"]);
+  const signature = await crypto.subtle.sign({ name: "ECDSA", hash: "SHA-256" }, key, new TextEncoder().encode(unsignedToken));
+  const signatureB64 = btoa(String.fromCharCode(...new Uint8Array(signature))).replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
+
   return {
-    authorization: `vapid t=${jwt}, k=${vapidPublicKey}`,
+    authorization: `vapid t=${unsignedToken}.${signatureB64}, k=${vapidPublicKey}`,
     cryptoKey: `p256ecdsa=${vapidPublicKey}`,
   };
 }
@@ -121,36 +73,22 @@ async function sendPushNotification(
 ): Promise<boolean> {
   try {
     const payloadString = JSON.stringify(payload);
-    
-    // For simplicity, we'll send an unencrypted notification
-    // In production, you'd want to use proper Web Push encryption
-    const headers = await generateVAPIDHeaders(
-      subscription.endpoint,
-      vapidPublicKey,
-      vapidPrivateKey
-    );
-    
+    const headers = await generateVAPIDHeaders(subscription.endpoint, vapidPublicKey, vapidPrivateKey);
     const response = await fetch(subscription.endpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "TTL": "86400",
+        TTL: "86400",
         Authorization: headers.authorization,
         "Crypto-Key": headers.cryptoKey,
       },
       body: payloadString,
     });
-    
     if (!response.ok) {
       const errorText = await response.text();
       console.error("Push notification failed:", response.status, errorText);
-      
-      // If subscription is expired/invalid, return false to delete it
-      if (response.status === 404 || response.status === 410) {
-        return false;
-      }
+      if (response.status === 404 || response.status === 410) return false;
     }
-    
     return true;
   } catch (error) {
     console.error("Error sending push notification:", error);
@@ -164,21 +102,58 @@ serve(async (req) => {
   }
 
   try {
-    const { userId, title, body, icon, badge, tag, data, image }: PushPayload = await req.json();
+    // ── AUTH GUARD ──
+    // Two valid auth modes:
+    //  1. Service role token (internal server-to-server calls)
+    //  2. End-user JWT, but ONLY allowed to push to themselves (userId === auth.uid())
+    const authHeader = req.headers.get("Authorization") || "";
+    const token = authHeader.replace("Bearer ", "").trim();
+    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 
-    if (!userId || !title || !body) {
-      return new Response(
-        JSON.stringify({ error: "userId, title, and body are required" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+    if (!token) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
-    console.log("Sending push notification to user:", userId);
+    const isServiceRole = serviceRoleKey && token === serviceRoleKey;
 
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+      serviceRoleKey
     );
+
+    const { userId, title, body, icon, badge, tag, data, image }: PushPayload = await req.json();
+    if (!userId || !title || !body) {
+      return new Response(JSON.stringify({ error: "userId, title, and body are required" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    if (!isServiceRole) {
+      // Verify the JWT and ensure caller can only push to their own user_id
+      const supabaseAuth = createClient(
+        Deno.env.get("SUPABASE_URL") ?? "",
+        Deno.env.get("SUPABASE_ANON_KEY") ?? ""
+      );
+      const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
+      if (claimsError || !claimsData?.claims?.sub) {
+        return new Response(JSON.stringify({ error: "Unauthorized" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      const callerId = claimsData.claims.sub;
+      if (callerId !== userId) {
+        // Not allowed to push to other users
+        return new Response(JSON.stringify({ error: "Forbidden: cannot push to other users" }), {
+          status: 403,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
 
     // Check if user has push notifications enabled
     const { data: preferences } = await supabaseAdmin
@@ -188,43 +163,36 @@ serve(async (req) => {
       .single();
 
     if (preferences && !preferences.push_notifications_enabled) {
-      console.log("Push notifications disabled for user, skipping");
-      return new Response(
-        JSON.stringify({ success: true, skipped: true, reason: "disabled" }),
-        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ success: true, skipped: true, reason: "disabled" }), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
-    // Get user's push subscriptions
     const { data: subscriptions, error: subError } = await supabaseAdmin
       .from("push_subscriptions")
       .select("*")
       .eq("user_id", userId);
 
-    if (subError) {
-      console.error("Error fetching subscriptions:", subError);
-      throw new Error("Failed to fetch subscriptions");
-    }
-
+    if (subError) throw new Error("Failed to fetch subscriptions");
     if (!subscriptions || subscriptions.length === 0) {
-      console.log("No push subscriptions found for user");
-      return new Response(
-        JSON.stringify({ success: true, skipped: true, reason: "no_subscriptions" }),
-        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ success: true, skipped: true, reason: "no_subscriptions" }), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     const vapidPublicKey = Deno.env.get("VAPID_PUBLIC_KEY");
     const vapidPrivateKey = Deno.env.get("VAPID_PRIVATE_KEY");
+    if (!vapidPublicKey || !vapidPrivateKey) throw new Error("VAPID keys not configured");
 
-    if (!vapidPublicKey || !vapidPrivateKey) {
-      console.error("VAPID keys not configured");
-      throw new Error("VAPID keys not configured");
-    }
+    // Cap title/body length to prevent abuse
+    const safeTitle = String(title).slice(0, 120);
+    const safeBody = String(body).slice(0, 300);
 
     const payload = {
-      title,
-      body,
+      title: safeTitle,
+      body: safeBody,
       icon: icon || "/favicon.png",
       badge: badge || "/favicon.png",
       tag: tag || "autora-notification",
@@ -235,7 +203,6 @@ serve(async (req) => {
     let successCount = 0;
     const expiredSubscriptions: string[] = [];
 
-    // Send to all subscriptions
     for (const sub of subscriptions) {
       const success = await sendPushNotification(
         { endpoint: sub.endpoint, p256dh: sub.p256dh, auth: sub.auth },
@@ -243,40 +210,23 @@ serve(async (req) => {
         vapidPublicKey,
         vapidPrivateKey
       );
-      
-      if (success) {
-        successCount++;
-      } else {
-        expiredSubscriptions.push(sub.id);
-      }
+      if (success) successCount++;
+      else expiredSubscriptions.push(sub.id);
     }
 
-    // Clean up expired subscriptions
     if (expiredSubscriptions.length > 0) {
-      await supabaseAdmin
-        .from("push_subscriptions")
-        .delete()
-        .in("id", expiredSubscriptions);
-      
-      console.log("Cleaned up expired subscriptions:", expiredSubscriptions.length);
+      await supabaseAdmin.from("push_subscriptions").delete().in("id", expiredSubscriptions);
     }
-
-    console.log(`Push notifications sent: ${successCount}/${subscriptions.length}`);
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
-        sent: successCount, 
-        total: subscriptions.length,
-        cleaned: expiredSubscriptions.length 
-      }),
+      JSON.stringify({ success: true, sent: successCount, total: subscriptions.length, cleaned: expiredSubscriptions.length }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
     console.error("Error in send-push-notification:", error);
-    return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 });
