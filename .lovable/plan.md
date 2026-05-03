@@ -1,53 +1,117 @@
-# Diagnostic et reset cache PWA
+# Plan — ErrorBoundary global production-grade
 
-## Le vrai problème
+## Constat
 
-Tes modifications **sont bien dans le code** (Plausible, HomeFAQ, suppression EarlyAccessBanner, analytics, etc.). Ce que tu vois dans le preview / sur ton téléphone, c'est **l'ancienne version mise en cache par le Service Worker PWA**.
+Tu as **déjà** un `ErrorBoundary` branché dans `src/main.tsx` au plus haut niveau (avant `HelmetProvider` et `App`). Le composant existe à `src/components/ErrorBoundary.tsx` avec un fallback Elite Green basique (icône, message, bouton retry). Pas besoin de le re-créer — on l'**améliore**.
 
-C'est un piège classique des PWA : une fois la PWA installée ou visitée une fois, le Service Worker intercepte toutes les requêtes et sert le cache. Les nouvelles versions ne s'appliquent qu'après un cycle complet de mise à jour SW (qui peut prendre plusieurs reloads).
+## Ce qui sera amélioré
 
-De plus, en preview Lovable, on attend que l'analytics Plausible soit **désactivé** (c'est volontaire dans `analytics.ts` via `IS_PREVIEW`) — donc tu ne verras jamais d'événements depuis le preview, seulement depuis `autora.be` en prod.
+### 1. Logs structurés JSON (cohérent avec le webhook Stripe)
 
-## Plan d'action
+Au lieu de `console.error('[ErrorBoundary]', error, errorInfo)`, on émet un payload JSON identique en forme à ce qui sort du webhook Stripe :
 
-### 1. Bump version PWA + cache-busting forcé
-- Mettre à jour la version dans `vite.config.ts` (manifest description) pour forcer une régénération SW
-- Ajouter un mécanisme de "kill switch" : un fichier `public/sw-version.json` lu au boot pour forcer `skipWaiting` + `clients.claim()` + reload si version différente
-- Renforcer le guard de `main.tsx` pour purger **toutes** les caches au démarrage en preview (déjà fait, mais ajouter aussi sur le domaine autora.be temporairement pour 1 release)
+```json
+{
+  "level": "error",
+  "fn": "react-error-boundary",
+  "step": "render_error",
+  "ts": "2026-05-03T16:30:00Z",
+  "error_id": "err_lwz3k_a8f2",
+  "message": "...",
+  "name": "TypeError",
+  "stack": "...",
+  "url": "/voiture/abc-123",
+  "ua": "...",
+  "component_stack": "..."
+}
+```
 
-### 2. Vérification visuelle des modifs récentes
-Ouvrir le preview en mode browser tool (hors iframe) pour confirmer que :
-- La bannière `EarlyAccessBanner` est bien retirée de la home
-- Le composant `HomeFAQ` est bien rendu sur Index
-- Plausible script est injecté dans `<head>` (vérifié via DOM)
-- `useAnalytics` ne crashe pas
+Avantages : filtrable par `step`, traçable par `error_id`, exploitable par n'importe quel outil d'observabilité ajouté plus tard sans changer le code.
 
-### 3. Instructions claires pour toi (utilisateur)
-- **Sur desktop preview Lovable** : Ouvrir DevTools (F12) → Application → Service Workers → "Unregister" → Storage → "Clear site data" → recharger
-- **Sur PWA mobile installée** : Désinstaller la PWA, vider le cache du navigateur, réinstaller
-- **Sur autora.be publié** : Attendre ~30s après publication, puis hard refresh (Ctrl+Shift+R / Cmd+Shift+R)
+### 2. Capture des `unhandledrejection` (window-level)
 
-### 4. Confirmation du bon fonctionnement Plausible
-- Plausible n'enregistre **rien** en preview/dev/iframe (par design dans `analytics.ts`)
-- Pour tester : aller sur `autora.be` (prod) après publish → ouvrir Plausible dashboard → vérifier les événements `pageview`, puis `signup_started` sur /auth
+React n'attrape **pas** les promesses rejetées non catchées (ex: `await fetch(...)` qui throw sans `try/catch`). On ajoute un listener `window.addEventListener('unhandledrejection', ...)` au mount qui les loggue avec le même format (mais sans déclencher le fallback UI — ce serait trop agressif pour des erreurs réseau transitoires).
+
+### 3. Event Plausible automatique
+
+Si Plausible est chargé (déjà le cas via `index.html`), chaque erreur catchée envoie un event :
+```js
+plausible('Error', { props: { step, name, message: '...' } })
+```
+→ visible directement dans ton dashboard Plausible existant, **zéro nouveau secret**.
+
+### 4. Fallback UI enrichi
+
+Trois actions au lieu d'une (toutes en touch-target 44px, mobile-first) :
+
+```text
+┌──────────────────────────────────┐
+│      [icône AlertTriangle]       │
+│                                  │
+│   Oups, quelque chose s'est      │
+│         mal passé                │
+│                                  │
+│   Une erreur inattendue est      │
+│   survenue. Vous pouvez...       │
+│                                  │
+│   ▼ Détails techniques (collap.) │
+│     Error: Cannot read prop...   │
+│     ID: err_lwz3k_a8f2           │
+│                                  │
+│  [Réessayer] [Recharger] [Home]  │
+└──────────────────────────────────┘
+```
+
+- **Réessayer** — reset l'état local du boundary (utile si l'erreur était transitoire)
+- **Recharger** — `window.location.reload()` (utile si état React corrompu)
+- **Retour à l'accueil** — `window.location.href = '/'` (utile si la route entière est cassée)
+
+L'`error_id` affiché permet à un user qui te contacte de te donner une référence précise pour retrouver la trace dans les logs.
+
+### 5. i18n via `react-i18next`
+
+Wrap avec `withTranslation()` (compatible class component). 4 nouvelles clés ajoutées dans `fr.json`, `nl.json`, `de.json`, `en.json` :
+- `errorBoundary.title`
+- `errorBoundary.description`
+- `errorBoundary.details`
+- `errorBoundary.retry`
+- `errorBoundary.reload`
+- `errorBoundary.home`
+
+Fallback gracieux : si i18n n'est pas encore initialisé (le boundary peut catcher des erreurs au boot avant que i18next soit prêt), le composant utilise les textes FR par défaut. Pas de crash dans le crash handler.
+
+### 6. Style cohérent charte
+
+- Fond `bg-background`, fallback en `min-h-screen` centré
+- Icône `lucide-react` `strokeWidth={1.5}` (charte Elite Green)
+- Titre en `font-serif` (Playfair Display) pour cohérence luxe
+- Boutons 44px min, mobile-first stacking
+
+## Fichiers modifiés
+
+1. **`src/components/ErrorBoundary.tsx`** — réécriture complète (~180 lignes), même API publique (props `children`, `fallback`, `onError`) → aucun appelant à modifier
+2. **`src/i18n/fr.json`** — ajout de 6 clés `errorBoundary.*`
+3. **`src/i18n/nl.json`** — ajout des 6 clés traduites
+4. **`src/i18n/de.json`** — ajout des 6 clés traduites
+5. **`src/i18n/en.json`** — ajout des 6 clés traduites
+
+## Ce qui ne change pas
+
+- `src/main.tsx` — déjà branché correctement
+- L'API du composant — props identiques, pas de breaking change
+- Aucun nouveau secret, aucune nouvelle dépendance npm
+- Aucune migration DB
 
 ## Détails techniques
 
-**Fichiers à modifier :**
-- `vite.config.ts` — bump description manifest pour forcer un nouveau hash SW
-- `public/sw-kill.js` — petit kill-switch one-shot à enregistrer une fois pour purger l'ancien SW
-- `src/main.tsx` — déjà OK mais ajouter un message console clair "[PWA] cache purged" pour debug
+- Class component (obligatoire pour `getDerivedStateFromError` / `componentDidCatch`)
+- `withTranslation()` HOC pour récupérer `t` dans une class
+- Listener `unhandledrejection` ajouté/retiré dans `componentDidMount` / `componentWillUnmount`
+- Type augmentation pour `window.plausible` (déjà global dans `index.html`)
+- Strict TS, zéro `any`
+- Stack trace tronquée à 8 lignes pour éviter de polluer les logs
 
-**À ne PAS faire :**
-- Ne pas réécrire l'analytics, il fonctionne
-- Ne pas re-supprimer/recréer HomeFAQ, il est déjà en place
-- Ne pas désactiver complètement la PWA (tu en as besoin pour le mobile)
+## Hors scope
 
-## Résultat attendu
-
-Après application + un hard refresh de ta part :
-- Preview Lovable affiche la **vraie** dernière version (HomeFAQ visible, plus de EarlyAccessBanner)
-- PWA mobile se met à jour automatiquement au prochain lancement
-- Plausible commence à tracker dès que tu visites autora.be (URL publiée)
-
-Approuve et j'applique. Si tu préfères, je peux aussi juste te guider pour le hard reset cache **sans toucher au code** — dis-le-moi.
+- Pas de Sentry / Axiom / GlitchTip — décidé précédemment de rester sur les logs structurés + Plausible
+- Pas de UI dédiée pour les erreurs réseau transitoires (les `unhandledrejection` sont juste loggés, pas affichés à l'utilisateur — c'est volontaire)
