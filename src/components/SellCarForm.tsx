@@ -123,6 +123,11 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
   const { t } = useLanguage();
   const queryClient = useQueryClient();
   const [currentStep, setCurrentStep] = useState(1);
+  // Fire listing_started once when wizard mounts in create mode
+  useEffect(() => {
+    if (!editId) trackEvent(EVENTS.LISTING_STARTED);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [photos, setPhotos] = useState<File[]>([]);
   const [photosPreviews, setPhotosPreviews] = useState<string[]>([]);
   const [existingPhotos, setExistingPhotos] = useState<string[]>([]);
