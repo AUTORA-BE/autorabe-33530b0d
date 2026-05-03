@@ -1,34 +1,29 @@
 /**
- * Hook to check if the current user has admin role
+ * Hook to check if the current user has admin role.
+ * Uses React Query so the result is shared/cached across components
+ * (Header, CarDetail, Settings, useFeatureAccess) instead of issuing
+ * a fresh RPC call per consumer.
  * @module hooks
  */
 
-import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-/**
- * Returns whether the current authenticated user has the admin role
- */
 export const useIsAdmin = (userId: string | undefined): boolean => {
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  useEffect(() => {
-    if (!userId) {
-      setIsAdmin(false);
-      return;
-    }
-
-    const check = async () => {
+  const { data } = useQuery({
+    queryKey: ["is-admin", userId],
+    enabled: !!userId,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    queryFn: async () => {
       const { data, error } = await supabase.rpc("has_role", {
-        _user_id: userId,
+        _user_id: userId!,
         _role: "admin",
       });
-      if (!error && data) setIsAdmin(true);
-      else setIsAdmin(false);
-    };
+      if (error) return false;
+      return !!data;
+    },
+  });
 
-    check();
-  }, [userId]);
-
-  return isAdmin;
+  return !!data;
 };
