@@ -30,6 +30,8 @@ import LezWidget from "@/components/LezWidget";
 import SellerBadge from "@/components/SellerBadge";
 import ReviewsSection from "@/components/ReviewsSection";
 import BentoSpecs from "@/components/BentoSpecs";
+import EquipmentSection from "@/components/EquipmentSection";
+import RichDescription from "@/components/RichDescription";
 import _AutoraTransparency from "@/components/AutoraTransparency";
 import SEOHead from "@/components/SEOHead";
 import { vehicleSchema, breadcrumbSchema } from "@/lib/seoSchemas";
@@ -133,9 +135,12 @@ const CarDetail = () => {
           setSellerContact(contact);
         }
 
-        // Fetch related vehicles via optimized API query
-        const related = await vehicleQueries.getRelated(dbCar, 4);
-        setRelatedCars(related);
+        // Fetch similar listings: same brand + body type, price ±30%, max 3
+        const similar = await vehicleQueries.getSimilar(
+          { id: dbCar.id, brand: dbCar.brand, bodyType: data?.body_type, price: dbCar.price },
+          3,
+        );
+        setRelatedCars(similar);
       }
       
       setIsLoading(false);
@@ -405,8 +410,7 @@ const CarDetail = () => {
     }
   };
 
-  const description = dbListing?.description || `Superbe ${car.brand} ${car.model} de ${car.year} en excellent état.
-Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fonctionne au ${car.fuelType.toLowerCase()}. Avec seulement ${formatMileage(car.mileage)} au compteur, cette voiture est idéale pour les trajets quotidiens comme pour les longs voyages. Norme ${car.euroNorm}, compatible avec toutes les zones à faibles émissions de Belgique.`;
+  const description = dbListing?.description ?? "";
 
   const sellerName = sellerContact?.contact_name || "Vendeur vérifié";
 
