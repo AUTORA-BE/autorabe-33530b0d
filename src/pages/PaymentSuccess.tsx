@@ -4,13 +4,14 @@
  */
 
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle2, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Header, Footer } from '@/shared/components';
 import { useSubscription } from '@/features/subscription';
 import SEOHead from '@/components/SEOHead';
+import { trackEvent, EVENTS } from '@/lib/analytics';
 
 const REDIRECT_DELAY = 8;
 
