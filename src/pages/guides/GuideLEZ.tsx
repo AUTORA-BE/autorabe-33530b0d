@@ -3,7 +3,7 @@
  */
 import { Header, Footer, BackButton } from "@/shared/components";
 import SEOHead from "@/components/SEOHead";
-import { articleSchema, breadcrumbSchema } from "@/lib/seoSchemas";
+import { articleSchema, breadcrumbSchema, faqSchema } from "@/lib/seoSchemas";
 import { Shield, MapPin, AlertTriangle, CheckCircle, Car, Info } from "lucide-react";
 
 const GuideLEZ = () => {
@@ -21,9 +21,17 @@ const GuideLEZ = () => {
             datePublished: "2026-04-15",
           }),
           breadcrumbSchema([
-            { name: "AutoRa", url: "https://autora.be" },
+            { name: "Accueil", url: "https://autora.be" },
             { name: "Guides", url: "https://autora.be/guide/lez-belgique" },
             { name: "LEZ Belgique", url: "https://autora.be/guide/lez-belgique" },
+          ]),
+          faqSchema([
+            { question: "Quelles villes belges ont une LEZ en 2026 ?", answer: "Trois villes appliquent une zone de basses émissions : Bruxelles (toute la Région), Anvers (centre-ville) et Gand (intra-ring)." },
+            { question: "Mon diesel Euro 5 peut-il rouler à Bruxelles ?", answer: "Non. Depuis le 1er janvier 2025, les diesels Euro 5 sont interdits dans la LEZ de Bruxelles. Seuls Euro 6 et plus récents sont autorisés." },
+            { question: "Quelle est l'amende pour une infraction LEZ ?", answer: "350 € pour la première infraction à Bruxelles, jusqu'à 1 000 € en cas de récidive. Anvers et Gand : 150 € à 350 €." },
+            { question: "Mon véhicule essence est-il concerné par la LEZ ?", answer: "Les essences Euro 1 et inférieurs sont interdits à Bruxelles. À partir d'Euro 2, ils sont autorisés. La plupart des véhicules essence post-1997 passent." },
+            { question: "Comment vérifier si mon véhicule est conforme LEZ ?", answer: "Sur AutoRa, chaque annonce affiche un badge LEZ par ville. Vous pouvez aussi vérifier sur lez.brussels avec votre plaque d'immatriculation." },
+            { question: "Les voitures électriques et hybrides sont-elles autorisées ?", answer: "Oui, les véhicules 100% électriques et hybrides rechargeables (PHEV) sont autorisés dans toutes les LEZ belges sans restriction." },
           ]),
         ]}
       />
