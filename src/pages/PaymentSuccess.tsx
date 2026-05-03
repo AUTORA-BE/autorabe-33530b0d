@@ -19,10 +19,16 @@ export default function PaymentSuccess() {
   const navigate = useNavigate();
   const [countdown, setCountdown] = useState(REDIRECT_DELAY);
   const { checkSubscription } = useSubscription();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     checkSubscription();
-  }, [checkSubscription]);
+    const type = searchParams.get('type') || 'subscription';
+    const tier = searchParams.get('tier') || undefined;
+    if (type === 'boost') {
+      trackEvent(EVENTS.BOOST_PURCHASED, { tier });
+    }
+  }, [checkSubscription, searchParams]);
 
   useEffect(() => {
     const timer = setInterval(() => {
