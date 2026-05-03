@@ -13,10 +13,14 @@
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(self), geolocation=(), payment=()" />
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://js.stripe.com https://plausible.io; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co https://images.unsplash.com https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.stripe.com https://plausible.io; frame-src 'self' https://js.stripe.com; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests;" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes" />
     <meta name="fragment" content="!" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="color-scheme" content="dark light" />
     <link rel="apple-touch-icon" href="/pwa-icon-192.png">
-    <meta name="theme-color" content="#0a0a14">
+    <meta name="theme-color" content="#0a0a14" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="AutoRa">
@@ -31,21 +35,31 @@
     <link rel="dns-prefetch" href="https://images.unsplash.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" as="style" onload="this.rel='stylesheet'" />
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" /></noscript>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" as="style" onload="this.rel='stylesheet'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" /></noscript>
+    <link rel="preload" href="/pwa-icon-192.png" as="image" fetchpriority="high" />
     <style>
-      /* Critical inline CSS to speed up FCP */
+      /* Critical inline CSS to speed up FCP and avoid CLS across devices */
       *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-      body{font-family:system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
-      #root{min-height:100vh}
+      html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+      body{font-family:Inter,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;background:#0a0a14;color:#fff;overflow-x:hidden}
+      @media (prefers-color-scheme: light){body{background:#fafafa;color:#0a0a14}}
+      #root{min-height:100vh;min-height:100dvh}
+      img{max-width:100%;height:auto;display:block}
+      /* Avoid layout shift while React mounts */
+      #root:empty::before{content:"";display:block;height:100vh;height:100dvh}
     </style>
     
     <title>AutoRa | Voiture occasion Belgique — Car-Pass &amp; LEZ vérifiés</title>
     <meta name="description" content="AutoRa, marketplace automobile belge. Achetez ou vendez votre voiture d&#39;occasion avec Car-Pass vérifié et compatibilité LEZ garantie. Calculateur TCO et fiscalité Wallonie · Bruxelles · Flandre.">
     <meta name="author" content="AutoRa" />
-    <meta name="keywords" content="voiture occasion belgique, car-pass, LEZ Bruxelles, LEZ Anvers, LEZ Gand, taxe mise circulation, TMC, fiscalité auto belgique, calculateur TCO" />
+    <meta name="keywords" content="voiture occasion belgique, tweedehands auto belgië, gebrauchtwagen belgien, used cars belgium, car-pass, LEZ Bruxelles, LEZ Anvers, LEZ Gand, taxe mise circulation, TMC, fiscalité auto belgique, calculateur TCO, autoscout, 2ememain auto" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow" />
     <meta name="geo.region" content="BE" />
     <meta name="geo.placename" content="Belgium" />
+    <meta name="geo.position" content="50.8503;4.3517" />
+    <meta name="ICBM" content="50.8503, 4.3517" />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="AutoRa" />
