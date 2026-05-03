@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
+import { trackEvent, EVENTS } from "@/lib/analytics";
 
 const FAVORITES_KEY = "autora_favorites";
 
 export const useFavorites = () => {
   const [favorites, setFavorites] = useState<string[]>([]);
 
-  // Load favorites from localStorage on mount
   useEffect(() => {
     const stored = localStorage.getItem(FAVORITES_KEY);
     if (stored) {
@@ -17,17 +17,18 @@ export const useFavorites = () => {
     }
   }, []);
 
-  // Save to localStorage whenever favorites change
   useEffect(() => {
     localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
   }, [favorites]);
 
   const toggleFavorite = (carId: string) => {
-    setFavorites((prev) =>
-      prev.includes(carId)
-        ? prev.filter((id) => id !== carId)
-        : [...prev, carId]
-    );
+    setFavorites((prev) => {
+      const isAdding = !prev.includes(carId);
+      if (isAdding) {
+        trackEvent(EVENTS.FAVORITE_ADDED, { car_id: carId });
+      }
+      return isAdding ? [...prev, carId] : prev.filter((id) => id !== carId);
+    });
   };
 
   const isFavorite = (carId: string) => favorites.includes(carId);

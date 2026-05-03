@@ -13,6 +13,7 @@ import { useTypingIndicator } from '@/features/messaging';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
 import type { Message, MessageRow, ConversationDetails } from '@/features/messaging/types/messaging.types';
+import { trackEvent, EVENTS } from '@/lib/analytics';
 
 interface ReplyToMessage {
   id: string;
@@ -206,6 +207,12 @@ export function ChatWindow({
       toast.error(t('messages.sendError') || "Erreur lors de l'envoi");
       return;
     }
+
+    trackEvent(EVENTS.MESSAGE_SENT, {
+      conversation_id: conversationId,
+      has_image: !!imageUrl,
+      is_reply: !!replyToId,
+    });
 
     // Update conversation last_message_at
     await supabase

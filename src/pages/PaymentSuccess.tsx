@@ -4,13 +4,14 @@
  */
 
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle2, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Header, Footer } from '@/shared/components';
 import { useSubscription } from '@/features/subscription';
 import SEOHead from '@/components/SEOHead';
+import { trackEvent, EVENTS } from '@/lib/analytics';
 
 const REDIRECT_DELAY = 8;
 
@@ -18,10 +19,16 @@ export default function PaymentSuccess() {
   const navigate = useNavigate();
   const [countdown, setCountdown] = useState(REDIRECT_DELAY);
   const { checkSubscription } = useSubscription();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     checkSubscription();
-  }, [checkSubscription]);
+    const type = searchParams.get('type') || 'subscription';
+    const tier = searchParams.get('tier') || undefined;
+    if (type === 'boost') {
+      trackEvent(EVENTS.BOOST_PURCHASED, { tier });
+    }
+  }, [checkSubscription, searchParams]);
 
   useEffect(() => {
     const timer = setInterval(() => {

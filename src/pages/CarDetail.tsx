@@ -24,6 +24,7 @@ import { useFavorites } from "@/features/favorites";
 import { useToast } from "@/hooks/use-toast";
 import { useTrackView } from "@/hooks/useTrackView";
 import { supabase } from "@/integrations/supabase/client";
+import { trackEvent, EVENTS } from "@/lib/analytics";
 import TransparencyChecklist from "@/components/TransparencyChecklist";
 import LezWidget from "@/components/LezWidget";
 import SellerBadge from "@/components/SellerBadge";
@@ -111,7 +112,12 @@ const CarDetail = () => {
       const dbCar = await getCarByIdFromDb(id);
       if (dbCar) {
         setCar(dbCar);
-        
+        trackEvent(EVENTS.VEHICLE_VIEWED, {
+          car_id: dbCar.id,
+          brand: dbCar.brand,
+          model: dbCar.model,
+          price: dbCar.price,
+        });
         const { data } = await supabase
           .from('car_listings_public')
           .select('*')
@@ -281,6 +287,11 @@ const CarDetail = () => {
   };
 
   const handleContact = async (method: string) => {
+    trackEvent(EVENTS.CONTACT_SELLER_CLICKED, {
+      method,
+      car_id: car?.id ?? null,
+      brand: car?.brand ?? null,
+    });
     if (sellerContact) {
       if (method === "Email" && sellerContact.contact_email) {
         window.location.href = `mailto:${sellerContact.contact_email}?subject=Intéressé par votre ${car.brand} ${car.model}`;

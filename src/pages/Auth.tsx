@@ -14,6 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth, usePasswordValidation } from "@/features/auth";
 import { z } from "zod";
+import { trackEvent, EVENTS } from "@/lib/analytics";
 
 /**
  * Authentication page component
@@ -143,12 +144,14 @@ const Auth = () => {
           });
         }
       } else {
+        trackEvent(EVENTS.LOGIN_COMPLETED, { method: "email" });
         toast({
           title: t("auth.welcome"),
           description: t("auth.loginSuccess"),
         });
       }
     } else {
+      trackEvent(EVENTS.SIGNUP_STARTED, { method: "email", account_type: accountType });
       const result = await signUp({
         email,
         password,
@@ -173,6 +176,7 @@ const Auth = () => {
           });
         }
       } else {
+        trackEvent(EVENTS.SIGNUP_COMPLETED, { method: "email", account_type: accountType });
         setVerificationEmailSent(true);
         toast({
           title: t("auth.verificationEmailSent"),
@@ -224,6 +228,7 @@ const Auth = () => {
    * Handle Google OAuth
    */
   const handleGoogleAuth = async () => {
+    trackEvent(isLogin ? EVENTS.LOGIN_COMPLETED : EVENTS.SIGNUP_STARTED, { method: "google" });
     const result = await signInWithGoogle();
 
     if (!result.success && result.error) {
@@ -239,6 +244,7 @@ const Auth = () => {
    * Handle Apple OAuth
    */
   const handleAppleAuth = async () => {
+    trackEvent(isLogin ? EVENTS.LOGIN_COMPLETED : EVENTS.SIGNUP_STARTED, { method: "apple" });
     const result = await signInWithApple();
 
     if (!result.success && result.error) {

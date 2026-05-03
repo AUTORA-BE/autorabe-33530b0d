@@ -22,6 +22,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useListingLimit } from '@/features/subscription';
 import { useAutoSaveDraft } from '@/features/listings/hooks/useAutoSaveDraft';
 import { useLocalizedHref } from '@/lib/useLocalizedHref';
+import { trackEvent, EVENTS } from '@/lib/analytics';
 
 const ConfettiCanvas = lazy(() => import('@/components/ConfettiCanvas'));
 
@@ -122,6 +123,11 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
   const { t } = useLanguage();
   const queryClient = useQueryClient();
   const [currentStep, setCurrentStep] = useState(1);
+  // Fire listing_started once when wizard mounts in create mode
+  useEffect(() => {
+    if (!editId) trackEvent(EVENTS.LISTING_STARTED);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [photos, setPhotos] = useState<File[]>([]);
   const [photosPreviews, setPhotosPreviews] = useState<string[]>([]);
   const [existingPhotos, setExistingPhotos] = useState<string[]>([]);
@@ -633,6 +639,13 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
         queryClient.invalidateQueries({ queryKey: vehicleKeys.all });
         // Supprimer le brouillon après publication
         await clearDraft();
+        trackEvent(EVENTS.LISTING_PUBLISHED, {
+          brand: data.brand,
+          model: data.model,
+          price: data.price,
+          fuel_type: data.fuel_type,
+          seller_type: data.seller_type || 'particulier',
+        });
         // Confetti !
         setShowConfetti(true);
         toast.success('🎉 Félicitations ! En tant que membre fondateur, votre annonce est publiée gratuitement (Offre de lancement limitée).', { duration: 5000 });
