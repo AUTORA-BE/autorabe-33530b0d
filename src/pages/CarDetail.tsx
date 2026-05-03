@@ -701,7 +701,9 @@ const CarDetail = () => {
                             transmission={car.transmission} euroNorm={car.euroNorm} location={car.location}
                             power={dbListing?.power} color={dbListing?.color}
                             bodyType={dbListing?.body_type} doors={dbListing?.doors}
+                            firstRegistration={dbListing?.first_registration}
                           />
+                          <EquipmentSection features={dbListing?.features} />
                         </div>
                       )}
                       {mobileTab === 1 && (
@@ -737,10 +739,7 @@ const CarDetail = () => {
                       )}
                       {mobileTab === 3 && (
                         <div className="space-y-4">
-                          <div className="glass-card p-5">
-                            <h2 className="font-display text-lg font-bold text-foreground mb-3">Description</h2>
-                            <p className="text-muted-foreground leading-relaxed whitespace-pre-line text-sm">{description}</p>
-                          </div>
+                          <RichDescription description={description} compact />
                           <ReviewsSection carListingId={id!} sellerId={sellerContact?.user_id} />
                         </div>
                       )}
@@ -756,7 +755,10 @@ const CarDetail = () => {
                     </Suspense>
                   </ScrollReveal>
                   <ScrollReveal delay={0.05}>
-                    <BentoSpecs year={car.year} mileage={car.mileage} fuelType={car.fuelType} transmission={car.transmission} euroNorm={car.euroNorm} location={car.location} power={dbListing?.power} color={dbListing?.color} bodyType={dbListing?.body_type} doors={dbListing?.doors} />
+                    <BentoSpecs year={car.year} mileage={car.mileage} fuelType={car.fuelType} transmission={car.transmission} euroNorm={car.euroNorm} location={car.location} power={dbListing?.power} color={dbListing?.color} bodyType={dbListing?.body_type} doors={dbListing?.doors} firstRegistration={dbListing?.first_registration} />
+                  </ScrollReveal>
+                  <ScrollReveal delay={0.05}>
+                    <EquipmentSection features={dbListing?.features} />
                   </ScrollReveal>
                   <ScrollReveal delay={0.05}>
                     <TransparencyChecklist carPassVerified={dbListing?.car_pass_verified} ctValid={dbListing?.ct_valid} maintenanceBookComplete={dbListing?.maintenance_book_complete} />
@@ -775,10 +777,7 @@ const CarDetail = () => {
                     </div>
                   </ScrollReveal>
                   <ScrollReveal delay={0.05}>
-                    <div className="glass-card p-6 sm:p-7">
-                      <h2 className="font-display text-xl font-bold text-foreground mb-4">Description</h2>
-                      <p className="text-muted-foreground leading-relaxed whitespace-pre-line text-sm sm:text-base">{description}</p>
-                    </div>
+                    <RichDescription description={description} />
                   </ScrollReveal>
                   <ScrollReveal delay={0.05}>
                     <ReviewsSection carListingId={id!} sellerId={sellerContact?.user_id} />
