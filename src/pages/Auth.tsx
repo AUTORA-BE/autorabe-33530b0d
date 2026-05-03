@@ -149,7 +149,14 @@ const Auth = () => {
         });
       }
     } else {
-      const result = await signUp({ email, password, fullName, phone: phone.replace(/[\s\-\(\)]/g, ""), garageName: garageName || undefined, postalCode: postalCode || undefined });
+      const result = await signUp({
+        email,
+        password,
+        fullName,
+        phone: phone.replace(/[\s\-\(\)]/g, ""),
+        garageName: accountType === "pro" ? (garageName || undefined) : undefined,
+        postalCode: accountType === "pro" ? (postalCode || undefined) : undefined,
+      });
       
       if (!result.success && result.error) {
         if (result.error.type === 'user_exists') {
