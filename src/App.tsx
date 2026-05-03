@@ -103,10 +103,10 @@ function AppPages() {
       <Route path="/car/:id" element={<PageTransition><CarDetail /></PageTransition>} />
       <Route path="/voiture/:id" element={<PageTransition><CarDetail /></PageTransition>} />
       <Route path="/auto/:id" element={<PageTransition><CarDetail /></PageTransition>} />
-      <Route path="/favorites" element={<PageTransition><Favorites /></PageTransition>} />
-      <Route path="/favoris" element={<PageTransition><Favorites /></PageTransition>} />
-      <Route path="/favorieten" element={<PageTransition><Favorites /></PageTransition>} />
-      <Route path="/favoriten" element={<PageTransition><Favorites /></PageTransition>} />
+      <Route path="/favorites" element={<Navigate to="/garage" replace />} />
+      <Route path="/favoris" element={<Navigate to="/garage" replace />} />
+      <Route path="/favorieten" element={<Navigate to="/mijn-garage" replace />} />
+      <Route path="/favoriten" element={<Navigate to="/meine-garage" replace />} />
       <Route path="/garage" element={<PageTransition><MyGarage /></PageTransition>} />
       <Route path="/mijn-garage" element={<PageTransition><MyGarage /></PageTransition>} />
       <Route path="/my-garage" element={<PageTransition><MyGarage /></PageTransition>} />
