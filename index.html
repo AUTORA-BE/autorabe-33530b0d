@@ -7,7 +7,7 @@
     <meta http-equiv="X-Frame-Options" content="SAMEORIGIN" />
     <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(self), geolocation=(), payment=()" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co https://images.unsplash.com https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.stripe.com; frame-src 'self' https://js.stripe.com; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://plausible.io; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co https://images.unsplash.com https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.stripe.com https://plausible.io; frame-src 'self' https://js.stripe.com; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="fragment" content="!" />
     <link rel="apple-touch-icon" href="/pwa-icon-192.png">
@@ -61,6 +61,12 @@
   <meta name="twitter:title" content="AutoRa | Voiture occasion Belgique — Car-Pass &amp; LEZ vérifiés">
   <meta property="og:description" content="AutoRa, marketplace automobile belge. Achetez ou vendez votre voiture d&#39;occasion avec Car-Pass vérifié et compatibilité LEZ garantie. Calculateur TCO gratuit.">
   <meta name="twitter:description" content="AutoRa, marketplace automobile belge. Achetez ou vendez votre voiture d&#39;occasion avec Car-Pass vérifié et compatibilité LEZ garantie. Calculateur TCO gratuit.">
+
+  <!-- Plausible Analytics — manual SPA pageviews + custom events + outbound link tracking -->
+  <script defer data-domain="autora.be" src="https://plausible.io/js/script.manual.tagged-events.outbound-links.js"></script>
+  <script>
+    window.plausible = window.plausible || function () { (window.plausible.q = window.plausible.q || []).push(arguments) };
+  </script>
 </head>
 
   <body>
