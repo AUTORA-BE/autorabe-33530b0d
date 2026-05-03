@@ -21,7 +21,7 @@ import { DebugOverlay } from "@/components/DebugOverlay";
 
 const FuelPriceStrip = lazy(() => import("@/components/FuelPriceStrip"));
 
-const EarlyAccessBanner = lazy(() => import("@/components/EarlyAccessBanner"));
+
 const TrustBar = lazy(() => import("@/components/TrustBar"));
 const BrandCarousel = lazy(() => import("@/features/search/components/BrandCarousel"));
 const FilterPanel = lazy(() => import("@/features/search/components/FilterPanel"));
