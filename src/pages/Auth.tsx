@@ -14,6 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth, usePasswordValidation } from "@/features/auth";
 import { z } from "zod";
+import { trackEvent, EVENTS } from "@/lib/analytics";
 
 /**
  * Authentication page component
