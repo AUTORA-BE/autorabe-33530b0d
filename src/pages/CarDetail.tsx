@@ -40,6 +40,7 @@ import ScrollReveal from "@/components/ScrollReveal";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useLocalizedVehicleHref } from "@/lib/useLocalizedHref";
+import { useLanguage } from "@/contexts/LanguageContext";
 const VehicleTcoSection = lazy(() => import("@/features/tco/components/VehicleTcoSection"));
 const BelgianTaxCalculator = lazy(() => import("@/components/BelgianTaxCalculator"));
 const TaxChatModal = lazy(() => import("@/components/TaxChatModal"));
@@ -59,6 +60,7 @@ const CarDetail = () => {
     : undefined;
   const navigate = useNavigate();
   const vehicleHref = useLocalizedVehicleHref();
+  const { t } = useLanguage();
   const { toast } = useToast();
   const { isFavorite, toggleFavorite } = useFavorites();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -917,7 +919,7 @@ const CarDetail = () => {
                 <div className="flex items-center gap-3 mb-6 sm:mb-8">
                   <div className="w-1 h-8 rounded-full bg-primary" />
                   <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground">
-                    Véhicules similaires
+                    {t("carDetail.similar.title")}
                   </h2>
                 </div>
                 {/* Horizontal scroll on mobile, grid on desktop */}
