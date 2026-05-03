@@ -13,6 +13,7 @@ import PageTransition from "@/components/PageTransition";
 import ScrollToTop from "@/components/ScrollToTop";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { SpeedInsights } from "@vercel/speed-insights/react";
+import { useAnalytics } from "@/hooks/useAnalytics";
 const CompareBar = lazy(() => import("@/features/compare/components/CompareBar"));
 const BottomNav = lazy(() => import("@/shared/components/BottomNav"));
 const CarChatbot = lazy(() => import("@/components/CarChatbot"));
@@ -81,9 +82,10 @@ const queryClient = new QueryClient({
   },
 });
 
-/** Scroll to top on route change + trigger idle prefetching once */
+/** Scroll to top on route change + trigger idle prefetching + global analytics */
 function ScrollToTopOnNavigate() {
   const { pathname } = useLocation();
+  useAnalytics();
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
