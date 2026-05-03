@@ -9,7 +9,8 @@ import {
   Zap, 
   Palette,
   Car,
-  DoorOpen
+  DoorOpen,
+  CalendarCheck
 } from "lucide-react";
 
 interface BentoSpecsProps {
@@ -23,6 +24,8 @@ interface BentoSpecsProps {
   color?: string | null;
   bodyType?: string | null;
   doors?: number | null;
+  /** First registration date (ISO YYYY-MM-DD). Displayed as MM/YYYY when present. */
+  firstRegistration?: string | null;
 }
 
 const BentoSpecs = ({
@@ -36,7 +39,14 @@ const BentoSpecs = ({
   color,
   bodyType,
   doors,
+  firstRegistration,
 }: BentoSpecsProps) => {
+  const formatFirstReg = (iso: string): string | null => {
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return null;
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    return `${mm}/${d.getFullYear()}`;
+  };
   const formatMileage = (km: number) =>
     new Intl.NumberFormat("fr-BE").format(km) + " km";
 
@@ -62,6 +72,10 @@ const BentoSpecs = ({
   if (color) details.push({ icon: Palette, label: "Couleur", value: color });
   if (bodyType) details.push({ icon: Car, label: "Carrosserie", value: bodyType });
   if (doors) details.push({ icon: DoorOpen, label: "Portes", value: `${doors}` });
+  if (firstRegistration) {
+    const formatted = formatFirstReg(firstRegistration);
+    if (formatted) details.push({ icon: CalendarCheck, label: "1ère immat.", value: formatted });
+  }
 
   return (
     <div className="glass-card p-3 sm:p-6">
