@@ -13,6 +13,7 @@ import { VoiceSearchButton } from "@/components/VoiceSearchButton";
 import { parseVoiceTranscript } from "@/lib/voiceEntityDetection";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
+import { trackEvent, EVENTS } from "@/lib/analytics";
 
 /* ─── localStorage search history ─── */
 const HISTORY_KEY = "autora_search_history";
@@ -379,6 +380,12 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
 
   const handleSearch = () => {
     addSearchHistory({ brand: selectedBrand, model, budget: selectedBudget });
+    trackEvent(EVENTS.SEARCH_PERFORMED, {
+      brand: selectedBrand || undefined,
+      model: model || undefined,
+      max_price: selectedBudget || undefined,
+      source: "hero",
+    });
     onSearch(selectedBrand, model, selectedBudget || 1000000);
   };
 
@@ -387,6 +394,12 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
     setModel(mdl);
     setSelectedBudget(maxPrice >= 1000000 ? 0 : maxPrice);
     addSearchHistory({ brand, model: mdl, budget: maxPrice >= 1000000 ? 0 : maxPrice });
+    trackEvent(EVENTS.SEARCH_PERFORMED, {
+      brand: brand || undefined,
+      model: mdl || undefined,
+      max_price: maxPrice,
+      source: "mobile",
+    });
     onSearch(brand, mdl, maxPrice);
     setTimeout(() => {
       document.getElementById("results-section")?.scrollIntoView({ behavior: "smooth" });
