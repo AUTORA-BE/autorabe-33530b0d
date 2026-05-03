@@ -3,7 +3,7 @@
  */
 import { Header, Footer, BackButton } from "@/shared/components";
 import SEOHead from "@/components/SEOHead";
-import { articleSchema, breadcrumbSchema } from "@/lib/seoSchemas";
+import { articleSchema, breadcrumbSchema, faqSchema, howToSchema } from "@/lib/seoSchemas";
 import { FileCheck, Shield, AlertTriangle, CheckCircle, HelpCircle, Scale } from "lucide-react";
 
 const GuideCarPass = () => {
@@ -21,10 +21,28 @@ const GuideCarPass = () => {
             datePublished: "2026-04-15",
           }),
           breadcrumbSchema([
-            { name: "AutoRa", url: "https://autora.be" },
+            { name: "Accueil", url: "https://autora.be" },
             { name: "Guides", url: "https://autora.be/guide/car-pass" },
             { name: "Car-Pass", url: "https://autora.be/guide/car-pass" },
           ]),
+          faqSchema([
+            { question: "Le Car-Pass est-il obligatoire en Belgique ?", answer: "Oui, le Car-Pass est obligatoire pour toute vente de véhicule d'occasion entre particuliers ou par un professionnel en Belgique depuis 2006. Sans Car-Pass, la vente est juridiquement nulle." },
+            { question: "Combien coûte un Car-Pass ?", answer: "Le Car-Pass coûte environ 15 € TTC. Il est commandé en ligne sur car-pass.be par le vendeur et délivré sous 24-48h." },
+            { question: "Qui doit fournir le Car-Pass ?", answer: "Le vendeur (particulier ou professionnel) doit obligatoirement fournir le Car-Pass à l'acheteur avant la signature de la vente." },
+            { question: "Que faire si le kilométrage du Car-Pass diffère du compteur ?", answer: "Refusez l'achat ou exigez une explication écrite. Une différence non justifiée est un signe de fraude au compteur, sanctionnée pénalement en Belgique." },
+            { question: "Le Car-Pass est-il valable combien de temps ?", answer: "Le Car-Pass doit dater de moins de 2 mois au moment de la vente. Au-delà, il faut en commander un nouveau." },
+          ]),
+          howToSchema({
+            name: "Comment obtenir un Car-Pass en Belgique",
+            description: "Procédure complète pour commander et utiliser un Car-Pass lors de la vente d'un véhicule",
+            steps: [
+              { name: "Rendez-vous sur car-pass.be", text: "Le site officiel de l'ASBL Car-Pass. Connectez-vous avec itsme ou eID." },
+              { name: "Renseignez la plaque et le numéro de châssis", text: "Le système vérifie l'historique kilométrique enregistré au contrôle technique et chez les garages agréés." },
+              { name: "Payez environ 15 €", text: "Paiement sécurisé en ligne par Bancontact ou carte bancaire." },
+              { name: "Téléchargez le PDF officiel", text: "Document délivré sous 24-48h. Imprimez-le et remettez-le à l'acheteur lors de la vente." },
+              { name: "Signez la vente avec le Car-Pass", text: "Annexez le Car-Pass au contrat de vente. Sans ce document, la transaction est juridiquement contestable." },
+            ],
+          }),
         ]}
       />
       <Header />
