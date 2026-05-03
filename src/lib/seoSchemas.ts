@@ -216,3 +216,29 @@ export function articleSchema(article: {
     publisher: organizationSchema,
   };
 }
+
+/** WebApplication schema for free tools (TCO calculator, tax simulator…) */
+export function webApplicationSchema(app: {
+  name: string;
+  description: string;
+  url: string;
+  category?: string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: app.name,
+    description: app.description,
+    url: app.url,
+    applicationCategory: app.category || "FinanceApplication",
+    operatingSystem: "Any",
+    browserRequirements: "Requires JavaScript",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "EUR",
+    },
+    inLanguage: ["fr-BE", "nl-BE", "de-BE", "en"],
+    publisher: organizationSchema,
+  };
+}
