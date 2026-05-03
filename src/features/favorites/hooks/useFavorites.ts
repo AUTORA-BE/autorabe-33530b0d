@@ -7,6 +7,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchFavorites, addFavorite, removeFavorite } from "../api/favoriteQueries";
+import { trackEvent, EVENTS } from "@/lib/analytics";
 import type { User } from "@supabase/supabase-js";
 
 const FAVORITES_QUERY_KEY = ["favorites"] as const;
@@ -75,11 +76,15 @@ export const useFavorites = () => {
 
   const toggleFavorite = useCallback(
     (carId: string) => {
-      // Prevent double-click while mutation is in flight
       if (isToggling) return;
 
+      const wasFavorite = isFavorite(carId);
+      if (!wasFavorite) {
+        trackEvent(EVENTS.FAVORITE_ADDED, { car_id: carId });
+      }
+
       if (user) {
-        if (isFavorite(carId)) {
+        if (wasFavorite) {
           removeMutation.mutate(carId);
         } else {
           addMutation.mutate(carId);
