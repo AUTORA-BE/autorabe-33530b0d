@@ -21,7 +21,7 @@ import { DebugOverlay } from "@/components/DebugOverlay";
 
 const FuelPriceStrip = lazy(() => import("@/components/FuelPriceStrip"));
 
-const EarlyAccessBanner = lazy(() => import("@/components/EarlyAccessBanner"));
+
 const TrustBar = lazy(() => import("@/components/TrustBar"));
 const BrandCarousel = lazy(() => import("@/features/search/components/BrandCarousel"));
 const FilterPanel = lazy(() => import("@/features/search/components/FilterPanel"));
@@ -227,12 +227,12 @@ const Index = () => {
           </ScrollReveal>
         </Suspense>
 
-        {/* Testimonials */}
-        <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 500px" }}>
+        {/* Testimonials — masqués tant qu'on n'a pas ≥ 5 vrais avis */}
+        {/* <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 500px" }}>
           <Suspense fallback={<TestimonialsSkeleton />}>
             <TestimonialsSection />
           </Suspense>
-        </div>
+        </div> */}
 
         {/* Sell Car CTA */}
         <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 300px" }}>

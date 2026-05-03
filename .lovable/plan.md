@@ -1,85 +1,44 @@
 
-# Audit AutoRA & plan « Grand Lancement »
+# Finalisation « Grand Lancement » — ce qui reste
 
-Objectif : livrer un site propre, cohérent et premium, prêt pour un lancement public proche. On supprime toute trace de "Beta", on corrige les incohérences, on refond la home et la page connexion, on pose les fondations de différenciation.
+J'ai déjà livré dans le batch précédent :
+- ✅ Suppression du badge "Beta" du Header
+- ✅ Suppression du `EarlyAccessBanner` de la home
+- ✅ Redirect `/favorites*` → `/garage` (multi-langue)
+- ✅ Refonte hero gauche page Auth (logo AutoRA cohérent, suppression stats fictives 15K+/98%, 3 pills Car-Pass/LEZ/Pro&Particuliers)
+- ✅ Logo mobile Auth unifié (suppression icône Car parasite)
+- ✅ Redirection post-login intelligente (admin → `/admin`, sinon → `/`)
+- ✅ Nouvelles clés i18n FR/NL/DE/EN : `auth.heroTitle`, `auth.heroSubtitle`, `auth.proAndPrivate`
 
----
+## Reste à faire (ce batch)
 
-## 1. Incohérences détectées (à corriger)
+### Auth — toggle Acheteur/Pro
+- Ajouter un toggle 2 boutons en haut du formulaire signup (`Particulier` / `Vendeur Pro`) avec état actif Emerald.
+- Conditionner l'affichage des champs **Nom du garage + Code postal** à `accountType === "pro"` uniquement.
+- Remplacer les placeholders FR codés en dur par `t("auth.garageNamePlaceholder")` / `t("auth.postalCodePlaceholder")`.
+- Mini-rassureur sous le bouton submit : « Connexion sécurisée • Aucune donnée revendue • RGPD ».
+- Nouvelles clés i18n × 4 langues : `auth.rolePrivate`, `auth.rolePro`, `auth.garageNamePlaceholder`, `auth.postalCodePlaceholder`, `auth.secureNotice`.
 
-### Page Auth (`/auth`)
-- Doublon textuel : `hero.title1` (« Trouvez votre prochaine ») suivi de `auth.findIdealCar` (« Trouvez votre voiture idéale ») = « Trouvez votre… Trouvez votre… ».
-- Stats codées en dur (« 15K+ véhicules », « 98% Car-Pass ») non vérifiables → on les remplace par des compteurs DB live.
-- Champs Garage / Code postal toujours visibles, même pour un acheteur particulier → confusion.
-- Placeholders « Nom du garage (facultatif) » et « Code postal » non traduits NL/DE/EN.
-- Logo `Car` + « AutoRa » → incohérent avec le branding officiel `AutoRA` (RA en Emerald) du Header.
-- Redirection post-login → `/dashboard` (page vendeur) pour TOUS les users, y compris acheteurs.
+### Home — retirer témoignages fictifs
+- Commenter / retirer le bloc `<TestimonialsSection />` dans `src/pages/Index.tsx` tant qu'on n'a pas ≥ 5 vrais avis (réactivable en 1 ligne).
+- Supprimer le skeleton `TestimonialsSkeleton` du tableau d'imports.
 
-### Page d'accueil (`/`)
-- Deux jeux de titres hero (`hero.title1/2` vs `hero.titleLine1/2`) = dette i18n.
-- Mention « Beta » dans Header + `EarlyAccessBanner` → à retirer entièrement.
-- Témoignages fictifs en boucle (vu en session replay) → érodent la confiance.
-- Pas de USP visible above-the-fold.
-- Aucun KPI réel (annonces, vendeurs, villes).
+### Hero — nettoyage clés legacy
+- Supprimer les clés inutilisées `hero.title1` / `hero.title2` / `auth.findIdealCar` / `auth.heroDesc` des 4 fichiers i18n (la home utilise `hero.titleLine1/2`).
 
-### Reste du site
-- `/favorites` (legacy) coexiste avec `/garage` → redirect manquant.
-- `useIsAdmin` et `useAdminAuth` font la même requête `has_role` → fusion possible.
-- Console : warning OAuth `Unknown message type: authorization_response` (non bloquant).
-- `EarlyAccessBanner` à retirer (cohérence "lancement").
+### Technique — fusion hooks admin
+- Remplacer `src/hooks/useIsAdmin.ts` par un ré-export de `src/features/admin/hooks/useAdminAuth.ts` (single source of truth, plus de double requête `has_role`).
+- Vérifier que les 4 consommateurs (`Settings`, `CarDetail`, `Header`, `useFeatureAccess`) restent fonctionnels.
 
----
+### Files touchés (estimation)
+- `src/pages/Auth.tsx` (toggle + placeholders i18n + notice)
+- `src/pages/Index.tsx` (retrait Testimonials)
+- `src/i18n/{fr,nl,de,en}.json` (5 clés ajoutées, 4 supprimées)
+- `src/hooks/useIsAdmin.ts` (ré-export)
 
-## 2. Plan d'exécution (3 batchs livrés d'un coup)
+### Pas dans ce batch (volontairement)
+- Section USP "Made for Belgium" cards bento → batch 2 dédié pour ne pas exploser le scope.
+- Trust strip avec compteurs DB live → nécessite nouveau RPC `get_marketplace_stats`, batch 2.
+- Estimation IA, score Bon Match, PDF Confiance → batch 4 R&D.
 
-### Batch 1 — Page Auth refresh (cohérence + confiance)
-- Refonte hero gauche : titre unique « La marketplace auto belge — vérifiée, transparente, locale ». Suppression des stats fictives → 3 pills `Car-Pass vérifié` · `LEZ Belgique` · `Pro & Particuliers`.
-- Logo Auth = identique Header (Auto blanc + RA Emerald, sans icône Car).
-- Toggle « Acheteur / Vendeur Pro » au-dessus du formulaire signup → champs Garage/Code postal affichés **uniquement si Pro**.
-- Sous-titre signup honnête et orienté lancement : « Rejoignez la nouvelle référence belge de la voiture d'occasion. »
-- Redirection post-login intelligente : admin → `/admin`, sinon → `/`.
-- Mini-rassureur sous le bouton : « Connexion sécurisée • Aucune donnée revendue • RGPD ».
-- i18n FR/NL/DE/EN : nouvelles clés (`auth.heroTitle`, `auth.heroSubtitle`, `auth.rolePrivate`, `auth.rolePro`, `auth.garageNamePlaceholder`, `auth.postalCodePlaceholder`, `auth.secureNotice`).
-
-### Batch 2 — Home « grand lancement »
-- Hero unifié, une seule paire de clés `hero.headline` / `hero.subheadline`.
-- **Suppression du badge Beta** dans Header + retrait `EarlyAccessBanner`.
-- Trust strip réelle alimentée par compteurs DB (annonces approuvées, vendeurs, villes couvertes) via un petit RPC public `get_marketplace_stats`.
-- Section USP « Pourquoi AutoRA » : 4 cards bento Lucide stroke 1.5 — Car-Pass automatique, LEZ par région, TCO 5 ans, Match IA belge.
-- Témoignages fictifs masqués tant qu'on n'a pas ≥ 5 avis réels — remplacés par carrousel « Dernières annonces vérifiées ».
-- Section différenciation **Made for Belgium** : carte LEZ, simulateur taxe régionale 1 clic, badges Car-Pass.
-- Double CTA above-the-fold : Acheteur (Recherche) / Vendeur (Estimer ma voiture en 60 s).
-
-### Batch 3 — Clean technique
-- Redirect `/favorites*` → `/garage`.
-- Fusion `useIsAdmin` + `useAdminAuth` → un seul `useAdminRole`.
-- Suppression des clés i18n legacy `hero.title1/2`.
-- Suppression `EarlyAccessBanner` du bundle.
-- Filtrage du warning OAuth résiduel.
-- Vérification `<link rel="canonical">` dynamique sur toutes les routes.
-
----
-
-## 3. Idées différenciantes (votre projet « millionaire »)
-
-| Feature | Pourquoi ça différencie |
-|---|---|
-| **Estimation IA gratuite en 60 s** (Gemini Flash + comps DB) | Aucun concurrent BE ne l'offre gratuitement, hook viral |
-| **Car-Pass automatique** (upload PDF → OCR Gemini → score transparence) | Élimine la friction n°1 du marché belge |
-| **Score « Bon Match »** acheteur/voiture (TCO + LEZ + budget + usage) | Recommandation, pas simple filtre |
-| **Garage virtuel** (favoris + historique + alertes + estimations) | Rétention même sans achat |
-| **Carte LEZ live** + alerte « bannie d'ici X années » | Personne ne le fait clairement en BE |
-| **Badge "AutoRA Verified Pro"** payant (KYC garage) | Revenu récurrent + premium trust |
-| **Mode "Vendre en 48 h"** (photo studio + boost + visites filtrées) | Service à forte marge |
-| **Programme parrainage acheteur** (50 € si transaction via AutoRA) | Acquisition virale |
-| **Rapport PDF "Confiance AutoRA"** par mail à chaque visite | Différenciation perçue + SEO partagé |
-
-→ Ces features feront l'objet d'un Batch 4 dédié (R&D produit) une fois le refresh validé.
-
----
-
-## 4. Décisions à confirmer
-- ✅ Aucune mention "Beta" — confirmé.
-- OK pour **masquer les témoignages fictifs** tant qu'on n'a pas ≥ 5 vrais avis ?
-- OK pour **toggle Acheteur/Pro** au signup (au lieu d'afficher tous les champs) ?
-- Je propose d'enchaîner directement Batch 1 + 2 + 3 pour un rendu visible immédiat. Confirmez et je lance.
+Confirme et j'enchaîne tout en une passe.

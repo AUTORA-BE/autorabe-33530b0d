@@ -149,7 +149,14 @@ const Auth = () => {
         });
       }
     } else {
-      const result = await signUp({ email, password, fullName, phone: phone.replace(/[\s\-\(\)]/g, ""), garageName: garageName || undefined, postalCode: postalCode || undefined });
+      const result = await signUp({
+        email,
+        password,
+        fullName,
+        phone: phone.replace(/[\s\-\(\)]/g, ""),
+        garageName: accountType === "pro" ? (garageName || undefined) : undefined,
+        postalCode: accountType === "pro" ? (postalCode || undefined) : undefined,
+      });
       
       if (!result.success && result.error) {
         if (result.error.type === 'user_exists') {
@@ -526,6 +533,33 @@ const Auth = () => {
                 {/* Email Form */}
                 <form onSubmit={handleEmailAuth} className="space-y-4">
                   {!isLogin && (
+                    <div className="grid grid-cols-2 gap-2 p-1 rounded-xl bg-secondary/40 border border-border/50">
+                      <button
+                        type="button"
+                        onClick={() => setAccountType("private")}
+                        className={`h-10 rounded-lg text-sm font-medium transition-colors ${
+                          accountType === "private"
+                            ? "bg-primary text-primary-foreground shadow-sm"
+                            : "text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        {t("auth.rolePrivate")}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setAccountType("pro")}
+                        className={`h-10 rounded-lg text-sm font-medium transition-colors ${
+                          accountType === "pro"
+                            ? "bg-primary text-primary-foreground shadow-sm"
+                            : "text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        {t("auth.rolePro")}
+                      </button>
+                    </div>
+                  )}
+
+                  {!isLogin && (
                     <div>
                       <div className="relative">
                         <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
@@ -543,7 +577,6 @@ const Auth = () => {
                     </div>
                   )}
 
-                  {/* Phone field for signup */}
                   {!isLogin && (
                     <div>
                       <div className="relative">
@@ -562,14 +595,13 @@ const Auth = () => {
                     </div>
                   )}
 
-                  {/* Garage name + Postal code for signup */}
-                  {!isLogin && (
+                  {!isLogin && accountType === "pro" && (
                     <div className="grid grid-cols-2 gap-3">
                       <div className="relative">
                         <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                         <Input
                           type="text"
-                          placeholder="Nom du garage (facultatif)"
+                          placeholder={t("auth.garageNamePlaceholder")}
                           value={garageName}
                           onChange={(e) => setGarageName(e.target.value)}
                           className="pl-10 h-12 bg-secondary/50 border-border/50 focus:border-primary focus:ring-primary/30 transition-colors"
@@ -579,7 +611,7 @@ const Auth = () => {
                         <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                         <Input
                           type="text"
-                          placeholder="Code postal"
+                          placeholder={t("auth.postalCodePlaceholder")}
                           value={postalCode}
                           onChange={(e) => setPostalCode(e.target.value)}
                           maxLength={4}
@@ -675,6 +707,10 @@ const Auth = () => {
                   >
                     {authLoading ? t("auth.loading") : isLogin ? t("auth.submit") : t("auth.submitSignup")}
                   </Button>
+
+                  <p className="text-center text-xs text-muted-foreground mt-2">
+                    {t("auth.secureNotice")}
+                  </p>
                 </form>
 
                 {/* Toggle Login/Signup */}
