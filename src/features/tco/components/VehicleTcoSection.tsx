@@ -90,7 +90,7 @@ function computeTco(
   year: number,
   inputs: TcoInputs,
   fiscalCv: number,
-  annualBrackets?: ReturnType<typeof useTaxBrackets>['data'] extends { annual: infer A } ? A : never,
+  annualBrackets?: AnnualTaxBracket[],
 ): TcoResult {
   const age = new Date().getFullYear() - year;
   const totalKm = inputs.kmPerYear * 5;
