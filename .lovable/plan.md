@@ -1,70 +1,66 @@
-# Finalisation Grand Launch — 3 vagues d'un coup
+# Plan : Plausible Analytics + Funnel Tracking
 
-## Vague 1 — Page d'accueil premium
+## Choix retenus
+- **Provider** : Plausible (script léger, sans cookies, RGPD-friendly).
+- **Events** : Funnel étendu recommandé (par défaut, faute de réponse).
+- **Identification** : `user_id` (UUID) + `role` (private/pro/admin) + `email` envoyés en custom props.
 
-**HeroSearch (`src/features/search/components/HeroSearch.tsx`)**
-- Headline serif Playfair plus impactante: "L'automobile belge, sans compromis."
-- Sub: "Car-Pass vérifié · LEZ conforme · Vendeurs locaux"
-- 3 trust chips sous la barre de recherche (Car-Pass / LEZ / Pro & Particuliers), Lucide stroke 1.5
-- Traduction des nouvelles clés dans fr/nl/de/en
+⚠️ **Note RGPD** : Plausible déconseille d'envoyer des PII (email). Je l'inclus comme tu l'as demandé, mais je recommande de le retirer après lancement et de garder uniquement `user_id` + `role` (ce qui suffit pour le funnel). Le cookie banner existant couvre déjà l'opt-in.
 
-**Compteurs réels (`src/components/LiveStatsStrip.tsx`)**
-- Garder les requêtes existantes (déjà branchées sur `car_listings_public`, `profiles_public`, `car_views`)
-- Remplacer la valeur fake "99% Uptime" par un compteur réel: nombre de villes uniques couvertes (RPC ou query distinct sur `car_listings.location`)
-- Ajouter une nouvelle RPC `get_active_cities_count()` (SECURITY DEFINER, public)
+## Étapes
 
-**WhyAutoRa (`src/components/WhyAutoRa.tsx`)**
-- Vérifier que les 4 cartes mettent en avant: Car-Pass obligatoire · Bon Match IA · TMC/LEZ intégré · Conseiller fiscal IA
-- Ajuster textes i18n si besoin
+### 1. Setup script Plausible
+- Ajouter le script `plausible.io/js/script.tagged-events.outbound-links.js` dans `index.html` avec `data-domain="autora.be"` et `data-api="/api/event"` désactivé (pas de proxy).
+- Exposer `window.plausible()` pour les events custom (queue avant chargement).
 
-## Vague 2 — Cohérence & nettoyage
+### 2. Helper `src/lib/analytics.ts`
+- `trackEvent(name, props?)` — wrapper sûr (no-op en preview/dev/iframe).
+- `identifyUser({ user_id, email, role })` — stocke en mémoire et injecte automatiquement dans chaque event.
+- `resetUser()` au logout.
+- Garde-fou : pas de tracking sur `id-preview--*.lovable.app` ni dans iframe.
 
-**Refactor admin hook**
-- `src/hooks/useIsAdmin.ts` → simple re-export de `useAdminAuth` (ou wrapper autour de la même RPC) pour supprimer la duplication
+### 3. Hook `useAnalytics`
+- Auto page_view sur changement de route (React Router).
+- Identifie l'utilisateur dès `useAuth` retourne une session (avec lookup du `role` via `user_roles`).
 
-**i18n purge**
-- Supprimer clés mortes dans fr/nl/de/en: `hero.title1`, `hero.title2`, `auth.findIdealCar`, anciennes `auth.heroDesc` non référencées
-- Vérifier via `rg` avant suppression
+### 4. Events instrumentés (funnel étendu)
+| Event | Trigger | Fichier |
+|---|---|---|
+| `page_view` | route change | hook global |
+| `signup_started` | ouverture form Signup | `Auth.tsx` |
+| `signup_completed` | succès `signUp` | `useAuth` |
+| `login_completed` | succès `signIn` | `useAuth` |
+| `search_performed` | submit HeroSearch / FilterPanel apply | `HeroSearch`, `FilterPanel` |
+| `vehicle_viewed` | mount `VehicleDetail` | `VehicleDetail.tsx` |
+| `favorite_added` | toggle favori (true) | `useFavorites` |
+| `contact_seller_clicked` | clic bouton contact | `VehicleDetail` |
+| `message_sent` | envoi message chat | `ChatRoom` |
+| `listing_started` | step 1 Sell wizard | `SellWizard` |
+| `listing_published` | submit final OK | `SellWizard` |
+| `boost_purchased` | retour Stripe success boost | `BoostSuccess` |
 
-**Routes obsolètes (`src/App.tsx`)**
-- Confirmer que `/favorites` redirige vers `/garage`
-- Supprimer route `/early-access` si présente
-- Supprimer import du composant `EarlyAccessBanner` partout
+### 5. Dashboard config
+Tu devras créer le site `autora.be` sur plausible.io, puis configurer dans Plausible :
+- **Goals** custom pour chaque event ci-dessus.
+- **Funnel** : `signup_started` → `signup_completed` → `listing_started` → `listing_published`.
+- **Custom props** activés : `user_id`, `role`, `email`, et props spécifiques par event (ex: `brand`, `price_range`).
 
-## Vague 3 — Confiance & conversion
-
-**Badge "Vendeur vérifié"**
-- Sur `VehicleCard`, afficher badge Emerald-600 quand `seller_type = 'professionnel'` et profil complété (garage_name + phone)
-
-**Section FAQ home (lazy)**
-- Ajouter `<HomeFAQ />` dans `Index.tsx` après `PricingCTA`
-- 4 questions clés réutilisées de `/faq` (Car-Pass, LEZ, frais cachés, vendeur Pro vs Particulier)
-- Schema.org `FAQPage` injecté via `SEOHead`
-
-**Skeleton sync**
-- Vérifier `HomeSkeleton.tsx` → ajouter skeleton FAQ pour éviter CLS
-
-**Meta OG**
-- `Index.tsx` SEOHead: ajouter image OG `https://autora.be/og-home.jpg`, description orientée Belgique (déjà en place, vérifier)
-
-## Détails techniques
-
-- Nouvelle RPC SQL:
-  ```sql
-  CREATE OR REPLACE FUNCTION public.get_active_cities_count()
-  RETURNS integer LANGUAGE sql STABLE SECURITY DEFINER SET search_path=public AS $$
-    SELECT COUNT(DISTINCT location)::integer
-    FROM car_listings WHERE status='approved' AND location IS NOT NULL
-  $$;
-  GRANT EXECUTE ON FUNCTION public.get_active_cities_count() TO anon, authenticated;
-  ```
-- Composant nouveau: `src/components/HomeFAQ.tsx`
-- Pas de breaking change DB; pas de nouvelle table
+## Fichiers touchés
+- `index.html` (script Plausible)
+- `src/lib/analytics.ts` (nouveau)
+- `src/hooks/useAnalytics.ts` (nouveau)
+- `src/App.tsx` (mount du hook)
+- `src/features/auth/hooks/useAuth.ts` (identify + signup events)
+- `src/pages/Auth.tsx` (signup_started)
+- `src/components/HeroSearch.tsx`, `FilterPanel.tsx` (search)
+- `src/pages/VehicleDetail.tsx` (view + contact)
+- `src/hooks/useFavorites.ts` (favorite)
+- `src/features/messaging/.../ChatRoom.tsx` (message_sent)
+- `src/features/listings/sell/SellWizard.tsx` (listing flow)
+- `src/pages/BoostSuccess.tsx` (boost)
 
 ## Hors scope
+- Pas de proxy server-side (les ad-blockers bloqueront ~30% des events — acceptable pour MVP).
+- Si tu veux contourner les ad-blockers plus tard, on ajoutera un edge function proxy `/api/event`.
 
-- Vrais témoignages (attendre signups)
-- Programme parrainage
-- App mobile native
-
-J'enchaîne dès validation.
+Validation puis j'enchaîne.
