@@ -267,9 +267,13 @@ const ReviewsSection = ({ carListingId, sellerId }: ReviewsSectionProps) => {
                   </Button>
                 )}
               </div>
-              {review.comment && (
+              {review.comment ? (
                 <p className="text-foreground mt-3 pl-13">
                   {review.comment}
+                </p>
+              ) : (
+                <p className="text-muted-foreground/70 italic text-sm mt-3 pl-13">
+                  {t("reviews.noComment")}
                 </p>
               )}
             </div>

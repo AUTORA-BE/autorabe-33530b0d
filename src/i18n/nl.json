@@ -589,5 +589,13 @@
   "garage.history.itemsLabel": "bekeken voertuigen",
   "garage.history.clear": "Geschiedenis wissen",
   "garage.history.clearConfirmTitle": "Geschiedenis wissen?",
-  "garage.history.clearConfirm": "Deze actie verwijdert al uw weergaven definitief. Uw favorieten blijven ongewijzigd."
+  "garage.history.clearConfirm": "Deze actie verwijdert al uw weergaven definitief. Uw favorieten blijven ongewijzigd.",
+  "carDetail.description.title": "Beschrijving",
+  "carDetail.description.shortBadge": "Korte beschrijving",
+  "carDetail.description.empty": "Geen beschrijving door de verkoper.",
+  "carDetail.description.readMore": "Lees meer",
+  "carDetail.description.readLess": "Inklappen",
+  "carDetail.equipment.title": "Uitrusting & Opties",
+  "carDetail.similar.title": "Vergelijkbare advertenties",
+  "reviews.noComment": "Geen opmerking achtergelaten"
 }

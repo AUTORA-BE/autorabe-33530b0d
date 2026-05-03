@@ -382,6 +382,38 @@ export const vehicleQueries = {
   },
 
   /**
+   * Fetches similar listings for a given vehicle.
+   * Strict matching: same brand, same body type, price within ±30%, excluding self.
+   * Returns most recent results first.
+   *
+   * @param params - Reference vehicle parameters
+   * @param limit - Maximum number of similar vehicles (default 3)
+   */
+  async getSimilar(
+    params: { id: string; brand: string; bodyType: string | null | undefined; price: number },
+    limit: number = 3,
+  ): Promise<Vehicle[]> {
+    if (!params.brand || !params.bodyType || !params.price) return [];
+
+    const minPrice = Math.round(params.price * 0.7);
+    const maxPrice = Math.round(params.price * 1.3);
+
+    const { data, error } = await supabase
+      .from('car_listings_public')
+      .select(LIST_COLUMNS)
+      .neq('id', params.id)
+      .ilike('brand', params.brand)
+      .ilike('body_type', params.bodyType)
+      .gte('price', minPrice)
+      .lte('price', maxPrice)
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    if (error) throw new Error(error.message);
+    return (data || []).map((row) => mapListingToVehicle(row as unknown as VehicleListingRow));
+  },
+
+  /**
    * Fetches related vehicles based on brand or fuel type
    * @param vehicle - Reference vehicle to find related items for
    * @param limit - Maximum number of related vehicles

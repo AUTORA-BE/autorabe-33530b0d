@@ -30,6 +30,8 @@ import LezWidget from "@/components/LezWidget";
 import SellerBadge from "@/components/SellerBadge";
 import ReviewsSection from "@/components/ReviewsSection";
 import BentoSpecs from "@/components/BentoSpecs";
+import EquipmentSection from "@/components/EquipmentSection";
+import RichDescription from "@/components/RichDescription";
 import _AutoraTransparency from "@/components/AutoraTransparency";
 import SEOHead from "@/components/SEOHead";
 import { vehicleSchema, breadcrumbSchema } from "@/lib/seoSchemas";
@@ -38,6 +40,7 @@ import ScrollReveal from "@/components/ScrollReveal";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useLocalizedVehicleHref } from "@/lib/useLocalizedHref";
+import { useLanguage } from "@/contexts/LanguageContext";
 const VehicleTcoSection = lazy(() => import("@/features/tco/components/VehicleTcoSection"));
 const BelgianTaxCalculator = lazy(() => import("@/components/BelgianTaxCalculator"));
 const TaxChatModal = lazy(() => import("@/components/TaxChatModal"));
@@ -57,6 +60,7 @@ const CarDetail = () => {
     : undefined;
   const navigate = useNavigate();
   const vehicleHref = useLocalizedVehicleHref();
+  const { t } = useLanguage();
   const { toast } = useToast();
   const { isFavorite, toggleFavorite } = useFavorites();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -133,9 +137,12 @@ const CarDetail = () => {
           setSellerContact(contact);
         }
 
-        // Fetch related vehicles via optimized API query
-        const related = await vehicleQueries.getRelated(dbCar, 4);
-        setRelatedCars(related);
+        // Fetch similar listings: same brand + body type, price ±30%, max 3
+        const similar = await vehicleQueries.getSimilar(
+          { id: dbCar.id, brand: dbCar.brand, bodyType: data?.body_type, price: dbCar.price },
+          3,
+        );
+        setRelatedCars(similar);
       }
       
       setIsLoading(false);
@@ -405,8 +412,7 @@ const CarDetail = () => {
     }
   };
 
-  const description = dbListing?.description || `Superbe ${car.brand} ${car.model} de ${car.year} en excellent état.
-Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fonctionne au ${car.fuelType.toLowerCase()}. Avec seulement ${formatMileage(car.mileage)} au compteur, cette voiture est idéale pour les trajets quotidiens comme pour les longs voyages. Norme ${car.euroNorm}, compatible avec toutes les zones à faibles émissions de Belgique.`;
+  const description = dbListing?.description ?? "";
 
   const sellerName = sellerContact?.contact_name || "Vendeur vérifié";
 
@@ -697,7 +703,9 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                             transmission={car.transmission} euroNorm={car.euroNorm} location={car.location}
                             power={dbListing?.power} color={dbListing?.color}
                             bodyType={dbListing?.body_type} doors={dbListing?.doors}
+                            firstRegistration={dbListing?.first_registration}
                           />
+                          <EquipmentSection features={dbListing?.features} />
                         </div>
                       )}
                       {mobileTab === 1 && (
@@ -733,10 +741,7 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                       )}
                       {mobileTab === 3 && (
                         <div className="space-y-4">
-                          <div className="glass-card p-5">
-                            <h2 className="font-display text-lg font-bold text-foreground mb-3">Description</h2>
-                            <p className="text-muted-foreground leading-relaxed whitespace-pre-line text-sm">{description}</p>
-                          </div>
+                          <RichDescription description={description} compact />
                           <ReviewsSection carListingId={id!} sellerId={sellerContact?.user_id} />
                         </div>
                       )}
@@ -752,7 +757,10 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                     </Suspense>
                   </ScrollReveal>
                   <ScrollReveal delay={0.05}>
-                    <BentoSpecs year={car.year} mileage={car.mileage} fuelType={car.fuelType} transmission={car.transmission} euroNorm={car.euroNorm} location={car.location} power={dbListing?.power} color={dbListing?.color} bodyType={dbListing?.body_type} doors={dbListing?.doors} />
+                    <BentoSpecs year={car.year} mileage={car.mileage} fuelType={car.fuelType} transmission={car.transmission} euroNorm={car.euroNorm} location={car.location} power={dbListing?.power} color={dbListing?.color} bodyType={dbListing?.body_type} doors={dbListing?.doors} firstRegistration={dbListing?.first_registration} />
+                  </ScrollReveal>
+                  <ScrollReveal delay={0.05}>
+                    <EquipmentSection features={dbListing?.features} />
                   </ScrollReveal>
                   <ScrollReveal delay={0.05}>
                     <TransparencyChecklist carPassVerified={dbListing?.car_pass_verified} ctValid={dbListing?.ct_valid} maintenanceBookComplete={dbListing?.maintenance_book_complete} />
@@ -771,10 +779,7 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                     </div>
                   </ScrollReveal>
                   <ScrollReveal delay={0.05}>
-                    <div className="glass-card p-6 sm:p-7">
-                      <h2 className="font-display text-xl font-bold text-foreground mb-4">Description</h2>
-                      <p className="text-muted-foreground leading-relaxed whitespace-pre-line text-sm sm:text-base">{description}</p>
-                    </div>
+                    <RichDescription description={description} />
                   </ScrollReveal>
                   <ScrollReveal delay={0.05}>
                     <ReviewsSection carListingId={id!} sellerId={sellerContact?.user_id} />
@@ -914,7 +919,7 @@ Ce véhicule dispose d'une transmission ${car.transmission.toLowerCase()} et fon
                 <div className="flex items-center gap-3 mb-6 sm:mb-8">
                   <div className="w-1 h-8 rounded-full bg-primary" />
                   <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground">
-                    Véhicules similaires
+                    {t("carDetail.similar.title")}
                   </h2>
                 </div>
                 {/* Horizontal scroll on mobile, grid on desktop */}

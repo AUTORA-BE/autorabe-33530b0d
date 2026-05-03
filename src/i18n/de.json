@@ -589,5 +589,13 @@
   "garage.history.itemsLabel": "angesehene Fahrzeuge",
   "garage.history.clear": "Verlauf löschen",
   "garage.history.clearConfirmTitle": "Verlauf löschen?",
-  "garage.history.clearConfirm": "Diese Aktion entfernt alle Ihre Aufrufe dauerhaft. Ihre Favoriten bleiben unberührt."
+  "garage.history.clearConfirm": "Diese Aktion entfernt alle Ihre Aufrufe dauerhaft. Ihre Favoriten bleiben unberührt.",
+  "carDetail.description.title": "Beschreibung",
+  "carDetail.description.shortBadge": "Kurze Beschreibung",
+  "carDetail.description.empty": "Keine Beschreibung vom Verkäufer.",
+  "carDetail.description.readMore": "Mehr lesen",
+  "carDetail.description.readLess": "Einklappen",
+  "carDetail.equipment.title": "Ausstattung & Optionen",
+  "carDetail.similar.title": "Ähnliche Anzeigen",
+  "reviews.noComment": "Kein Kommentar hinterlassen"
 }
