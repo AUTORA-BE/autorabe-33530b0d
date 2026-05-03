@@ -589,5 +589,13 @@
   "garage.history.itemsLabel": "véhicules consultés",
   "garage.history.clear": "Effacer l'historique",
   "garage.history.clearConfirmTitle": "Effacer l'historique ?",
-  "garage.history.clearConfirm": "Cette action supprime définitivement toutes vos vues. Vos favoris ne sont pas affectés."
+  "garage.history.clearConfirm": "Cette action supprime définitivement toutes vos vues. Vos favoris ne sont pas affectés.",
+  "carDetail.description.title": "Description",
+  "carDetail.description.shortBadge": "Description courte",
+  "carDetail.description.empty": "Aucune description fournie par le vendeur.",
+  "carDetail.description.readMore": "Lire la suite",
+  "carDetail.description.readLess": "Réduire",
+  "carDetail.equipment.title": "Équipements & Options",
+  "carDetail.similar.title": "Annonces similaires",
+  "reviews.noComment": "Aucun commentaire laissé"
 }
