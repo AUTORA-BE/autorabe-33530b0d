@@ -296,32 +296,34 @@ const Auth = () => {
         <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-primary/5 rounded-full blur-3xl animate-float" style={{ animationDelay: "-3s" }} />
         
         <div className="relative z-10 flex flex-col justify-center p-12">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
-              <Car className="w-7 h-7 text-primary" />
-            </div>
-            <span className="font-display text-2xl font-bold text-foreground">AutoRa</span>
+          <div className="mb-10">
+            <span className="font-display text-3xl font-bold tracking-wider">
+              <span className="text-foreground">Auto</span>
+              <span className="text-primary">RA</span>
+            </span>
           </div>
-          
+
           <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-6 tracking-tight leading-tight">
-            {t("hero.title1")}
-            <br />
-            <span className="gradient-text">{t("auth.findIdealCar")}</span>
+            {t("auth.heroTitle")}
           </h1>
-          
-          <p className="text-lg text-muted-foreground max-w-md">
-            {t("auth.heroDesc")}
+
+          <p className="text-lg text-muted-foreground max-w-md mb-10">
+            {t("auth.heroSubtitle")}
           </p>
-          
-          <div className="flex gap-8 mt-12">
-            <div className="text-center">
-              <div className="font-display text-3xl font-bold text-foreground">15K+</div>
-              <div className="text-muted-foreground text-sm">{t("hero.vehicles")}</div>
-            </div>
-            <div className="text-center">
-              <div className="font-display text-3xl font-bold text-foreground">98%</div>
-              <div className="text-muted-foreground text-sm">Car-Pass</div>
-            </div>
+
+          <div className="flex flex-wrap gap-3 max-w-md">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary text-sm">
+              <BadgeCheck className="w-4 h-4" strokeWidth={1.5} />
+              Car-Pass
+            </span>
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary text-sm">
+              <MapPinned className="w-4 h-4" strokeWidth={1.5} />
+              LEZ Belgique
+            </span>
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary text-sm">
+              <ShieldCheck className="w-4 h-4" strokeWidth={1.5} />
+              {t("auth.proAndPrivate")}
+            </span>
           </div>
         </div>
       </div>
@@ -330,11 +332,11 @@ const Auth = () => {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 md:p-12">
         <div className="w-full max-w-md">
           {/* Mobile Logo */}
-          <div className="flex lg:hidden items-center gap-3 mb-8 justify-center">
-            <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
-              <Car className="w-6 h-6 text-primary" />
-            </div>
-            <span className="font-display text-xl font-bold text-foreground">AutoRa</span>
+          <div className="flex lg:hidden items-center justify-center mb-8">
+            <span className="font-display text-2xl font-bold tracking-wider">
+              <span className="text-foreground">Auto</span>
+              <span className="text-primary">RA</span>
+            </span>
           </div>
 
           {/* Back Button */}
