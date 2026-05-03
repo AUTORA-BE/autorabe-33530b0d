@@ -728,7 +728,7 @@ const CarDetail = () => {
                           </Suspense>
                           <Suspense fallback={<div className="h-20 rounded-2xl skeleton-shimmer" />}>
                             <BelgianTaxCalculator
-                              powerKw={dbListing?.power} fuelType={car.fuelType}
+                              powerKw={dbListing?.power ? Math.round(dbListing.power * 0.7355) : null} fuelType={car.fuelType}
                               euroNorm={car.euroNorm} year={car.year}
                             />
                           </Suspense>
@@ -770,7 +770,7 @@ const CarDetail = () => {
                   </ScrollReveal>
                   <ScrollReveal delay={0.05}>
                     <Suspense fallback={<div className="h-20 rounded-2xl skeleton-shimmer" />}>
-                      <BelgianTaxCalculator powerKw={dbListing?.power} fuelType={car.fuelType} euroNorm={car.euroNorm} year={car.year} />
+                      <BelgianTaxCalculator powerKw={dbListing?.power ? Math.round(dbListing.power * 0.7355) : null} fuelType={car.fuelType} euroNorm={car.euroNorm} year={car.year} />
                     </Suspense>
                     <div className="mt-3 flex justify-center">
                       <Suspense fallback={null}>

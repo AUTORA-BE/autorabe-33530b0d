@@ -77,7 +77,7 @@ const TcoResults = ({ breakdown, alternatives, onReset, onBack }: Props) => {
           <div className="mt-6 flex flex-wrap justify-center gap-2 text-xs text-muted-foreground">
             <span className="bg-secondary/60 px-3 py-1 rounded-full">✓ Certifié</span>
             <span className="bg-secondary/60 px-3 py-1 rounded-full">✓ Sources SPF</span>
-            <span className="bg-secondary/60 px-3 py-1 rounded-full">✓ MAJ 14/02/2026</span>
+            <span className="bg-secondary/60 px-3 py-1 rounded-full">✓ MAJ {new Date().toLocaleDateString('fr-BE', { month: '2-digit', year: 'numeric' })}</span>
           </div>
         </motion.div>
 

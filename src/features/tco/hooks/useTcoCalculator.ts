@@ -7,6 +7,10 @@ import {
   COEFF_BONUS, MULT_COUVERTURE, TAXE_REGION, DEPRECIATION, PRIMES,
   DEFAULT_CONSUMPTION,
 } from '../constants/belgianData';
+import {
+  useTaxBrackets, computeAnnualTaxFromDb,
+  type AnnualTaxBracket,
+} from '@/features/admin/hooks/useTaxBrackets';
 
 const DEFAULT_FORM: TcoFormData = {
   fuelType: 'essence95',
@@ -30,8 +34,8 @@ function getFuelCategory(ft: FuelType): string {
   return 'diesel';
 }
 
-function calculateBreakdown(data: TcoFormData): TcoBreakdown {
-  const ageVehicule = 2026 - data.year;
+function calculateBreakdown(data: TcoFormData, annualBrackets?: AnnualTaxBracket[]): TcoBreakdown {
+  const ageVehicule = new Date().getFullYear() - data.year;
   const totalKm = data.kmPerYear * 5;
   const fuelCat = getFuelCategory(data.fuelType);
   const facteur = FACTEUR_REALITE[data.usage][fuelCat] || 1.1;
@@ -42,7 +46,7 @@ function calculateBreakdown(data: TcoFormData): TcoBreakdown {
   let litresTotal: number;
 
   if (data.fuelType === 'electric') {
-    const coutKwh = 0.8 * 0.35 + 0.2 * 0.55;
+    const coutKwh = 0.8 * PRIX_CARBURANT.electric_domicile + 0.2 * PRIX_CARBURANT.electric_public;
     litresTotal = (totalKm / 100) * consoReelle;
     prixLitre = coutKwh;
     carburant = litresTotal * coutKwh;
@@ -58,7 +62,9 @@ function calculateBreakdown(data: TcoFormData): TcoBreakdown {
   const assuranceAnnuelle = ASSURANCE_RC[data.ageProfile] * COEFF_BONUS[data.bonusMalus] * MULT_COUVERTURE[data.insuranceType];
   const totalAssurance = assuranceAnnuelle * 5;
 
-  const taxeAnnuelle = TAXE_REGION[data.region][data.fuelType] || 200;
+  const taxeAnnuelle = annualBrackets && data.fiscalPower > 0
+    ? computeAnnualTaxFromDb(annualBrackets, data.region, data.fiscalPower, data.fuelType)
+    : (TAXE_REGION[data.region][data.fuelType] || 200);
   const totalTaxe = taxeAnnuelle * 5;
 
   const deprec = data.price * (DEPRECIATION[data.fuelType] || 0.45);
@@ -95,11 +101,16 @@ export function useTcoCalculator() {
   const [formData, setFormData] = useState<TcoFormData>(DEFAULT_FORM);
   const [showResults, setShowResults] = useState(false);
 
+  const { data: taxData } = useTaxBrackets();
+
   const updateField = <K extends keyof TcoFormData>(key: K, value: TcoFormData[K]) => {
     setFormData(prev => ({ ...prev, [key]: value }));
   };
 
-  const breakdown = useMemo(() => calculateBreakdown(formData), [formData]);
+  const breakdown = useMemo(
+    () => calculateBreakdown(formData, taxData?.annual),
+    [formData, taxData]
+  );
 
   const alternatives = useMemo((): TcoAlternative[] => {
     const alts: TcoAlternative[] = [];
@@ -111,7 +122,7 @@ export function useTcoCalculator() {
     for (const alt of altTypes) {
       if (alt.fuel === formData.fuelType) continue;
       const altData = { ...formData, fuelType: alt.fuel, consumption: DEFAULT_CONSUMPTION[alt.fuel] };
-      const altBreakdown = calculateBreakdown(altData);
+      const altBreakdown = calculateBreakdown(altData, taxData?.annual);
       alts.push({
         fuelType: alt.fuel,
         label: alt.label,
@@ -120,7 +131,7 @@ export function useTcoCalculator() {
       });
     }
     return alts.slice(0, 2);
-  }, [formData, breakdown]);
+  }, [formData, breakdown, taxData]);
 
   const nextStep = () => {
     if (step < 5) setStep(s => s + 1);
