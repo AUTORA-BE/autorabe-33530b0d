@@ -1,9 +1,12 @@
 /**
  * Plausible Analytics wrapper
+ * - RGPD: no-op until user has accepted analytics cookies (see consent.ts)
  * - No-op in dev / preview / iframe to keep dashboards clean
  * - Custom props (user_id, role, email) auto-injected on every event
  * - Safe before plausible script has loaded (uses window queue)
  */
+
+import { analyticsAllowed } from "./consent";
 
 type Props = Record<string, string | number | boolean | undefined | null>;
 
@@ -17,9 +20,10 @@ let userCtx: UserContext = {};
 
 const isBrowser = typeof window !== "undefined";
 
-/** Skip tracking in preview / iframe / dev to avoid polluting production stats. */
+/** Skip tracking in preview / iframe / dev / no-consent. */
 function isTrackingDisabled(): boolean {
   if (!isBrowser) return true;
+  if (!analyticsAllowed()) return true; // RGPD gate
   try {
     if (window.self !== window.top) return true; // iframe (lovable preview)
   } catch {

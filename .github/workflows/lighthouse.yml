@@ -1,0 +1,35 @@
+name: Lighthouse CI
+
+on:
+  # Runs on every PR and weekly to catch regressions on prod
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 4 * * 1" # every Monday 04:00 UTC
+  workflow_dispatch:
+
+jobs:
+  lighthouse:
+    name: Lighthouse mobile audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli@0.14.x
+
+      - name: Run Lighthouse against published URL
+        run: lhci autorun --config=./.lighthouserc.cjs
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+        # Don't fail the whole PR when published URL is briefly unreachable —
+        # treat lighthouse as advisory until we wire a stable preview URL.
+        continue-on-error: true

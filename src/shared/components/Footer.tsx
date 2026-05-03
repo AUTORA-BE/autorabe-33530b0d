@@ -50,6 +50,7 @@ const Footer = () => {
       links: [
         { to: "/terms", label: language === "nl" ? "Algemene voorwaarden" : language === "en" ? "Terms of Service" : language === "de" ? "AGB" : "Conditions générales" },
         { to: "/privacy", label: language === "nl" ? "Privacybeleid" : language === "en" ? "Privacy Policy" : language === "de" ? "Datenschutz" : "Confidentialité" },
+        { to: "/cookies", label: language === "nl" ? "Cookiebeleid" : language === "en" ? "Cookie Policy" : language === "de" ? "Cookie-Richtlinie" : "Politique cookies" },
         { to: "/legal", label: language === "nl" ? "Wettelijke vermeldingen" : language === "en" ? "Legal Notice" : language === "de" ? "Impressum" : "Mentions légales" },
       ],
     },
