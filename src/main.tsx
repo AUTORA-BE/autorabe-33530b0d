@@ -4,7 +4,12 @@ import { ThemeProvider } from "next-themes";
 import { HelmetProvider } from "react-helmet-async";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import App from "./App.tsx";
+import { loadPlausibleIfAllowed } from "@/lib/consent";
 import "./index.css";
+
+// Boot analytics only if user already accepted in a previous session
+loadPlausibleIfAllowed();
+
 
 // PWA guard: unregister service workers in iframe/preview contexts
 const isInIframe = (() => {
