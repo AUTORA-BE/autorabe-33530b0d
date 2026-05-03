@@ -27,7 +27,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 // Lazy-loaded pages for reduced initial bundle size
 const Auth = lazy(() => import("./pages/Auth"));
 const CarDetail = lazy(() => import("./pages/CarDetail"));
-const Favorites = lazy(() => import("./pages/Favorites"));
+// Legacy /favorites routes redirect to /garage
 const MyGarage = lazy(() => import("./pages/MyGarage"));
 const SellCar = lazy(() => import("./pages/SellCar"));
 const Messages = lazy(() => import("./pages/Messages"));

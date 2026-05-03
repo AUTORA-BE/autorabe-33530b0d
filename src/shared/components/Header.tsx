@@ -98,14 +98,6 @@ const Header = () => {
             }`}>
               <span className="text-foreground">Auto</span><span className="text-primary">RA</span>
             </span>
-            <span
-              className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-semibold tracking-[0.12em] uppercase border border-primary/30 bg-primary/10 text-primary backdrop-blur-sm"
-              aria-label="Private Beta"
-              title="AutoRA est en Private Beta — merci pour vos retours"
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-              Beta
-            </span>
           </Link>
 
           {/* Desktop Navigation (lg+ to give tablets the hamburger drawer) */}
