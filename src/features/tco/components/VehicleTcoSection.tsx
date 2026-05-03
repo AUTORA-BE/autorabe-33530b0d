@@ -18,6 +18,7 @@ import {
 import type { FuelType as TcoFuelType, Region } from "../types/tco.types";
 import {
   useTaxBrackets, computeFiscalCV, computeAnnualTaxFromDb,
+  type AnnualTaxBracket,
 } from "@/features/admin/hooks/useTaxBrackets";
 
 /* ─── helpers ─── */
