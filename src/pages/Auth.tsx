@@ -228,6 +228,7 @@ const Auth = () => {
    * Handle Google OAuth
    */
   const handleGoogleAuth = async () => {
+    trackEvent(isLogin ? EVENTS.LOGIN_COMPLETED : EVENTS.SIGNUP_STARTED, { method: "google" });
     const result = await signInWithGoogle();
 
     if (!result.success && result.error) {
@@ -243,6 +244,7 @@ const Auth = () => {
    * Handle Apple OAuth
    */
   const handleAppleAuth = async () => {
+    trackEvent(isLogin ? EVENTS.LOGIN_COMPLETED : EVENTS.SIGNUP_STARTED, { method: "apple" });
     const result = await signInWithApple();
 
     if (!result.success && result.error) {
