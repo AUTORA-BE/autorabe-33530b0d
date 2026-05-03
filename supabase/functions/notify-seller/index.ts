@@ -36,6 +36,22 @@ Deno.serve(async (req) => {
       throw new Error("Conversation not found");
     }
 
+    // Rate limit — max 30 notifications/h par seller (anti-spam, évite tempête mails)
+    const { data: rlAllowed, error: rlError } = await supabaseAdmin.rpc("check_rate_limit", {
+      _key: `message_send:${conversation.seller_id}`,
+      _max_attempts: 30,
+      _window_seconds: 3600,
+    });
+    if (rlError) {
+      console.warn("[notify-seller] Rate limit check failed, allowing:", rlError);
+    } else if (rlAllowed === false) {
+      console.log(`[notify-seller] Rate limit exceeded for seller ${conversation.seller_id}, skipping notification`);
+      return new Response(JSON.stringify({ success: true, skipped: true, reason: "rate_limit" }), {
+        status: 200,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+
     // Check if seller has email notifications enabled
     const { data: preferences } = await supabaseAdmin
       .from("user_preferences")

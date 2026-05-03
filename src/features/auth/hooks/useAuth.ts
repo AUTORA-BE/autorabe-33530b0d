@@ -167,7 +167,21 @@ export function useAuth() {
    */
   const resetPassword = useCallback(async (email: string): Promise<AuthResult> => {
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      // Rate limit côté client (3/h/email) — UX, évite double-clic & spam involontaire
+      const normalizedEmail = email.trim().toLowerCase();
+      const { checkServerRateLimit } = await import('@/lib/security');
+      const { allowed } = await checkServerRateLimit('password_reset', normalizedEmail);
+      if (!allowed) {
+        return {
+          success: false,
+          error: {
+            type: 'unknown',
+            message: 'Trop de demandes. Réessayez dans 1 heure.',
+          },
+        };
+      }
+
+      const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
         redirectTo: `${window.location.origin}/reset-password`,
       });
 
