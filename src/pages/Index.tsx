@@ -227,12 +227,12 @@ const Index = () => {
           </ScrollReveal>
         </Suspense>
 
-        {/* Testimonials */}
-        <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 500px" }}>
+        {/* Testimonials — masqués tant qu'on n'a pas ≥ 5 vrais avis */}
+        {/* <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 500px" }}>
           <Suspense fallback={<TestimonialsSkeleton />}>
             <TestimonialsSection />
           </Suspense>
-        </div>
+        </div> */}
 
         {/* Sell Car CTA */}
         <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 300px" }}>
