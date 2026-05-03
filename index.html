@@ -67,11 +67,8 @@
   <meta property="og:description" content="AutoRa, marketplace automobile belge. Achetez ou vendez votre voiture d&#39;occasion avec Car-Pass vérifié et compatibilité LEZ garantie. Calculateur TCO gratuit.">
   <meta name="twitter:description" content="AutoRa, marketplace automobile belge. Achetez ou vendez votre voiture d&#39;occasion avec Car-Pass vérifié et compatibilité LEZ garantie. Calculateur TCO gratuit.">
 
-  <!-- Plausible Analytics — manual SPA pageviews + custom events + outbound link tracking -->
-  <script defer data-domain="autora.be" src="https://plausible.io/js/script.manual.tagged-events.outbound-links.js"></script>
-  <script>
-    window.plausible = window.plausible || function () { (window.plausible.q = window.plausible.q || []).push(arguments) };
-  </script>
+  <!-- Plausible Analytics is loaded dynamically AFTER user consent.
+       See src/lib/consent.ts (loadPlausibleIfAllowed) — RGPD compliance. -->
 </head>
 
   <body>
