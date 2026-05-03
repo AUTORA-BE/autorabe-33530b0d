@@ -70,8 +70,7 @@ async function fetchLiveStats() {
     supabase
       .from("car_views")
       .select("id", { count: "exact", head: true }),
-    // @ts-expect-error - new RPC, types regen pending
-    supabase.rpc("get_active_cities_count"),
+    supabase.rpc("get_active_cities_count" as never),
   ]);
 
   return {
