@@ -21,11 +21,21 @@ const isPreviewHost =
 
 if (isPreviewHost || isInIframe) {
   navigator.serviceWorker?.getRegistrations().then((registrations) => {
+    if (registrations.length > 0) {
+      // eslint-disable-next-line no-console
+      console.info(`[PWA] Unregistering ${registrations.length} stale service worker(s) in preview/iframe context`);
+    }
     registrations.forEach((r) => r.unregister());
   });
   // Purge tout cache PWA résiduel qui pourrait servir une ancienne version du preview
   if (typeof caches !== "undefined") {
-    caches.keys().then((keys) => keys.forEach((k) => caches.delete(k)));
+    caches.keys().then((keys) => {
+      if (keys.length > 0) {
+        // eslint-disable-next-line no-console
+        console.info(`[PWA] Clearing ${keys.length} stale cache(s)`);
+      }
+      keys.forEach((k) => caches.delete(k));
+    });
   }
 }
 
