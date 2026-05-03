@@ -597,5 +597,11 @@
   "carDetail.description.readLess": "Show less",
   "carDetail.equipment.title": "Equipment & Options",
   "carDetail.similar.title": "Similar listings",
-  "reviews.noComment": "No comment left"
+  "reviews.noComment": "No comment left",
+  "errorBoundary.title": "Oops, something went wrong",
+  "errorBoundary.description": "An unexpected error occurred. You can try again or reload the page.",
+  "errorBoundary.details": "Technical details",
+  "errorBoundary.retry": "Try again",
+  "errorBoundary.reload": "Reload page",
+  "errorBoundary.home": "Back to home"
 }

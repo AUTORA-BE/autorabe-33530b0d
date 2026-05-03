@@ -597,5 +597,11 @@
   "carDetail.description.readLess": "Réduire",
   "carDetail.equipment.title": "Équipements & Options",
   "carDetail.similar.title": "Annonces similaires",
-  "reviews.noComment": "Aucun commentaire laissé"
+  "reviews.noComment": "Aucun commentaire laissé",
+  "errorBoundary.title": "Oups, quelque chose s'est mal passé",
+  "errorBoundary.description": "Une erreur inattendue est survenue. Vous pouvez réessayer ou recharger la page.",
+  "errorBoundary.details": "Détails techniques",
+  "errorBoundary.retry": "Réessayer",
+  "errorBoundary.reload": "Recharger la page",
+  "errorBoundary.home": "Retour à l'accueil"
 }

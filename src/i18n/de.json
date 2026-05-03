@@ -597,5 +597,11 @@
   "carDetail.description.readLess": "Einklappen",
   "carDetail.equipment.title": "Ausstattung & Optionen",
   "carDetail.similar.title": "Ähnliche Anzeigen",
-  "reviews.noComment": "Kein Kommentar hinterlassen"
+  "reviews.noComment": "Kein Kommentar hinterlassen",
+  "errorBoundary.title": "Hoppla, etwas ist schiefgelaufen",
+  "errorBoundary.description": "Ein unerwarteter Fehler ist aufgetreten. Sie können es erneut versuchen oder die Seite neu laden.",
+  "errorBoundary.details": "Technische Details",
+  "errorBoundary.retry": "Erneut versuchen",
+  "errorBoundary.reload": "Seite neu laden",
+  "errorBoundary.home": "Zur Startseite"
 }

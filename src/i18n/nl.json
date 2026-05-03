@@ -597,5 +597,11 @@
   "carDetail.description.readLess": "Inklappen",
   "carDetail.equipment.title": "Uitrusting & Opties",
   "carDetail.similar.title": "Vergelijkbare advertenties",
-  "reviews.noComment": "Geen opmerking achtergelaten"
+  "reviews.noComment": "Geen opmerking achtergelaten",
+  "errorBoundary.title": "Oeps, er ging iets mis",
+  "errorBoundary.description": "Er is een onverwachte fout opgetreden. Je kunt opnieuw proberen of de pagina herladen.",
+  "errorBoundary.details": "Technische details",
+  "errorBoundary.retry": "Opnieuw proberen",
+  "errorBoundary.reload": "Pagina herladen",
+  "errorBoundary.home": "Terug naar start"
 }
