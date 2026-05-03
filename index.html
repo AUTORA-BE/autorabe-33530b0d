@@ -39,10 +39,15 @@
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" /></noscript>
     <link rel="preload" href="/pwa-icon-192.png" as="image" fetchpriority="high" />
     <style>
-      /* Critical inline CSS to speed up FCP */
+      /* Critical inline CSS to speed up FCP and avoid CLS across devices */
       *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-      body{font-family:system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
-      #root{min-height:100vh}
+      html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+      body{font-family:Inter,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;background:#0a0a14;color:#fff;overflow-x:hidden}
+      @media (prefers-color-scheme: light){body{background:#fafafa;color:#0a0a14}}
+      #root{min-height:100vh;min-height:100dvh}
+      img{max-width:100%;height:auto;display:block}
+      /* Avoid layout shift while React mounts */
+      #root:empty::before{content:"";display:block;height:100vh;height:100dvh}
     </style>
     
     <title>AutoRa | Voiture occasion Belgique — Car-Pass &amp; LEZ vérifiés</title>
