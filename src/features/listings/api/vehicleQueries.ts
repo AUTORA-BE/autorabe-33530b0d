@@ -196,12 +196,16 @@ export function applyFilters<T>(query: T, filters: VehicleFilters): T {
   }
 
   // Province filter — matches against the free-text `location` column
-  // We build a list of representative cities + the province name itself
-  // and use a single OR with ilike for fuzzy matching (case + accents tolerant).
   if (filters.province) {
     const cities = PROVINCE_CITIES[filters.province] || [filters.province];
     const conditions = cities.map((c) => `location.ilike.%${c}%`).join(',');
     q = q.or(conditions);
+  }
+
+  // Features filter — AND logic: all selected features must be present
+  // Uses the GIN-indexed text[] column with Postgres @> (contains) operator
+  if (filters.features && filters.features.length > 0) {
+    q = q.contains('features', filters.features);
   }
 
   return q as T;
@@ -242,11 +246,31 @@ export const vehicleQueries = {
    * and sorts client-side using the get_listing_popularity RPC.
    */
   async list(
-    filters: VehicleFilters, 
+    filters: VehicleFilters,
     sortBy: VehicleSortOption = 'recent',
     page: number = 0
   ): Promise<{ vehicles: Vehicle[]; total: number; hasMore: boolean }> {
     const isPopularitySort = ['favorites', 'views', 'interactions'].includes(sortBy);
+
+    // Distance filter: fetch IDs within radius first, then apply as .in() constraint
+    const hasDistanceFilter =
+      filters.maxDistanceKm !== null &&
+      filters.userLat !== null &&
+      filters.userLng !== null;
+
+    let distanceIds: string[] | null = null;
+    if (hasDistanceFilter) {
+      const { data: distRows } = await supabase.rpc('listings_within_radius', {
+        user_lat: filters.userLat!,
+        user_lng: filters.userLng!,
+        radius_km: filters.maxDistanceKm!,
+      } as any);
+      distanceIds = (distRows as { listing_id: string }[] | null)?.map((r) => r.listing_id) ?? [];
+      // No results within radius → return empty immediately
+      if (distanceIds.length === 0) {
+        return { vehicles: [], total: 0, hasMore: false };
+      }
+    }
 
     // Only request count on first page; subsequent pages skip it to avoid
     // a full COUNT scan on every "load more" call. Use 'planned' (planner
@@ -256,6 +280,11 @@ export const vehicleQueries = {
       supabase.from('car_listings_public').select(LIST_COLUMNS, countMode ? { count: countMode } : undefined),
       filters
     );
+
+    // Constrain to distance-filtered IDs if applicable
+    if (distanceIds !== null) {
+      query = query.in('id', distanceIds);
+    }
     
     if (isPopularitySort) {
       // For popularity sorts: always boost first, then we'll re-sort by popularity

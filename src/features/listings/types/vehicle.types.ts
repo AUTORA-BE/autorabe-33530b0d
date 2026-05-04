@@ -137,6 +137,14 @@ export interface VehicleFilters {
   color: string;
   /** Filter by Belgian province (matched against location field server-side) */
   province: string;
+  /** Required equipment features (AND logic — all selected must be present) */
+  features: string[];
+  /** Maximum distance in km from userLat/userLng (null = disabled) */
+  maxDistanceKm: number | null;
+  /** User latitude for distance filter */
+  userLat: number | null;
+  /** User longitude for distance filter */
+  userLng: number | null;
 }
 /**
  * Default filter values
@@ -159,6 +167,10 @@ export const defaultVehicleFilters: VehicleFilters = {
   bodyType: "",
   color: "",
   province: "",
+  features: [],
+  maxDistanceKm: null,
+  userLat: null,
+  userLng: null,
 };
 
 /**

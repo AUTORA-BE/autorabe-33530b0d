@@ -6,7 +6,7 @@ import { vehicleKeys } from '@/features/listings/api/vehicleKeys';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
-import {  Upload, X, Car, Info, User, Camera, FileCheck, Building2, AlertTriangle, Leaf, CreditCard, ChevronLeft, ChevronRight, Check, CheckCircle, FileText } from 'lucide-react';
+import { Upload, X, Car, Info, User, Camera, FileCheck, Building2, AlertTriangle, Leaf, CreditCard, ChevronLeft, ChevronRight, Check, CheckCircle, FileText, Settings } from 'lucide-react';
 import { PhotoUploadStep } from '@/components/PhotoUploadStep';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -56,6 +56,7 @@ const sellCarSchema = z.object({
   car_pass_date: z.string().optional(),
   description: z.string().optional(),
   reference_url: z.string().url("URL invalide").optional().or(z.literal("")),
+  features: z.array(z.string()).optional(),
   contact_name: z.string().min(1, "Le nom de contact est obligatoire"),
   contact_phone: z.string().optional(),
   contact_email: z.string().email("Adresse email invalide"),
@@ -77,6 +78,24 @@ const brands = [
 ];
 
 const euroNorms = ['Euro 6d', 'Euro 6c', 'Euro 6b', 'Euro 6', 'Euro 5', 'Euro 4', 'Euro 3'];
+
+const VEHICLE_FEATURES = [
+  'CarPlay / Android Auto',
+  'Toit ouvrant / panoramique',
+  'Caméra de recul',
+  'Radar de stationnement',
+  'Sièges chauffants',
+  'GPS / Navigation',
+  'Bluetooth',
+  'Cruise control adaptatif',
+  'Lane assist',
+  'Démarrage sans clé',
+  'Climatisation automatique',
+  'Jantes alliage',
+  'Attelage',
+  'Vitres électriques',
+  'Rétroviseurs électriques',
+];
 
 const STEPS = [
   { id: 1, label: 'Informations', icon: Car },
@@ -581,6 +600,25 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
         return;
       }
 
+      // Geocode location → lat/lng via OSM Nominatim (free, no key)
+      let latitude: number | null = null;
+      let longitude: number | null = null;
+      if (data.location) {
+        try {
+          const geoRes = await fetch(
+            `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(data.location + ', Belgique')}&format=json&limit=1`,
+            { headers: { 'Accept-Language': 'fr' } }
+          );
+          const geoData = await geoRes.json();
+          if (geoData?.length > 0) {
+            latitude = parseFloat(geoData[0].lat);
+            longitude = parseFloat(geoData[0].lon);
+          }
+        } catch {
+          // Geocoding failure is non-blocking — listing still publishes without coords
+        }
+      }
+
       const listingData = {
         brand: data.brand,
         model: data.model,
@@ -594,13 +632,14 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
         power: data.power || null,
         doors: data.doors || 5,
         euro_norm: data.euro_norm || null,
-        
         first_registration: data.first_registration || null,
         description: data.description || null,
         contact_name: data.contact_name,
         contact_phone: data.contact_phone || null,
         contact_email: data.contact_email,
         location: data.location || null,
+        latitude,
+        longitude,
         photos: allPhotoUrls,
         car_pass_verified: true,
         car_pass_url: carPassUrl,
@@ -609,6 +648,8 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
         maintenance_book_complete: data.maintenance_book_complete || false,
         seller_type: data.seller_type || 'particulier',
         tva_number: data.tva_number || null,
+        features: data.features?.length ? data.features : null,
+        reference_url: data.reference_url || null,
       };
 
       if (isEditMode && editId) {
@@ -1088,6 +1129,47 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
                   {form.watch('seller_type') === 'particulier' && (
                     <p className="text-sm text-muted-foreground p-3 rounded-lg bg-muted/50">{t('sellForm.individualHint')}</p>
                   )}
+                </CardContent>
+              </Card>
+
+              {/* Équipements */}
+              <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-foreground">
+                    <Settings className="h-5 w-5 text-primary" />
+                    Équipements
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Sélectionnez les équipements présents sur le véhicule — ils apparaissent dans les filtres de recherche.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {VEHICLE_FEATURES.map((feat) => {
+                      const selected = (form.watch('features') ?? []).includes(feat);
+                      return (
+                        <button
+                          key={feat}
+                          type="button"
+                          onClick={() => {
+                            const current = form.getValues('features') ?? [];
+                            form.setValue(
+                              'features',
+                              selected ? current.filter((f) => f !== feat) : [...current, feat],
+                              { shouldDirty: true }
+                            );
+                          }}
+                          className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all duration-150 ${
+                            selected
+                              ? 'bg-primary text-primary-foreground border-primary shadow-sm'
+                              : 'border-border/60 text-muted-foreground hover:border-primary/40 hover:text-foreground'
+                          }`}
+                        >
+                          {feat}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </CardContent>
               </Card>
 

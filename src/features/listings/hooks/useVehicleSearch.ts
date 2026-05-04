@@ -173,6 +173,8 @@ export function useVehicleSearch(options: UseVehicleSearchOptions = {}) {
     if (filters.bodyType) count++;
     if (filters.color) count++;
     if (filters.province) count++;
+    if (filters.features && filters.features.length > 0) count++;
+    if (filters.maxDistanceKm !== null && filters.userLat !== null) count++;
     return count;
   }, [filters]);
 

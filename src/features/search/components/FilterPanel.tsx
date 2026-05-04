@@ -4,12 +4,30 @@
  */
 
 import React, { useState, useEffect, useRef, useCallback, memo, forwardRef } from "react";
-import { Fuel, Calendar, Gauge, Settings2, Leaf, X, ChevronDown, Euro, Car, MapPin, Building2, User, CarFront, Truck, CircleDot, RectangleHorizontal, Sun, Users, Palette, Cone, Droplets, Zap, FlaskConical, Cog } from "lucide-react";
+import { Fuel, Calendar, Gauge, Settings2, Leaf, X, ChevronDown, Euro, Car, MapPin, Building2, User, CarFront, Truck, CircleDot, RectangleHorizontal, Sun, Users, Palette, Cone, Droplets, Zap, FlaskConical, Cog, LocateFixed } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getAllBrands, getModelsByBrand } from "@/utils/carUtils";
 import { EURO_NORMS, BELGIAN_PROVINCES } from "../types/search.types";
 import type { VehicleFilters } from "@/features/listings/types/vehicle.types";
+
+const VEHICLE_FEATURES = [
+  'CarPlay / Android Auto',
+  'Toit ouvrant / panoramique',
+  'Caméra de recul',
+  'Radar de stationnement',
+  'Sièges chauffants',
+  'GPS / Navigation',
+  'Bluetooth',
+  'Cruise control adaptatif',
+  'Lane assist',
+  'Démarrage sans clé',
+  'Climatisation automatique',
+  'Jantes alliage',
+  'Attelage',
+  'Vitres électriques',
+  'Rétroviseurs électriques',
+] as const;
 
 /**
  * Props for the FilterPanel component
@@ -595,6 +613,86 @@ const FilterPanel = memo(forwardRef<HTMLElement, FilterPanelProps>(function Filt
               ))}
             </select>
             <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+          </div>
+        </FilterSection>
+
+        {/* Divider */}
+        <div className="h-px w-full" style={{ background: "hsl(var(--border) / 0.5)" }} />
+
+        {/* Distance */}
+        <FilterSection icon={<LocateFixed className="w-4 h-4 text-primary" aria-hidden="true" />} title="Proximité">
+          {filters.userLat === null ? (
+            <button
+              onClick={() => {
+                if (!navigator.geolocation) return;
+                navigator.geolocation.getCurrentPosition((pos) => {
+                  onFilterChange("userLat", pos.coords.latitude);
+                  onFilterChange("userLng", pos.coords.longitude);
+                  onFilterChange("maxDistanceKm", 50);
+                });
+              }}
+              className="w-full flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium border border-border/50 text-muted-foreground hover:border-primary/40 hover:text-foreground transition-all duration-200"
+            >
+              <LocateFixed className="w-4 h-4" />
+              Utiliser ma position
+            </button>
+          ) : (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">Rayon</span>
+                <span className="font-medium text-foreground">{filters.maxDistanceKm ?? 50} km</span>
+              </div>
+              <Slider
+                min={10}
+                max={200}
+                step={10}
+                value={[filters.maxDistanceKm ?? 50]}
+                onValueChange={([v]) => onFilterChange("maxDistanceKm", v)}
+                className="w-full"
+              />
+              <button
+                onClick={() => {
+                  onFilterChange("userLat", null);
+                  onFilterChange("userLng", null);
+                  onFilterChange("maxDistanceKm", null);
+                }}
+                className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-2"
+              >
+                Désactiver la proximité
+              </button>
+            </div>
+          )}
+        </FilterSection>
+
+        {/* Divider */}
+        <div className="h-px w-full" style={{ background: "hsl(var(--border) / 0.5)" }} />
+
+        {/* Équipements */}
+        <FilterSection icon={<Settings2 className="w-4 h-4 text-primary" aria-hidden="true" />} title="Équipements">
+          <div className="flex flex-wrap gap-2">
+            {VEHICLE_FEATURES.map((feat) => {
+              const active = (filters.features ?? []).includes(feat);
+              return (
+                <button
+                  key={feat}
+                  onClick={() => {
+                    const current = filters.features ?? [];
+                    onFilterChange(
+                      "features",
+                      active ? current.filter((f) => f !== feat) : [...current, feat]
+                    );
+                  }}
+                  aria-pressed={active}
+                  className={`px-2.5 py-1 rounded-full text-[11px] font-medium border transition-all duration-150 ${
+                    active
+                      ? 'bg-primary text-primary-foreground border-primary shadow-sm'
+                      : 'border-border/50 text-muted-foreground hover:border-primary/30 hover:text-foreground'
+                  }`}
+                >
+                  {feat}
+                </button>
+              );
+            })}
           </div>
         </FilterSection>
 
