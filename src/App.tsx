@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect } from "react";
+import Maintenance from "@/pages/Maintenance";
 import { AnimatePresence } from "framer-motion";
 import { prefetchCriticalRoutes } from "@/utils/prefetchRoutes";
 import { Toaster } from "@/components/ui/toaster";
@@ -178,7 +179,11 @@ function AppRoutes() {
   );
 }
 
-const App = () => (
+const MAINTENANCE = import.meta.env.VITE_MAINTENANCE_MODE === "true";
+
+const App = () => {
+  if (MAINTENANCE) return <Maintenance />;
+  return (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -208,6 +213,7 @@ const App = () => (
       {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
   </ErrorBoundary>
-);
+  );
+};
 
 export default App;

@@ -5,10 +5,14 @@ import { HelmetProvider } from "react-helmet-async";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import App from "./App.tsx";
 import { loadPlausibleIfAllowed } from "@/lib/consent";
+import { initSentry } from "@/lib/sentry";
 import "./index.css";
 
 // Boot analytics only if user already accepted in a previous session
 loadPlausibleIfAllowed();
+
+// Error monitoring — no-ops unless VITE_SENTRY_DSN is set in Vercel env
+initSentry();
 
 
 // PWA guard: unregister service workers in iframe/preview contexts
