@@ -1,18 +1,16 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+
+
+import { buildCorsHeaders, handlePreflight } from "../_shared/cors.ts";
 
 interface NotifySellerRequest {
   conversationId: string;
 }
 
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
-  }
+  const corsHeaders = buildCorsHeaders(req);
+  if (req.method === "OPTIONS") return handlePreflight(req);
 
   try {
     // ── Auth required: only conversation participants can trigger ──

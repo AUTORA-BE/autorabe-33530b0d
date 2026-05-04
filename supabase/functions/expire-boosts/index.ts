@@ -1,11 +1,9 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { Resend } from "https://esm.sh/resend@2.0.0";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-};
+
+
+import { buildCorsHeaders, handlePreflight } from "../_shared/cors.ts";
 
 const APP_URL = "https://autora.be";
 
@@ -41,9 +39,8 @@ function buildEmailShell(badgeColor: string, badgeText: string, bodyContent: str
 }
 
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
-  }
+  const corsHeaders = buildCorsHeaders(req);
+  if (req.method === "OPTIONS") return handlePreflight(req);
 
   try {
     // ── Service-role guard: only internal callers (cron / scheduler) ──

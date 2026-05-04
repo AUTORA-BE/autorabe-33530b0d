@@ -1,11 +1,7 @@
 // Edge function — Création d'annonce sécurisée côté serveur
 // Seul point d'entrée pour insérer dans car_listings depuis l'app AutoRa
 import { createClient } from 'npm:@supabase/supabase-js@2';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+import { buildCorsHeaders, handlePreflight, jsonResponse } from '../_shared/cors.ts';
 
 interface ListingPayload {
   brand: string;
@@ -26,28 +22,46 @@ interface ListingPayload {
   contact_phone?: string | null;
   contact_email: string;
   location?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
   photos?: string[];
-  car_pass_verified?: boolean;
   car_pass_url?: string | null;
   car_pass_date?: string | null;
   ct_valid?: boolean;
   maintenance_book_complete?: boolean;
   seller_type?: string;
   tva_number?: string | null;
+  features?: string[] | null;
+  reference_url?: string | null;
 }
 
 const REQUIRED = ['brand', 'model', 'year', 'price', 'mileage', 'fuel_type', 'transmission', 'body_type', 'color', 'contact_name', 'contact_email'] as const;
 
+/**
+ * Server-side defense in depth: strip control chars + any chevrons / on-* attrs
+ * from free-text. React already escapes when rendering, but we don't want
+ * `<script>` or `<img onerror>` ever stored at rest.
+ */
+function sanitizeText(input: unknown, maxLen = 5000): string | null {
+  if (input === null || input === undefined) return null;
+  const s = String(input)
+    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
+    .replace(/<\/?[a-zA-Z][^>]*>/g, '')
+    .replace(/\bon\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+    .slice(0, maxLen)
+    .trim();
+  return s || null;
+}
+
 Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
+  if (req.method === 'OPTIONS') return handlePreflight(req);
+  const cors = buildCorsHeaders(req);
 
   try {
     // 1. Auth — JWT requis
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      return new Response(JSON.stringify({ error: 'Authentification requise' }), {
-        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      return jsonResponse(req, { error: 'Authentification requise' }, { status: 401 });
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -59,38 +73,28 @@ Deno.serve(async (req) => {
     });
     const { data: { user }, error: userError } = await userClient.auth.getUser();
     if (userError || !user) {
-      return new Response(JSON.stringify({ error: 'Session invalide' }), {
-        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      return jsonResponse(req, { error: 'Session invalide' }, { status: 401 });
     }
 
     // 2. Validation payload
     const payload = (await req.json()) as ListingPayload;
     for (const key of REQUIRED) {
       if (payload[key] === undefined || payload[key] === null || payload[key] === '') {
-        return new Response(JSON.stringify({ error: `Champ obligatoire manquant: ${key}` }), {
-          status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
+        return jsonResponse(req, { error: `Champ obligatoire manquant: ${key}` }, { status: 400 });
       }
     }
     if (typeof payload.year !== 'number' || payload.year < 1900 || payload.year > new Date().getFullYear()) {
-      return new Response(JSON.stringify({ error: 'Année invalide' }), {
-        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      return jsonResponse(req, { error: 'Année invalide' }, { status: 400 });
     }
     if (typeof payload.price !== 'number' || payload.price < 100 || payload.price > 1_000_000) {
-      return new Response(JSON.stringify({ error: 'Prix invalide' }), {
-        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      return jsonResponse(req, { error: 'Prix invalide' }, { status: 400 });
     }
 
     // 3. Vérifier suspension
     const admin = createClient(supabaseUrl, serviceKey);
     const { data: suspended } = await admin.rpc('is_user_suspended', { _user_id: user.id });
     if (suspended) {
-      return new Response(JSON.stringify({ error: 'Compte suspendu — publication bloquée' }), {
-        status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      return jsonResponse(req, { error: 'Compte suspendu — publication bloquée' }, { status: 403 });
     }
 
     // 3b. Rate limit — 10 annonces / jour / user (anti-spam)
@@ -102,20 +106,14 @@ Deno.serve(async (req) => {
     if (rlError) {
       console.warn('[create-listing] Rate limit check failed, allowing:', rlError);
     } else if (rlAllowed === false) {
-      return new Response(
-        JSON.stringify({
-          error: 'Limite de 10 annonces par jour atteinte. Réessayez demain.',
-          code: 'RATE_LIMIT_EXCEEDED',
-        }),
-        {
-          status: 429,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Retry-After': '86400' },
-        },
+      return jsonResponse(
+        req,
+        { error: 'Limite de 10 annonces par jour atteinte. Réessayez demain.', code: 'RATE_LIMIT_EXCEEDED' },
+        { status: 429, headers: { 'Retry-After': '86400' } },
       );
     }
 
-    // 4. Anti-doublon — même user, même voiture (marque/modèle/année, km ±500),
-    //    annonce active (pending ou approved) dans les 90 derniers jours
+    // 4. Anti-doublon
     const kmMin = Math.max(0, payload.mileage - 500);
     const kmMax = payload.mileage + 500;
     const since = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
@@ -136,17 +134,21 @@ Deno.serve(async (req) => {
     if (dupeError) {
       console.error('[create-listing] Dupe check error:', dupeError);
     } else if (dupes && dupes.length > 0) {
-      return new Response(
-        JSON.stringify({
-          error: 'Une annonce identique existe déjà (même marque, modèle, année et kilométrage). Modifiez l\'annonce existante plutôt que d\'en créer une nouvelle.',
+      return jsonResponse(
+        req,
+        {
+          error: "Une annonce identique existe déjà. Modifiez l'annonce existante plutôt que d'en créer une nouvelle.",
           duplicateId: dupes[0].id,
           code: 'DUPLICATE_LISTING',
-        }),
-        { status: 409, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+        },
+        { status: 409 },
       );
     }
 
-    // 5. Insertion via service_role (seule voie autorisée)
+    // 5. Insertion via service_role (seule voie autorisée).
+    //    NOTE: car_pass_verified is a generated column now → never set explicitly.
+    //    Listings start with car_pass_status='unverified'; the seller must
+    //    request verification via the verify-car-pass Edge Function.
     const { data, error } = await admin
       .from('car_listings')
       .insert({
@@ -165,37 +167,35 @@ Deno.serve(async (req) => {
         doors: payload.doors ?? 5,
         euro_norm: payload.euro_norm ?? null,
         first_registration: payload.first_registration ?? null,
-        description: payload.description ?? null,
+        description: sanitizeText(payload.description, 5000),
         contact_name: payload.contact_name,
         contact_phone: payload.contact_phone ?? null,
         contact_email: payload.contact_email,
         location: payload.location ?? null,
+        latitude: payload.latitude ?? null,
+        longitude: payload.longitude ?? null,
         photos: payload.photos ?? [],
-        car_pass_verified: payload.car_pass_verified ?? false,
+        car_pass_status: 'unverified',
         car_pass_url: payload.car_pass_url ?? null,
         car_pass_date: payload.car_pass_date ?? null,
         ct_valid: payload.ct_valid ?? false,
         maintenance_book_complete: payload.maintenance_book_complete ?? false,
         seller_type: payload.seller_type ?? 'particulier',
         tva_number: payload.tva_number ?? null,
+        features: payload.features ?? null,
+        reference_url: payload.reference_url ?? null,
       })
       .select('id')
       .single();
 
     if (error) {
       console.error('[create-listing] Insert error:', error);
-      return new Response(JSON.stringify({ error: error.message }), {
-        status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      return jsonResponse(req, { error: error.message }, { status: 500 });
     }
 
-    return new Response(JSON.stringify({ id: data.id }), {
-      status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return jsonResponse(req, { id: data.id });
   } catch (e) {
     console.error('[create-listing] Fatal:', e);
-    return new Response(JSON.stringify({ error: (e as Error).message }), {
-      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return jsonResponse(req, { error: (e as Error).message }, { status: 500 });
   }
 });

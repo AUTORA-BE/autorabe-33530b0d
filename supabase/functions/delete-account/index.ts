@@ -2,11 +2,9 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import Stripe from "npm:stripe@17";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+
+
+import { buildCorsHeaders, handlePreflight } from "../_shared/cors.ts";
 
 /**
  * RGPD right-to-be-forgotten endpoint.
@@ -21,9 +19,8 @@ const corsHeaders = {
  * audit_log entries are preserved for accounting (anonymised by user deletion).
  */
 serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
-  }
+  const corsHeaders = buildCorsHeaders(req);
+  if (req.method === 'OPTIONS') return handlePreflight(req);
 
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL") ?? "",

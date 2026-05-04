@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { sanitizeMultilineInput } from "@/lib/security";
 
 interface RichDescriptionProps {
   /** Raw description text from DB. May contain newlines. */
@@ -22,7 +23,10 @@ const RichDescription = ({ description, compact = false }: RichDescriptionProps)
   const [isOverflowing, setIsOverflowing] = useState(false);
   const [expanded, setExpanded] = useState(false);
 
-  const text = (description ?? "").trim();
+  // Strip HTML/scripts before rendering — protects against legacy DB rows
+  // that might contain `<script>` or inline handlers from before server-side
+  // sanitization was wired in create-listing / sync-vehicle-content.
+  const text = useMemo(() => sanitizeMultilineInput(description ?? "", 5000), [description]);
   const isShort = text.length > 0 && text.length < SHORT_DESCRIPTION_THRESHOLD;
 
   useEffect(() => {

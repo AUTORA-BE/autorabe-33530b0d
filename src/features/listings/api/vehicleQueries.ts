@@ -338,6 +338,83 @@ export const vehicleQueries = {
   },
 
   /**
+   * Cursor-based pagination — preferred for high-volume `recent` listings.
+   *
+   * Uses (created_at, id) as a stable composite cursor: rows newer than
+   * the cursor are returned in descending order. Avoids the COUNT() and
+   * OFFSET overhead of `list()` and stays O(log n) regardless of depth.
+   *
+   * Note: only valid for `sortBy = 'recent'` (other sorts can't use a
+   * single-column cursor without a secondary index). For popularity
+   * sorts keep using `list()`.
+   *
+   * @param filters
+   * @param cursor   Either { createdAt: string; id: string } or null for first page.
+   */
+  async listCursor(
+    filters: VehicleFilters,
+    cursor: { createdAt: string; id: string } | null,
+    pageSize: number = PAGE_SIZE,
+  ): Promise<{
+    vehicles: Vehicle[];
+    nextCursor: { createdAt: string; id: string } | null;
+  }> {
+    // Distance pre-filter, same logic as list()
+    const hasDistance =
+      filters.maxDistanceKm !== null &&
+      filters.userLat !== null &&
+      filters.userLng !== null;
+    let distanceIds: string[] | null = null;
+    if (hasDistance) {
+      const { data: distRows } = await supabase.rpc('listings_within_radius', {
+        user_lat: filters.userLat!,
+        user_lng: filters.userLng!,
+        radius_km: filters.maxDistanceKm!,
+      } as any);
+      distanceIds = (distRows as { listing_id: string }[] | null)?.map((r) => r.listing_id) ?? [];
+      if (distanceIds.length === 0) return { vehicles: [], nextCursor: null };
+    }
+
+    let query = applyFilters(
+      supabase.from('car_listings_public').select(LIST_COLUMNS),
+      filters,
+    );
+
+    if (distanceIds !== null) {
+      query = query.in('id', distanceIds);
+    }
+
+    // Cursor predicate: (created_at, id) < (cursor.createdAt, cursor.id)
+    // Implemented as: created_at < cursor.createdAt
+    //                OR (created_at = cursor.createdAt AND id < cursor.id)
+    if (cursor) {
+      query = query.or(
+        `and(created_at.lt.${cursor.createdAt}),and(created_at.eq.${cursor.createdAt},id.lt.${cursor.id})`,
+      );
+    }
+
+    query = query
+      .order('boost_level', { ascending: false, nullsFirst: false })
+      .order('created_at', { ascending: false })
+      .order('id', { ascending: false })
+      .limit(pageSize);
+
+    const { data, error } = await query;
+    if (error) throw new Error(error.message);
+
+    const rows = (data || []) as unknown as VehicleListingRow[];
+    const vehicles = rows.map(mapListingToVehicle);
+
+    const last = rows[rows.length - 1];
+    const nextCursor =
+      rows.length === pageSize && last
+        ? { createdAt: last.created_at, id: last.id }
+        : null;
+
+    return { vehicles, nextCursor };
+  },
+
+  /**
    * Fetches a single vehicle by ID with full details
    * @param id - Vehicle UUID
    * @returns Promise with VehicleDetail or null if not found
