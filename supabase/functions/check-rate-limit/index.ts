@@ -1,9 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+import { buildCorsHeaders, handlePreflight, jsonResponse } from "../_shared/cors.ts";
 
 // Actions whose identifier MUST be the caller's auth.uid() (prevents lockout DoS by 3rd parties)
 const USER_BOUND_ACTIONS = new Set(["listing_create", "message", "message_send", "report"]);
@@ -11,18 +7,15 @@ const USER_BOUND_ACTIONS = new Set(["listing_create", "message", "message_send",
 const IP_BOUND_ACTIONS = new Set(["contact_form", "login", "signup", "password_reset"]);
 
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
-  }
+  if (req.method === "OPTIONS") return handlePreflight(req);
+  // CORS headers are attached by jsonResponse — no need to compute manually
+  // unless you build a custom Response.
 
   try {
     const { action, identifier: rawIdentifier } = await req.json();
 
     if (!action || typeof action !== "string") {
-      return new Response(JSON.stringify({ error: "Missing action" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return jsonResponse(req, { error: "Missing action" }, { status: 400 });
     }
 
     const limits: Record<string, { max: number; window: number }> = {
@@ -37,10 +30,7 @@ Deno.serve(async (req) => {
     };
 
     if (!limits[action]) {
-      return new Response(JSON.stringify({ error: "Unknown action" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return jsonResponse(req, { error: "Unknown action" }, { status: 400 });
     }
 
     const ip = (req.headers.get("x-forwarded-for") || "unknown").split(",")[0].trim();
@@ -49,32 +39,23 @@ Deno.serve(async (req) => {
     let identifier: string;
 
     if (IP_BOUND_ACTIONS.has(action)) {
-      // Always use IP — ignore caller-supplied identifier to prevent targeted lockout
       identifier = ip;
     } else if (USER_BOUND_ACTIONS.has(action)) {
-      // Require auth and bind identifier to auth.uid() — caller cannot lock out other users
       const authHeader = req.headers.get("Authorization") || "";
       const token = authHeader.replace("Bearer ", "").trim();
       if (!token) {
-        return new Response(JSON.stringify({ error: "Unauthorized" }), {
-          status: 401,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+        return jsonResponse(req, { error: "Unauthorized" }, { status: 401 });
       }
       const supabaseAuth = createClient(
         Deno.env.get("SUPABASE_URL")!,
-        Deno.env.get("SUPABASE_ANON_KEY")!
+        Deno.env.get("SUPABASE_ANON_KEY")!,
       );
       const { data: claimsData, error: claimsErr } = await supabaseAuth.auth.getClaims(token);
       if (claimsErr || !claimsData?.claims?.sub) {
-        return new Response(JSON.stringify({ error: "Unauthorized" }), {
-          status: 401,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+        return jsonResponse(req, { error: "Unauthorized" }, { status: 401 });
       }
       identifier = claimsData.claims.sub;
     } else {
-      // Unknown class: fall back to IP, never honor arbitrary identifier
       identifier = ip;
     }
 
@@ -86,7 +67,7 @@ Deno.serve(async (req) => {
 
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
     const { data: allowed, error } = await supabaseAdmin.rpc("check_rate_limit", {
@@ -97,20 +78,14 @@ Deno.serve(async (req) => {
 
     if (error) {
       console.error("Rate limit check error:", error);
-      // Fail closed on internal errors only for sensitive actions; otherwise allow
-      return new Response(JSON.stringify({ allowed: true }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return jsonResponse(req, { allowed: true });
     }
 
-    return new Response(JSON.stringify({ allowed }), {
-      status: allowed ? 200 : 429,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return jsonResponse(req, { allowed }, { status: allowed ? 200 : 429 });
   } catch (err) {
     console.error("Rate limit error:", err);
-    return new Response(JSON.stringify({ allowed: true }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return jsonResponse(req, { allowed: true });
   }
 });
+// Quiet "unused" warning for the buildCorsHeaders import — used inside jsonResponse.
+void buildCorsHeaders;

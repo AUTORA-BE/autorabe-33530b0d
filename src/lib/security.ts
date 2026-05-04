@@ -23,35 +23,51 @@ export function escapeHtml(str: string): string {
 }
 
 /**
+ * Strip HTML tags + inline event handlers + javascript: URLs.
+ * Defense in depth — React already escapes JSX text, but we don't want
+ * `<script>`, `<img onerror=…>`, or `javascript:` payloads ever stored at rest.
+ */
+function stripHtmlAndScripts(input: string): string {
+  return input
+    // Drop any tag, including unclosed (`<script`)
+    .replace(/<\/?[a-zA-Z][^>]*>?/g, '')
+    // Drop inline event handlers (onerror=…, ONCLICK=…)
+    .replace(/\bon\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+    // Defang javascript: / vbscript: / data:text/html: URLs
+    .replace(/\b(?:javascript|vbscript|data\s*:\s*text\/html)\s*:/gi, '');
+}
+
+/**
  * Sanitizes user input by trimming, removing control characters, and limiting length
  */
 export function sanitizeInput(input: string, maxLength = 1000): string {
   if (!input || typeof input !== 'string') return '';
-  
-  return input
-    .trim()
-    // Remove null bytes and control characters (except newlines/tabs)
-    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
-    // Normalize whitespace
-    .replace(/\s+/g, ' ')
-    // Limit length
-    .slice(0, maxLength);
+
+  return stripHtmlAndScripts(
+    input
+      .trim()
+      // Remove null bytes and control characters (except newlines/tabs)
+      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
+      // Normalize whitespace
+      .replace(/\s+/g, ' ')
+  ).slice(0, maxLength);
 }
 
 /**
- * Sanitizes text that may contain newlines (for descriptions, messages)
+ * Sanitizes text that may contain newlines (for descriptions, messages).
+ * Strips HTML/script tags and inline handlers in addition to control chars.
  */
 export function sanitizeMultilineInput(input: string, maxLength = 5000): string {
   if (!input || typeof input !== 'string') return '';
-  
-  return input
-    .trim()
-    // Remove null bytes and control characters (keep newlines/tabs)
-    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
-    // Normalize multiple newlines to max 2
-    .replace(/\n{3,}/g, '\n\n')
-    // Limit length
-    .slice(0, maxLength);
+
+  return stripHtmlAndScripts(
+    input
+      .trim()
+      // Remove null bytes and control characters (keep newlines/tabs)
+      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
+      // Normalize multiple newlines to max 2
+      .replace(/\n{3,}/g, '\n\n')
+  ).slice(0, maxLength);
 }
 
 /**

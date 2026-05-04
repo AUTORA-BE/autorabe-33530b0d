@@ -125,68 +125,6 @@ export interface SellCarFormWatchData {
   tva_number?: string;
 }
 
-/** Small button that calls the generate-description edge function */
-function AiDescriptionButton({
-  onGenerated,
-  getFormValues,
-}: {
-  onGenerated: (text: string) => void;
-  getFormValues: () => Partial<SellCarFormData>;
-}) {
-  const [loading, setLoading] = useState(false);
-
-  const handleGenerate = async () => {
-    const values = getFormValues();
-    if (!values.brand || !values.model) {
-      toast.error('Sélectionnez d\'abord la marque et le modèle.');
-      return;
-    }
-    setLoading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('generate-description', {
-        body: {
-          brand: values.brand,
-          model: values.model,
-          year: values.year,
-          mileage: values.mileage,
-          fuel_type: values.fuel_type,
-          transmission: values.transmission,
-          body_type: values.body_type,
-          color: values.color,
-          power: values.power,
-          euro_norm: values.euro_norm,
-          ct_valid: values.ct_valid,
-          car_pass_verified: values.car_pass_verified,
-          maintenance_book_complete: values.maintenance_book_complete,
-          features: values.features,
-        },
-      });
-      if (error) throw error;
-      if (data?.description) onGenerated(data.description);
-    } catch {
-      toast.error('Génération impossible. Vérifiez votre connexion.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <button
-      type="button"
-      onClick={handleGenerate}
-      disabled={loading}
-      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-medium bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-all disabled:opacity-50"
-    >
-      {loading ? (
-        <span className="w-3 h-3 border border-primary border-t-transparent rounded-full animate-spin" />
-      ) : (
-        <span>✨</span>
-      )}
-      {loading ? 'Génération…' : 'Générer par IA'}
-    </button>
-  );
-}
-
 interface SellCarFormProps {
   editId?: string;
   /** Callback appelé à chaque changement de données pour la live preview */
@@ -698,7 +636,9 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
         latitude,
         longitude,
         photos: allPhotoUrls,
-        car_pass_verified: true,
+        // car_pass_verified is a generated column derived from car_pass_status.
+        // The seller must explicitly request verification via the verify-car-pass
+        // Edge Function — uploading the document alone does NOT verify it.
         car_pass_url: carPassUrl,
         car_pass_date: data.car_pass_date || null,
         ct_valid: data.ct_valid || false,
@@ -1259,13 +1199,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
                 <CardContent className="space-y-4">
                   <FormField control={form.control} name="description" render={({ field }) => (
                     <FormItem>
-                      <div className="flex items-center justify-between mb-1.5">
-                        <FormLabel>{t('sellForm.description')}</FormLabel>
-                        <AiDescriptionButton
-                          onGenerated={(text) => field.onChange(text)}
-                          getFormValues={() => form.getValues()}
-                        />
-                      </div>
+                      <FormLabel>{t('sellForm.description')}</FormLabel>
                       <FormControl><Textarea placeholder={t('sellForm.descriptionPlaceholder')} className="min-h-[150px]" {...field} /></FormControl>
                       <FormMessage />
                     </FormItem>
