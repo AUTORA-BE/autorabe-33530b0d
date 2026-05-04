@@ -8,7 +8,7 @@
  * - Uploads to Supabase "vehicle-photos" bucket
  */
 
-import { useState, useRef, useCallback, useMemo } from 'react';
+import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { Upload, X, Camera, ImagePlus, GripVertical } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -147,6 +147,15 @@ export function PhotoUploadStep({ existingPhotos, onPhotosChange, t }: PhotoUplo
     const previews = items.map(p => p.preview);
     onPhotosChange(urls, previews);
   }, [onPhotosChange]);
+
+  // Sync existing photos to parent on mount so edit mode doesn't start with empty uploadedPhotoUrls
+  useEffect(() => {
+    if (existingPhotos.length > 0) {
+      notifyParent(photos);
+    }
+    // intentionally runs only on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;

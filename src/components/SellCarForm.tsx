@@ -8,6 +8,7 @@ import { z } from 'zod';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Upload, X, Car, Info, User, Camera, FileCheck, Building2, AlertTriangle, Leaf, CreditCard, ChevronLeft, ChevronRight, Check, CheckCircle, FileText, Settings } from 'lucide-react';
 import { PhotoUploadStep } from '@/components/PhotoUploadStep';
+import { BRAND_MODELS, ALL_BRANDS } from '@/data/brandModels';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -70,12 +71,6 @@ const sellCarSchema = z.object({
 
 type SellCarFormData = z.infer<typeof sellCarSchema>;
 
-const brands = [
-  'Audi', 'BMW', 'Mercedes-Benz', 'Volkswagen', 'Peugeot', 'Renault', 'Citroën',
-  'Toyota', 'Honda', 'Ford', 'Opel', 'Hyundai', 'Kia', 'Nissan', 'Mazda',
-  'Volvo', 'Skoda', 'Seat', 'Fiat', 'Alfa Romeo', 'Porsche', 'Tesla', 'Mini',
-  'Dacia', 'Suzuki', 'Mitsubishi', 'Lexus', 'Jaguar', 'Land Rover', 'Jeep'
-];
 
 const euroNorms = ['Euro 6d', 'Euro 6c', 'Euro 6b', 'Euro 6', 'Euro 5', 'Euro 4', 'Euro 3'];
 
@@ -128,6 +123,68 @@ export interface SellCarFormWatchData {
   contact_email?: string;
   contact_phone?: string;
   tva_number?: string;
+}
+
+/** Small button that calls the generate-description edge function */
+function AiDescriptionButton({
+  onGenerated,
+  getFormValues,
+}: {
+  onGenerated: (text: string) => void;
+  getFormValues: () => Partial<SellCarFormData>;
+}) {
+  const [loading, setLoading] = useState(false);
+
+  const handleGenerate = async () => {
+    const values = getFormValues();
+    if (!values.brand || !values.model) {
+      toast.error('Sélectionnez d\'abord la marque et le modèle.');
+      return;
+    }
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-description', {
+        body: {
+          brand: values.brand,
+          model: values.model,
+          year: values.year,
+          mileage: values.mileage,
+          fuel_type: values.fuel_type,
+          transmission: values.transmission,
+          body_type: values.body_type,
+          color: values.color,
+          power: values.power,
+          euro_norm: values.euro_norm,
+          ct_valid: values.ct_valid,
+          car_pass_verified: values.car_pass_verified,
+          maintenance_book_complete: values.maintenance_book_complete,
+          features: values.features,
+        },
+      });
+      if (error) throw error;
+      if (data?.description) onGenerated(data.description);
+    } catch {
+      toast.error('Génération impossible. Vérifiez votre connexion.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={handleGenerate}
+      disabled={loading}
+      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-medium bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-all disabled:opacity-50"
+    >
+      {loading ? (
+        <span className="w-3 h-3 border border-primary border-t-transparent rounded-full animate-spin" />
+      ) : (
+        <span>✨</span>
+      )}
+      {loading ? 'Génération…' : 'Générer par IA'}
+    </button>
+  );
 }
 
 interface SellCarFormProps {
@@ -323,6 +380,11 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
         if (data.photos && data.photos.length > 0) {
           setExistingPhotos(data.photos);
           setPhotosPreviews(data.photos);
+        }
+
+        if (data.car_pass_url) {
+          setCarPassUrl(data.car_pass_url);
+          setCarPassFileName('Car-Pass existant');
         }
       } catch (error) {
         console.error("Error fetching listing:", error);
@@ -567,32 +629,27 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
         return;
       }
 
-      const hasPhotos = uploadedPhotoUrls.length > 0;
-      if (!hasPhotos) {
+      // In edit mode, combine existing photos with any newly uploaded ones
+      const allPhotoUrls = isEditMode
+        ? [...new Set([...existingPhotos, ...uploadedPhotoUrls])]
+        : [...uploadedPhotoUrls];
+
+      if (allPhotoUrls.length === 0) {
         toast.error(t('sellForm.photosRequired'));
         setCurrentStep(2);
         setIsSubmitting(false);
         return;
       }
 
-      const allPhotoUrls = [...uploadedPhotoUrls];
-
-      if (allPhotoUrls.length === 0) {
-        toast.error(t('sellForm.errorUpload'));
-        setIsSubmitting(false);
-        return;
-      }
-
-      // Car-Pass is now uploaded in real-time via Step 3
-      // Validate Car-Pass is present
-      if (!carPassUrl) {
+      // Car-Pass validation (skip re-check in edit mode if already present)
+      if (!carPassUrl && !isEditMode) {
         toast.error('Le Car-Pass est obligatoire pour publier l\'annonce.');
         setCurrentStep(3);
         setIsSubmitting(false);
         return;
       }
 
-      // Validate minimum 3 photos
+      // Minimum 3 photos
       if (allPhotoUrls.length < 3) {
         toast.error('Ajoutez au moins 3 photos pour publier l\'annonce.');
         setCurrentStep(2);
@@ -994,19 +1051,40 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
                       <FormLabel>{t('sellForm.brand')} *</FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl><SelectTrigger><SelectValue placeholder={t('sellForm.select')} /></SelectTrigger></FormControl>
-                        <SelectContent>{brands.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}</SelectContent>
+                        <SelectContent>{ALL_BRANDS.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}</SelectContent>
                       </Select>
                       <FormMessage />
                     </FormItem>
                   )} />
 
-                  <FormField control={form.control} name="model" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('sellForm.model')} *</FormLabel>
-                      <FormControl><Input placeholder={t('sellForm.modelPlaceholder')} {...field} /></FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
+                  <FormField control={form.control} name="model" render={({ field }) => {
+                    const selectedBrand = form.watch('brand');
+                    const modelList = selectedBrand ? (BRAND_MODELS[selectedBrand] ?? []) : [];
+                    return (
+                      <FormItem>
+                        <FormLabel>{t('sellForm.model')} *</FormLabel>
+                        {modelList.length > 0 ? (
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <FormControl><SelectTrigger><SelectValue placeholder={t('sellForm.select')} /></SelectTrigger></FormControl>
+                            <SelectContent>
+                              {modelList.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}
+                              <SelectItem value="__autre__">Autre modèle…</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        ) : (
+                          <FormControl><Input placeholder={t('sellForm.modelPlaceholder')} {...field} /></FormControl>
+                        )}
+                        {field.value === '__autre__' && (
+                          <Input
+                            className="mt-2"
+                            placeholder="Saisir le modèle exact"
+                            onChange={(e) => field.onChange(e.target.value)}
+                          />
+                        )}
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }} />
 
                   <FormField control={form.control} name="year" render={({ field }) => (
                     <FormItem>
@@ -1181,6 +1259,13 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
                 <CardContent className="space-y-4">
                   <FormField control={form.control} name="description" render={({ field }) => (
                     <FormItem>
+                      <div className="flex items-center justify-between mb-1.5">
+                        <FormLabel>{t('sellForm.description')}</FormLabel>
+                        <AiDescriptionButton
+                          onGenerated={(text) => field.onChange(text)}
+                          getFormValues={() => form.getValues()}
+                        />
+                      </div>
                       <FormControl><Textarea placeholder={t('sellForm.descriptionPlaceholder')} className="min-h-[150px]" {...field} /></FormControl>
                       <FormMessage />
                     </FormItem>
@@ -1372,14 +1457,29 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
                   </div>
 
                   {/* CT Date */}
-                  <FormField control={form.control} name="car_pass_date" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Date du contrôle technique (optionnel)</FormLabel>
-                      <FormControl><Input type="date" {...field} /></FormControl>
-                      <p className="text-xs text-muted-foreground">Indiquez la date du dernier contrôle technique si disponible.</p>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
+                  <FormField control={form.control} name="car_pass_date" render={({ field }) => {
+                    const carPassDate = field.value ? new Date(field.value) : null;
+                    const monthsOld = carPassDate
+                      ? (Date.now() - carPassDate.getTime()) / (1000 * 60 * 60 * 24 * 30)
+                      : null;
+                    const isOld = monthsOld !== null && monthsOld > 2;
+                    return (
+                      <FormItem>
+                        <FormLabel>Date du Car-Pass (optionnel)</FormLabel>
+                        <FormControl><Input type="date" {...field} /></FormControl>
+                        {isOld && (
+                          <div className="flex items-start gap-2 p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 text-xs mt-1.5">
+                            <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                            <span>
+                              Ce Car-Pass date de plus de 2 mois. Pour maximiser la confiance des acheteurs, nous recommandons d'obtenir un Car-Pass récent via{" "}
+                              <a href="https://www.car-pass.be" target="_blank" rel="noopener noreferrer" className="underline font-medium">car-pass.be</a>.
+                            </span>
+                          </div>
+                        )}
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }} />
                 </CardContent>
               </Card>
 

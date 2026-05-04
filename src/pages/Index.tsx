@@ -24,6 +24,7 @@ const FuelPriceStrip = lazy(() => import("@/components/FuelPriceStrip"));
 
 const TrustBar = lazy(() => import("@/components/TrustBar"));
 const BrandCarousel = lazy(() => import("@/features/search/components/BrandCarousel"));
+const EvBrandSection = lazy(() => import("@/features/search/components/EvBrandSection"));
 const FilterPanel = lazy(() => import("@/features/search/components/FilterPanel"));
 const PopularVehicles = lazy(() => import("@/features/listings/components/PopularVehicles"));
 const SwipeDiscovery = lazy(() => import("@/features/listings/components/SwipeDiscovery"));
@@ -227,6 +228,14 @@ const Index = () => {
               selectedModel={filters.searchQuery}
             />
           </ScrollReveal>
+        </Suspense>
+
+        {/* EV brand quick-filter strip */}
+        <Suspense fallback={null}>
+          <EvBrandSection
+            onBrandFilter={(brand) => updateFilter("brand", brand)}
+            selectedBrand={filters.brand}
+          />
         </Suspense>
 
         {/* Testimonials — masqués tant qu'on n'a pas ≥ 5 vrais avis */}

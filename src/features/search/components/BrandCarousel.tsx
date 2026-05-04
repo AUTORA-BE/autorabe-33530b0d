@@ -32,24 +32,8 @@ import volvoLogo from "@/assets/brands/volvo.png";
 import skodaLogo from "@/assets/brands/skoda.png";
 
 import type { BrandConfig } from "../types/search.types";
-
-export const BRAND_MODELS: Record<string, string[]> = {
-  "Volkswagen": ["Golf","Polo","Tiguan","Passat","T-Roc","T-Cross","ID.3","ID.4","Touareg","Sharan","Caddy","Transporter"],
-  "BMW": ["Série 1","Série 2","Série 3","Série 4","Série 5","Série 7","X1","X2","X3","X4","X5","X6","iX","i4","i5"],
-  "Audi": ["A1","A3","A4","A5","A6","A7","A8","Q2","Q3","Q4 e-tron","Q5","Q7","Q8","TT","e-tron"],
-  "Mercedes-Benz": ["Classe A","Classe B","Classe C","Classe E","Classe S","CLA","CLS","GLA","GLB","GLC","GLE","GLS","EQA","EQB","EQC","EQE","EQS"],
-  "Peugeot": ["108","208","308","408","508","2008","3008","5008","Rifter","Partner","Expert","e-208","e-2008"],
-  "Renault": ["Clio","Captur","Mégane","Arkana","Kadjar","Koleos","Scenic","Espace","Trafic","Master","Zoe","Megane E-Tech"],
-  "Citroën": ["C1","C3","C3 Aircross","C4","C5 Aircross","C5 X","Berlingo","SpaceTourer","Jumpy","ë-C4"],
-  "Toyota": ["Yaris","Corolla","C-HR","RAV4","Prius","Camry","Highlander","Land Cruiser","Proace","Aygo X","bZ4X"],
-  "Ford": ["Fiesta","Focus","Puma","Kuga","Mustang Mach-E","Explorer","Ranger","Transit","Galaxy","S-Max","EcoSport"],
-  "Opel": ["Corsa","Astra","Mokka","Crossland","Grandland","Zafira","Insignia","Combo","Vivaro","Movano"],
-  "Hyundai": ["i10","i20","i30","i40","Tucson","Santa Fe","Ioniq 5","Ioniq 6","Kona","Nexo","Staria"],
-  "Kia": ["Picanto","Rio","Ceed","Stinger","Sportage","Sorento","Stonic","Niro","EV6","Carnival"],
-  "Fiat": ["500","500X","500L","Tipo","Panda","Punto","Bravo","Doblo","Ducato","500e"],
-  "Volvo": ["XC40","XC60","XC90","S60","S90","V60","V90","C40 Recharge","EX30","EX90"],
-  "Škoda": ["Fabia","Scala","Octavia","Superb","Rapid","Kamiq","Karoq","Kodiaq","Enyaq"],
-};
+import { BRAND_MODELS } from "@/data/brandModels";
+export { BRAND_MODELS } from "@/data/brandModels";
 
 const BRANDS: BrandConfig[] = [
   { name: "Volkswagen", logo: volkswagenLogo, color: "#001E50" },

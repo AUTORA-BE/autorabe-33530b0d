@@ -180,37 +180,99 @@ export default function AdminListingsPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Listing detail sheet with history */}
+      {/* Listing detail sheet with full buyer-facing preview */}
       <Sheet open={!!detailListing} onOpenChange={(open) => { if (!open) setDetailListing(null); }}>
-        <SheetContent className="sm:max-w-lg overflow-y-auto">
+        <SheetContent className="sm:max-w-xl overflow-y-auto">
           {detailListing && (
             <>
               <SheetHeader>
-                <SheetTitle className="flex items-center gap-2">
-                  {detailListing.brand} {detailListing.model}
+                <SheetTitle className="flex items-center gap-2 flex-wrap">
+                  {detailListing.brand} {detailListing.model} {detailListing.year}
                   <Badge className={`text-[10px] ${STATUS_COLORS[detailListing.status || 'pending'] || ''}`}>
                     {detailListing.status}
                   </Badge>
                 </SheetTitle>
               </SheetHeader>
 
-              {/* Listing info */}
-              <div className="mt-4 space-y-3">
-                {detailListing.photos?.[0] && (
-                  <img src={detailListing.photos[0]} alt="" className="w-full h-40 rounded-xl object-cover" />
-                )}
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div><span className="text-muted-foreground">Année :</span> {detailListing.year}</div>
-                  <div><span className="text-muted-foreground">Prix :</span> €{detailListing.price?.toLocaleString()}</div>
-                  <div><span className="text-muted-foreground">Km :</span> {detailListing.mileage?.toLocaleString()}</div>
-                  <div><span className="text-muted-foreground">Carburant :</span> {detailListing.fuel_type}</div>
-                  <div><span className="text-muted-foreground">Vendeur :</span> {detailListing.contact_name}</div>
-                  <div><span className="text-muted-foreground">Lieu :</span> {detailListing.location || '—'}</div>
+              {/* Photo gallery */}
+              {detailListing.photos && detailListing.photos.length > 0 && (
+                <div className="mt-4 grid grid-cols-3 gap-1.5">
+                  {detailListing.photos.map((url: string, i: number) => (
+                    <div key={i} className="relative aspect-[4/3] rounded-lg overflow-hidden bg-muted">
+                      <img src={url} alt={`Photo ${i + 1}`} className="w-full h-full object-cover" loading="lazy" />
+                      {i === 0 && (
+                        <span className="absolute bottom-1 left-1 text-[9px] font-semibold bg-primary text-primary-foreground px-1.5 py-0.5 rounded">
+                          Principale
+                        </span>
+                      )}
+                    </div>
+                  ))}
                 </div>
-                {detailListing.description && (
-                  <p className="text-xs text-muted-foreground line-clamp-3">{detailListing.description}</p>
-                )}
+              )}
+
+              {/* Price + link */}
+              <div className="mt-4 flex items-center justify-between">
+                <p className="text-2xl font-bold text-foreground">€{detailListing.price?.toLocaleString('fr-BE')}</p>
+                <a
+                  href={`/vehicles/${detailListing.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-primary underline underline-offset-2"
+                >
+                  Voir la fiche →
+                </a>
               </div>
+
+              {/* All specs */}
+              <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                {[
+                  ["Année", detailListing.year],
+                  ["Km", `${detailListing.mileage?.toLocaleString('fr-BE')} km`],
+                  ["Carburant", detailListing.fuel_type],
+                  ["Boîte", detailListing.transmission],
+                  ["Carrosserie", detailListing.body_type],
+                  ["Couleur", detailListing.color],
+                  ["Puissance", detailListing.power ? `${detailListing.power} ch` : "—"],
+                  ["Portes", detailListing.doors],
+                  ["Norme Euro", detailListing.euro_norm || "—"],
+                  ["Lieu", detailListing.location || "—"],
+                  ["Vendeur", detailListing.contact_name],
+                  ["Type", detailListing.seller_type],
+                  ["CT valide", detailListing.ct_valid ? "✅ Oui" : "❌ Non"],
+                  ["Carnet entretien", detailListing.maintenance_book_complete ? "✅ Complet" : "❌ Incomplet"],
+                  ["Car-Pass", detailListing.car_pass_verified ? "✅ Vérifié" : "❌ Non"],
+                  ["Car-Pass date", detailListing.car_pass_date || "—"],
+                ].map(([label, value]) => (
+                  <div key={label as string}>
+                    <span className="text-muted-foreground text-xs">{label} : </span>
+                    <span className="font-medium text-xs">{value ?? "—"}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Features */}
+              {detailListing.features && detailListing.features.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {detailListing.features.map((f: string) => (
+                    <span key={f} className="px-2 py-0.5 text-[10px] rounded-full bg-primary/10 text-primary border border-primary/20">{f}</span>
+                  ))}
+                </div>
+              )}
+
+              {/* Description */}
+              {detailListing.description && (
+                <div className="mt-3 p-3 rounded-xl bg-muted/50 text-xs text-muted-foreground leading-relaxed">
+                  {detailListing.description}
+                </div>
+              )}
+
+              {/* Car-Pass link */}
+              {detailListing.car_pass_url && (
+                <a href={detailListing.car_pass_url} target="_blank" rel="noopener noreferrer"
+                  className="mt-3 flex items-center gap-2 text-xs text-primary underline underline-offset-2">
+                  📄 Voir le Car-Pass
+                </a>
+              )}
 
               <Separator className="my-4" />
 
