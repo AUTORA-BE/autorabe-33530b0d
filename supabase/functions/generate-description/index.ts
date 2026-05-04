@@ -59,40 +59,53 @@ Couleur : ${color} | Puissance : ${power} ch | Norme : ${euroNorm}
 État : ${ctValid}${carPass ? " | " + carPass : ""}${maintenance ? " | " + maintenance : ""}
 Équipements : ${features || "non précisés"}`;
 
-    const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
+    const apiKey = Deno.env.get("LOVABLE_API_KEY");
     if (!apiKey) {
       return new Response(
-        JSON.stringify({ error: "Clé API manquante" }),
+        JSON.stringify({ error: "AI gateway non configuré" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
+    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01",
-        "content-type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "claude-haiku-4-5-20251001",
-        max_tokens: 300,
-        system: systemPrompt,
-        messages: [{ role: "user", content: userPrompt }],
+        model: "google/gemini-2.5-flash",
+        max_tokens: 400,
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
       }),
     });
 
+    if (response.status === 429) {
+      return new Response(
+        JSON.stringify({ error: "Trop de requêtes, réessayez dans un instant." }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    if (response.status === 402) {
+      return new Response(
+        JSON.stringify({ error: "Crédits IA épuisés, contactez l'administrateur." }),
+        { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
     if (!response.ok) {
       const err = await response.text();
-      console.error("Anthropic error:", err);
+      console.error("AI gateway error:", err);
       return new Response(
-        JSON.stringify({ error: "Erreur API" }),
+        JSON.stringify({ error: "Erreur IA" }),
         { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
     const data = await response.json();
-    const description = data.content?.[0]?.text ?? "";
+    const description = data.choices?.[0]?.message?.content ?? "";
 
     return new Response(
       JSON.stringify({ description }),
