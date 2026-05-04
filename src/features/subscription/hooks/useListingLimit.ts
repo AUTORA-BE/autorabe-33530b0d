@@ -7,7 +7,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useSubscription } from './useSubscription';
-import {  FREE_PARTICULIER_LIMIT } from '../constants/tiers';
+import { FREE_PARTICULIER_LIMIT, SUBSCRIPTION_TIERS } from '../constants/tiers';
+import { IS_BETA_MODE } from '@/config/betaConfig';
 
 interface ListingLimitState {
   isLoading: boolean;
@@ -76,7 +77,10 @@ export function useListingLimit() {
 
       // Determine max allowed based on subscription
       let maxAllowed: number | null;
-      if (subscribed && tier) {
+      if (IS_BETA_MODE) {
+        // Beta mode: everyone gets Pro limits for free
+        maxAllowed = SUBSCRIPTION_TIERS.pro.maxListings;
+      } else if (subscribed && tier) {
         maxAllowed = tier.maxListings; // null = unlimited
       } else {
         // Free tier: 3 simultaneous for particulier

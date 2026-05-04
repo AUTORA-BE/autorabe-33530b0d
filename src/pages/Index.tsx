@@ -32,7 +32,6 @@ const WhyAutoRa = lazy(() => import("@/components/WhyAutoRa"));
 
 const TestimonialsSection = lazy(() => import("@/components/TestimonialsSection"));
 const SellCarCTA = lazy(() => import("@/components/SellCarCTA"));
-const PricingCTA = lazy(() => import("@/components/PricingCTA"));
 const HomeFAQ = lazy(() => import("@/components/HomeFAQ"));
 const TcoFloatingButton = lazy(() => import("@/components/TcoFloatingButton"));
 
@@ -221,9 +220,11 @@ const Index = () => {
         {/* Brand carousel — thin arrows */}
         <Suspense fallback={<BrandCarouselSkeleton />}>
           <ScrollReveal delay={0.05} direction="left">
-            <BrandCarousel 
-              onBrandFilter={(brand) => updateFilter("brand", brand)} 
-              selectedBrand={filters.brand} 
+            <BrandCarousel
+              onBrandFilter={(brand) => updateFilter("brand", brand)}
+              selectedBrand={filters.brand}
+              onModelFilter={(model) => updateFilter("searchQuery", model)}
+              selectedModel={filters.searchQuery}
             />
           </ScrollReveal>
         </Suspense>
@@ -239,15 +240,6 @@ const Index = () => {
         <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 300px" }}>
           <Suspense fallback={null}>
             <SellCarCTA />
-          </Suspense>
-        </div>
-
-        {/* Pricing CTA */}
-        <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 300px" }}>
-          <Suspense fallback={null}>
-            <ScrollReveal delay={0.1}>
-              <PricingCTA />
-            </ScrollReveal>
           </Suspense>
         </div>
 

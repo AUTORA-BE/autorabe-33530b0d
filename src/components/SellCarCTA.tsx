@@ -63,7 +63,7 @@ const SellCarCTA = memo(() => {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
                   <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary" />
                 </span>
-                {isNl ? "Voor particulieren — gratis" : "Pour particuliers — gratuit"}
+                {isNl ? "Vertrouwd door duizenden Belgische verkopers" : "Fait confiance par des milliers de vendeurs belges"}
               </span>
             </motion.div>
 
@@ -73,9 +73,9 @@ const SellCarCTA = memo(() => {
               className="font-serif text-center text-3xl sm:text-4xl lg:text-5xl font-light text-foreground mb-5 leading-[1.15]"
             >
               {isNl ? (
-                <>Verkoop uw auto <span className="text-primary">in 3 minuten</span></>
+                <>Uw auto verdient <span className="text-primary">de juiste koper</span></>
               ) : (
-                <>Vendez votre voiture <span className="text-primary">en 3 minutes</span></>
+                <>Votre voiture mérite <span className="text-primary">le bon acheteur</span></>
               )}
             </motion.h2>
 
@@ -84,8 +84,8 @@ const SellCarCTA = memo(() => {
               className="text-muted-foreground text-sm sm:text-base font-light text-center max-w-lg mx-auto mb-14 leading-relaxed"
             >
               {isNl
-                ? "Bereik duizenden kopers in België. Uw advertentie wordt automatisch geverifieerd."
-                : "Touchez des milliers d'acheteurs en Belgique. Votre annonce est vérifiée automatiquement."}
+                ? "AutoRa brengt uw voertuig bij duizenden serieuze kopers in België. Elke advertentie is Car-Pass geverifieerd en LEZ-conform — meer vertrouwen, snellere verkoop."
+                : "AutoRa connecte votre véhicule à des milliers d'acheteurs sérieux en Belgique. Chaque annonce est vérifiée Car-Pass et conforme LEZ — plus de confiance, vente plus rapide."}
             </motion.p>
 
             {/* Steps — premium with hover lift */}

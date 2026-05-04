@@ -33,6 +33,24 @@ import skodaLogo from "@/assets/brands/skoda.png";
 
 import type { BrandConfig } from "../types/search.types";
 
+export const BRAND_MODELS: Record<string, string[]> = {
+  "Volkswagen": ["Golf","Polo","Tiguan","Passat","T-Roc","T-Cross","ID.3","ID.4","Touareg","Sharan","Caddy","Transporter"],
+  "BMW": ["Série 1","Série 2","Série 3","Série 4","Série 5","Série 7","X1","X2","X3","X4","X5","X6","iX","i4","i5"],
+  "Audi": ["A1","A3","A4","A5","A6","A7","A8","Q2","Q3","Q4 e-tron","Q5","Q7","Q8","TT","e-tron"],
+  "Mercedes-Benz": ["Classe A","Classe B","Classe C","Classe E","Classe S","CLA","CLS","GLA","GLB","GLC","GLE","GLS","EQA","EQB","EQC","EQE","EQS"],
+  "Peugeot": ["108","208","308","408","508","2008","3008","5008","Rifter","Partner","Expert","e-208","e-2008"],
+  "Renault": ["Clio","Captur","Mégane","Arkana","Kadjar","Koleos","Scenic","Espace","Trafic","Master","Zoe","Megane E-Tech"],
+  "Citroën": ["C1","C3","C3 Aircross","C4","C5 Aircross","C5 X","Berlingo","SpaceTourer","Jumpy","ë-C4"],
+  "Toyota": ["Yaris","Corolla","C-HR","RAV4","Prius","Camry","Highlander","Land Cruiser","Proace","Aygo X","bZ4X"],
+  "Ford": ["Fiesta","Focus","Puma","Kuga","Mustang Mach-E","Explorer","Ranger","Transit","Galaxy","S-Max","EcoSport"],
+  "Opel": ["Corsa","Astra","Mokka","Crossland","Grandland","Zafira","Insignia","Combo","Vivaro","Movano"],
+  "Hyundai": ["i10","i20","i30","i40","Tucson","Santa Fe","Ioniq 5","Ioniq 6","Kona","Nexo","Staria"],
+  "Kia": ["Picanto","Rio","Ceed","Stinger","Sportage","Sorento","Stonic","Niro","EV6","Carnival"],
+  "Fiat": ["500","500X","500L","Tipo","Panda","Punto","Bravo","Doblo","Ducato","500e"],
+  "Volvo": ["XC40","XC60","XC90","S60","S90","V60","V90","C40 Recharge","EX30","EX90"],
+  "Škoda": ["Fabia","Scala","Octavia","Superb","Rapid","Kamiq","Karoq","Kodiaq","Enyaq"],
+};
+
 const BRANDS: BrandConfig[] = [
   { name: "Volkswagen", logo: volkswagenLogo, color: "#001E50" },
   { name: "BMW", logo: bmwLogo, color: "#0066B1" },
@@ -54,18 +72,32 @@ const BRANDS: BrandConfig[] = [
 export interface BrandCarouselProps {
   onBrandFilter?: (brand: string) => void;
   selectedBrand?: string;
+  onModelFilter?: (model: string) => void;
+  selectedModel?: string;
 }
 
-const BrandCarousel = memo(function BrandCarousel({ 
-  onBrandFilter, 
-  selectedBrand 
+const BrandCarousel = memo(function BrandCarousel({
+  onBrandFilter,
+  selectedBrand,
+  onModelFilter,
+  selectedModel,
 }: BrandCarouselProps) {
   const { t } = useLanguage();
   const [api, setApi] = useState<CarouselApi>();
 
+  const models = selectedBrand ? (BRAND_MODELS[selectedBrand] ?? []) : [];
+
   const handleBrandClick = (brandName: string) => {
     if (onBrandFilter) {
       onBrandFilter(selectedBrand === brandName ? "" : brandName);
+    }
+    if (onModelFilter) onModelFilter("");
+    document.getElementById("results-section")?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleModelClick = (model: string) => {
+    if (onModelFilter) {
+      onModelFilter(selectedModel === model ? "" : model);
     }
     document.getElementById("results-section")?.scrollIntoView({ behavior: "smooth" });
   };
@@ -114,13 +146,14 @@ const BrandCarousel = memo(function BrandCarousel({
                       )}
                     >
                       <div className={cn(
-                        "w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center mb-2 sm:mb-3 rounded-2xl p-2 sm:p-3 transition-all duration-300",
-                        "bg-white/80 dark:bg-white/5"
+                        "w-14 h-14 sm:w-18 sm:h-18 flex items-center justify-center mb-2 sm:mb-3 rounded-2xl p-2.5 sm:p-3.5 transition-all duration-300 shadow-sm",
+                        "bg-white dark:bg-white/10",
+                        selectedBrand === brand.name && "ring-2 ring-primary/40"
                       )}>
-                        <img 
-                          src={brand.logo} 
+                        <img
+                          src={brand.logo}
                           alt={`${brand.name} logo`}
-                          className="w-full h-full object-contain opacity-70 group-hover:opacity-100 transition-opacity duration-300"
+                          className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110"
                           loading="lazy"
                           draggable="false"
                         />
@@ -157,6 +190,26 @@ const BrandCarousel = memo(function BrandCarousel({
             <ChevronRight className="w-5 h-5" strokeWidth={1} />
           </button>
         </div>
+
+        {/* Model chips — appear when a brand is selected */}
+        {models.length > 0 && (
+          <div className="mt-6 flex flex-wrap gap-2 justify-center">
+            {models.map((model) => (
+              <button
+                key={model}
+                onClick={() => handleModelClick(model)}
+                className={cn(
+                  "px-3 py-1.5 rounded-full text-xs font-light border transition-all duration-200",
+                  selectedModel === model
+                    ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                    : "border-border/50 text-muted-foreground hover:border-primary/40 hover:text-foreground"
+                )}
+              >
+                {model}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

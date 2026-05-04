@@ -55,6 +55,7 @@ const sellCarSchema = z.object({
   first_registration: z.string().optional(),
   car_pass_date: z.string().optional(),
   description: z.string().optional(),
+  reference_url: z.string().url("URL invalide").optional().or(z.literal("")),
   contact_name: z.string().min(1, "Le nom de contact est obligatoire"),
   contact_phone: z.string().optional(),
   contact_email: z.string().email("Adresse email invalide"),
@@ -648,7 +649,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
         });
         // Confetti !
         setShowConfetti(true);
-        toast.success('🎉 Félicitations ! En tant que membre fondateur, votre annonce est publiée gratuitement (Offre de lancement limitée).', { duration: 5000 });
+        toast.success('✅ Votre annonce est en ligne — des milliers d\'acheteurs belges vont la découvrir. Bonne vente !', { duration: 5000 });
         setTimeout(() => navigate('/dashboard'), 3500);
       }
       
@@ -1095,10 +1096,30 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
                 <CardHeader>
                   <CardTitle className="text-foreground">{t('sellForm.description')}</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="space-y-4">
                   <FormField control={form.control} name="description" render={({ field }) => (
                     <FormItem>
                       <FormControl><Textarea placeholder={t('sellForm.descriptionPlaceholder')} className="min-h-[150px]" {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+
+                  {/* Lien annonce concurrente (optionnel) */}
+                  <FormField control={form.control} name="reference_url" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium text-foreground flex items-center gap-2">
+                        🔗 Lien vers une annonce similaire <span className="text-muted-foreground font-normal">(optionnel)</span>
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="url"
+                          placeholder="https://www.autoscout24.be/... ou 2dehands.be/..."
+                          {...field}
+                        />
+                      </FormControl>
+                      <p className="text-xs text-muted-foreground">
+                        Vous avez trouvé votre voiture sur un autre site ? Collez le lien ici pour faciliter la vérification. Vous pouvez aussi ajouter une capture d'écran dans les photos.
+                      </p>
                       <FormMessage />
                     </FormItem>
                   )} />
