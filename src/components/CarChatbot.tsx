@@ -147,7 +147,8 @@ const CarChatbot = forwardRef<HTMLDivElement>(function CarChatbot(_props, ref) {
       <button
         data-hide-on-filter
         onClick={() => setIsOpen(true)}
-        className={`fixed bottom-[5.5rem] right-3 lg:bottom-6 lg:right-6 z-[60] w-11 h-11 lg:w-14 lg:h-14 rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/30 flex items-center justify-center transition-all hover:scale-110 active:scale-95 ${
+        style={{ bottom: 'calc(5.5rem + env(safe-area-inset-bottom, 0px))' }}
+        className={`fixed right-3 lg:right-6 lg:!bottom-6 z-[60] w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-primary text-primary-foreground shadow-xl shadow-primary/40 flex items-center justify-center transition-all hover:scale-110 active:scale-95 ${
           isOpen ? "hidden" : ""
         }`}
         aria-label="Ouvrir l'assistant AutoRa"
