@@ -149,7 +149,7 @@ Deno.serve(async (req) => {
     });
   } catch (error: any) {
     console.error("Error in notify-seller function:", error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
       headers: { "Content-Type": "application/json", ...corsHeaders },
     });
