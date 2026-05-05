@@ -1204,26 +1204,6 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
                       <FormMessage />
                     </FormItem>
                   )} />
-
-                  {/* Lien annonce concurrente (optionnel) */}
-                  <FormField control={form.control} name="reference_url" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm font-medium text-foreground flex items-center gap-2">
-                        🔗 Lien vers une annonce similaire <span className="text-muted-foreground font-normal">(optionnel)</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          type="url"
-                          placeholder="https://www.autoscout24.be/... ou 2dehands.be/..."
-                          {...field}
-                        />
-                      </FormControl>
-                      <p className="text-xs text-muted-foreground">
-                        Vous avez trouvé votre voiture sur un autre site ? Collez le lien ici pour faciliter la vérification. Vous pouvez aussi ajouter une capture d'écran dans les photos.
-                      </p>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
                 </CardContent>
               </Card>
 
@@ -1239,7 +1219,18 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
                   <FormField control={form.control} name="contact_name" render={({ field }) => (
                     <FormItem>
                       <FormLabel>{t('sellForm.contactName')} *</FormLabel>
-                      <FormControl><Input placeholder={t('sellForm.contactNamePlaceholder')} {...field} /></FormControl>
+                      <FormControl>
+                        <Input
+                          placeholder={t('sellForm.contactNamePlaceholder')}
+                          {...field}
+                          readOnly
+                          aria-readonly="true"
+                          className="bg-muted/50 cursor-not-allowed"
+                        />
+                      </FormControl>
+                      <p className="text-xs text-muted-foreground">
+                        Issu de votre profil. Modifiez-le depuis vos paramètres si besoin.
+                      </p>
                       <FormMessage />
                     </FormItem>
                   )} />
