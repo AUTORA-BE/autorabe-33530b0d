@@ -104,6 +104,21 @@ const handler = async (req: Request): Promise<Response> => {
     `;
 
     const appUrl = "https://autora.be";
+
+    // Skip suppressed recipients (GDPR opt-out compliance)
+    const { data: suppressed } = await supabaseAdmin
+      .from("suppressed_emails")
+      .select("id")
+      .eq("email", listing.contact_email.toLowerCase())
+      .maybeSingle();
+    if (suppressed) {
+      console.log(`Skipping suppressed recipient: ${listing.contact_email}`);
+      return new Response(JSON.stringify({ success: true, skipped: "suppressed" }), {
+        status: 200,
+        headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+
     const emailResponse = await resend.emails.send({
       from: "AutoRa <noreply@autora.be>",
       to: [listing.contact_email],
