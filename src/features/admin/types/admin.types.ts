@@ -50,6 +50,16 @@ export interface AdminListing {
   description: string | null;
   euro_norm: string | null;
   boost_level: string | null;
+  body_type?: string | null;
+  color?: string | null;
+  power?: number | null;
+  doors?: number | null;
+  ct_valid?: boolean | null;
+  maintenance_book_complete?: boolean | null;
+  car_pass_verified?: boolean | null;
+  car_pass_date?: string | null;
+  car_pass_url?: string | null;
+  features?: string[] | null;
 }
 
 export interface AdminReport {

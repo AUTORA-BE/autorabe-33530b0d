@@ -224,7 +224,7 @@ const Confidentialite = () => {
       <SEOHead
         title={`${t.title} — AutoRA.be`}
         description="Politique de confidentialité et protection des données personnelles RGPD"
-        noindex
+        noIndex
       />
       <Header />
       <main className="container mx-auto px-4 py-12 max-w-3xl">

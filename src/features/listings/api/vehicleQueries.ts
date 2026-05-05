@@ -260,7 +260,7 @@ export const vehicleQueries = {
 
     let distanceIds: string[] | null = null;
     if (hasDistanceFilter) {
-      const { data: distRows } = await supabase.rpc('listings_within_radius', {
+      const { data: distRows } = await (supabase as any).rpc('listings_within_radius', {
         user_lat: filters.userLat!,
         user_lng: filters.userLng!,
         radius_km: filters.maxDistanceKm!,
@@ -366,7 +366,7 @@ export const vehicleQueries = {
       filters.userLng !== null;
     let distanceIds: string[] | null = null;
     if (hasDistance) {
-      const { data: distRows } = await supabase.rpc('listings_within_radius', {
+      const { data: distRows } = await (supabase as any).rpc('listings_within_radius', {
         user_lat: filters.userLat!,
         user_lng: filters.userLng!,
         radius_km: filters.maxDistanceKm!,

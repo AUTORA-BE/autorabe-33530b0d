@@ -58,6 +58,10 @@ export function parseFiltersFromParams(params: URLSearchParams): {
     bodyType: params.get(PARAM_KEYS.bodyType) || d.bodyType,
     color: params.get('color') || d.color,
     province: params.get(PARAM_KEYS.province) || d.province,
+    features: d.features,
+    maxDistanceKm: d.maxDistanceKm,
+    userLat: d.userLat,
+    userLng: d.userLng,
   };
 
   const sortBy = (params.get(PARAM_KEYS.sort) as VehicleSortOption) || 'recent';
