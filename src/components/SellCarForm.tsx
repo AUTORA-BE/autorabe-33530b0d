@@ -1219,7 +1219,18 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
                   <FormField control={form.control} name="contact_name" render={({ field }) => (
                     <FormItem>
                       <FormLabel>{t('sellForm.contactName')} *</FormLabel>
-                      <FormControl><Input placeholder={t('sellForm.contactNamePlaceholder')} {...field} /></FormControl>
+                      <FormControl>
+                        <Input
+                          placeholder={t('sellForm.contactNamePlaceholder')}
+                          {...field}
+                          readOnly
+                          aria-readonly="true"
+                          className="bg-muted/50 cursor-not-allowed"
+                        />
+                      </FormControl>
+                      <p className="text-xs text-muted-foreground">
+                        Issu de votre profil. Modifiez-le depuis vos paramètres si besoin.
+                      </p>
                       <FormMessage />
                     </FormItem>
                   )} />
