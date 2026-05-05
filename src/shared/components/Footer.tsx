@@ -48,10 +48,11 @@ const Footer = () => {
     {
       title: language === "nl" ? "Juridisch" : language === "en" ? "Legal" : language === "de" ? "Rechtliches" : "Légal",
       links: [
-        { to: "/terms", label: language === "nl" ? "Algemene voorwaarden" : language === "en" ? "Terms of Service" : language === "de" ? "AGB" : "Conditions générales" },
-        { to: "/privacy", label: language === "nl" ? "Privacybeleid" : language === "en" ? "Privacy Policy" : language === "de" ? "Datenschutz" : "Confidentialité" },
+        { to: language === "nl" ? "/voorwaarden" : "/cgu", label: language === "nl" ? "Algemene gebruiksvoorwaarden" : language === "en" ? "Terms of Use" : language === "de" ? "AGB" : "CGU" },
+        { to: language === "nl" ? "/verkoopvoorwaarden" : "/cgv", label: language === "nl" ? "Verkoopvoorwaarden" : language === "en" ? "Sales Terms" : language === "de" ? "AGB Verkauf" : "CGV" },
+        { to: language === "nl" ? "/privacybeleid" : "/confidentialite", label: language === "nl" ? "Privacybeleid" : language === "en" ? "Privacy Policy" : language === "de" ? "Datenschutz" : "Confidentialité (RGPD)" },
         { to: "/cookies", label: language === "nl" ? "Cookiebeleid" : language === "en" ? "Cookie Policy" : language === "de" ? "Cookie-Richtlinie" : "Politique cookies" },
-        { to: "/legal", label: language === "nl" ? "Wettelijke vermeldingen" : language === "en" ? "Legal Notice" : language === "de" ? "Impressum" : "Mentions légales" },
+        { to: language === "nl" ? "/wettelijke-vermeldingen" : "/mentions-legales", label: language === "nl" ? "Wettelijke vermeldingen" : language === "en" ? "Legal Notice" : language === "de" ? "Impressum" : "Mentions légales" },
       ],
     },
   ];

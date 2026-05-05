@@ -67,6 +67,16 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
+    // Authenticate optional user
+    let userId: string | null = null;
+    try {
+      const authHeader = req.headers.get("Authorization");
+      if (authHeader?.startsWith("Bearer ")) {
+        const { data } = await supabaseAdmin.auth.getUser(authHeader.replace("Bearer ", ""));
+        userId = data?.user?.id ?? null;
+      }
+    } catch { /* anonymous contact — no-op */ }
+
     const { name, email, subject, message }: ContactFormData = await req.json();
 
     // Validate input
@@ -204,6 +214,21 @@ const handler = async (req: Request): Promise<Response> => {
     );
 
     console.log("Confirmation email sent");
+
+    // Persist message to DB for admin review (best-effort, never blocks the response)
+    try {
+      await supabaseAdmin.from("contact_messages").insert({
+        name,
+        email,
+        subject,
+        message,
+        ip_address: ip,
+        user_id: userId,
+        status: "new",
+      });
+    } catch (dbErr) {
+      console.error("Failed to persist contact message:", dbErr);
+    }
 
     return new Response(
       JSON.stringify({ success: true, message: "Emails envoyés avec succès" }),

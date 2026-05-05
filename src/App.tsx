@@ -60,6 +60,11 @@ const GuideCarPass = lazy(() => import("./pages/guides/GuideCarPass"));
 const GuideAchatOccasion = lazy(() => import("./pages/guides/GuideAchatOccasion"));
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogArticle = lazy(() => import("./pages/blog/BlogArticle"));
+const MentionsLegales = lazy(() => import("./pages/MentionsLegales"));
+const CGU = lazy(() => import("./pages/CGU"));
+const Confidentialite = lazy(() => import("./pages/Confidentialite"));
+const CGV = lazy(() => import("./pages/CGV"));
+const ServerError = lazy(() => import("./pages/ServerError"));
 
 /** Minimal loading fallback shown while lazy chunks load */
 function PageLoader() {
@@ -132,11 +137,22 @@ function AppPages() {
       <Route path="/admin/*" element={<PageTransition><AdminLayout /></PageTransition>} />
       <Route path="/settings" element={<PageTransition><Settings /></PageTransition>} />
       <Route path="/reset-password" element={<PageTransition><ResetPassword /></PageTransition>} />
+      {/* Legacy routes kept for backwards-compat */}
       <Route path="/terms" element={<PageTransition><Terms /></PageTransition>} />
       <Route path="/privacy" element={<PageTransition><Privacy /></PageTransition>} />
       <Route path="/legal" element={<PageTransition><Legal /></PageTransition>} />
       <Route path="/cookies" element={<PageTransition><Cookies /></PageTransition>} />
       <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
+      {/* Canonical legal pages — FR + NL */}
+      <Route path="/mentions-legales" element={<PageTransition><MentionsLegales /></PageTransition>} />
+      <Route path="/wettelijke-vermeldingen" element={<PageTransition><MentionsLegales /></PageTransition>} />
+      <Route path="/cgu" element={<PageTransition><CGU /></PageTransition>} />
+      <Route path="/voorwaarden" element={<PageTransition><CGU /></PageTransition>} />
+      <Route path="/confidentialite" element={<PageTransition><Confidentialite /></PageTransition>} />
+      <Route path="/privacybeleid" element={<PageTransition><Confidentialite /></PageTransition>} />
+      <Route path="/cgv" element={<PageTransition><CGV /></PageTransition>} />
+      <Route path="/verkoopvoorwaarden" element={<PageTransition><CGV /></PageTransition>} />
+      <Route path="/500" element={<PageTransition><ServerError /></PageTransition>} />
       <Route path="/kontakt" element={<PageTransition><Contact /></PageTransition>} />
       <Route path="/calculateur-tco" element={<PageTransition><CalculateurTCO /></PageTransition>} />
       <Route path="/mes-alertes" element={<PageTransition><MesAlertes /></PageTransition>} />
