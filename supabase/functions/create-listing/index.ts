@@ -190,12 +190,12 @@ Deno.serve(async (req) => {
 
     if (error) {
       console.error('[create-listing] Insert error:', error);
-      return jsonResponse(req, { error: error.message }, { status: 500 });
+      return jsonResponse(req, { error: 'Internal server error' }, { status: 500 });
     }
 
     return jsonResponse(req, { id: data.id });
   } catch (e) {
     console.error('[create-listing] Fatal:', e);
-    return jsonResponse(req, { error: (e as Error).message }, { status: 500 });
+    return jsonResponse(req, { error: 'Internal server error' }, { status: 500 });
   }
 });

@@ -92,6 +92,17 @@ Deno.serve(async (req) => {
         const hoursLeft = Math.max(1, Math.round((expiresAt.getTime() - now.getTime()) / (1000 * 60 * 60)));
 
         try {
+          // Skip suppressed recipients (GDPR opt-out compliance)
+          const { data: suppressed } = await supabase
+            .from("suppressed_emails")
+            .select("id")
+            .eq("email", listing.contact_email.toLowerCase())
+            .maybeSingle();
+          if (suppressed) {
+            console.log(`Skipping suppressed recipient: ${listing.contact_email}`);
+            return;
+          }
+
           await resend.emails.send({
             from: "AutoRa <noreply@autora.be>",
             to: [listing.contact_email],
@@ -149,6 +160,17 @@ Deno.serve(async (req) => {
         const boostLabel = listing.boost_level === "ultra" ? "Ultra" : "Premium";
 
         try {
+          // Skip suppressed recipients (GDPR opt-out compliance)
+          const { data: suppressed } = await supabase
+            .from("suppressed_emails")
+            .select("id")
+            .eq("email", listing.contact_email.toLowerCase())
+            .maybeSingle();
+          if (suppressed) {
+            console.log(`Skipping suppressed recipient: ${listing.contact_email}`);
+            return;
+          }
+
           await resend.emails.send({
             from: "AutoRa <noreply@autora.be>",
             to: [listing.contact_email],

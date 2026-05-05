@@ -242,6 +242,17 @@ Deno.serve(async (req) => {
 
         if (userEmail) {
           try {
+            // Skip suppressed recipients (GDPR opt-out compliance)
+            const { data: suppressed } = await supabase
+              .from("suppressed_emails")
+              .select("id")
+              .eq("email", userEmail.toLowerCase())
+              .maybeSingle();
+            if (suppressed) {
+              console.log(`Skipping suppressed recipient: ${userEmail}`);
+              continue;
+            }
+
             await fetch("https://api.resend.com/emails", {
               method: "POST",
               headers: {

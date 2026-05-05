@@ -166,7 +166,7 @@ const CGV = () => {
       <SEOHead
         title={`${t.title} — AutoRA.be`}
         description="Conditions générales de vente des abonnements AutoRA.be"
-        noindex
+        noIndex
       />
       <Header />
       <main className="container mx-auto px-4 py-12 max-w-3xl">

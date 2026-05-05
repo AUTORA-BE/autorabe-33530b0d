@@ -13,7 +13,7 @@ const ServerError = () => {
       <SEOHead
         title={isNl ? "500 — Serverfout | AutoRA.be" : "500 — Erreur serveur | AutoRA.be"}
         description=""
-        noindex
+        noIndex
       />
       <div className="text-center max-w-md w-full">
         <div className="inline-flex items-center justify-center w-24 h-24 rounded-2xl bg-destructive/10 mb-8">

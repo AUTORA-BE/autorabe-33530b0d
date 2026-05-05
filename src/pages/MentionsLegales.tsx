@@ -146,7 +146,7 @@ const MentionsLegales = () => {
       <SEOHead
         title={`${t.title} — AutoRA.be`}
         description={t.subtitle}
-        noindex
+        noIndex
       />
       <Header />
       <main className="container mx-auto px-4 py-12 max-w-3xl">
