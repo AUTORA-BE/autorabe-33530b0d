@@ -1,20 +1,22 @@
 /**
  * React Query hook for managing user favorites via Supabase
- * Falls back to localStorage for unauthenticated users
+ * Auth required — guests are redirected to /auth on toggle
  * @module features/favorites/hooks
  */
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchFavorites, addFavorite, removeFavorite } from "../api/favoriteQueries";
 import { trackEvent, EVENTS } from "@/lib/analytics";
+import { toast } from "sonner";
 import type { User } from "@supabase/supabase-js";
 
 const FAVORITES_QUERY_KEY = ["favorites"] as const;
-const LOCAL_KEY = "autora_favorites";
 
 export const useFavorites = () => {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
@@ -22,14 +24,12 @@ export const useFavorites = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setUser(session?.user ?? null);
-        // Invalidate on auth change so we refetch from Supabase
         queryClient.invalidateQueries({ queryKey: FAVORITES_QUERY_KEY });
       },
     );
     return () => subscription.unsubscribe();
   }, [queryClient]);
 
-  // --- Supabase-backed query (authenticated) ---
   const { data: dbFavorites = [] } = useQuery({
     queryKey: FAVORITES_QUERY_KEY,
     queryFn: fetchFavorites,
@@ -37,25 +37,7 @@ export const useFavorites = () => {
     staleTime: 5 * 60 * 1000,
   });
 
-  // --- localStorage fallback (guest) ---
-  const [localFavorites, setLocalFavorites] = useState<string[]>(() => {
-    try {
-      return JSON.parse(localStorage.getItem(LOCAL_KEY) || "[]");
-    } catch {
-      return [];
-    }
-  });
-
-  useEffect(() => {
-    if (!user) {
-      localStorage.setItem(LOCAL_KEY, JSON.stringify(localFavorites));
-    }
-  }, [localFavorites, user]);
-
-  // Derived list of car_listing_ids
-  const favoriteIds: string[] = user
-    ? dbFavorites.map((f) => f.car_listing_id)
-    : localFavorites;
+  const favoriteIds: string[] = user ? dbFavorites.map((f) => f.car_listing_id) : [];
 
   const addMutation = useMutation({
     mutationFn: addFavorite,
@@ -76,35 +58,28 @@ export const useFavorites = () => {
 
   const toggleFavorite = useCallback(
     (carId: string) => {
+      if (!user) {
+        toast.info("Connectez-vous pour ajouter aux favoris", {
+          action: { label: "Se connecter", onClick: () => navigate("/auth") },
+        });
+        return;
+      }
       if (isToggling) return;
 
       const wasFavorite = isFavorite(carId);
       if (!wasFavorite) {
         trackEvent(EVENTS.FAVORITE_ADDED, { car_id: carId });
-      }
-
-      if (user) {
-        if (wasFavorite) {
-          removeMutation.mutate(carId);
-        } else {
-          addMutation.mutate(carId);
-        }
+        addMutation.mutate(carId);
       } else {
-        // Guest: localStorage
-        setLocalFavorites((prev) =>
-          prev.includes(carId) ? prev.filter((id) => id !== carId) : [...prev, carId],
-        );
+        removeMutation.mutate(carId);
       }
     },
-    [user, isFavorite, addMutation, removeMutation, isToggling],
+    [user, isFavorite, addMutation, removeMutation, isToggling, navigate],
   );
 
   const clearFavorites = useCallback(() => {
-    if (!user) {
-      setLocalFavorites([]);
-    }
-    // For authenticated users, clearing all is rarely needed; skip for now
-  }, [user]);
+    // No-op for guests; authenticated bulk-clear handled elsewhere if needed
+  }, []);
 
   return {
     favorites: favoriteIds,
