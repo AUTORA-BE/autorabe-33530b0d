@@ -88,6 +88,17 @@ const queryClient = new QueryClient({
   },
 });
 
+// Purge React Query cache on logout / user switch — prevents data leakage between accounts.
+import { supabase } from "@/integrations/supabase/client";
+let _lastUserId: string | null | undefined = undefined;
+supabase.auth.onAuthStateChange((_evt, session) => {
+  const uid = session?.user?.id ?? null;
+  if (_lastUserId !== undefined && _lastUserId !== uid) {
+    queryClient.clear();
+  }
+  _lastUserId = uid;
+});
+
 /** Scroll to top on route change + trigger idle prefetching + global analytics */
 function ScrollToTopOnNavigate() {
   const { pathname } = useLocation();
