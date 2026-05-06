@@ -42,8 +42,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useLocalizedVehicleHref } from "@/lib/useLocalizedHref";
 import { useLanguage } from "@/contexts/LanguageContext";
 const VehicleTcoSection = lazy(() => import("@/features/tco/components/VehicleTcoSection"));
-const BelgianTaxCalculator = lazy(() => import("@/components/BelgianTaxCalculator"));
-const TaxChatModal = lazy(() => import("@/components/TaxChatModal"));
+const FiscalAdvisorCard = lazy(() => import("@/components/FiscalAdvisorCard"));
 
 /** Stagger variants for sections */
 const fadeUp = (delay: number) => ({
