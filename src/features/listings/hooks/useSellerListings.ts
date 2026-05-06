@@ -161,16 +161,19 @@ export function useSellerListings(period: ChartPeriod = 30, dateLocale?: Locale)
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  // Delete mutation
+  // Delete mutation — defense-in-depth: filter by user_id
   const deleteMutation = useMutation({
     mutationFn: async (listingId: string) => {
+      if (!user?.id) throw new Error("Not authenticated");
       const { error } = await supabase
         .from("car_listings")
         .delete()
-        .eq("id", listingId);
+        .eq("id", listingId)
+        .eq("user_id", user.id);
       if (error) throw error;
     },
     onSuccess: () => {
+      if (user?.id) queryClient.invalidateQueries({ queryKey: vehicleKeys.seller(user.id) });
       queryClient.invalidateQueries({ queryKey: vehicleKeys.all });
       toast.success(t("dashboard.deleteSuccess"));
     },
@@ -179,16 +182,19 @@ export function useSellerListings(period: ChartPeriod = 30, dateLocale?: Locale)
     },
   });
 
-  // Mark as sold mutation
+  // Mark as sold mutation — defense-in-depth: filter by user_id
   const markAsSoldMutation = useMutation({
     mutationFn: async (listingId: string) => {
+      if (!user?.id) throw new Error("Not authenticated");
       const { error } = await supabase
         .from("car_listings")
         .update({ status: "sold" })
-        .eq("id", listingId);
+        .eq("id", listingId)
+        .eq("user_id", user.id);
       if (error) throw error;
     },
     onSuccess: () => {
+      if (user?.id) queryClient.invalidateQueries({ queryKey: vehicleKeys.seller(user.id) });
       queryClient.invalidateQueries({ queryKey: vehicleKeys.all });
       toast.success(t("dashboard.markedAsSold") || "Véhicule marqué comme vendu");
     },

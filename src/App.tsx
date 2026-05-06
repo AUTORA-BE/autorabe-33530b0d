@@ -64,6 +64,7 @@ const CGU = lazy(() => import("./pages/CGU"));
 const Confidentialite = lazy(() => import("./pages/Confidentialite"));
 const CGV = lazy(() => import("./pages/CGV"));
 const ServerError = lazy(() => import("./pages/ServerError"));
+const MarquesElectriques = lazy(() => import("./pages/MarquesElectriques"));
 
 /** Minimal loading fallback shown while lazy chunks load */
 function PageLoader() {
@@ -88,6 +89,17 @@ const queryClient = new QueryClient({
   },
 });
 
+// Purge React Query cache on logout / user switch — prevents data leakage between accounts.
+import { supabase } from "@/integrations/supabase/client";
+let _lastUserId: string | null | undefined = undefined;
+supabase.auth.onAuthStateChange((_evt, session) => {
+  const uid = session?.user?.id ?? null;
+  if (_lastUserId !== undefined && _lastUserId !== uid) {
+    queryClient.clear();
+  }
+  _lastUserId = uid;
+});
+
 /** Scroll to top on route change + trigger idle prefetching + global analytics */
 function ScrollToTopOnNavigate() {
   const { pathname } = useLocation();
@@ -106,6 +118,8 @@ function AppPages() {
   return (
     <Routes>
       <Route path="/" element={<PageTransition><Index /></PageTransition>} />
+      <Route path="/marques-electriques" element={<PageTransition><MarquesElectriques /></PageTransition>} />
+      <Route path="/electric-brands" element={<PageTransition><MarquesElectriques /></PageTransition>} />
       <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
       {/* Vehicle detail accepts UUID or SEO slug ending with UUID */}
       <Route path="/car/:id" element={<PageTransition><CarDetail /></PageTransition>} />
