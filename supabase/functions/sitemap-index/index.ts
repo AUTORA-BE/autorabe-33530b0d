@@ -1,7 +1,7 @@
 // Sitemap index — référence un sitemap par langue pour AutoRa
 // Best practice Google : un sitemap par langue, regroupés par un index.
 const SITE_URL = "https://autora.be";
-const SUPABASE_PROJECT_REF = "jbdsjqoonpieusfvkhyo";
+const SUPABASE_PROJECT_REF = "okeiblbufwhfirxrzkfo";
 const FUNCTIONS_BASE = `https://${SUPABASE_PROJECT_REF}.supabase.co/functions/v1`;
 const LANGS = ["fr", "nl", "de", "en"] as const;
 
