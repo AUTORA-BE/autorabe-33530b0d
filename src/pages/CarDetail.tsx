@@ -727,16 +727,10 @@ const CarDetail = () => {
                             />
                           </Suspense>
                           <Suspense fallback={<div className="h-20 rounded-2xl skeleton-shimmer" />}>
-                            <BelgianTaxCalculator
-                              powerKw={dbListing?.power ? Math.round(dbListing.power * 0.7355) : null} fuelType={car.fuelType}
-                              euroNorm={car.euroNorm} year={car.year}
+                            <FiscalAdvisorCard
+                              vehicle={{ brand: car.brand, model: car.model, year: car.year, fuelType: car.fuelType, power: dbListing?.power, euroNorm: car.euroNorm }}
                             />
                           </Suspense>
-                          <div className="flex justify-center">
-                            <Suspense fallback={null}>
-                              <TaxChatModal vehicle={{ brand: car.brand, model: car.model, year: car.year, fuelType: car.fuelType, power: dbListing?.power, euroNorm: car.euroNorm }} />
-                            </Suspense>
-                          </div>
                         </div>
                       )}
                       {mobileTab === 3 && (
@@ -770,13 +764,10 @@ const CarDetail = () => {
                   </ScrollReveal>
                   <ScrollReveal delay={0.05}>
                     <Suspense fallback={<div className="h-20 rounded-2xl skeleton-shimmer" />}>
-                      <BelgianTaxCalculator powerKw={dbListing?.power ? Math.round(dbListing.power * 0.7355) : null} fuelType={car.fuelType} euroNorm={car.euroNorm} year={car.year} />
+                      <FiscalAdvisorCard
+                        vehicle={{ brand: car.brand, model: car.model, year: car.year, fuelType: car.fuelType, power: dbListing?.power, euroNorm: car.euroNorm }}
+                      />
                     </Suspense>
-                    <div className="mt-3 flex justify-center">
-                      <Suspense fallback={null}>
-                        <TaxChatModal vehicle={{ brand: car.brand, model: car.model, year: car.year, fuelType: car.fuelType, power: dbListing?.power, euroNorm: car.euroNorm }} />
-                      </Suspense>
-                    </div>
                   </ScrollReveal>
                   <ScrollReveal delay={0.05}>
                     <RichDescription description={description} />
