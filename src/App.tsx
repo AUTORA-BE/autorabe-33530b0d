@@ -64,6 +64,7 @@ const CGU = lazy(() => import("./pages/CGU"));
 const Confidentialite = lazy(() => import("./pages/Confidentialite"));
 const CGV = lazy(() => import("./pages/CGV"));
 const ServerError = lazy(() => import("./pages/ServerError"));
+const MarquesElectriques = lazy(() => import("./pages/MarquesElectriques"));
 
 /** Minimal loading fallback shown while lazy chunks load */
 function PageLoader() {
@@ -117,6 +118,8 @@ function AppPages() {
   return (
     <Routes>
       <Route path="/" element={<PageTransition><Index /></PageTransition>} />
+      <Route path="/marques-electriques" element={<PageTransition><MarquesElectriques /></PageTransition>} />
+      <Route path="/electric-brands" element={<PageTransition><MarquesElectriques /></PageTransition>} />
       <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
       {/* Vehicle detail accepts UUID or SEO slug ending with UUID */}
       <Route path="/car/:id" element={<PageTransition><CarDetail /></PageTransition>} />
