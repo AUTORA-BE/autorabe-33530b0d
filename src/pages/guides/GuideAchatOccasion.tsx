@@ -21,7 +21,7 @@ const GuideAchatOccasion = () => {
             datePublished: "2026-04-15",
           }),
           breadcrumbSchema([
-            { name: "AutoRa", url: "https://autora.be" },
+            { name: "AutoRA", url: "https://autora.be" },
             { name: "Guides", url: "https://autora.be/guide/acheter-voiture-occasion" },
             { name: "Acheter une voiture d'occasion", url: "https://autora.be/guide/acheter-voiture-occasion" },
           ]),
@@ -72,7 +72,7 @@ const GuideAchatOccasion = () => {
                 ))}
               </div>
               <p className="text-muted-foreground leading-relaxed">
-                <strong>Conseil AutoRa :</strong> Utilisez notre <a href="/calculateur-tco" className="text-primary hover:underline font-medium">calculateur TCO gratuit</a> pour estimer le coût total sur 5 ans de n'importe quel véhicule.
+                <strong>Conseil AutoRA :</strong> Utilisez notre <a href="/calculateur-tco" className="text-primary hover:underline font-medium">calculateur TCO gratuit</a> pour estimer le coût total sur 5 ans de n'importe quel véhicule.
               </p>
             </section>
 
@@ -207,10 +207,10 @@ const GuideAchatOccasion = () => {
             <section className="glass-card p-8 rounded-2xl">
               <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground mb-4 flex items-center gap-3">
                 <Heart className="w-7 h-7 text-primary flex-shrink-0" />
-                Pourquoi acheter sur AutoRa ?
+                Pourquoi acheter sur AutoRA ?
               </h2>
               <p className="text-muted-foreground leading-relaxed mb-6">
-                AutoRa est la marketplace automobile belge conçue pour un achat en toute confiance :
+                AutoRA est la marketplace automobile belge conçue pour un achat en toute confiance :
               </p>
               <ul className="space-y-3">
                 {[

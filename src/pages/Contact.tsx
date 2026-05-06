@@ -63,7 +63,7 @@ const Contact = () => {
     setIsSubmitting(true);
     setLastSubmitTime(now);
     try {
-      // Send notification to AutoRa team (existing edge function)
+      // Send notification to AutoRA team (existing edge function)
       const { error } = await supabase.functions.invoke("send-contact-email", {
         body: data,
       });
@@ -135,7 +135,7 @@ const Contact = () => {
 
   return (
     <div className="page-gradient">
-      <SEOHead title="Contactez AutoRa — Support & Questions" description="Contactez l'équipe AutoRa pour toute question sur l'achat ou la vente de votre véhicule d'occasion en Belgique. Réponse sous 24h." url="https://autora.be/contact" />
+      <SEOHead title="Contactez AutoRA — Support & Questions" description="Contactez l'équipe AutoRA pour toute question sur l'achat ou la vente de votre véhicule d'occasion en Belgique. Réponse sous 24h." url="https://autora.be/contact" />
       <Header />
       
       <main className="pt-24">

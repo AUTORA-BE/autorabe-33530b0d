@@ -4,7 +4,7 @@
  */
 
 const SITE_URL = "https://autora.be";
-const SITE_NAME = "AutoRa";
+const SITE_NAME = "AutoRA";
 const LOGO_URL = `${SITE_URL}/logo.png`;
 
 /** Organization schema — reused across pages */

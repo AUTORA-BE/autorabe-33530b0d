@@ -8,7 +8,7 @@ const About = () => {
     {
       name: "Sophie Dupont",
       role: "CEO & Fondatrice",
-      description: "Passionnée d'automobile depuis toujours, Sophie a fondé AutoRa pour révolutionner le marché belge."
+      description: "Passionnée d'automobile depuis toujours, Sophie a fondé AutoRA pour révolutionner le marché belge."
     },
     {
       name: "Marc Van Bergen",
@@ -53,13 +53,13 @@ const About = () => {
   return (
     <div className="page-gradient">
       <SEOHead 
-        title="À propos d'AutoRa — Marketplace auto belge de confiance"
-        description="Découvrez AutoRa, la marketplace automobile belge fondée en 2024. Véhicules vérifiés Car-Pass, conformité LEZ garantie et transparence totale."
+        title="À propos d'AutoRA — Marketplace auto belge de confiance"
+        description="Découvrez AutoRA, la marketplace automobile belge fondée en 2024. Véhicules vérifiés Car-Pass, conformité LEZ garantie et transparence totale."
         url="https://autora.be/about"
         jsonLd={[
           localBusinessSchema,
           breadcrumbSchema([
-            { name: "AutoRa", url: "https://autora.be" },
+            { name: "AutoRA", url: "https://autora.be" },
             { name: "À propos", url: "https://autora.be/about" },
           ]),
         ]}
@@ -73,13 +73,13 @@ const About = () => {
           <div className="max-w-3xl mx-auto animate-fade-up">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
               <Car className="w-4 h-4" />
-              À propos d'AutoRa
+              À propos d'AutoRA
             </div>
             <h1 className="font-display text-4xl md:text-5xl font-bold text-foreground mb-6">
               La marketplace automobile <span className="gradient-text">de confiance</span> en Belgique
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              Fondée en 2024, AutoRa est née d'une vision simple : rendre l'achat et la vente de véhicules 
+              Fondée en 2024, AutoRA est née d'une vision simple : rendre l'achat et la vente de véhicules 
               en Belgique plus transparent, plus sûr et plus agréable. Nous combinons technologie de pointe 
               et expertise locale pour vous offrir la meilleure expérience possible.
             </p>
@@ -145,7 +145,7 @@ const About = () => {
                 Notre équipe
               </div>
               <h2 className="font-display text-3xl font-bold text-foreground mb-4">
-                Les visages derrière AutoRa
+                Les visages derrière AutoRA
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
                 Une équipe passionnée d'automobile et dédiée à votre satisfaction.

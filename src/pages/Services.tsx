@@ -120,7 +120,7 @@ const services: ServiceDetail[] = [
     title: "Pack Car-Pass",
     tagline: "Transparence et confiance",
     description:
-      "Le Car-Pass est obligatoire en Belgique pour toute vente de véhicule d'occasion. Nous simplifions l'intégralité du processus : demande, vérification et intégration directe dans votre annonce AutoRa.",
+      "Le Car-Pass est obligatoire en Belgique pour toute vente de véhicule d'occasion. Nous simplifions l'intégralité du processus : demande, vérification et intégration directe dans votre annonce AutoRA.",
     features: [
       "Demande Car-Pass officielle auprès des services agréés",
       "Vérification de l'historique kilométrique",
@@ -136,7 +136,7 @@ const services: ServiceDetail[] = [
   {
     id: "logistique",
     icon: Truck,
-    title: "Logistique Autora",
+    title: "Logistique AutoRA",
     tagline: "Livraison et dépannage partout en Belgique",
     description:
       "Service de transport et de dépannage professionnel pour vos véhicules. Que vous achetiez à distance ou que vous ayez besoin d'un dépannage, nous livrons votre véhicule en toute sécurité, partout en Belgique.",
@@ -215,8 +215,8 @@ const Services = () => {
   return (
     <div className="page-gradient">
       <SEOHead
-        title="Services Experts — AutoRa"
-        description="Découvrez les services experts AutoRa : mise en vente professionnelle, certification Car-Pass et logistique automobile en Belgique."
+        title="Services Experts — AutoRA"
+        description="Découvrez les services experts AutoRA : mise en vente professionnelle, certification Car-Pass et logistique automobile en Belgique."
         url="https://autora.be/services"
       />
       <Header />
@@ -239,7 +239,7 @@ const Services = () => {
               <span className="gradient-text">service</span>
             </h1>
             <p className="text-lg sm:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-              De la photo professionnelle à la livraison, AutoRa vous accompagne à chaque étape de la vente ou de l'achat de votre véhicule.
+              De la photo professionnelle à la livraison, AutoRA vous accompagne à chaque étape de la vente ou de l'achat de votre véhicule.
             </p>
           </motion.div>
         </section>

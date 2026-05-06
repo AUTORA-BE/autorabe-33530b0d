@@ -17,7 +17,7 @@ import {
 
 import type { TemplateEntry } from './registry.ts'
 
-const SITE_NAME = "AutoRa"
+const SITE_NAME = "AutoRA"
 const SITE_URL = "https://autora.be"
 
 interface WelcomeEmailProps {
@@ -31,7 +31,7 @@ const WelcomeEmail = ({ name }: WelcomeEmailProps) => (
     <Body style={main}>
       <Container style={container}>
         <Heading style={h1}>
-          Bienvenue sur AutoRa 🚗
+          Bienvenue sur AutoRA 🚗
         </Heading>
         <Text style={text}>
           {name ? `Bonjour ${name},` : 'Bonjour,'}

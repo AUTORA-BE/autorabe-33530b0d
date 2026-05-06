@@ -1,5 +1,5 @@
 /**
- * Core vehicle types for the AutoRa marketplace
+ * Core vehicle types for the AutoRA marketplace
  * @module features/listings/types
  */
 

@@ -539,7 +539,7 @@ const AdminReports = () => {
 
   return (
     <div className="page-gradient">
-      <SEOHead title={`${t("admin.title")} - AutoRa`} description="Admin dashboard" />
+      <SEOHead title={`${t("admin.title")} - AutoRA`} description="Admin dashboard" />
       <Header />
 
       <main className="min-h-screen pt-16 sm:pt-24 pb-24 sm:pb-12">

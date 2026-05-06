@@ -93,7 +93,7 @@ export default function PWAInstallBanner() {
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-bold text-foreground">
-            Installer AutoRa
+            Installer AutoRA
           </p>
           <p className="text-xs text-muted-foreground mt-0.5">
             {iosMode

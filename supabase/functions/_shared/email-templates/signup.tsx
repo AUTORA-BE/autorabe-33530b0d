@@ -32,7 +32,7 @@ export const SignupEmail = ({
     <Preview>Confirmez votre email pour {siteName}</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>Bienvenue sur AutoRa 🚗</Heading>
+        <Heading style={h1}>Bienvenue sur AutoRA 🚗</Heading>
         <Text style={text}>
           Merci de vous être inscrit sur{' '}
           <Link href={siteUrl} style={link}>

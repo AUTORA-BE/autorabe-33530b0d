@@ -84,8 +84,8 @@ const SellCarCTA = memo(() => {
               className="text-muted-foreground text-sm sm:text-base font-light text-center max-w-lg mx-auto mb-14 leading-relaxed"
             >
               {isNl
-                ? "AutoRa brengt uw voertuig bij duizenden serieuze kopers in België. Elke advertentie is Car-Pass geverifieerd en LEZ-conform — meer vertrouwen, snellere verkoop."
-                : "AutoRa connecte votre véhicule à des milliers d'acheteurs sérieux en Belgique. Chaque annonce est vérifiée Car-Pass et conforme LEZ — plus de confiance, vente plus rapide."}
+                ? "AutoRA brengt uw voertuig bij duizenden serieuze kopers in België. Elke advertentie is Car-Pass geverifieerd en LEZ-conform — meer vertrouwen, snellere verkoop."
+                : "AutoRA connecte votre véhicule à des milliers d'acheteurs sérieux en Belgique. Chaque annonce est vérifiée Car-Pass et conforme LEZ — plus de confiance, vente plus rapide."}
             </motion.p>
 
             {/* Steps — premium with hover lift */}

@@ -84,7 +84,7 @@ const MyGarage = () => {
       <div className="page-gradient min-h-screen">
         <SEOHead
           title="Mon Garage"
-          description="Retrouvez vos véhicules favoris et votre historique de consultation sur AutoRa."
+          description="Retrouvez vos véhicules favoris et votre historique de consultation sur AutoRA."
           url="https://autora.be/garage"
           noIndex
         />

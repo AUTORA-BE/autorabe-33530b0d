@@ -7,7 +7,7 @@ const Legal = () => {
     {
       icon: Building2,
       title: "1. Éditeur du site",
-      content: `AutoRa
+      content: `AutoRA
 Projet en cours de constitution
 
 Email : autoracontact@gmail.com`
@@ -15,12 +15,12 @@ Email : autoracontact@gmail.com`
     {
       icon: User,
       title: "2. Directeur de la publication",
-      content: `Le directeur de la publication est le créateur et responsable éditorial du site AutoRa.`
+      content: `Le directeur de la publication est le créateur et responsable éditorial du site AutoRA.`
     },
     {
       icon: Server,
       title: "3. Hébergement",
-      content: `Le site AutoRa est hébergé par Lovable Technologies.
+      content: `Le site AutoRA est hébergé par Lovable Technologies.
 Site web : https://lovable.dev
 
 Pour toute question, contactez-nous à : autoracontact@gmail.com`
@@ -30,14 +30,14 @@ Pour toute question, contactez-nous à : autoracontact@gmail.com`
       title: "4. Propriété intellectuelle",
       content: `L'ensemble du contenu de ce site (textes, images, vidéos, logos, graphismes, icônes, sons, logiciels, etc.) est protégé par le droit d'auteur et le droit des marques.
 
-Toute reproduction, représentation, modification, publication, adaptation de tout ou partie des éléments du site, quel que soit le moyen ou le procédé utilisé, est interdite, sauf autorisation écrite préalable d'AutoRa.
+Toute reproduction, représentation, modification, publication, adaptation de tout ou partie des éléments du site, quel que soit le moyen ou le procédé utilisé, est interdite, sauf autorisation écrite préalable d'AutoRA.
 
-La marque AutoRa, le logo et les éléments graphiques associés sont des marques déposées. Leur utilisation sans autorisation constitue une contrefaçon.`
+La marque AutoRA, le logo et les éléments graphiques associés sont des marques déposées. Leur utilisation sans autorisation constitue une contrefaçon.`
     },
     {
       icon: FileText,
       title: "5. Conditions d'utilisation",
-      content: `L'utilisation du site AutoRa implique l'acceptation pleine et entière des conditions générales d'utilisation décrites dans nos CGU.
+      content: `L'utilisation du site AutoRA implique l'acceptation pleine et entière des conditions générales d'utilisation décrites dans nos CGU.
 
 Ces conditions d'utilisation sont susceptibles d'être modifiées ou complétées à tout moment. Les utilisateurs sont donc invités à les consulter de manière régulière.
 
@@ -46,9 +46,9 @@ Pour consulter nos conditions générales complètes, veuillez vous rendre sur l
     {
       icon: Scale,
       title: "6. Limitation de responsabilité",
-      content: `AutoRa s'efforce de fournir des informations aussi précises que possible sur son site. Toutefois, AutoRa ne pourra être tenue responsable des omissions, inexactitudes ou carences dans la mise à jour.
+      content: `AutoRA s'efforce de fournir des informations aussi précises que possible sur son site. Toutefois, AutoRA ne pourra être tenue responsable des omissions, inexactitudes ou carences dans la mise à jour.
 
-AutoRa décline toute responsabilité :
+AutoRA décline toute responsabilité :
 • En cas de défaillance technique
 • En cas de contenu publié par les utilisateurs
 • Pour les transactions effectuées entre particuliers
@@ -68,7 +68,7 @@ Pour plus de détails, consultez notre Politique de Confidentialité.`
     {
       icon: Mail,
       title: "8. Contact",
-      content: `Pour toute question ou réclamation concernant le site AutoRa, vous pouvez nous contacter par email :
+      content: `Pour toute question ou réclamation concernant le site AutoRA, vous pouvez nous contacter par email :
 
 autoracontact@gmail.com`
     }
@@ -76,7 +76,7 @@ autoracontact@gmail.com`
 
   return (
     <div className="page-gradient">
-      <SEOHead title="Mentions Légales" description="Mentions légales du site AutoRa. Informations sur l'éditeur, l'hébergement et la propriété intellectuelle." url="https://autora.be/legal" />
+      <SEOHead title="Mentions Légales" description="Mentions légales du site AutoRA. Informations sur l'éditeur, l'hébergement et la propriété intellectuelle." url="https://autora.be/legal" />
       <Header />
       
       <main className="pt-24">
@@ -91,7 +91,7 @@ autoracontact@gmail.com`
               Mentions <span className="gradient-text">Légales</span>
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              Retrouvez toutes les informations légales relatives au site AutoRa, 
+              Retrouvez toutes les informations légales relatives au site AutoRA, 
               conformément à la législation belge et européenne en vigueur.
             </p>
           </div>
@@ -133,7 +133,7 @@ autoracontact@gmail.com`
               </h2>
               <p className="text-muted-foreground leading-relaxed mb-6">
                 Les présentes mentions légales sont régies par le droit belge. 
-                Tout litige relatif à l'utilisation du site AutoRa sera soumis à la compétence 
+                Tout litige relatif à l'utilisation du site AutoRA sera soumis à la compétence 
                 exclusive des tribunaux de Bruxelles.
               </p>
               <p className="text-sm text-muted-foreground">

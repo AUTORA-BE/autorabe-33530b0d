@@ -116,7 +116,7 @@ const TransparencyChecklist = ({
       </div>
 
       <p className="mt-4 text-xs text-muted-foreground text-center">
-        Ces informations sont fournies par le vendeur et n'engagent pas AutoRa.
+        Ces informations sont fournies par le vendeur et n'engagent pas AutoRA.
       </p>
     </div>
   );

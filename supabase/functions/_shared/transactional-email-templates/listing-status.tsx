@@ -16,7 +16,7 @@ import {
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
 
-const SITE_NAME = 'AutoRa'
+const SITE_NAME = 'AutoRA'
 
 interface ListingStatusProps {
   contactName?: string
@@ -33,7 +33,7 @@ const statusConfig = {
     title: 'Votre annonce a été approuvée !',
     preview: 'Bonne nouvelle – votre annonce est maintenant en ligne',
     color: 'hsl(142, 71%, 45%)',
-    message: 'Votre annonce est désormais visible par tous les acheteurs sur AutoRa. Vous pouvez la retrouver dans votre espace vendeur.',
+    message: 'Votre annonce est désormais visible par tous les acheteurs sur AutoRA. Vous pouvez la retrouver dans votre espace vendeur.',
     cta: 'Voir mon espace vendeur',
     ctaUrl: 'https://autora.be/seller-dashboard',
   },
@@ -99,8 +99,8 @@ export const template = {
   component: ListingStatusEmail,
   subject: (data: Record<string, any>) =>
     data?.status === 'rejected'
-      ? `Annonce non approuvée – ${data?.brand ?? ''} ${data?.model ?? ''} – AutoRa`
-      : `Annonce approuvée – ${data?.brand ?? ''} ${data?.model ?? ''} – AutoRa`,
+      ? `Annonce non approuvée – ${data?.brand ?? ''} ${data?.model ?? ''} – AutoRA`
+      : `Annonce approuvée – ${data?.brand ?? ''} ${data?.model ?? ''} – AutoRA`,
   displayName: 'Notification statut annonce',
   previewData: {
     contactName: 'Jean Dupont',

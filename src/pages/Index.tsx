@@ -29,7 +29,7 @@ const FilterPanel = lazy(() => import("@/features/search/components/FilterPanel"
 const PopularVehicles = lazy(() => import("@/features/listings/components/PopularVehicles"));
 const SwipeDiscovery = lazy(() => import("@/features/listings/components/SwipeDiscovery"));
 const LoadMoreGrid = lazy(() => import("@/components/LoadMoreGrid"));
-const WhyAutoRa = lazy(() => import("@/components/WhyAutoRa"));
+const WhyAutoRA = lazy(() => import("@/components/WhyAutoRA"));
 
 const TestimonialsSection = lazy(() => import("@/components/TestimonialsSection"));
 const SellCarCTA = lazy(() => import("@/components/SellCarCTA"));
@@ -149,10 +149,10 @@ const Index = () => {
   return (
     <div className="page-gradient">
       <SEOHead 
-        title={language === "nl" ? "AutoRa — De Belgische automarktplaats" : "AutoRa — La marketplace automobile belge"}
+        title={language === "nl" ? "AutoRA — De Belgische automarktplaats" : "AutoRA — La marketplace automobile belge"}
         description={language === "nl" 
-          ? "AutoRa - De betrouwbare Belgische automarkt. Vind duizenden geverifieerde voertuigen met Car-Pass en gegarandeerde LEZ-compatibiliteit."
-          : "AutoRa - La marketplace automobile belge de confiance. Véhicules vérifiés Car-Pass, conformité LEZ garantie et calcul TCO régional."}
+          ? "AutoRA - De betrouwbare Belgische automarkt. Vind duizenden geverifieerde voertuigen met Car-Pass en gegarandeerde LEZ-compatibiliteit."
+          : "AutoRA - La marketplace automobile belge de confiance. Véhicules vérifiés Car-Pass, conformité LEZ garantie et calcul TCO régional."}
         url="https://autora.be"
         jsonLd={[organizationSchema, websiteSchema]}
       />
@@ -201,9 +201,9 @@ const Index = () => {
           </Suspense>
         )}
 
-        {/* Why AutoRa — bento grid */}
+        {/* Why AutoRA — bento grid */}
         <Suspense fallback={<WhyAutoRaSkeleton />}>
-          <WhyAutoRa />
+          <WhyAutoRA />
         </Suspense>
 
 

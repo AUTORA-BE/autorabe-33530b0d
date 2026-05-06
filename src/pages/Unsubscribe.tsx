@@ -78,7 +78,7 @@ const Unsubscribe = () => {
     valid: {
       icon: <MailX className="w-10 h-10 text-muted-foreground" />,
       title: "Se désabonner",
-      desc: "Vous ne recevrez plus d'emails de notification de la part d'AutoRa.",
+      desc: "Vous ne recevrez plus d'emails de notification de la part d'AutoRA.",
     },
     already_unsubscribed: {
       icon: <CheckCircle className="w-10 h-10 text-primary" />,

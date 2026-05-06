@@ -104,7 +104,7 @@ export default function Admin() {
 
   return (
     <div className="page-gradient">
-      <SEOHead title="Administration | AutoRa" description="Tableau de bord d'administration AutoRa" />
+      <SEOHead title="Administration | AutoRA" description="Tableau de bord d'administration AutoRA" />
       <Header />
       <main className="min-h-screen pt-16 sm:pt-24 pb-24 sm:pb-12">
         <div className="container mx-auto px-3 sm:px-6 max-w-5xl">
@@ -116,7 +116,7 @@ export default function Admin() {
             </div>
             <div>
               <h1 className="text-lg sm:text-2xl font-bold text-foreground">Administration</h1>
-              <p className="text-muted-foreground text-[11px] sm:text-sm">Tableau de bord AutoRa</p>
+              <p className="text-muted-foreground text-[11px] sm:text-sm">Tableau de bord AutoRA</p>
             </div>
           </div>
 

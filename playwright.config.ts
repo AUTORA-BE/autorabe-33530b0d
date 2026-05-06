@@ -1,7 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
 /**
- * Playwright config — E2E for AutoRa critical paths.
+ * Playwright config — E2E for AutoRA critical paths.
  *
  * IMPORTANT — these tests run against the PUBLISHED app by default
  * (https://autorabe.lovable.app). They are SMOKE tests and require:

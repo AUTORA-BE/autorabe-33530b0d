@@ -16,7 +16,7 @@ const AutoraTransparency = ({ carPassVerified, ctValid }: AutoraTransparencyProp
     >
       <h3 className="font-display font-semibold text-foreground mb-3 flex items-center gap-2">
         <FileCheck className="w-4 h-4 text-primary" />
-        Transparence Autora
+        Transparence AutoRA
       </h3>
 
       <div className="space-y-2">

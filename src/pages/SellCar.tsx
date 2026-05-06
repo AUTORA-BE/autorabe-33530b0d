@@ -64,7 +64,7 @@ export default function SellCar() {
     <div className="page-gradient">
       <SEOHead 
         title={editId ? t("sell.editTitle") : t("sell.title")}
-        description="Publiez votre annonce automobile en quelques minutes sur AutoRa et touchez des milliers d'acheteurs en Belgique."
+        description="Publiez votre annonce automobile en quelques minutes sur AutoRA et touchez des milliers d'acheteurs en Belgique."
         url="https://autora.be/sell"
       />
       <Header />

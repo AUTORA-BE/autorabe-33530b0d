@@ -88,7 +88,7 @@ const Header = () => {
           <Link to={localized("/")} className="flex items-center gap-2 group">
             <img
               src={autoraLogo}
-              alt="Autora Logo"
+              alt="AutoRA Logo"
               className={`rounded-2xl object-cover transition-all duration-300 group-hover:scale-105 dark:brightness-110 drop-shadow-sm ${
                 scrolled ? "w-7 h-7" : "w-8 h-8 sm:w-9 sm:h-9"
               }`}

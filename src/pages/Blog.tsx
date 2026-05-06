@@ -41,7 +41,7 @@ const Blog = () => {
           {/* Hero */}
           <section className="text-center mb-12">
             <h1 className="text-3xl sm:text-4xl font-display font-bold text-foreground mb-3">
-              Blog <span className="text-primary">AutoRa</span>
+              Blog <span className="text-primary">AutoRA</span>
             </h1>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Guides pratiques, réglementations et conseils pour naviguer le marché automobile belge en toute confiance.

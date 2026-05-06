@@ -15,7 +15,7 @@ import {
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
 
-const SITE_NAME = 'AutoRa'
+const SITE_NAME = 'AutoRA'
 
 interface SellerNotificationProps {
   vehicleName?: string
@@ -72,7 +72,7 @@ const SellerNotificationEmail = ({
 export const template = {
   component: SellerNotificationEmail,
   subject: (data: Record<string, any>) =>
-    `Nouveau message concernant ${data.vehicleName || 'votre véhicule'} – AutoRa`,
+    `Nouveau message concernant ${data.vehicleName || 'votre véhicule'} – AutoRA`,
   displayName: 'Notification vendeur',
   previewData: {
     vehicleName: 'BMW Série 3 2022',

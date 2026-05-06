@@ -4,7 +4,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2'
 import { TEMPLATES } from '../_shared/transactional-email-templates/registry.ts'
 
 // Configuration baked in at scaffold time
-const SITE_NAME = "AutoRa"
+const SITE_NAME = "AutoRA"
 const SENDER_DOMAIN = "notify.autora.be"
 const FROM_DOMAIN = "autora.be"
 
@@ -26,7 +26,7 @@ function generateToken(): string {
 // Auth: verify_jwt = true validates the JWT signature, but anon JWTs are
 // public. We additionally require the caller to be service_role so this
 // endpoint cannot be abused by anyone holding the anon key to send
-// AutoRa-branded emails to arbitrary recipients.
+// AutoRA-branded emails to arbitrary recipients.
 
 Deno.serve(async (req) => {
   // Handle CORS preflight

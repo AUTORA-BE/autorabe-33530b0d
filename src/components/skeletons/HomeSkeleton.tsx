@@ -63,16 +63,16 @@ export const TrustBarSkeleton = () => (
   </div>
 );
 
-/** Why AutoRa section skeleton — 3 pillars */
+/** Why AutoRA section skeleton — 3 pillars */
 export const WhyAutoRaSkeleton = () => (
   <section className="py-16 sm:py-32 relative overflow-hidden">
     <div className="container mx-auto px-6 sm:px-8 relative">
-      {/* Header — matches WhyAutoRa */}
+      {/* Header — matches WhyAutoRA */}
       <div className="text-center max-w-xl mx-auto mb-10 sm:mb-20 space-y-4">
         <div className="h-8 sm:h-10 w-64 mx-auto rounded-lg skeleton-shimmer" />
         <div className="h-4 w-80 max-w-md mx-auto rounded-lg skeleton-shimmer" />
       </div>
-      {/* 4-col bento grid — matches WhyAutoRa layout */}
+      {/* 4-col bento grid — matches WhyAutoRA layout */}
       <div className="flex sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 overflow-x-auto sm:overflow-visible scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 pb-2 sm:pb-0">
         {[1, 2, 3, 4].map((i) => (
           <div key={i} className="rounded-3xl border border-border/30 bg-card/30 p-6 sm:p-8 space-y-6 flex-shrink-0 w-[240px] sm:w-auto">

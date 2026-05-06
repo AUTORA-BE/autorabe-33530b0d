@@ -1,5 +1,5 @@
 // Edge function — Création d'annonce sécurisée côté serveur
-// Seul point d'entrée pour insérer dans car_listings depuis l'app AutoRa
+// Seul point d'entrée pour insérer dans car_listings depuis l'app AutoRA
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { buildCorsHeaders, handlePreflight, jsonResponse } from '../_shared/cors.ts';
 

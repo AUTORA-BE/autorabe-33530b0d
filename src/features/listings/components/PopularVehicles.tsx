@@ -34,7 +34,7 @@ const PopularVehicles = memo(function PopularVehicles({
 
   const texts = {
     noListings: language === "nl" ? "Geen advertenties beschikbaar" : language === "en" ? "No listings available" : "Aucune annonce disponible",
-    beFirst: language === "nl" ? "Wees de eerste om een advertentie te plaatsen op AutoRa." : language === "en" ? "Be the first to post a listing on AutoRa." : "Soyez le premier à publier une annonce sur AutoRa.",
+    beFirst: language === "nl" ? "Wees de eerste om een advertentie te plaatsen op AutoRA." : language === "en" ? "Be the first to post a listing on AutoRA." : "Soyez le premier à publier une annonce sur AutoRA.",
     postListing: language === "nl" ? "Een advertentie plaatsen" : language === "en" ? "Post a listing" : "Publier une annonce",
     popular: language === "nl" ? "Populaire auto's" : language === "en" ? "Popular cars" : "Voitures populaires",
     mostSearched: language === "nl" ? "De meest gezochte voertuigen deze week" : language === "en" ? "Most searched vehicles this week" : "Les véhicules les plus recherchés cette semaine",

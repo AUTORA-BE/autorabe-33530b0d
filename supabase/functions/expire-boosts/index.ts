@@ -17,7 +17,7 @@ function buildEmailShell(badgeColor: string, badgeText: string, bodyContent: str
       </head>
       <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; background: #f0f0f0;">
         <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
-          <h1 style="color: #fff; margin: 0; font-size: 24px;">🚗 AutoRa</h1>
+          <h1 style="color: #fff; margin: 0; font-size: 24px;">🚗 AutoRA</h1>
           <p style="color: #94a3b8; margin: 8px 0 0; font-size: 14px;">Notification de boost</p>
         </div>
         <div style="background: #ffffff; padding: 30px; border-radius: 0 0 12px 12px;">
@@ -29,7 +29,7 @@ function buildEmailShell(badgeColor: string, badgeText: string, bodyContent: str
           ${bodyContent}
           <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
           <p style="color: #94a3b8; font-size: 12px; margin-bottom: 0; text-align: center;">
-            Cet email a été envoyé automatiquement par AutoRa.<br>
+            Cet email a été envoyé automatiquement par AutoRA.<br>
             Vous recevez cet email car vous avez activé un boost sur votre annonce.
           </p>
         </div>
@@ -104,7 +104,7 @@ Deno.serve(async (req) => {
           }
 
           await resend.emails.send({
-            from: "AutoRa <noreply@autora.be>",
+            from: "AutoRA <noreply@autora.be>",
             to: [listing.contact_email],
             subject: `⏳ Votre boost ${boostLabel} expire dans ${hoursLeft}h — ${listing.brand} ${listing.model}`,
             html: buildEmailShell("#e67e22", `⏳ Expire dans ~${hoursLeft}h`, `
@@ -172,7 +172,7 @@ Deno.serve(async (req) => {
           }
 
           await resend.emails.send({
-            from: "AutoRa <noreply@autora.be>",
+            from: "AutoRA <noreply@autora.be>",
             to: [listing.contact_email],
             subject: `🚀 Votre boost ${boostLabel} pour ${listing.brand} ${listing.model} a expiré`,
             html: buildEmailShell("#d97706", `⏰ Boost ${boostLabel} expiré`, `
