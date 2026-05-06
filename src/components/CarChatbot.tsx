@@ -17,7 +17,7 @@ const CarChatbot = forwardRef<HTMLDivElement>(function CarChatbot(_props, ref) {
     {
       role: "assistant",
       content:
-        "Bonjour ! Je suis l'assistant AutoRa. Je peux vous aider à trouver votre prochaine voiture ou répondre à vos questions automobiles. Comment puis-je vous aider ?",
+        "Bonjour ! Je suis l'assistant AutoRA. Je peux vous aider à trouver votre prochaine voiture ou répondre à vos questions automobiles. Comment puis-je vous aider ?",
     },
   ]);
   const [input, setInput] = useState("");
@@ -151,7 +151,7 @@ const CarChatbot = forwardRef<HTMLDivElement>(function CarChatbot(_props, ref) {
         className={`fixed right-3 lg:right-6 lg:!bottom-6 z-[60] w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-primary text-primary-foreground shadow-xl shadow-primary/40 flex items-center justify-center transition-all hover:scale-110 active:scale-95 ${
           isOpen ? "hidden" : ""
         }`}
-        aria-label="Ouvrir l'assistant AutoRa"
+        aria-label="Ouvrir l'assistant AutoRA"
       >
         <MessageCircle className="w-5 h-5 lg:w-6 lg:h-6" />
       </button>
@@ -172,7 +172,7 @@ const CarChatbot = forwardRef<HTMLDivElement>(function CarChatbot(_props, ref) {
                 <Bot className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <h3 className="font-semibold text-foreground">Assistant AutoRa</h3>
+                <h3 className="font-semibold text-foreground">Assistant AutoRA</h3>
                 <p className="text-xs text-muted-foreground">Expert automobile IA</p>
               </div>
             </div>

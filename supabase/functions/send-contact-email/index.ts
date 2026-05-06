@@ -22,7 +22,7 @@ async function sendEmail(to: string[], subject: string, html: string, replyTo?: 
       Authorization: `Bearer ${RESEND_API_KEY}`,
     },
     body: JSON.stringify({
-      from: "AutoRa <noreply@autora.be>",
+      from: "AutoRA <noreply@autora.be>",
       to,
       subject,
       html,
@@ -117,7 +117,7 @@ const handler = async (req: Request): Promise<Response> => {
     const safeSubject = escapeHtml(subject);
     const safeMessage = escapeHtml(message);
 
-    // Send notification email to AutoRa team
+    // Send notification email to AutoRA team
     const notificationHtml = `
       <!DOCTYPE html>
       <html>
@@ -138,7 +138,7 @@ const handler = async (req: Request): Promise<Response> => {
         <div class="container">
           <div class="header">
             <h1 style="margin: 0;">Nouveau message de contact</h1>
-            <p style="margin: 10px 0 0 0; opacity: 0.9;">Via le formulaire AutoRa</p>
+            <p style="margin: 10px 0 0 0; opacity: 0.9;">Via le formulaire AutoRA</p>
           </div>
           <div class="content">
             <div class="field">
@@ -165,7 +165,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     await sendEmail(
       ["autoracontact@gmail.com"],
-      `[Contact AutoRa] ${safeSubject}`,
+      `[Contact AutoRA] ${safeSubject}`,
       notificationHtml,
       email
     );
@@ -196,10 +196,10 @@ const handler = async (req: Request): Promise<Response> => {
             <p>Nous avons bien reçu votre message concernant "<strong>${safeSubject}</strong>".</p>
             <p>Notre équipe traitera votre demande dans les plus brefs délais. Nous nous efforçons de répondre sous 24 heures ouvrées.</p>
             <p>En attendant, n'hésitez pas à consulter notre <a href="https://autora.be/faq">FAQ</a> qui pourrait répondre à certaines de vos questions.</p>
-            <p>Cordialement,<br><strong>L'équipe AutoRa</strong></p>
+            <p>Cordialement,<br><strong>L'équipe AutoRA</strong></p>
           </div>
           <div class="footer">
-            <p>AutoRa - La marketplace automobile belge de confiance</p>
+            <p>AutoRA - La marketplace automobile belge de confiance</p>
             <p>Rue de la Loi 1, 1000 Bruxelles, Belgique</p>
           </div>
         </div>
@@ -209,7 +209,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     await sendEmail(
       [email],
-      "Nous avons bien reçu votre message - AutoRa",
+      "Nous avons bien reçu votre message - AutoRA",
       confirmationHtml
     );
 

@@ -65,8 +65,8 @@ export default defineConfig(({ mode }) => ({
         navigateFallbackDenylist: [/^\/~oauth/, /^\/api/],
       },
       manifest: {
-        name: "AutoRa — Marketplace automobile belge",
-        short_name: "AutoRa",
+        name: "AutoRA — Marketplace automobile belge",
+        short_name: "AutoRA",
         description: "Trouvez votre prochaine voiture en Belgique. Véhicules vérifiés Car-Pass, conformité LEZ garantie. Version 1.0.0-beta.3 — Analytics Plausible & FAQ home",
         theme_color: "#0a0a14",
         background_color: "#0a0a14",
@@ -91,7 +91,7 @@ export default defineConfig(({ mode }) => ({
             sizes: "512x512",
             type: "image/png",
             form_factor: "narrow",
-            label: "AutoRa — Marketplace automobile belge",
+            label: "AutoRA — Marketplace automobile belge",
           },
         ],
         shortcuts: [

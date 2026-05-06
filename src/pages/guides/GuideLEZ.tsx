@@ -30,7 +30,7 @@ const GuideLEZ = () => {
             { question: "Mon diesel Euro 5 peut-il rouler à Bruxelles ?", answer: "Non. Depuis le 1er janvier 2025, les diesels Euro 5 sont interdits dans la LEZ de Bruxelles. Seuls Euro 6 et plus récents sont autorisés." },
             { question: "Quelle est l'amende pour une infraction LEZ ?", answer: "350 € pour la première infraction à Bruxelles, jusqu'à 1 000 € en cas de récidive. Anvers et Gand : 150 € à 350 €." },
             { question: "Mon véhicule essence est-il concerné par la LEZ ?", answer: "Les essences Euro 1 et inférieurs sont interdits à Bruxelles. À partir d'Euro 2, ils sont autorisés. La plupart des véhicules essence post-1997 passent." },
-            { question: "Comment vérifier si mon véhicule est conforme LEZ ?", answer: "Sur AutoRa, chaque annonce affiche un badge LEZ par ville. Vous pouvez aussi vérifier sur lez.brussels avec votre plaque d'immatriculation." },
+            { question: "Comment vérifier si mon véhicule est conforme LEZ ?", answer: "Sur AutoRA, chaque annonce affiche un badge LEZ par ville. Vous pouvez aussi vérifier sur lez.brussels avec votre plaque d'immatriculation." },
             { question: "Les voitures électriques et hybrides sont-elles autorisées ?", answer: "Oui, les véhicules 100% électriques et hybrides rechargeables (PHEV) sont autorisés dans toutes les LEZ belges sans restriction." },
           ]),
         ]}
@@ -65,7 +65,7 @@ const GuideLEZ = () => {
               <li><a href="#calendrier-2026" className="hover:text-primary transition-colors">4. Calendrier des restrictions 2026</a></li>
               <li><a href="#amendes" className="hover:text-primary transition-colors">5. Amendes et sanctions</a></li>
               <li><a href="#conseils-achat" className="hover:text-primary transition-colors">6. Conseils pour acheter un véhicule conforme LEZ</a></li>
-              <li><a href="#autora-lez" className="hover:text-primary transition-colors">7. Comment AutoRa vous aide</a></li>
+              <li><a href="#autora-lez" className="hover:text-primary transition-colors">7. Comment AutoRA vous aide</a></li>
             </ol>
           </nav>
 
@@ -204,20 +204,20 @@ const GuideLEZ = () => {
                 6. Conseils pour acheter un véhicule conforme LEZ
               </h2>
               <ol className="space-y-4 text-muted-foreground leading-relaxed">
-                <li><strong className="text-foreground">1. Vérifiez la norme Euro</strong> — Sur AutoRa, chaque annonce affiche clairement la norme Euro du véhicule avec un badge de compatibilité LEZ.</li>
+                <li><strong className="text-foreground">1. Vérifiez la norme Euro</strong> — Sur AutoRA, chaque annonce affiche clairement la norme Euro du véhicule avec un badge de compatibilité LEZ.</li>
                 <li><strong className="text-foreground">2. Privilégiez Euro 6 ou supérieur</strong> — Pour être tranquille pendant au moins 5 à 10 ans, optez pour un véhicule Euro 6 (diesel ou essence) ou un véhicule électrique.</li>
                 <li><strong className="text-foreground">3. Vérifiez le Car-Pass</strong> — Le Car-Pass confirme l'historique kilométrique et la date de première immatriculation, essentiel pour déterminer la norme Euro réelle.</li>
-                <li><strong className="text-foreground">4. Utilisez le calculateur TCO d'AutoRa</strong> — Notre outil gratuit calcule le coût total de possession sur 5 ans, taxes LEZ incluses.</li>
+                <li><strong className="text-foreground">4. Utilisez le calculateur TCO d'AutoRA</strong> — Notre outil gratuit calcule le coût total de possession sur 5 ans, taxes LEZ incluses.</li>
                 <li><strong className="text-foreground">5. Anticipez les évolutions</strong> — Les normes se durcissent chaque année. Un investissement dans un véhicule propre aujourd'hui vous protège contre les futures restrictions.</li>
               </ol>
             </section>
 
             <section id="autora-lez" className="glass-card p-8 rounded-2xl">
               <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground mb-4">
-                7. Comment AutoRa vous aide
+                7. Comment AutoRA vous aide
               </h2>
               <p className="text-muted-foreground leading-relaxed mb-6">
-                AutoRa est la seule marketplace automobile belge qui intègre nativement la vérification LEZ dans chaque annonce. Voici ce que nous offrons :
+                AutoRA est la seule marketplace automobile belge qui intègre nativement la vérification LEZ dans chaque annonce. Voici ce que nous offrons :
               </p>
               <ul className="space-y-3">
                 {[

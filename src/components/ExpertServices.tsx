@@ -71,9 +71,9 @@ const ExpertServices = memo(() => {
     {
       icon: Truck,
       title: t(
-        "Logistique Autora",
-        "Autora Logistiek",
-        "Autora Logistics"
+        "Logistique AutoRA",
+        "AutoRA Logistiek",
+        "AutoRA Logistics"
       ),
       description: t(
         "Service de dépannage professionnel et livraison de véhicules partout en Belgique. Votre voiture livrée en toute sécurité, où que vous soyez.",

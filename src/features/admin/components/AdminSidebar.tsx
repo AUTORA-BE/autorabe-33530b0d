@@ -44,7 +44,7 @@ export function AdminSidebar() {
           <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
             <LayoutDashboard className="h-4 w-4 text-primary" />
           </div>
-          {!collapsed && <span className="font-bold text-sm text-foreground">Admin AutoRa</span>}
+          {!collapsed && <span className="font-bold text-sm text-foreground">Admin AutoRA</span>}
         </div>
       </SidebarHeader>
 

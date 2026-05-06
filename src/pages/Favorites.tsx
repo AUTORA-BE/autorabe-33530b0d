@@ -125,7 +125,7 @@ const Favorites = () => {
       <div className="page-gradient min-h-screen">
         <SEOHead
           title="Mes favoris"
-          description="Retrouvez toutes les voitures d'occasion que vous avez ajoutées à vos favoris sur AutoRa."
+          description="Retrouvez toutes les voitures d'occasion que vous avez ajoutées à vos favoris sur AutoRA."
           url="https://autora.be/favorites"
           noIndex
         />

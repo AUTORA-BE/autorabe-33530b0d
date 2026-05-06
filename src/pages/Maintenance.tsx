@@ -12,7 +12,7 @@ const Maintenance = () => {
           Maintenance en cours
         </h1>
         <p className="text-lg text-muted-foreground mb-2">
-          AutoRa.be is tijdelijk offline voor onderhoud.
+          AutoRA.be is tijdelijk offline voor onderhoud.
         </p>
         <p className="text-muted-foreground mb-8">
           Nous effectuons une mise à jour pour améliorer votre expérience.
@@ -34,7 +34,7 @@ const Maintenance = () => {
         </div>
 
         <p className="mt-12 text-xs text-muted-foreground/50">
-          AutoRa.be — Marketplace automobile belge
+          AutoRA.be — Marketplace automobile belge
         </p>
       </div>
     </div>

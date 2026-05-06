@@ -69,7 +69,7 @@ const Footer = () => {
           {/* Brand column */}
           <div className="col-span-2 sm:col-span-2 lg:col-span-1 space-y-5">
             <Link to="/" className="flex items-center gap-2.5">
-              <img src={autoraLogo} alt="AutoRa" className="w-8 h-8 rounded-xl object-cover" />
+              <img src={autoraLogo} alt="AutoRA" className="w-8 h-8 rounded-xl object-cover" />
               <span className="font-display text-lg font-bold tracking-wider">
                 <span className="text-white">Auto</span>
                 <span className="text-primary">RA</span>
@@ -151,7 +151,7 @@ const Footer = () => {
               <MapPin className="w-3 h-3" />
               Belgique 🇧🇪
             </span>
-            <span>© {currentYear} AutoRa · {language === "nl" ? "Alle rechten voorbehouden" : language === "en" ? "All rights reserved" : language === "de" ? "Alle Rechte vorbehalten" : "Tous droits réservés"}</span>
+            <span>© {currentYear} AutoRA · {language === "nl" ? "Alle rechten voorbehouden" : language === "en" ? "All rights reserved" : language === "de" ? "Alle Rechte vorbehalten" : "Tous droits réservés"}</span>
           </div>
         </div>
       </div>

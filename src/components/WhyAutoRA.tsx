@@ -1,5 +1,5 @@
 /**
- * "Why AutoRa" — luxe section with horizontal swipe on mobile, refined grid on desktop
+ * "Why AutoRA" — luxe section with horizontal swipe on mobile, refined grid on desktop
  * @module components
  */
 
@@ -19,7 +19,7 @@ const item = {
   show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.25, 0.1, 0.25, 1] } },
 };
 
-const WhyAutoRa = memo(() => {
+const WhyAutoRA = memo(() => {
   const { language } = useLanguage();
   const isMobile = useIsMobile();
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -101,10 +101,10 @@ const WhyAutoRa = memo(() => {
   ];
 
   const sectionTitle = t(
-    "Pourquoi choisir AutoRa ?",
-    "Waarom kiezen voor AutoRa?",
-    "Warum AutoRa wählen?",
-    "Why choose AutoRa?"
+    "Pourquoi choisir AutoRA ?",
+    "Waarom kiezen voor AutoRA?",
+    "Warum AutoRA wählen?",
+    "Why choose AutoRA?"
   );
 
   const sectionSubtitle = t(
@@ -237,6 +237,6 @@ const WhyAutoRa = memo(() => {
   );
 });
 
-WhyAutoRa.displayName = "WhyAutoRa";
+WhyAutoRA.displayName = "WhyAutoRA";
 
-export default WhyAutoRa;
+export default WhyAutoRA;

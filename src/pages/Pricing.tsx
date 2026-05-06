@@ -194,7 +194,7 @@ export default function Pricing() {
     <div className="page-gradient">
       <SEOHead
         title="Tarifs & Abonnements vendeurs"
-        description="Comparez les 5 offres AutoRa : Gratuit, Boost (20€/mois), Pro Garage (50€), Premium (250€) et BOSS (sur mesure). Vendez vos voitures en Belgique avec le plan idéal."
+        description="Comparez les 5 offres AutoRA : Gratuit, Boost (20€/mois), Pro Garage (50€), Premium (250€) et BOSS (sur mesure). Vendez vos voitures en Belgique avec le plan idéal."
         url="https://autora.be/pricing"
       />
       <Header />
@@ -336,7 +336,7 @@ export default function Pricing() {
             </div>
             <DialogTitle className="text-center text-xl">Vérification requise</DialogTitle>
             <DialogDescription className="text-center">
-              Pour garantir la sécurité et la confiance sur AutoRa, les comptes professionnels sont vérifiés manuellement.
+              Pour garantir la sécurité et la confiance sur AutoRA, les comptes professionnels sont vérifiés manuellement.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">

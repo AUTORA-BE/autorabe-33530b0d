@@ -24,17 +24,17 @@ const SEOHead = ({
   const { language } = useLanguage();
 
   const defaultTitles: Record<string, string> = {
-    fr: "AutoRa | Trouvez votre prochaine voiture en Belgique",
-    nl: "AutoRa | Vind uw volgende auto in België",
-    de: "AutoRa | Finden Sie Ihr nächstes Auto in Belgien",
-    en: "AutoRa | Find your next car in Belgium",
+    fr: "AutoRA | Trouvez votre prochaine voiture en Belgique",
+    nl: "AutoRA | Vind uw volgende auto in België",
+    de: "AutoRA | Finden Sie Ihr nächstes Auto in Belgien",
+    en: "AutoRA | Find your next car in Belgium",
   };
 
   const defaultDescriptions: Record<string, string> = {
-    fr: "AutoRa - La marketplace automobile belge de confiance. Trouvez des milliers de véhicules vérifiés avec Car-Pass et compatibilité LEZ garantie.",
-    nl: "AutoRa - De betrouwbare Belgische automarkt. Vind duizenden geverifieerde voertuigen met Car-Pass en gegarandeerde LEZ-compatibiliteit.",
-    de: "AutoRa - Der vertrauenswürdige belgische Automarktplatz. Finden Sie Tausende verifizierte Fahrzeuge mit Car-Pass und garantierter LEZ-Kompatibilität.",
-    en: "AutoRa - The trusted Belgian car marketplace. Find thousands of verified vehicles with Car-Pass and guaranteed LEZ compatibility.",
+    fr: "AutoRA - La marketplace automobile belge de confiance. Trouvez des milliers de véhicules vérifiés avec Car-Pass et compatibilité LEZ garantie.",
+    nl: "AutoRA - De betrouwbare Belgische automarkt. Vind duizenden geverifieerde voertuigen met Car-Pass en gegarandeerde LEZ-compatibiliteit.",
+    de: "AutoRA - Der vertrauenswürdige belgische Automarktplatz. Finden Sie Tausende verifizierte Fahrzeuge mit Car-Pass und garantierter LEZ-Kompatibilität.",
+    en: "AutoRA - The trusted Belgian car marketplace. Find thousands of verified vehicles with Car-Pass and guaranteed LEZ compatibility.",
   };
 
   const locales: Record<string, string> = {
@@ -44,7 +44,7 @@ const SEOHead = ({
     en: "en_GB",
   };
 
-  const fullTitle = title ? `${title} | AutoRa` : defaultTitles[language] || defaultTitles.fr;
+  const fullTitle = title ? `${title} | AutoRA` : defaultTitles[language] || defaultTitles.fr;
   const fullDescription = description || defaultDescriptions[language] || defaultDescriptions.fr;
   const locale = locales[language] || "fr_BE";
 
@@ -76,7 +76,7 @@ const SEOHead = ({
       <meta property="og:type" content={type} />
       <meta property="og:image" content={image} />
       <meta property="og:url" content={canonicalUrl} />
-      <meta property="og:site_name" content="AutoRa" />
+      <meta property="og:site_name" content="AutoRA" />
       <meta property="og:locale" content={locale} />
       
       {/* Twitter */}

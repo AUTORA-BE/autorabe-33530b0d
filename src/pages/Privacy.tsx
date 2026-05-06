@@ -109,7 +109,7 @@ Vous pouvez gérer vos préférences de cookies dans les paramètres de votre na
 
 Délégué à la Protection des Données (DPO) :
 • Email : privacy@autora.be
-• Adresse : AutoRa SPRL, Rue de la Loi 1, 1000 Bruxelles, Belgique
+• Adresse : AutoRA SPRL, Rue de la Loi 1, 1000 Bruxelles, Belgique
 
 Si vous estimez que vos droits ne sont pas respectés, vous pouvez introduire une réclamation auprès de l'Autorité de Protection des Données (APD) :
 • Site web : www.autoriteprotectiondonnees.be
@@ -121,7 +121,7 @@ Dernière mise à jour : Janvier 2025`
 
   return (
     <div className="page-gradient">
-      <SEOHead title="Politique de Confidentialité" description="Politique de confidentialité d'AutoRa. Découvrez comment nous protégeons vos données personnelles conformément au RGPD." url="https://autora.be/privacy" />
+      <SEOHead title="Politique de Confidentialité" description="Politique de confidentialité d'AutoRA. Découvrez comment nous protégeons vos données personnelles conformément au RGPD." url="https://autora.be/privacy" />
       <Header />
       
       <main className="pt-24">
@@ -136,7 +136,7 @@ Dernière mise à jour : Janvier 2025`
               Protection de vos <span className="gradient-text">données personnelles</span>
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              Chez AutoRa, nous prenons la protection de vos données très au sérieux. 
+              Chez AutoRA, nous prenons la protection de vos données très au sérieux. 
               Cette politique explique comment nous collectons, utilisons et protégeons vos informations personnelles.
             </p>
           </div>
@@ -152,7 +152,7 @@ Dernière mise à jour : Janvier 2025`
               <div>
                 <h3 className="font-display font-bold text-foreground mb-1">Conforme au RGPD</h3>
                 <p className="text-sm text-muted-foreground">
-                  AutoRa respecte le Règlement Général sur la Protection des Données (RGPD) 
+                  AutoRA respecte le Règlement Général sur la Protection des Données (RGPD) 
                   et la loi belge du 30 juillet 2018 relative à la protection des personnes physiques.
                 </p>
               </div>

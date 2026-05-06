@@ -147,7 +147,7 @@ const GuideCarPass = () => {
               <ol className="space-y-4 text-muted-foreground leading-relaxed">
                 <li><strong className="text-foreground">1. En ligne</strong> — Rendez-vous sur <a href="https://www.car-pass.be" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">car-pass.be</a> et introduisez le numéro de châssis. Le document est généré en quelques minutes.</li>
                 <li><strong className="text-foreground">2. Chez un professionnel</strong> — Tout garage agréé ou concessionnaire peut générer un Car-Pass pour vous.</li>
-                <li><strong className="text-foreground">3. Via AutoRa</strong> — Notre service Pack Car-Pass s'occupe de toute la démarche pour vous. Nous vérifions, certifions et intégrons le Car-Pass directement dans votre annonce avec un badge « Car-Pass vérifié ».</li>
+                <li><strong className="text-foreground">3. Via AutoRA</strong> — Notre service Pack Car-Pass s'occupe de toute la démarche pour vous. Nous vérifions, certifions et intégrons le Car-Pass directement dans votre annonce avec un badge « Car-Pass vérifié ».</li>
               </ol>
             </section>
 
@@ -169,10 +169,10 @@ const GuideCarPass = () => {
 
             <section className="glass-card p-8 rounded-2xl">
               <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground mb-4">
-                AutoRa & le Car-Pass
+                AutoRA & le Car-Pass
               </h2>
               <p className="text-muted-foreground leading-relaxed mb-6">
-                Sur AutoRa, la transparence est au cœur de notre mission. Chaque annonce affiche le statut Car-Pass du véhicule :
+                Sur AutoRA, la transparence est au cœur de notre mission. Chaque annonce affiche le statut Car-Pass du véhicule :
               </p>
               <ul className="space-y-3">
                 {[

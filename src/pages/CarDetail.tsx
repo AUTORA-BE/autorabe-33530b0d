@@ -420,7 +420,7 @@ const CarDetail = () => {
     <div className="page-gradient">
       <SEOHead 
         title={`${car.brand} ${car.model} ${car.year} — ${formatPrice(car.price)}`}
-        description={`${car.brand} ${car.model} ${car.year} • ${formatPrice(car.price)} • ${formatMileage(car.mileage)} km • ${car.fuelType} • ${car.location}. Annonce vérifiée sur AutoRa.be.`}
+        description={`${car.brand} ${car.model} ${car.year} • ${formatPrice(car.price)} • ${formatMileage(car.mileage)} km • ${car.fuelType} • ${car.location}. Annonce vérifiée sur AutoRA.be.`}
         image={car.image}
         url={`https://autora.be/car/${id}`}
         type="product"
@@ -442,7 +442,7 @@ const CarDetail = () => {
             sellerType: car.sellerType,
           }),
           breadcrumbSchema([
-            { name: "AutoRa", url: "https://autora.be" },
+            { name: "AutoRA", url: "https://autora.be" },
             { name: car.brand, url: `https://autora.be/?brand=${car.brand}` },
             { name: `${car.brand} ${car.model}`, url: `https://autora.be/car/${id}` },
           ]),
@@ -883,7 +883,7 @@ const CarDetail = () => {
 
                 {/* Disclaimer */}
                 <p className="text-xs text-muted-foreground text-center leading-relaxed">
-                  AutoRa n'est pas intermédiaire de paiement. Ne payez jamais avant d'avoir vu le véhicule.
+                  AutoRA n'est pas intermédiaire de paiement. Ne payez jamais avant d'avoir vu le véhicule.
                 </p>
 
                 {/* Report Ad */}

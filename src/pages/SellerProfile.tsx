@@ -204,8 +204,8 @@ const SellerProfile = () => {
   return (
     <div className="page-gradient min-h-screen">
       <SEOHead
-        title={`${displayName} | AutoRa`}
-        description={`Profil vendeur de ${displayName} sur AutoRa. Consultez les annonces, avis et coordonnées.`}
+        title={`${displayName} | AutoRA`}
+        description={`Profil vendeur de ${displayName} sur AutoRA. Consultez les annonces, avis et coordonnées.`}
       />
       <Header />
 

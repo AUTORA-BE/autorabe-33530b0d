@@ -18,10 +18,10 @@ export default function Cookies() {
 
   const t = {
     fr: {
-      title: "Politique cookies — AutoRa",
+      title: "Politique cookies — AutoRA",
       h1: "Politique de cookies",
       intro:
-        "Cette page détaille les cookies et technologies de stockage utilisés par AutoRa et vous permet de modifier votre consentement à tout moment, conformément au RGPD et à la loi belge sur les communications électroniques.",
+        "Cette page détaille les cookies et technologies de stockage utilisés par AutoRA et vous permet de modifier votre consentement à tout moment, conformément au RGPD et à la loi belge sur les communications électroniques.",
       essentialTitle: "Cookies essentiels",
       essentialDesc:
         "Indispensables au fonctionnement du site (authentification, panier, préférences de langue). Ne peuvent pas être désactivés.",
@@ -49,10 +49,10 @@ export default function Cookies() {
       reset: "Réinitialiser mon consentement",
     },
     en: {
-      title: "Cookie Policy — AutoRa",
+      title: "Cookie Policy — AutoRA",
       h1: "Cookie Policy",
       intro:
-        "This page lists every cookie and storage technology used by AutoRa and lets you change your consent at any time, in compliance with GDPR.",
+        "This page lists every cookie and storage technology used by AutoRA and lets you change your consent at any time, in compliance with GDPR.",
       essentialTitle: "Essential cookies",
       essentialDesc:
         "Required for the site to work (auth, cart, language). Cannot be disabled.",
@@ -78,10 +78,10 @@ export default function Cookies() {
       reset: "Reset my consent",
     },
     nl: {
-      title: "Cookiebeleid — AutoRa",
+      title: "Cookiebeleid — AutoRA",
       h1: "Cookiebeleid",
       intro:
-        "Deze pagina toont elke cookie die AutoRa gebruikt en laat je toestemming op elk moment wijzigen, conform GDPR.",
+        "Deze pagina toont elke cookie die AutoRA gebruikt en laat je toestemming op elk moment wijzigen, conform GDPR.",
       essentialTitle: "Essentiële cookies",
       essentialDesc: "Nodig voor de werking van de site. Kunnen niet uitgeschakeld worden.",
       essentialList: [
@@ -105,10 +105,10 @@ export default function Cookies() {
       reset: "Reset toestemming",
     },
     de: {
-      title: "Cookie-Richtlinie — AutoRa",
+      title: "Cookie-Richtlinie — AutoRA",
       h1: "Cookie-Richtlinie",
       intro:
-        "Diese Seite listet jeden von AutoRa verwendeten Cookie auf und ermöglicht es Ihnen, Ihre Einwilligung jederzeit zu ändern (DSGVO-konform).",
+        "Diese Seite listet jeden von AutoRA verwendeten Cookie auf und ermöglicht es Ihnen, Ihre Einwilligung jederzeit zu ändern (DSGVO-konform).",
       essentialTitle: "Wesentliche Cookies",
       essentialDesc:
         "Für den Betrieb der Website erforderlich. Können nicht deaktiviert werden.",

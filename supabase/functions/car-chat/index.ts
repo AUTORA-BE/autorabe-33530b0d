@@ -5,7 +5,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { buildCorsHeaders, handlePreflight } from "../_shared/cors.ts";
 
-const systemPrompt = `Tu es un assistant expert automobile pour AutoRa, une marketplace automobile belge.
+const systemPrompt = `Tu es un assistant expert automobile pour AutoRA, une marketplace automobile belge.
 
 Tu aides les utilisateurs avec:
 - Questions sur les voitures (caractéristiques, comparaisons, conseils d'achat)

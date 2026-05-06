@@ -75,7 +75,7 @@ En Belgique, l'achat d'un véhicule d'occasion entraîne deux taxes principales 
 
 ### Conclusion
 
-Acheter une voiture d'occasion en Belgique est sûr et encadré, à condition de respecter quelques règles simples. Utilisez AutoRa pour trouver des véhicules vérifiés avec Car-Pass et compatibilité LEZ garantie.
+Acheter une voiture d'occasion en Belgique est sûr et encadré, à condition de respecter quelques règles simples. Utilisez AutoRA pour trouver des véhicules vérifiés avec Car-Pass et compatibilité LEZ garantie.
     `.trim(),
   },
   {
@@ -120,14 +120,14 @@ Les amendes varient selon la ville :
 ### Comment vérifier votre véhicule ?
 
 1. Consultez votre carte grise pour trouver la **norme Euro**
-2. Utilisez le simulateur sur AutoRa pour vérifier la compatibilité
-3. Vérifiez le badge LEZ sur chaque annonce AutoRa
+2. Utilisez le simulateur sur AutoRA pour vérifier la compatibilité
+3. Vérifiez le badge LEZ sur chaque annonce AutoRA
 
 ### Alternatives si votre véhicule est interdit
 
 - **Day-pass** : certaines villes proposent un pass journalier (max 8 jours/an à Bruxelles)
 - **Retrofit** : conversion au gaz naturel (rare)
-- **Remplacement** : trouvez un véhicule compatible sur AutoRa
+- **Remplacement** : trouvez un véhicule compatible sur AutoRA
     `.trim(),
   },
   {
@@ -169,11 +169,11 @@ Depuis 2004, le vendeur d'un véhicule d'occasion en Belgique est **légalement 
 
 1. Demandez le document au vendeur **avant** de vous déplacer
 2. Vérifiez la cohérence entre le kilométrage affiché et l'historique
-3. Sur AutoRa, les véhicules avec Car-Pass vérifié portent un **badge vert**
+3. Sur AutoRA, les véhicules avec Car-Pass vérifié portent un **badge vert**
 
 ### Conclusion
 
-Le Car-Pass est votre meilleur allié pour acheter en toute confiance. Sur AutoRa, nous vérifions systématiquement la présence du Car-Pass pour chaque annonce.
+Le Car-Pass est votre meilleur allié pour acheter en toute confiance. Sur AutoRA, nous vérifions systématiquement la présence du Car-Pass pour chaque annonce.
     `.trim(),
   },
   {
@@ -224,7 +224,7 @@ En plus de la TMC, une **taxe annuelle** est due. Elle est basée sur la cylindr
 
 ### Simulez votre taxe
 
-Utilisez le **calculateur fiscal intégré** sur AutoRa pour estimer précisément la TMC et la taxe annuelle selon votre région et votre véhicule.
+Utilisez le **calculateur fiscal intégré** sur AutoRA pour estimer précisément la TMC et la taxe annuelle selon votre région et votre véhicule.
     `.trim(),
   },
   {
@@ -278,7 +278,7 @@ Le réseau de bornes belge s'est considérablement développé :
 1. Vérifiez le **SoH de la batterie** avec un diagnostic
 2. Testez l'**autonomie réelle** lors de l'essai
 3. Assurez-vous d'avoir une **solution de recharge** (domicile ou travail)
-4. Comparez le **TCO** avec notre calculateur intégré sur AutoRa
+4. Comparez le **TCO** avec notre calculateur intégré sur AutoRA
 
 ### Conclusion
 

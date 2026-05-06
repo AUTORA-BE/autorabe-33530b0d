@@ -158,10 +158,10 @@ const TestimonialsSection = memo(() => {
   };
 
   const sectionTitles: Record<string, { title: string; subtitle: string }> = {
-    fr: { title: "Ils nous font confiance", subtitle: "Des milliers de Belges utilisent AutoRa pour acheter et vendre leur voiture en toute sérénité." },
-    nl: { title: "Zij vertrouwen ons", subtitle: "Duizenden Belgen gebruiken AutoRa om met een gerust hart hun auto te kopen en te verkopen." },
-    de: { title: "Sie vertrauen uns", subtitle: "Tausende Belgier nutzen AutoRa, um ihr Auto sicher zu kaufen und zu verkaufen." },
-    en: { title: "They trust us", subtitle: "Thousands of Belgians use AutoRa to buy and sell their car with confidence." },
+    fr: { title: "Ils nous font confiance", subtitle: "Des milliers de Belges utilisent AutoRA pour acheter et vendre leur voiture en toute sérénité." },
+    nl: { title: "Zij vertrouwen ons", subtitle: "Duizenden Belgen gebruiken AutoRA om met een gerust hart hun auto te kopen en te verkopen." },
+    de: { title: "Sie vertrauen uns", subtitle: "Tausende Belgier nutzen AutoRA, um ihr Auto sicher zu kaufen und zu verkaufen." },
+    en: { title: "They trust us", subtitle: "Thousands of Belgians use AutoRA to buy and sell their car with confidence." },
   };
 
   const { title, subtitle } = sectionTitles[language] || sectionTitles.fr;
