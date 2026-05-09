@@ -266,8 +266,8 @@ export default function AdminListingsPage() {
                 </div>
               )}
 
-              {/* Car-Pass link */}
-              {detailListing.car_pass_url && (
+              {/* Car-Pass link — XSS guard: only allow safe https URLs */}
+              {detailListing.car_pass_url && /^https:\/\//i.test(detailListing.car_pass_url) && (
                 <a href={detailListing.car_pass_url} target="_blank" rel="noopener noreferrer"
                   className="mt-3 flex items-center gap-2 text-xs text-primary underline underline-offset-2">
                   📄 Voir le Car-Pass
