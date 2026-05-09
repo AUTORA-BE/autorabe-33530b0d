@@ -9,14 +9,11 @@ import { toast } from 'sonner';
 import type { Json } from '@/integrations/supabase/types';
 import type { AdminListing } from '../types/admin.types';
 
-const LISTING_COLS = 'id, brand, model, year, price, mileage, fuel_type, transmission, location, photos, contact_name, contact_email, created_at, status, seller_type, description, euro_norm, boost_level';
-
 async function fetchListings(): Promise<AdminListing[]> {
+  // SECURITY: contact_email/phone/name are revoked from anon/authenticated direct SELECT.
+  // Use the SECURITY DEFINER admin RPC which performs an in-function admin role check.
   const { data, error } = await supabase
-    .from('car_listings')
-    .select(LISTING_COLS)
-    .order('created_at', { ascending: false })
-    .limit(500);
+    .rpc('admin_list_listings_with_contacts', { _limit: 500 });
   if (error) throw error;
   return (data || []) as AdminListing[];
 }
