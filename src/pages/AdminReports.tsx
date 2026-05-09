@@ -159,13 +159,11 @@ const AdminReports = () => {
     setPendingLoading(true);
     try {
       const { data, error } = await supabase
-        .from("car_listings")
-        .select("id, brand, model, year, price, mileage, fuel_type, transmission, location, photos, contact_name, contact_email, created_at, status, seller_type, description")
-        .eq("status", "pending")
-        .order("created_at", { ascending: true });
+        .rpc('admin_list_listings_with_contacts', { _limit: 500 });
 
       if (error) throw error;
-      setPendingListings((data || []).map((d: any) => ({ ...d, status: d.status ?? 'pending' })));
+      const pending = (data || []).filter((d: any) => d.status === 'pending');
+      setPendingListings(pending.map((d: any) => ({ ...d, status: d.status ?? 'pending' })));
     } catch (error) {
       console.error("Error fetching pending listings:", error);
     } finally {
