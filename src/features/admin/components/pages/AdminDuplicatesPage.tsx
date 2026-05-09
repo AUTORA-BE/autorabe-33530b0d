@@ -43,14 +43,11 @@ interface DuplicateGroup {
 }
 
 async function fetchAllListings(): Promise<Listing[]> {
+  // SECURITY: contact_email/name require admin RPC access (column SELECT revoked from authenticated)
   const { data, error } = await supabase
-    .from('car_listings')
-    .select('id, user_id, brand, model, year, mileage, price, status, created_at, contact_email, contact_name, photos')
-    .in('status', ['pending', 'approved'])
-    .order('created_at', { ascending: false })
-    .limit(2000);
+    .rpc('admin_list_listings_with_contacts', { _limit: 2000 });
   if (error) throw error;
-  return (data ?? []) as Listing[];
+  return ((data ?? []) as Listing[]).filter(l => l.status === 'pending' || l.status === 'approved');
 }
 
 /** Group listings by brand+model+year, then cluster by km within ±KM_TOLERANCE */
