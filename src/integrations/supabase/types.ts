@@ -1207,6 +1207,40 @@ export type Database = {
       }
     }
     Functions: {
+      admin_get_listing_contacts: {
+        Args: { _ids: string[] }
+        Returns: {
+          contact_email: string
+          contact_name: string
+          contact_phone: string
+          id: string
+        }[]
+      }
+      admin_list_listings_with_contacts: {
+        Args: { _limit?: number }
+        Returns: {
+          boost_level: string
+          brand: string
+          contact_email: string
+          contact_name: string
+          contact_phone: string
+          created_at: string
+          description: string
+          euro_norm: string
+          fuel_type: string
+          id: string
+          location: string
+          mileage: number
+          model: string
+          photos: string[]
+          price: number
+          seller_type: string
+          status: string
+          transmission: string
+          user_id: string
+          year: number
+        }[]
+      }
       check_rate_limit: {
         Args: { _key: string; _max_attempts: number; _window_seconds: number }
         Returns: boolean
