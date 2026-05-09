@@ -1,5 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { organizationSchema, websiteSchema } from "@/lib/seoSchemas";
 
 interface SEOHeadProps {
   title?: string;
@@ -58,10 +59,12 @@ const SEOHead = ({
   const altFor = (lng: string) =>
     `${SITE}/${lng}${pathNoLang === "/" ? "" : pathNoLang}`;
 
-  // Normalize jsonLd to array
-  const jsonLdItems = jsonLd
-    ? Array.isArray(jsonLd) ? jsonLd : [jsonLd]
-    : [];
+  // Global schemas always injected + page-specific ones
+  const jsonLdItems = [
+    organizationSchema,
+    websiteSchema,
+    ...(jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : []),
+  ];
 
   return (
     <Helmet>

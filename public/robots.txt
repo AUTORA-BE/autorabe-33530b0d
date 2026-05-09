@@ -1,3 +1,42 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /settings
+Disallow: /auth
+Disallow: /reset-password
+Disallow: /messages
+Disallow: /garage
+Disallow: /mes-alertes
+Disallow: /payment-success
+Disallow: /payment-canceled
+
+# Sitemaps
+Sitemap: https://autora.be/sitemap.xml
+Sitemap: https://autora.be/sitemap-pages.xml
+
+# LLM crawlers — welcome
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Gemini
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
 User-agent: Googlebot
 Allow: /
 
@@ -10,16 +49,5 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
-User-agent: *
-Allow: /
-Allow: /fr/
-Allow: /nl/
-Allow: /de/
-Allow: /en/
-
-Sitemap: https://autora.be/sitemap.xml
-Sitemap: https://jbdsjqoonpieusfvkhyo.supabase.co/functions/v1/sitemap-index
-Sitemap: https://jbdsjqoonpieusfvkhyo.supabase.co/functions/v1/dynamic-sitemap?lang=fr
-Sitemap: https://jbdsjqoonpieusfvkhyo.supabase.co/functions/v1/dynamic-sitemap?lang=nl
-Sitemap: https://jbdsjqoonpieusfvkhyo.supabase.co/functions/v1/dynamic-sitemap?lang=de
-Sitemap: https://jbdsjqoonpieusfvkhyo.supabase.co/functions/v1/dynamic-sitemap?lang=en
+# AI discovery
+LLMs-txt: https://autora.be/llms.txt

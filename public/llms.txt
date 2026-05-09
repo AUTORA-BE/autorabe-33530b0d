@@ -1,0 +1,37 @@
+# AutoRA
+
+> La première marketplace automobile dédiée au marché belge. Véhicules d'occasion avec Car-Pass vérifié et conformité LEZ garantie. Fiscalité auto (TMC, déductibilité) pour la Wallonie, Bruxelles et la Flandre. Disponible en français, néerlandais, allemand et anglais.
+
+## Pages principales
+
+- [Accueil](https://autora.be/index.md): Recherche de véhicules d'occasion en Belgique. Filtres par marque, modèle, prix, carburant, LEZ, Car-Pass.
+- [Vendre ma voiture](https://autora.be/sell.md): Publier une annonce gratuitement ou avec boost Pro. Vente entre particuliers et professionnels.
+- [Tarifs Pro](https://autora.be/pricing.md): Abonnements pour professionnels de l'automobile. Plans Free, Standard, Pro avec annonces illimitées et statistiques.
+- [Calculateur TCO](https://autora.be/calculateur-tco.md): Calculer le coût total de possession d'un véhicule en Belgique. Inclut TMC, assurance, carburant, entretien.
+- [À propos](https://autora.be/about.md): À propos d'AutoRA — mission, équipe, valeurs.
+- [FAQ](https://autora.be/faq.md): Questions fréquentes sur l'achat, la vente, Car-Pass, LEZ et les abonnements.
+- [Contact](https://autora.be/contact.md): Contacter l'équipe AutoRA par formulaire ou email.
+- [Blog](https://autora.be/blog.md): Articles et guides automobile pour le marché belge.
+- [Services](https://autora.be/services.md): Services proposés par AutoRA aux acheteurs et vendeurs.
+
+## Guides
+
+- [Guide Car-Pass](https://autora.be/guide/car-pass.md): Comprendre le Car-Pass belge obligatoire pour toute vente de voiture d'occasion.
+- [Guide LEZ](https://autora.be/guide/lez-belgique.md): Zones à basses émissions (LEZ) à Bruxelles, Anvers et Gand — normes Euro acceptées.
+- [Guide achat occasion](https://autora.be/guide/acheter-voiture-occasion.md): Guide complet pour acheter une voiture d'occasion en Belgique.
+
+## Légal
+
+- [CGU](https://autora.be/cgu.md): Conditions générales d'utilisation de la plateforme AutoRA.be.
+- [CGV](https://autora.be/cgv.md): Conditions générales de vente — abonnements Pro et services payants.
+- [Confidentialité (RGPD)](https://autora.be/confidentialite.md): Politique de confidentialité et traitement des données personnelles (RGPD / APD).
+- [Mentions légales](https://autora.be/mentions-legales.md): Mentions légales conformes à la loi belge du 11 mars 2003.
+- [Cookies](https://autora.be/cookies.md): Politique de gestion des cookies et traceurs.
+
+## Contexte technique
+
+- Stack: React 18, Supabase (PostgreSQL + Edge Functions), Stripe, Resend, Cloudflare CDN
+- Hébergement: Lovable Cloud, domaine autora.be (Belgique)
+- Données: annonces vérifiées Car-Pass, conformité LEZ calculée automatiquement
+- Langues: français (fr-BE), néerlandais (nl-BE), allemand (de-BE), anglais (en)
+- Marché: Belgique exclusivement (Wallonie, Bruxelles, Flandre)

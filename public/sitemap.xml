@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Static pages sitemap -->
   <sitemap>
-    <loc>https://jbdsjqoonpieusfvkhyo.supabase.co/functions/v1/dynamic-sitemap?lang=fr</loc>
+    <loc>https://autora.be/sitemap-pages.xml</loc>
+    <lastmod>2026-05-09</lastmod>
+  </sitemap>
+  <!-- Dynamic vehicle listings sitemaps per language -->
+  <sitemap>
+    <loc>https://okeiblbufwhfirxrzkfo.supabase.co/functions/v1/dynamic-sitemap?lang=fr</loc>
   </sitemap>
   <sitemap>
-    <loc>https://jbdsjqoonpieusfvkhyo.supabase.co/functions/v1/dynamic-sitemap?lang=nl</loc>
+    <loc>https://okeiblbufwhfirxrzkfo.supabase.co/functions/v1/dynamic-sitemap?lang=nl</loc>
   </sitemap>
   <sitemap>
-    <loc>https://jbdsjqoonpieusfvkhyo.supabase.co/functions/v1/dynamic-sitemap?lang=de</loc>
+    <loc>https://okeiblbufwhfirxrzkfo.supabase.co/functions/v1/dynamic-sitemap?lang=de</loc>
   </sitemap>
   <sitemap>
-    <loc>https://jbdsjqoonpieusfvkhyo.supabase.co/functions/v1/dynamic-sitemap?lang=en</loc>
+    <loc>https://okeiblbufwhfirxrzkfo.supabase.co/functions/v1/dynamic-sitemap?lang=en</loc>
   </sitemap>
 </sitemapindex>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+
+  <url>
+    <loc>https://autora.be/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="fr-BE" href="https://autora.be/"/>
+    <xhtml:link rel="alternate" hreflang="nl-BE" href="https://autora.be/"/>
+    <xhtml:link rel="alternate" hreflang="de-BE" href="https://autora.be/"/>
+    <xhtml:link rel="alternate" hreflang="en"    href="https://autora.be/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://autora.be/"/>
+  </url>
+
+  <url><loc>https://autora.be/sell</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://autora.be/pricing</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://autora.be/calculateur-tco</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://autora.be/marques-electriques</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://autora.be/about</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://autora.be/faq</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://autora.be/blog</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://autora.be/services</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://autora.be/contact</loc><changefreq>yearly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://autora.be/guide/car-pass</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://autora.be/guide/lez-belgique</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://autora.be/guide/acheter-voiture-occasion</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
+  <url><loc>https://autora.be/cgu</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://autora.be/cgv</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://autora.be/confidentialite</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://autora.be/mentions-legales</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+  <url><loc>https://autora.be/cookies</loc><changefreq>yearly</changefreq><priority>0.2</priority></url>
+
+</urlset>
