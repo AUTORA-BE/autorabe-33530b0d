@@ -44,7 +44,7 @@ export default function AdminExportsPage() {
       description: 'Toutes les annonces véhicules',
       filename: 'annonces',
       fetch: async () => {
-        const { data } = await supabase.from('car_listings').select('id, brand, model, year, price, mileage, fuel_type, status, location, contact_name, contact_email, created_at');
+        const { data } = await supabase.rpc('admin_list_listings_with_contacts', { _limit: 5000 });
         return (data || []) as Record<string, unknown>[];
       },
     },
