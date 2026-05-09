@@ -65,6 +65,7 @@ export default function AdminLayout() {
                 <Route path="tax-brackets" element={<AdminTaxBracketsPage />} />
                 <Route path="lez-audit" element={<AdminLezAuditPage />} />
                 <Route path="duplicates" element={<AdminDuplicatesPage />} />
+                <Route path="payments" element={<AdminPaymentsPage />} />
                 <Route path="*" element={<Navigate to="/admin" replace />} />
               </Routes>
             </Suspense>
