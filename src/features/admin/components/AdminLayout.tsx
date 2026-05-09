@@ -22,6 +22,7 @@ const AdminFuelPricesPage = lazy(() => import('./pages/AdminFuelPricesPage'));
 const AdminTaxBracketsPage = lazy(() => import('./pages/AdminTaxBracketsPage'));
 const AdminLezAuditPage = lazy(() => import('./pages/AdminLezAuditPage'));
 const AdminDuplicatesPage = lazy(() => import('./pages/AdminDuplicatesPage'));
+const AdminPaymentsPage = lazy(() => import('./pages/AdminPaymentsPage'));
 
 function PageFallback() {
   return (
