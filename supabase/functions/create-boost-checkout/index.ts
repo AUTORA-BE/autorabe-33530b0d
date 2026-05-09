@@ -80,7 +80,9 @@ serve(async (req) => {
       customerId = customers.data[0].id;
     }
 
-    const origin = req.headers.get("origin") || "https://autorabe.lovable.app";
+    const ALLOWED_ORIGINS = ["https://autora.be", "https://www.autora.be", "https://autorabe.lovable.app"];
+    const rawOrigin = req.headers.get("origin") || "";
+    const origin = ALLOWED_ORIGINS.includes(rawOrigin) ? rawOrigin : "https://autora.be";
 
     const session = await stripe.checkout.sessions.create({
       customer: customerId,

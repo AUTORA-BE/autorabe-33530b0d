@@ -211,9 +211,7 @@ serve(async (req) => {
   } catch (error) {
     logErr("fatal", error);
     return new Response(
-      JSON.stringify({
-        error: error instanceof Error ? error.message : String(error),
-      }),
+      JSON.stringify({ error: "Internal server error" }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 500,

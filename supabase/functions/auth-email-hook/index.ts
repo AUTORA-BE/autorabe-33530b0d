@@ -309,7 +309,8 @@ Deno.serve(async (req) => {
   } catch (error) {
     console.error('Webhook handler error:', error)
     const message = error instanceof Error ? error.message : 'Unknown error'
-    return new Response(JSON.stringify({ error: message }), {
+    console.error('auth-email-hook fatal:', message)
+    return new Response(JSON.stringify({ error: 'Internal server error' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })

@@ -25,6 +25,10 @@ serve(async (req) => {
     const { priceId } = await req.json();
     if (!priceId) throw new Error("Price ID is required");
 
+    const ALLOWED_ORIGINS = ["https://autora.be", "https://www.autora.be", "https://autorabe.lovable.app"];
+    const rawOrigin = req.headers.get("origin") || "";
+    const origin = ALLOWED_ORIGINS.includes(rawOrigin) ? rawOrigin : "https://autora.be";
+
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
       apiVersion: "2025-08-27.basil",
     });
@@ -40,8 +44,8 @@ serve(async (req) => {
       customer_email: customerId ? undefined : user.email,
       line_items: [{ price: priceId, quantity: 1 }],
       mode: "subscription",
-      success_url: `${req.headers.get("origin")}/payment-success`,
-      cancel_url: `${req.headers.get("origin")}/payment-canceled`,
+      success_url: `${origin}/payment-success`,
+      cancel_url: `${origin}/payment-canceled`,
     });
 
     return new Response(JSON.stringify({ url: session.url }), {
@@ -49,8 +53,8 @@ serve(async (req) => {
       status: 200,
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    return new Response(JSON.stringify({ error: message }), {
+    console.error("[create-checkout] Error:", error);
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });

@@ -35,7 +35,9 @@ serve(async (req) => {
       throw new Error("No Stripe customer found for this user");
     }
 
-    const origin = req.headers.get("origin") || "http://localhost:3000";
+    const ALLOWED_ORIGINS = ["https://autora.be", "https://www.autora.be", "https://autorabe.lovable.app"];
+    const rawOrigin = req.headers.get("origin") || "";
+    const origin = ALLOWED_ORIGINS.includes(rawOrigin) ? rawOrigin : "https://autora.be";
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: customers.data[0].id,
       return_url: `${origin}/pricing`,
