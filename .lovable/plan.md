@@ -1,55 +1,104 @@
-# Bloc 9 + 10 + Rapport final — Lancement beta
 
-## Bloc 9 — Rate limiting (option B pragmatique)
+# Plan — Migration runtime de jbds (Lovable Cloud) vers okei (ton Supabase)
 
-Infra déjà en place (`rate_limits` table + RPC `check_rate_limit` + edge function `check-rate-limit`), mais pas câblée. On câble uniquement là où le risque métier est réel.
+## ⚠️ À lire avant de démarrer
 
-1. **`supabase/functions/create-listing/index.ts`** : ajouter check `listing_create` (10/jour/user) en début de handler. Retour 429 propre si dépassé.
-2. **`supabase/functions/notify-seller/index.ts`** : ajouter check `message_send` (30/h/user). Retour 429 propre si dépassé.
-3. **Reset password (côté client)** : ajouter `checkServerRateLimit('password_reset', email)` dans le formulaire reset (3/h/email) — UX, évite spam involontaire.
-4. **Étendre `limits` map** dans `check-rate-limit/index.ts` avec les nouvelles clés (`listing_create`, `message_send`, `password_reset`).
-5. **Skip signup/login** : Supabase Auth a déjà du rate limiting natif côté infra. Documenter dans le rapport.
+Aujourd'hui l'app **tourne réellement sur `jbds…`** (Lovable Cloud). C'est ce projet qui contient :
+- toutes les tables avec leurs données (car_listings, profiles, subscriptions, …)
+- les 28 edge functions déployées
+- les secrets (STRIPE_*, RESEND_API_KEY, VAPID_*, LOVABLE_API_KEY, …)
+- les buckets de storage (vehicle-photos, car-pass, chat-images, avatars, brand-logos, car-photos)
+- la config Auth (Google, HIBP, templates email)
 
-## Bloc 10 — xlsx CVE (option C accepter le risque)
+Le fichier `.env` est **géré automatiquement par Lovable Cloud** — je ne peux pas le pointer manuellement vers okei. Pour basculer le runtime, il faut **déconnecter Lovable Cloud** et **connecter ton propre projet Supabase okei** depuis le menu Connectors.
 
-1. Aucune modification de code.
-2. Documenter dans `LAUNCH_READINESS.md` : usage admin-only, vecteur d'attaque inexistant (export uniquement, jamais d'import xlsx user), risque accepté.
+Ce n'est pas une opération que je peux faire entièrement seul : il y a des étapes manuelles côté toi (Lovable Connectors + dashboard Supabase okei).
 
-## Rapport final
+---
 
-Créer `LAUNCH_READINESS.md` à la racine avec :
+## Phase 1 — Préparation (côté Lovable, sans rien casser)
 
-- **Section ✅ Done** : ErrorBoundary, CI/CD, RGPD/cookie gating, delete-account hardening, rate-limit câblé sur listing/message/reset, audit dépendances clean.
-- **Section ⚠️ Limitations connues** : 
-  - Lighthouse CI peut produire faux positifs sur preview Lovable
-  - Rate limit IP-based contournable derrière VPN (acceptable pour beta)
-  - xlsx@0.18.5 conservé (admin-only, vecteur inexploitable)
-  - Playwright E2E reporté post-beta
-- **Section 📋 Checklist Go/No-Go** : 
-  - Auth (Google + email + phone obligatoire) ✅
-  - Paiements Stripe (5 tiers + webhooks) ✅
-  - RGPD (cookie gating + delete cascade + export JSON) ✅
-  - Mobile PWA (safe-area + offline) ✅
-  - Sécurité (RLS, has_role, no VIN storage) ✅
-  - i18n FR/NL/DE/EN ✅
-  - Belgian compliance (Car-Pass, LEZ, TMC) ✅
-  - Monitoring : ErrorBoundary + console structuré ✅
-  - À faire avant prod : tester delete-account end-to-end avec un vrai compte test
+1. **Aligner les références codebase déjà sur okei** (pas d'impact runtime, juste cohérence) :
+   - `public/sitemap.xml` → repointer vers `okei`
+   - vérifier que `vite.config.ts`, `index.html`, `supabase/config.toml`, `sitemap-index/index.ts` sont bien alignés sur `okei`
+2. **Préparer un dump SQL complet** des migrations à rejouer sur okei : `supabase/combined_migrations.sql` existe déjà → on le met à jour avec les 5 dernières migrations.
 
-## Détails techniques
+## Phase 2 — Export des données depuis jbds
 
-- Rate limit côté edge : `await fetch(SUPABASE_URL + '/functions/v1/check-rate-limit', { body: { action, identifier: user.id } })` puis if `!allowed` → 429 avec header `Retry-After: 3600`.
-- Pour `create-listing` et `notify-seller`, l'`identifier` = `user.id` (pas l'IP) car déjà authentifié.
-- Pour `password_reset`, identifier = email normalisé (lowercase + trim).
-- Update `mem://technical/security-architecture` pour documenter les 3 nouveaux points de rate-limit câblés.
+Pour chaque table avec données utilisateur, je génère un export SQL/CSV via `read_query` :
+- `auth.users` (⚠️ mot de passe hashes non exportables → users devront reset password)
+- `profiles`, `user_roles`, `user_preferences`
+- `car_listings` + `car_views` + `favorites` + `reviews`
+- `conversations` + `messages` + `daily_message_counts`
+- `subscriptions` + `stripe_processed_events`
+- `user_alerts` + `alert_notifications`
+- `belgian_*` (TMC, annual tax, age reductions), `fuel_prices`
+- `admin_actions`, `audit_log`, `reports`
 
-## Fichiers touchés
+Pour le **storage** (vehicle-photos, car-pass, chat-images, avatars) : il faut un script qui télécharge tous les fichiers de jbds et les ré-upload vers okei. Très volumineux selon les annonces existantes.
 
-- `supabase/functions/check-rate-limit/index.ts` (étendre `limits`)
-- `supabase/functions/create-listing/index.ts` (check + 429)
-- `supabase/functions/notify-seller/index.ts` (check + 429)
-- `src/features/auth/**` formulaire reset password (1 appel checkServerRateLimit)
-- `LAUNCH_READINESS.md` (nouveau, racine)
-- `mem://technical/security-architecture` (mise à jour)
+## Phase 3 — Provisioning okei (toi, dans dashboard Supabase okei)
 
-Estimation : ~25 min de build, pas de migration DB nécessaire (table + RPC déjà OK).
+1. **Activer les extensions** : `pgcrypto`, `pg_trgm`, `pgmq`, `pg_cron` (pour expire-boosts), …
+2. **Créer les buckets** : `vehicle-photos`, `car-pass`, `chat-images`, `avatars`, `brand-logos`, `car-photos` (avec mêmes policies)
+3. **Configurer Auth** :
+   - Activer Email + Google OAuth (mêmes Client ID / Secret que jbds)
+   - Activer HIBP password protection
+   - Configurer templates email FR/NL/DE/EN
+   - Configurer SMTP Resend custom + domaine `noreply@autora.be`
+4. **Configurer secrets edge functions** : `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `RESEND_API_KEY`, `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `LOVABLE_API_KEY`
+
+## Phase 4 — Bascule Lovable Cloud → okei
+
+1. Toi : **Connectors → Lovable Cloud → Disable Cloud** (attention : irréversible côté Cloud)
+2. Toi : **Connectors → Supabase → Connect** ton projet okei
+3. `.env` se régénère automatiquement avec URL + anon key d'okei
+4. `src/integrations/supabase/types.ts` se régénère depuis le schéma okei
+
+## Phase 5 — Rejouer schéma + données sur okei
+
+1. Lovable applique automatiquement les migrations Supabase au connect (à valider)
+2. Sinon : exécuter manuellement `combined_migrations.sql` dans le SQL editor okei
+3. Importer les CSV de données dans l'ordre des FK : profiles → user_roles → car_listings → favorites → … 
+4. Ré-upload des fichiers storage (script à part)
+5. Redéployer les 28 edge functions sur okei (Lovable le fait au prochain push)
+
+## Phase 6 — Validation post-migration
+
+- `/admin` accessible avec ton compte (vérifier `user_roles`)
+- Une annonce existante s'affiche avec ses photos
+- Login Google fonctionne
+- Stripe webhook : pointer le webhook Stripe vers la nouvelle URL `https://okei….supabase.co/functions/v1/stripe-webhook` + mettre à jour `STRIPE_WEBHOOK_SECRET`
+- Re-tester sitemap, edge function `dynamic-sitemap`
+
+## Phase 7 — Reconfigurer les services externes
+
+- **Stripe Dashboard** : webhook URL → okei
+- **Google OAuth Console** : redirect URI → `https://okei….supabase.co/auth/v1/callback`
+- **Resend** : domain reste identique (`autora.be`)
+- **Vercel** : pas de changement (lit `.env` au build, qui sera mis à jour)
+
+---
+
+## Risques
+
+| Risque | Impact | Mitigation |
+|---|---|---|
+| Mots de passe Auth non exportables | Tous les users doivent reset password | Email de communication "migration sécurité" |
+| Photos storage volumineuses | Téléchargement long + coûts bande passante | Script batch nocturne |
+| URLs photos hardcodées dans `car_listings.photos[]` | Liens cassés post-migration | Script SQL UPDATE pour réécrire les URLs jbds → okei |
+| Stripe webhooks en cours pendant bascule | Events manqués | Faire la bascule en heure creuse, replay des events Stripe ensuite |
+| Lovable Cloud disable = irréversible | Si problème avec okei, retour difficile | Faire un dump complet de jbds avant disable |
+
+---
+
+## Recommandation honnête
+
+Cette migration représente **plusieurs heures de travail synchronisé** (toi + moi) avec un risque de downtime et de perte de données utilisateur (mots de passe).
+
+**Question** : es-tu sûr de vouloir migrer maintenant, alors que tu es en phase finale de lancement ? Si la seule raison est "je n'ai pas accès à jbds", la solution la plus simple serait que je te montre comment **récupérer l'accès au projet jbds via le dashboard Lovable Cloud** (Connectors → Lovable Cloud → View Backend), où tu retrouves les mêmes outils que Supabase dashboard mais déjà connectés.
+
+Veux-tu :
+- **(A)** que je te guide d'abord pour accéder à jbds via Lovable Cloud (5 min, zéro risque)
+- **(B)** que je commence par la **Phase 1** (alignement codebase sans toucher au runtime) en attendant que tu prépares okei
+- **(C)** déclencher le plan complet maintenant
