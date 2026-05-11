@@ -3,7 +3,7 @@
  * @module features/listings/components
  */
 
-import { memo, useEffect, useRef } from "react";
+import { memo, useEffect, useRef, type JSX } from "react";
 import { SlidersHorizontal, ChevronDown, ChevronLeft, ChevronRight, Flame } from "lucide-react";
 import VehicleCard from "./VehicleCard";
 import { useLanguage } from "@/contexts/LanguageContext";
