@@ -22,6 +22,7 @@ const PATH_MAP: Record<string, Record<Lang, string>> = {
   "/terms": { fr: "/terms", nl: "/terms", de: "/terms", en: "/terms" },
   "/privacy": { fr: "/privacy", nl: "/privacy", de: "/privacy", en: "/privacy" },
   "/legal": { fr: "/legal", nl: "/legal", de: "/legal", en: "/legal" },
+  "/fiscalite-auto-2026": { fr: "/fiscalite-auto-2026", nl: "/autofiscaliteit-2026", de: "/autofiscalitaet-2026", en: "/car-tax-belgium-2026" },
 };
 
 const CAR_SEG: Record<Lang, string> = { fr: "/voiture", nl: "/auto", de: "/auto", en: "/car" };
@@ -39,6 +40,7 @@ const META: Record<string, { changefreq: string; priority: string }> = {
   "/guide/lez-belgique": { changefreq: "monthly", priority: "0.8" },
   "/guide/car-pass": { changefreq: "monthly", priority: "0.8" },
   "/guide/acheter-voiture-occasion": { changefreq: "monthly", priority: "0.8" },
+  "/fiscalite-auto-2026": { changefreq: "monthly", priority: "0.9" },
   "/terms": { changefreq: "yearly", priority: "0.3" },
   "/privacy": { changefreq: "yearly", priority: "0.3" },
   "/legal": { changefreq: "yearly", priority: "0.3" },

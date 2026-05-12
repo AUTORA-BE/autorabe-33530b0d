@@ -443,7 +443,9 @@ const Auth = () => {
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                       <Input
+                        id="forgot-email"
                         type="email"
+                        aria-label={t("auth.email")}
                         placeholder={t("auth.email")}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
@@ -572,7 +574,9 @@ const Auth = () => {
                       <div className="relative">
                         <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                         <Input
+                          id="signup-name"
                           type="text"
+                          aria-label={t("auth.fullName")}
                           placeholder={t("auth.fullName")}
                           value={fullName}
                           onChange={(e) => setFullName(e.target.value)}
@@ -590,7 +594,9 @@ const Auth = () => {
                       <div className="relative">
                         <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                         <Input
+                          id="signup-phone"
                           type="tel"
+                          aria-label={t("auth.phone") || "Téléphone"}
                           placeholder="+32 4XX XX XX XX"
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
@@ -608,7 +614,9 @@ const Auth = () => {
                       <div className="relative">
                         <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                         <Input
+                          id="signup-garage"
                           type="text"
+                          aria-label={t("auth.garageNamePlaceholder")}
                           placeholder={t("auth.garageNamePlaceholder")}
                           value={garageName}
                           onChange={(e) => setGarageName(e.target.value)}
@@ -618,7 +626,9 @@ const Auth = () => {
                       <div className="relative">
                         <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                         <Input
+                          id="signup-postal"
                           type="text"
+                          aria-label={t("auth.postalCodePlaceholder")}
                           placeholder={t("auth.postalCodePlaceholder")}
                           value={postalCode}
                           onChange={(e) => setPostalCode(e.target.value)}
@@ -632,7 +642,9 @@ const Auth = () => {
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                       <Input
+                        id="auth-email"
                         type="email"
+                        aria-label={t("auth.email")}
                         placeholder={t("auth.email")}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
@@ -648,7 +660,9 @@ const Auth = () => {
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                       <Input
+                        id="auth-password"
                         type={showPassword ? "text" : "password"}
+                        aria-label={t("auth.password")}
                         placeholder={t("auth.password")}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}

@@ -68,7 +68,7 @@ Le vendeur garantit que toutes les informations de son annonce sont exactes, com
 Toute omission intentionnelle ou fausse déclaration est susceptible d'engager la responsabilité civile et pénale du vendeur.
 
 **4.2 Car-Pass**
-Pour les véhicules d'occasion immatriculés en Belgique, la mise à disposition du Car-Pass est fortement encouragée et peut être rendue obligatoire pour certaines catégories d'annonces. La plateforme peut afficher la mention « Car-Pass non vérifié » pour les annonces sans vérification.
+Pour les véhicules d'occasion immatriculés en Belgique, le vendeur peut soumettre son document Car-Pass depuis son tableau de bord vendeur. Après soumission, l'annonce est marquée « En attente de vérification » jusqu'à validation manuelle par l'équipe AutoRA (délai indicatif : 24-48 heures ouvrables). Les annonces avec Car-Pass vérifié bénéficient d'une meilleure visibilité. AutoRA ne garantit pas l'authenticité des documents soumis — la responsabilité de l'exactitude du kilométrage incombe au vendeur.
 
 **4.3 Photos**
 Les photos publiées doivent représenter le véhicule concerné. L'utilisation de photos volées, de logiciels tiers ou de visuels génériques est interdite.
@@ -209,7 +209,7 @@ De verkoper garandeert dat alle informatie in zijn advertentie juist, volledig e
 Elke opzettelijke weglating of valse verklaring kan de burgerrechtelijke en strafrechtelijke aansprakelijkheid van de verkoper in het geding brengen.
 
 **4.2 Car-Pass**
-Voor tweedehandse voertuigen die in België geregistreerd zijn, wordt het ter beschikking stellen van de Car-Pass sterk aanbevolen en kan voor bepaalde categorieën advertenties verplicht worden gesteld. Het platform kan de vermelding « Car-Pass niet geverifieerd » weergeven voor advertenties zonder verificatie.
+Voor tweedehandse voertuigen die in België geregistreerd zijn, kan de verkoper zijn Car-Pass-document indienen via zijn verkopersdashboard. Na indiening wordt de advertentie gemarkeerd als « In afwachting van verificatie » totdat het document handmatig door het AutoRA-team is gevalideerd (indicatieve termijn: 24-48 werkuren). Advertenties met een geverifieerde Car-Pass genieten een betere zichtbaarheid. AutoRA garandeert niet de authenticiteit van ingediende documenten — de verantwoordelijkheid voor de juistheid van de kilometerstand berust bij de verkoper.
 
 **4.3 Foto's**
 De gepubliceerde foto's moeten het betrokken voertuig weergeven. Het gebruik van gestolen foto's, software van derden of generieke beelden is verboden.
@@ -350,7 +350,7 @@ Der Verkäufer garantiert, dass alle Informationen in seiner Anzeige korrekt, vo
 Jede vorsätzliche Auslassung oder falsche Angabe kann die zivilrechtliche und strafrechtliche Haftung des Verkäufers begründen.
 
 **4.2 Car-Pass**
-Für gebrauchte in Belgien zugelassene Fahrzeuge wird die Bereitstellung des Car-Pass dringend empfohlen und kann für bestimmte Anzeigenkategorien verpflichtend sein. Die Plattform kann den Hinweis „Car-Pass nicht verifiziert" für Anzeigen ohne Verifizierung anzeigen.
+Für gebrauchte in Belgien zugelassene Fahrzeuge kann der Verkäufer sein Car-Pass-Dokument über sein Verkäufer-Dashboard einreichen. Nach der Einreichung wird die Anzeige als „In Bearbeitung" markiert, bis das Dokument vom AutoRA-Team manuell validiert wurde (Richtwert: 24-48 Arbeitsstunden). Anzeigen mit verifiziertem Car-Pass genießen eine bessere Sichtbarkeit. AutoRA übernimmt keine Garantie für die Echtheit der eingereichten Dokumente — die Verantwortung für die Richtigkeit des Kilometerstandes liegt beim Verkäufer.
 
 **4.3 Fotos**
 Die veröffentlichten Fotos müssen das betreffende Fahrzeug zeigen. Die Verwendung gestohlener Fotos, Software Dritter oder generischer Abbildungen ist verboten.
@@ -491,7 +491,7 @@ The seller warrants that all information in their listing is accurate, complete 
 Any intentional omission or misrepresentation may engage the seller's civil and criminal liability.
 
 **4.2 Car-Pass**
-For second-hand vehicles registered in Belgium, providing the Car-Pass is strongly encouraged and may be made mandatory for certain listing categories. The platform may display the "Car-Pass not verified" notice for listings without verification.
+For second-hand vehicles registered in Belgium, sellers may submit their Car-Pass document from their seller dashboard. After submission, the listing is marked "Pending verification" until the document is manually validated by the AutoRA team (indicative timeframe: 24-48 working hours). Listings with a verified Car-Pass benefit from greater visibility. AutoRA does not guarantee the authenticity of submitted documents — the responsibility for the accuracy of the mileage lies with the seller.
 
 **4.3 Photos**
 Published photos must depict the vehicle in question. The use of stolen photos, third-party software or generic visuals is prohibited.

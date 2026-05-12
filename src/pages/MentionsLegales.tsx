@@ -51,6 +51,8 @@ Les contenus publiés par les utilisateurs (annonces, photos, descriptions) rest
 
 En tant qu'hébergeur de contenus générés par des tiers (annonces), AutoRA bénéficie du régime de responsabilité limitée prévu par l'article XII.19 du Code de droit économique (transposant la directive 2000/31/CE). AutoRA n'est pas responsable des contenus publiés par les utilisateurs, sauf si, informée d'un contenu manifestement illicite, elle n'agit pas promptement pour le retirer.
 
+**Modération des contenus — DSA art. 16** : AutoRA traite tout signalement de contenu potentiellement illicite dans un délai de **48 heures ouvrables** suivant sa réception. Pour signaler un contenu, utilisez le bouton « Signaler » sur l'annonce concernée ou écrivez à autoracontact@gmail.com. L'auteur du signalement sera informé des suites données à sa demande.
+
 AutoRA ne saurait être tenue responsable des dommages directs ou indirects résultant de l'utilisation du site ou de son inaccessibilité temporaire.`,
       },
       {
@@ -121,6 +123,8 @@ Inhoud gepubliceerd door gebruikers (advertenties, foto's, beschrijvingen) blijf
         title: "4. Aansprakelijkheid",
         body: `Als host van door derden gegenereerde inhoud (advertenties) geniet AutoRA het beperkte aansprakelijkheidsregime van artikel XII.19 van het Wetboek van economisch recht (omzetting van richtlijn 2000/31/EG). AutoRA is niet verantwoordelijk voor inhoud gepubliceerd door gebruikers, tenzij zij, na in kennis te zijn gesteld van een kennelijk onwettige inhoud, niet onmiddellijk handelt om deze te verwijderen.
 
+**Inhoudsmoderatie — DSA art. 16** : AutoRA behandelt elke melding van mogelijk onwettige inhoud binnen **48 werkuren** na ontvangst. Om inhoud te melden, gebruikt u de knop « Melden » op de betreffende advertentie of stuurt u een e-mail naar autoracontact@gmail.com. De melder wordt op de hoogte gesteld van het gevolg dat aan zijn verzoek wordt gegeven.
+
 AutoRA kan niet aansprakelijk worden gesteld voor directe of indirecte schade als gevolg van het gebruik van de website of de tijdelijke onbeschikbaarheid ervan.`,
       },
       {
@@ -187,6 +191,8 @@ Der Name „AutoRA", das Logo und die zugehörigen grafischen Elemente sind unte
         title: "4. Haftung",
         body: `Als Host von nutzergenerierten Inhalten (Anzeigen) genießt AutoRA das beschränkte Haftungsregime gemäß Art. XII.19 des belgischen Wirtschaftsgesetzbuches (Umsetzung der Richtlinie 2000/31/EG). AutoRA ist nicht für von Nutzern veröffentlichte Inhalte verantwortlich, es sei denn, sie handelt nach Bekanntwerden eines offensichtlich rechtswidrigen Inhalts nicht unverzüglich, um diesen zu entfernen.
 
+**Inhaltsmoderation — DSA Art. 16** : AutoRA bearbeitet jede Meldung potenziell rechtswidriger Inhalte innerhalb von **48 Arbeitsstunden** nach Eingang. Um Inhalte zu melden, nutzen Sie die Schaltfläche „Melden" bei der betreffenden Anzeige oder schreiben Sie an autoracontact@gmail.com. Der Melder wird über das Ergebnis seiner Anfrage informiert.
+
 AutoRA haftet nicht für direkte oder indirekte Schäden, die aus der Nutzung der Website oder deren vorübergehender Nichtverfügbarkeit entstehen.`,
       },
       {
@@ -252,6 +258,8 @@ The name "AutoRA", the logo and associated graphic elements are distinctive sign
       {
         title: "4. Liability",
         body: `As a host of user-generated content (listings), AutoRA benefits from the limited liability regime provided by Article XII.19 of the Belgian Code of Economic Law (implementing Directive 2000/31/EC). AutoRA is not responsible for content published by users, unless, upon being notified of manifestly illegal content, it fails to act promptly to remove it.
+
+**Content moderation — DSA Art. 16** : AutoRA processes any report of potentially illegal content within **48 working hours** of receipt. To report content, use the "Report" button on the relevant listing or write to autoracontact@gmail.com. The reporter will be informed of the outcome of their request.
 
 AutoRA shall not be liable for direct or indirect damages resulting from the use of the website or its temporary unavailability.`,
       },
