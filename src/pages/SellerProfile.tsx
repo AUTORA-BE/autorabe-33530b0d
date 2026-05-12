@@ -8,6 +8,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Header, Footer } from "@/shared/components";
 import SEOHead from "@/components/SEOHead";
+import { localBusinessSchema } from "@/lib/seoSchemas";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocalizedVehicleHref } from "@/lib/useLocalizedHref";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -206,6 +207,7 @@ const SellerProfile = () => {
       <SEOHead
         title={`${displayName} | AutoRA`}
         description={`Profil vendeur de ${displayName} sur AutoRA. Consultez les annonces, avis et coordonnées.`}
+        jsonLd={localBusinessSchema}
       />
       <Header />
 

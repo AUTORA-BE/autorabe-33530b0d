@@ -6,6 +6,7 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import SEOHead from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { Mail, Lock, User, Eye, EyeOff, ArrowLeft, CheckCircle, Phone, Building2, MapPin, ShieldCheck, BadgeCheck, MapPinned } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -302,6 +303,7 @@ const Auth = () => {
 
   return (
     <div className="page-gradient flex">
+      <SEOHead noIndex />
       {/* Left Side - Branding */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background to-secondary" />

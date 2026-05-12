@@ -5,6 +5,7 @@
 
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import SEOHead from "@/components/SEOHead";
 import { Header, Footer, BackButton } from "@/shared/components";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import SellerDashboardComponent from "@/features/listings/components/SellerDashboard";
@@ -23,6 +24,7 @@ const SellerDashboardPage = () => {
 
   return (
     <div className="page-gradient">
+      <SEOHead noIndex />
       <Header />
       <main className="pt-24 pb-12">
         <div className="container mx-auto px-6">

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import SEOHead from "@/components/SEOHead";
 import { Header, Footer } from "@/shared/components";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -106,6 +107,7 @@ const Unsubscribe = () => {
 
   return (
     <div className="page-gradient min-h-screen flex flex-col">
+      <SEOHead noIndex />
       <Header />
       <main className="flex-1 flex items-center justify-center pt-24 pb-16 px-4">
         <Card className="glass-card max-w-md w-full">

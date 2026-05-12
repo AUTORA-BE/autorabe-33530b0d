@@ -141,6 +141,7 @@ export default function Cookies() {
       <Helmet>
         <title>{t.title}</title>
         <meta name="description" content={t.intro.slice(0, 155)} />
+        <meta name="robots" content="noindex, nofollow" />
         <link rel="canonical" href="https://autora.be/cookies" />
       </Helmet>
 

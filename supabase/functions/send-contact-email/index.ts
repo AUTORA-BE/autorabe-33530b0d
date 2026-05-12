@@ -222,7 +222,6 @@ const handler = async (req: Request): Promise<Response> => {
         email,
         subject,
         message,
-        ip_address: ip,
         user_id: userId,
         status: "new",
       });

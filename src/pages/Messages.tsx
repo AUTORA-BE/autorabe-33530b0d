@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import {  motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
 import {  MessageCircle, Car, Archive } from "lucide-react";
 import { PullToRefresh } from "@/components/PullToRefresh";
+import SEOHead from "@/components/SEOHead";
 import { Header, Footer, BackButton } from "@/shared/components";
 import { ChatWindow } from "@/components/ChatWindow";
 import { Button } from "@/components/ui/button";
@@ -208,6 +209,7 @@ export default function Messages() {
   return (
     <PullToRefresh onRefresh={refetch}>
       <div className="page-gradient min-h-screen">
+        <SEOHead noIndex />
         <Header />
         <main className="pt-16 sm:pt-24 pb-20">
           <div className="container mx-auto px-3 sm:px-4 max-w-4xl">
