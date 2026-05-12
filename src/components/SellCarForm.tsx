@@ -67,6 +67,14 @@ const sellCarSchema = z.object({
   maintenance_book_complete: z.boolean().optional(),
   seller_type: z.string().optional(),
   tva_number: z.string().optional(),
+}).superRefine((data, ctx) => {
+  if (data.seller_type === "professionnel" && !data.tva_number?.trim()) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "Le numéro de TVA est obligatoire pour les vendeurs professionnels",
+      path: ["tva_number"],
+    });
+  }
 });
 
 type SellCarFormData = z.infer<typeof sellCarSchema>;

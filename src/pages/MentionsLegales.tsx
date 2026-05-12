@@ -21,13 +21,12 @@ AutoRA est une marketplace de mise en relation entre vendeurs et acheteurs de v�
       },
       {
         title: "2. Hébergement",
-        body: `Le site AutoRA.be est hébergé par :
+        body: `Le site AutoRA.be est hébergé et déployé par :
 
-**Vercel Inc.**
-340 Pine Street, Suite 1028
+**Lovable Inc.**
+548 Market St, Suite 75837
 San Francisco, CA 94104 — États-Unis
-Site web : https://vercel.com
-Email : support@vercel.com
+Site web : https://lovable.dev
 
 La base de données et les fonctions serverless sont gérées par :
 
@@ -94,12 +93,12 @@ AutoRA is een marktplaats voor de bemiddeling tussen verkopers en kopers van twe
       },
       {
         title: "2. Hosting",
-        body: `De website AutoRA.be wordt gehost door:
+        body: `De website AutoRA.be wordt gehost en uitgerold door:
 
-**Vercel Inc.**
-340 Pine Street, Suite 1028
+**Lovable Inc.**
+548 Market St, Suite 75837
 San Francisco, CA 94104 — Verenigde Staten
-Website: https://vercel.com
+Website: https://lovable.dev
 
 De database en serverfuncties worden beheerd door:
 
@@ -112,15 +111,167 @@ Website: https://supabase.com`,
         title: "3. Intellectuele eigendom",
         body: `Alle elementen van de website AutoRA.be (structuur, teksten, graphics, logo's, iconen, afbeeldingen, software, database, enz.) zijn beschermd door het auteursrecht en het merkenrecht, overeenkomstig het Belgisch Wetboek van Economisch Recht (Boek XI).
 
-Elke reproductie, verspreiding, wijziging, publicatie of aanpassing, geheel of gedeeltelijk, van de elementen van de website, met welk middel of via welk procédé dan ook, is strikt verboden zonder de voorafgaande schriftelijke toestemming van AutoRA.`,
+Elke reproductie, verspreiding, wijziging, publicatie of aanpassing, geheel of gedeeltelijk, van de elementen van de website, met welk middel of via welk procédé dan ook, is strikt verboden zonder de voorafgaande schriftelijke toestemming van AutoRA.
+
+De naam « AutoRA », het logo en de bijbehorende grafische elementen zijn onderscheidende tekens die toebehoren aan AutoRA. Ongeoorloofd gebruik ervan vormt namaak die wordt bestraft door de artikelen XI.335 en volgende van het Wetboek van Economisch Recht.
+
+Inhoud gepubliceerd door gebruikers (advertenties, foto's, beschrijvingen) blijft eigendom van de auteur. Door ze op AutoRA te publiceren, verleent de gebruiker AutoRA een niet-exclusieve, wereldwijde en kosteloze licentie voor gebruik voor de werking van het platform.`,
       },
       {
         title: "4. Aansprakelijkheid",
-        body: `Als host van door derden gegenereerde inhoud (advertenties) geniet AutoRA het beperkte aansprakelijkheidsregime van artikel XII.19 van het Wetboek van economisch recht (omzetting van richtlijn 2000/31/EG). AutoRA is niet verantwoordelijk voor inhoud gepubliceerd door gebruikers, tenzij zij, na in kennis te zijn gesteld van een kennelijk onwettige inhoud, niet onmiddellijk handelt om deze te verwijderen.`,
+        body: `Als host van door derden gegenereerde inhoud (advertenties) geniet AutoRA het beperkte aansprakelijkheidsregime van artikel XII.19 van het Wetboek van economisch recht (omzetting van richtlijn 2000/31/EG). AutoRA is niet verantwoordelijk voor inhoud gepubliceerd door gebruikers, tenzij zij, na in kennis te zijn gesteld van een kennelijk onwettige inhoud, niet onmiddellijk handelt om deze te verwijderen.
+
+AutoRA kan niet aansprakelijk worden gesteld voor directe of indirecte schade als gevolg van het gebruik van de website of de tijdelijke onbeschikbaarheid ervan.`,
       },
       {
-        title: "5. Toepasselijk recht en bevoegde rechtbank",
-        body: `Deze wettelijke vermeldingen worden beheerst door het Belgisch recht. Bij geschillen zijn de rechtbanken van het gerechtelijk arrondissement [in te vullen] bevoegd, behoudens dwingende wettelijke bepalingen.`,
+        title: "5. Hyperlinks",
+        body: `De website AutoRA.be kan links bevatten naar websites van derden. Deze links worden uitsluitend ter informatie verstrekt. AutoRA heeft geen controle over deze websites en wijst elke aansprakelijkheid af voor hun inhoud, privacybeleid of praktijken.
+
+Het plaatsen van hyperlinks naar de website AutoRA.be vereist de voorafgaande schriftelijke toestemming van AutoRA.`,
+      },
+      {
+        title: "6. Toepasselijk recht en bevoegde rechtbank",
+        body: `Deze wettelijke vermeldingen worden beheerst door het Belgisch recht. Bij geschillen zijn de rechtbanken van het gerechtelijk arrondissement [in te vullen] bevoegd, behoudens dwingende wettelijke bepalingen.
+
+Voor consumentengeschillen kan de Belgische consument ook een klacht indienen bij de Consumentenombudsdienst: https://www.consumentenombudsdienst.be of via het Europees platform voor onlinegeschillenbeslechting: https://ec.europa.eu/consumers/odr`,
+      },
+      {
+        title: "7. Bescherming van persoonsgegevens",
+        body: `De verwerking van persoonsgegevens van gebruikers wordt beschreven in ons privacybeleid, toegankelijk op: https://autora.be/confidentialite
+
+Voor vragen over uw gegevens kunt u contact met ons opnemen via: autoracontact@gmail.com`,
+      },
+    ],
+  },
+  de: {
+    title: "Impressum",
+    subtitle: "Gemäß dem belgischen Gesetz vom 11. März 2003 über bestimmte rechtliche Aspekte der Dienste der Informationsgesellschaft",
+    sections: [
+      {
+        title: "1. Herausgeber der Website",
+        body: `**Name** : AutoRA.be (nachfolgend „AutoRA")
+**Rechtsform** : [Auszufüllen — z.B. : SRL / Natürliche Person]
+**Adresse** : [Vollständige Adresse auszufüllen]
+**Unternehmensnummer BCE** : [BE 0000.000.000 — auszufüllen]
+**USt-IdNr.** : [BE 0000.000.000 — auszufüllen, falls MwSt-pflichtig]
+**E-Mail** : autoracontact@gmail.com
+**Verantwortlicher für die Veröffentlichung** : [Name auszufüllen]
+
+AutoRA ist ein Marktplatz zur Vermittlung zwischen Verkäufern und Käufern von Gebrauchtfahrzeugen in Belgien. Die Plattform ist nicht an Transaktionen zwischen Privatpersonen beteiligt und ist keine Vertragspartei der zwischen Nutzern abgeschlossenen Kaufverträge.`,
+      },
+      {
+        title: "2. Hosting",
+        body: `Die Website AutoRA.be wird gehostet und bereitgestellt von:
+
+**Lovable Inc.**
+548 Market St, Suite 75837
+San Francisco, CA 94104 — Vereinigte Staaten
+Website: https://lovable.dev
+
+Die Datenbank und Server-Funktionen werden verwaltet von:
+
+**Supabase Inc.**
+970 Toa Payoh North, #07-04
+Singapore 318992
+Website: https://supabase.com`,
+      },
+      {
+        title: "3. Geistiges Eigentum",
+        body: `Alle Elemente der Website AutoRA.be (Struktur, Texte, Grafiken, Logos, Icons, Bilder, Software, Datenbank usw.) sind durch das Urheberrecht und das Markenrecht gemäß dem belgischen Wirtschaftsgesetzbuch (Buch XI) geschützt.
+
+Jede Reproduktion, Verbreitung, Änderung, Veröffentlichung oder Anpassung, ganz oder teilweise, der Elemente der Website, mit welchem Mittel oder Verfahren auch immer, ist ohne die vorherige schriftliche Genehmigung von AutoRA strengstens untersagt.
+
+Der Name „AutoRA", das Logo und die zugehörigen grafischen Elemente sind unterscheidungskräftige Zeichen, die AutoRA gehören. Ihre unbefugte Verwendung stellt eine Fälschung dar, die gemäß Art. XI.335 ff. des Wirtschaftsgesetzbuches geahndet wird.`,
+      },
+      {
+        title: "4. Haftung",
+        body: `Als Host von nutzergenerierten Inhalten (Anzeigen) genießt AutoRA das beschränkte Haftungsregime gemäß Art. XII.19 des belgischen Wirtschaftsgesetzbuches (Umsetzung der Richtlinie 2000/31/EG). AutoRA ist nicht für von Nutzern veröffentlichte Inhalte verantwortlich, es sei denn, sie handelt nach Bekanntwerden eines offensichtlich rechtswidrigen Inhalts nicht unverzüglich, um diesen zu entfernen.
+
+AutoRA haftet nicht für direkte oder indirekte Schäden, die aus der Nutzung der Website oder deren vorübergehender Nichtverfügbarkeit entstehen.`,
+      },
+      {
+        title: "5. Hyperlinks",
+        body: `Die Website AutoRA.be kann Links zu Websites Dritter enthalten. Diese Links dienen nur zur Information. AutoRA hat keine Kontrolle über diese Websites und übernimmt keine Verantwortung für deren Inhalt, Datenschutzrichtlinien oder Praktiken.
+
+Das Setzen von Hyperlinks zur Website AutoRA.be erfordert die vorherige schriftliche Zustimmung von AutoRA.`,
+      },
+      {
+        title: "6. Anwendbares Recht und Gerichtsstand",
+        body: `Dieses Impressum unterliegt belgischem Recht. Bei Streitigkeiten sind die Gerichte des Gerichtsbezirks [auszufüllen], Belgien, zuständig, vorbehaltlich zwingender gesetzlicher Bestimmungen.
+
+Verbraucher können Beschwerden auch beim belgischen Verbraucherschlichtungsdienst einreichen: https://www.mediationconsommateur.be oder über die europäische Online-Streitbeilegungsplattform: https://ec.europa.eu/consumers/odr`,
+      },
+      {
+        title: "7. Schutz personenbezogener Daten",
+        body: `Die Verarbeitung personenbezogener Daten der Nutzer wird in unserer Datenschutzerklärung beschrieben, zugänglich unter: https://autora.be/confidentialite
+
+Für Fragen zu Ihren Daten wenden Sie sich an: autoracontact@gmail.com`,
+      },
+    ],
+  },
+  en: {
+    title: "Legal Notice",
+    subtitle: "In accordance with the Belgian law of 11 March 2003 on certain legal aspects of information society services",
+    sections: [
+      {
+        title: "1. Website Publisher",
+        body: `**Name** : AutoRA.be (hereinafter "AutoRA")
+**Legal form** : [To be completed — e.g. : SRL / Sole trader]
+**Address** : [Full address to be completed]
+**Company number BCE** : [BE 0000.000.000 — to be completed]
+**VAT number** : [BE 0000.000.000 — to be completed if VAT-registered]
+**Email** : autoracontact@gmail.com
+**Publication director** : [Name to be completed]
+
+AutoRA is a marketplace connecting sellers and buyers of second-hand vehicles in Belgium. The platform does not take part in transactions between individuals and is not a party to sale contracts concluded between users.`,
+      },
+      {
+        title: "2. Hosting",
+        body: `The AutoRA.be website is hosted and deployed by:
+
+**Lovable Inc.**
+548 Market St, Suite 75837
+San Francisco, CA 94104 — United States
+Website: https://lovable.dev
+
+The database and serverless functions are managed by:
+
+**Supabase Inc.**
+970 Toa Payoh North, #07-04
+Singapore 318992
+Website: https://supabase.com`,
+      },
+      {
+        title: "3. Intellectual Property",
+        body: `All elements of the AutoRA.be website (structure, texts, graphics, logos, icons, images, software, database, etc.) are protected by copyright and trademark law in accordance with the Belgian Code of Economic Law (Book XI).
+
+Any reproduction, representation, modification, publication, adaptation or exploitation, in whole or in part, of the elements of the website, by any means or process, is strictly prohibited without the prior written authorisation of AutoRA.
+
+The name "AutoRA", the logo and associated graphic elements are distinctive signs belonging to AutoRA. Unauthorised use constitutes infringement punishable under Articles XI.335 et seq. of the Code of Economic Law.`,
+      },
+      {
+        title: "4. Liability",
+        body: `As a host of user-generated content (listings), AutoRA benefits from the limited liability regime provided by Article XII.19 of the Belgian Code of Economic Law (implementing Directive 2000/31/EC). AutoRA is not responsible for content published by users, unless, upon being notified of manifestly illegal content, it fails to act promptly to remove it.
+
+AutoRA shall not be liable for direct or indirect damages resulting from the use of the website or its temporary unavailability.`,
+      },
+      {
+        title: "5. Hyperlinks",
+        body: `The AutoRA.be website may contain links to third-party websites. These links are provided for information purposes only. AutoRA has no control over these websites and disclaims all responsibility for their content, privacy policies or practices.
+
+Creating hyperlinks to the AutoRA.be website requires the prior written consent of AutoRA.`,
+      },
+      {
+        title: "6. Applicable Law and Jurisdiction",
+        body: `This legal notice is governed by Belgian law. In the event of a dispute, the courts of the judicial district of [to be completed], Belgium, shall have exclusive jurisdiction, subject to mandatory legal provisions.
+
+Consumers may also lodge complaints with the Belgian Consumer Mediation Service: https://www.mediationconsommateur.be or via the European online dispute resolution platform: https://ec.europa.eu/consumers/odr`,
+      },
+      {
+        title: "7. Personal Data Protection",
+        body: `The processing of users' personal data is described in our privacy policy, accessible at: https://autora.be/confidentialite
+
+For any questions regarding your data, please contact us at: autoracontact@gmail.com`,
       },
     ],
   },
@@ -128,8 +279,17 @@ Elke reproductie, verspreiding, wijziging, publicatie of aanpassing, geheel of g
 
 const MentionsLegales = () => {
   const { language } = useLanguage();
-  const lang = language === "nl" ? "nl" : "fr";
+  const lang = (["fr", "nl", "de", "en"] as const).includes(language as "fr" | "nl" | "de" | "en")
+    ? (language as "fr" | "nl" | "de" | "en")
+    : "fr";
   const t = content[lang];
+
+  const lastUpdated: Record<string, string> = {
+    fr: "Dernière mise à jour : mai 2026",
+    nl: "Laatste update: mei 2026",
+    de: "Letzte Aktualisierung: Mai 2026",
+    en: "Last updated: May 2026",
+  };
 
   const renderBody = (body: string) =>
     body.split("\n").map((line, i) => {
@@ -167,9 +327,7 @@ const MentionsLegales = () => {
         </div>
 
         <p className="mt-12 text-xs text-muted-foreground/50 border-t border-border/10 pt-6">
-          {lang === "fr"
-            ? `Dernière mise à jour : mai 2026`
-            : `Laatste update: mei 2026`}
+          {lastUpdated[lang]}
         </p>
       </main>
       <Footer />

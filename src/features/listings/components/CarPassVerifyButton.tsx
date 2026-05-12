@@ -33,14 +33,17 @@ export function CarPassVerifyButton({ listingId, initialStatus, onSuccess }: Pro
     if (res) {
       const next = (res.status === 'failed' ? 'rejected' : res.status) as CarPassStatus;
       setStatus(next);
-      if (next === 'verified') {
+      if (next === 'pending') {
+        toast.success('Document Car-Pass envoyé — en attente de vérification par notre équipe (24-48h)');
+        onSuccess?.();
+      } else if (next === 'verified') {
         toast.success('Car-Pass vérifié — votre annonce est maintenant visible');
         onSuccess?.();
       } else if (next === 'rejected') {
-        toast.error('La vérification Car-Pass a échoué. Réessayez ou contactez le support.');
+        toast.error('La soumission Car-Pass a échoué. Vérifiez que le document est bien uploadé ou contactez le support.');
       }
     } else {
-      toast.error('Impossible de lancer la vérification. Réessayez plus tard.');
+      toast.error('Impossible de soumettre le Car-Pass. Réessayez plus tard.');
     }
   };
 
@@ -74,7 +77,7 @@ export function CarPassVerifyButton({ listingId, initialStatus, onSuccess }: Pro
   return (
     <Button size="sm" onClick={handleClick} disabled={isVerifying} className="gap-1.5">
       <ShieldAlert className="w-3 h-3" />
-      Demander la vérification Car-Pass
+      Soumettre le Car-Pass pour vérification
     </Button>
   );
 }
