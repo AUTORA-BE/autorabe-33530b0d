@@ -45,7 +45,9 @@ const SEOHead = ({
     en: "en_GB",
   };
 
-  const fullTitle = title ? `${title} | AutoRA` : defaultTitles[language] || defaultTitles.fr;
+  const fullTitle = title
+    ? (title.includes("AutoRA") ? title : `${title} | AutoRA`)
+    : defaultTitles[language] || defaultTitles.fr;
   const fullDescription = description || defaultDescriptions[language] || defaultDescriptions.fr;
   const locale = locales[language] || "fr_BE";
 
