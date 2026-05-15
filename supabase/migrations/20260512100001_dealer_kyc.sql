@@ -17,6 +17,13 @@ CREATE TABLE IF NOT EXISTS public.dealer_kyc (
 
 ALTER TABLE public.dealer_kyc ENABLE ROW LEVEL SECURITY;
 
+-- Drop policies before recreating to make migration idempotent
+DROP POLICY IF EXISTS "Dealer reads own KYC"        ON public.dealer_kyc;
+DROP POLICY IF EXISTS "Dealer inserts own KYC"       ON public.dealer_kyc;
+DROP POLICY IF EXISTS "Dealer updates own pending KYC" ON public.dealer_kyc;
+DROP POLICY IF EXISTS "Admins read all KYC"          ON public.dealer_kyc;
+DROP POLICY IF EXISTS "Admins update any KYC"        ON public.dealer_kyc;
+
 -- Dealer can read their own KYC record
 CREATE POLICY "Dealer reads own KYC"
   ON public.dealer_kyc
@@ -59,14 +66,15 @@ CREATE POLICY "Admins update any KYC"
   );
 
 -- Auto-update updated_at
+DROP TRIGGER IF EXISTS update_dealer_kyc_updated_at ON public.dealer_kyc;
 CREATE TRIGGER update_dealer_kyc_updated_at
   BEFORE UPDATE ON public.dealer_kyc
   FOR EACH ROW
   EXECUTE FUNCTION public.update_updated_at_column();
 
--- Index for admin panel queries by status
-CREATE INDEX idx_dealer_kyc_status ON public.dealer_kyc (status);
-CREATE INDEX idx_dealer_kyc_user ON public.dealer_kyc (user_id);
+-- Indexes (idempotent)
+CREATE INDEX IF NOT EXISTS idx_dealer_kyc_status ON public.dealer_kyc (status);
+CREATE INDEX IF NOT EXISTS idx_dealer_kyc_user   ON public.dealer_kyc (user_id);
 
 -- Storage bucket for KYC documents (private, admin + owner access only)
 INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
@@ -78,6 +86,11 @@ VALUES (
   ARRAY['image/jpeg', 'image/png', 'image/webp', 'application/pdf']
 )
 ON CONFLICT (id) DO NOTHING;
+
+-- Storage RLS (drop before recreate for idempotency)
+DROP POLICY IF EXISTS "Dealer uploads own KYC doc" ON storage.objects;
+DROP POLICY IF EXISTS "Dealer reads own KYC doc"   ON storage.objects;
+DROP POLICY IF EXISTS "Admins read all KYC docs"   ON storage.objects;
 
 -- Storage RLS: owners can upload to their own folder
 CREATE POLICY "Dealer uploads own KYC doc"
