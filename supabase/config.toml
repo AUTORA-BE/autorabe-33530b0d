@@ -21,6 +21,8 @@ project_id = "okeiblbufwhfirxrzkfo"
     verify_jwt = false
   [functions.notify-listing-status]
     verify_jwt = false
+  [functions.notify-reporter]
+    verify_jwt = false
   [functions.notify-seller]
     verify_jwt = false
   [functions.process-email-queue]
