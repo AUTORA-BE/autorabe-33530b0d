@@ -267,14 +267,8 @@ const CarDetail = () => {
     );
   }
 
-  const images: string[] = (dbListing?.photos && dbListing.photos.length > 0)
-    ? dbListing.photos
-    : [
-        car.image,
-        car.image.replace("w=800", "w=801"),
-        car.image.replace("w=800", "w=802"),
-        car.image.replace("w=800", "w=803"),
-      ];
+  const validPhotos = (dbListing?.photos ?? []).filter((p): p is string => !!p && p.length > 0);
+  const images: string[] = validPhotos.length > 0 ? validPhotos : [car.image];
 
   const handleShare = async () => {
     try {

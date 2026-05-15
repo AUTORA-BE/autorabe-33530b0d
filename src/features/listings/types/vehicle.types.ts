@@ -57,6 +57,8 @@ export interface Vehicle {
   boostLevel?: string;
   /** Whether the boost is currently active */
   isBoosted?: boolean;
+  /** Mixed fuel consumption: L/100km for ICE, kWh/100km for EV */
+  fuelConsumption?: number | null;
 }
 
 /**
@@ -234,4 +236,5 @@ export interface VehicleListingRow {
   updated_at: string;
   boost_level?: string | null;
   boost_expires_at?: string | null;
+  fuel_consumption?: number | null;
 }

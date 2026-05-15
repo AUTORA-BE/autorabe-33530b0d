@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Header from '@/shared/components/Header';
 import Footer from '@/shared/components/Footer';
+import { BackButton } from '@/shared/components';
 import SEOHead from '@/components/SEOHead';
 import TcoHero from '@/features/tco/components/TcoHero';
 import TcoStepper from '@/features/tco/components/TcoStepper';
@@ -39,6 +40,9 @@ const CalculateurTCO = () => {
       />
       <Header />
       <main className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 pt-24 pb-2">
+          <BackButton to="/" className="mb-2" />
+        </div>
         {!started && !calc.showResults ? (
           <TcoHero onStart={() => setStarted(true)} />
         ) : (

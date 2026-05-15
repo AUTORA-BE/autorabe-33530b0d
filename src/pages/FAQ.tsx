@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from "react";
-import { Header, Footer } from "@/shared/components";
+import { Header, Footer, BackButton } from "@/shared/components";
 import SEOHead from "@/components/SEOHead";
 import { faqSchema } from "@/lib/seoSchemas";
 import { HelpCircle, Search, X, User, ShoppingCart, Car, Shield, CreditCard, Link2, Check, Leaf } from "lucide-react";
@@ -260,6 +260,9 @@ const FAQ = () => {
       <Header />
       
       <main className="pt-24">
+        <div className="container mx-auto px-6 pt-4">
+          <BackButton to="/" className="mb-2" />
+        </div>
         {/* Hero Section */}
         <section className="container mx-auto px-6 py-16 text-center">
           <div className="max-w-3xl mx-auto animate-fade-up">

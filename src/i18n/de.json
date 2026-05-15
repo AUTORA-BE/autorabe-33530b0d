@@ -149,7 +149,7 @@
   "auth.rolePro": "Profi-Verkäufer",
   "auth.garageNamePlaceholder": "Name der Werkstatt",
   "auth.postalCodePlaceholder": "Postleitzahl",
-  "auth.secureNotice": "Sichere Verbindung • Keine Datenweitergabe • DSGVO",
+  "auth.secureNotice": "Sichere Verbindung • Daten geschützt • DSGVO",
   "auth.errorLogin": "Anmeldefehler",
   "auth.errorCredentials": "E-Mail oder Passwort falsch",
   "auth.welcome": "Willkommen!",

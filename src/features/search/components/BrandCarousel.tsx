@@ -51,6 +51,12 @@ const BRANDS: BrandConfig[] = [
   { name: "Fiat", logo: fiatLogo, color: "#8B0000" },
   { name: "Volvo", logo: volvoLogo, color: "#003057" },
   { name: "Škoda", logo: skodaLogo, color: "#4BA82E" },
+  // Pure EV brands — text-only display
+  { name: "Tesla", logo: null, color: "#CC0000" },
+  { name: "Polestar", logo: null, color: "#0A0A0A" },
+  { name: "BYD", logo: null, color: "#1B3A8C" },
+  { name: "NIO", logo: null, color: "#00A0E9" },
+  { name: "XPENG", logo: null, color: "#00A0FF" },
 ];
 
 export interface BrandCarouselProps {
@@ -134,13 +140,19 @@ const BrandCarousel = memo(function BrandCarousel({
                         "bg-white dark:bg-white/10",
                         selectedBrand === brand.name && "ring-2 ring-primary/40"
                       )}>
-                        <img
-                          src={brand.logo}
-                          alt={`${brand.name} logo`}
-                          className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110"
-                          loading="lazy"
-                          draggable="false"
-                        />
+                        {brand.logo ? (
+                          <img
+                            src={brand.logo}
+                            alt={`${brand.name} logo`}
+                            className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110"
+                            loading="lazy"
+                            draggable="false"
+                          />
+                        ) : (
+                          <span className="text-[11px] sm:text-xs font-bold tracking-tight text-center leading-none px-1 text-foreground dark:text-foreground transition-transform duration-300 group-hover:scale-110 inline-block">
+                            {brand.name}
+                          </span>
+                        )}
                       </div>
                       
                       <span className={cn(

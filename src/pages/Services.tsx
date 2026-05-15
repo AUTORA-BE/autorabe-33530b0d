@@ -18,7 +18,7 @@ import {
   ArrowRight,
   Sparkles,
 } from "lucide-react";
-import { Header, Footer } from "@/shared/components";
+import { Header, Footer, BackButton } from "@/shared/components";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -222,6 +222,9 @@ const Services = () => {
       <Header />
 
       <main className="pt-24 pb-16">
+        <div className="container mx-auto px-6 sm:px-8 pt-4">
+          <BackButton to="/" className="mb-2" />
+        </div>
         {/* ── Hero ─────────────────────────────────────────── */}
         <section className="container mx-auto px-6 sm:px-8 py-16 sm:py-24 text-center">
           <motion.div

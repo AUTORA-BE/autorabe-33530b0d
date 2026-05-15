@@ -47,6 +47,7 @@ export interface Conversation {
   unreadCount?: number;
   lastMessage?: string;
   otherUserId?: string;
+  sellerName?: string | null;
 }
 
 /**

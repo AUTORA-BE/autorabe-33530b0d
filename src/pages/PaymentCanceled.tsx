@@ -7,7 +7,7 @@ import { XCircle, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Header, Footer } from '@/shared/components';
+import { Header, Footer, BackButton } from '@/shared/components';
 import SEOHead from '@/components/SEOHead';
 
 export default function PaymentCanceled() {
@@ -17,7 +17,10 @@ export default function PaymentCanceled() {
     <div className="page-gradient">
       <SEOHead title="Paiement annulé | AutoRA" description="Votre paiement a été annulé. Vous pouvez réessayer à tout moment." />
       <Header />
-      <main className="min-h-screen pt-24 pb-16 flex items-center justify-center">
+      <main className="min-h-screen pt-24 pb-16 flex flex-col items-center justify-center">
+        <div className="w-full max-w-md px-4 mb-4 flex justify-start">
+          <BackButton to="/" />
+        </div>
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}

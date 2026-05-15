@@ -9,6 +9,7 @@ import { Cookie, Shield, BarChart3, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getConsent, resetConsent, setConsent, onConsentChange } from "@/lib/consent";
+import { BackButton } from "@/shared/components";
 
 export default function Cookies() {
   const { language } = useLanguage();
@@ -146,6 +147,7 @@ export default function Cookies() {
       </Helmet>
 
       <main className="container mx-auto px-4 sm:px-6 py-12 sm:py-20 max-w-3xl">
+        <BackButton to="/" className="mb-6" />
         <header className="mb-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium mb-4">
             <Cookie className="w-3.5 h-3.5" />

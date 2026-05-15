@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
-import { Header, Footer } from "@/shared/components";
+import { Header, Footer, BackButton } from "@/shared/components";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Bell, BellOff, Plus, TrendingUp } from "lucide-react";
@@ -38,6 +38,7 @@ export default function MesAlertes() {
       <Header />
       <main className="min-h-screen pt-24 pb-16">
         <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
+          <BackButton to="/" className="mb-4" />
           {/* Header — stacks on mobile */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
             <div>

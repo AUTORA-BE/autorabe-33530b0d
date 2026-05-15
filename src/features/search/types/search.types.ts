@@ -58,7 +58,7 @@ export const BELGIAN_PROVINCES: BelgianProvince[] = [
  */
 export interface BrandConfig {
   name: string;
-  logo: string;
+  logo: string | null;
   color: string;
 }
 

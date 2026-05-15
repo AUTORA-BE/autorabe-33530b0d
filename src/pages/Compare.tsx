@@ -291,6 +291,11 @@ const Compare = () => {
     { label: "Année", icon: Calendar, render: (car: typeof compareList[0]) => car.year.toString() },
     { label: "Kilométrage", icon: Gauge, render: (car: typeof compareList[0]) => formatMileage(car.mileage) },
     { label: "Carburant", icon: Fuel, render: (car: typeof compareList[0]) => car.fuelType },
+    { label: "Consommation", icon: Fuel, render: (car: typeof compareList[0]) => {
+      if (!car.fuelConsumption) return "—";
+      const isEv = car.fuelType?.toLowerCase().includes('lectrique');
+      return `${car.fuelConsumption} ${isEv ? 'kWh/100km' : 'L/100km'}`;
+    }},
     { label: "Transmission", icon: Cog, render: (car: typeof compareList[0]) => car.transmission },
     { label: "Norme Euro", icon: Leaf, render: (car: typeof compareList[0]) => car.euroNorm || "—" },
     { label: "Localisation", icon: MapPin, render: (car: typeof compareList[0]) => car.location || "—" },
@@ -318,6 +323,12 @@ const Compare = () => {
     if (specLabel === "Année") {
       const max = Math.max(...compareList.map(c => c.year));
       return compareList.find(c => c.year === max)?.id || null;
+    }
+    if (specLabel === "Consommation") {
+      const withConsump = compareList.filter(c => c.fuelConsumption != null);
+      if (withConsump.length < 2) return null;
+      const min = Math.min(...withConsump.map(c => c.fuelConsumption!));
+      return withConsump.find(c => c.fuelConsumption === min)?.id || null;
     }
     return null;
   };

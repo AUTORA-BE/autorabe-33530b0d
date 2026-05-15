@@ -1,4 +1,4 @@
-import { Header, Footer } from "@/shared/components";
+import { Header, Footer, BackButton } from "@/shared/components";
 import SEOHead from "@/components/SEOHead";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -490,6 +490,7 @@ const CGV = () => {
       />
       <Header />
       <main className="container mx-auto px-4 py-12 max-w-3xl">
+        <BackButton to="/" className="mb-6" />
         <h1 className="text-3xl font-bold mb-2 font-display">{t.title}</h1>
         <p className="text-sm text-muted-foreground mb-8 italic">{t.subtitle}</p>
 

@@ -3,7 +3,7 @@ import {  useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import SEOHead from "@/components/SEOHead";
-import { Header, Footer } from "@/shared/components";
+import { Header, Footer, BackButton } from "@/shared/components";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -283,6 +283,7 @@ export default function Settings() {
       <SEOHead noIndex />
       <Header />
       <main className="container mx-auto px-4 max-w-lg pt-24 pb-28">
+        <BackButton to="/" className="mb-4" />
         <motion.div variants={container} initial="hidden" animate="show" className="space-y-4">
           {/* ─── Hero Profile Card ─── */}
           <GlassCard className="text-center pt-8 pb-6">

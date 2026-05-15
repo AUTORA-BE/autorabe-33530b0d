@@ -55,6 +55,21 @@ export function useConversations(userId: string | undefined): UseConversationsRe
 
       if (fetchError) throw fetchError;
 
+      // Batch-fetch seller profiles for garage/display names
+      const sellerIds = [...new Set((convos || []).map((c: ConversationRow) => c.seller_id))];
+      const { data: profiles } = sellerIds.length
+        ? await supabase
+            .from('profiles')
+            .select('user_id, garage_name, display_name')
+            .in('user_id', sellerIds)
+        : { data: [] };
+      const profileMap = new Map(
+        (profiles || []).map((p: { user_id: string; garage_name: string | null; display_name: string | null }) => [
+          p.user_id,
+          p.garage_name?.trim() || p.display_name?.trim() || null,
+        ])
+      );
+
       // For each conversation, get unread count and last message
       const conversationsWithDetails = await Promise.all(
         (convos || []).map(async (conv: ConversationRow) => {
@@ -76,7 +91,7 @@ export function useConversations(userId: string | undefined): UseConversationsRe
             .maybeSingle();
 
           const otherUserId = conv.buyer_id === userId ? conv.seller_id : conv.buyer_id;
-          
+
           return {
             id: conv.id,
             carListingId: conv.car_listing_id,
@@ -90,6 +105,7 @@ export function useConversations(userId: string | undefined): UseConversationsRe
             unreadCount: count || 0,
             lastMessage: lastMsgData?.content || '',
             otherUserId,
+            sellerName: profileMap.get(conv.seller_id) ?? null,
           } as Conversation;
         })
       );

@@ -149,7 +149,7 @@
   "auth.rolePro": "Pro seller",
   "auth.garageNamePlaceholder": "Dealership name",
   "auth.postalCodePlaceholder": "Postal code",
-  "auth.secureNotice": "Secure sign-in • No data resold • GDPR",
+  "auth.secureNotice": "Secure sign-in • Data protected • GDPR",
   "auth.errorLogin": "Login error",
   "auth.errorCredentials": "Incorrect email or password",
   "auth.welcome": "Welcome!",

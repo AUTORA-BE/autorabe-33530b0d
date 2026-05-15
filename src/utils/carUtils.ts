@@ -10,13 +10,13 @@ const mapListingToCar = (listing: VehicleListingRow): Car => {
   return mapListingToVehicle(listing);
 };
 
-// Common car brands for Belgium
+// Common car brands for Belgium — includes pure EV brands
 const commonBrands = [
-  "Alfa Romeo", "Audi", "BMW", "Citroën", "Cupra", "Dacia", "DS", "Fiat", "Ford",
-  "Honda", "Hyundai", "Jaguar", "Jeep", "Kia", "Land Rover", "Lexus", "Mazda",
-  "Mercedes-Benz", "MG", "Mini", "Mitsubishi", "Nissan", "Opel", "Peugeot",
-  "Porsche", "Renault", "Seat", "Skoda", "Smart", "Subaru", "Suzuki", "Tesla",
-  "Toyota", "Volkswagen", "Volvo"
+  "Alfa Romeo", "Audi", "BMW", "BYD", "Citroën", "Cupra", "Dacia", "DS", "Fiat", "Ford",
+  "Honda", "Hyundai", "Jaguar", "Jeep", "Kia", "Land Rover", "Lexus", "Lucid",
+  "Mazda", "Mercedes-Benz", "MG", "Mini", "Mitsubishi", "NIO", "Nissan", "Opel",
+  "Peugeot", "Polestar", "Porsche", "Renault", "Rivian", "Seat", "Skoda", "Smart",
+  "Subaru", "Suzuki", "Tesla", "Toyota", "Vinfast", "Volkswagen", "Volvo", "XPENG"
 ];
 
 /** Complete known models per brand — shown even if not currently in stock */
@@ -56,6 +56,13 @@ const BRAND_MODELS: Record<string, string[]> = {
   "Toyota": ["Yaris", "Yaris Cross", "Corolla", "C-HR", "RAV4", "Camry", "Highlander", "Land Cruiser", "Supra", "GR86", "Aygo X", "bZ4X", "Proace", "Hilux"],
   "Volkswagen": ["Polo", "Golf", "T-Cross", "T-Roc", "Tiguan", "Touareg", "Passat", "Arteon", "ID.3", "ID.4", "ID.5", "ID.7", "ID. Buzz", "Up!", "Caddy", "Transporter", "Multivan"],
   "Volvo": ["XC40", "XC60", "XC90", "C40", "S60", "S90", "V60", "V90", "EX30", "EX90"],
+  "BYD": ["Atto 3", "Han", "Tang", "Seal", "Dolphin", "Atto 2", "Sea Lion 6"],
+  "Polestar": ["Polestar 2", "Polestar 3", "Polestar 4"],
+  "Lucid": ["Air", "Gravity"],
+  "NIO": ["ET5", "ET7", "EL6", "EL7", "ES8", "EC7"],
+  "Rivian": ["R1T", "R1S"],
+  "Vinfast": ["VF 8", "VF 9", "VF 6", "VF 7"],
+  "XPENG": ["G6", "G9", "P7", "P5"],
 };
 
 export const getAllBrands = (): string[] => {

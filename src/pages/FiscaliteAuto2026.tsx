@@ -1,5 +1,5 @@
 import SEOHead from "@/components/SEOHead";
-import { Header, Footer } from "@/shared/components";
+import { Header, Footer, BackButton } from "@/shared/components";
 import { Link } from "react-router-dom";
 import { Calculator, Car, Euro, FileText, ArrowRight } from "lucide-react";
 
@@ -57,6 +57,7 @@ export default function FiscaliteAuto2026() {
       />
       <Header />
       <main className="container mx-auto px-4 py-12 max-w-4xl">
+        <BackButton to="/" className="mb-6" />
         <div className="mb-10">
           <span className="text-xs font-medium text-primary bg-primary/10 px-3 py-1 rounded-full">
             Guide 2026

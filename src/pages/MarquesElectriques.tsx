@@ -5,6 +5,7 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Zap } from "lucide-react";
 import SEOHead from "@/components/SEOHead";
+import { BackButton } from "@/shared/components";
 
 import volkswagenLogo from "@/assets/brands/volkswagen.png";
 import bmwLogo from "@/assets/brands/bmw.png";
@@ -65,7 +66,7 @@ export default function MarquesElectriques() {
             loading="eager"
             fetchPriority="high"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/70 to-background" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/60 to-black/80 dark:from-background/40 dark:via-background/70 dark:to-background" />
           <div className="relative z-10 container mx-auto px-6 sm:px-8 h-full flex flex-col justify-end pb-16 sm:pb-20">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/30 backdrop-blur-md w-fit mb-5">
               <Zap className="w-3.5 h-3.5 text-primary" strokeWidth={2} />
@@ -73,15 +74,19 @@ export default function MarquesElectriques() {
                 100% Électrique
               </span>
             </div>
-            <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-light text-foreground leading-[1.05] tracking-tight max-w-3xl">
+            <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-light text-white dark:text-foreground leading-[1.05] tracking-tight max-w-3xl">
               L'électrique <span className="text-primary italic">de prestige</span>
             </h1>
-            <p className="mt-5 max-w-2xl text-base sm:text-lg text-muted-foreground font-light leading-relaxed">
+            <p className="mt-5 max-w-2xl text-base sm:text-lg text-white/80 dark:text-muted-foreground font-light leading-relaxed">
               Toutes les marques de voitures électriques disponibles sur AutoRA, en Belgique.
               Du pure player à l'icône allemande — choisissez votre prochain trajet sans compromis.
             </p>
           </div>
         </section>
+
+        <div className="container mx-auto px-6 sm:px-8 pt-8">
+          <BackButton to="/" className="mb-2" />
+        </div>
 
         {/* PURE EV */}
         <section className="container mx-auto px-6 sm:px-8 py-16 sm:py-20">

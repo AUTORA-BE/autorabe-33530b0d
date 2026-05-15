@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Header, Footer } from "@/shared/components";
+import { Header, Footer, BackButton } from "@/shared/components";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -139,6 +139,9 @@ const Contact = () => {
       <Header />
       
       <main className="pt-24">
+        <div className="container mx-auto px-6 pt-4">
+          <BackButton to="/" className="mb-2" />
+        </div>
         {/* Hero Section */}
         <section className="container mx-auto px-6 py-16 text-center">
           <div className="max-w-3xl mx-auto animate-fade-up">

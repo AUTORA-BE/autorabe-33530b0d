@@ -569,6 +569,19 @@ const Auth = () => {
                     </div>
                   )}
 
+                  {!isLogin && accountType === "pro" && (
+                    <div className="flex items-start gap-2.5 rounded-xl border border-primary/30 bg-primary/5 px-4 py-3 text-xs text-foreground">
+                      <span className="mt-0.5 shrink-0 text-primary">💼</span>
+                      <span>
+                        Pour activer votre compte professionnel, contactez-nous :{" "}
+                        <a href="mailto:autoracontact@gmail.com" className="font-semibold text-primary underline underline-offset-2">
+                          autoracontact@gmail.com
+                        </a>{" "}
+                        — validation sous 24h.
+                      </span>
+                    </div>
+                  )}
+
                   {!isLogin && (
                     <div>
                       <div className="relative">

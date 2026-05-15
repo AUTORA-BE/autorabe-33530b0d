@@ -52,6 +52,7 @@ const sellCarSchema = z.object({
   power: z.number().optional(),
   doors: z.number().optional(),
   euro_norm: z.string().optional(),
+  fuel_consumption: z.number().min(0).max(50).nullable().optional(),
   
   first_registration: z.string().optional(),
   car_pass_date: z.string().optional(),
@@ -327,7 +328,8 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
           power: data.power || undefined,
           doors: data.doors || 5,
           euro_norm: data.euro_norm || undefined,
-          
+          fuel_consumption: data.fuel_consumption ?? null,
+
           first_registration: data.first_registration || undefined,
           description: data.description || undefined,
           contact_name: data.contact_name,
@@ -653,6 +655,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
         power: data.power || null,
         doors: data.doors || 5,
         euro_norm: data.euro_norm || null,
+        fuel_consumption: data.fuel_consumption ?? null,
         first_registration: data.first_registration || null,
         description: data.description || null,
         contact_name: data.contact_name,
@@ -1003,6 +1006,18 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
               transition={{ duration: 0.3, ease: 'easeInOut' }}
               className="space-y-8"
             >
+              {/* Profile incomplete warning */}
+              {!form.watch('contact_email') && (
+                <div className="flex items-start gap-3 rounded-xl border border-amber-500/40 bg-amber-500/5 px-4 py-3 text-sm">
+                  <span className="shrink-0 text-amber-500">⚠️</span>
+                  <span className="text-foreground">
+                    Votre profil est incomplet — ajoutez votre email dans{" "}
+                    <a href="/settings" className="font-semibold text-primary underline underline-offset-2">vos paramètres</a>{" "}
+                    avant de publier une annonce.
+                  </span>
+                </div>
+              )}
+
               {/* Vehicle Info */}
               <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
                 <CardHeader>
@@ -1087,6 +1102,30 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
                     </FormItem>
                   )} />
 
+                  <FormField control={form.control} name="fuel_consumption" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        {form.watch('fuel_type')?.toLowerCase().includes('lectrique')
+                          ? 'Consommation (kWh/100 km)'
+                          : 'Consommation mixte (L/100 km)'}
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          step="0.1"
+                          min="0"
+                          max="50"
+                          placeholder={form.watch('fuel_type')?.toLowerCase().includes('lectrique') ? 'ex: 17.5' : 'ex: 6.2'}
+                          {...field}
+                          value={field.value ?? ''}
+                          onChange={e => field.onChange(e.target.value === '' ? null : parseFloat(e.target.value))}
+                        />
+                      </FormControl>
+                      <p className="text-xs text-muted-foreground">Optionnel — améliore la comparaison</p>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+
                   <FormField control={form.control} name="transmission" render={({ field }) => (
                     <FormItem>
                       <FormLabel>{t('sellForm.transmission')} *</FormLabel>
@@ -1139,27 +1178,16 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
                 </CardContent>
               </Card>
 
-              {/* Seller Type */}
-              <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-foreground">
-                    <Building2 className="h-5 w-5 text-primary" />
-                    {t('sellForm.sellerType')}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <FormField control={form.control} name="seller_type" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('sellForm.youAre')} *</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl><SelectTrigger><SelectValue placeholder={t('sellForm.select')} /></SelectTrigger></FormControl>
-                        <SelectContent>{sellerTypes.map(type => <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>)}</SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-
-                  {form.watch('seller_type') === 'professionnel' && (
+              {/* Seller Type — auto-detected from profile, no manual selection */}
+              {form.watch('seller_type') === 'professionnel' && (
+                <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-foreground">
+                      <Building2 className="h-5 w-5 text-primary" />
+                      Vendeur professionnel
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
                     <FormField control={form.control} name="tva_number" render={({ field }) => (
                       <FormItem>
                         <FormLabel>{t('sellForm.vatNumber')}</FormLabel>
@@ -1168,13 +1196,9 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
                         <FormMessage />
                       </FormItem>
                     )} />
-                  )}
-
-                  {form.watch('seller_type') === 'particulier' && (
-                    <p className="text-sm text-muted-foreground p-3 rounded-lg bg-muted/50">{t('sellForm.individualHint')}</p>
-                  )}
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              )}
 
               {/* Équipements */}
               <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
@@ -1233,59 +1257,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
                 </CardContent>
               </Card>
 
-              {/* Contact Info */}
-              <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-foreground">
-                    <User className="h-5 w-5 text-primary" />
-                    {t('sellForm.contact')}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="grid md:grid-cols-2 gap-6">
-                  <FormField control={form.control} name="contact_name" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('sellForm.contactName')} *</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder={t('sellForm.contactNamePlaceholder')}
-                          {...field}
-                          readOnly
-                          aria-readonly="true"
-                          className="bg-muted/50 cursor-not-allowed"
-                        />
-                      </FormControl>
-                      <p className="text-xs text-muted-foreground">
-                        Issu de votre profil. Modifiez-le depuis vos paramètres si besoin.
-                      </p>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-
-                  <FormField control={form.control} name="contact_email" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('sellForm.contactEmail')} *</FormLabel>
-                      <FormControl><Input type="email" placeholder="votre@email.be" {...field} /></FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-
-                  <FormField control={form.control} name="contact_phone" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('sellForm.contactPhone')}</FormLabel>
-                      <FormControl><Input placeholder="+32 xxx xx xx xx" {...field} /></FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-
-                  <FormField control={form.control} name="location" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t('sellForm.location')}</FormLabel>
-                      <FormControl><Input placeholder={t('sellForm.locationPlaceholder')} {...field} /></FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
-                </CardContent>
-              </Card>
+              {/* Contact fields are auto-filled from profile and submitted silently */}
             </motion.div>
           )}
 

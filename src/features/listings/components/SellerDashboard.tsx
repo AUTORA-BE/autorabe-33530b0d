@@ -231,6 +231,7 @@ export default function SellerDashboard() {
     pending: listings.filter((l: SellerListing) => l.status === "pending").length,
     rejected: listings.filter((l: SellerListing) => l.status === "rejected").length,
     sold: listings.filter((l: SellerListing) => l.status === "sold").length,
+    archived: listings.filter((l: SellerListing) => l.status === "archived").length,
   }), [listings]);
 
   // Filtered listings
@@ -273,6 +274,7 @@ export default function SellerDashboard() {
       pending: { label: t("dashboard.pending"), variant: "secondary" },
       rejected: { label: t("dashboard.rejected"), variant: "destructive" },
       sold: { label: t("dashboard.sold") || "Vendu", variant: "outline" },
+      archived: { label: "Supprimé", variant: "secondary" },
     };
     const config = configs[status] || configs.pending;
     return (

@@ -176,7 +176,7 @@ const FullscreenGallery = memo(function FullscreenGallery({
 
       {/* Main image area */}
       <div ref={imgRef} className="flex-1 relative overflow-hidden flex items-center justify-center touch-none">
-        <AnimatePresence initial={false} custom={direction} mode="popLayout">
+        <AnimatePresence initial={false} custom={direction} mode="wait">
           <motion.div
             key={index}
             custom={direction}
@@ -199,6 +199,10 @@ const FullscreenGallery = memo(function FullscreenGallery({
               className="max-h-full max-w-full object-contain select-none"
               style={{ scale }}
               draggable={false}
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).src =
+                  "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800&q=60";
+              }}
             />
           </motion.div>
         </AnimatePresence>

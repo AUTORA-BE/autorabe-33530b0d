@@ -161,13 +161,13 @@ export function useSellerListings(period: ChartPeriod = 30, dateLocale?: Locale)
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  // Delete mutation — defense-in-depth: filter by user_id
+  // Delete mutation — soft delete: archive rather than destroy, keeps trace for seller + admin
   const deleteMutation = useMutation({
     mutationFn: async (listingId: string) => {
       if (!user?.id) throw new Error("Not authenticated");
       const { error } = await supabase
         .from("car_listings")
-        .delete()
+        .update({ status: "archived" })
         .eq("id", listingId)
         .eq("user_id", user.id);
       if (error) throw error;

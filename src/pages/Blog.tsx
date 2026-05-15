@@ -3,6 +3,7 @@ import { Calendar, Clock, ArrowRight } from "lucide-react";
 import SEOHead from "@/components/SEOHead";
 import Header from "@/shared/components/Header";
 import Footer from "@/shared/components/Footer";
+import { BackButton } from "@/shared/components";
 import { blogArticles } from "@/data/blogArticles";
 import { articleSchema, breadcrumbSchema } from "@/lib/seoSchemas";
 import { Card, CardContent } from "@/components/ui/card";
@@ -38,6 +39,7 @@ const Blog = () => {
       <Header />
       <main className="min-h-screen bg-background pt-20 pb-24">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
+          <BackButton to="/" className="mb-4" />
           {/* Hero */}
           <section className="text-center mb-12">
             <h1 className="text-3xl sm:text-4xl font-display font-bold text-foreground mb-3">

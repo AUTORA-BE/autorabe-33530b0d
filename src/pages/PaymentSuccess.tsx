@@ -8,7 +8,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle2, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Header, Footer } from '@/shared/components';
+import { Header, Footer, BackButton } from '@/shared/components';
 import { useSubscription } from '@/features/subscription';
 import SEOHead from '@/components/SEOHead';
 import { trackEvent, EVENTS } from '@/lib/analytics';
@@ -48,7 +48,10 @@ export default function PaymentSuccess() {
     <div className="page-gradient">
       <SEOHead title="Paiement confirmé | AutoRA" description="Votre abonnement AutoRA a été activé avec succès." />
       <Header />
-      <main className="min-h-screen pt-24 pb-16 flex items-center justify-center">
+      <main className="min-h-screen pt-24 pb-16 flex flex-col items-center justify-center">
+        <div className="w-full max-w-md px-4 mb-4 flex justify-start">
+          <BackButton to="/" />
+        </div>
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SEOHead from "@/components/SEOHead";
-import { Header, Footer } from "@/shared/components";
+import { Header, Footer, BackButton } from "@/shared/components";
 import { useLocalizedVehicleHref } from "@/lib/useLocalizedHref";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
@@ -317,6 +317,9 @@ const SellerStats = () => {
       <Header />
 
       <main className="pt-24">
+        <div className="container mx-auto px-6 pt-4">
+          <BackButton to="/" className="mb-2" />
+        </div>
         <section className="container mx-auto px-6 py-12">
           <div className="max-w-7xl mx-auto">
             {/* Header */}

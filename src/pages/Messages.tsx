@@ -90,11 +90,18 @@ function SwipeableConversation({
         {/* Content */}
         <div className="flex-1 min-w-0 text-left">
           <div className="flex items-center justify-between gap-2">
-            <span
-              className={`text-sm truncate ${hasUnread ? "font-bold text-foreground" : "font-medium text-foreground"}`}
-            >
-              {conv.carBrand} {conv.carModel}
-            </span>
+            <div className="flex flex-col min-w-0">
+              {conv.sellerName && (
+                <span className={`text-xs truncate ${hasUnread ? "font-semibold text-foreground" : "text-muted-foreground"}`}>
+                  {conv.sellerName}
+                </span>
+              )}
+              <span
+                className={`text-sm truncate ${hasUnread ? "font-bold text-foreground" : "font-medium text-foreground"}`}
+              >
+                {conv.carBrand} {conv.carModel}
+              </span>
+            </div>
             <span className="text-[11px] text-muted-foreground flex-shrink-0">
               {formatDate(conv.lastMessageAt ?? conv.createdAt)}
             </span>

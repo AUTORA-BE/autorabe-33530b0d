@@ -149,7 +149,7 @@
   "auth.rolePro": "Pro-verkoper",
   "auth.garageNamePlaceholder": "Naam van de garage",
   "auth.postalCodePlaceholder": "Postcode",
-  "auth.secureNotice": "Beveiligde verbinding • Geen gegevensverkoop • GDPR",
+  "auth.secureNotice": "Beveiligde verbinding • Gegevens beschermd • GDPR",
   "auth.errorLogin": "Inlogfout",
   "auth.errorCredentials": "E-mail of wachtwoord onjuist",
   "auth.welcome": "Welkom!",

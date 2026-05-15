@@ -149,7 +149,7 @@
   "auth.rolePro": "Vendeur Pro",
   "auth.garageNamePlaceholder": "Nom du garage",
   "auth.postalCodePlaceholder": "Code postal",
-  "auth.secureNotice": "Connexion sécurisée • Aucune donnée revendue • RGPD",
+  "auth.secureNotice": "Connexion sécurisée • Données protégées • RGPD",
   "auth.errorLogin": "Erreur de connexion",
   "auth.errorCredentials": "Email ou mot de passe incorrect",
   "auth.welcome": "Bienvenue !",
