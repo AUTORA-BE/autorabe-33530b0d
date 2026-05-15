@@ -56,6 +56,14 @@ export function useAdminReports() {
           metadata: { new_status: status } as unknown as Json,
         });
       }
+
+      // DSA Art. 16 §5 — notify the reporter of the decision (fire-and-forget)
+      if (status === 'resolved' || status === 'dismissed') {
+        const outcome = status === 'resolved' ? 'actioned' : 'rejected';
+        supabase.functions
+          .invoke('notify-reporter', { body: { report_id: id, outcome } })
+          .catch((e) => console.warn('notify-reporter failed', e));
+      }
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['admin'] });

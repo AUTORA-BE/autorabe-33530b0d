@@ -83,6 +83,15 @@ const sellCarSchema = z.object({
         path: ["tva_number"],
       });
     }
+
+    // C2 — Car-Pass obligatoire pour vendeurs pros (loi belge sur la vente d'occasion)
+    if (!data.car_pass_verified) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Le Car-Pass est obligatoire pour les vendeurs professionnels. Uploadez le document avant de publier.",
+        path: ["car_pass_verified"],
+      });
+    }
   }
 });
 
