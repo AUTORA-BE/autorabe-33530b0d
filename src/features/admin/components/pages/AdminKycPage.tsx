@@ -16,6 +16,10 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
+// dealer_kyc is added by a migration; types regen happens via Lovable after deploy.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const sb = supabase as any;
+
 interface KycRecord {
   id: string;
   user_id: string;
@@ -44,7 +48,7 @@ export default function AdminKycPage() {
 
   const fetchRecords = async () => {
     setLoading(true);
-    const q = supabase
+    const q = sb
       .from("dealer_kyc")
       .select("*, profiles(display_name, garage_name)")
       .order("created_at", { ascending: false });
@@ -68,7 +72,7 @@ export default function AdminKycPage() {
   const review = async (outcome: "verified" | "rejected") => {
     if (!selected) return;
     setSubmitting(true);
-    const { error } = await supabase
+    const { error } = await sb
       .from("dealer_kyc")
       .update({
         status: outcome,

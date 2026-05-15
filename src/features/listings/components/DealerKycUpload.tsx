@@ -10,6 +10,10 @@ import { Loader2, ShieldCheck, ShieldAlert, Clock, Upload, RefreshCcw } from "lu
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
+// dealer_kyc is added by a migration; types regen happens via Lovable after deploy.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const sb = supabase as any;
+
 interface KycRecord {
   id: string;
   status: "pending" | "verified" | "rejected";
@@ -27,7 +31,7 @@ export function DealerKycUpload({ userId }: Props) {
   const fileRef = useRef<HTMLInputElement>(null);
 
   const fetchKyc = async () => {
-    const { data } = await supabase
+    const { data } = await sb
       .from("dealer_kyc")
       .select("id, status, submitted_at, reviewer_note")
       .eq("user_id", userId)
@@ -60,12 +64,12 @@ export function DealerKycUpload({ userId }: Props) {
       if (storageErr) throw storageErr;
 
       if (kyc) {
-        await supabase
+        await sb
           .from("dealer_kyc")
           .update({ document_path: path, status: "pending", submitted_at: new Date().toISOString() })
           .eq("id", kyc.id);
       } else {
-        await supabase.from("dealer_kyc").insert({
+        await sb.from("dealer_kyc").insert({
           user_id: userId,
           document_path: path,
           status: "pending",
