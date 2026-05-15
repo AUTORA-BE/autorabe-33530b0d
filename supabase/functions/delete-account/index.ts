@@ -54,10 +54,18 @@ serve(async (req) => {
     log("start", { user_id: userId });
 
     // Audit log first (preserved post-deletion for accounting/legal)
+    // Email is hashed (SHA-256) — no plaintext PII in audit trail (GDPR art. 5)
+    const emailHashBuf = await crypto.subtle.digest(
+      "SHA-256",
+      new TextEncoder().encode((userEmail ?? "").toLowerCase()),
+    );
+    const emailHash = Array.from(new Uint8Array(emailHashBuf))
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
     await supabase.from("audit_log").insert({
       user_id: userId,
       action: "account_deletion",
-      details: { email: userEmail, initiated_at: new Date().toISOString() },
+      details: { email_sha256: emailHash, initiated_at: new Date().toISOString() },
     });
 
     // ─── 1. Cancel active Stripe subscriptions ───────────────────────────

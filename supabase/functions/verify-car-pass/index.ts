@@ -1,13 +1,12 @@
 /**
- * verify-car-pass — kicks off (and, in this stub, completes) a Car-Pass check.
+ * verify-car-pass — submits a Car-Pass document for manual admin review.
  *
  * Flow:
  *   1. Authenticate the caller via JWT.
  *   2. Confirm the listing belongs to them (or they are admin).
  *   3. Insert a row in car_pass_verification_requests with status='pending'.
  *   4. Flip car_listings.car_pass_status to 'pending'.
- *   5. (Stub) Wait 2 s, then mark the request 'completed' and the listing 'verified'.
- *      Replace the simulateExternalApi() call with the real Car-Pass API later.
+ *   5. Return { request_id, status: 'pending' } — an admin must manually approve.
  *
  * Returns: { request_id, status }
  */
@@ -17,15 +16,6 @@ import { buildCorsHeaders, handlePreflight, jsonResponse } from "../_shared/cors
 
 interface VerifyBody {
   listing_id: string;
-}
-
-async function simulateExternalApi(): Promise<{ ok: boolean; raw: Record<string, unknown> }> {
-  // TODO: replace with a real fetch() to the Car-Pass partner API.
-  await new Promise((r) => setTimeout(r, 2000));
-  return {
-    ok: true,
-    raw: { source: "stub", verified_at: new Date().toISOString() },
-  };
 }
 
 Deno.serve(async (req) => {
@@ -110,45 +100,10 @@ Deno.serve(async (req) => {
       })
       .eq("id", listing.id);
 
-    // 3. Run external check (stubbed)
-    let result: { ok: boolean; raw: Record<string, unknown> };
-    try {
-      result = await simulateExternalApi();
-    } catch (e) {
-      console.error("external api error", e);
-      await admin
-        .from("car_pass_verification_requests")
-        .update({
-          status: "failed",
-          completed_at: new Date().toISOString(),
-          error_message: (e as Error).message ?? "external_error",
-        })
-        .eq("id", reqRow.id);
-      await admin
-        .from("car_listings")
-        .update({ car_pass_status: "rejected" })
-        .eq("id", listing.id);
-
-      return jsonResponse(req, { request_id: reqRow.id, status: "failed" }, { status: 502 });
-    }
-
-    // 4. Persist outcome
-    const newStatus = result.ok ? "verified" : "rejected";
-    await admin
-      .from("car_pass_verification_requests")
-      .update({
-        status: result.ok ? "completed" : "failed",
-        completed_at: new Date().toISOString(),
-        api_response: result.raw,
-      })
-      .eq("id", reqRow.id);
-
-    await admin
-      .from("car_listings")
-      .update({ car_pass_status: newStatus })
-      .eq("id", listing.id);
-
-    return jsonResponse(req, { request_id: reqRow.id, status: newStatus });
+    // 3. Document received — awaiting manual admin review
+    // An admin must verify the uploaded document and update car_pass_status to 'verified'.
+    console.log(`[car-pass] listing ${listing.id} submitted for manual review, request ${reqRow.id}`);
+    return jsonResponse(req, { request_id: reqRow.id, status: "pending" });
   } catch (err) {
     console.error("verify-car-pass error", err);
     return jsonResponse(req, { error: "Internal error" }, { status: 500 });

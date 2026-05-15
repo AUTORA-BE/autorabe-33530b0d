@@ -2,6 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
+  <!-- Homepage with hreflang alternates -->
   <url>
     <loc>https://autora.be/</loc>
     <changefreq>daily</changefreq>
@@ -13,22 +14,153 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://autora.be/"/>
   </url>
 
-  <url><loc>https://autora.be/sell</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://autora.be/pricing</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://autora.be/calculateur-tco</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://autora.be/marques-electriques</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://autora.be/about</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://autora.be/faq</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://autora.be/blog</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
-  <url><loc>https://autora.be/services</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://autora.be/contact</loc><changefreq>yearly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://autora.be/guide/car-pass</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://autora.be/guide/lez-belgique</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://autora.be/guide/acheter-voiture-occasion</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>https://autora.be/cgu</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
-  <url><loc>https://autora.be/cgv</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
-  <url><loc>https://autora.be/confidentialite</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
-  <url><loc>https://autora.be/mentions-legales</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
-  <url><loc>https://autora.be/cookies</loc><changefreq>yearly</changefreq><priority>0.2</priority></url>
+  <!-- /sell (vendre / verkopen / verkaufen) -->
+  <url>
+    <loc>https://autora.be/vendre</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="fr-BE" href="https://autora.be/vendre"/>
+    <xhtml:link rel="alternate" hreflang="nl-BE" href="https://autora.be/verkopen"/>
+    <xhtml:link rel="alternate" hreflang="de-BE" href="https://autora.be/verkaufen"/>
+    <xhtml:link rel="alternate" hreflang="en"    href="https://autora.be/sell"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://autora.be/sell"/>
+  </url>
+
+  <!-- /pricing (tarifs / prijzen / preise) -->
+  <url>
+    <loc>https://autora.be/tarifs</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="fr-BE" href="https://autora.be/tarifs"/>
+    <xhtml:link rel="alternate" hreflang="nl-BE" href="https://autora.be/prijzen"/>
+    <xhtml:link rel="alternate" hreflang="de-BE" href="https://autora.be/preise"/>
+    <xhtml:link rel="alternate" hreflang="en"    href="https://autora.be/pricing"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://autora.be/pricing"/>
+  </url>
+
+  <!-- Calculateur TCO (same slug across langs) -->
+  <url>
+    <loc>https://autora.be/calculateur-tco</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- /marques-electriques -->
+  <url>
+    <loc>https://autora.be/marques-electriques</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- About (a-propos / over-ons / ueber-uns) -->
+  <url>
+    <loc>https://autora.be/a-propos</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="fr-BE" href="https://autora.be/a-propos"/>
+    <xhtml:link rel="alternate" hreflang="nl-BE" href="https://autora.be/over-ons"/>
+    <xhtml:link rel="alternate" hreflang="de-BE" href="https://autora.be/ueber-uns"/>
+    <xhtml:link rel="alternate" hreflang="en"    href="https://autora.be/about"/>
+  </url>
+
+  <!-- FAQ -->
+  <url>
+    <loc>https://autora.be/faq</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Blog -->
+  <url>
+    <loc>https://autora.be/blog</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Services (services / diensten / dienste) -->
+  <url>
+    <loc>https://autora.be/services</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="fr-BE" href="https://autora.be/services"/>
+    <xhtml:link rel="alternate" hreflang="nl-BE" href="https://autora.be/diensten"/>
+    <xhtml:link rel="alternate" hreflang="de-BE" href="https://autora.be/dienste"/>
+    <xhtml:link rel="alternate" hreflang="en"    href="https://autora.be/services"/>
+  </url>
+
+  <!-- Contact (contact / kontakt) -->
+  <url>
+    <loc>https://autora.be/contact</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="fr-BE" href="https://autora.be/contact"/>
+    <xhtml:link rel="alternate" hreflang="nl-BE" href="https://autora.be/contact"/>
+    <xhtml:link rel="alternate" hreflang="de-BE" href="https://autora.be/kontakt"/>
+    <xhtml:link rel="alternate" hreflang="en"    href="https://autora.be/contact"/>
+  </url>
+
+  <!-- Hub fiscalité 2026 — high-value SEO pages -->
+  <url>
+    <loc>https://autora.be/fiscalite-auto-2026</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="fr-BE" href="https://autora.be/fiscalite-auto-2026"/>
+    <xhtml:link rel="alternate" hreflang="nl-BE" href="https://autora.be/autofiscaliteit-2026"/>
+  </url>
+  <url>
+    <loc>https://autora.be/autofiscaliteit-2026</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="fr-BE" href="https://autora.be/fiscalite-auto-2026"/>
+    <xhtml:link rel="alternate" hreflang="nl-BE" href="https://autora.be/autofiscaliteit-2026"/>
+  </url>
+
+  <!-- Guides -->
+  <url>
+    <loc>https://autora.be/guide/car-pass</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://autora.be/guide/lez-belgique</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://autora.be/guide/acheter-voiture-occasion</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Legal pages (FR canonical + NL/DE/EN handled by react-router) -->
+  <url>
+    <loc>https://autora.be/cgu</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="fr-BE" href="https://autora.be/cgu"/>
+    <xhtml:link rel="alternate" hreflang="nl-BE" href="https://autora.be/gebruiksvoorwaarden"/>
+  </url>
+  <url>
+    <loc>https://autora.be/cgv</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="fr-BE" href="https://autora.be/cgv"/>
+    <xhtml:link rel="alternate" hreflang="nl-BE" href="https://autora.be/verkoopvoorwaarden"/>
+  </url>
+  <url>
+    <loc>https://autora.be/confidentialite</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://autora.be/mentions-legales</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://autora.be/cookies</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
 
 </urlset>

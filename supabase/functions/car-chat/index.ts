@@ -77,7 +77,7 @@ serve(async (req) => {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("AI gateway error:", response.status, errorText);
+      console.error("AI gateway error:", response.status, errorText.slice(0, 200));
       if (response.status === 429) {
         return new Response(JSON.stringify({ error: "Limite de requêtes atteinte." }), {
           status: 429,
@@ -100,7 +100,8 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
     });
   } catch (error) {
-    console.error("Chat function error:", error);
+    const msg = error instanceof Error ? error.message : "unknown";
+    console.error("Chat function error:", msg.includes("API_KEY") ? "[config error]" : msg);
     return new Response(JSON.stringify({ error: "Erreur interne du serveur" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

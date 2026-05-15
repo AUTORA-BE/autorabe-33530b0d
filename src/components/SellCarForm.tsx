@@ -67,6 +67,32 @@ const sellCarSchema = z.object({
   maintenance_book_complete: z.boolean().optional(),
   seller_type: z.string().optional(),
   tva_number: z.string().optional(),
+}).superRefine((data, ctx) => {
+  if (data.seller_type === "professionnel") {
+    const tva = data.tva_number?.trim().replace(/[\s.]/g, "").toUpperCase();
+    if (!tva) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Le numéro de TVA est obligatoire pour les vendeurs professionnels",
+        path: ["tva_number"],
+      });
+    } else if (!/^BE0\d{9}$/.test(tva)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Format TVA belge invalide. Exemple : BE0123456789",
+        path: ["tva_number"],
+      });
+    }
+
+    // C2 — Car-Pass obligatoire pour vendeurs pros (loi belge sur la vente d'occasion)
+    if (!data.car_pass_verified) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Le Car-Pass est obligatoire pour les vendeurs professionnels. Uploadez le document avant de publier.",
+        path: ["car_pass_verified"],
+      });
+    }
+  }
 });
 
 type SellCarFormData = z.infer<typeof sellCarSchema>;

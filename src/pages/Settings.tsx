@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import {  useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
+import SEOHead from "@/components/SEOHead";
 import { Header, Footer } from "@/shared/components";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
@@ -279,6 +280,7 @@ export default function Settings() {
 
   return (
     <div className="page-gradient min-h-screen">
+      <SEOHead noIndex />
       <Header />
       <main className="container mx-auto px-4 max-w-lg pt-24 pb-28">
         <motion.div variants={container} initial="hidden" animate="show" className="space-y-4">

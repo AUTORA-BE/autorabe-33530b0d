@@ -86,11 +86,11 @@ export default function CookieBanner() {
               <div className="flex-1 min-w-0">
                 <p className="text-sm text-foreground leading-relaxed mb-4">{t.message}</p>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <Button size="sm" onClick={handleAccept} className="text-xs">
-                    {t.accept}
-                  </Button>
                   <Button size="sm" variant="outline" onClick={handleRefuse} className="text-xs">
                     {t.refuse}
+                  </Button>
+                  <Button size="sm" onClick={handleAccept} className="text-xs">
+                    {t.accept}
                   </Button>
                   <a
                     href="/cookies"

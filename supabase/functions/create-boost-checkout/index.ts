@@ -89,6 +89,7 @@ serve(async (req) => {
       customer_email: customerId ? undefined : user.email,
       line_items: [{ price: boostConfig.price_id, quantity: 1 }],
       mode: "payment",
+      payment_method_types: ["card", "bancontact", "sepa_debit"],
       success_url: `${origin}/dashboard?boost_success=true&listing=${listingId}&tier=${boostTier}`,
       cancel_url: `${origin}/dashboard?boost_canceled=true`,
       metadata: {

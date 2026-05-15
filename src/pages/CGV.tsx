@@ -131,35 +131,355 @@ Les factures sont disponibles au format PDF dans l'espace client et sont émises
 const nl = {
   title: "Algemene Verkoopvoorwaarden",
   subtitle: "Abonnementen en betalende diensten — Versie mei 2026",
-  intro: `Deze Algemene Verkoopvoorwaarden (hierna « AVV ») zijn van toepassing op alle aankopen van betalende diensten op het AutoRA.be platform, uitgebaat door [Naam — in te vullen], België.`,
+  intro: `Deze Algemene Verkoopvoorwaarden (hierna « AVV ») zijn van toepassing op alle aankopen van betalende diensten op het AutoRA.be platform, uitgebaat door [Naam / Vennootschap — in te vullen], [adres — in te vullen], België.
+
+Deze AVV vormen het contract tussen AutoRA en de koper. Zij hebben voorrang op elk document van de koper.`,
   sections: [
     {
       title: "1. Aanbod en diensten",
-      body: `AutoRA biedt de volgende betalende diensten aan: advertentieboost (voorrang in zoekresultaten) en Professioneel abonnement. Prijzen en kenmerken zijn beschikbaar op https://autora.be/pricing.`,
+      body: `AutoRA biedt de volgende betalende diensten aan:
+
+**Advertentieboost** : het uitlichten van een specifieke advertentie in de zoekresultaten gedurende een bepaalde periode.
+**Professioneel abonnement** : toegang tot geavanceerde functies voor professionele verkopers (advertentiequotum, statistieken, pro-badge, enz.).
+
+De gedetailleerde kenmerken en prijzen van elk aanbod zijn beschikbaar op https://autora.be/pricing.
+
+Prijzen zijn vermeld in euro (EUR), inclusief alle belastingen (BTW inbegrepen) voor Belgische consumenten. Voor professionele klanten die BTW-plichtig zijn, wordt de toepasselijke Belgische BTW op de factuur vermeld.`,
     },
     {
-      title: "2. Betaling",
-      body: `Betalingen worden verwerkt door **Stripe, Inc.** (PCI DSS niveau 1 gecertificeerd). Aanvaarde betaalmiddelen: Visa, Mastercard, Bancontact. Abonnementen worden automatisch verlengd, tenzij vooraf opgezegd.`,
+      title: "2. Bestelproces",
+      body: `**2.1 Stappen**
+Om een betalende dienst af te nemen, moet de gebruiker:
+1. Ingelogd zijn op zijn AutoRA-account;
+2. Het gewenste aanbod selecteren;
+3. De vóór de betaling samengevatte kenmerken en prijs verifiëren;
+4. Zijn betalingsgegevens invoeren via Stripe;
+5. De bestelling bevestigen.
+
+**2.2 Bevestiging**
+Een bevestigingsmail wordt verzonden naar het e-mailadres van het account binnen enkele minuten na de betaling. Deze e-mail geldt als bewijs van de transactie.
+
+**2.3 Factuur**
+Een elektronische factuur is beschikbaar in de klantenruimte voor elke transactie.`,
     },
     {
-      title: "3. Herroepingsrecht",
-      body: `Overeenkomstig artikel VI.47 van het Wetboek van economisch recht beschikt de consument over een herroepingstermijn van **14 kalenderdagen** vanaf de contractsluiting. Uitzonderingen zijn van toepassing op volledig uitgevoerde digitale diensten waarbij u uitdrukkelijk toestemming heeft gegeven om onmiddellijk te beginnen.`,
+      title: "3. Betaling",
+      body: `**3.1 Verwerker**
+Betalingen worden verwerkt door **Stripe, Inc.** (354 Oyster Point Blvd, South San Francisco, CA 94080, VS), gecertificeerd PCI DSS niveau 1. AutoRA heeft nooit toegang tot uw volledige bankgegevens.
+
+**3.2 Aanvaarde betaalmiddelen**
+— Bankkaart (Visa, Mastercard, American Express)
+— Bancontact
+
+**3.3 Beveiliging**
+Alle transacties zijn beveiligd met TLS-versleuteling. Kaarten worden door Stripe getokeniseerd.
+
+**3.4 Automatische verlenging (abonnementen)**
+Abonnementen worden automatisch verlengd bij het verstrijken, tenzij vooraf opgezegd. Het verlengingsbedrag komt overeen met het tarief dat op het moment van verlenging van kracht is. U wordt 7 dagen voor de verlenging per e-mail op de hoogte gesteld.`,
     },
     {
-      title: "4. Opzegging",
-      body: `U kunt uw abonnement op elk moment opzeggen via uw accountinstellingen. De opzegging gaat in aan het einde van de lopende periode.`,
+      title: "4. Herroepingsrecht",
+      body: `**4.1 Principe**
+Overeenkomstig artikel VI.47 van het Belgisch Wetboek van economisch recht (omzetting van richtlijn 2011/83/EU) beschikt de consument over een herroepingstermijn van **14 kalenderdagen** vanaf de contractsluiting om zijn herroepingsrecht uit te oefenen, zonder zijn beslissing te moeten rechtvaardigen of een boete te betalen.
+
+**4.2 Uitoefening van het recht**
+Om uw herroepingsrecht uit te oefenen, moet u AutoRA per e-mail op de hoogte stellen via autoracontact@gmail.com met duidelijke vermelding van uw intentie om te herroepen.
+
+**4.3 Uitzonderingen**
+Overeenkomstig artikel VI.53 van het Wetboek van economisch recht is het herroepingsrecht niet van toepassing op:
+— Digitale inhoud op immateriële drager waarvan de uitvoering is begonnen met de uitdrukkelijke voorafgaande toestemming van de consument en zijn uitdrukkelijke afstand van zijn herroepingsrecht;
+— Volledig uitgevoerde diensten vóór het einde van de herroepingstermijn, met de uitdrukkelijke voorafgaande toestemming van de consument.
+
+**4.4 Modelformulier voor herroeping**
+Te sturen naar autoracontact@gmail.com:
+« Ik/Wij deel/delen u hierbij mede dat ik/wij herroep/herroepen van het contract betreffende [gekochte dienst], besteld op [datum], onder transactienummer [Stripe ID]. Naam: [uw naam]. Datum: [datum]. »
+
+**4.5 Terugbetaling**
+Bij geldige herroeping verwerkt AutoRA de terugbetaling binnen 14 dagen na ontvangst van de kennisgeving, via hetzelfde betaalmiddel als dat bij de oorspronkelijke transactie is gebruikt.`,
     },
     {
-      title: "5. Toepasselijk recht",
-      body: `Deze AVV worden beheerst door het Belgisch recht. Bij geschillen zijn de rechtbanken van het gerechtelijk arrondissement [in te vullen] bevoegd. Consumenten kunnen ook een klacht indienen bij de Consumentenombudsdienst: [https://www.consumentenombudsdienst.be](https://www.consumentenombudsdienst.be).`,
+      title: "5. Duur en opzegging van abonnementen",
+      body: `**5.1 Duur**
+Abonnementen worden afgesloten voor een duur van één maand (of één jaar afhankelijk van het gekozen aanbod), automatisch verlengbaar.
+
+**5.2 Opzegging door de gebruiker**
+De gebruiker kan zijn abonnement op elk moment opzeggen via zijn klantenruimte (Instellingen → Abonnement → Opzeggen). De opzegging gaat in aan het einde van de lopende periode, zonder terugbetaling van het niet-gebruikte gedeelte, tenzij wettelijk anders bepaald.
+
+**5.3 Opzegging door AutoRA**
+AutoRA kan een abonnement opzeggen met pro-rata terugbetaling bij sluiting van de dienst, of zonder terugbetaling bij ernstige schending van de AGV door de gebruiker.`,
+    },
+    {
+      title: "6. Garanties en aansprakelijkheid",
+      body: `**6.1 Inspanningsverplichting**
+AutoRA verbindt zich ertoe de geabonneerde diensten online te brengen binnen de aangekondigde termijnen. In geval van een technische storing die aan AutoRA te wijten is en die de uitvoering van de dienst meer dan 24 opeenvolgende uren verhindert, zal een gelijkwaardig tegoed worden aangeboden.
+
+**6.2 Aansprakelijkheidsbeperking**
+De aansprakelijkheid van AutoRA is beperkt tot het bedrag dat voor de betrokken dienst is betaald in de afgelopen 12 maanden. AutoRA is niet aansprakelijk voor indirecte verliezen (winstderving, verlies van klanten).
+
+**6.3 Overmacht**
+AutoRA kan niet aansprakelijk worden gesteld voor het niet-nakomen van haar verplichtingen in geval van overmacht, overeenkomstig artikel 7.1.1 van het nieuwe Belgisch Burgerlijk Wetboek.`,
+    },
+    {
+      title: "7. Facturatie en BTW",
+      body: `Professionele gebruikers (verkopers die bij de registratie als professioneel zijn opgegeven) kunnen hun intracommunautair BTW-nummer opgeven om te profiteren van het verleggingsmechanisme dat van toepassing is op B2B-diensten.
+
+Facturen zijn beschikbaar in PDF-formaat in de klantenruimte en worden uitgesteld door AutoRA ([BTW-nummer — in te vullen]).`,
+    },
+    {
+      title: "8. Klantenservice en geschillen",
+      body: `Voor vragen over een bestelling, neem contact met ons op via autoracontact@gmail.com.
+
+**Bemiddeling** : Overeenkomstig artikel VI.73 van het Wetboek van economisch recht kan elke consument kosteloos een beroep doen op de consumentenombudsdienst in geval van een onopgelost geschil: [https://www.consumentenombudsdienst.be](https://www.consumentenombudsdienst.be)
+
+**ODR-platform** : [https://ec.europa.eu/consumers/odr](https://ec.europa.eu/consumers/odr)`,
+    },
+    {
+      title: "9. Toepasselijk recht",
+      body: `Deze AVV worden beheerst door het Belgisch recht. Elk geschil valt onder de exclusieve bevoegdheid van de rechtbanken van het gerechtelijk arrondissement [in te vullen], onder voorbehoud van de dwingende wettelijke bepalingen die op consumenten van toepassing zijn.`,
     },
   ],
 };
 
+const de = {
+  title: "Allgemeine Verkaufsbedingungen",
+  subtitle: "Abonnements und kostenpflichtige Dienste — Version Mai 2026",
+  intro: `Diese Allgemeinen Verkaufsbedingungen (nachfolgend „AVB") gelten für alle Käufe kostenpflichtiger Dienste auf der Plattform AutoRA.be (nachfolgend „AutoRA"), betrieben von [Name / Gesellschaft — auszufüllen], [Adresse — auszufüllen], Belgien.
+
+Diese AVB bilden den zwischen AutoRA und dem Käufer geschlossenen Vertrag. Sie haben Vorrang vor allen Dokumenten des Käufers.`,
+  sections: [
+    {
+      title: "1. Angebote und Dienste",
+      body: `AutoRA bietet folgende kostenpflichtige Dienste an:
+
+**Anzeigen-Boost** : Hervorhebung einer bestimmten Anzeige in den Suchergebnissen für eine festgelegte Dauer.
+**Professionelles Abonnement** : Zugang zu erweiterten Funktionen für professionelle Verkäufer (Anzeigenkontingent, Statistiken, Pro-Badge usw.).
+
+Die detaillierten Merkmale und Preise jedes Angebots sind unter https://autora.be/pricing verfügbar.
+
+Preise sind in Euro (EUR) angegeben, inklusive aller Steuern (inkl. MwSt.) für belgische Verbraucher. Für MwSt.-pflichtige gewerbliche Kunden wird die anwendbare belgische MwSt. auf der Rechnung ausgewiesen.`,
+    },
+    {
+      title: "2. Bestellprozess",
+      body: `**2.1 Schritte**
+Um einen kostenpflichtigen Dienst zu abonnieren, muss der Nutzer:
+1. In seinem AutoRA-Konto eingeloggt sein;
+2. Das gewünschte Angebot auswählen;
+3. Die vor der Zahlung zusammengefassten Merkmale und den Preis überprüfen;
+4. Seine Zahlungsdaten über Stripe eingeben;
+5. Die Bestellung bestätigen.
+
+**2.2 Bestätigung**
+Eine Bestätigungs-E-Mail wird innerhalb weniger Minuten nach der Zahlung an die mit dem Konto verknüpfte E-Mail-Adresse gesendet. Diese E-Mail dient als Transaktionsnachweis.
+
+**2.3 Rechnung**
+Eine elektronische Rechnung ist im Kundenbereich für jede Transaktion verfügbar.`,
+    },
+    {
+      title: "3. Zahlung",
+      body: `**3.1 Zahlungsdienstleister**
+Zahlungen werden von **Stripe, Inc.** (354 Oyster Point Blvd, South San Francisco, CA 94080, USA), PCI DSS Level 1 zertifiziert, abgewickelt. AutoRA hat niemals Zugang zu Ihren vollständigen Bankdaten.
+
+**3.2 Akzeptierte Zahlungsmittel**
+— Bankkarte (Visa, Mastercard, American Express)
+— Bancontact
+
+**3.3 Sicherheit**
+Alle Transaktionen sind durch TLS-Verschlüsselung gesichert. Karten werden von Stripe tokenisiert.
+
+**3.4 Automatische Verlängerung (Abonnements)**
+Abonnements werden automatisch bei Ablauf verlängert, sofern sie nicht vorher gekündigt werden. Der Verlängerungsbetrag entspricht dem zum Zeitpunkt der Verlängerung geltenden Tarif. Sie werden 7 Tage vor der Verlängerung per E-Mail benachrichtigt.`,
+    },
+    {
+      title: "4. Widerrufsrecht",
+      body: `**4.1 Grundsatz**
+Gemäß Art. VI.47 des belgischen Wirtschaftsgesetzbuches (Umsetzung der Richtlinie 2011/83/EU) hat der Verbraucher das Recht, den Vertrag innerhalb von **14 Kalendertagen** ab Vertragsabschluss ohne Angabe von Gründen und ohne Zahlung einer Vertragsstrafe zu widerrufen.
+
+**4.2 Ausübung des Rechts**
+Um Ihr Widerrufsrecht auszuüben, müssen Sie AutoRA per E-Mail an autoracontact@gmail.com informieren und Ihre Widerrufsabsicht klar angeben.
+
+**4.3 Ausnahmen**
+Gemäß Art. VI.53 des Wirtschaftsgesetzbuches gilt das Widerrufsrecht nicht für:
+— Digitale Inhalte auf nicht-körperlichem Träger, deren Ausführung mit ausdrücklicher vorheriger Zustimmung des Verbrauchers und seinem ausdrücklichen Verzicht auf sein Widerrufsrecht begonnen hat;
+— Vollständig erbrachte Dienstleistungen vor Ablauf der Widerrufsfrist mit ausdrücklicher vorheriger Zustimmung des Verbrauchers.
+
+**4.4 Muster-Widerrufsformular**
+An autoracontact@gmail.com senden:
+„Ich/Wir widerrufe/widerrufen hiermit den Vertrag über [gekaufter Dienst], bestellt am [Datum], unter Transaktionsnummer [Stripe-ID]. Name: [Ihr Name]. Datum: [Datum]."
+
+**4.5 Erstattung**
+Bei gültigem Widerruf erstattet AutoRA den Betrag innerhalb von 14 Tagen nach Eingang der Mitteilung über dasselbe Zahlungsmittel, das bei der ursprünglichen Transaktion verwendet wurde.`,
+    },
+    {
+      title: "5. Laufzeit und Kündigung von Abonnements",
+      body: `**5.1 Laufzeit**
+Abonnements werden für eine Laufzeit von einem Monat (oder einem Jahr je nach gewähltem Angebot) abgeschlossen und automatisch verlängert.
+
+**5.2 Kündigung durch den Nutzer**
+Der Nutzer kann sein Abonnement jederzeit über seinen Kundenbereich kündigen (Einstellungen → Abonnement → Kündigen). Die Kündigung wird zum Ende der laufenden Periode wirksam, ohne anteilige Erstattung des nicht genutzten Zeitraums, sofern gesetzlich nicht anderes vorgeschrieben.
+
+**5.3 Kündigung durch AutoRA**
+AutoRA kann ein Abonnement mit anteiliger Erstattung bei Schließung des Dienstes oder ohne Erstattung bei schwerwiegendem Verstoß gegen die ANB durch den Nutzer kündigen.`,
+    },
+    {
+      title: "6. Gewährleistungen und Haftung",
+      body: `**6.1 Bemühenspflicht**
+AutoRA verpflichtet sich, die abonnierten Dienste innerhalb der angekündigten Fristen bereitzustellen. Bei einer AutoRA zuzurechnenden technischen Störung, die die Erbringung des Dienstes für mehr als 24 aufeinanderfolgende Stunden verhindert, wird ein gleichwertiges Guthaben angeboten.
+
+**6.2 Haftungsbeschränkung**
+Die Haftung von AutoRA ist auf den für den betreffenden Dienst in den letzten 12 Monaten gezahlten Betrag begrenzt. AutoRA haftet nicht für mittelbare Schäden (entgangener Gewinn, Kundenverlust).
+
+**6.3 Höhere Gewalt**
+AutoRA kann nicht für die Nichterfüllung ihrer Verpflichtungen im Falle höherer Gewalt haftbar gemacht werden, gemäß Art. 7.1.1 des neuen belgischen Zivilgesetzbuches.`,
+    },
+    {
+      title: "7. Rechnungsstellung und Mehrwertsteuer",
+      body: `Gewerbliche Nutzer (bei der Registrierung als professionell gemeldete Verkäufer) können ihre innergemeinschaftliche Umsatzsteuer-ID angeben, um vom Reverse-Charge-Mechanismus für B2B-Dienstleistungen zu profitieren.
+
+Rechnungen stehen im PDF-Format im Kundenbereich zur Verfügung und werden von AutoRA ausgestellt ([USt-IdNr. — auszufüllen]).`,
+    },
+    {
+      title: "8. Kundendienst und Streitbeilegung",
+      body: `Bei Fragen zu einer Bestellung wenden Sie sich an autoracontact@gmail.com.
+
+**Schlichtung** : Gemäß Art. VI.73 des Wirtschaftsgesetzbuches kann jeder Verbraucher bei einem ungelösten Streit kostenlos den Verbraucherschlichtungsdienst in Anspruch nehmen: [https://www.mediationconsommateur.be](https://www.mediationconsommateur.be)
+
+**ODR-Plattform** : [https://ec.europa.eu/consumers/odr](https://ec.europa.eu/consumers/odr)`,
+    },
+    {
+      title: "9. Anwendbares Recht",
+      body: `Diese AVB unterliegen belgischem Recht. Alle Streitigkeiten fallen unter die ausschließliche Zuständigkeit der Gerichte des Gerichtsbezirks [auszufüllen], vorbehaltlich der auf Verbraucher anwendbaren zwingenden gesetzlichen Bestimmungen.`,
+    },
+  ],
+};
+
+const en = {
+  title: "Terms of Sale",
+  subtitle: "Subscriptions and paid services — Version May 2026",
+  intro: `These Terms of Sale (hereinafter "ToS") apply to all purchases of paid services made on the AutoRA.be platform (hereinafter "AutoRA"), operated by [Name / Company — to be completed], [address — to be completed], Belgium.
+
+These ToS constitute the contract concluded between AutoRA and the buyer. They prevail over any buyer document.`,
+  sections: [
+    {
+      title: "1. Offers and services",
+      body: `AutoRA offers the following paid services:
+
+**Listing boost** : promotion of a specific listing in search results for a set period.
+**Professional subscription** : access to advanced features for professional sellers (listing quota, statistics, pro badge, etc.).
+
+Detailed features and prices for each offer are available at https://autora.be/pricing.
+
+Prices are stated in euros (EUR), inclusive of all taxes (VAT included) for Belgian consumers. For VAT-registered professional customers, applicable Belgian VAT will be indicated on the invoice.`,
+    },
+    {
+      title: "2. Order process",
+      body: `**2.1 Steps**
+To subscribe to a paid service, the user must:
+1. Be logged in to their AutoRA account;
+2. Select the desired offer;
+3. Verify the features and price summarised before payment;
+4. Enter their payment details via Stripe;
+5. Confirm the order.
+
+**2.2 Confirmation**
+A confirmation email is sent to the account's associated email address within minutes of payment. This email constitutes proof of the transaction.
+
+**2.3 Invoice**
+An electronic invoice is available in the customer area for each transaction.`,
+    },
+    {
+      title: "3. Payment",
+      body: `**3.1 Payment processor**
+Payments are processed by **Stripe, Inc.** (354 Oyster Point Blvd, South San Francisco, CA 94080, USA), PCI DSS Level 1 certified. AutoRA never accesses your complete banking details.
+
+**3.2 Accepted payment methods**
+— Bank card (Visa, Mastercard, American Express)
+— Bancontact
+
+**3.3 Security**
+All transactions are secured by TLS encryption. Cards are tokenised by Stripe.
+
+**3.4 Automatic renewal (subscriptions)**
+Subscriptions are automatically renewed at expiry, unless cancelled beforehand. The renewal amount corresponds to the rate in force at the time of renewal. You will be notified by email 7 days before renewal.`,
+    },
+    {
+      title: "4. Right of withdrawal",
+      body: `**4.1 Principle**
+In accordance with Article VI.47 of the Belgian Code of Economic Law (transposing Directive 2011/83/EU), the consumer has **14 calendar days** from the conclusion of the contract to exercise their right of withdrawal, without having to justify their decision or pay a penalty.
+
+**4.2 Exercise of the right**
+To exercise your right of withdrawal, you must notify AutoRA by email at autoracontact@gmail.com clearly stating your intention to withdraw.
+
+**4.3 Exceptions**
+Pursuant to Article VI.53 of the Code of Economic Law, the right of withdrawal does not apply to:
+— Digital content provided on a non-tangible medium whose performance has begun with the consumer's express prior consent and their express waiver of the right of withdrawal;
+— Services fully performed before the end of the withdrawal period, with the consumer's express prior consent.
+
+**4.4 Model withdrawal form**
+To be sent to autoracontact@gmail.com:
+"I/We hereby give notice of my/our withdrawal from the contract for [purchased service], ordered on [date], under transaction number [Stripe ID]. Name: [your name]. Date: [date]."
+
+**4.5 Refund**
+In the event of a valid withdrawal, AutoRA processes the refund within 14 days of receiving the notification, via the same payment method used for the original transaction.`,
+    },
+    {
+      title: "5. Term and cancellation of subscriptions",
+      body: `**5.1 Term**
+Subscriptions are taken out for a period of one month (or one year depending on the chosen offer), automatically renewable.
+
+**5.2 Cancellation by the user**
+The user may cancel their subscription at any time from their customer area (Settings → Subscription → Cancel). Cancellation takes effect at the end of the current period, without refund of the unused portion, unless otherwise required by law.
+
+**5.3 Cancellation by AutoRA**
+AutoRA may cancel a subscription with pro-rata refund upon service closure, or without refund in the event of serious breach of the ToU by the user.`,
+    },
+    {
+      title: "6. Warranties and liability",
+      body: `**6.1 Best efforts**
+AutoRA undertakes to make subscribed services available within the announced timeframes. In the event of a technical failure attributable to AutoRA preventing service delivery for more than 24 consecutive hours, an equivalent credit will be offered.
+
+**6.2 Limitation of liability**
+AutoRA's liability is limited to the amount paid for the relevant service over the past 12 months. AutoRA is not responsible for indirect losses (loss of earnings, loss of customers).
+
+**6.3 Force majeure**
+AutoRA cannot be held liable for the non-performance of its obligations in the event of force majeure, in accordance with Article 7.1.1 of the new Belgian Civil Code.`,
+    },
+    {
+      title: "7. Invoicing and VAT",
+      body: `Professional users (sellers declared as professionals at registration) may provide their intra-community VAT number to benefit from the reverse charge mechanism applicable to B2B services.
+
+Invoices are available in PDF format in the customer area and are issued by AutoRA ([VAT number — to be completed]).`,
+    },
+    {
+      title: "8. Customer service and disputes",
+      body: `For any questions regarding an order, contact us at autoracontact@gmail.com.
+
+**Mediation** : In accordance with Article VI.73 of the Code of Economic Law, any consumer may use the consumer mediation service free of charge in the event of an unresolved dispute: [https://www.mediationconsommateur.be](https://www.mediationconsommateur.be)
+
+**ODR platform** : [https://ec.europa.eu/consumers/odr](https://ec.europa.eu/consumers/odr)`,
+    },
+    {
+      title: "9. Applicable law",
+      body: `These ToS are governed by Belgian law. All disputes are subject to the exclusive jurisdiction of the courts of the judicial district of [to be completed], subject to mandatory legal provisions applicable to consumers.`,
+    },
+  ],
+};
+
+type Lang = "fr" | "nl" | "de" | "en";
+const langs = { fr, nl, de, en };
+
+const lastUpdated: Record<Lang, string> = {
+  fr: "Dernière mise à jour : mai 2026",
+  nl: "Laatste update: mei 2026",
+  de: "Letzte Aktualisierung: Mai 2026",
+  en: "Last updated: May 2026",
+};
+
 const CGV = () => {
   const { language } = useLanguage();
-  const lang = language === "nl" ? "nl" : "fr";
-  const t = lang === "nl" ? nl : fr;
+  const lang: Lang = (["fr", "nl", "de", "en"] as Lang[]).includes(language as Lang)
+    ? (language as Lang)
+    : "fr";
+  const t = langs[lang];
 
   return (
     <>
@@ -193,7 +513,7 @@ const CGV = () => {
         </div>
 
         <p className="mt-12 text-xs text-muted-foreground/50 border-t border-border/10 pt-6">
-          {lang === "fr" ? "Dernière mise à jour : mai 2026" : "Laatste update: mei 2026"}
+          {lastUpdated[lang]}
         </p>
       </main>
       <Footer />

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import SEOHead from "@/components/SEOHead";
 import { Header, Footer } from "@/shared/components";
 import { useLocalizedVehicleHref } from "@/lib/useLocalizedHref";
 import { supabase } from "@/integrations/supabase/client";
@@ -312,6 +313,7 @@ const SellerStats = () => {
 
   return (
     <div className="page-gradient">
+      <SEOHead noIndex />
       <Header />
 
       <main className="pt-24">

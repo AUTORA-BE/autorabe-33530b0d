@@ -65,6 +65,8 @@ const Confidentialite = lazy(() => import("./pages/Confidentialite"));
 const CGV = lazy(() => import("./pages/CGV"));
 const ServerError = lazy(() => import("./pages/ServerError"));
 const MarquesElectriques = lazy(() => import("./pages/MarquesElectriques"));
+const FiscaliteAuto2026 = lazy(() => import("./pages/FiscaliteAuto2026"));
+const AutoFiscaliteit2026 = lazy(() => import("./pages/AutoFiscaliteit2026"));
 
 /** Minimal loading fallback shown while lazy chunks load */
 function PageLoader() {
@@ -185,6 +187,8 @@ function AppPages() {
       <Route path="/guide/acheter-voiture-occasion" element={<PageTransition><GuideAchatOccasion /></PageTransition>} />
       <Route path="/blog" element={<PageTransition><Blog /></PageTransition>} />
       <Route path="/blog/:slug" element={<PageTransition><BlogArticle /></PageTransition>} />
+      <Route path="/fiscalite-auto-2026" element={<PageTransition><FiscaliteAuto2026 /></PageTransition>} />
+      <Route path="/autofiscaliteit-2026" element={<PageTransition><AutoFiscaliteit2026 /></PageTransition>} />
       <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
     </Routes>
   );
