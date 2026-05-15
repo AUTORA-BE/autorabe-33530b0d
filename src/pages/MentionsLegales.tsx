@@ -75,6 +75,18 @@ Pour les litiges de consommation, le consommateur belge peut également recourir
 
 Pour toute question relative à vos données, contactez-nous à : autoracontact@gmail.com`,
       },
+      {
+        title: "8. Point de contact unique (DSA art. 11 & 12)",
+        body: `Conformément aux articles 11 et 12 du Règlement (UE) 2022/2065 (Digital Services Act), AutoRA désigne un point de contact unique pour les autorités, les utilisateurs et les signaleurs de confiance :
+
+**Contact général (utilisateurs, signaleurs)** : autoracontact@gmail.com
+**Langues acceptées** : français, néerlandais, allemand, anglais
+**Délai de réponse indicatif** : 48 heures ouvrables
+
+**Représentation légale dans l'Union** : AutoRA étant établi en Belgique, aucun représentant légal supplémentaire (art. 13 DSA) n'est requis.
+
+Les autorités belges (SPF Économie, APD, autorités judiciaires) peuvent adresser leurs demandes officielles à la même adresse, qui sera traitée en priorité.`,
+      },
     ],
   },
   nl: {
@@ -145,6 +157,18 @@ Voor consumentengeschillen kan de Belgische consument ook een klacht indienen bi
 
 Voor vragen over uw gegevens kunt u contact met ons opnemen via: autoracontact@gmail.com`,
       },
+      {
+        title: "8. Enig contactpunt (DSA art. 11 & 12)",
+        body: `Overeenkomstig de artikelen 11 en 12 van Verordening (EU) 2022/2065 (Digital Services Act) wijst AutoRA één enkel contactpunt aan voor autoriteiten, gebruikers en betrouwbare flaggers:
+
+**Algemeen contact (gebruikers, melders)**: autoracontact@gmail.com
+**Aanvaarde talen**: Frans, Nederlands, Duits, Engels
+**Indicatieve antwoordtermijn**: 48 werkuren
+
+**Wettelijke vertegenwoordiging in de Unie**: Aangezien AutoRA in België is gevestigd, is geen aanvullende wettelijke vertegenwoordiger (art. 13 DSA) vereist.
+
+De Belgische autoriteiten (FOD Economie, GBA, gerechtelijke autoriteiten) kunnen hun officiële verzoeken aan hetzelfde adres richten, waar ze met voorrang worden behandeld.`,
+      },
     ],
   },
   de: {
@@ -213,6 +237,18 @@ Verbraucher können Beschwerden auch beim belgischen Verbraucherschlichtungsdien
 
 Für Fragen zu Ihren Daten wenden Sie sich an: autoracontact@gmail.com`,
       },
+      {
+        title: "8. Einheitliche Kontaktstelle (DSA Art. 11 & 12)",
+        body: `Gemäß Artikel 11 und 12 der Verordnung (EU) 2022/2065 (Digital Services Act) benennt AutoRA eine einheitliche Kontaktstelle für Behörden, Nutzer und vertrauenswürdige Hinweisgeber:
+
+**Allgemeiner Kontakt (Nutzer, Hinweisgeber)**: autoracontact@gmail.com
+**Akzeptierte Sprachen**: Französisch, Niederländisch, Deutsch, Englisch
+**Indikative Antwortzeit**: 48 Arbeitsstunden
+
+**Gesetzliche Vertretung in der Union**: Da AutoRA in Belgien ansässig ist, ist kein zusätzlicher gesetzlicher Vertreter (Art. 13 DSA) erforderlich.
+
+Die belgischen Behörden (FÖD Wirtschaft, APD, Justizbehörden) können ihre offiziellen Anfragen an dieselbe Adresse richten und werden vorrangig bearbeitet.`,
+      },
     ],
   },
   en: {
@@ -280,6 +316,18 @@ Consumers may also lodge complaints with the Belgian Consumer Mediation Service:
         body: `The processing of users' personal data is described in our privacy policy, accessible at: https://autora.be/confidentialite
 
 For any questions regarding your data, please contact us at: autoracontact@gmail.com`,
+      },
+      {
+        title: "8. Single Point of Contact (DSA Art. 11 & 12)",
+        body: `In accordance with Articles 11 and 12 of Regulation (EU) 2022/2065 (Digital Services Act), AutoRA designates a single point of contact for authorities, users and trusted flaggers:
+
+**General contact (users, reporters)**: autoracontact@gmail.com
+**Languages accepted**: French, Dutch, German, English
+**Indicative response time**: 48 working hours
+
+**Legal representation in the Union**: As AutoRA is established in Belgium, no additional legal representative (Art. 13 DSA) is required.
+
+Belgian authorities (FPS Economy, APD/GBA, judicial authorities) may address their official requests to the same address, where they will be handled as a priority.`,
       },
     ],
   },

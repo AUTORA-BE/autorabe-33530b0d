@@ -68,12 +68,21 @@ const sellCarSchema = z.object({
   seller_type: z.string().optional(),
   tva_number: z.string().optional(),
 }).superRefine((data, ctx) => {
-  if (data.seller_type === "professionnel" && !data.tva_number?.trim()) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "Le numéro de TVA est obligatoire pour les vendeurs professionnels",
-      path: ["tva_number"],
-    });
+  if (data.seller_type === "professionnel") {
+    const tva = data.tva_number?.trim().replace(/[\s.]/g, "").toUpperCase();
+    if (!tva) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Le numéro de TVA est obligatoire pour les vendeurs professionnels",
+        path: ["tva_number"],
+      });
+    } else if (!/^BE0\d{9}$/.test(tva)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Format TVA belge invalide. Exemple : BE0123456789",
+        path: ["tva_number"],
+      });
+    }
   }
 });
 
