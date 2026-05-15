@@ -7,15 +7,15 @@
   </sitemap>
   <!-- Dynamic vehicle listings sitemaps per language -->
   <sitemap>
-    <loc>https://okeiblbufwhfirxrzkfo.supabase.co/functions/v1/dynamic-sitemap?lang=fr</loc>
+    <loc>https://jbdsjqoonpieusfvkhyo.supabase.co/functions/v1/dynamic-sitemap?lang=fr</loc>
   </sitemap>
   <sitemap>
-    <loc>https://okeiblbufwhfirxrzkfo.supabase.co/functions/v1/dynamic-sitemap?lang=nl</loc>
+    <loc>https://jbdsjqoonpieusfvkhyo.supabase.co/functions/v1/dynamic-sitemap?lang=nl</loc>
   </sitemap>
   <sitemap>
-    <loc>https://okeiblbufwhfirxrzkfo.supabase.co/functions/v1/dynamic-sitemap?lang=de</loc>
+    <loc>https://jbdsjqoonpieusfvkhyo.supabase.co/functions/v1/dynamic-sitemap?lang=de</loc>
   </sitemap>
   <sitemap>
-    <loc>https://okeiblbufwhfirxrzkfo.supabase.co/functions/v1/dynamic-sitemap?lang=en</loc>
+    <loc>https://jbdsjqoonpieusfvkhyo.supabase.co/functions/v1/dynamic-sitemap?lang=en</loc>
   </sitemap>
 </sitemapindex>
