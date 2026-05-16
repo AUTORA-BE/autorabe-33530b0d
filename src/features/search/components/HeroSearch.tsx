@@ -362,7 +362,13 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
   const { t } = useLanguage();
   const isMobile = useIsMobile();
   const prefersReduced = useReducedMotion();
-  const showOrbs = !isMobile && !prefersReduced;
+
+  // Parallax — photo scrolls slower than viewport
+  const heroRef = useRef<HTMLElement>(null);
+  const { scrollY } = useScroll();
+  const imgY = useTransform(scrollY, [0, 600], [0, prefersReduced ? 0 : 120]);
+  const overlayOpacity = useTransform(scrollY, [0, 500], [0.55, 0.85]);
+  const contentY = useTransform(scrollY, [0, 600], [0, prefersReduced ? 0 : -40]);
 
   useEffect(() => { setBrands(getAllBrands()); }, []);
 
