@@ -429,6 +429,10 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
     }, 500);
   }, [brands, selectedBrand, selectedBudget, onSearch]);
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") handleSearch();
+  };
+
   const handleBodyType = (bodyType: string) => {
     trackEvent(EVENTS.SEARCH_PERFORMED, { body_type: bodyType, source: "hero-bodytype" });
     onSearch("", "", 1000000);
