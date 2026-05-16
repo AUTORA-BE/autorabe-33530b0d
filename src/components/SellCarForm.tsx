@@ -328,7 +328,6 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
           power: data.power || undefined,
           doors: data.doors || 5,
           euro_norm: data.euro_norm || undefined,
-          fuel_consumption: data.fuel_consumption ?? null,
 
           first_registration: data.first_registration || undefined,
           description: data.description || undefined,
