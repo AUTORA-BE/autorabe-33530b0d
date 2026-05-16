@@ -1,104 +1,88 @@
+## Objectif
 
-# Plan — Migration runtime de jbds (Lovable Cloud) vers okei (ton Supabase)
+Faire basculer le rendu de la home d'une esthétique **SaaS premium** (gradients verts, glassmorphism, beaucoup d'air, typo Playfair éditoriale) vers une vibe **marketplace dense, dynamique et vivante** (proche de l'image de référence : header sombre compact, hero immersif avec photo voiture, blocs de recherche flottants façon "cards d'action", grille de voitures dense type Vinted/AutoScout, sections "promesses" en cards horizontales).
 
-## ⚠️ À lire avant de démarrer
+**Aucun changement** sur : routing, hooks (`useVehicleSearch`, `useFavorites`, `useBuyerProfile`), edge functions, RLS, i18n, schémas SEO, structure des données. C'est uniquement du **frontend / présentation**.
 
-Aujourd'hui l'app **tourne réellement sur `jbds…`** (Lovable Cloud). C'est ce projet qui contient :
-- toutes les tables avec leurs données (car_listings, profiles, subscriptions, …)
-- les 28 edge functions déployées
-- les secrets (STRIPE_*, RESEND_API_KEY, VAPID_*, LOVABLE_API_KEY, …)
-- les buckets de storage (vehicle-photos, car-pass, chat-images, avatars, brand-logos, car-photos)
-- la config Auth (Google, HIBP, templates email)
+## Direction visuelle cible
 
-Le fichier `.env` est **géré automatiquement par Lovable Cloud** — je ne peux pas le pointer manuellement vers okei. Pour basculer le runtime, il faut **déconnecter Lovable Cloud** et **connecter ton propre projet Supabase okei** depuis le menu Connectors.
+Inspiré de l'image de référence + standards marketplace auto :
 
-Ce n'est pas une opération que je peux faire entièrement seul : il y a des étapes manuelles côté toi (Lovable Connectors + dashboard Supabase okei).
+- **Header** : compact, fond noir/dark translucide même en light mode sur le hero, logo + langues à droite, plus de "premium feel"
+- **Hero** : 
+  - Photo immersive plein écran (voiture sur route belge, paysage)
+  - Overlay sombre dégradé bas → haut
+  - Titre serif large à gauche, sous-titre court
+  - **3 cards flottantes** en bas du hero (façon image réf) : "Recherche rapide" / "Type de carrosserie" / "Mon Garage / Comparer" — au lieu de la grosse barre de recherche actuelle
+- **Sections** : rythme plus serré, titres plus petits, plus de contenu visible en scroll
+- **Cards voitures** : ratio 4:3 conservé, mais badges Car-Pass / LEZ plus marketplace (pills colorées top-left, prix gros en bas-right comme sur la réf)
+- **"Nos promesses"** : 3-4 cards horizontales avec icône + titre + 1 ligne, scrollable mobile
+- **Couleur** : on garde Emerald-600 comme accent mais on **réduit son usage** — le fond devient plus neutre (gris très clair / blanc cassé), l'accent vert ne sert que pour CTA + badges vérifiés
+- Effets au scroll (nouveaux)
 
----
+Tous via Framer Motion (déjà installé) + IntersectionObserver, GPU-friendly :
 
-## Phase 1 — Préparation (côté Lovable, sans rien casser)
+1. **Hero parallax** : photo voiture translateY plus lente que le scroll (`useScroll` + `useTransform`), opacité hero qui fade
+2. **Header morph** : transparent sur hero → solide blanc/dark avec shadow dès `scrollY > 80px`
+3. **Cards flottantes du hero** : se "détachent" et stickent brièvement avant de disparaître (sticky + fade)
+4. **Sections reveal** : fade-up + stagger (déjà via `ScrollReveal`, on l'étend aux cards individuelles avec délai)
+5. **Compteurs animés** sur TrustBar (10K+ voitures, etc.) — count-up déclenché à l'entrée viewport
+6. **Marquee** discret sur la BrandCarousel (auto-scroll lent au repos, pause au hover)
+7. **Hover lift** plus prononcé sur VehicleCard (translateY -6px + shadow glow)
 
-1. **Aligner les références codebase déjà sur okei** (pas d'impact runtime, juste cohérence) :
-   - `public/sitemap.xml` → repointer vers `okei`
-   - vérifier que `vite.config.ts`, `index.html`, `supabase/config.toml`, `sitemap-index/index.ts` sont bien alignés sur `okei`
-2. **Préparer un dump SQL complet** des migrations à rejouer sur okei : `supabase/combined_migrations.sql` existe déjà → on le met à jour avec les 5 dernières migrations.
+Respect strict de `prefers-reduced-motion` : tous les effets désactivés.
 
-## Phase 2 — Export des données depuis jbds
+## Périmètre des fichiers touchés
 
-Pour chaque table avec données utilisateur, je génère un export SQL/CSV via `read_query` :
-- `auth.users` (⚠️ mot de passe hashes non exportables → users devront reset password)
-- `profiles`, `user_roles`, `user_preferences`
-- `car_listings` + `car_views` + `favorites` + `reviews`
-- `conversations` + `messages` + `daily_message_counts`
-- `subscriptions` + `stripe_processed_events`
-- `user_alerts` + `alert_notifications`
-- `belgian_*` (TMC, annual tax, age reductions), `fuel_prices`
-- `admin_actions`, `audit_log`, `reports`
+**Modifiés (présentation uniquement) :**
 
-Pour le **storage** (vehicle-photos, car-pass, chat-images, avatars) : il faut un script qui télécharge tous les fichiers de jbds et les ré-upload vers okei. Très volumineux selon les annonces existantes.
+- `src/features/search/components/HeroSearch.tsx` → refonte hero immersif + 3 cards flottantes
+- `src/shared/components/Header.tsx` → variante transparent → solid au scroll
+- `src/components/TrustBar.tsx` → compteurs animés count-up
+- `src/components/WhyAutoRA.tsx` → reformatage en cards horizontales "promesses"
+- `src/features/listings/components/VehicleCard.tsx` → badges marketplace style + prix proéminent
+- `src/features/search/components/BrandCarousel.tsx` → marquee auto-scroll
+- `src/index.css` → ajustement tokens (fond plus neutre, accent vert plus rare), nouveaux utilitaires marketplace
+- `src/pages/Index.tsx` → réordonnancement mineur des sections, ajout wrappers ScrollReveal
 
-## Phase 3 — Provisioning okei (toi, dans dashboard Supabase okei)
+**Créés :**
 
-1. **Activer les extensions** : `pgcrypto`, `pg_trgm`, `pgmq`, `pg_cron` (pour expire-boosts), …
-2. **Créer les buckets** : `vehicle-photos`, `car-pass`, `chat-images`, `avatars`, `brand-logos`, `car-photos` (avec mêmes policies)
-3. **Configurer Auth** :
-   - Activer Email + Google OAuth (mêmes Client ID / Secret que jbds)
-   - Activer HIBP password protection
-   - Configurer templates email FR/NL/DE/EN
-   - Configurer SMTP Resend custom + domaine `noreply@autora.be`
-4. **Configurer secrets edge functions** : `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `RESEND_API_KEY`, `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `LOVABLE_API_KEY`
+- `src/components/marketplace/HeroParallax.tsx` — wrapper parallax du hero
+- `src/components/marketplace/QuickActionCard.tsx` — les 3 cards flottantes
+- `src/hooks/useCountUp.ts` — hook compteur animé
+- `src/hooks/useScrollHeader.ts` — détection scroll pour header morph
 
-## Phase 4 — Bascule Lovable Cloud → okei
+**Non touchés** : tous les hooks `useVehicleSearch`, `useFavorites`, `useSubscription`, toutes les pages autres que `/`, tous les edge functions, RLS, types Supabase.
 
-1. Toi : **Connectors → Lovable Cloud → Disable Cloud** (attention : irréversible côté Cloud)
-2. Toi : **Connectors → Supabase → Connect** ton projet okei
-3. `.env` se régénère automatiquement avec URL + anon key d'okei
-4. `src/integrations/supabase/types.ts` se régénère depuis le schéma okei
+## Étapes d'exécution
 
-## Phase 5 — Rejouer schéma + données sur okei
+1. Ajouter tokens CSS marketplace (fond neutre, ombres plus marquées, accent vert restreint) + utilitaires scroll
+2. Créer hooks `useCountUp`, `useScrollHeader`
+3. Refondre `HeroSearch` → photo plein écran + parallax + 3 QuickActionCards flottantes (recherche / carrosserie / comparer)
+4. Adapter `Header` pour transition transparent → solid au scroll
+5. Refondre `TrustBar` avec compteurs animés
+6. Refondre `WhyAutoRA` en 3 cards horizontales "promesses"
+7. Restyler `VehicleCard` (badges pills, prix gros)
+8. Ajouter marquee à `BrandCarousel`
+9. Vérifier en preview desktop + mobile + `prefers-reduced-motion`
 
-1. Lovable applique automatiquement les migrations Supabase au connect (à valider)
-2. Sinon : exécuter manuellement `combined_migrations.sql` dans le SQL editor okei
-3. Importer les CSV de données dans l'ordre des FK : profiles → user_roles → car_listings → favorites → … 
-4. Ré-upload des fichiers storage (script à part)
-5. Redéployer les 28 edge functions sur okei (Lovable le fait au prochain push)
+## Garde-fous
 
-## Phase 6 — Validation post-migration
+- Aucune modification de la logique de recherche : les 3 QuickActionCards déclenchent les mêmes `handleSearch` / `updateFilter` que la barre actuelle
+- Aucune modification de schéma / migration
+- i18n : toutes les nouvelles strings utilisent `useLanguage()` + clés ajoutées dans `fr.json` / `nl.json` / `de.json` / `en.json`
+- Mémoire projet "Elite Green luxe" → on garde Emerald-600 en accent ; on assouplit juste la densité de gradients verts (à confirmer ci-dessous)
 
-- `/admin` accessible avec ton compte (vérifier `user_roles`)
-- Une annonce existante s'affiche avec ses photos
-- Login Google fonctionne
-- Stripe webhook : pointer le webhook Stripe vers la nouvelle URL `https://okei….supabase.co/functions/v1/stripe-webhook` + mettre à jour `STRIPE_WEBHOOK_SECRET`
-- Re-tester sitemap, edge function `dynamic-sitemap`
+## Question avant exécution
 
-## Phase 7 — Reconfigurer les services externes
+L'image de réf est plus **claire / neutre** (fond clair, header noir compact), alors que le site actuel est **dark Elite Green**. Tu veux :
 
-- **Stripe Dashboard** : webhook URL → okei
-- **Google OAuth Console** : redirect URI → `https://okei….supabase.co/auth/v1/callback`
-- **Resend** : domain reste identique (`autora.be`)
-- **Vercel** : pas de changement (lit `.env` au build, qui sera mis à jour)
+- **A.** Garder le dark mode par défaut, juste adopter la composition marketplace (hero photo + cards flottantes + densité)
+- **B.** Passer en **light mode par défaut** comme la réf (fond clair, header dark sur hero puis blanc au scroll)
+- **C.** Hero light (comme réf) + reste du site dark
 
----
+Réponds A / B / C et je lance l'implémentation.
 
-## Risques
+ne fais pas trop comme autoscout apres ils vont crier au ^plagiat 
 
-| Risque | Impact | Mitigation |
-|---|---|---|
-| Mots de passe Auth non exportables | Tous les users doivent reset password | Email de communication "migration sécurité" |
-| Photos storage volumineuses | Téléchargement long + coûts bande passante | Script batch nocturne |
-| URLs photos hardcodées dans `car_listings.photos[]` | Liens cassés post-migration | Script SQL UPDATE pour réécrire les URLs jbds → okei |
-| Stripe webhooks en cours pendant bascule | Events manqués | Faire la bascule en heure creuse, replay des events Stripe ensuite |
-| Lovable Cloud disable = irréversible | Si problème avec okei, retour difficile | Faire un dump complet de jbds avant disable |
-
----
-
-## Recommandation honnête
-
-Cette migration représente **plusieurs heures de travail synchronisé** (toi + moi) avec un risque de downtime et de perte de données utilisateur (mots de passe).
-
-**Question** : es-tu sûr de vouloir migrer maintenant, alors que tu es en phase finale de lancement ? Si la seule raison est "je n'ai pas accès à jbds", la solution la plus simple serait que je te montre comment **récupérer l'accès au projet jbds via le dashboard Lovable Cloud** (Connectors → Lovable Cloud → View Backend), où tu retrouves les mêmes outils que Supabase dashboard mais déjà connectés.
-
-Veux-tu :
-- **(A)** que je te guide d'abord pour accéder à jbds via Lovable Cloud (5 min, zéro risque)
-- **(B)** que je commence par la **Phase 1** (alignement codebase sans toucher au runtime) en attendant que tu prépares okei
-- **(C)** déclencher le plan complet maintenant
+&nbsp;

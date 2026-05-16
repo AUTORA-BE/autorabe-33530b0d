@@ -77,8 +77,8 @@ const Header = () => {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-background/80 backdrop-blur-xl border-b border-border/30 shadow-sm"
-          : "bg-transparent border-b border-transparent"
+          ? "bg-background/85 backdrop-blur-xl border-b border-border/30 shadow-sm text-foreground"
+          : "bg-gradient-to-b from-black/40 via-black/15 to-transparent border-b border-transparent text-white"
       }`}
       style={{ paddingTop: 'var(--safe-area-top, env(safe-area-inset-top, 0px))' }}
     >
@@ -89,14 +89,14 @@ const Header = () => {
             <img
               src={autoraLogo}
               alt="AutoRA Logo"
-              className={`rounded-2xl object-cover transition-all duration-300 group-hover:scale-105 dark:brightness-110 drop-shadow-sm ${
-                scrolled ? "w-7 h-7" : "w-8 h-8 sm:w-9 sm:h-9"
+              className={`rounded-2xl object-cover transition-all duration-300 group-hover:scale-105 drop-shadow-md ${
+                scrolled ? "w-7 h-7 dark:brightness-110" : "w-8 h-8 sm:w-9 sm:h-9 brightness-110"
               }`}
             />
             <span className={`font-semibold tracking-wider transition-all duration-300 ${
-              scrolled ? "text-base" : "text-lg sm:text-xl"
+              scrolled ? "text-base" : "text-lg sm:text-xl drop-shadow-md"
             }`}>
-              <span className="text-foreground">Auto</span><span className="text-primary">RA</span>
+              <span className={scrolled ? "text-foreground" : "text-white"}>Auto</span><span className="text-primary">RA</span>
             </span>
           </Link>
 

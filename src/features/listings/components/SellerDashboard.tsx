@@ -231,7 +231,7 @@ export default function SellerDashboard() {
     pending: listings.filter((l: SellerListing) => l.status === "pending").length,
     rejected: listings.filter((l: SellerListing) => l.status === "rejected").length,
     sold: listings.filter((l: SellerListing) => l.status === "sold").length,
-    archived: listings.filter((l: SellerListing) => l.status === "archived").length,
+    archived: 0,
   }), [listings]);
 
   // Filtered listings
