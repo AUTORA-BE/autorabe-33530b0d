@@ -452,7 +452,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
     <>
       <section
         ref={heroRef}
-        className="relative flex flex-col justify-end overflow-hidden min-h-[88vh] sm:min-h-[92vh] -mt-16 pt-16"
+        className="relative flex flex-col justify-end overflow-hidden min-h-[88vh] sm:min-h-[92vh]"
         style={{ contain: "layout style" }}
       >
         {/* ── Immersive background photo with parallax ── */}
