@@ -4,8 +4,9 @@
  */
 
 import { memo, useState, useEffect, useRef, useCallback } from "react";
-import { Search, ChevronDown, X, Clock, TrendingUp, ArrowRight, ShieldCheck, MapPin, Sparkles } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Link } from "react-router-dom";
+import { Search, ChevronDown, X, Clock, TrendingUp, ArrowRight, ShieldCheck, MapPin, Sparkles, Car, Truck, Caravan, GitCompareArrows } from "lucide-react";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { getAllBrands, getModelsByBrand } from "@/utils/carUtils";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { BUDGET_OPTIONS } from "../types/search.types";
@@ -14,6 +15,7 @@ import { parseVoiceTranscript } from "@/lib/voiceEntityDetection";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 import { trackEvent, EVENTS } from "@/lib/analytics";
+import heroMarketplace from "@/assets/hero-marketplace.jpg";
 
 /* ─── localStorage search history ─── */
 const HISTORY_KEY = "autora_search_history";
