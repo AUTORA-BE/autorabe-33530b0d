@@ -19,7 +19,8 @@ import { AnimatePresence } from "framer-motion";
 import { PullToRefresh } from "@/components/PullToRefresh";
 import { DebugOverlay } from "@/components/DebugOverlay";
 
-const FuelPriceStrip = lazy(() => import("@/components/FuelPriceStrip"));
+const FuelPricesSection = lazy(() => import("@/components/home/FuelPricesSection"));
+const FeaturedVehiclesSection = lazy(() => import("@/components/home/FeaturedVehiclesSection"));
 
 
 const TrustBar = lazy(() => import("@/components/TrustBar"));
@@ -177,16 +178,27 @@ const Index = () => {
         </div>
 
 
+        {/* Véhicules en vedette — NOUVELLE section premium juste sous le hero */}
+        <Suspense fallback={<CarouselSkeleton />}>
+          <FeaturedVehiclesSection />
+        </Suspense>
+
+        {/* EV brand quick-filter strip (déplacé ici : position 2) */}
+        <Suspense fallback={null}>
+          <EvBrandSection
+            onBrandFilter={(brand) => updateFilter("brand", brand)}
+            selectedBrand={filters.brand}
+          />
+        </Suspense>
+
+        {/* Prix carburants Belgique — NOUVELLE section */}
+        <Suspense fallback={<div className="h-96" />}>
+          <FuelPricesSection />
+        </Suspense>
+
         {/* Trust Bar — minimal badges */}
         <Suspense fallback={<TrustBarSkeleton />}>
           <TrustBar />
-        </Suspense>
-
-        {/* Fuel Price Strip */}
-        <Suspense fallback={<div className="h-12" />}>
-          <ScrollReveal delay={0.05}>
-            <FuelPriceStrip />
-          </ScrollReveal>
         </Suspense>
 
         {/* Swipe Discovery — mobile only, deferred to avoid loading framer-motion-heavy chunk on desktop */}
