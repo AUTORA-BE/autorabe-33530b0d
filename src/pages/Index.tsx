@@ -242,14 +242,6 @@ const Index = () => {
           </ScrollReveal>
         </Suspense>
 
-        {/* EV brand quick-filter strip */}
-        <Suspense fallback={null}>
-          <EvBrandSection
-            onBrandFilter={(brand) => updateFilter("brand", brand)}
-            selectedBrand={filters.brand}
-          />
-        </Suspense>
-
         {/* Testimonials — masqués tant qu'on n'a pas ≥ 5 vrais avis */}
         {/* <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 500px" }}>
           <Suspense fallback={<TestimonialsSkeleton />}>
