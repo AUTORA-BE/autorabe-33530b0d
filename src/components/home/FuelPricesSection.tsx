@@ -1,163 +1,126 @@
 /**
- * FuelPricesSection — Prix carburants Belgique (homepage).
- * Sombre, 4 cartes avec sparklines inline SVG, données depuis Supabase si dispo
- * sinon fallback statique src/data/fuelPrices.ts.
+ * FuelPricesSection — Prix carburants Belgique (fond clair, sparklines SVG inline).
  * @module components/home/FuelPricesSection
  */
 
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { Droplets, Flame, Zap, TrendingUp, TrendingDown } from 'lucide-react';
+import { Droplet, Flame, Zap } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { FUEL_PRICES, type FuelPriceEntry } from '@/data/fuelPrices';
-import { cn } from '@/lib/utils';
+import { FUEL_PRICES, type FuelPrice } from '@/data/fuelPrices';
 
-const ICONS: Record<FuelPriceEntry['key'], { Icon: typeof Droplets; tint: string }> = {
-  diesel: { Icon: Droplets, tint: 'bg-red-500/10 text-red-400' },
-  essence95: { Icon: Droplets, tint: 'bg-emerald-500/10 text-emerald-400' },
-  essence98: { Icon: Flame, tint: 'bg-orange-500/10 text-orange-400' },
-  electric: { Icon: Zap, tint: 'bg-primary/15 text-primary' },
-};
+const ICONS = { droplet: Droplet, flame: Flame, zap: Zap } as const;
 
-function Sparkline({ data, positive }: { data: number[]; positive: boolean }) {
-  const w = 120;
-  const h = 36;
-  const min = Math.min(...data);
-  const max = Math.max(...data);
+function buildSparklinePath(values: number[]): string {
+  if (values.length === 0) return '';
+  const width = 100;
+  const height = 40;
+  const padding = 2;
+  const min = Math.min(...values);
+  const max = Math.max(...values);
   const range = max - min || 1;
-  const step = w / (data.length - 1);
-  const points = data
-    .map((v, i) => `${(i * step).toFixed(1)},${(h - ((v - min) / range) * h).toFixed(1)}`)
+  const stepX = (width - padding * 2) / (values.length - 1);
+  return values
+    .map((v, i) => {
+      const x = padding + i * stepX;
+      const y = padding + (height - padding * 2) * (1 - (v - min) / range);
+      return `${i === 0 ? 'M' : 'L'} ${x.toFixed(2)} ${y.toFixed(2)}`;
+    })
     .join(' ');
-  const stroke = positive ? 'hsl(0 72% 60%)' : 'hsl(var(--primary))';
+}
+
+function FuelCard({ fuel }: { fuel: FuelPrice }) {
+  const Icon = ICONS[fuel.iconName];
+  const isDown = fuel.trend === 'down';
+  const path = buildSparklinePath(fuel.sparkline);
+  const stroke = isDown ? 'rgb(16 185 129)' : 'rgb(239 68 68)';
+  const badgeClass = isDown
+    ? 'bg-emerald-500/10 text-emerald-600'
+    : 'bg-red-500/10 text-red-600';
+
   return (
-    <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} className="overflow-visible">
-      <polyline
-        fill="none"
-        stroke={stroke}
-        strokeWidth={1.5}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        points={points}
-      />
-    </svg>
+    <article className="rounded-2xl border border-neutral-200 bg-white p-6 transition-all duration-300 hover:border-emerald-500/50 hover:-translate-y-1 hover:shadow-md">
+      <div className="flex justify-between items-start">
+        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${fuel.iconColor}`}>
+          <Icon className="w-[18px] h-[18px]" strokeWidth={1.75} />
+        </div>
+        <span className={`text-xs font-medium px-2 py-1 rounded-full ${badgeClass}`}>
+          {isDown ? '▼' : '▲'}{fuel.variation.toFixed(1)}%
+        </span>
+      </div>
+
+      <p className="text-xs font-medium uppercase tracking-wider text-neutral-500 mt-6">
+        {fuel.label}
+      </p>
+
+      <div className="flex items-baseline gap-1 mt-1">
+        <span className="text-4xl font-semibold text-neutral-900 tabular-nums">
+          {fuel.price.toFixed(fuel.decimals)}
+        </span>
+        <span className="text-sm text-neutral-500">{fuel.unit}</span>
+      </div>
+
+      <svg viewBox="0 0 100 40" className="mt-6 w-full h-12" aria-hidden="true">
+        <path d={path} stroke={stroke} strokeWidth={1.5} fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </article>
   );
 }
 
 const FuelPricesSection = () => {
-  const [prices, setPrices] = useState<FuelPriceEntry[]>(FUEL_PRICES);
+  const [prices, setPrices] = useState<FuelPrice[]>(FUEL_PRICES);
+  const [formattedDate, setFormattedDate] = useState<string>('');
 
   useEffect(() => {
-    let cancelled = false;
+    setFormattedDate(
+      new Date().toLocaleDateString('fr-BE', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+    );
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
     (async () => {
       const { data } = await supabase
         .from('fuel_prices')
         .select('diesel, essence95, essence98, electric_home')
         .limit(1)
         .maybeSingle();
-      if (cancelled || !data) return;
-      const d = data as { diesel: number; essence95: number; essence98: number; electric_home: number };
+      if (!mounted || !data) return;
       setPrices((prev) =>
         prev.map((p) => {
           const next =
-            p.key === 'diesel' ? d.diesel :
-            p.key === 'essence95' ? d.essence95 :
-            p.key === 'essence98' ? d.essence98 :
-            d.electric_home;
-          return next != null ? { ...p, price: next } : p;
+            p.id === 'diesel-b7' ? data.diesel :
+            p.id === 'essence-e10' ? data.essence95 :
+            p.id === 'essence-e98' ? data.essence98 :
+            p.id === 'electricite' ? data.electric_home : null;
+          return next != null ? { ...p, price: Number(next) } : p;
         }),
       );
     })();
-    return () => { cancelled = true; };
+    return () => { mounted = false; };
   }, []);
 
-  const today = new Date().toLocaleDateString('fr-BE', { day: '2-digit', month: '2-digit', year: 'numeric' });
-
   return (
-    <section className="bg-[#0a0a0a] text-white py-16 sm:py-24 border-y border-white/5">
-      <div className="container mx-auto max-w-[1280px] px-6 sm:px-12">
-        {/* Header */}
-        <div className="mb-10 sm:mb-14 max-w-2xl">
-          <motion.p
-            initial={{ opacity: 0, y: 6 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-[11px] uppercase tracking-[0.25em] text-primary font-medium mb-3"
-          >
+    <section className="bg-neutral-50 py-16 md:py-24">
+      <div className="max-w-7xl mx-auto px-6 md:px-12">
+        <div className="space-y-4 max-w-2xl mb-12">
+          <p className="text-xs md:text-sm font-medium uppercase tracking-[0.15em] text-emerald-500">
             Données temps réel
-          </motion.p>
-          <motion.h2
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.05 }}
-            className="font-serif text-3xl sm:text-5xl font-light tracking-tight"
-          >
+          </p>
+          <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-normal leading-tight text-neutral-900">
             Prix carburants Belgique
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="text-white/60 text-base font-light mt-3 max-w-xl"
-          >
+          </h2>
+          <p className="text-base md:text-lg leading-relaxed text-neutral-600">
             Moyennes nationales mises à jour quotidiennement — utilisées dans le calculateur TCO de chaque annonce.
-          </motion.p>
+          </p>
         </div>
 
-        {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-          {prices.map((fuel, i) => {
-            const { Icon, tint } = ICONS[fuel.key];
-            const positive = fuel.variation >= 0;
-            const VarIcon = positive ? TrendingUp : TrendingDown;
-            return (
-              <motion.article
-                key={fuel.key}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-50px' }}
-                transition={{ delay: i * 0.07, duration: 0.5 }}
-                className="group rounded-2xl border border-white/10 bg-white/[0.02] p-6 hover:border-primary/40 hover:bg-white/[0.04] transition-all duration-300"
-              >
-                <div className="flex items-start justify-between mb-5">
-                  <div className={cn('w-10 h-10 rounded-xl flex items-center justify-center', tint)}>
-                    <Icon className="w-5 h-5" strokeWidth={1.5} />
-                  </div>
-                  <span
-                    className={cn(
-                      'inline-flex items-center gap-1 text-[11px] font-medium px-2 py-1 rounded-full',
-                      positive ? 'bg-red-500/10 text-red-400' : 'bg-emerald-500/10 text-emerald-400',
-                    )}
-                  >
-                    <VarIcon className="w-3 h-3" strokeWidth={2} />
-                    {positive ? '+' : ''}{fuel.variation.toFixed(1)}%
-                  </span>
-                </div>
-
-                <p className="text-[11px] uppercase tracking-[0.15em] text-white/40 font-medium mb-2">
-                  {fuel.label}
-                </p>
-
-                <div className="flex items-baseline gap-1.5 mb-5">
-                  <span className="font-serif text-4xl font-light tabular-nums">
-                    {fuel.price.toFixed(fuel.key === 'electric' ? 2 : 3)}
-                  </span>
-                  <span className="text-sm text-white/40">{fuel.unit}</span>
-                </div>
-
-                <div className="-mx-1">
-                  <Sparkline data={fuel.series} positive={positive} />
-                </div>
-              </motion.article>
-            );
-          })}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {prices.map((f) => <FuelCard key={f.id} fuel={f} />)}
         </div>
 
-        {/* Footer */}
-        <p className="mt-10 text-xs text-white/40 font-light">
-          Dernière mise à jour : {today} · Source : données officielles SPF Économie + opérateurs de bornes.
+        <p className="mt-12 text-xs text-neutral-500 text-center">
+          {formattedDate && <>Dernière mise à jour : {formattedDate} · </>}
+          Source : données officielles SPF Économie + opérateurs de bornes.
         </p>
       </div>
     </section>
