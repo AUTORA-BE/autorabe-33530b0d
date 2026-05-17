@@ -16,6 +16,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 import { trackEvent, EVENTS } from "@/lib/analytics";
 import heroMarketplace from "@/assets/hero-marketplace.jpg";
+import FloatingTrustChip from "@/features/landing/components/FloatingTrustChip";
 
 /* ─── localStorage search history ─── */
 const HISTORY_KEY = "autora_search_history";
@@ -484,6 +485,11 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
               "radial-gradient(ellipse at 80% 30%, hsl(160 84% 30% / 0.15) 0%, transparent 55%)",
           }}
         />
+
+        {/* ── Floating trust chip — live annonce counter ── */}
+        <div className="absolute top-[14%] sm:top-[18%] left-1/2 -translate-x-1/2 z-20">
+          <FloatingTrustChip count={12482} />
+        </div>
 
         {/* ── Editorial title (left-aligned, white) ── */}
         <motion.div
