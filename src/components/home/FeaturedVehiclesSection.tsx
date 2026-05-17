@@ -1,61 +1,108 @@
 /**
- * FeaturedVehiclesSection — Véhicules en vedette (homepage).
- * Affiche les 6 dernières annonces approuvées dans une grille premium claire.
+ * FeaturedVehiclesSection — homepage section premium "Véhicules en vedette".
+ * Fond clair, en-tête éditorial AutoRA, grille 4 cols desktop / scroll horizontal mobile.
  * @module components/home/FeaturedVehiclesSection
  */
 
-import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
-import { usePopularVehicles } from '@/features/listings/hooks/usePopularVehicles';
-import CarCard from '@/features/listings/components/CarCard';
-import { CarCardSkeleton } from '@/components/skeletons/HomeSkeleton';
-import { useFavorites } from '@/features/favorites';
-import { useFavoriteCounts } from '@/features/favorites/hooks/useFavoriteCounts';
+import { ArrowRight, MapPin, ShieldCheck } from 'lucide-react';
+import { useFeaturedListings } from '@/hooks/useFeaturedListings';
 import { useLocalizedVehicleHref } from '@/lib/useLocalizedHref';
-import { useNavigate } from 'react-router-dom';
+import type { Vehicle } from '@/features/listings/types/vehicle.types';
 
-const FeaturedVehiclesSection = () => {
-  const { vehicles, isLoading } = usePopularVehicles({ limit: 6 });
-  const { isFavorite, toggleFavorite } = useFavorites();
-  const listingIds = useMemo(() => vehicles.map((v) => v.id), [vehicles]);
-  const favCounts = useFavoriteCounts(listingIds);
-  const vehicleHref = useLocalizedVehicleHref();
-  const navigate = useNavigate();
+const FALLBACK_IMG =
+  'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800&h=500&fit=crop';
+
+const formatPrice = (p: number) =>
+  new Intl.NumberFormat('fr-BE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(p);
+
+const formatKm = (km: number) =>
+  `${new Intl.NumberFormat('fr-BE').format(km)} km`;
+
+function FeaturedListingCard({ vehicle, href }: { vehicle: Vehicle; href: string }) {
+  const isElectric = /lectri/i.test(vehicle.fuelType);
+  const motorLabel = isElectric ? '100% Électrique' : vehicle.fuelType;
 
   return (
-    <section className="bg-[#fafafa] text-neutral-900 py-16 sm:py-24">
-      <div className="container mx-auto max-w-[1280px] px-6 sm:px-12">
+    <Link
+      to={href}
+      className="group block rounded-2xl border border-neutral-200 bg-white shadow-sm overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-emerald-500/50"
+    >
+      <div className="relative aspect-[16/10] bg-neutral-100 overflow-hidden">
+        <img
+          src={vehicle.image || FALLBACK_IMG}
+          alt={`${vehicle.brand} ${vehicle.model} ${vehicle.year}`}
+          loading="lazy"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+        />
+        {vehicle.hasCarPass && (
+          <span className="absolute top-3 left-3 inline-flex items-center gap-1 bg-emerald-500/95 text-neutral-950 text-[11px] font-medium px-2.5 py-1 rounded-full backdrop-blur-sm">
+            <ShieldCheck className="w-3 h-3" strokeWidth={2} />
+            Car-Pass
+          </span>
+        )}
+        <span
+          className={
+            isElectric
+              ? 'absolute top-3 right-3 bg-neutral-950/80 text-emerald-400 border border-emerald-500/30 text-[11px] font-medium px-2.5 py-1 rounded-full backdrop-blur-sm'
+              : 'absolute top-3 right-3 bg-neutral-950/70 text-white text-[11px] font-medium px-2.5 py-1 rounded-full backdrop-blur-sm capitalize'
+          }
+        >
+          {motorLabel}
+        </span>
+      </div>
+
+      <div className="p-5">
+        <h3 className="font-semibold text-base text-neutral-900 line-clamp-1">
+          {vehicle.brand} {vehicle.model}
+        </h3>
+        <p className="text-xs text-neutral-500 mt-1">
+          {vehicle.year} · {formatKm(vehicle.mileage)} · <span className="capitalize">{vehicle.fuelType}</span>
+        </p>
+        <p className="text-2xl font-semibold text-neutral-900 mt-3 tabular-nums">
+          {formatPrice(vehicle.price)}
+        </p>
+        <p className="text-xs text-neutral-500 mt-2 inline-flex items-center gap-1">
+          <MapPin className="w-3 h-3" strokeWidth={1.75} />
+          {vehicle.location}
+        </p>
+      </div>
+    </Link>
+  );
+}
+
+function CardSkeleton() {
+  return (
+    <div className="rounded-2xl border border-neutral-200 bg-white overflow-hidden">
+      <div className="aspect-[16/10] bg-neutral-200 animate-pulse" />
+      <div className="p-5 space-y-3">
+        <div className="h-4 w-3/4 bg-neutral-200 rounded animate-pulse" />
+        <div className="h-3 w-1/2 bg-neutral-200 rounded animate-pulse" />
+        <div className="h-6 w-1/3 bg-neutral-200 rounded animate-pulse" />
+      </div>
+    </div>
+  );
+}
+
+const FeaturedVehiclesSection = () => {
+  const { listings, loading, error } = useFeaturedListings(8);
+  const vehicleHref = useLocalizedVehicleHref();
+
+  return (
+    <section className="bg-neutral-50 py-16 md:py-24">
+      <div className="max-w-7xl mx-auto px-6 md:px-12">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-10 sm:mb-14">
-          <div className="max-w-xl">
-            <motion.p
-              initial={{ opacity: 0, y: 6 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-[11px] uppercase tracking-[0.25em] text-primary font-medium mb-3"
-            >
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
+          <div className="space-y-4 max-w-2xl">
+            <p className="text-xs md:text-sm font-medium uppercase tracking-[0.15em] text-emerald-500">
               Sélection de la semaine
-            </motion.p>
-            <motion.h2
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.05 }}
-              className="font-serif text-3xl sm:text-5xl font-light tracking-tight text-neutral-900"
-            >
+            </p>
+            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-normal leading-tight text-neutral-900">
               Véhicules en vedette
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="text-neutral-600 text-base font-light mt-3"
-            >
+            </h2>
+            <p className="text-base md:text-lg leading-relaxed text-neutral-600">
               Une sélection de voitures Car-Pass vérifiées, prêtes pour les zones LEZ belges.
-            </motion.p>
+            </p>
           </div>
 
           <Link
@@ -64,58 +111,52 @@ const FeaturedVehiclesSection = () => {
               e.preventDefault();
               document.getElementById('results-section')?.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="group inline-flex items-center gap-2 text-sm font-medium text-primary hover:gap-3 transition-all"
+            className="hidden md:inline-flex items-center gap-2 text-emerald-500 hover:text-emerald-600 font-medium transition-colors group"
           >
             Voir toutes les annonces
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" strokeWidth={1.75} />
           </Link>
         </div>
 
-        {/* Grid */}
-        {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <CarCardSkeleton key={i} />
-            ))}
+        {/* Content */}
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {Array.from({ length: 8 }).map((_, i) => <CardSkeleton key={i} />)}
           </div>
-        ) : vehicles.length === 0 ? (
-          <p className="text-center text-neutral-500 text-sm py-10">
+        ) : error ? (
+          <p className="text-center text-neutral-500 text-sm py-12">
+            Impossible de charger les annonces pour le moment.
+          </p>
+        ) : listings.length === 0 ? (
+          <p className="text-center text-neutral-500 text-sm py-12">
             Aucune annonce disponible pour le moment.
           </p>
         ) : (
           <>
-            {/* Desktop / tablet grid */}
-            <div className="hidden sm:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-              {vehicles.slice(0, 6).map((vehicle, idx) => (
-                <CarCard
-                  key={vehicle.id}
-                  car={vehicle}
-                  isFavorite={isFavorite(vehicle.id)}
-                  onToggleFavorite={toggleFavorite}
-                  onClick={() => navigate(vehicleHref(vehicle))}
-                  favoriteCount={favCounts[vehicle.id]}
-                  eager={idx === 0}
-                />
+            <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {listings.map((v) => (
+                <FeaturedListingCard key={v.id} vehicle={v} href={vehicleHref(v)} />
               ))}
             </div>
-
-            {/* Mobile horizontal scroll */}
-            <div
-              className="sm:hidden flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-6 px-6 pb-2"
-              style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
-            >
-              {vehicles.slice(0, 6).map((vehicle, idx) => (
-                <div key={vehicle.id} className="flex-shrink-0 w-[78vw] snap-start">
-                  <CarCard
-                    car={vehicle}
-                    isFavorite={isFavorite(vehicle.id)}
-                    onToggleFavorite={toggleFavorite}
-                    onClick={() => navigate(vehicleHref(vehicle))}
-                    favoriteCount={favCounts[vehicle.id]}
-                    eager={idx === 0}
-                  />
+            <div className="md:hidden flex overflow-x-auto snap-x snap-mandatory gap-4 -mx-6 px-6 pb-4 scrollbar-hide">
+              {listings.map((v) => (
+                <div key={v.id} className="min-w-[280px] snap-start">
+                  <FeaturedListingCard vehicle={v} href={vehicleHref(v)} />
                 </div>
               ))}
+            </div>
+            <div className="md:hidden mt-6 flex justify-center">
+              <Link
+                to="/"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById('results-section')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="inline-flex items-center gap-2 text-emerald-500 hover:text-emerald-600 font-medium transition-colors"
+              >
+                Voir toutes les annonces
+                <ArrowRight className="w-4 h-4" strokeWidth={1.75} />
+              </Link>
             </div>
           </>
         )}
