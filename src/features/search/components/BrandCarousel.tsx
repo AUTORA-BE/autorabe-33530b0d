@@ -51,12 +51,6 @@ const BRANDS: BrandConfig[] = [
   { name: "Fiat", logo: fiatLogo, color: "#8B0000" },
   { name: "Volvo", logo: volvoLogo, color: "#003057" },
   { name: "Škoda", logo: skodaLogo, color: "#4BA82E" },
-  // Pure EV brands — text-only display
-  { name: "Tesla", logo: null, color: "#CC0000" },
-  { name: "Polestar", logo: null, color: "#0A0A0A" },
-  { name: "BYD", logo: null, color: "#1B3A8C" },
-  { name: "NIO", logo: null, color: "#00A0E9" },
-  { name: "XPENG", logo: null, color: "#00A0FF" },
 ];
 
 export interface BrandCarouselProps {
@@ -137,22 +131,16 @@ const BrandCarousel = memo(function BrandCarousel({
                     >
                       <div className={cn(
                         "w-14 h-14 sm:w-18 sm:h-18 flex items-center justify-center mb-2 sm:mb-3 rounded-2xl p-2.5 sm:p-3.5 transition-all duration-300 shadow-sm",
-                        "bg-white dark:bg-white/10",
+                        "bg-white",
                         selectedBrand === brand.name && "ring-2 ring-primary/40"
                       )}>
-                        {brand.logo ? (
-                          <img
-                            src={brand.logo}
-                            alt={`${brand.name} logo`}
-                            className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110"
-                            loading="lazy"
-                            draggable="false"
-                          />
-                        ) : (
-                          <span className="text-[11px] sm:text-xs font-bold tracking-tight text-center leading-none px-1 text-foreground dark:text-foreground transition-transform duration-300 group-hover:scale-110 inline-block">
-                            {brand.name}
-                          </span>
-                        )}
+                        <img
+                          src={brand.logo}
+                          alt={`${brand.name} logo`}
+                          className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110"
+                          loading="lazy"
+                          draggable="false"
+                        />
                       </div>
                       
                       <span className={cn(
@@ -170,20 +158,20 @@ const BrandCarousel = memo(function BrandCarousel({
             </CarouselContent>
           </Carousel>
 
-          {/* Thin, minimal navigation arrows */}
+          {/* Navigation arrows — glass effect for visibility on light & dark */}
           <button
             onClick={() => api?.scrollPrev()}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 w-8 h-8 flex items-center justify-center text-muted-foreground/40 hover:text-foreground transition-colors"
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:-translate-x-4 w-10 h-10 rounded-full bg-card/80 backdrop-blur border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/40 hover:bg-card transition-all shadow-sm"
             aria-label="Marques précédentes"
           >
-            <ChevronLeft className="w-5 h-5" strokeWidth={1} />
+            <ChevronLeft className="w-4 h-4" strokeWidth={1.5} />
           </button>
           <button
             onClick={() => api?.scrollNext()}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 w-8 h-8 flex items-center justify-center text-muted-foreground/40 hover:text-foreground transition-colors"
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-4 w-10 h-10 rounded-full bg-card/80 backdrop-blur border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/40 hover:bg-card transition-all shadow-sm"
             aria-label="Marques suivantes"
           >
-            <ChevronRight className="w-5 h-5" strokeWidth={1} />
+            <ChevronRight className="w-4 h-4" strokeWidth={1.5} />
           </button>
         </div>
 

@@ -48,7 +48,7 @@ const TrustBar = memo(() => {
               initial={{ opacity: 0, y: 8 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.07 }}
+              transition={{ duration: 0.5, delay: i * 0.075 }}
               className="relative flex-shrink-0 snap-start flex items-center gap-3.5 px-5 py-3.5 rounded-2xl border border-border/15 bg-card/40 backdrop-blur-sm overflow-hidden group hover:border-primary/15 transition-colors duration-300"
             >
               {/* Subtle gradient background */}

@@ -5,7 +5,7 @@
  */
 
 import { memo, useState, useCallback, useRef, useEffect } from "react";
-import { ImageOff } from "lucide-react";
+import { Car } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -60,6 +60,10 @@ const CarImage = memo(function CarImage({
     }
   }, [src]);
 
+  // Empty/null src → show placeholder directly (no failed network request)
+  const isEmpty = !src || src.trim() === "";
+  const showPlaceholder = isEmpty || hasError;
+
   return (
     <div
       className={cn(
@@ -74,7 +78,7 @@ const CarImage = memo(function CarImage({
       onKeyDown={onClick ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick(); } } : undefined}
     >
       {/* Blur placeholder layer — visible until real image loads */}
-      {!isLoaded && !hasError && (
+      {!isLoaded && !showPlaceholder && (
         <div
           className="absolute inset-0 skeleton-shimmer"
           style={{
@@ -86,11 +90,11 @@ const CarImage = memo(function CarImage({
         />
       )}
 
-      {/* Error fallback */}
-      {hasError ? (
+      {/* Empty / error fallback */}
+      {showPlaceholder ? (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-muted-foreground bg-muted">
-          <ImageOff className="w-8 h-8" />
-          <span className="text-xs font-medium">Image non disponible</span>
+          <Car className="w-12 h-12 text-muted-foreground/40" strokeWidth={1.5} />
+          <span className="text-xs text-muted-foreground">Photo à venir</span>
         </div>
       ) : (
         <img
@@ -112,7 +116,7 @@ const CarImage = memo(function CarImage({
       )}
 
       {/* Primary badge */}
-      {isPrimary && isLoaded && !hasError && (
+      {isPrimary && isLoaded && !showPlaceholder && (
         <Badge className="absolute bottom-2 left-2 bg-primary/90 text-primary-foreground border-0 text-xs backdrop-blur-sm">
           Photo principale
         </Badge>

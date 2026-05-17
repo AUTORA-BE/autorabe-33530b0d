@@ -36,7 +36,8 @@ const SellCarCTA = memo(() => {
   ];
 
   return (
-    <section className="container mx-auto px-6 sm:px-8 py-20 sm:py-32">
+    <section className="relative px-6 sm:px-8 py-20 sm:py-32 bg-[radial-gradient(ellipse_at_top,_hsl(var(--primary)/0.08),transparent_50%)]">
+      <div className="container mx-auto">
       <motion.div
         {...fadeUp(0)}
         className="relative overflow-hidden rounded-3xl border border-border/40 bg-card/60 backdrop-blur-xl shadow-xl hover:shadow-2xl transition-shadow duration-500"
@@ -138,6 +139,7 @@ const SellCarCTA = memo(() => {
           </div>
         </div>
       </motion.div>
+      </div>
     </section>
   );
 });

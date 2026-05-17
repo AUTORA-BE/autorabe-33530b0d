@@ -142,7 +142,14 @@ const PopularVehicles = memo(function PopularVehicles({
             style={{ scrollbarWidth: "none", msOverflowStyle: "none", WebkitOverflowScrolling: "touch" }}
           >
             {vehicles.map((vehicle, idx) => (
-              <div key={vehicle.id} className="flex-shrink-0 w-[300px] sm:w-[340px] snap-start">
+              <motion.div
+                key={vehicle.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.5, delay: idx * 0.075, ease: [0.25, 0.1, 0.25, 1] }}
+                className="flex-shrink-0 w-[300px] sm:w-[340px] snap-start"
+              >
                 <CarCard
                   car={vehicle}
                   isFavorite={isFavorite(vehicle.id)}
@@ -151,7 +158,7 @@ const PopularVehicles = memo(function PopularVehicles({
                   favoriteCount={favCounts[vehicle.id]}
                   eager={idx === 0}
                 />
-              </div>
+              </motion.div>
             ))}
           </div>
         )}

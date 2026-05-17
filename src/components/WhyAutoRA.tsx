@@ -1,23 +1,13 @@
 /**
- * "Why AutoRA" — luxe section with horizontal swipe on mobile, refined grid on desktop
+ * "Why AutoRA" — editorial numbered list, automotive luxury style
  * @module components
  */
 
 import { memo, useRef } from "react";
-import {   Shield, Leaf, FileCheck, Zap, Globe, Calculator } from "lucide-react";
+import { Shield, Leaf, FileCheck, Zap, Globe, Calculator } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useIsMobile } from "@/hooks/use-mobile";
-
-const container = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.08, delayChildren: 0.2 } },
-};
-
-const item = {
-  hidden: { opacity: 0, y: 20 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.25, 0.1, 0.25, 1] } },
-};
 
 const WhyAutoRA = memo(() => {
   const { language } = useLanguage();
@@ -41,7 +31,7 @@ const WhyAutoRA = memo(() => {
         "Verifizierter Kilometerstand für jedes Fahrzeug. Absolute Transparenz.",
         "Verified mileage history for every vehicle. Absolute transparency."
       ),
-      accent: "from-primary/20 to-primary/5",
+      color: "text-primary",
     },
     {
       icon: Leaf,
@@ -52,7 +42,7 @@ const WhyAutoRA = memo(() => {
         "Sofortige Prüfung für Brüssel, Antwerpen und Gent.",
         "Instant check for Brussels, Antwerp and Ghent."
       ),
-      accent: "from-emerald-500/20 to-emerald-500/5",
+      color: "text-emerald-500",
     },
     {
       icon: Zap,
@@ -63,7 +53,7 @@ const WhyAutoRA = memo(() => {
         "Kontaktieren Sie den Verkäufer in Echtzeit. Durchschnittliche Antwortzeit 3 Minuten.",
         "Contact the seller in real time. Average response in 3 minutes."
       ),
-      accent: "from-amber-500/20 to-amber-500/5",
+      color: "text-amber-500",
     },
     {
       icon: Calculator,
@@ -74,7 +64,7 @@ const WhyAutoRA = memo(() => {
         "Gesamtkosten schätzen: Steuern, Versicherung, Kraftstoff und Abschreibung.",
         "Estimate total cost: taxes, insurance, fuel and depreciation."
       ),
-      accent: "from-blue-500/20 to-blue-500/5",
+      color: "text-blue-500",
     },
     {
       icon: FileCheck,
@@ -85,7 +75,7 @@ const WhyAutoRA = memo(() => {
         "Jede Anzeige zeigt die Euro-Norm. Filtern Sie nach Bedarf.",
         "Every listing displays its Euro standard. Filter to your needs."
       ),
-      accent: "from-violet-500/20 to-violet-500/5",
+      color: "text-violet-500",
     },
     {
       icon: Globe,
@@ -96,7 +86,7 @@ const WhyAutoRA = memo(() => {
         "Verfügbar auf Französisch, Niederländisch, Deutsch und Englisch.",
         "Available in French, Dutch, German and English."
       ),
-      accent: "from-rose-500/20 to-rose-500/5",
+      color: "text-rose-500",
     },
   ];
 
@@ -114,26 +104,19 @@ const WhyAutoRA = memo(() => {
     "The Belgian car marketplace that puts transparency first."
   );
 
-  const scroll = (dir: "left" | "right") => {
-    if (!scrollRef.current) return;
-    const amount = scrollRef.current.offsetWidth * 0.75;
-    scrollRef.current.scrollBy({ left: dir === "right" ? amount : -amount, behavior: "smooth" });
-  };
-  void scroll;
-
   return (
-    <section className="py-20 sm:py-32 relative overflow-hidden">
+    <section className="py-20 sm:py-32 relative overflow-hidden bg-[radial-gradient(ellipse_at_top,_hsl(var(--primary)/0.08),transparent_50%)]">
       {/* Ambient glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-primary/[0.03] blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-primary/[0.025] blur-[130px] pointer-events-none" />
 
       <div className="container mx-auto px-6 sm:px-8 relative">
         {/* Header */}
-        <div className="text-center max-w-xl mx-auto mb-12 sm:mb-20">
+        <div className="max-w-xl mb-14 sm:mb-20">
           <motion.p
             initial={{ opacity: 0, y: 8 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-[11px] uppercase tracking-[0.25em] text-primary/70 font-medium mb-5"
+            className="text-[10px] uppercase tracking-[0.28em] text-primary/70 font-medium mb-5"
           >
             {t("Nos engagements", "Onze beloften", "Unsere Versprechen", "Our commitments")}
           </motion.p>
@@ -159,7 +142,7 @@ const WhyAutoRA = memo(() => {
           </motion.p>
         </div>
 
-        {/* Mobile: Horizontal scroll carousel */}
+        {/* Mobile: horizontal scroll cards */}
         {isMobile ? (
           <div className="relative -mx-6">
             <div
@@ -174,63 +157,60 @@ const WhyAutoRA = memo(() => {
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.5, delay: i * 0.05 }}
-                  className="flex-shrink-0 w-[280px] snap-center rounded-2xl border border-border/20 bg-card/60 backdrop-blur-sm p-6 relative overflow-hidden"
+                  className="flex-shrink-0 w-[260px] snap-center rounded-2xl border border-border/15 bg-card/40 backdrop-blur-sm p-6 relative overflow-hidden"
                 >
-                  {/* Gradient accent top */}
-                  <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${feature.accent}`} />
-
-                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br ${feature.accent} border border-primary/10 flex items-center justify-center mb-5">
-                    <feature.icon className="w-5 h-5 text-primary" strokeWidth={1.5} />
+                  <span className="block font-mono text-[11px] text-muted-foreground/30 mb-5 tracking-widest">
+                    0{i + 1}
+                  </span>
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <feature.icon className={`w-4 h-4 ${feature.color}`} strokeWidth={1.5} />
+                    <h3 className="text-[15px] font-medium text-foreground tracking-tight">
+                      {feature.title}
+                    </h3>
                   </div>
-
-                  <h3 className="text-[15px] font-medium text-foreground mb-2 tracking-tight">
-                    {feature.title}
-                  </h3>
-                  <p className="text-[13px] text-muted-foreground font-light leading-relaxed">
+                  <p className="text-[13px] text-muted-foreground font-light leading-relaxed pl-[26px]">
                     {feature.desc}
                   </p>
                 </motion.div>
               ))}
             </div>
-
-            {/* Scroll hint gradient */}
             <div className="absolute right-0 top-0 bottom-4 w-12 bg-gradient-to-l from-background to-transparent pointer-events-none" />
           </div>
         ) : (
-          /* Desktop: Refined grid */
-          <motion.div
-            variants={container}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-80px" }}
-            className="grid grid-cols-2 lg:grid-cols-3 gap-5"
-          >
+          /* Desktop: editorial numbered grid */
+          <div className="grid grid-cols-2 lg:grid-cols-3">
             {features.map((feature, i) => (
               <motion.div
                 key={i}
-                variants={item}
-                className="group relative rounded-2xl border border-border/15 bg-card/40 backdrop-blur-sm p-8 sm:p-10 transition-all duration-500 hover:border-primary/20 hover:shadow-xl hover:shadow-primary/5 overflow-hidden"
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-60px" }}
+                transition={{ duration: 0.6, delay: 0.05 + (i % 3) * 0.08 }}
+                className="group py-9 px-6 sm:px-8 lg:px-10 border-t border-border/10 hover:bg-card/20 transition-colors duration-500"
               >
-                {/* Gradient accent top */}
-                <div className={`absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r ${feature.accent} opacity-60 group-hover:opacity-100 transition-opacity duration-500`} />
+                {/* Number */}
+                <span className="block font-mono text-[11px] text-muted-foreground/25 mb-6 tracking-[0.2em] group-hover:text-primary/40 transition-colors duration-500">
+                  0{i + 1}
+                </span>
 
-                {/* Icon */}
-                <div className="mb-6 relative">
-                  <div className="w-12 h-12 rounded-2xl bg-primary/[0.06] border border-primary/10 flex items-center justify-center transition-all duration-500 group-hover:bg-primary/10 group-hover:border-primary/20 group-hover:shadow-lg group-hover:shadow-primary/5">
-                    <feature.icon className="w-5 h-5 text-primary/70 group-hover:text-primary transition-colors duration-500" strokeWidth={1.5} />
-                  </div>
+                {/* Icon + Title */}
+                <div className="flex items-center gap-3 mb-3">
+                  <feature.icon
+                    className={`w-4 h-4 ${feature.color} opacity-70 group-hover:opacity-100 transition-opacity duration-500`}
+                    strokeWidth={1.5}
+                  />
+                  <h3 className="text-[15px] sm:text-base font-medium text-foreground tracking-tight">
+                    {feature.title}
+                  </h3>
                 </div>
 
-                {/* Text */}
-                <h3 className="text-[15px] sm:text-base font-medium text-foreground mb-2.5 tracking-tight">
-                  {feature.title}
-                </h3>
-                <p className="text-[13px] sm:text-sm text-muted-foreground font-light leading-relaxed">
+                {/* Description */}
+                <p className="text-[13px] sm:text-sm text-muted-foreground font-light leading-relaxed pl-[26px]">
                   {feature.desc}
                 </p>
               </motion.div>
             ))}
-          </motion.div>
+          </div>
         )}
       </div>
     </section>
