@@ -125,7 +125,7 @@ const DesktopActions = ({ user, userProfile, onLogout, t, isAdmin }: DesktopActi
           </DropdownMenuContent>
         </DropdownMenu>
       ) : (
-        <Button variant="outline" size="sm" className="rounded-2xl shadow-sm hover:shadow-lg transition-shadow" onClick={() => navigate("/auth")}>
+        <Button size="sm" className="rounded-2xl" onClick={() => navigate("/auth")}>
           <User className="w-4 h-4 mr-2" />
           {t("nav.login")}
         </Button>

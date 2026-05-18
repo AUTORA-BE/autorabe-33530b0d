@@ -53,16 +53,16 @@ const EvBrandSection = memo(function EvBrandSection({
   };
 
   return (
-    <section className="bg-neutral-950 py-16 md:py-24">
+    <section className="bg-card py-16 md:py-24">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         <div className="space-y-4 max-w-2xl mb-12">
-          <p className="text-xs md:text-sm font-medium uppercase tracking-[0.15em] text-emerald-500">
+          <p className="text-xs md:text-sm font-medium uppercase tracking-[0.15em] text-primary">
             {eyebrow}
           </p>
-          <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-normal leading-tight text-white">
+          <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-normal leading-tight text-foreground">
             {title}
           </h2>
-          <p className="text-base md:text-lg leading-relaxed text-neutral-400">
+          <p className="text-base md:text-lg leading-relaxed text-muted-foreground">
             {subtitle}
           </p>
         </div>
@@ -76,17 +76,17 @@ const EvBrandSection = memo(function EvBrandSection({
                 onClick={() => handleClick(name)}
                 aria-pressed={active}
                 className={cn(
-                  "group relative h-28 md:h-32 rounded-2xl border bg-neutral-900 flex items-center justify-center",
+                  "group relative h-28 md:h-32 rounded-2xl border flex items-center justify-center",
                   "transition-all duration-300 hover:-translate-y-1",
                   active
-                    ? "border-emerald-500/60 bg-emerald-500/5 shadow-lg shadow-emerald-500/10"
-                    : "border-neutral-800 hover:border-emerald-500/50",
+                    ? "border-primary/50 bg-primary/5 shadow-lg shadow-primary/10"
+                    : "border-border bg-background hover:border-primary/40 hover:bg-secondary/50",
                 )}
               >
                 <span
                   className={cn(
                     "font-serif text-lg md:text-xl font-medium tracking-wide transition-colors",
-                    active ? "text-emerald-400" : "text-neutral-200 group-hover:text-white",
+                    active ? "text-primary" : "text-foreground group-hover:text-primary",
                   )}
                 >
                   {name}
@@ -99,7 +99,7 @@ const EvBrandSection = memo(function EvBrandSection({
         <div className="mt-12">
           <Link
             to="/marques-electriques"
-            className="inline-flex items-center gap-2 text-emerald-500 hover:text-emerald-400 font-medium transition-colors group"
+            className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium transition-colors group"
           >
             <span>{cta}</span>
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" strokeWidth={1.75} />
