@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 140">
+  <!-- Ford blue oval -->
+  <ellipse cx="150" cy="70" rx="148" ry="68" fill="#003476"/>
+  <!-- Thin inner oval outline -->
+  <ellipse cx="150" cy="70" rx="138" ry="58" fill="none" stroke="#fff" stroke-width="3" opacity="0.5"/>
+  <!-- Ford script lettering (simplified paths) -->
+  <text x="150" y="93"
+    text-anchor="middle"
+    font-size="70"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-style="italic"
+    font-weight="bold"
+    fill="#fff"
+    letter-spacing="-2">Ford</text>
+</svg>

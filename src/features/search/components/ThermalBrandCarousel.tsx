@@ -1,9 +1,9 @@
 /**
  * ThermalBrandCarousel — horizontal scroll carousel of popular thermal brands
- * in Belgium with real official brand logos. Excludes pure-EV brands.
+ * with locally-hosted brand logos (no CDN dependency).
  * @module features/search/components
  */
-import { memo, useState } from "react";
+import { memo } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ThermalBrandCarouselProps {
@@ -13,76 +13,21 @@ interface ThermalBrandCarouselProps {
 
 interface BrandEntry {
   name: string;
-  /** simpleicons.org slug (CDN serves SVG in original brand color) */
-  slug: string;
+  logo: string;
 }
 
 const BRANDS: BrandEntry[] = [
-  { name: "BMW", slug: "bmw" },
-  { name: "Mercedes-Benz", slug: "mercedes" },
-  { name: "Audi", slug: "audi" },
-  { name: "Volkswagen", slug: "volkswagen" },
-  { name: "Peugeot", slug: "peugeot" },
-  { name: "Renault", slug: "renault" },
-  { name: "Ford", slug: "ford" },
-  { name: "Opel", slug: "opel" },
-  { name: "Volvo", slug: "volvo" },
-  { name: "Porsche", slug: "porsche" },
+  { name: "BMW",           logo: "/brands/bmw.svg"        },
+  { name: "Mercedes-Benz", logo: "/brands/mercedes.svg"   },
+  { name: "Audi",          logo: "/brands/audi.svg"       },
+  { name: "Volkswagen",    logo: "/brands/volkswagen.svg" },
+  { name: "Peugeot",       logo: "/brands/peugeot.svg"    },
+  { name: "Renault",       logo: "/brands/renault.svg"    },
+  { name: "Ford",          logo: "/brands/ford.svg"       },
+  { name: "Opel",          logo: "/brands/opel.svg"       },
+  { name: "Volvo",         logo: "/brands/volvo.svg"      },
+  { name: "Porsche",       logo: "/brands/porsche.svg"    },
 ];
-
-interface BrandCardProps {
-  brand: BrandEntry;
-  active: boolean;
-  onClick: (name: string) => void;
-}
-
-function BrandCard({ brand, active, onClick }: BrandCardProps) {
-  const [imgError, setImgError] = useState(false);
-
-  return (
-    <button
-      onClick={() => onClick(brand.name)}
-      aria-pressed={active}
-      aria-label={brand.name}
-      className={[
-        "group flex-shrink-0 snap-start w-32 sm:w-36 h-24 sm:h-28",
-        "flex items-center justify-center rounded-2xl border bg-card",
-        "transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md",
-        active
-          ? "border-primary/60 shadow-md shadow-primary/10"
-          : "border-border/40 hover:border-primary/50",
-      ].join(" ")}
-    >
-      {!imgError ? (
-        <img
-          src={`https://cdn.simpleicons.org/${brand.slug}`}
-          alt={brand.name}
-          loading="lazy"
-          width={64}
-          height={36}
-          onError={() => setImgError(true)}
-          className={[
-            "h-8 sm:h-9 w-auto max-w-[78%] object-contain",
-            "transition-all duration-300 group-hover:scale-110",
-            active
-              ? "grayscale-0 opacity-100"
-              : "grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100",
-          ].join(" ")}
-        />
-      ) : (
-        <span
-          className={[
-            "font-serif text-sm sm:text-base font-medium tracking-wide",
-            "transition-colors duration-300",
-            active ? "text-primary" : "text-foreground/60 group-hover:text-primary",
-          ].join(" ")}
-        >
-          {brand.name}
-        </span>
-      )}
-    </button>
-  );
-}
 
 const ThermalBrandCarousel = memo(function ThermalBrandCarousel({
   onBrandFilter,
@@ -96,8 +41,8 @@ const ThermalBrandCarousel = memo(function ThermalBrandCarousel({
     : language === "de" ? "Nach Marke suchen"
     : "Rechercher par marque populaire";
 
-  const handleClick = (brand: string) => {
-    if (onBrandFilter) onBrandFilter(selectedBrand === brand ? "" : brand);
+  const handleClick = (name: string) => {
+    if (onBrandFilter) onBrandFilter(selectedBrand === name ? "" : name);
     document.getElementById("results-section")?.scrollIntoView({ behavior: "smooth" });
   };
 
@@ -114,14 +59,49 @@ const ThermalBrandCarousel = memo(function ThermalBrandCarousel({
         style={{ WebkitOverflowScrolling: "touch" }}
       >
         <div className="flex gap-3 md:gap-4 px-6 md:px-12 pb-2">
-          {BRANDS.map((brand) => (
-            <BrandCard
-              key={brand.slug}
-              brand={brand}
-              active={selectedBrand === brand.name}
-              onClick={handleClick}
-            />
-          ))}
+          {BRANDS.map(({ name, logo }) => {
+            const active = selectedBrand === name;
+            return (
+              <button
+                key={name}
+                onClick={() => handleClick(name)}
+                aria-pressed={active}
+                aria-label={name}
+                className={[
+                  "group flex-shrink-0 snap-start flex flex-col items-center justify-center gap-3",
+                  "w-32 sm:w-36 h-28 sm:h-32 rounded-2xl border bg-card px-4",
+                  "transition-all duration-300 hover:-translate-y-1 hover:shadow-lg",
+                  active
+                    ? "border-primary/60 shadow-md shadow-primary/10 bg-primary/5"
+                    : "border-border/40 hover:border-primary/50",
+                ].join(" ")}
+              >
+                <img
+                  src={logo}
+                  alt={name}
+                  width={80}
+                  height={44}
+                  loading="lazy"
+                  className={[
+                    "w-16 sm:w-20 h-10 sm:h-11 object-contain",
+                    "transition-all duration-300 group-hover:scale-110",
+                    active
+                      ? "opacity-100"
+                      : "opacity-50 grayscale group-hover:opacity-100 group-hover:grayscale-0",
+                  ].join(" ")}
+                />
+                <span
+                  className={[
+                    "text-[10px] sm:text-[11px] font-medium tracking-wide text-center leading-tight",
+                    "transition-colors duration-300 whitespace-nowrap",
+                    active ? "text-primary" : "text-muted-foreground group-hover:text-foreground",
+                  ].join(" ")}
+                >
+                  {name}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
     </section>

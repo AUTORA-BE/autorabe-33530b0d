@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 100">
+  <!-- Four interlocking rings — Audi signature -->
+  <!-- Ring 1 -->
+  <circle cx="45" cy="50" r="42" fill="none" stroke="#999" stroke-width="10"/>
+  <!-- Ring 2 -->
+  <circle cx="125" cy="50" r="42" fill="none" stroke="#999" stroke-width="10"/>
+  <!-- Ring 3 -->
+  <circle cx="205" cy="50" r="42" fill="none" stroke="#999" stroke-width="10"/>
+  <!-- Ring 4 -->
+  <circle cx="285" cy="50" r="42" fill="none" stroke="#999" stroke-width="10"/>
+  <!-- Overlap covers (white fill arcs to simulate interlocking) -->
+  <!-- Between ring1 and ring2 -->
+  <path d="M85 13 A42 42 0 0 1 85 87" fill="none" stroke="#fff" stroke-width="11"/>
+  <!-- Between ring2 and ring3 -->
+  <path d="M165 13 A42 42 0 0 1 165 87" fill="none" stroke="#fff" stroke-width="11"/>
+  <!-- Between ring3 and ring4 -->
+  <path d="M245 13 A42 42 0 0 1 245 87" fill="none" stroke="#fff" stroke-width="11"/>
+</svg>

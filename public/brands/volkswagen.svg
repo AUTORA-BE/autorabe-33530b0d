@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Blue circle background -->
+  <circle cx="100" cy="100" r="100" fill="#001E6C"/>
+  <!-- Thin inner ring -->
+  <circle cx="100" cy="100" r="88" fill="none" stroke="#fff" stroke-width="2.5" opacity="0.6"/>
+  <!-- VW monogram in white -->
+  <!-- V shape: two lines from top going down to center bottom -->
+  <path d="M68 52 L100 108 L132 52" fill="none" stroke="#fff" stroke-width="11" stroke-linejoin="round" stroke-linecap="round"/>
+  <!-- W shape below: M-like shape -->
+  <path d="M57 80 L76 130 L100 93 L124 130 L143 80" fill="none" stroke="#fff" stroke-width="11" stroke-linejoin="round" stroke-linecap="round"/>
+  <!-- Horizontal divider between V and W -->
+  <line x1="62" y1="108" x2="138" y2="108" stroke="#001E6C" stroke-width="8"/>
+</svg>
