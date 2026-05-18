@@ -154,7 +154,7 @@ const HeroParallaxScene = memo(function HeroParallaxScene({ onSearch }: HeroPara
         style={{ y: textY, opacity: textOpacity }}
         className="relative z-20 flex items-center justify-center pt-28 sm:pt-36 pb-12 sm:pb-20"
       >
-        <HeroSearch onSearch={onSearch} embedded />
+        <HeroSearch onSearch={onSearch} />
       </motion.div>
 
       {/* ── Layer 5: Showcase mini-cards (desktop only) ── */}
