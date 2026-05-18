@@ -3,16 +3,15 @@
  * @module components/home
  */
 
-import { memo, useState } from "react";
+import { memo } from "react";
+import { Link } from "react-router-dom";
 import { Sparkles, ArrowRight, Calculator, MapPin } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
-import TaxChatModal from "@/components/TaxChatModal";
 
 const FiscalAdvisorCTA = memo(function FiscalAdvisorCTA() {
   const { language } = useLanguage();
-  const [open, setOpen] = useState(false);
 
   const t = {
     badge:
@@ -90,20 +89,20 @@ const FiscalAdvisorCTA = memo(function FiscalAdvisorCTA() {
               </div>
 
               <Button
+                asChild
                 variant="primary"
                 size="lg"
-                onClick={() => setOpen(true)}
                 className="mt-4 px-7 py-6 text-base"
               >
-                {t.cta}
-                <ArrowRight className="w-4 h-4 ml-1" />
+                <Link to="/fiscalite-auto-2026">
+                  {t.cta}
+                  <ArrowRight className="w-4 h-4 ml-1" />
+                </Link>
               </Button>
             </div>
           </motion.div>
         </div>
       </section>
-
-      <TaxChatModal open={open} onOpenChange={setOpen} />
     </>
   );
 });
