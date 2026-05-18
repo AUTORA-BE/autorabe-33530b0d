@@ -71,7 +71,7 @@ function calculateBreakdown(data: TcoFormData, annualBrackets?: AnnualTaxBracket
 
   const prime = PRIMES[data.region]?.[data.fuelType] || 0;
 
-  const total = data.price + carburant + totalEntretien + totalAssurance + totalTaxe + deprec - prime;
+  const total = deprec + carburant + totalEntretien + totalAssurance + totalTaxe - prime;
   const mensuel = Math.round(total / 60);
 
   return {

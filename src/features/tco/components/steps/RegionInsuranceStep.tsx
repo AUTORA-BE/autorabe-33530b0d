@@ -1,6 +1,6 @@
 /** Step 5: Region & Insurance */
 
-import {  TAXE_REGION } from '../../constants/belgianData';
+import { TAXE_REGION, ASSURANCE_RC, COEFF_BONUS, MULT_COUVERTURE } from '../../constants/belgianData';
 import type { TcoFormData, Region, InsuranceType } from '../../types/tco.types';
 
 interface Props {
@@ -14,14 +14,17 @@ const regionOptions: { value: Region; icon: string; label: string; desc: string 
   { value: 'wallonie', icon: '🌲', label: 'Wallonie', desc: 'Taxes basses' },
 ];
 
-const insuranceOptions: { value: InsuranceType; label: string; price: string; rec?: boolean }[] = [
-  { value: 'rc', label: 'RC Seule', price: '~450€/an' },
-  { value: 'mini_omnium', label: 'Mini Omnium', price: '~750€/an', rec: true },
-  { value: 'omnium', label: 'Omnium', price: '~1 200€/an' },
+const insuranceOptions: { value: InsuranceType; label: string; rec?: boolean }[] = [
+  { value: 'rc', label: 'RC Seule' },
+  { value: 'mini_omnium', label: 'Mini Omnium', rec: true },
+  { value: 'omnium', label: 'Omnium' },
 ];
 
 const RegionInsuranceStep = ({ formData, updateField }: Props) => {
   const taxe = TAXE_REGION[formData.region]?.[formData.fuelType] || 200;
+  const baseRC = ASSURANCE_RC[formData.ageProfile] * COEFF_BONUS[formData.bonusMalus];
+  const annualPrice = (type: InsuranceType) =>
+    Math.round(baseRC * MULT_COUVERTURE[type]);
 
   return (
     <div>
@@ -79,7 +82,9 @@ const RegionInsuranceStep = ({ formData, updateField }: Props) => {
                     </span>
                   )}
                   <div className="text-xs sm:text-sm font-semibold text-foreground leading-tight">{opt.label}</div>
-                  <div className="text-[10px] sm:text-xs text-muted-foreground mt-1">{opt.price}</div>
+                  <div className="text-[10px] sm:text-xs text-muted-foreground mt-1">
+                    {annualPrice(opt.value).toLocaleString('fr-BE')} €/an
+                  </div>
                 </button>
               );
             })}
