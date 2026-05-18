@@ -22,6 +22,7 @@ const FiscalAdvisorCTA = lazy(() => import("@/components/home/FiscalAdvisorCTA")
 const FilterPanel = lazy(() => import("@/features/search/components/FilterPanel"));
 const LoadMoreGrid = lazy(() => import("@/components/LoadMoreGrid"));
 const WhyAutoRA = lazy(() => import("@/components/WhyAutoRA"));
+const EvBrandSection = lazy(() => import("@/features/search/components/EvBrandSection"));
 
 const SellCarCTA = lazy(() => import("@/components/SellCarCTA"));
 const HomeFAQ = lazy(() => import("@/components/HomeFAQ"));
@@ -175,7 +176,15 @@ const Index = () => {
           <WhyAutoRA />
         </Suspense>
 
-        {/* 4. Outils fiscaux — Conseiller IA + Prix carburants */}
+        {/* 4. Marques 100% électriques — dark navy section */}
+        <Suspense fallback={null}>
+          <EvBrandSection
+            onBrandFilter={(brand) => updateFilter("brand", brand)}
+            selectedBrand={filters.brand}
+          />
+        </Suspense>
+
+        {/* 5. Outils fiscaux — Conseiller IA + Prix carburants */}
         <Suspense fallback={<div className="h-96" />}>
           <FiscalAdvisorCTA />
         </Suspense>
@@ -183,14 +192,14 @@ const Index = () => {
           <FuelPricesSection />
         </Suspense>
 
-        {/* 5. Sell Car CTA */}
+        {/* 6. Sell Car CTA */}
         <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 300px" }}>
           <Suspense fallback={null}>
             <SellCarCTA />
           </Suspense>
         </div>
 
-        {/* 6. Home FAQ */}
+        {/* 7. Home FAQ */}
         <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 600px" }}>
           <Suspense fallback={null}>
             <HomeFAQ />
