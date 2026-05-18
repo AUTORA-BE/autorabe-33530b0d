@@ -135,7 +135,7 @@ const BrandCarousel = memo(function BrandCarousel({
                         selectedBrand === brand.name && "ring-2 ring-primary/40"
                       )}>
                         <img
-                          src={brand.logo}
+                          src={brand.logo ?? undefined}
                           alt={`${brand.name} logo`}
                           className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110"
                           loading="lazy"

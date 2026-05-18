@@ -1,88 +1,76 @@
-## Objectif
+# Refonte homepage AutoRA — Plan d'exécution
 
-Faire basculer le rendu de la home d'une esthétique **SaaS premium** (gradients verts, glassmorphism, beaucoup d'air, typo Playfair éditoriale) vers une vibe **marketplace dense, dynamique et vivante** (proche de l'image de référence : header sombre compact, hero immersif avec photo voiture, blocs de recherche flottants façon "cards d'action", grille de voitures dense type Vinted/AutoScout, sections "promesses" en cards horizontales).
+## Phase 1 — Système de couleurs unifié (fondations)
 
-**Aucun changement** sur : routing, hooks (`useVehicleSearch`, `useFavorites`, `useBuyerProfile`), edge functions, RLS, i18n, schémas SEO, structure des données. C'est uniquement du **frontend / présentation**.
+**Fichiers :** `src/index.css`, `tailwind.config.ts`
 
-## Direction visuelle cible
+- Ajout des tokens HSL dans `:root` et `.dark` :
+  - `--background-primary`, `--background-elevated`
+  - `--background-gradient-from`, `--background-gradient-via`, `--background-gradient-to`
+  - `--surface-glass`, `--border-glass`
+  - `--accent-electric` (cyan/vert électrique distinct de `--primary` emerald)
+  - `--text-primary`, `--text-secondary`, `--text-muted`
+- Exposition dans `tailwind.config.ts` (`colors.surface.glass`, `colors.accent.electric`, etc.)
+- Suppression du `transition` global sur `html` (cause des saccades scroll)
+- Ajout d'un utilitaire `.hero-gradient-deep` (dégradé br from/via/to)
 
-Inspiré de l'image de référence + standards marketplace auto :
+## Phase 2 — Anti-FOUC + Hero adaptatif
 
-- **Header** : compact, fond noir/dark translucide même en light mode sur le hero, logo + langues à droite, plus de "premium feel"
-- **Hero** : 
-  - Photo immersive plein écran (voiture sur route belge, paysage)
-  - Overlay sombre dégradé bas → haut
-  - Titre serif large à gauche, sous-titre court
-  - **3 cards flottantes** en bas du hero (façon image réf) : "Recherche rapide" / "Type de carrosserie" / "Mon Garage / Comparer" — au lieu de la grosse barre de recherche actuelle
-- **Sections** : rythme plus serré, titres plus petits, plus de contenu visible en scroll
-- **Cards voitures** : ratio 4:3 conservé, mais badges Car-Pass / LEZ plus marketplace (pills colorées top-left, prix gros en bas-right comme sur la réf)
-- **"Nos promesses"** : 3-4 cards horizontales avec icône + titre + 1 ligne, scrollable mobile
-- **Couleur** : on garde Emerald-600 comme accent mais on **réduit son usage** — le fond devient plus neutre (gris très clair / blanc cassé), l'accent vert ne sert que pour CTA + badges vérifiés
-- Effets au scroll (nouveaux)
+**Fichiers :** `index.html`, `src/features/search/components/HeroSearch.tsx`
 
-Tous via Framer Motion (déjà installé) + IntersectionObserver, GPU-friendly :
+- Script inline `<head>` AVANT React : lit `localStorage.theme` ou `prefers-color-scheme`, applique `class="dark"` sur `<html>` immédiatement
+- Couleur de fond du body alignée sur le token via CSS dans `<style>` critique
+- HeroSearch : remplacement des couleurs hardcodées par tokens, image avec overlay glass adaptatif, dégradé profond derrière la BMW
+- Vérification que `next-themes` est bien `defaultTheme="dark" enableSystem` (déjà OK dans main.tsx)
 
-1. **Hero parallax** : photo voiture translateY plus lente que le scroll (`useScroll` + `useTransform`), opacité hero qui fade
-2. **Header morph** : transparent sur hero → solide blanc/dark avec shadow dès `scrollY > 80px`
-3. **Cards flottantes du hero** : se "détachent" et stickent brièvement avant de disparaître (sticky + fade)
-4. **Sections reveal** : fade-up + stagger (déjà via `ScrollReveal`, on l'étend aux cards individuelles avec délai)
-5. **Compteurs animés** sur TrustBar (10K+ voitures, etc.) — count-up déclenché à l'entrée viewport
-6. **Marquee** discret sur la BrandCarousel (auto-scroll lent au repos, pause au hover)
-7. **Hover lift** plus prononcé sur VehicleCard (translateY -6px + shadow glow)
+## Phase 3 — Variants boutons stricts
 
-Respect strict de `prefers-reduced-motion` : tous les effets désactivés.
+**Fichier :** `src/components/ui/button.tsx`
 
-## Périmètre des fichiers touchés
+- Ajout variants : `primary` (accent-electric + glow), `secondary` (glass), `ghost-link` (underline hover)
+- Border-radius uniforme `rounded-xl`, transitions `duration-200`
+- Tailles `sm` / `default` / `lg` cohérentes
+- Variants existants (`default`, `outline`, etc.) conservés pour ne pas casser le reste de l'app
 
-**Modifiés (présentation uniquement) :**
+## Phase 4 — Réorganisation homepage avec transitions fluides
 
-- `src/features/search/components/HeroSearch.tsx` → refonte hero immersif + 3 cards flottantes
-- `src/shared/components/Header.tsx` → variante transparent → solid au scroll
-- `src/components/TrustBar.tsx` → compteurs animés count-up
-- `src/components/WhyAutoRA.tsx` → reformatage en cards horizontales "promesses"
-- `src/features/listings/components/VehicleCard.tsx` → badges marketplace style + prix proéminent
-- `src/features/search/components/BrandCarousel.tsx` → marquee auto-scroll
-- `src/index.css` → ajustement tokens (fond plus neutre, accent vert plus rare), nouveaux utilitaires marketplace
-- `src/pages/Index.tsx` → réordonnancement mineur des sections, ajout wrappers ScrollReveal
+**Fichier :** `src/pages/Index.tsx` + nouveau composant `src/components/home/FiscalAdvisorCTA.tsx`
 
-**Créés :**
+Ordre final :
+1. Hero (existant, ajusté Phase 2)
+2. **Bandeau confiance** (TrustBar remonté, cards glass translucides)
+3. **Marques 100% électriques** (EvBrandSection, déjà en place)
+4. **Annonces en vedette** (FeaturedVehiclesSection)
+5. **CTA Conseiller fiscal IA** (NOUVEAU — bandeau glass avec lien vers chatbot)
+6. **Marques gamme mixte** (BrandCarousel)
+7. **Pourquoi AutoRA** (WhyAutoRA)
+8. Sections existantes restantes (PopularVehicles, SellCarCTA, FAQ, Results)
+9. Footer
 
-- `src/components/marketplace/HeroParallax.tsx` — wrapper parallax du hero
-- `src/components/marketplace/QuickActionCard.tsx` — les 3 cards flottantes
-- `src/hooks/useCountUp.ts` — hook compteur animé
-- `src/hooks/useScrollHeader.ts` — détection scroll pour header morph
+Transitions : suppression des `bg-white`/`bg-black` durs dans chaque section, remplacement par token-based gradients qui se chaînent.
 
-**Non touchés** : tous les hooks `useVehicleSearch`, `useFavorites`, `useSubscription`, toutes les pages autres que `/`, tous les edge functions, RLS, types Supabase.
+## Phase 5 — Fixes UI ciblés
 
-## Étapes d'exécution
+- **Cards listing** : audit `VehicleCard` → `h-full`, `aspect-[4/3]`, footer `mt-auto`
+- **Nav mobile** : audit `MobileMenu` → drawer plein écran, backdrop-blur, body-scroll-lock
+- **Footer** : audit `Footer.tsx` → grid 4 cols desktop, alignement top
+- **Scroll** : `scroll-behavior: smooth` déjà présent ; retrait des transitions globales parasites
 
-1. Ajouter tokens CSS marketplace (fond neutre, ombres plus marquées, accent vert restreint) + utilitaires scroll
-2. Créer hooks `useCountUp`, `useScrollHeader`
-3. Refondre `HeroSearch` → photo plein écran + parallax + 3 QuickActionCards flottantes (recherche / carrosserie / comparer)
-4. Adapter `Header` pour transition transparent → solid au scroll
-5. Refondre `TrustBar` avec compteurs animés
-6. Refondre `WhyAutoRA` en 3 cards horizontales "promesses"
-7. Restyler `VehicleCard` (badges pills, prix gros)
-8. Ajouter marquee à `BrandCarousel`
-9. Vérifier en preview desktop + mobile + `prefers-reduced-motion`
+## Contraintes respectées
 
-## Garde-fous
+- Aucune touche à Supabase / auth / Stripe / Resend / prompt chatbot IA
+- Routes inchangées
+- Branding "AutoRA" (R+A majuscules) préservé
+- Pas de nouvelle dépendance (`next-themes` déjà installé)
 
-- Aucune modification de la logique de recherche : les 3 QuickActionCards déclenchent les mêmes `handleSearch` / `updateFilter` que la barre actuelle
-- Aucune modification de schéma / migration
-- i18n : toutes les nouvelles strings utilisent `useLanguage()` + clés ajoutées dans `fr.json` / `nl.json` / `de.json` / `en.json`
-- Mémoire projet "Elite Green luxe" → on garde Emerald-600 en accent ; on assouplit juste la densité de gradients verts (à confirmer ci-dessous)
+## Risques identifiés
 
-## Question avant exécution
+- Variants boutons : si renommage de `default` → risque de casse → je garde `default` et j'**ajoute** `primary`/`secondary`/`ghost-link` à côté
+- Tokens renommés : je **n'écrase pas** `--background`/`--foreground` existants → j'**ajoute** la nouvelle famille à côté pour migration progressive
+- VehicleCard utilisé partout : modifs minimales (juste `h-full` + `mt-auto` sur footer)
 
-L'image de réf est plus **claire / neutre** (fond clair, header noir compact), alors que le site actuel est **dark Elite Green**. Tu veux :
+## Estimation
 
-- **A.** Garder le dark mode par défaut, juste adopter la composition marketplace (hero photo + cards flottantes + densité)
-- **B.** Passer en **light mode par défaut** comme la réf (fond clair, header dark sur hero puis blanc au scroll)
-- **C.** Hero light (comme réf) + reste du site dark
+~15 fichiers modifiés, ~3 nouveaux fichiers, 0 régression backend attendue.
 
-Réponds A / B / C et je lance l'implémentation.
-
-ne fais pas trop comme autoscout apres ils vont crier au ^plagiat 
-
-&nbsp;
+Validez le plan et je l'exécute dans l'ordre.

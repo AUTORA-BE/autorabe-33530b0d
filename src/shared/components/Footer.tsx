@@ -58,10 +58,10 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="relative overflow-hidden mt-12 sm:mt-20 border-t border-border/10 pb-24 md:pb-0">
-      {/* Subtle gradient bg */}
-      <div className="absolute inset-0 bg-[hsl(224,30%,5%)]" />
-      <div className="absolute inset-0 bg-gradient-to-b from-background/20 to-transparent" />
+    <footer className="relative overflow-hidden mt-12 sm:mt-20 border-t border-[hsl(var(--border-glass)/0.3)] pb-24 md:pb-0">
+      {/* Tokenized background — adapts to light/dark */}
+      <div className="absolute inset-0 bg-[hsl(var(--background-elevated))]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[hsl(var(--background-primary)/0.3)] to-transparent" />
 
       <div className="container mx-auto px-4 sm:px-6 relative">
         {/* Main grid */}
@@ -71,7 +71,7 @@ const Footer = () => {
             <Link to="/" className="flex items-center gap-2.5">
               <img src={autoraLogo} alt="AutoRA" className="w-8 h-8 rounded-xl object-cover" />
               <span className="font-display text-lg font-bold tracking-wider">
-                <span className="text-white">Auto</span>
+                <span className="text-foreground">Auto</span>
                 <span className="text-primary">RA</span>
               </span>
             </Link>
@@ -124,7 +124,7 @@ const Footer = () => {
         {/* Bottom bar */}
         <div className="py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           {/* Language selector */}
-          <div className="flex items-center gap-0.5 text-[11px] bg-white/[0.04] rounded-full p-0.5">
+          <div className="flex items-center gap-0.5 text-[11px] bg-[hsl(var(--surface-glass)/0.5)] border border-[hsl(var(--border-glass)/0.2)] rounded-full p-0.5">
             {(["fr", "nl", "de", "en"] as const).map((lang) => (
               <button
                 key={lang}
