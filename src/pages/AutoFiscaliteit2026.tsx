@@ -186,12 +186,38 @@ export default function AutoFiscaliteit2026() {
 
         <section id="vaa" className="mb-12 scroll-mt-20">
           <h2 className="text-2xl font-bold mb-4">Voordeel alle aard (VAA)</h2>
-          <p className="text-muted-foreground text-sm leading-relaxed">
-            Het VAA wordt berekend op basis van de cataloguswaarde van het voertuig, de CO₂-
-            coëfficiënt en een ouderdomscoëfficiënt. Voor 2026 blijft de formule{" "}
-            <em>VAA = cataloguswaarde × 6/7 × CO₂-coëfficiënt × ouderdomscoëfficiënt</em>, met een
-            wettelijk minimum vastgesteld bij koninklijk besluit.
+          <p className="text-muted-foreground text-sm leading-relaxed mb-4">
+            Het VAA is de belasting die u maandelijks betaalt (rechtstreeks ingehouden op
+            uw loonbrief) omdat uw werkgever u een wagen ter beschikking stelt voor uw
+            privéverplaatsingen.
           </p>
+          <p className="text-muted-foreground text-sm leading-relaxed mb-3">
+            Voor de berekening neemt de Staat de{" "}
+            <strong className="text-foreground">oorspronkelijke cataloguswaarde</strong>{" "}
+            van het voertuig (nieuw en opties inbegrepen), en past dan een formule toe op
+            basis van twee criteria:
+          </p>
+          <ul className="text-sm text-muted-foreground space-y-2 mb-4 list-disc list-outside ml-5">
+            <li>
+              <strong className="text-foreground">De vervuiling (CO₂):</strong> hoe meer de
+              wagen CO₂ uitstoot ten opzichte van het nationale gemiddelde, hoe hoger de
+              belasting. Elektrische wagens krijgen automatisch het voordeligste
+              minimumtarief.
+            </li>
+            <li>
+              <strong className="text-foreground">De leeftijd van de wagen:</strong> elk
+              jaar past de Staat een korting van 6% toe voor de slijtage van het voertuig,
+              tot een maximum van 5 jaar.
+            </li>
+          </ul>
+          <div className="rounded-2xl border border-primary/30 bg-primary/5 p-4">
+            <p className="text-sm text-foreground">
+              <strong>Wettelijk minimum 2026:</strong> hoe de berekening ook uitvalt, het
+              VAA kan nooit lager zijn dan{" "}
+              <strong className="text-primary">1 690 € per jaar</strong> (≈ 141 € per
+              maand) — inkomsten 2026, aanslagjaar 2027.
+            </p>
+          </div>
         </section>
 
         <div className="bg-primary/5 border border-primary/20 rounded-2xl p-6 flex items-center gap-4">

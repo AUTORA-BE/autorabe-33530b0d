@@ -188,12 +188,37 @@ export default function FiscaliteAuto2026() {
 
         <section id="atn" className="mb-12 scroll-mt-20">
           <h2 className="text-2xl font-bold mb-4">Avantage de toute nature (ATN)</h2>
-          <p className="text-muted-foreground text-sm leading-relaxed">
-            L'ATN est calculé sur la base de la valeur catalogue du véhicule, du coefficient CO₂
-            et d'un coefficient d'âge. Pour 2026, la formule reste{" "}
-            <em>ATN = Valeur catalogue × 6/7 × CO₂ coefficient × âge coefficient</em>, avec un
-            minimum légal fixé par arrêté royal.
+          <p className="text-muted-foreground text-sm leading-relaxed mb-4">
+            L'ATN, c'est la taxe que tu payes chaque mois (directement retenue sur ta fiche
+            de paie) parce que ton entreprise te met une voiture à disposition pour tes
+            trajets privés.
           </p>
+          <p className="text-muted-foreground text-sm leading-relaxed mb-3">
+            Pour le calculer, l'État prend le <strong className="text-foreground">prix
+            catalogue d'origine</strong> du véhicule (neuf et options comprises), puis
+            applique une formule qui tient compte de deux critères :
+          </p>
+          <ul className="text-sm text-muted-foreground space-y-2 mb-4 list-disc list-outside ml-5">
+            <li>
+              <strong className="text-foreground">La pollution (le CO₂) :</strong> plus la
+              voiture émet de CO₂ par rapport à la moyenne nationale, plus la taxe grimpe.
+              Les voitures électriques bénéficient d'office du taux minimal le plus
+              avantageux.
+            </li>
+            <li>
+              <strong className="text-foreground">L'âge de la voiture :</strong> chaque
+              année, l'État applique une ristourne de 6 % pour tenir compte de l'usure du
+              véhicule, jusqu'à un blocage maximum au bout de 5 ans.
+            </li>
+          </ul>
+          <div className="rounded-2xl border border-primary/30 bg-primary/5 p-4">
+            <p className="text-sm text-foreground">
+              <strong>Minimum légal 2026 :</strong> peu importe le calcul, l'ATN ne peut
+              jamais descendre en dessous de{" "}
+              <strong className="text-primary">1 690 € par an</strong> (≈ 141 € par mois)
+              — revenus 2026, exercice d'imposition 2027.
+            </p>
+          </div>
         </section>
 
         <div className="bg-primary/5 border border-primary/20 rounded-2xl p-6 flex items-center gap-4">
