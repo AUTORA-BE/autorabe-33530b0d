@@ -130,22 +130,59 @@ export default function FiscaliteAuto2026() {
 
         <section id="deductibilite" className="mb-12 scroll-mt-20">
           <h2 className="text-2xl font-bold mb-4">Déductibilité professionnelle</h2>
-          <p className="text-muted-foreground text-sm leading-relaxed mb-3">
-            Depuis la réforme fiscale belge de 2021 (phasing-in jusqu'en 2026), la déductibilité
-            des frais de voiture est directement liée aux émissions de CO₂ :
+          <p className="text-muted-foreground text-sm leading-relaxed mb-6">
+            La réforme fiscale belge entrée en vigueur le 1ᵉʳ janvier 2026 modifie radicalement
+            la déductibilité des frais de voiture. La date de commande devient déterminante.
           </p>
-          <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
-            <li>Véhicules zéro émission : 100 % déductible</li>
-            <li>≤ 50 g/km CO₂ : 75 % déductible (transitoire 2026)</li>
-            <li>50-100 g/km : selon barème dégressif 2026</li>
-            <li>Thermiques pur achetés après 2026 : déductibilité limitée</li>
-          </ul>
-          <p className="text-xs text-muted-foreground mt-4 italic">
-            Consulte notre outil{" "}
+
+          <div className="rounded-2xl border border-border bg-card overflow-hidden mb-4">
+            <div className="px-5 py-4 border-b border-border bg-secondary/40">
+              <p className="font-semibold text-sm">En résumé : la règle d'or</p>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left font-semibold px-5 py-3 text-foreground">Type de motorisation</th>
+                    <th className="text-left font-semibold px-5 py-3 text-foreground">Commandé avant le 31/12/2025</th>
+                    <th className="text-left font-semibold px-5 py-3 text-foreground">Commandé (nouvel achat)</th>
+                  </tr>
+                </thead>
+                <tbody className="text-muted-foreground">
+                  <tr className="border-b border-border/60">
+                    <td className="px-5 py-4 font-semibold text-foreground align-top">100 % Électrique (BEV)</td>
+                    <td className="px-5 py-4 align-top">100 % déductible</td>
+                    <td className="px-5 py-4 align-top">
+                      <span className="font-semibold text-primary">100 % déductible</span>
+                      <span className="block text-xs mt-1">(sécurisé à vie si commandé cette année)</span>
+                    </td>
+                  </tr>
+                  <tr className="border-b border-border/60">
+                    <td className="px-5 py-4 font-semibold text-foreground align-top">Hybride Rechargeable (PHEV)</td>
+                    <td className="px-5 py-4 align-top">Régime transitoire (plafonné à 50 % ; carburant à 50 %)</td>
+                    <td className="px-5 py-4 align-top">
+                      <span className="font-semibold text-destructive">0 % déductible</span>
+                      <span className="block text-xs mt-1">(sauf exception très ciblée pour certains indépendants en personne physique)</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="px-5 py-4 font-semibold text-foreground align-top">Thermique (Essence / Diesel / HEV)</td>
+                    <td className="px-5 py-4 align-top">Régime transitoire (plafonné à 50 % maximum)</td>
+                    <td className="px-5 py-4 align-top">
+                      <span className="font-semibold text-destructive">0 % déductible</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <p className="text-xs text-muted-foreground italic">
+            Consultez notre outil{" "}
             <Link to="/calculateur-tco" className="text-primary underline">
               Calculateur TCO
             </Link>{" "}
-            pour simuler la déductibilité de votre véhicule.
+            pour simuler la déductibilité de votre véhicule selon votre situation.
           </p>
         </section>
 

@@ -128,22 +128,59 @@ export default function AutoFiscaliteit2026() {
 
         <section id="aftrekbaarheid" className="mb-12 scroll-mt-20">
           <h2 className="text-2xl font-bold mb-4">Professionele aftrekbaarheid</h2>
-          <p className="text-muted-foreground text-sm leading-relaxed mb-3">
-            Sinds de Belgische belastinghervorming van 2021 (geleidelijke invoering t.e.m. 2026) is
-            de aftrekbaarheid van autokosten rechtstreeks gekoppeld aan de CO₂-uitstoot:
+          <p className="text-muted-foreground text-sm leading-relaxed mb-6">
+            De Belgische belastinghervorming die op 1 januari 2026 in werking treedt, wijzigt
+            de aftrekbaarheid van autokosten radicaal. De besteldatum wordt doorslaggevend.
           </p>
-          <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
-            <li>Voertuigen zonder uitstoot: 100% aftrekbaar</li>
-            <li>≤ 50 g/km CO₂: 75% aftrekbaar (overgangsmaatregel 2026)</li>
-            <li>50-100 g/km: degressief barema 2026</li>
-            <li>Zuivere verbrandingsmotoren aangekocht na 2026: beperkte aftrekbaarheid</li>
-          </ul>
-          <p className="text-xs text-muted-foreground mt-4 italic">
+
+          <div className="rounded-2xl border border-border bg-card overflow-hidden mb-4">
+            <div className="px-5 py-4 border-b border-border bg-secondary/40">
+              <p className="font-semibold text-sm">Samengevat: de gulden regel</p>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="text-left font-semibold px-5 py-3 text-foreground">Type motorisering</th>
+                    <th className="text-left font-semibold px-5 py-3 text-foreground">Besteld vóór 31/12/2025</th>
+                    <th className="text-left font-semibold px-5 py-3 text-foreground">Besteld (nieuwe aankoop)</th>
+                  </tr>
+                </thead>
+                <tbody className="text-muted-foreground">
+                  <tr className="border-b border-border/60">
+                    <td className="px-5 py-4 font-semibold text-foreground align-top">100% Elektrisch (BEV)</td>
+                    <td className="px-5 py-4 align-top">100% aftrekbaar</td>
+                    <td className="px-5 py-4 align-top">
+                      <span className="font-semibold text-primary">100% aftrekbaar</span>
+                      <span className="block text-xs mt-1">(levenslang verzekerd indien dit jaar besteld)</span>
+                    </td>
+                  </tr>
+                  <tr className="border-b border-border/60">
+                    <td className="px-5 py-4 font-semibold text-foreground align-top">Plug-in hybride (PHEV)</td>
+                    <td className="px-5 py-4 align-top">Overgangsregeling (geplafonneerd op 50%; brandstof op 50%)</td>
+                    <td className="px-5 py-4 align-top">
+                      <span className="font-semibold text-destructive">0% aftrekbaar</span>
+                      <span className="block text-xs mt-1">(behoudens zeer gerichte uitzondering voor bepaalde zelfstandigen-natuurlijke personen)</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="px-5 py-4 font-semibold text-foreground align-top">Verbrandingsmotor (Benzine / Diesel / HEV)</td>
+                    <td className="px-5 py-4 align-top">Overgangsregeling (geplafonneerd op maximaal 50%)</td>
+                    <td className="px-5 py-4 align-top">
+                      <span className="font-semibold text-destructive">0% aftrekbaar</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <p className="text-xs text-muted-foreground italic">
             Gebruik onze{" "}
             <Link to="/calculateur-tco" className="text-primary underline">
               TCO-calculator
             </Link>{" "}
-            om de aftrekbaarheid van uw voertuig te simuleren.
+            om de aftrekbaarheid van uw voertuig volgens uw situatie te simuleren.
           </p>
         </section>
 
