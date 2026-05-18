@@ -71,8 +71,10 @@ input[type="number"] {
     --z-tooltip: 100;
 
     /* Custom tokens */
-    --glass-bg: 0 0% 100% / 0.7;
-    --glass-border: 0 0% 100% / 0.2;
+    --glass-bg: 0 0% 100%;
+    --glass-bg-alpha: 0.7;
+    --glass-border: 0 0% 100%;
+    --glass-border-alpha: 0.2;
     --gradient-primary: linear-gradient(135deg, hsl(160 84% 30%), hsl(160 70% 38%));
     --gradient-hero: linear-gradient(180deg, hsl(210 40% 98%) 0%, hsl(210 30% 96%) 100%);
     --gradient-section: linear-gradient(180deg, transparent 0%, hsl(210 25% 96% / 0.5) 50%, transparent 100%);
@@ -138,8 +140,10 @@ input[type="number"] {
     --ring: 160 84% 42%;
 
     /* Dark mode custom tokens */
-    --glass-bg: 222 25% 11% / 0.6;
-    --glass-border: 0 0% 100% / 0.08;
+    --glass-bg: 222 25% 11%;
+    --glass-bg-alpha: 0.6;
+    --glass-border: 0 0% 100%;
+    --glass-border-alpha: 0.08;
     --gradient-hero: linear-gradient(180deg, hsl(220 30% 6%) 0%, hsl(222 30% 7%) 100%);
     --gradient-section: linear-gradient(180deg, transparent 0%, hsl(220 20% 8% / 0.5) 50%, transparent 100%);
     --gradient-warm: linear-gradient(135deg, hsl(160 84% 42%), hsl(160 70% 48%), hsl(155 60% 42%));
@@ -257,9 +261,9 @@ input[type="number"] {
 @layer components {
   .glass-panel {
     @apply backdrop-blur-2xl border rounded-3xl;
-    background: hsl(var(--glass-bg));
-    border-color: hsl(var(--glass-border));
-    box-shadow: 
+    background: hsl(var(--glass-bg) / var(--glass-bg-alpha));
+    border-color: hsl(var(--glass-border) / var(--glass-border-alpha));
+    box-shadow:
       0 8px 32px -4px hsl(var(--foreground) / 0.08),
       inset 0 1px 0 0 hsl(0 0% 100% / 0.15),
       inset 0 -1px 0 0 hsl(var(--foreground) / 0.05);
@@ -268,7 +272,7 @@ input[type="number"] {
   .glass-card {
     @apply backdrop-blur-md border rounded-3xl;
     background: hsl(var(--card));
-    border-color: hsl(var(--glass-border));
+    border-color: hsl(var(--glass-border) / var(--glass-border-alpha));
     box-shadow: 0 4px 20px -4px hsl(var(--foreground) / 0.06);
   }
 
