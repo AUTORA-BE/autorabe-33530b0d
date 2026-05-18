@@ -52,7 +52,18 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        surface: {
+          glass: "hsl(var(--surface-glass))",
+          elevated: "hsl(var(--background-elevated))",
+        },
+        electric: {
+          DEFAULT: "hsl(var(--accent-electric))",
+          foreground: "hsl(var(--accent-electric-foreground))",
+        },
       },
+      backgroundImage: {
+        'hero-deep': 'linear-gradient(135deg, hsl(var(--background-gradient-from)) 0%, hsl(var(--background-gradient-via)) 50%, hsl(var(--background-gradient-to)) 100%)',
+        'section-fade': 'linear-gradient(180deg, hsl(var(--background-gradient-to)) 0%, hsl(var(--background-primary)) 100%)',
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
