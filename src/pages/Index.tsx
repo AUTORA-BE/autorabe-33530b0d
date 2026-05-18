@@ -21,6 +21,7 @@ import { DebugOverlay } from "@/components/DebugOverlay";
 
 const FuelPricesSection = lazy(() => import("@/components/home/FuelPricesSection"));
 const FeaturedVehiclesSection = lazy(() => import("@/components/home/FeaturedVehiclesSection"));
+const FiscalAdvisorCTA = lazy(() => import("@/components/home/FiscalAdvisorCTA"));
 
 
 const TrustBar = lazy(() => import("@/components/TrustBar"));
@@ -178,12 +179,12 @@ const Index = () => {
         </div>
 
 
-        {/* Véhicules en vedette — NOUVELLE section premium juste sous le hero */}
-        <Suspense fallback={<CarouselSkeleton />}>
-          <FeaturedVehiclesSection />
+        {/* 2. Bandeau de confiance — chiffres clés (remonté juste sous le hero pour fondre dans le dégradé) */}
+        <Suspense fallback={<TrustBarSkeleton />}>
+          <TrustBar />
         </Suspense>
 
-        {/* EV brand quick-filter strip (déplacé ici : position 2) */}
+        {/* 3. Marques 100% électriques */}
         <Suspense fallback={null}>
           <EvBrandSection
             onBrandFilter={(brand) => updateFilter("brand", brand)}
@@ -191,17 +192,22 @@ const Index = () => {
           />
         </Suspense>
 
-        {/* Prix carburants Belgique — NOUVELLE section */}
+        {/* 4. Annonces en vedette */}
+        <Suspense fallback={<CarouselSkeleton />}>
+          <FeaturedVehiclesSection />
+        </Suspense>
+
+        {/* 5. CTA Conseiller fiscal IA — bandeau glass premium */}
+        <Suspense fallback={<div className="h-96" />}>
+          <FiscalAdvisorCTA />
+        </Suspense>
+
+        {/* 6. Prix carburants Belgique */}
         <Suspense fallback={<div className="h-96" />}>
           <FuelPricesSection />
         </Suspense>
 
-        {/* Trust Bar — minimal badges */}
-        <Suspense fallback={<TrustBarSkeleton />}>
-          <TrustBar />
-        </Suspense>
-
-        {/* Swipe Discovery — mobile only, deferred to avoid loading framer-motion-heavy chunk on desktop */}
+        {/* Swipe Discovery — mobile only */}
         {!isDesktopFiltersViewport && (
           <Suspense fallback={null}>
             <SwipeDiscovery
@@ -213,11 +219,22 @@ const Index = () => {
           </Suspense>
         )}
 
-        {/* Why AutoRA — bento grid */}
+        {/* 7. Marques gamme mixte */}
+        <Suspense fallback={<BrandCarouselSkeleton />}>
+          <ScrollReveal delay={0.05} direction="left">
+            <BrandCarousel
+              onBrandFilter={(brand) => updateFilter("brand", brand)}
+              selectedBrand={filters.brand}
+              onModelFilter={(model) => updateFilter("searchQuery", model)}
+              selectedModel={filters.searchQuery}
+            />
+          </ScrollReveal>
+        </Suspense>
+
+        {/* 8. Pourquoi AutoRA — bento grid */}
         <Suspense fallback={<WhyAutoRaSkeleton />}>
           <WhyAutoRA />
         </Suspense>
-
 
         {/* Popular vehicles */}
         <Suspense fallback={<CarouselSkeleton />}>
@@ -228,18 +245,6 @@ const Index = () => {
               onVehicleClick={handleCarClick}
             />
           </div>
-        </Suspense>
-
-        {/* Brand carousel — thin arrows */}
-        <Suspense fallback={<BrandCarouselSkeleton />}>
-          <ScrollReveal delay={0.05} direction="left">
-            <BrandCarousel
-              onBrandFilter={(brand) => updateFilter("brand", brand)}
-              selectedBrand={filters.brand}
-              onModelFilter={(model) => updateFilter("searchQuery", model)}
-              selectedModel={filters.searchQuery}
-            />
-          </ScrollReveal>
         </Suspense>
 
         {/* Testimonials — masqués tant qu'on n'a pas ≥ 5 vrais avis */}
