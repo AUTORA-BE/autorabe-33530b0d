@@ -7,12 +7,9 @@ import SEOHead from "@/components/SEOHead";
 import { organizationSchema, websiteSchema } from "@/lib/seoSchemas";
 import {
   CarouselSkeleton,
-  TrustBarSkeleton,
   WhyAutoRaSkeleton,
-  BrandCarouselSkeleton,
   GridSkeleton,
 } from "@/components/skeletons/HomeSkeleton";
-import ScrollReveal from "@/components/ScrollReveal";
 import { VoiceSearchSummary, type VoiceFilter } from "@/components/VoiceSearchSummary";
 import { AnimatePresence } from "framer-motion";
 import { PullToRefresh } from "@/components/PullToRefresh";
@@ -22,23 +19,15 @@ const FuelPricesSection = lazy(() => import("@/components/home/FuelPricesSection
 const FeaturedVehiclesSection = lazy(() => import("@/components/home/FeaturedVehiclesSection"));
 const FiscalAdvisorCTA = lazy(() => import("@/components/home/FiscalAdvisorCTA"));
 
-
-const TrustBar = lazy(() => import("@/components/TrustBar"));
-const BrandCarousel = lazy(() => import("@/features/search/components/BrandCarousel"));
-const EvBrandSection = lazy(() => import("@/features/search/components/EvBrandSection"));
 const FilterPanel = lazy(() => import("@/features/search/components/FilterPanel"));
-const PopularVehicles = lazy(() => import("@/features/listings/components/PopularVehicles"));
-const SwipeDiscovery = lazy(() => import("@/features/listings/components/SwipeDiscovery"));
 const LoadMoreGrid = lazy(() => import("@/components/LoadMoreGrid"));
 const WhyAutoRA = lazy(() => import("@/components/WhyAutoRA"));
 
-const TestimonialsSection = lazy(() => import("@/components/TestimonialsSection"));
 const SellCarCTA = lazy(() => import("@/components/SellCarCTA"));
 const HomeFAQ = lazy(() => import("@/components/HomeFAQ"));
 const TcoFloatingButton = lazy(() => import("@/components/TcoFloatingButton"));
 
 import { useVehicleSearch } from "@/features/listings";
-import { usePopularVehicles } from "@/features/listings/hooks/usePopularVehicles";
 import { useFavorites } from "@/features/favorites";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocalizedVehicleHref } from "@/lib/useLocalizedHref";
@@ -70,7 +59,6 @@ const Index = () => {
   }, []);
 
   const { isFavorite, toggleFavorite } = useFavorites();
-  const { vehicles: popularVehicles } = usePopularVehicles({ limit: 12 });
   const { profile: buyerProfile, saveProfile } = useBuyerProfile();
   const profileModalRef = useRef<HTMLButtonElement>(null);
 
@@ -177,90 +165,32 @@ const Index = () => {
           </AnimatePresence>
         </div>
 
-
-        {/* 2. Bandeau de confiance — chiffres clés (remonté juste sous le hero pour fondre dans le dégradé) */}
-        <Suspense fallback={<TrustBarSkeleton />}>
-          <TrustBar />
-        </Suspense>
-
-        {/* 3. Marques 100% électriques */}
-        <Suspense fallback={null}>
-          <EvBrandSection
-            onBrandFilter={(brand) => updateFilter("brand", brand)}
-            selectedBrand={filters.brand}
-          />
-        </Suspense>
-
-        {/* 4. Annonces en vedette */}
+        {/* 2. Annonces en vedette — remontées juste sous la recherche */}
         <Suspense fallback={<CarouselSkeleton />}>
           <FeaturedVehiclesSection />
         </Suspense>
 
-        {/* 5. CTA Conseiller fiscal IA — bandeau glass premium */}
-        <Suspense fallback={<div className="h-96" />}>
-          <FiscalAdvisorCTA />
-        </Suspense>
-
-        {/* 6. Prix carburants Belgique */}
-        <Suspense fallback={<div className="h-96" />}>
-          <FuelPricesSection />
-        </Suspense>
-
-        {/* Swipe Discovery — mobile only */}
-        {!isDesktopFiltersViewport && (
-          <Suspense fallback={null}>
-            <SwipeDiscovery
-              vehicles={popularVehicles}
-              isFavorite={isFavorite}
-              onToggleFavorite={toggleFavorite}
-              onVehicleClick={handleCarClick}
-            />
-          </Suspense>
-        )}
-
-        {/* 7. Marques gamme mixte */}
-        <Suspense fallback={<BrandCarouselSkeleton />}>
-          <ScrollReveal delay={0.05} direction="left">
-            <BrandCarousel
-              onBrandFilter={(brand) => updateFilter("brand", brand)}
-              selectedBrand={filters.brand}
-              onModelFilter={(model) => updateFilter("searchQuery", model)}
-              selectedModel={filters.searchQuery}
-            />
-          </ScrollReveal>
-        </Suspense>
-
-        {/* 8. Pourquoi AutoRA — bento grid */}
+        {/* 3. Pourquoi AutoRA — bento grid 2×3 */}
         <Suspense fallback={<WhyAutoRaSkeleton />}>
           <WhyAutoRA />
         </Suspense>
 
-        {/* Popular vehicles */}
-        <Suspense fallback={<CarouselSkeleton />}>
-          <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 400px" }}>
-            <PopularVehicles
-              isFavorite={isFavorite}
-              onToggleFavorite={toggleFavorite}
-              onVehicleClick={handleCarClick}
-            />
-          </div>
+        {/* 4. Outils fiscaux — Conseiller IA + Prix carburants */}
+        <Suspense fallback={<div className="h-96" />}>
+          <FiscalAdvisorCTA />
+        </Suspense>
+        <Suspense fallback={<div className="h-96" />}>
+          <FuelPricesSection />
         </Suspense>
 
-        {/* Testimonials — masqués tant qu'on n'a pas ≥ 5 vrais avis */}
-        {/* <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 500px" }}>
-          <Suspense fallback={<TestimonialsSkeleton />}>
-            <TestimonialsSection />
-          </Suspense>
-        </div> */}
-
-        {/* Sell Car CTA */}
+        {/* 5. Sell Car CTA */}
         <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 300px" }}>
           <Suspense fallback={null}>
             <SellCarCTA />
           </Suspense>
         </div>
 
-        {/* Home FAQ — trust + SEO */}
+        {/* 6. Home FAQ */}
         <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 600px" }}>
           <Suspense fallback={null}>
             <HomeFAQ />

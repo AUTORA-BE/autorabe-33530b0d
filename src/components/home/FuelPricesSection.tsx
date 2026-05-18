@@ -1,5 +1,5 @@
 /**
- * FuelPricesSection — Prix carburants Belgique (fond clair, sparklines SVG inline).
+ * FuelPricesSection — Prix carburants Belgique.
  * @module components/home/FuelPricesSection
  */
 
@@ -10,45 +10,25 @@ import { FUEL_PRICES, type FuelPrice } from '@/data/fuelPrices';
 
 const ICONS = { droplet: Droplet, flame: Flame, zap: Zap } as const;
 
-function buildSparklinePath(values: number[]): string {
-  if (values.length === 0) return '';
-  const width = 100;
-  const height = 40;
-  const padding = 2;
-  const min = Math.min(...values);
-  const max = Math.max(...values);
-  const range = max - min || 1;
-  const stepX = (width - padding * 2) / (values.length - 1);
-  return values
-    .map((v, i) => {
-      const x = padding + i * stepX;
-      const y = padding + (height - padding * 2) * (1 - (v - min) / range);
-      return `${i === 0 ? 'M' : 'L'} ${x.toFixed(2)} ${y.toFixed(2)}`;
-    })
-    .join(' ');
-}
-
 function FuelCard({ fuel }: { fuel: FuelPrice }) {
   const Icon = ICONS[fuel.iconName];
   const isDown = fuel.trend === 'down';
-  const path = buildSparklinePath(fuel.sparkline);
-  const stroke = isDown ? 'hsl(var(--primary))' : 'rgb(239 68 68)';
   const badgeClass = isDown
     ? 'bg-primary/10 text-primary'
     : 'bg-red-500/10 text-red-600';
 
   return (
     <article className="rounded-2xl border border-border bg-card p-6 transition-all duration-300 hover:border-primary/30 hover:-translate-y-1 hover:shadow-md">
-      <div className="flex justify-between items-start">
+      <div className="flex justify-between items-start mb-6">
         <div className={`w-10 h-10 rounded-full flex items-center justify-center ${fuel.iconColor}`}>
           <Icon className="w-[18px] h-[18px]" strokeWidth={1.75} />
         </div>
         <span className={`text-xs font-medium px-2 py-1 rounded-full ${badgeClass}`}>
-          {isDown ? '▼' : '▲'}{fuel.variation.toFixed(1)}%
+          {isDown ? '▼' : '▲'} {fuel.variation.toFixed(1)}%
         </span>
       </div>
 
-      <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mt-6">
+      <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
         {fuel.label}
       </p>
 
@@ -58,10 +38,6 @@ function FuelCard({ fuel }: { fuel: FuelPrice }) {
         </span>
         <span className="text-sm text-muted-foreground">{fuel.unit}</span>
       </div>
-
-      <svg viewBox="0 0 100 40" className="mt-6 w-full h-12" aria-hidden="true">
-        <path d={path} stroke={stroke} strokeWidth={1.5} fill="none" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
     </article>
   );
 }
