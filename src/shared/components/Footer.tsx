@@ -58,10 +58,10 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="relative overflow-hidden mt-12 sm:mt-20 border-t border-[hsl(var(--border-glass)/0.3)] pb-24 md:pb-0">
-      {/* Tokenized background — adapts to light/dark */}
-      <div className="absolute inset-0 bg-[hsl(var(--background-elevated))]" />
-      <div className="absolute inset-0 bg-gradient-to-b from-[hsl(var(--background-primary)/0.3)] to-transparent" />
+    <footer className="relative overflow-hidden mt-12 sm:mt-20 border-t border-border/10 pb-24 md:pb-0">
+      {/* Seamless background — inherits page gradient, no color jump */}
+      <div className="absolute inset-0 bg-background" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/[0.02] to-transparent pointer-events-none" />
 
       <div className="container mx-auto px-4 sm:px-6 relative">
         {/* Main grid */}

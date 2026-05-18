@@ -42,8 +42,9 @@
       /* Critical inline CSS to speed up FCP and avoid CLS across devices */
       *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
       html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
-      body{font-family:Inter,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;background:#0a0a14;color:#fff;overflow-x:hidden}
-      html.light body{background:#fafafa;color:#0a0a14}
+      html,body{background:#0c1221;color:#f0f4f8}
+      html.light,html.light body{background:#f5f8fc;color:#0a1628}
+      body{font-family:Inter,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow-x:hidden}
       #root{min-height:100vh;min-height:100dvh}
       img{max-width:100%;height:auto;display:block}
       /* Avoid layout shift while React mounts */
