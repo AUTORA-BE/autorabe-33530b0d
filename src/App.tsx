@@ -35,6 +35,7 @@ const Messages = lazy(() => import("./pages/Messages"));
 const About = lazy(() => import("./pages/About"));
 const FAQ = lazy(() => import("./pages/FAQ"));
 const Compare = lazy(() => import("./pages/Compare"));
+const Recherche = lazy(() => import("./pages/Recherche"));
 const SellerDashboard = lazy(() => import("./pages/SellerDashboard"));
 const SellerStats = lazy(() => import("./pages/SellerStats"));
 const SellerProfile = lazy(() => import("./pages/SellerProfile"));
@@ -146,6 +147,10 @@ function AppPages() {
       <Route path="/ueber-uns" element={<PageTransition><About /></PageTransition>} />
       <Route path="/faq" element={<PageTransition><FAQ /></PageTransition>} />
       <Route path="/compare" element={<PageTransition><Compare /></PageTransition>} />
+      <Route path="/recherche" element={<PageTransition><Recherche /></PageTransition>} />
+      <Route path="/zoeken" element={<PageTransition><Recherche /></PageTransition>} />
+      <Route path="/search" element={<PageTransition><Recherche /></PageTransition>} />
+      <Route path="/suche" element={<PageTransition><Recherche /></PageTransition>} />
       <Route path="/dashboard" element={<PageTransition><SellerDashboard /></PageTransition>} />
       <Route path="/dashboard/stats" element={<PageTransition><SellerStats /></PageTransition>} />
       <Route path="/seller/:userId" element={<PageTransition><SellerProfile /></PageTransition>} />
