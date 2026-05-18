@@ -92,52 +92,49 @@ export default function FiscaliteAuto2026() {
 
         <section id="tmc" className="mb-12 scroll-mt-20">
           <h2 className="text-2xl font-bold mb-4">Taxe de mise en circulation (TMC)</h2>
-          <div className="prose prose-sm max-w-none text-muted-foreground space-y-3">
+          <div className="text-muted-foreground text-sm leading-relaxed space-y-3">
             <p>
-              La TMC est perçue une seule fois lors de la première immatriculation du véhicule en
-              Belgique. Son montant varie selon la <strong>région</strong>, la{" "}
+              La TMC est perçue une seule fois lors de la première immatriculation du véhicule
+              en Belgique. Son montant varie selon la <strong>région</strong>, la{" "}
               <strong>puissance fiscale</strong> (CV) et les <strong>émissions de CO₂</strong>.
             </p>
             <p>
-              En <strong>Région wallonne</strong>, la TMC 2026 est calculée sur la base de la
-              puissance fiscale, avec un multiplicateur CO₂. En <strong>Région flamande</strong>,
-              le barème repose principalement sur les émissions CO₂ et la norme Euro. En{" "}
-              <strong>Région de Bruxelles-Capitale</strong>, la TMC intègre un bonus pour les
-              véhicules zéro émission.
+              En <strong>Région wallonne</strong>, la nouvelle TMC intègre désormais la
+              puissance fiscale, le CO₂, mais aussi la <strong>masse (MMA)</strong> et
+              l'<strong>âge</strong> du véhicule. En <strong>Région flamande</strong>, le
+              barème repose principalement sur les émissions CO₂ et la norme Euro. En{" "}
+              <strong>Région de Bruxelles-Capitale</strong>, la taxe reste basée sur les CV
+              fiscaux avec des incitants pour le zéro émission. Utilisez notre{" "}
+              <Link to="/calculateur-tco" className="text-primary underline">
+                calculateur TCO
+              </Link>{" "}
+              pour une estimation précise.
             </p>
-            <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4">
-              <p className="text-amber-700 dark:text-amber-400 text-xs font-medium">
-                ⚠️ Les barèmes 2026 détaillés seront publiés dès réception des arrêtés régionaux
-                définitifs. Utilisez notre{" "}
-                <Link to="/calculateur-tco" className="underline">
-                  calculateur TCO
-                </Link>{" "}
-                pour une estimation en temps réel.
-              </p>
-            </div>
           </div>
         </section>
 
         <section id="tc" className="mb-12 scroll-mt-20">
           <h2 className="text-2xl font-bold mb-4">Taxe de circulation annuelle</h2>
           <p className="text-muted-foreground text-sm leading-relaxed">
-            La taxe de circulation est due chaque année pour tout véhicule immatriculé en Belgique.
-            Son montant dépend de la puissance du moteur (kW), du type de carburant et de la région
-            de résidence du propriétaire. Les véhicules entièrement électriques bénéficient d'une
-            exonération totale dans les trois régions jusqu'en 2026.
+            La taxe de circulation est due chaque année pour tout véhicule immatriculé en
+            Belgique. Son montant dépend de la <strong>puissance du moteur</strong>, du{" "}
+            <strong>type de carburant</strong> et de la <strong>région</strong>. À noter
+            qu'à partir de <strong>2026</strong>, les véhicules entièrement électriques ne
+            sont plus totalement exonérés lors d'une nouvelle immatriculation et basculent
+            sur des <strong>tarifs forfaitaires minimaux</strong>.
           </p>
         </section>
 
         <section id="deductibilite" className="mb-12 scroll-mt-20">
           <h2 className="text-2xl font-bold mb-4">Déductibilité professionnelle</h2>
           <p className="text-muted-foreground text-sm leading-relaxed mb-6">
-            La réforme fiscale belge entrée en vigueur le 1ᵉʳ janvier 2026 modifie radicalement
-            la déductibilité des frais de voiture. La date de commande devient déterminante.
+            La réforme fiscale belge modifie radicalement la déductibilité des frais de
+            voiture. La date de commande devient déterminante.
           </p>
 
           <div className="rounded-2xl border border-border bg-card overflow-hidden mb-4">
             <div className="px-5 py-4 border-b border-border bg-secondary/40">
-              <p className="font-semibold text-sm">En résumé : la règle d'or</p>
+              <p className="font-semibold text-sm">En résumé : la règle d'or 2026</p>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
@@ -145,7 +142,7 @@ export default function FiscaliteAuto2026() {
                   <tr className="border-b border-border">
                     <th className="text-left font-semibold px-5 py-3 text-foreground">Type de motorisation</th>
                     <th className="text-left font-semibold px-5 py-3 text-foreground">Commandé avant le 31/12/2025</th>
-                    <th className="text-left font-semibold px-5 py-3 text-foreground">Commandé (nouvel achat)</th>
+                    <th className="text-left font-semibold px-5 py-3 text-foreground">Commandé en 2026 (nouvel achat)</th>
                   </tr>
                 </thead>
                 <tbody className="text-muted-foreground">
@@ -162,7 +159,7 @@ export default function FiscaliteAuto2026() {
                     <td className="px-5 py-4 align-top">Régime transitoire (plafonné à 50 % ; carburant à 50 %)</td>
                     <td className="px-5 py-4 align-top">
                       <span className="font-semibold text-destructive">0 % déductible</span>
-                      <span className="block text-xs mt-1">(sauf exception très ciblée pour certains indépendants en personne physique)</span>
+                      <span className="block text-xs mt-1">(sauf rares exceptions en personne physique)</span>
                     </td>
                   </tr>
                   <tr>
@@ -189,34 +186,23 @@ export default function FiscaliteAuto2026() {
         <section id="atn" className="mb-12 scroll-mt-20">
           <h2 className="text-2xl font-bold mb-4">Avantage de toute nature (ATN)</h2>
           <p className="text-muted-foreground text-sm leading-relaxed mb-4">
-            L'ATN, c'est la taxe que tu payes chaque mois (directement retenue sur ta fiche
-            de paie) parce que ton entreprise te met une voiture à disposition pour tes
-            trajets privés.
+            L'ATN est calculé sur la base de la <strong className="text-foreground">valeur
+            catalogue du véhicule TVAC</strong>, d'un <strong className="text-foreground">pourcentage CO₂</strong>{" "}
+            (calculé selon les nouvelles valeurs de référence de{" "}
+            <strong className="text-foreground">70 g pour l'essence</strong> et{" "}
+            <strong className="text-foreground">58 g pour le diesel</strong>) et d'un{" "}
+            <strong className="text-foreground">coefficient d'âge</strong>. Pour 2026, la
+            formule reste :
           </p>
-          <p className="text-muted-foreground text-sm leading-relaxed mb-3">
-            Pour le calculer, l'État prend le <strong className="text-foreground">prix
-            catalogue d'origine</strong> du véhicule (neuf et options comprises), puis
-            applique une formule qui tient compte de deux critères :
-          </p>
-          <ul className="text-sm text-muted-foreground space-y-2 mb-4 list-disc list-outside ml-5">
-            <li>
-              <strong className="text-foreground">La pollution (le CO₂) :</strong> plus la
-              voiture émet de CO₂ par rapport à la moyenne nationale, plus la taxe grimpe.
-              Les voitures électriques bénéficient d'office du taux minimal le plus
-              avantageux.
-            </li>
-            <li>
-              <strong className="text-foreground">L'âge de la voiture :</strong> chaque
-              année, l'État applique une ristourne de 6 % pour tenir compte de l'usure du
-              véhicule, jusqu'à un blocage maximum au bout de 5 ans.
-            </li>
-          </ul>
+          <div className="rounded-2xl border border-border bg-secondary/40 p-4 mb-4">
+            <p className="font-mono text-sm text-foreground text-center">
+              ATN = Valeur catalogue × 6/7 × % CO₂ × Coefficient d'âge
+            </p>
+          </div>
           <div className="rounded-2xl border border-primary/30 bg-primary/5 p-4">
             <p className="text-sm text-foreground">
-              <strong>Minimum légal 2026 :</strong> peu importe le calcul, l'ATN ne peut
-              jamais descendre en dessous de{" "}
-              <strong className="text-primary">1 690 € par an</strong> (≈ 141 € par mois)
-              — revenus 2026, exercice d'imposition 2027.
+              Le montant minimal légal de l'ATN pour l'année 2026 est fixé à{" "}
+              <strong className="text-primary">1 690 € par an</strong>.
             </p>
           </div>
         </section>
