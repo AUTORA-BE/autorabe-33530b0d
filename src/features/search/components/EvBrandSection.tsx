@@ -53,16 +53,16 @@ const EvBrandSection = memo(function EvBrandSection({
   };
 
   return (
-    <section className="bg-card py-16 md:py-24">
+    <section className="bg-[#0A1118] py-16 md:py-24">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         <div className="space-y-4 max-w-2xl mb-12">
           <p className="text-xs md:text-sm font-medium uppercase tracking-[0.15em] text-primary">
             {eyebrow}
           </p>
-          <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-normal leading-tight text-foreground">
+          <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-normal leading-tight text-white">
             {title}
           </h2>
-          <p className="text-base md:text-lg leading-relaxed text-muted-foreground">
+          <p className="text-base md:text-lg leading-relaxed text-white/60">
             {subtitle}
           </p>
         </div>
@@ -79,14 +79,14 @@ const EvBrandSection = memo(function EvBrandSection({
                   "group relative h-28 md:h-32 rounded-2xl border flex items-center justify-center",
                   "transition-all duration-300 hover:-translate-y-1",
                   active
-                    ? "border-primary/50 bg-primary/5 shadow-lg shadow-primary/10"
-                    : "border-border bg-background hover:border-primary/40 hover:bg-secondary/50",
+                    ? "border-primary/60 bg-primary/10 shadow-lg shadow-primary/20"
+                    : "border-white/10 bg-white/[0.03] hover:border-primary/40 hover:bg-white/[0.06]",
                 )}
               >
                 <span
                   className={cn(
                     "font-serif text-lg md:text-xl font-medium tracking-wide transition-colors",
-                    active ? "text-primary" : "text-foreground group-hover:text-primary",
+                    active ? "text-primary" : "text-white group-hover:text-primary",
                   )}
                 >
                   {name}
