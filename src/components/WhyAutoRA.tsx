@@ -22,6 +22,7 @@ const WhyAutoRA = memo(() => {
     isNl ? nl : isDe ? de : isEn ? en : fr;
 
   const features = [
+    // Row 1 — Trust & Legal
     {
       icon: Shield,
       title: t("Car-Pass certifié", "Gecertificeerde Car-Pass", "Zertifizierter Car-Pass", "Certified Car-Pass"),
@@ -35,14 +36,37 @@ const WhyAutoRA = memo(() => {
     },
     {
       icon: Leaf,
-      title: t("Conformité LEZ", "LEZ-conformiteit", "LEZ-Konformität", "LEZ Compliance"),
+      title: t("LEZ & Normes Euro", "LEZ & Euro-normen", "LEZ & Euro-Normen", "LEZ & Euro standards"),
       desc: t(
-        "Vérification instantanée pour Bruxelles, Anvers et Gand.",
-        "Directe controle voor Brussel, Antwerpen en Gent.",
-        "Sofortige Prüfung für Brüssel, Antwerpen und Gent.",
-        "Instant check for Brussels, Antwerp and Ghent."
+        "Conformité LEZ pour Bruxelles, Anvers et Gand. Chaque annonce affiche sa norme Euro.",
+        "LEZ-conformiteit voor Brussel, Antwerpen en Gent. Elke advertentie toont de Euro-norm.",
+        "LEZ-Konformität für Brüssel, Antwerpen und Gent. Jede Anzeige zeigt die Euro-Norm.",
+        "LEZ compliance for Brussels, Antwerp and Ghent. Every listing displays its Euro standard."
       ),
       color: "text-emerald-500",
+    },
+    {
+      icon: Globe,
+      title: t("100% belge, 4 langues", "100% Belgisch, 4 talen", "100% belgisch, 4 Sprachen", "100% Belgian, 4 languages"),
+      desc: t(
+        "Disponible en français, néerlandais, allemand et anglais.",
+        "Beschikbaar in het Frans, Nederlands, Duits en Engels.",
+        "Verfügbar auf Französisch, Niederländisch, Deutsch und Englisch.",
+        "Available in French, Dutch, German and English."
+      ),
+      color: "text-rose-500",
+    },
+    // Row 2 — Tools & Experience
+    {
+      icon: Calculator,
+      title: t("Calculateur TCO", "TCO-calculator", "TCO-Rechner", "TCO Calculator"),
+      desc: t(
+        "Estimez le coût total : taxes, assurance, carburant et dépréciation.",
+        "Schat de totale kosten: belastingen, verzekering, brandstof en afschrijving.",
+        "Gesamtkosten schätzen: Steuern, Versicherung, Kraftstoff und Abschreibung.",
+        "Estimate total cost: taxes, insurance, fuel and depreciation."
+      ),
+      color: "text-blue-500",
     },
     {
       icon: Zap,
@@ -56,37 +80,15 @@ const WhyAutoRA = memo(() => {
       color: "text-amber-500",
     },
     {
-      icon: Calculator,
-      title: t("Calculateur TCO", "TCO-calculator", "TCO-Rechner", "TCO Calculator"),
-      desc: t(
-        "Estimez le coût total : taxes, assurance, carburant et dépréciation.",
-        "Schat de totale kosten: belastingen, verzekering, brandstof en afschrijving.",
-        "Gesamtkosten schätzen: Steuern, Versicherung, Kraftstoff und Abschreibung.",
-        "Estimate total cost: taxes, insurance, fuel and depreciation."
-      ),
-      color: "text-blue-500",
-    },
-    {
       icon: FileCheck,
-      title: t("Normes Euro vérifiées", "Geverifieerde Euro-normen", "Verifizierte Euro-Normen", "Verified Euro standards"),
+      title: t("Annonces vérifiées", "Geverifieerde advertenties", "Geprüfte Anzeigen", "Verified listings"),
       desc: t(
-        "Chaque annonce affiche sa norme Euro. Filtrez selon vos besoins.",
-        "Elke advertentie toont de Euro-norm. Filter op uw behoeften.",
-        "Jede Anzeige zeigt die Euro-Norm. Filtern Sie nach Bedarf.",
-        "Every listing displays its Euro standard. Filter to your needs."
+        "Chaque annonce passe un contrôle qualité avant publication.",
+        "Elke advertentie ondergaat een kwaliteitscontrole vóór publicatie.",
+        "Jede Anzeige durchläuft eine Qualitätskontrolle vor der Veröffentlichung.",
+        "Every listing undergoes a quality check before publication."
       ),
       color: "text-violet-500",
-    },
-    {
-      icon: Globe,
-      title: t("100% belge, 4 langues", "100% Belgisch, 4 talen", "100% belgisch, 4 Sprachen", "100% Belgian, 4 languages"),
-      desc: t(
-        "Disponible en français, néerlandais, allemand et anglais.",
-        "Beschikbaar in het Frans, Nederlands, Duits en Engels.",
-        "Verfügbar auf Französisch, Niederländisch, Deutsch und Englisch.",
-        "Available in French, Dutch, German and English."
-      ),
-      color: "text-rose-500",
     },
   ];
 
