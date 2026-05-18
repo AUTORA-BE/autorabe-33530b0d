@@ -9,7 +9,6 @@ import {
   CarouselSkeleton,
   TrustBarSkeleton,
   WhyAutoRaSkeleton,
-  TestimonialsSkeleton,
   BrandCarouselSkeleton,
   GridSkeleton,
 } from "@/components/skeletons/HomeSkeleton";
@@ -162,7 +161,7 @@ const Index = () => {
 
       <PullToRefresh onRefresh={async () => { refresh(); }}>
       <main className="pb-24 md:pb-0">
-        {/* Hero — serif typography, glassmorphic search */}
+        {/* Hero — cinematic parallax with editorial serif text */}
         <HeroSearch onSearch={handleSearch} />
 
         {/* Voice search summary */}

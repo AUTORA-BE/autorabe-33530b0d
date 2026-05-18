@@ -26,9 +26,9 @@ function FeaturedListingCard({ vehicle, href }: { vehicle: Vehicle; href: string
   return (
     <Link
       to={href}
-      className="group block rounded-2xl border border-neutral-200 bg-white shadow-sm overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-emerald-500/50"
+      className="group block rounded-2xl border border-border bg-card shadow-sm overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-primary/30"
     >
-      <div className="relative aspect-[16/10] bg-neutral-100 overflow-hidden">
+      <div className="relative aspect-[16/10] bg-muted overflow-hidden">
         <img
           src={vehicle.image || FALLBACK_IMG}
           alt={`${vehicle.brand} ${vehicle.model} ${vehicle.year}`}
@@ -36,7 +36,7 @@ function FeaturedListingCard({ vehicle, href }: { vehicle: Vehicle; href: string
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
         />
         {vehicle.hasCarPass && (
-          <span className="absolute top-3 left-3 inline-flex items-center gap-1 bg-emerald-500/95 text-neutral-950 text-[11px] font-medium px-2.5 py-1 rounded-full backdrop-blur-sm">
+          <span className="absolute top-3 left-3 inline-flex items-center gap-1 bg-primary text-primary-foreground text-[11px] font-medium px-2.5 py-1 rounded-full backdrop-blur-sm">
             <ShieldCheck className="w-3 h-3" strokeWidth={2} />
             Car-Pass
           </span>
@@ -44,7 +44,7 @@ function FeaturedListingCard({ vehicle, href }: { vehicle: Vehicle; href: string
         <span
           className={
             isElectric
-              ? 'absolute top-3 right-3 bg-neutral-950/80 text-emerald-400 border border-emerald-500/30 text-[11px] font-medium px-2.5 py-1 rounded-full backdrop-blur-sm'
+              ? 'absolute top-3 right-3 bg-neutral-950/80 text-primary border border-primary/30 text-[11px] font-medium px-2.5 py-1 rounded-full backdrop-blur-sm'
               : 'absolute top-3 right-3 bg-neutral-950/70 text-white text-[11px] font-medium px-2.5 py-1 rounded-full backdrop-blur-sm capitalize'
           }
         >
@@ -53,16 +53,16 @@ function FeaturedListingCard({ vehicle, href }: { vehicle: Vehicle; href: string
       </div>
 
       <div className="p-5">
-        <h3 className="font-semibold text-base text-neutral-900 line-clamp-1">
+        <h3 className="font-semibold text-base text-foreground line-clamp-1">
           {vehicle.brand} {vehicle.model}
         </h3>
-        <p className="text-xs text-neutral-500 mt-1">
+        <p className="text-xs text-muted-foreground mt-1">
           {vehicle.year} · {formatKm(vehicle.mileage)} · <span className="capitalize">{vehicle.fuelType}</span>
         </p>
-        <p className="text-2xl font-semibold text-neutral-900 mt-3 tabular-nums">
+        <p className="text-2xl font-semibold text-foreground mt-3 tabular-nums">
           {formatPrice(vehicle.price)}
         </p>
-        <p className="text-xs text-neutral-500 mt-2 inline-flex items-center gap-1">
+        <p className="text-xs text-muted-foreground mt-2 inline-flex items-center gap-1">
           <MapPin className="w-3 h-3" strokeWidth={1.75} />
           {vehicle.location}
         </p>
@@ -73,12 +73,12 @@ function FeaturedListingCard({ vehicle, href }: { vehicle: Vehicle; href: string
 
 function CardSkeleton() {
   return (
-    <div className="rounded-2xl border border-neutral-200 bg-white overflow-hidden">
-      <div className="aspect-[16/10] bg-neutral-200 animate-pulse" />
+    <div className="rounded-2xl border border-border bg-card overflow-hidden">
+      <div className="aspect-[16/10] bg-muted animate-pulse" />
       <div className="p-5 space-y-3">
-        <div className="h-4 w-3/4 bg-neutral-200 rounded animate-pulse" />
-        <div className="h-3 w-1/2 bg-neutral-200 rounded animate-pulse" />
-        <div className="h-6 w-1/3 bg-neutral-200 rounded animate-pulse" />
+        <div className="h-4 w-3/4 bg-muted rounded animate-pulse" />
+        <div className="h-3 w-1/2 bg-muted rounded animate-pulse" />
+        <div className="h-6 w-1/3 bg-muted rounded animate-pulse" />
       </div>
     </div>
   );
@@ -89,18 +89,18 @@ const FeaturedVehiclesSection = () => {
   const vehicleHref = useLocalizedVehicleHref();
 
   return (
-    <section className="bg-neutral-50 py-16 md:py-24">
+    <section className="bg-background py-16 md:py-24">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
           <div className="space-y-4 max-w-2xl">
-            <p className="text-xs md:text-sm font-medium uppercase tracking-[0.15em] text-emerald-500">
+            <p className="text-xs md:text-sm font-medium uppercase tracking-[0.15em] text-primary">
               Sélection de la semaine
             </p>
-            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-normal leading-tight text-neutral-900">
+            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-normal leading-tight text-foreground">
               Véhicules en vedette
             </h2>
-            <p className="text-base md:text-lg leading-relaxed text-neutral-600">
+            <p className="text-base md:text-lg leading-relaxed text-muted-foreground">
               Une sélection de voitures Car-Pass vérifiées, prêtes pour les zones LEZ belges.
             </p>
           </div>
@@ -111,7 +111,7 @@ const FeaturedVehiclesSection = () => {
               e.preventDefault();
               document.getElementById('results-section')?.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="hidden md:inline-flex items-center gap-2 text-emerald-500 hover:text-emerald-600 font-medium transition-colors group"
+            className="hidden md:inline-flex items-center gap-2 text-primary hover:text-primary font-medium transition-colors group"
           >
             Voir toutes les annonces
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" strokeWidth={1.75} />
@@ -124,11 +124,11 @@ const FeaturedVehiclesSection = () => {
             {Array.from({ length: 8 }).map((_, i) => <CardSkeleton key={i} />)}
           </div>
         ) : error ? (
-          <p className="text-center text-neutral-500 text-sm py-12">
+          <p className="text-center text-muted-foreground text-sm py-12">
             Impossible de charger les annonces pour le moment.
           </p>
         ) : listings.length === 0 ? (
-          <p className="text-center text-neutral-500 text-sm py-12">
+          <p className="text-center text-muted-foreground text-sm py-12">
             Aucune annonce disponible pour le moment.
           </p>
         ) : (
@@ -152,7 +152,7 @@ const FeaturedVehiclesSection = () => {
                   e.preventDefault();
                   document.getElementById('results-section')?.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="inline-flex items-center gap-2 text-emerald-500 hover:text-emerald-600 font-medium transition-colors"
+                className="inline-flex items-center gap-2 text-primary hover:text-primary font-medium transition-colors"
               >
                 Voir toutes les annonces
                 <ArrowRight className="w-4 h-4" strokeWidth={1.75} />

@@ -32,13 +32,13 @@ function FuelCard({ fuel }: { fuel: FuelPrice }) {
   const Icon = ICONS[fuel.iconName];
   const isDown = fuel.trend === 'down';
   const path = buildSparklinePath(fuel.sparkline);
-  const stroke = isDown ? 'rgb(16 185 129)' : 'rgb(239 68 68)';
+  const stroke = isDown ? 'hsl(var(--primary))' : 'rgb(239 68 68)';
   const badgeClass = isDown
-    ? 'bg-emerald-500/10 text-emerald-600'
+    ? 'bg-primary/10 text-primary'
     : 'bg-red-500/10 text-red-600';
 
   return (
-    <article className="rounded-2xl border border-neutral-200 bg-white p-6 transition-all duration-300 hover:border-emerald-500/50 hover:-translate-y-1 hover:shadow-md">
+    <article className="rounded-2xl border border-border bg-card p-6 transition-all duration-300 hover:border-primary/30 hover:-translate-y-1 hover:shadow-md">
       <div className="flex justify-between items-start">
         <div className={`w-10 h-10 rounded-full flex items-center justify-center ${fuel.iconColor}`}>
           <Icon className="w-[18px] h-[18px]" strokeWidth={1.75} />
@@ -48,15 +48,15 @@ function FuelCard({ fuel }: { fuel: FuelPrice }) {
         </span>
       </div>
 
-      <p className="text-xs font-medium uppercase tracking-wider text-neutral-500 mt-6">
+      <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mt-6">
         {fuel.label}
       </p>
 
       <div className="flex items-baseline gap-1 mt-1">
-        <span className="text-4xl font-semibold text-neutral-900 tabular-nums">
+        <span className="text-4xl font-semibold text-foreground tabular-nums">
           {fuel.price.toFixed(fuel.decimals)}
         </span>
-        <span className="text-sm text-neutral-500">{fuel.unit}</span>
+        <span className="text-sm text-muted-foreground">{fuel.unit}</span>
       </div>
 
       <svg viewBox="0 0 100 40" className="mt-6 w-full h-12" aria-hidden="true">
@@ -100,16 +100,16 @@ const FuelPricesSection = () => {
   }, []);
 
   return (
-    <section className="bg-neutral-50 py-16 md:py-24">
+    <section className="bg-background py-16 md:py-24">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         <div className="space-y-4 max-w-2xl mb-12">
-          <p className="text-xs md:text-sm font-medium uppercase tracking-[0.15em] text-emerald-500">
+          <p className="text-xs md:text-sm font-medium uppercase tracking-[0.15em] text-primary">
             Données temps réel
           </p>
-          <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-normal leading-tight text-neutral-900">
+          <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-normal leading-tight text-foreground">
             Prix carburants Belgique
           </h2>
-          <p className="text-base md:text-lg leading-relaxed text-neutral-600">
+          <p className="text-base md:text-lg leading-relaxed text-muted-foreground">
             Moyennes nationales mises à jour quotidiennement — utilisées dans le calculateur TCO de chaque annonce.
           </p>
         </div>
@@ -118,7 +118,7 @@ const FuelPricesSection = () => {
           {prices.map((f) => <FuelCard key={f.id} fuel={f} />)}
         </div>
 
-        <p className="mt-12 text-xs text-neutral-500 text-center">
+        <p className="mt-12 text-xs text-muted-foreground text-center">
           {formattedDate && <>Dernière mise à jour : {formattedDate} · </>}
           Source : données officielles SPF Économie + opérateurs de bornes.
         </p>

@@ -116,7 +116,7 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
   return (
     <article
       ref={ref}
-      className={`rounded-2xl overflow-hidden bg-card border group cursor-pointer touch-target relative hover:-translate-y-1.5 active:scale-[0.98] transition-all duration-300 ease-out ${
+      className={`rounded-2xl overflow-hidden bg-card border group cursor-pointer touch-target relative hover:-translate-y-1.5 active:scale-[0.98] transition-all duration-300 ease-out flex flex-col h-full ${
         isBoosted ? "border-amber-400/70 shadow-md" : "border-border/50"
       }`}
       style={{ contain: "layout style paint" }}
@@ -239,7 +239,7 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
       </div>
 
       {/* Content */}
-      <div className="p-3.5 sm:p-5 relative z-[1]">
+      <div className="p-3.5 sm:p-5 relative z-[1] flex flex-col flex-1">
         <div className="flex items-center justify-between mb-1">
           <h3 className="font-display text-lg font-bold text-foreground group-hover:text-primary transition-colors duration-300 line-clamp-1">
             {car.brand} {car.model}
@@ -255,7 +255,7 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
           <MapPin className="w-3 h-3" />
           {car.location}
         </p>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 mt-auto pt-2">
           <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-2xl bg-secondary text-sm text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-colors duration-300">
             <Calendar className="w-3.5 h-3.5" />
             {car.year}
