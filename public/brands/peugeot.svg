@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Peugeot 2021 geometric lion-head crest shield -->
+  <!-- Shield outline -->
+  <path d="M100 10 L175 38 L175 120 Q175 170 100 192 Q25 170 25 120 L25 38 Z" fill="#1D1D1B"/>
+  <!-- Simplified geometric lion head (stylized) -->
+  <!-- Head outline (circle) -->
+  <circle cx="100" cy="80" r="38" fill="none" stroke="#fff" stroke-width="4"/>
+  <!-- Eyes -->
+  <circle cx="87" cy="72" r="6" fill="#fff"/>
+  <circle cx="113" cy="72" r="6" fill="#fff"/>
+  <!-- Nose bridge -->
+  <rect x="97" y="80" width="6" height="10" rx="3" fill="#fff"/>
+  <!-- Mane lines -->
+  <path d="M62 80 Q68 60 100 55 Q132 60 138 80" fill="none" stroke="#fff" stroke-width="3.5"/>
+  <!-- Stylized crown/mane top -->
+  <path d="M75 55 L80 42 M100 52 L100 38 M125 55 L120 42" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/>
+  <!-- Peugeot wordmark below shield -->
+  <text x="100" y="188" text-anchor="middle" font-size="0" fill="transparent">Peugeot</text>
+</svg>
