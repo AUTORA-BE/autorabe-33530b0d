@@ -23,6 +23,7 @@ const FilterPanel = lazy(() => import("@/features/search/components/FilterPanel"
 const LoadMoreGrid = lazy(() => import("@/components/LoadMoreGrid"));
 const WhyAutoRA = lazy(() => import("@/components/WhyAutoRA"));
 const EvBrandSection = lazy(() => import("@/features/search/components/EvBrandSection"));
+const ThermalBrandCarousel = lazy(() => import("@/features/search/components/ThermalBrandCarousel"));
 
 const SellCarCTA = lazy(() => import("@/components/SellCarCTA"));
 const HomeFAQ = lazy(() => import("@/components/HomeFAQ"));
@@ -171,12 +172,20 @@ const Index = () => {
           <FeaturedVehiclesSection />
         </Suspense>
 
-        {/* 3. Pourquoi AutoRA — bento grid 2×3 */}
+        {/* 3. Carrousel marques thermiques */}
+        <Suspense fallback={null}>
+          <ThermalBrandCarousel
+            onBrandFilter={(brand) => updateFilter("brand", brand)}
+            selectedBrand={filters.brand}
+          />
+        </Suspense>
+
+        {/* 4. Pourquoi AutoRA — bento grid 2×3 */}
         <Suspense fallback={<WhyAutoRaSkeleton />}>
           <WhyAutoRA />
         </Suspense>
 
-        {/* 4. Marques 100% électriques — dark navy section */}
+        {/* 5. Marques 100% électriques — dark navy section */}
         <Suspense fallback={null}>
           <EvBrandSection
             onBrandFilter={(brand) => updateFilter("brand", brand)}
@@ -184,7 +193,7 @@ const Index = () => {
           />
         </Suspense>
 
-        {/* 5. Outils fiscaux — Conseiller IA + Prix carburants */}
+        {/* 6. Outils fiscaux — Conseiller IA + Prix carburants */}
         <Suspense fallback={<div className="h-96" />}>
           <FiscalAdvisorCTA />
         </Suspense>
@@ -192,14 +201,14 @@ const Index = () => {
           <FuelPricesSection />
         </Suspense>
 
-        {/* 6. Sell Car CTA */}
+        {/* 7. Sell Car CTA */}
         <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 300px" }}>
           <Suspense fallback={null}>
             <SellCarCTA />
           </Suspense>
         </div>
 
-        {/* 7. Home FAQ */}
+        {/* 8. Home FAQ */}
         <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 600px" }}>
           <Suspense fallback={null}>
             <HomeFAQ />
