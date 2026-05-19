@@ -1,7 +1,8 @@
 /**
  * Recherche — luxury catalogue search page.
- * No left sidebar: full-width centered layout with a floating pill filter bar
- * (Prix max, Énergie, Kilométrage) and a side-drawer (Sheet) for "Plus de filtres".
+ * Full-width premium dark layout: ambient radial backdrop, floating glass pill
+ * filter bar with scroll-shrink, bento grid of cinematic vehicle cards, and a
+ * side Sheet for "Plus de filtres". Hooks/types/data flow strictly preserved.
  * @module pages
  */
 
@@ -10,7 +11,8 @@ import { useNavigate } from "react-router-dom";
 import { Header, Footer } from "@/shared/components";
 import SEOHead from "@/components/SEOHead";
 import {
-  ShieldCheck, Leaf, ChevronDown, SlidersHorizontal, Grid3x3, Flame, Calendar, Gauge, X,
+  ShieldCheck, Leaf, ChevronDown, SlidersHorizontal, Grid3x3, Flame,
+  Calendar, Gauge, X, Sparkles,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -26,6 +28,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { getAllBrands, getModelsByBrand } from "@/utils/carUtils";
 import { BUDGET_OPTIONS, EURO_NORMS } from "@/features/search/types/search.types";
 import CarImage from "@/components/cars/CarImage";
+import { AmbientBackdrop } from "@/components/search/AmbientBackdrop";
+import { cn } from "@/lib/utils";
 import type { Vehicle } from "@/features/listings/types/vehicle.types";
 
 const SwipeDiscovery = lazy(() => import("@/features/listings/components/SwipeDiscovery"));
@@ -59,67 +63,123 @@ const COLOR_OPTIONS = [
 
 const CURRENT_YEAR = new Date().getFullYear();
 
-/* ─────────────── Luxury Car Card ─────────────── */
+/* ─────────────── Premium Bento Card ─────────────── */
 
-function LuxuryCarCard({ car, onClick }: { car: Vehicle; onClick: (id: string) => void }) {
+function LuxuryCarCard({
+  car,
+  featured,
+  onClick,
+}: {
+  car: Vehicle;
+  featured?: boolean;
+  onClick: (id: string) => void;
+}) {
   return (
     <motion.article
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+      transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
       onClick={() => onClick(car.id)}
-      className="group cursor-pointer rounded-2xl bg-card border border-border/40 overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 hover:border-primary/50 hover:-translate-y-1"
+      className={cn(
+        "group relative isolate cursor-pointer overflow-hidden rounded-2xl",
+        "border border-white/5 bg-white/[0.02] backdrop-blur-sm",
+        "transition-all duration-500 ease-out",
+        "hover:-translate-y-0.5 hover:border-primary/40 hover:bg-white/[0.035]",
+        "hover:shadow-[0_30px_60px_-20px_rgba(0,0,0,0.6),0_0_0_1px_hsl(var(--primary)/0.15),0_0_45px_-10px_hsl(var(--primary)/0.25)]",
+      )}
     >
-      {/* Cinematic image — 16:9 with smooth zoom contained by overflow-hidden */}
-      <div className="aspect-video relative overflow-hidden bg-muted">
+      {/* Glow vert interne au survol */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
+        style={{
+          background:
+            "radial-gradient(120% 80% at 50% 0%, hsl(var(--primary) / 0.18) 0%, hsl(var(--primary) / 0) 60%)",
+        }}
+      />
+
+      {/* Image cinéma 16:9 */}
+      <div className="relative aspect-video overflow-hidden rounded-t-2xl bg-slate-900">
         <CarImage
           src={car.image}
           alt={`${car.brand} ${car.model}`}
-          className="w-full h-full object-cover transition-transform duration-[900ms] ease-out group-hover:scale-105"
+          className="h-full w-full object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.06]"
         />
 
-        {/* Subtle vignette on hover */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
 
-        {/* Premium top-row badges (glass + bright text) */}
-        <div className="absolute top-3 left-3 right-3 flex items-start justify-between gap-2 pointer-events-none">
+        {/* Shimmer ultra-discret sur cartes vedettes */}
+        {featured && (
+          <span
+            aria-hidden
+            className="search-shimmer pointer-events-none absolute inset-0"
+          />
+        )}
+
+        {/* Badges glass haut */}
+        <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
           {car.hasCarPass && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/15 backdrop-blur-md border border-primary/30 text-primary text-[11px] font-semibold tracking-wide shadow-lg shadow-primary/10">
-              <ShieldCheck className="w-3.5 h-3.5" strokeWidth={2.2} />
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/25 bg-emerald-500/10 px-2.5 py-0.5 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-emerald-300 backdrop-blur-md">
+              <ShieldCheck className="h-3 w-3" strokeWidth={2.5} />
               Car-Pass
             </span>
           )}
           {car.isLezCompatible && (
-            <span className="ml-auto inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-emerald-400/15 backdrop-blur-md border border-emerald-400/40 text-emerald-300 text-[11px] font-semibold tracking-wide shadow-lg">
-              <Leaf className="w-3.5 h-3.5" strokeWidth={2} />
-              LEZ
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-400/25 bg-sky-500/10 px-2.5 py-0.5 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-sky-300 backdrop-blur-md">
+              <Leaf className="h-3 w-3" strokeWidth={2.5} />
+              LEZ OK
             </span>
           )}
         </div>
-      </div>
 
-      {/* Content */}
-      <div className="p-6 sm:p-7 flex flex-col gap-4">
-        <div>
-          <h3 className="font-serif text-xl sm:text-2xl font-medium text-foreground leading-tight tracking-tight">
-            {car.brand} <span className="text-foreground/80">{car.model}</span>
-          </h3>
-          <div className="mt-2 flex items-center gap-3 text-[12px] text-muted-foreground font-light">
-            <span className="inline-flex items-center gap-1">
-              <Calendar className="w-3 h-3" strokeWidth={1.5} />
-              {car.year}
-            </span>
-            <span className="text-border">·</span>
-            <span className="inline-flex items-center gap-1">
-              <Gauge className="w-3 h-3" strokeWidth={1.5} />
-              {car.mileage.toLocaleString("fr-BE")} km
+        {featured && (
+          <div className="absolute right-3 top-3">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-400/25 bg-amber-500/10 px-2.5 py-0.5 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-amber-300 backdrop-blur-md">
+              <Sparkles className="h-3 w-3" strokeWidth={2.5} />
+              Coup de cœur
             </span>
           </div>
+        )}
+
+        {/* Marque / modèle sur l'image */}
+        <div className="absolute bottom-3 left-3 right-3">
+          <p className="truncate text-[11px] font-medium uppercase tracking-[0.14em] text-white/60">
+            {car.brand}
+          </p>
+          <h3 className="truncate font-serif text-xl font-medium tracking-tight text-white">
+            {car.model}
+          </h3>
+        </div>
+      </div>
+
+      {/* Contenu */}
+      <div className="relative space-y-4 p-5 sm:p-6">
+        <div className="flex items-center gap-4 text-[12.5px] text-white/65">
+          <span className="inline-flex items-center gap-1.5">
+            <Calendar className="h-3.5 w-3.5 text-white/40" strokeWidth={2} />
+            {car.year}
+          </span>
+          <span className="text-white/20">·</span>
+          <span className="inline-flex items-center gap-1.5">
+            <Gauge className="h-3.5 w-3.5 text-white/40" strokeWidth={2} />
+            {car.mileage.toLocaleString("fr-BE")} km
+          </span>
         </div>
 
-        <div className="flex items-end justify-between pt-2 border-t border-border/30">
-          <span className="font-serif text-4xl sm:text-5xl font-semibold text-foreground tracking-tight tabular-nums leading-none pt-3">
-            {car.price.toLocaleString("fr-BE")}<span className="text-2xl sm:text-3xl text-muted-foreground font-light ml-1">€</span>
+        <div className="flex items-end justify-between border-t border-white/5 pt-4">
+          <div>
+            <p className="text-[10.5px] font-medium uppercase tracking-[0.14em] text-white/45">
+              Prix
+            </p>
+            <p className="mt-0.5 font-serif text-3xl font-bold tracking-tight tabular-nums text-white">
+              {car.price.toLocaleString("fr-BE")}
+              <span className="ml-1 text-xl font-light text-white/55">€</span>
+            </p>
+          </div>
+          <span
+            className="rounded-full border border-white/10 bg-white/[0.04] px-3.5 py-2 text-[11px] font-medium uppercase tracking-[0.12em] text-white/85 transition-all duration-300 group-hover:border-primary/40 group-hover:bg-primary/15 group-hover:text-primary"
+          >
+            Voir →
           </span>
         </div>
       </div>
@@ -127,15 +187,16 @@ function LuxuryCarCard({ car, onClick }: { car: Vehicle; onClick: (id: string) =
   );
 }
 
-/* ─────────────── Pill Filter Bar ─────────────── */
+/* ─────────────── Pill Filter Bar (glass + sticky shrink) ─────────────── */
 
 interface FilterBarProps {
   filters: ReturnType<typeof useVehicleSearch>["filters"];
   updateFilter: ReturnType<typeof useVehicleSearch>["updateFilter"];
   onOpenMore: () => void;
+  shrunk: boolean;
 }
 
-function PillFilterBar({ filters, updateFilter, onOpenMore }: FilterBarProps) {
+function PillFilterBar({ filters, updateFilter, onOpenMore, shrunk }: FilterBarProps) {
   const budgetLabel = filters.maxPrice < 1000000
     ? `≤ ${filters.maxPrice.toLocaleString("fr-BE")} €`
     : "Prix max";
@@ -149,23 +210,45 @@ function PillFilterBar({ filters, updateFilter, onOpenMore }: FilterBarProps) {
     ? `≤ ${filters.kmMax.toLocaleString("fr-BE")} km`
     : "Kilométrage";
 
-  const triggerCls = "rounded-full bg-transparent hover:bg-secondary/60 text-sm font-medium px-5 h-11 gap-1.5 border-0";
+  const triggerCls = cn(
+    "rounded-full bg-transparent text-[13px] font-medium gap-1.5 border-0",
+    "text-white/85 hover:bg-white/[0.06] hover:text-white",
+    shrunk ? "px-4 h-9" : "px-5 h-10",
+  );
+  const activeTriggerCls =
+    "bg-primary/15 text-primary hover:bg-primary/20 hover:text-primary ring-1 ring-inset ring-primary/30";
 
   return (
-    <div className="hidden md:flex items-center gap-1 p-2 rounded-full bg-background/60 backdrop-blur-xl border border-border/40 shadow-2xl shadow-primary/5 ring-1 ring-white/5">
+    <div
+      className={cn(
+        "hidden md:flex items-center gap-1 rounded-full",
+        "border border-white/10 bg-slate-950/55 backdrop-blur-xl",
+        "shadow-[0_25px_60px_-12px_rgba(0,0,0,0.55),0_0_0_1px_rgba(255,255,255,0.03)]",
+        "transition-all duration-300 ease-out",
+        shrunk ? "p-1.5 scale-[0.97]" : "p-2",
+      )}
+    >
       {/* Prix max */}
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="ghost" className={triggerCls}>
+          <Button
+            variant="ghost"
+            className={cn(triggerCls, filters.maxPrice < 1000000 && activeTriggerCls)}
+          >
             {budgetLabel}
-            <ChevronDown className="w-3.5 h-3.5 opacity-60" />
+            <ChevronDown className="h-3.5 w-3.5 opacity-60" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-80 p-6 rounded-2xl" align="start">
+        <PopoverContent
+          className="w-80 rounded-2xl border-white/10 bg-slate-950/85 p-6 text-white shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7)] backdrop-blur-2xl"
+          align="start"
+        >
           <div className="space-y-5">
             <div className="flex items-baseline justify-between">
-              <label className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-medium">Prix maximum</label>
-              <span className="text-lg font-semibold text-foreground tabular-nums">
+              <label className="text-[10px] font-medium uppercase tracking-[0.15em] text-white/55">
+                Prix maximum
+              </label>
+              <span className="text-lg font-semibold tabular-nums text-white">
                 {filters.maxPrice >= 1000000 ? "∞" : `${filters.maxPrice.toLocaleString("fr-BE")} €`}
               </span>
             </div>
@@ -181,11 +264,12 @@ function PillFilterBar({ filters, updateFilter, onOpenMore }: FilterBarProps) {
                 <button
                   key={b.value}
                   onClick={() => updateFilter("maxPrice", b.value)}
-                  className={`text-[11px] px-2.5 py-1 rounded-full border transition-all ${
+                  className={cn(
+                    "rounded-full border px-2.5 py-1 text-[11px] transition-all",
                     filters.maxPrice === b.value
                       ? "border-primary bg-primary text-primary-foreground"
-                      : "border-border/60 hover:border-primary/40 text-muted-foreground"
-                  }`}
+                      : "border-white/10 text-white/65 hover:border-primary/40 hover:text-white",
+                  )}
                 >
                   {b.label}
                 </button>
@@ -195,18 +279,26 @@ function PillFilterBar({ filters, updateFilter, onOpenMore }: FilterBarProps) {
         </PopoverContent>
       </Popover>
 
-      <span className="w-px h-5 bg-border/60" />
+      <span className="h-5 w-px bg-white/10" />
 
       {/* Énergie */}
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="ghost" className={triggerCls}>
+          <Button
+            variant="ghost"
+            className={cn(triggerCls, filters.fuelTypes.length > 0 && activeTriggerCls)}
+          >
             {fuelLabel}
-            <ChevronDown className="w-3.5 h-3.5 opacity-60" />
+            <ChevronDown className="h-3.5 w-3.5 opacity-60" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-72 p-4 rounded-2xl" align="start">
-          <label className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-medium block mb-3">Type d'énergie</label>
+        <PopoverContent
+          className="w-72 rounded-2xl border-white/10 bg-slate-950/85 p-4 text-white shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7)] backdrop-blur-2xl"
+          align="start"
+        >
+          <label className="mb-3 block text-[10px] font-medium uppercase tracking-[0.15em] text-white/55">
+            Type d'énergie
+          </label>
           <div className="grid grid-cols-2 gap-2">
             {FUEL_OPTIONS.map((f) => {
               const active = filters.fuelTypes.includes(f.id);
@@ -219,11 +311,12 @@ function PillFilterBar({ filters, updateFilter, onOpenMore }: FilterBarProps) {
                       : [...filters.fuelTypes, f.id];
                     updateFilter("fuelTypes", next);
                   }}
-                  className={`px-3 py-2.5 rounded-xl text-sm font-medium border transition-all ${
+                  className={cn(
+                    "rounded-xl border px-3 py-2.5 text-sm font-medium transition-all",
                     active
-                      ? "border-primary bg-primary/10 text-primary"
-                      : "border-border/60 hover:border-primary/40 text-foreground"
-                  }`}
+                      ? "border-primary/40 bg-primary/15 text-primary"
+                      : "border-white/10 text-white/85 hover:border-primary/40 hover:bg-white/[0.04]",
+                  )}
                 >
                   {f.labelFr}
                 </button>
@@ -233,21 +326,29 @@ function PillFilterBar({ filters, updateFilter, onOpenMore }: FilterBarProps) {
         </PopoverContent>
       </Popover>
 
-      <span className="w-px h-5 bg-border/60" />
+      <span className="h-5 w-px bg-white/10" />
 
       {/* Kilométrage */}
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="ghost" className={triggerCls}>
+          <Button
+            variant="ghost"
+            className={cn(triggerCls, filters.kmMax < 500000 && activeTriggerCls)}
+          >
             {kmLabel}
-            <ChevronDown className="w-3.5 h-3.5 opacity-60" />
+            <ChevronDown className="h-3.5 w-3.5 opacity-60" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-80 p-6 rounded-2xl" align="start">
+        <PopoverContent
+          className="w-80 rounded-2xl border-white/10 bg-slate-950/85 p-6 text-white shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7)] backdrop-blur-2xl"
+          align="start"
+        >
           <div className="space-y-5">
             <div className="flex items-baseline justify-between">
-              <label className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-medium">Kilométrage maximum</label>
-              <span className="text-lg font-semibold text-foreground tabular-nums">
+              <label className="text-[10px] font-medium uppercase tracking-[0.15em] text-white/55">
+                Kilométrage maximum
+              </label>
+              <span className="text-lg font-semibold tabular-nums text-white">
                 {filters.kmMax >= 500000 ? "∞" : `${filters.kmMax.toLocaleString("fr-BE")} km`}
               </span>
             </div>
@@ -263,11 +364,12 @@ function PillFilterBar({ filters, updateFilter, onOpenMore }: FilterBarProps) {
                 <button
                   key={km}
                   onClick={() => updateFilter("kmMax", km)}
-                  className={`text-[11px] px-2.5 py-1 rounded-full border transition-all ${
+                  className={cn(
+                    "rounded-full border px-2.5 py-1 text-[11px] transition-all",
                     filters.kmMax === km
                       ? "border-primary bg-primary text-primary-foreground"
-                      : "border-border/60 hover:border-primary/40 text-muted-foreground"
-                  }`}
+                      : "border-white/10 text-white/65 hover:border-primary/40 hover:text-white",
+                  )}
                 >
                   {km >= 500000 ? "Tous" : `≤ ${(km / 1000).toLocaleString("fr-BE")}k km`}
                 </button>
@@ -277,18 +379,25 @@ function PillFilterBar({ filters, updateFilter, onOpenMore }: FilterBarProps) {
         </PopoverContent>
       </Popover>
 
-      <span className="w-px h-5 bg-border/60" />
+      <span className="h-5 w-px bg-white/10" />
 
       {/* Plus de filtres → side drawer */}
-      <Button variant="ghost" onClick={onOpenMore} className={triggerCls}>
-        <SlidersHorizontal className="w-3.5 h-3.5" />
+      <Button
+        variant="ghost"
+        onClick={onOpenMore}
+        className={cn(
+          triggerCls,
+          "border border-white/10 bg-white/[0.03] hover:border-primary/40 hover:bg-primary/10 hover:text-primary",
+        )}
+      >
+        <SlidersHorizontal className="h-3.5 w-3.5" />
         Plus de filtres
       </Button>
     </div>
   );
 }
 
-/* ─────────────── More Filters Sheet (side drawer) ─────────────── */
+/* ─────────────── More Filters Sheet (side drawer, premium dark) ─────────────── */
 
 interface MoreFiltersSheetProps {
   open: boolean;
@@ -304,27 +413,36 @@ interface MoreFiltersSheetProps {
 function MoreFiltersSheet({
   open, onOpenChange, filters, updateFilter, resetFilters, resultsCount, brands, models,
 }: MoreFiltersSheetProps) {
-  const fieldCls = "w-full h-11 px-4 rounded-xl border border-border bg-background text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition";
-  const eyebrow = "text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-medium block mb-2";
+  const fieldCls =
+    "w-full h-11 px-4 rounded-xl border border-white/10 bg-white/[0.03] text-sm text-white outline-none transition focus:border-primary/40 focus:bg-white/[0.06] focus:ring-2 focus:ring-primary/20";
+  const eyebrow =
+    "text-[10px] uppercase tracking-[0.15em] text-white/55 font-medium block mb-2";
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="w-full sm:max-w-md p-0 flex flex-col gap-0 border-l border-border/60"
+        className="flex w-full flex-col gap-0 border-l border-white/10 bg-slate-950/85 p-0 text-white backdrop-blur-2xl shadow-[-40px_0_80px_-20px_rgba(0,0,0,0.6)] sm:max-w-md"
       >
-        <SheetHeader className="px-6 py-5 border-b border-border/40 flex flex-row items-center justify-between space-y-0">
-          <SheetTitle className="font-serif text-xl font-medium tracking-tight">Plus de filtres</SheetTitle>
+        <SheetHeader className="flex flex-row items-center justify-between space-y-0 border-b border-white/5 px-6 py-5">
+          <div>
+            <p className="text-[10.5px] font-medium uppercase tracking-[0.16em] text-white/45">
+              Affiner
+            </p>
+            <SheetTitle className="mt-1 font-serif text-xl font-medium tracking-tight text-white">
+              Plus de filtres
+            </SheetTitle>
+          </div>
           <button
             onClick={() => onOpenChange(false)}
-            className="w-9 h-9 inline-flex items-center justify-center rounded-full hover:bg-secondary/60 transition-colors"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-white/75 transition-colors hover:bg-white/[0.06] hover:text-white"
             aria-label="Fermer"
           >
-            <X className="w-4 h-4" />
+            <X className="h-4 w-4" />
           </button>
         </SheetHeader>
 
-        <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6 scrollbar-thin">
+        <div className="scrollbar-thin flex-1 space-y-6 overflow-y-auto px-6 py-6">
           {/* Marque & Modèle */}
           <div className="space-y-4">
             <div>
@@ -344,7 +462,7 @@ function MoreFiltersSheet({
                 value={filters.searchQuery}
                 onChange={(e) => updateFilter("searchQuery", e.target.value)}
                 disabled={!filters.brand}
-                className={`${fieldCls} disabled:opacity-50`}
+                className={cn(fieldCls, "disabled:opacity-50")}
               >
                 <option value="">{filters.brand ? "Tous les modèles" : "Choisissez une marque"}</option>
                 {models.map((m) => <option key={m} value={m}>{m}</option>)}
@@ -354,9 +472,9 @@ function MoreFiltersSheet({
 
           {/* Année */}
           <div>
-            <div className="flex items-baseline justify-between mb-2">
-              <label className={`${eyebrow} mb-0`}>Année</label>
-              <span className="text-xs text-muted-foreground tabular-nums">
+            <div className="mb-2 flex items-baseline justify-between">
+              <label className={cn(eyebrow, "mb-0")}>Année</label>
+              <span className="text-xs tabular-nums text-white/50">
                 {filters.yearMin} – {filters.yearMax}
               </span>
             </div>
@@ -392,11 +510,12 @@ function MoreFiltersSheet({
                   <button
                     key={t.id || "all"}
                     onClick={() => updateFilter("transmission", t.id)}
-                    className={`h-11 rounded-xl text-sm font-medium border transition-all ${
+                    className={cn(
+                      "h-11 rounded-xl border text-sm font-medium transition-all",
                       active
-                        ? "border-primary bg-primary/10 text-primary"
-                        : "border-border/60 hover:border-primary/40 text-foreground"
-                    }`}
+                        ? "border-primary/40 bg-primary/15 text-primary"
+                        : "border-white/10 text-white/85 hover:border-primary/40 hover:bg-white/[0.04]",
+                    )}
                   >
                     {t.label}
                   </button>
@@ -428,11 +547,12 @@ function MoreFiltersSheet({
                   <button
                     key={c.id || "all"}
                     onClick={() => updateFilter("color", c.id)}
-                    className={`px-4 h-9 rounded-full text-xs font-medium border transition-all ${
+                    className={cn(
+                      "h-9 rounded-full border px-4 text-xs font-medium transition-all",
                       active
                         ? "border-primary bg-primary text-primary-foreground"
-                        : "border-border/60 hover:border-primary/40 text-foreground"
-                    }`}
+                        : "border-white/10 text-white/85 hover:border-primary/40 hover:bg-white/[0.04]",
+                    )}
                   >
                     {c.label}
                   </button>
@@ -442,8 +562,8 @@ function MoreFiltersSheet({
           </div>
 
           {/* LEZ-only */}
-          <div className="flex items-center justify-between pt-2 border-t border-border/40">
-            <Label htmlFor="lez-only" className="text-sm font-medium cursor-pointer">
+          <div className="flex items-center justify-between border-t border-white/5 pt-4">
+            <Label htmlFor="lez-only" className="cursor-pointer text-sm font-medium text-white">
               Uniquement compatibles LEZ
             </Label>
             <Checkbox
@@ -454,17 +574,17 @@ function MoreFiltersSheet({
           </div>
         </div>
 
-        <SheetFooter className="px-6 py-4 border-t border-border/40 flex-row gap-3">
+        <SheetFooter className="flex-row gap-3 border-t border-white/5 bg-slate-950/60 px-6 py-4">
           <Button
             variant="outline"
             onClick={resetFilters}
-            className="flex-1 rounded-full h-11"
+            className="h-11 flex-1 rounded-full border-white/10 bg-transparent text-white hover:bg-white/[0.04]"
           >
             Réinitialiser
           </Button>
           <Button
             onClick={() => onOpenChange(false)}
-            className="flex-1 rounded-full h-11"
+            className="h-11 flex-1 rounded-full bg-primary text-primary-foreground shadow-[0_15px_40px_-10px_hsl(var(--primary)/0.55)] hover:bg-primary/90"
           >
             Voir {resultsCount.toLocaleString("fr-BE")} véhicules
           </Button>
@@ -482,6 +602,7 @@ const Recherche = () => {
   const [viewMode, setViewMode] = useState<ViewMode>("catalog");
   const [moreFiltersOpen, setMoreFiltersOpen] = useState(false);
   const [models, setModels] = useState<string[]>([]);
+  const [shrunk, setShrunk] = useState(false);
   const brands = useMemo(() => getAllBrands(), []);
 
   const {
@@ -496,6 +617,13 @@ const Recherche = () => {
     if (filters.brand) getModelsByBrand(filters.brand).then(setModels);
     else setModels([]);
   }, [filters.brand]);
+
+  useEffect(() => {
+    const onScroll = () => setShrunk(window.scrollY > 96);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const handleCarClick = (id: string) => {
     const car = cars.find((c) => c.id === id);
@@ -517,8 +645,16 @@ const Recherche = () => {
       ? `Entdecken Sie ${count.toLocaleString("fr-BE")} geprüfte Fahrzeuge, Car-Pass garantiert und bereit für die Straße in Belgien.`
       : `Découvrez ${count.toLocaleString("fr-BE")} véhicules vérifiés, garantis Car-Pass et prêts à rouler en Belgique.`;
 
+  const eyebrow =
+    language === "nl" ? "Marktplaats · Geselecteerd"
+    : language === "en" ? "Marketplace · Curated"
+    : language === "de" ? "Marktplatz · Kuratiert"
+    : "Marketplace · Sélection certifiée";
+
   return (
-    <div className="page-gradient min-h-screen">
+    <div className="page-gradient relative min-h-screen text-white">
+      <AmbientBackdrop />
+
       <SEOHead
         title="Rechercher une voiture | AutoRA"
         description="Catalogue premium de véhicules d'occasion en Belgique. Car-Pass certifié, LEZ vérifiée, prix transparent."
@@ -526,78 +662,92 @@ const Recherche = () => {
       />
       <Header />
 
-      <main className="pt-28 pb-32">
+      <main className="relative pt-24 pb-32 sm:pt-28">
         {/* ── Hero header ── */}
-        <section className="container mx-auto px-6 sm:px-8 text-center mb-10 sm:mb-14">
+        <section className="container mx-auto mb-10 px-6 text-center sm:mb-14 sm:px-8">
+          <motion.p
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-[10.5px] font-medium uppercase tracking-[0.22em] text-primary/80"
+          >
+            {eyebrow}
+          </motion.p>
           <motion.h1
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="font-serif text-3xl sm:text-4xl md:text-5xl font-light text-foreground tracking-tight leading-[1.1]"
+            transition={{ duration: 0.6, delay: 0.05 }}
+            className="mt-3 font-serif text-3xl font-light leading-[1.1] tracking-tight text-white sm:text-4xl md:text-5xl"
           >
             {title}
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="mt-4 text-sm sm:text-base text-muted-foreground font-light max-w-2xl mx-auto leading-relaxed"
+            transition={{ duration: 0.6, delay: 0.12 }}
+            className="mx-auto mt-4 max-w-2xl text-sm font-light leading-relaxed text-white/55 sm:text-base"
           >
             {subtitle(totalCount || 482)}
           </motion.p>
         </section>
 
-        {/* ── Floating glass filter bar (sticky on scroll) ── */}
-        <section className="sticky top-20 z-30 container mx-auto px-6 sm:px-8 mb-10 sm:mb-12 flex justify-center">
+        {/* ── Floating glass filter bar (sticky on scroll, shrink) ── */}
+        <section className="container sticky top-6 z-50 mx-auto mb-10 flex justify-center px-6 sm:mb-12 sm:px-8">
           <PillFilterBar
             filters={filters}
             updateFilter={updateFilter}
             onOpenMore={() => setMoreFiltersOpen(true)}
+            shrunk={shrunk}
           />
 
           {/* Mobile single button — glass */}
           <Button
             onClick={() => setMoreFiltersOpen(true)}
-            className="md:hidden w-full rounded-full h-12 bg-background/60 backdrop-blur-xl border border-border/40 text-foreground shadow-2xl hover:bg-background/80"
+            className="h-12 w-full rounded-full border border-white/10 bg-slate-950/55 text-white shadow-2xl backdrop-blur-xl hover:bg-slate-950/70 md:hidden"
             size="lg"
           >
-            <SlidersHorizontal className="w-4 h-4" />
+            <SlidersHorizontal className="h-4 w-4" />
             Filtrer la recherche
           </Button>
         </section>
 
         {/* ── View toggle + count ── */}
-        <section className="container mx-auto px-6 sm:px-8 mb-8 flex items-center justify-between">
-          <p className="text-xs sm:text-sm text-muted-foreground font-light tabular-nums">
-            <span className="font-medium text-foreground">{(totalCount || cars.length).toLocaleString("fr-BE")}</span> véhicules disponibles
+        <section className="container mx-auto mb-8 flex items-center justify-between px-6 sm:px-8">
+          <p className="text-xs font-light tabular-nums text-white/60 sm:text-sm">
+            <span className="font-semibold text-white">
+              {(totalCount || cars.length).toLocaleString("fr-BE")}
+            </span>{" "}
+            véhicules disponibles
           </p>
-          <div className="flex items-center gap-1 p-1 rounded-full bg-card border border-border/40">
+          <div className="flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.03] p-1 backdrop-blur-md">
             <button
               onClick={() => setViewMode("catalog")}
-              className={`flex items-center gap-1.5 px-3 sm:px-4 h-9 rounded-full text-xs sm:text-sm font-medium transition-all ${
+              className={cn(
+                "flex h-9 items-center gap-1.5 rounded-full px-3 text-xs font-medium transition-all sm:px-4 sm:text-sm",
                 viewMode === "catalog"
                   ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
+                  : "text-white/55 hover:text-white",
+              )}
             >
-              <Grid3x3 className="w-3.5 h-3.5" />
+              <Grid3x3 className="h-3.5 w-3.5" />
               Catalogue
             </button>
             <button
               onClick={() => setViewMode("match")}
-              className={`flex items-center gap-1.5 px-3 sm:px-4 h-9 rounded-full text-xs sm:text-sm font-medium transition-all ${
+              className={cn(
+                "flex h-9 items-center gap-1.5 rounded-full px-3 text-xs font-medium transition-all sm:px-4 sm:text-sm",
                 viewMode === "match"
                   ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
+                  : "text-white/55 hover:text-white",
+              )}
             >
-              <Flame className="w-3.5 h-3.5" />
+              <Flame className="h-3.5 w-3.5" />
               Match
             </button>
           </div>
         </section>
 
-        {/* ── Content — perfect 1/3-column grid, no sidebar ── */}
+        {/* ── Content — bento grid, 3-col PC / 1-col mobile, gap-8 ── */}
         <section className="container mx-auto px-6 sm:px-8">
           <AnimatePresence mode="wait">
             {viewMode === "catalog" ? (
@@ -609,40 +759,59 @@ const Recherche = () => {
                 transition={{ duration: 0.3 }}
               >
                 {isLoading && cars.length === 0 ? (
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 sm:gap-10">
+                  <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
                     {Array.from({ length: 6 }).map((_, i) => (
-                      <div key={i} className="rounded-2xl bg-card border border-border/40 overflow-hidden">
-                        <div className="aspect-video bg-muted animate-pulse" />
-                        <div className="p-7 space-y-3">
-                          <div className="h-6 w-2/3 bg-muted rounded animate-pulse" />
-                          <div className="h-3 w-1/3 bg-muted rounded animate-pulse" />
-                          <div className="h-9 w-1/2 bg-muted rounded animate-pulse" />
+                      <div
+                        key={i}
+                        className="overflow-hidden rounded-2xl border border-white/5 bg-white/[0.02]"
+                      >
+                        <div className="aspect-video animate-pulse bg-white/5" />
+                        <div className="space-y-3 p-6">
+                          <div className="h-6 w-2/3 animate-pulse rounded bg-white/5" />
+                          <div className="h-3 w-1/3 animate-pulse rounded bg-white/5" />
+                          <div className="h-9 w-1/2 animate-pulse rounded bg-white/5" />
                         </div>
                       </div>
                     ))}
                   </div>
                 ) : cars.length === 0 ? (
-                  <div className="text-center py-20">
-                    <p className="text-muted-foreground mb-6">Aucun véhicule ne correspond à vos critères.</p>
-                    <Button onClick={resetFilters} variant="outline" className="rounded-full">
+                  <div className="mx-auto max-w-md rounded-2xl border border-white/5 bg-white/[0.02] px-8 py-12 text-center backdrop-blur-sm">
+                    <div className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-full border border-white/10 bg-white/[0.03] text-white/55">
+                      <span className="text-xl">∅</span>
+                    </div>
+                    <h3 className="text-base font-medium text-white">
+                      Aucun véhicule ne correspond à vos critères
+                    </h3>
+                    <p className="mt-2 text-[13px] text-white/55">
+                      Élargissez vos critères ou réinitialisez les filtres.
+                    </p>
+                    <Button
+                      onClick={resetFilters}
+                      className="mt-5 rounded-full bg-primary text-primary-foreground"
+                    >
                       Réinitialiser les filtres
                     </Button>
                   </div>
                 ) : (
                   <>
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 sm:gap-10">
-                      {cars.map((car) => (
-                        <LuxuryCarCard key={car.id} car={car} onClick={handleCarClick} />
+                    <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+                      {cars.map((car, i) => (
+                        <LuxuryCarCard
+                          key={car.id}
+                          car={car}
+                          featured={i < 3}
+                          onClick={handleCarClick}
+                        />
                       ))}
                     </div>
                     {hasMore && (
-                      <div className="text-center mt-14">
+                      <div className="mt-14 text-center">
                         <Button
                           onClick={loadMore}
                           disabled={isLoadingMore}
                           variant="outline"
                           size="lg"
-                          className="rounded-full px-10"
+                          className="rounded-full border-white/10 bg-white/[0.03] px-10 text-white hover:border-primary/40 hover:bg-primary/10 hover:text-primary"
                         >
                           {isLoadingMore ? "Chargement…" : "Voir plus de véhicules"}
                         </Button>
@@ -659,7 +828,7 @@ const Recherche = () => {
                 exit={{ opacity: 0, scale: 0.98 }}
                 transition={{ duration: 0.3 }}
               >
-                <Suspense fallback={<div className="h-[600px] flex items-center justify-center text-muted-foreground">Chargement du mode Match…</div>}>
+                <Suspense fallback={<div className="flex h-[600px] items-center justify-center text-white/55">Chargement du mode Match…</div>}>
                   <SwipeDiscovery
                     vehicles={cars}
                     isFavorite={isFavorite}
@@ -673,7 +842,7 @@ const Recherche = () => {
         </section>
       </main>
 
-      {/* "Plus de filtres" — side drawer (Sheet) — slides only on click */}
+      {/* "Plus de filtres" — side drawer (Sheet) */}
       <MoreFiltersSheet
         open={moreFiltersOpen}
         onOpenChange={setMoreFiltersOpen}

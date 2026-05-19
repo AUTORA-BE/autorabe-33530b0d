@@ -773,4 +773,29 @@ input[type="number"] {
   .safe-bottom {
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
+
+  /* ─── Search page : premium shimmer on featured cards ─── */
+  .search-shimmer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      115deg,
+      transparent 0%,
+      transparent 35%,
+      rgba(255, 255, 255, 0.14) 50%,
+      transparent 65%,
+      transparent 100%
+    );
+    transform: translateX(-100%);
+    animation: search-shimmer 6s cubic-bezier(0.45, 0, 0.15, 1) infinite;
+    pointer-events: none;
+  }
+  @keyframes search-shimmer {
+    0% { transform: translateX(-100%); }
+    35%, 100% { transform: translateX(140%); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .search-shimmer::before { animation: none; opacity: 0; }
+  }
 }
