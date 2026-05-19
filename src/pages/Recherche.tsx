@@ -547,18 +547,18 @@ const Recherche = () => {
           </motion.p>
         </section>
 
-        {/* ── Floating pill filter bar (desktop) ── */}
-        <section className="container mx-auto px-6 sm:px-8 mb-10 sm:mb-12 flex justify-center">
+        {/* ── Floating glass filter bar (sticky on scroll) ── */}
+        <section className="sticky top-20 z-30 container mx-auto px-6 sm:px-8 mb-10 sm:mb-12 flex justify-center">
           <PillFilterBar
             filters={filters}
             updateFilter={updateFilter}
             onOpenMore={() => setMoreFiltersOpen(true)}
           />
 
-          {/* Mobile single button */}
+          {/* Mobile single button — glass */}
           <Button
             onClick={() => setMoreFiltersOpen(true)}
-            className="md:hidden w-full rounded-full h-12 shadow-md"
+            className="md:hidden w-full rounded-full h-12 bg-background/60 backdrop-blur-xl border border-border/40 text-foreground shadow-2xl hover:bg-background/80"
             size="lg"
           >
             <SlidersHorizontal className="w-4 h-4" />
