@@ -1,6 +1,10 @@
 /**
- * ThermalBrandCarousel — horizontal scroll carousel of popular thermal brands
- * with locally-hosted brand logos (no CDN dependency).
+ * ThermalBrandCarousel — horizontal scroll carousel of popular brands
+ * with real brand logos served from /public/logos/.
+ *
+ * Logo files (PNG, transparent background) must be placed at:
+ *   /public/logos/{slug}.png
+ * Slugs are listed below per brand.
  * @module features/search/components
  */
 import { memo } from "react";
@@ -12,21 +16,32 @@ interface ThermalBrandCarouselProps {
 }
 
 interface BrandEntry {
+  /** Display name shown to user */
   name: string;
+  /** Path to logo PNG (transparent background) */
   logo: string;
+  /** Optional override for the brand filter value when display name differs from DB brand (e.g., "Range Rover" → "Land Rover") */
+  filterBrand?: string;
 }
 
 const BRANDS: BrandEntry[] = [
-  { name: "BMW",           logo: "/brands/bmw.svg"        },
-  { name: "Mercedes-Benz", logo: "/brands/mercedes.svg"   },
-  { name: "Audi",          logo: "/brands/audi.svg"       },
-  { name: "Volkswagen",    logo: "/brands/volkswagen.svg" },
-  { name: "Peugeot",       logo: "/brands/peugeot.svg"    },
-  { name: "Renault",       logo: "/brands/renault.svg"    },
-  { name: "Ford",          logo: "/brands/ford.svg"       },
-  { name: "Opel",          logo: "/brands/opel.svg"       },
-  { name: "Volvo",         logo: "/brands/volvo.svg"      },
-  { name: "Porsche",       logo: "/brands/porsche.svg"    },
+  { name: "BMW",            logo: "/logos/bmw.png" },
+  { name: "Mercedes-Benz",  logo: "/logos/mercedes-benz.png" },
+  { name: "Audi",           logo: "/logos/audi.png" },
+  { name: "Volkswagen",     logo: "/logos/volkswagen.png" },
+  { name: "Peugeot",        logo: "/logos/peugeot.png" },
+  { name: "Renault",        logo: "/logos/renault.png" },
+  { name: "Ford",           logo: "/logos/ford.png" },
+  { name: "Opel",           logo: "/logos/opel.png" },
+  { name: "Fiat",           logo: "/logos/fiat.png" },
+  { name: "Range Rover",    logo: "/logos/range-rover.png", filterBrand: "Land Rover" },
+  { name: "Toyota",         logo: "/logos/toyota.png" },
+  { name: "Skoda",          logo: "/logos/skoda.png" },
+  { name: "Dacia",          logo: "/logos/dacia.png" },
+  { name: "Jaguar",         logo: "/logos/jaguar.png" },
+  { name: "Jeep",           logo: "/logos/jeep.png" },
+  { name: "Hyundai",        logo: "/logos/hyundai.png" },
+  { name: "Mini",           logo: "/logos/mini.png" },
 ];
 
 const ThermalBrandCarousel = memo(function ThermalBrandCarousel({
@@ -41,8 +56,9 @@ const ThermalBrandCarousel = memo(function ThermalBrandCarousel({
     : language === "de" ? "Nach Marke suchen"
     : "Rechercher par marque populaire";
 
-  const handleClick = (name: string) => {
-    if (onBrandFilter) onBrandFilter(selectedBrand === name ? "" : name);
+  const handleClick = (entry: BrandEntry) => {
+    const filterValue = entry.filterBrand ?? entry.name;
+    if (onBrandFilter) onBrandFilter(selectedBrand === filterValue ? "" : filterValue);
     document.getElementById("results-section")?.scrollIntoView({ behavior: "smooth" });
   };
 
@@ -59,14 +75,15 @@ const ThermalBrandCarousel = memo(function ThermalBrandCarousel({
         style={{ WebkitOverflowScrolling: "touch" }}
       >
         <div className="flex gap-3 md:gap-4 px-6 md:px-12 pb-2">
-          {BRANDS.map(({ name, logo }) => {
-            const active = selectedBrand === name;
+          {BRANDS.map((entry) => {
+            const filterValue = entry.filterBrand ?? entry.name;
+            const active = selectedBrand === filterValue;
             return (
               <button
-                key={name}
-                onClick={() => handleClick(name)}
+                key={entry.name}
+                onClick={() => handleClick(entry)}
                 aria-pressed={active}
-                aria-label={name}
+                aria-label={entry.name}
                 className={[
                   "group flex-shrink-0 snap-start flex flex-col items-center justify-center gap-3",
                   "w-32 sm:w-36 h-28 sm:h-32 rounded-2xl border bg-card px-4",
@@ -77,17 +94,14 @@ const ThermalBrandCarousel = memo(function ThermalBrandCarousel({
                 ].join(" ")}
               >
                 <img
-                  src={logo}
-                  alt={name}
-                  width={80}
-                  height={44}
+                  src={entry.logo}
+                  alt={`Logo ${entry.name}`}
                   loading="lazy"
+                  onError={(e) => { e.currentTarget.style.display = "none"; }}
                   className={[
-                    "w-16 sm:w-20 h-10 sm:h-11 object-contain",
+                    "h-12 w-auto max-w-[85%] object-contain",
                     "transition-all duration-300 group-hover:scale-110",
-                    active
-                      ? "opacity-100"
-                      : "opacity-50 grayscale group-hover:opacity-100 group-hover:grayscale-0",
+                    active ? "opacity-100" : "opacity-70 group-hover:opacity-100",
                   ].join(" ")}
                 />
                 <span
@@ -97,7 +111,7 @@ const ThermalBrandCarousel = memo(function ThermalBrandCarousel({
                     active ? "text-primary" : "text-muted-foreground group-hover:text-foreground",
                   ].join(" ")}
                 >
-                  {name}
+                  {entry.name}
                 </span>
               </button>
             );
