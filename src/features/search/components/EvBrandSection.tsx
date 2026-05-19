@@ -1,6 +1,7 @@
 /**
- * Marques 100% Électriques — homepage section, light theme (white bg).
- * Visually continuous with the rest of the home page — no dark break.
+ * Marques 100% Électriques — homepage section, theme-adaptive.
+ * Light mode: bg-white + slate-900 text. Dark mode: bg-slate-950 + white text.
+ * Visually continuous with the rest of the home page in both themes.
  * @module features/search/components
  */
 import { memo } from "react";
@@ -54,16 +55,16 @@ const EvBrandSection = memo(function EvBrandSection({
   };
 
   return (
-    <section className="bg-white py-16 md:py-24">
+    <section className="bg-white dark:bg-slate-950 py-16 md:py-24">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         <div className="space-y-4 max-w-2xl mb-12">
           <p className="text-[10.5px] font-medium uppercase tracking-[0.22em] text-primary/85">
             {eyebrow}
           </p>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-light leading-[1.1] tracking-tight text-slate-900">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-light leading-[1.1] tracking-tight text-slate-900 dark:text-white">
             {title}
           </h2>
-          <p className="text-sm sm:text-base font-light leading-relaxed text-slate-600">
+          <p className="text-sm sm:text-base font-light leading-relaxed text-slate-600 dark:text-slate-300">
             {subtitle}
           </p>
         </div>
@@ -77,18 +78,21 @@ const EvBrandSection = memo(function EvBrandSection({
                 onClick={() => handleClick(name)}
                 aria-pressed={active}
                 className={cn(
-                  "group relative h-28 md:h-32 rounded-2xl border flex items-center justify-center bg-white",
-                  "transition-all duration-300 ease-out shadow-sm",
-                  "hover:scale-[1.02] hover:shadow-md hover:border-primary",
+                  "group relative h-28 md:h-32 rounded-2xl border flex items-center justify-center",
+                  "bg-white dark:bg-slate-900",
+                  "transition-all duration-300 ease-out shadow-sm dark:shadow-black/30",
+                  "hover:scale-[1.02] hover:shadow-md dark:hover:shadow-primary/10 hover:border-primary",
                   active
                     ? "border-primary shadow-md ring-1 ring-primary/20"
-                    : "border-slate-200",
+                    : "border-slate-200 dark:border-slate-800",
                 )}
               >
                 <span
                   className={cn(
                     "text-base md:text-lg font-medium tracking-tight transition-colors",
-                    active ? "text-primary" : "text-slate-900 group-hover:text-primary",
+                    active
+                      ? "text-primary"
+                      : "text-slate-900 dark:text-white group-hover:text-primary",
                   )}
                 >
                   {name}
