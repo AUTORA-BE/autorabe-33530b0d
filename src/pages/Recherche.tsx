@@ -1,8 +1,8 @@
 /**
- * Recherche — luxury catalogue search page.
- * Full-width premium dark layout: ambient radial backdrop, floating glass pill
- * filter bar with scroll-shrink, bento grid of cinematic vehicle cards, and a
- * side Sheet for "Plus de filtres". Hooks/types/data flow strictly preserved.
+ * Recherche — luxury catalogue search page (pure black, glass UI).
+ * Hardcoded colors only (no theme tokens) so the page renders identically
+ * regardless of `dark` class state. Image is a plain <img> strictly contained
+ * by an overflow-hidden 16:9 frame. All hooks/data flow preserved.
  * @module pages
  */
 
@@ -12,7 +12,7 @@ import { Header, Footer } from "@/shared/components";
 import SEOHead from "@/components/SEOHead";
 import {
   ShieldCheck, Leaf, ChevronDown, SlidersHorizontal, Grid3x3, Flame,
-  Calendar, Gauge, X, Sparkles,
+  Calendar, Gauge, X, Sparkles, ImageOff,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -27,8 +27,6 @@ import { useLocalizedVehicleHref } from "@/lib/useLocalizedHref";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getAllBrands, getModelsByBrand } from "@/utils/carUtils";
 import { BUDGET_OPTIONS, EURO_NORMS } from "@/features/search/types/search.types";
-import CarImage from "@/components/cars/CarImage";
-import { AmbientBackdrop } from "@/components/search/AmbientBackdrop";
 import { cn } from "@/lib/utils";
 import type { Vehicle } from "@/features/listings/types/vehicle.types";
 
@@ -63,6 +61,35 @@ const COLOR_OPTIONS = [
 
 const CURRENT_YEAR = new Date().getFullYear();
 
+/* ─────────────── Card image (plain <img>, strictly contained) ─────────────── */
+
+function CardImage({ src, alt }: { src: string; alt: string }) {
+  const [errored, setErrored] = useState(false);
+  const empty = !src || src.trim() === "";
+
+  if (empty || errored) {
+    return (
+      <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-white/[0.03] text-white/40">
+        <ImageOff className="h-8 w-8" strokeWidth={1.5} />
+        <span className="text-[11px] uppercase tracking-[0.12em]">Photo à venir</span>
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={src}
+      alt={alt}
+      width={1600}
+      height={900}
+      loading="lazy"
+      decoding="async"
+      onError={() => setErrored(true)}
+      className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+    />
+  );
+}
+
 /* ─────────────── Premium Bento Card ─────────────── */
 
 function LuxuryCarCard({
@@ -82,46 +109,27 @@ function LuxuryCarCard({
       onClick={() => onClick(car.id)}
       className={cn(
         "group relative isolate cursor-pointer overflow-hidden rounded-2xl",
-        "border border-white/5 bg-white/[0.02] backdrop-blur-sm",
+        "border border-white/5 bg-white/[0.03]",
         "transition-all duration-500 ease-out",
-        "hover:-translate-y-0.5 hover:border-primary/40 hover:bg-white/[0.035]",
-        "hover:shadow-[0_30px_60px_-20px_rgba(0,0,0,0.6),0_0_0_1px_hsl(var(--primary)/0.15),0_0_45px_-10px_hsl(var(--primary)/0.25)]",
+        "hover:-translate-y-0.5 hover:border-primary/50 hover:bg-white/[0.05]",
+        "hover:shadow-[0_30px_60px_-20px_rgba(0,0,0,0.7),0_0_0_1px_hsl(var(--primary)/0.18),0_0_50px_-10px_hsl(var(--primary)/0.28)]",
       )}
     >
-      {/* Glow vert interne au survol */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
-        style={{
-          background:
-            "radial-gradient(120% 80% at 50% 0%, hsl(var(--primary) / 0.18) 0%, hsl(var(--primary) / 0) 60%)",
-        }}
-      />
+      {/* Image frame — strictly contained 16:9 */}
+      <div className="relative aspect-video overflow-hidden rounded-t-2xl bg-black">
+        <CardImage src={car.image} alt={`${car.brand} ${car.model}`} />
 
-      {/* Image cinéma 16:9 */}
-      <div className="relative aspect-video overflow-hidden rounded-t-2xl bg-slate-900">
-        <CarImage
-          src={car.image}
-          alt={`${car.brand} ${car.model}`}
-          className="h-full w-full object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.06]"
-        />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
-
-        {/* Shimmer ultra-discret sur cartes vedettes */}
         {featured && (
-          <span
-            aria-hidden
-            className="search-shimmer pointer-events-none absolute inset-0"
-          />
+          <span aria-hidden className="search-shimmer pointer-events-none absolute inset-0" />
         )}
 
-        {/* Badges glass haut */}
         <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
           {car.hasCarPass && (
             <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/25 bg-emerald-500/10 px-2.5 py-0.5 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-emerald-300 backdrop-blur-md">
               <ShieldCheck className="h-3 w-3" strokeWidth={2.5} />
-              Car-Pass
+              Car-Pass Certifié
             </span>
           )}
           {car.isLezCompatible && (
@@ -141,44 +149,40 @@ function LuxuryCarCard({
           </div>
         )}
 
-        {/* Marque / modèle sur l'image */}
         <div className="absolute bottom-3 left-3 right-3">
-          <p className="truncate text-[11px] font-medium uppercase tracking-[0.14em] text-white/60">
+          <p className="truncate text-[11px] font-medium uppercase tracking-[0.14em] text-white/65">
             {car.brand}
           </p>
-          <h3 className="truncate font-serif text-xl font-medium tracking-tight text-white">
+          <h3 className="truncate text-xl font-medium tracking-tight text-white">
             {car.model}
           </h3>
         </div>
       </div>
 
-      {/* Contenu */}
-      <div className="relative space-y-4 p-5 sm:p-6">
-        <div className="flex items-center gap-4 text-[12.5px] text-white/65">
+      <div className="relative space-y-4 p-6">
+        <div className="flex items-center gap-4 text-[13px] text-white/70">
           <span className="inline-flex items-center gap-1.5">
-            <Calendar className="h-3.5 w-3.5 text-white/40" strokeWidth={2} />
+            <Calendar className="h-3.5 w-3.5 text-white/45" strokeWidth={2} />
             {car.year}
           </span>
           <span className="text-white/20">·</span>
           <span className="inline-flex items-center gap-1.5">
-            <Gauge className="h-3.5 w-3.5 text-white/40" strokeWidth={2} />
+            <Gauge className="h-3.5 w-3.5 text-white/45" strokeWidth={2} />
             {car.mileage.toLocaleString("fr-BE")} km
           </span>
         </div>
 
         <div className="flex items-end justify-between border-t border-white/5 pt-4">
           <div>
-            <p className="text-[10.5px] font-medium uppercase tracking-[0.14em] text-white/45">
+            <p className="text-[10.5px] font-medium uppercase tracking-[0.14em] text-white/50">
               Prix
             </p>
-            <p className="mt-0.5 font-serif text-3xl font-bold tracking-tight tabular-nums text-white">
+            <p className="mt-0.5 text-3xl font-bold tracking-tight tabular-nums text-white">
               {car.price.toLocaleString("fr-BE")}
-              <span className="ml-1 text-xl font-light text-white/55">€</span>
+              <span className="ml-1 text-xl font-light text-white/65">€</span>
             </p>
           </div>
-          <span
-            className="rounded-full border border-white/10 bg-white/[0.04] px-3.5 py-2 text-[11px] font-medium uppercase tracking-[0.12em] text-white/85 transition-all duration-300 group-hover:border-primary/40 group-hover:bg-primary/15 group-hover:text-primary"
-          >
+          <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-[11px] font-medium uppercase tracking-[0.12em] text-white/85 transition-all duration-300 group-hover:border-primary/50 group-hover:bg-primary/15 group-hover:text-primary">
             Voir →
           </span>
         </div>
@@ -187,7 +191,7 @@ function LuxuryCarCard({
   );
 }
 
-/* ─────────────── Pill Filter Bar (glass + sticky shrink) ─────────────── */
+/* ─────────────── Glass Pill Filter Bar ─────────────── */
 
 interface FilterBarProps {
   filters: ReturnType<typeof useVehicleSearch>["filters"];
@@ -212,37 +216,33 @@ function PillFilterBar({ filters, updateFilter, onOpenMore, shrunk }: FilterBarP
 
   const triggerCls = cn(
     "rounded-full bg-transparent text-[13px] font-medium gap-1.5 border-0",
-    "text-white/85 hover:bg-white/[0.06] hover:text-white",
+    "text-white hover:bg-white/[0.08] hover:text-white",
     shrunk ? "px-4 h-9" : "px-5 h-10",
   );
   const activeTriggerCls =
-    "bg-primary/15 text-primary hover:bg-primary/20 hover:text-primary ring-1 ring-inset ring-primary/30";
+    "bg-primary/15 text-primary hover:bg-primary/20 hover:text-primary ring-1 ring-inset ring-primary/35";
+
+  const popoverCls =
+    "rounded-2xl border border-white/10 bg-slate-950 p-6 text-white shadow-[0_30px_80px_-20px_rgba(0,0,0,0.85)]";
 
   return (
     <div
       className={cn(
         "hidden md:flex items-center gap-1 rounded-full",
-        "border border-white/10 bg-slate-950/55 backdrop-blur-xl",
-        "shadow-[0_25px_60px_-12px_rgba(0,0,0,0.55),0_0_0_1px_rgba(255,255,255,0.03)]",
+        "border border-white/10 bg-slate-900/60 backdrop-blur-xl",
+        "shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)]",
         "transition-all duration-300 ease-out",
         shrunk ? "p-1.5 scale-[0.97]" : "p-2",
       )}
     >
-      {/* Prix max */}
       <Popover>
         <PopoverTrigger asChild>
-          <Button
-            variant="ghost"
-            className={cn(triggerCls, filters.maxPrice < 1000000 && activeTriggerCls)}
-          >
+          <Button variant="ghost" className={cn(triggerCls, filters.maxPrice < 1000000 && activeTriggerCls)}>
             {budgetLabel}
-            <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+            <ChevronDown className="h-3.5 w-3.5 opacity-70" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent
-          className="w-80 rounded-2xl border-white/10 bg-slate-950/85 p-6 text-white shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7)] backdrop-blur-2xl"
-          align="start"
-        >
+        <PopoverContent className={cn(popoverCls, "w-80")} align="start">
           <div className="space-y-5">
             <div className="flex items-baseline justify-between">
               <label className="text-[10px] font-medium uppercase tracking-[0.15em] text-white/55">
@@ -268,7 +268,7 @@ function PillFilterBar({ filters, updateFilter, onOpenMore, shrunk }: FilterBarP
                     "rounded-full border px-2.5 py-1 text-[11px] transition-all",
                     filters.maxPrice === b.value
                       ? "border-primary bg-primary text-primary-foreground"
-                      : "border-white/10 text-white/65 hover:border-primary/40 hover:text-white",
+                      : "border-white/10 text-white/70 hover:border-primary/50 hover:text-white",
                   )}
                 >
                   {b.label}
@@ -281,21 +281,14 @@ function PillFilterBar({ filters, updateFilter, onOpenMore, shrunk }: FilterBarP
 
       <span className="h-5 w-px bg-white/10" />
 
-      {/* Énergie */}
       <Popover>
         <PopoverTrigger asChild>
-          <Button
-            variant="ghost"
-            className={cn(triggerCls, filters.fuelTypes.length > 0 && activeTriggerCls)}
-          >
+          <Button variant="ghost" className={cn(triggerCls, filters.fuelTypes.length > 0 && activeTriggerCls)}>
             {fuelLabel}
-            <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+            <ChevronDown className="h-3.5 w-3.5 opacity-70" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent
-          className="w-72 rounded-2xl border-white/10 bg-slate-950/85 p-4 text-white shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7)] backdrop-blur-2xl"
-          align="start"
-        >
+        <PopoverContent className={cn(popoverCls, "w-72 p-4")} align="start">
           <label className="mb-3 block text-[10px] font-medium uppercase tracking-[0.15em] text-white/55">
             Type d'énergie
           </label>
@@ -315,7 +308,7 @@ function PillFilterBar({ filters, updateFilter, onOpenMore, shrunk }: FilterBarP
                     "rounded-xl border px-3 py-2.5 text-sm font-medium transition-all",
                     active
                       ? "border-primary/40 bg-primary/15 text-primary"
-                      : "border-white/10 text-white/85 hover:border-primary/40 hover:bg-white/[0.04]",
+                      : "border-white/10 bg-white/[0.02] text-white hover:border-primary/50 hover:bg-white/[0.06]",
                   )}
                 >
                   {f.labelFr}
@@ -328,21 +321,14 @@ function PillFilterBar({ filters, updateFilter, onOpenMore, shrunk }: FilterBarP
 
       <span className="h-5 w-px bg-white/10" />
 
-      {/* Kilométrage */}
       <Popover>
         <PopoverTrigger asChild>
-          <Button
-            variant="ghost"
-            className={cn(triggerCls, filters.kmMax < 500000 && activeTriggerCls)}
-          >
+          <Button variant="ghost" className={cn(triggerCls, filters.kmMax < 500000 && activeTriggerCls)}>
             {kmLabel}
-            <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+            <ChevronDown className="h-3.5 w-3.5 opacity-70" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent
-          className="w-80 rounded-2xl border-white/10 bg-slate-950/85 p-6 text-white shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7)] backdrop-blur-2xl"
-          align="start"
-        >
+        <PopoverContent className={cn(popoverCls, "w-80")} align="start">
           <div className="space-y-5">
             <div className="flex items-baseline justify-between">
               <label className="text-[10px] font-medium uppercase tracking-[0.15em] text-white/55">
@@ -368,7 +354,7 @@ function PillFilterBar({ filters, updateFilter, onOpenMore, shrunk }: FilterBarP
                     "rounded-full border px-2.5 py-1 text-[11px] transition-all",
                     filters.kmMax === km
                       ? "border-primary bg-primary text-primary-foreground"
-                      : "border-white/10 text-white/65 hover:border-primary/40 hover:text-white",
+                      : "border-white/10 text-white/70 hover:border-primary/50 hover:text-white",
                   )}
                 >
                   {km >= 500000 ? "Tous" : `≤ ${(km / 1000).toLocaleString("fr-BE")}k km`}
@@ -381,13 +367,12 @@ function PillFilterBar({ filters, updateFilter, onOpenMore, shrunk }: FilterBarP
 
       <span className="h-5 w-px bg-white/10" />
 
-      {/* Plus de filtres → side drawer */}
       <Button
         variant="ghost"
         onClick={onOpenMore}
         className={cn(
           triggerCls,
-          "border border-white/10 bg-white/[0.03] hover:border-primary/40 hover:bg-primary/10 hover:text-primary",
+          "border border-white/10 bg-white/[0.04] hover:border-primary/50 hover:bg-primary/10 hover:text-primary",
         )}
       >
         <SlidersHorizontal className="h-3.5 w-3.5" />
@@ -397,7 +382,7 @@ function PillFilterBar({ filters, updateFilter, onOpenMore, shrunk }: FilterBarP
   );
 }
 
-/* ─────────────── More Filters Sheet (side drawer, premium dark) ─────────────── */
+/* ─────────────── More Filters Sheet (dark) ─────────────── */
 
 interface MoreFiltersSheetProps {
   open: boolean;
@@ -414,36 +399,35 @@ function MoreFiltersSheet({
   open, onOpenChange, filters, updateFilter, resetFilters, resultsCount, brands, models,
 }: MoreFiltersSheetProps) {
   const fieldCls =
-    "w-full h-11 px-4 rounded-xl border border-white/10 bg-white/[0.03] text-sm text-white outline-none transition focus:border-primary/40 focus:bg-white/[0.06] focus:ring-2 focus:ring-primary/20";
+    "w-full h-11 px-4 rounded-xl border border-white/10 bg-white/[0.04] text-sm text-white outline-none transition focus:border-primary/50 focus:bg-white/[0.08] focus:ring-2 focus:ring-primary/20";
   const eyebrow =
-    "text-[10px] uppercase tracking-[0.15em] text-white/55 font-medium block mb-2";
+    "text-[10px] uppercase tracking-[0.15em] text-white/60 font-medium block mb-2";
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="flex w-full flex-col gap-0 border-l border-white/10 bg-slate-950/85 p-0 text-white backdrop-blur-2xl shadow-[-40px_0_80px_-20px_rgba(0,0,0,0.6)] sm:max-w-md"
+        className="flex w-full flex-col gap-0 border-l border-white/10 bg-slate-950 p-0 text-white shadow-[-40px_0_80px_-20px_rgba(0,0,0,0.7)] sm:max-w-md"
       >
         <SheetHeader className="flex flex-row items-center justify-between space-y-0 border-b border-white/5 px-6 py-5">
           <div>
-            <p className="text-[10.5px] font-medium uppercase tracking-[0.16em] text-white/45">
+            <p className="text-[10.5px] font-medium uppercase tracking-[0.16em] text-white/55">
               Affiner
             </p>
-            <SheetTitle className="mt-1 font-serif text-xl font-medium tracking-tight text-white">
+            <SheetTitle className="mt-1 text-xl font-medium tracking-tight text-white">
               Plus de filtres
             </SheetTitle>
           </div>
           <button
             onClick={() => onOpenChange(false)}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-white/75 transition-colors hover:bg-white/[0.06] hover:text-white"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-white/80 transition-colors hover:bg-white/[0.08] hover:text-white"
             aria-label="Fermer"
           >
             <X className="h-4 w-4" />
           </button>
         </SheetHeader>
 
-        <div className="scrollbar-thin flex-1 space-y-6 overflow-y-auto px-6 py-6">
-          {/* Marque & Modèle */}
+        <div className="flex-1 space-y-6 overflow-y-auto px-6 py-6">
           <div className="space-y-4">
             <div>
               <label className={eyebrow}>Marque</label>
@@ -452,8 +436,8 @@ function MoreFiltersSheet({
                 onChange={(e) => updateFilter("brand", e.target.value)}
                 className={fieldCls}
               >
-                <option value="">Toutes les marques</option>
-                {brands.map((b) => <option key={b} value={b}>{b}</option>)}
+                <option value="" className="bg-slate-950">Toutes les marques</option>
+                {brands.map((b) => <option key={b} value={b} className="bg-slate-950">{b}</option>)}
               </select>
             </div>
             <div>
@@ -464,17 +448,18 @@ function MoreFiltersSheet({
                 disabled={!filters.brand}
                 className={cn(fieldCls, "disabled:opacity-50")}
               >
-                <option value="">{filters.brand ? "Tous les modèles" : "Choisissez une marque"}</option>
-                {models.map((m) => <option key={m} value={m}>{m}</option>)}
+                <option value="" className="bg-slate-950">
+                  {filters.brand ? "Tous les modèles" : "Choisissez une marque"}
+                </option>
+                {models.map((m) => <option key={m} value={m} className="bg-slate-950">{m}</option>)}
               </select>
             </div>
           </div>
 
-          {/* Année */}
           <div>
             <div className="mb-2 flex items-baseline justify-between">
               <label className={cn(eyebrow, "mb-0")}>Année</label>
-              <span className="text-xs tabular-nums text-white/50">
+              <span className="text-xs tabular-nums text-white/55">
                 {filters.yearMin} – {filters.yearMax}
               </span>
             </div>
@@ -485,7 +470,7 @@ function MoreFiltersSheet({
                 className={fieldCls}
               >
                 {Array.from({ length: CURRENT_YEAR - 1989 }, (_, i) => CURRENT_YEAR - i).map((y) => (
-                  <option key={y} value={y}>De {y}</option>
+                  <option key={y} value={y} className="bg-slate-950">De {y}</option>
                 ))}
               </select>
               <select
@@ -494,13 +479,12 @@ function MoreFiltersSheet({
                 className={fieldCls}
               >
                 {Array.from({ length: CURRENT_YEAR - 1989 }, (_, i) => CURRENT_YEAR + 1 - i).map((y) => (
-                  <option key={y} value={y}>À {y}</option>
+                  <option key={y} value={y} className="bg-slate-950">À {y}</option>
                 ))}
               </select>
             </div>
           </div>
 
-          {/* Transmission */}
           <div>
             <label className={eyebrow}>Transmission</label>
             <div className="grid grid-cols-3 gap-2">
@@ -513,8 +497,8 @@ function MoreFiltersSheet({
                     className={cn(
                       "h-11 rounded-xl border text-sm font-medium transition-all",
                       active
-                        ? "border-primary/40 bg-primary/15 text-primary"
-                        : "border-white/10 text-white/85 hover:border-primary/40 hover:bg-white/[0.04]",
+                        ? "border-primary/50 bg-primary/15 text-primary"
+                        : "border-white/10 bg-white/[0.02] text-white hover:border-primary/50 hover:bg-white/[0.06]",
                     )}
                   >
                     {t.label}
@@ -524,7 +508,6 @@ function MoreFiltersSheet({
             </div>
           </div>
 
-          {/* Norme Euro */}
           <div>
             <label className={eyebrow}>Norme Euro (LEZ)</label>
             <select
@@ -532,12 +515,13 @@ function MoreFiltersSheet({
               onChange={(e) => updateFilter("euroNorm", e.target.value)}
               className={fieldCls}
             >
-              <option value="">Toutes</option>
-              {EURO_NORMS.map((n) => <option key={n} value={n}>{n}</option>)}
+              <option value="" className="bg-slate-950">Toutes</option>
+              {EURO_NORMS.map((n) => (
+                <option key={n} value={n} className="bg-slate-950">{n}</option>
+              ))}
             </select>
           </div>
 
-          {/* Couleur */}
           <div>
             <label className={eyebrow}>Couleur</label>
             <div className="flex flex-wrap gap-2">
@@ -551,7 +535,7 @@ function MoreFiltersSheet({
                       "h-9 rounded-full border px-4 text-xs font-medium transition-all",
                       active
                         ? "border-primary bg-primary text-primary-foreground"
-                        : "border-white/10 text-white/85 hover:border-primary/40 hover:bg-white/[0.04]",
+                        : "border-white/10 bg-white/[0.02] text-white hover:border-primary/50 hover:bg-white/[0.06]",
                     )}
                   >
                     {c.label}
@@ -561,7 +545,6 @@ function MoreFiltersSheet({
             </div>
           </div>
 
-          {/* LEZ-only */}
           <div className="flex items-center justify-between border-t border-white/5 pt-4">
             <Label htmlFor="lez-only" className="cursor-pointer text-sm font-medium text-white">
               Uniquement compatibles LEZ
@@ -574,11 +557,11 @@ function MoreFiltersSheet({
           </div>
         </div>
 
-        <SheetFooter className="flex-row gap-3 border-t border-white/5 bg-slate-950/60 px-6 py-4">
+        <SheetFooter className="flex-row gap-3 border-t border-white/5 bg-slate-950 px-6 py-4">
           <Button
             variant="outline"
             onClick={resetFilters}
-            className="h-11 flex-1 rounded-full border-white/10 bg-transparent text-white hover:bg-white/[0.04]"
+            className="h-11 flex-1 rounded-full border-white/10 bg-transparent text-white hover:bg-white/[0.06]"
           >
             Réinitialiser
           </Button>
@@ -652,8 +635,16 @@ const Recherche = () => {
     : "Marketplace · Sélection certifiée";
 
   return (
-    <div className="page-gradient relative min-h-screen text-white">
-      <AmbientBackdrop />
+    <div className="relative min-h-screen bg-[#010101] text-white">
+      {/* Ambient halo — extremely subtle, no white tracery, no grid */}
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-0 -z-10"
+        style={{
+          background:
+            "radial-gradient(circle 800px at 50% 18%, hsl(var(--primary) / 0.08) 0%, transparent 55%), radial-gradient(circle 1200px at 50% 90%, rgba(2,6,23,0.6) 0%, transparent 70%)",
+        }}
+      />
 
       <SEOHead
         title="Rechercher une voiture | AutoRA"
@@ -663,13 +654,12 @@ const Recherche = () => {
       <Header />
 
       <main className="relative pt-24 pb-32 sm:pt-28">
-        {/* ── Hero header ── */}
         <section className="container mx-auto mb-10 px-6 text-center sm:mb-14 sm:px-8">
           <motion.p
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-[10.5px] font-medium uppercase tracking-[0.22em] text-primary/80"
+            className="text-[10.5px] font-medium uppercase tracking-[0.22em] text-primary/85"
           >
             {eyebrow}
           </motion.p>
@@ -677,7 +667,7 @@ const Recherche = () => {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.05 }}
-            className="mt-3 font-serif text-3xl font-light leading-[1.1] tracking-tight text-white sm:text-4xl md:text-5xl"
+            className="mt-3 text-3xl font-light leading-[1.1] tracking-tight text-white sm:text-4xl md:text-5xl"
           >
             {title}
           </motion.h1>
@@ -685,13 +675,12 @@ const Recherche = () => {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.12 }}
-            className="mx-auto mt-4 max-w-2xl text-sm font-light leading-relaxed text-white/55 sm:text-base"
+            className="mx-auto mt-4 max-w-2xl text-sm font-light leading-relaxed text-white/65 sm:text-base"
           >
             {subtitle(totalCount || 482)}
           </motion.p>
         </section>
 
-        {/* ── Floating glass filter bar (sticky on scroll, shrink) ── */}
         <section className="container sticky top-6 z-50 mx-auto mb-10 flex justify-center px-6 sm:mb-12 sm:px-8">
           <PillFilterBar
             filters={filters}
@@ -700,10 +689,9 @@ const Recherche = () => {
             shrunk={shrunk}
           />
 
-          {/* Mobile single button — glass */}
           <Button
             onClick={() => setMoreFiltersOpen(true)}
-            className="h-12 w-full rounded-full border border-white/10 bg-slate-950/55 text-white shadow-2xl backdrop-blur-xl hover:bg-slate-950/70 md:hidden"
+            className="h-12 w-full rounded-full border border-white/10 bg-slate-900/60 text-white shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] backdrop-blur-xl hover:bg-slate-900/80 md:hidden"
             size="lg"
           >
             <SlidersHorizontal className="h-4 w-4" />
@@ -711,22 +699,21 @@ const Recherche = () => {
           </Button>
         </section>
 
-        {/* ── View toggle + count ── */}
         <section className="container mx-auto mb-8 flex items-center justify-between px-6 sm:px-8">
-          <p className="text-xs font-light tabular-nums text-white/60 sm:text-sm">
+          <p className="text-xs font-light tabular-nums text-white/70 sm:text-sm">
             <span className="font-semibold text-white">
               {(totalCount || cars.length).toLocaleString("fr-BE")}
             </span>{" "}
             véhicules disponibles
           </p>
-          <div className="flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.03] p-1 backdrop-blur-md">
+          <div className="flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] p-1">
             <button
               onClick={() => setViewMode("catalog")}
               className={cn(
                 "flex h-9 items-center gap-1.5 rounded-full px-3 text-xs font-medium transition-all sm:px-4 sm:text-sm",
                 viewMode === "catalog"
                   ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-white/55 hover:text-white",
+                  : "text-white/65 hover:text-white",
               )}
             >
               <Grid3x3 className="h-3.5 w-3.5" />
@@ -738,7 +725,7 @@ const Recherche = () => {
                 "flex h-9 items-center gap-1.5 rounded-full px-3 text-xs font-medium transition-all sm:px-4 sm:text-sm",
                 viewMode === "match"
                   ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-white/55 hover:text-white",
+                  : "text-white/65 hover:text-white",
               )}
             >
               <Flame className="h-3.5 w-3.5" />
@@ -747,7 +734,7 @@ const Recherche = () => {
           </div>
         </section>
 
-        {/* ── Content — bento grid, 3-col PC / 1-col mobile, gap-8 ── */}
+        {/* Bento grid — 3 cols PC / 1 col mobile / gap-10 */}
         <section className="container mx-auto px-6 sm:px-8">
           <AnimatePresence mode="wait">
             {viewMode === "catalog" ? (
@@ -759,42 +746,39 @@ const Recherche = () => {
                 transition={{ duration: 0.3 }}
               >
                 {isLoading && cars.length === 0 ? (
-                  <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+                  <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
                     {Array.from({ length: 6 }).map((_, i) => (
-                      <div
-                        key={i}
-                        className="overflow-hidden rounded-2xl border border-white/5 bg-white/[0.02]"
-                      >
-                        <div className="aspect-video animate-pulse bg-white/5" />
+                      <div key={i} className="overflow-hidden rounded-2xl border border-white/5 bg-white/[0.03]">
+                        <div className="aspect-video animate-pulse bg-white/[0.04]" />
                         <div className="space-y-3 p-6">
-                          <div className="h-6 w-2/3 animate-pulse rounded bg-white/5" />
-                          <div className="h-3 w-1/3 animate-pulse rounded bg-white/5" />
-                          <div className="h-9 w-1/2 animate-pulse rounded bg-white/5" />
+                          <div className="h-6 w-2/3 animate-pulse rounded bg-white/[0.04]" />
+                          <div className="h-3 w-1/3 animate-pulse rounded bg-white/[0.04]" />
+                          <div className="h-9 w-1/2 animate-pulse rounded bg-white/[0.04]" />
                         </div>
                       </div>
                     ))}
                   </div>
                 ) : cars.length === 0 ? (
-                  <div className="mx-auto max-w-md rounded-2xl border border-white/5 bg-white/[0.02] px-8 py-12 text-center backdrop-blur-sm">
-                    <div className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-full border border-white/10 bg-white/[0.03] text-white/55">
+                  <div className="mx-auto max-w-md rounded-2xl border border-white/5 bg-white/[0.03] px-8 py-12 text-center">
+                    <div className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-white/70">
                       <span className="text-xl">∅</span>
                     </div>
                     <h3 className="text-base font-medium text-white">
                       Aucun véhicule ne correspond à vos critères
                     </h3>
-                    <p className="mt-2 text-[13px] text-white/55">
+                    <p className="mt-2 text-[13px] text-white/65">
                       Élargissez vos critères ou réinitialisez les filtres.
                     </p>
                     <Button
                       onClick={resetFilters}
-                      className="mt-5 rounded-full bg-primary text-primary-foreground"
+                      className="mt-5 rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
                     >
                       Réinitialiser les filtres
                     </Button>
                   </div>
                 ) : (
                   <>
-                    <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+                    <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
                       {cars.map((car, i) => (
                         <LuxuryCarCard
                           key={car.id}
@@ -811,7 +795,7 @@ const Recherche = () => {
                           disabled={isLoadingMore}
                           variant="outline"
                           size="lg"
-                          className="rounded-full border-white/10 bg-white/[0.03] px-10 text-white hover:border-primary/40 hover:bg-primary/10 hover:text-primary"
+                          className="rounded-full border-white/10 bg-white/[0.04] px-10 text-white hover:border-primary/50 hover:bg-primary/10 hover:text-primary"
                         >
                           {isLoadingMore ? "Chargement…" : "Voir plus de véhicules"}
                         </Button>
@@ -828,7 +812,7 @@ const Recherche = () => {
                 exit={{ opacity: 0, scale: 0.98 }}
                 transition={{ duration: 0.3 }}
               >
-                <Suspense fallback={<div className="flex h-[600px] items-center justify-center text-white/55">Chargement du mode Match…</div>}>
+                <Suspense fallback={<div className="flex h-[600px] items-center justify-center text-white/65">Chargement du mode Match…</div>}>
                   <SwipeDiscovery
                     vehicles={cars}
                     isFavorite={isFavorite}
@@ -842,7 +826,6 @@ const Recherche = () => {
         </section>
       </main>
 
-      {/* "Plus de filtres" — side drawer (Sheet) */}
       <MoreFiltersSheet
         open={moreFiltersOpen}
         onOpenChange={setMoreFiltersOpen}
