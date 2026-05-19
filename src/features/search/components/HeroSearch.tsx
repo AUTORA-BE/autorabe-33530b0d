@@ -499,22 +499,22 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
               </span>
-              <span className="text-[11px] font-light text-white/90 tracking-wide">
+              <span className="text-[10.5px] font-medium uppercase tracking-[0.22em] text-primary/85">
                 {t("hero.badge") || "Marketplace #1 en Belgique"}
               </span>
             </motion.div>
 
             <motion.h1
               {...fadeUp(0.08)}
-              className="font-serif text-4xl sm:text-6xl md:text-7xl font-light text-white mb-4 sm:mb-6 leading-[1.05] tracking-tight drop-shadow-lg"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-white mb-4 sm:mb-6 leading-[1.05] tracking-tight drop-shadow-lg"
             >
               {t("hero.titleLine1")}<br />
-              <span className="text-primary font-normal">{t("hero.titleLine2")}</span>
+              <span className="text-primary font-light">{t("hero.titleLine2")}</span>
             </motion.h1>
 
             <motion.p
               {...fadeUp(0.14)}
-              className="text-sm sm:text-base md:text-lg text-white/80 font-light max-w-xl leading-relaxed"
+              className="text-sm sm:text-base font-light text-white/65 max-w-xl leading-relaxed"
             >
               {t("hero.subtitle") || "Véhicules vérifiés Car-Pass · Conformité LEZ garantie · Calcul TCO régional"}
             </motion.p>

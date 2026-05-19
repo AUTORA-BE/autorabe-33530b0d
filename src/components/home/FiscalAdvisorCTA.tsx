@@ -64,16 +64,16 @@ const FiscalAdvisorCTA = memo(function FiscalAdvisorCTA() {
             <div className="flex flex-col items-center text-center gap-5">
               <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full
                 bg-[hsl(var(--accent-electric)/0.12)] border border-[hsl(var(--accent-electric)/0.25)]
-                text-[hsl(var(--accent-electric))] text-[11px] font-medium tracking-wide uppercase">
+                text-[hsl(var(--accent-electric))] text-[10.5px] font-medium uppercase tracking-[0.22em]">
                 <Sparkles className="w-3.5 h-3.5" strokeWidth={2} />
                 {t.badge}
               </span>
 
-              <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-light text-foreground leading-tight max-w-3xl">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-light leading-[1.1] tracking-tight text-foreground max-w-3xl">
                 {t.title}
               </h2>
 
-              <p className="text-base md:text-lg text-[hsl(var(--text-secondary))] font-light max-w-2xl leading-relaxed">
+              <p className="text-sm sm:text-base font-light leading-relaxed text-[hsl(var(--text-secondary))] max-w-2xl">
                 {t.subtitle}
               </p>
 

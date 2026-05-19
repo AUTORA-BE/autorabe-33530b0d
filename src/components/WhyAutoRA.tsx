@@ -118,7 +118,7 @@ const WhyAutoRA = memo(() => {
             initial={{ opacity: 0, y: 8 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-[10px] uppercase tracking-[0.28em] text-primary/70 font-medium mb-5"
+            className="text-[10.5px] font-medium uppercase tracking-[0.22em] text-primary/85 mb-5"
           >
             {t("Nos engagements", "Onze beloften", "Unsere Versprechen", "Our commitments")}
           </motion.p>
@@ -128,7 +128,7 @@ const WhyAutoRA = memo(() => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.05 }}
-            className="font-serif text-3xl sm:text-4xl lg:text-5xl font-light text-foreground mb-5 leading-[1.15]"
+            className="text-3xl sm:text-4xl md:text-5xl font-light leading-[1.1] tracking-tight text-foreground mb-5"
           >
             {sectionTitle}
           </motion.h2>

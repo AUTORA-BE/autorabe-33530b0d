@@ -129,11 +129,11 @@ const HomeFAQ = memo(() => {
           transition={{ duration: 0.6 }}
           className="text-center mb-10 sm:mb-14"
         >
-          <p className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.25em] text-primary/70 font-medium mb-4">
+          <p className="inline-flex items-center gap-2 text-[10.5px] font-medium uppercase tracking-[0.22em] text-primary/85 mb-4">
             <HelpCircle className="w-3.5 h-3.5" strokeWidth={1.5} />
             {t("Questions fréquentes", "Veelgestelde vragen", "Häufige Fragen", "Frequently asked")}
           </p>
-          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-light text-foreground leading-[1.15]">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-light leading-[1.1] tracking-tight text-foreground">
             {t(
               "Tout savoir avant d'acheter",
               "Alles weten vóór de aankoop",

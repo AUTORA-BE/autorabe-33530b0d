@@ -53,16 +53,16 @@ function FeaturedListingCard({ vehicle, href }: { vehicle: Vehicle; href: string
       </div>
 
       <div className="p-5">
-        <h3 className="font-semibold text-base text-foreground line-clamp-1">
+        <h3 className="text-base font-medium tracking-tight text-foreground line-clamp-1">
           {vehicle.brand} {vehicle.model}
         </h3>
-        <p className="text-xs text-muted-foreground mt-1">
+        <p className="text-[12.5px] font-light text-muted-foreground mt-1">
           {vehicle.year} · {formatKm(vehicle.mileage)} · <span className="capitalize">{vehicle.fuelType}</span>
         </p>
-        <p className="text-2xl font-semibold text-foreground mt-3 tabular-nums">
+        <p className="text-2xl font-bold tracking-tight tabular-nums text-foreground mt-3">
           {formatPrice(vehicle.price)}
         </p>
-        <p className="text-xs text-muted-foreground mt-2 inline-flex items-center gap-1">
+        <p className="text-[12.5px] font-light text-muted-foreground mt-2 inline-flex items-center gap-1">
           <MapPin className="w-3 h-3" strokeWidth={1.75} />
           {vehicle.location}
         </p>
@@ -94,13 +94,13 @@ const FeaturedVehiclesSection = () => {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
           <div className="space-y-4 max-w-2xl">
-            <p className="text-xs md:text-sm font-medium uppercase tracking-[0.15em] text-primary">
+            <p className="text-[10.5px] font-medium uppercase tracking-[0.22em] text-primary/85">
               Sélection de la semaine
             </p>
-            <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-normal leading-tight text-foreground">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-light leading-[1.1] tracking-tight text-foreground">
               Véhicules en vedette
             </h2>
-            <p className="text-base md:text-lg leading-relaxed text-muted-foreground">
+            <p className="text-sm sm:text-base font-light leading-relaxed text-muted-foreground">
               Une sélection de voitures Car-Pass vérifiées, prêtes pour les zones LEZ belges.
             </p>
           </div>

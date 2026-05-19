@@ -66,7 +66,7 @@ const ThermalBrandCarousel = memo(function ThermalBrandCarousel({
   return (
     <section className="bg-background py-12 md:py-16 border-t border-border/30">
       <div className="max-w-7xl mx-auto px-6 md:px-12 mb-6 md:mb-8">
-        <p className="text-[11px] md:text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
+        <p className="text-[10.5px] font-medium uppercase tracking-[0.22em] text-primary/85">
           {eyebrow}
         </p>
       </div>

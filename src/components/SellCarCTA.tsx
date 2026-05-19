@@ -70,7 +70,7 @@ const SellCarCTA = memo(() => {
 
               {/* Eyebrow */}
               <motion.div {...fadeUp(0.02)} className="flex justify-center mb-8">
-                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-[11px] font-light text-primary tracking-wide">
+                <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-[10.5px] font-medium uppercase tracking-[0.22em] text-primary/85">
                   <span className="relative flex h-1.5 w-1.5">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
                     <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary" />
@@ -82,7 +82,7 @@ const SellCarCTA = memo(() => {
               {/* Headline */}
               <motion.h2
                 {...fadeUp(0.06)}
-                className="font-serif text-3xl sm:text-4xl lg:text-5xl font-light text-foreground mb-8 leading-[1.15]"
+                className="text-3xl sm:text-4xl md:text-5xl font-light leading-[1.1] tracking-tight text-foreground mb-8"
               >
                 {isNl
                   ? <>Uw auto verdient <span className="text-primary">de juiste koper</span></>

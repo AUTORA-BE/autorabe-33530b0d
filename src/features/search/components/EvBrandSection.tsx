@@ -56,13 +56,13 @@ const EvBrandSection = memo(function EvBrandSection({
     <section className="bg-[#0A1118] py-16 md:py-24">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
         <div className="space-y-4 max-w-2xl mb-12">
-          <p className="text-xs md:text-sm font-medium uppercase tracking-[0.15em] text-primary">
+          <p className="text-[10.5px] font-medium uppercase tracking-[0.22em] text-primary/85">
             {eyebrow}
           </p>
-          <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-normal leading-tight text-white">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-light leading-[1.1] tracking-tight text-white">
             {title}
           </h2>
-          <p className="text-base md:text-lg leading-relaxed text-white/60">
+          <p className="text-sm sm:text-base font-light leading-relaxed text-white/65">
             {subtitle}
           </p>
         </div>
@@ -85,7 +85,7 @@ const EvBrandSection = memo(function EvBrandSection({
               >
                 <span
                   className={cn(
-                    "font-serif text-lg md:text-xl font-medium tracking-wide transition-colors",
+                    "text-base md:text-lg font-medium tracking-tight transition-colors",
                     active ? "text-primary" : "text-white group-hover:text-primary",
                   )}
                 >
