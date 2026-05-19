@@ -9,6 +9,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/features/auth";
 
 const fadeUp = (delay: number) => ({
   initial: { opacity: 0, y: 20 },
@@ -33,7 +34,10 @@ const badges = {
 const SellCarCTA = memo(() => {
   const navigate = useNavigate();
   const { language } = useLanguage();
+  const { user } = useAuth();
   const isNl = language === "nl";
+
+  const goToSell = () => navigate(user ? "/sell" : "/auth?returnTo=/sell");
 
   const tagline = isNl
     ? "Verkoop uw voertuig snel, veilig en zonder tussenpersoon."
@@ -112,7 +116,7 @@ const SellCarCTA = memo(() => {
               <motion.div {...fadeUp(0.21)}>
                 <Button
                   size="lg"
-                  onClick={() => navigate("/sell")}
+                  onClick={goToSell}
                   className="rounded-full px-10 font-semibold text-sm group active:scale-[0.97] shadow-[0_8px_24px_-8px_hsl(var(--primary)/0.5)] hover:shadow-[0_14px_36px_-8px_hsl(var(--primary)/0.6)] hover:-translate-y-0.5 transition-all duration-300"
                 >
                   {isNl ? "Start mijn advertentie" : "Publier mon annonce"}

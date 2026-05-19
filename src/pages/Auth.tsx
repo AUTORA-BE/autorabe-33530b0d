@@ -5,7 +5,7 @@
  */
 
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import SEOHead from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { Mail, Lock, User, Eye, EyeOff, ArrowLeft, CheckCircle, Phone, Building2, MapPin, ShieldCheck, BadgeCheck, MapPinned } from "lucide-react";
@@ -40,6 +40,7 @@ const Auth = () => {
   const [errors, setErrors] = useState<{ email?: string; password?: string; name?: string; phone?: string }>({});
   
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { toast } = useToast();
   const { t, language } = useLanguage();
 
@@ -51,19 +52,27 @@ const Auth = () => {
   const emailSchema = z.string().email(t("auth.invalidEmail"));
   const nameSchema = z.string().min(2, t("auth.nameMin"));
 
-  // Redirect authenticated users (admin → /admin, others → home)
+  // Redirect authenticated users: returnTo (if same-origin path) > /admin (admins) > /
   useEffect(() => {
     if (!user) return;
+    const rawReturnTo = searchParams.get("returnTo");
+    const safeReturnTo = rawReturnTo && rawReturnTo.startsWith("/") && !rawReturnTo.startsWith("//")
+      ? rawReturnTo
+      : null;
     (async () => {
+      if (safeReturnTo) {
+        navigate(safeReturnTo, { replace: true });
+        return;
+      }
       const { data } = await supabase
         .from("user_roles")
         .select("role")
         .eq("user_id", user.id)
         .eq("role", "admin")
         .maybeSingle();
-      navigate(data ? "/admin" : "/");
+      navigate(data ? "/admin" : "/", { replace: true });
     })();
-  }, [user, navigate]);
+  }, [user, navigate, searchParams]);
 
   /**
    * Validate form fields

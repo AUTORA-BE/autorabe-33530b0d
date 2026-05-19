@@ -97,16 +97,18 @@ const MobileMenu = ({
 
             {/* Scrollable content */}
             <nav className="flex-1 overflow-y-auto px-4 py-4 space-y-1">
-              {/* CTA Vendre */}
-              <Link
-                to={localized("/sell")}
-                onMouseEnter={() => prefetchRoute("/sell")}
-                className="flex items-center justify-center gap-2 py-3 px-5 rounded-2xl bg-primary text-primary-foreground font-semibold text-sm shadow-lg shadow-primary/20 hover:brightness-110 transition-all active:scale-[0.98] mb-3"
-                onClick={handleLink}
+              {/* CTA Vendre — auth-gated */}
+              <button
+                onMouseEnter={() => prefetchRoute(user ? "/sell" : "/auth")}
+                className="w-full flex items-center justify-center gap-2 py-3 px-5 rounded-2xl bg-primary text-primary-foreground font-semibold text-sm shadow-lg shadow-primary/20 hover:brightness-110 transition-all active:scale-[0.98] mb-3"
+                onClick={() => {
+                  onNavigate(user ? "/sell" : "/auth?returnTo=/sell");
+                  onClose();
+                }}
               >
                 <Car className="w-4.5 h-4.5" />
                 {language === "nl" ? "Mijn auto verkopen" : "Vendre ma voiture"}
-              </Link>
+              </button>
 
               <div className="h-px bg-border/30 my-2" />
 
