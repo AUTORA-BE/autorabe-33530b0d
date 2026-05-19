@@ -1,6 +1,7 @@
 /**
- * Recherche — luxury catalogue search page with floating pill filter bar,
- * generous grid, and dual Catalogue / Match views.
+ * Recherche — luxury catalogue search page.
+ * No left sidebar: full-width centered layout with a floating pill filter bar
+ * (Prix max, Énergie, Kilométrage) and a side-drawer (Sheet) for "Plus de filtres".
  * @module pages
  */
 
@@ -8,31 +9,55 @@ import { useState, useEffect, lazy, Suspense, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header, Footer } from "@/shared/components";
 import SEOHead from "@/components/SEOHead";
-import { ShieldCheck, Leaf, ChevronDown, SlidersHorizontal, Grid3x3, Flame, Calendar, Gauge } from "lucide-react";
+import {
+  ShieldCheck, Leaf, ChevronDown, SlidersHorizontal, Grid3x3, Flame, Calendar, Gauge, X,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Slider } from "@/components/ui/slider";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetFooter } from "@/components/ui/sheet";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { useVehicleSearch } from "@/features/listings";
 import { useFavorites } from "@/features/favorites";
 import { useLocalizedVehicleHref } from "@/lib/useLocalizedHref";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getAllBrands, getModelsByBrand } from "@/utils/carUtils";
-import { BUDGET_OPTIONS } from "@/features/search/types/search.types";
+import { BUDGET_OPTIONS, EURO_NORMS } from "@/features/search/types/search.types";
 import CarImage from "@/components/cars/CarImage";
 import type { Vehicle } from "@/features/listings/types/vehicle.types";
 
 const SwipeDiscovery = lazy(() => import("@/features/listings/components/SwipeDiscovery"));
-const FilterPanel = lazy(() => import("@/features/search/components/FilterPanel"));
 
 type ViewMode = "catalog" | "match";
 
 const FUEL_OPTIONS = [
-  { id: "essence",    labelFr: "Essence",    labelNl: "Benzine",    labelEn: "Petrol",      labelDe: "Benzin" },
-  { id: "diesel",     labelFr: "Diesel",     labelNl: "Diesel",     labelEn: "Diesel",      labelDe: "Diesel" },
-  { id: "hybride",    labelFr: "Hybride",    labelNl: "Hybride",    labelEn: "Hybrid",      labelDe: "Hybrid" },
-  { id: "electrique", labelFr: "Électrique", labelNl: "Elektrisch", labelEn: "Electric",    labelDe: "Elektrisch" },
+  { id: "essence",    labelFr: "Essence" },
+  { id: "diesel",     labelFr: "Diesel" },
+  { id: "hybride",    labelFr: "Hybride" },
+  { id: "electrique", labelFr: "Électrique" },
 ];
+
+const KM_PRESETS = [30000, 60000, 100000, 150000, 500000];
+
+const TRANSMISSION_OPTIONS = [
+  { id: "",            label: "Toutes" },
+  { id: "manuelle",    label: "Manuelle" },
+  { id: "automatique", label: "Automatique" },
+];
+
+const COLOR_OPTIONS = [
+  { id: "",       label: "Toutes" },
+  { id: "blanc",  label: "Blanc" },
+  { id: "noir",   label: "Noir" },
+  { id: "gris",   label: "Gris" },
+  { id: "bleu",   label: "Bleu" },
+  { id: "rouge",  label: "Rouge" },
+  { id: "vert",   label: "Vert" },
+];
+
+const CURRENT_YEAR = new Date().getFullYear();
 
 /* ─────────────── Luxury Car Card ─────────────── */
 
@@ -45,7 +70,7 @@ function LuxuryCarCard({ car, onClick }: { car: Vehicle; onClick: (id: string) =
       onClick={() => onClick(car.id)}
       className="group cursor-pointer rounded-2xl bg-card border border-border/40 overflow-hidden transition-all duration-500 hover:shadow-2xl hover:border-primary/30 hover:-translate-y-1"
     >
-      {/* Image — 16:9 with zoom on hover */}
+      {/* Cinematic image — 16:9 with zoom on hover */}
       <div className="aspect-video relative overflow-hidden bg-muted">
         <CarImage
           src={car.image}
@@ -56,22 +81,22 @@ function LuxuryCarCard({ car, onClick }: { car: Vehicle; onClick: (id: string) =
         {/* Subtle vignette */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-        {/* Car-Pass badge */}
+        {/* Green Car-Pass badge */}
         {car.hasCarPass && (
-          <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/90 backdrop-blur-md text-primary-foreground text-[11px] font-medium tracking-wide shadow-md">
-            <ShieldCheck className="w-3 h-3" strokeWidth={2.2} />
+          <span className="absolute top-4 left-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary text-primary-foreground text-[11px] font-medium tracking-wide shadow-md">
+            <ShieldCheck className="w-3.5 h-3.5" strokeWidth={2.2} />
             Car-Pass Certifié
           </span>
         )}
       </div>
 
       {/* Content */}
-      <div className="p-5 sm:p-6 flex flex-col gap-3">
+      <div className="p-6 sm:p-7 flex flex-col gap-4">
         <div>
-          <h3 className="font-serif text-lg sm:text-xl font-medium text-foreground leading-tight tracking-tight">
+          <h3 className="font-serif text-xl sm:text-2xl font-medium text-foreground leading-tight tracking-tight">
             {car.brand} <span className="text-foreground/80">{car.model}</span>
           </h3>
-          <div className="mt-1.5 flex items-center gap-3 text-[12px] text-muted-foreground font-light">
+          <div className="mt-2 flex items-center gap-3 text-[12px] text-muted-foreground font-light">
             <span className="inline-flex items-center gap-1">
               <Calendar className="w-3 h-3" strokeWidth={1.5} />
               {car.year}
@@ -84,21 +109,17 @@ function LuxuryCarCard({ car, onClick }: { car: Vehicle; onClick: (id: string) =
           </div>
         </div>
 
-        <div className="flex items-end justify-between pt-1">
-          <span className="text-xl sm:text-2xl font-semibold text-foreground tracking-tight tabular-nums">
+        <div className="flex items-end justify-between pt-2">
+          <span className="text-3xl sm:text-4xl font-semibold text-foreground tracking-tight tabular-nums">
             {car.price.toLocaleString("fr-BE")} €
           </span>
           {car.isLezCompatible && (
-            <span className="inline-flex items-center gap-1 text-[10px] font-medium text-primary">
+            <span className="inline-flex items-center gap-1 text-[10px] font-medium text-primary pb-1.5">
               <Leaf className="w-3 h-3" strokeWidth={1.8} />
-              Critère LEZ : OK
+              LEZ : OK
             </span>
           )}
         </div>
-
-        <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/60 font-medium pt-1 border-t border-border/30">
-          TMC &amp; Taxe : Optimisées
-        </p>
       </div>
     </motion.article>
   );
@@ -109,69 +130,28 @@ function LuxuryCarCard({ car, onClick }: { car: Vehicle; onClick: (id: string) =
 interface FilterBarProps {
   filters: ReturnType<typeof useVehicleSearch>["filters"];
   updateFilter: ReturnType<typeof useVehicleSearch>["updateFilter"];
-  brands: string[];
-  models: string[];
   onOpenMore: () => void;
 }
 
-function PillFilterBar({ filters, updateFilter, brands, models, onOpenMore }: FilterBarProps) {
-  const brandLabel = filters.brand
-    ? (filters.searchQuery ? `${filters.brand} · ${filters.searchQuery}` : filters.brand)
-    : "Marque & Modèle";
-
+function PillFilterBar({ filters, updateFilter, onOpenMore }: FilterBarProps) {
   const budgetLabel = filters.maxPrice < 1000000
-    ? `< ${filters.maxPrice.toLocaleString("fr-BE")} €`
-    : "Budget max";
+    ? `≤ ${filters.maxPrice.toLocaleString("fr-BE")} €`
+    : "Prix max";
 
   const fuelLabel = filters.fuelTypes.length > 0
-    ? FUEL_OPTIONS.find((f) => f.id === filters.fuelTypes[0])?.labelFr +
+    ? (FUEL_OPTIONS.find((f) => f.id === filters.fuelTypes[0])?.labelFr ?? "Énergie") +
       (filters.fuelTypes.length > 1 ? ` +${filters.fuelTypes.length - 1}` : "")
     : "Énergie";
+
+  const kmLabel = filters.kmMax < 500000
+    ? `≤ ${filters.kmMax.toLocaleString("fr-BE")} km`
+    : "Kilométrage";
 
   const triggerCls = "rounded-full bg-transparent hover:bg-secondary/60 text-sm font-medium px-5 h-11 gap-1.5 border-0";
 
   return (
-    <div className="hidden md:flex items-center gap-1 p-1.5 rounded-full bg-card border border-border/40 shadow-lg shadow-black/[0.04] backdrop-blur-xl">
-      {/* Marque & Modèle */}
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button variant="ghost" className={triggerCls}>
-            {brandLabel}
-            <ChevronDown className="w-3.5 h-3.5 opacity-60" />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-80 p-5 rounded-2xl" align="start">
-          <div className="space-y-4">
-            <div>
-              <label className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-medium block mb-2">Marque</label>
-              <select
-                value={filters.brand}
-                onChange={(e) => updateFilter("brand", e.target.value)}
-                className="w-full h-11 px-4 rounded-xl border border-border bg-background text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition"
-              >
-                <option value="">Toutes les marques</option>
-                {brands.map((b) => <option key={b} value={b}>{b}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-medium block mb-2">Modèle</label>
-              <select
-                value={filters.searchQuery}
-                onChange={(e) => updateFilter("searchQuery", e.target.value)}
-                disabled={!filters.brand}
-                className="w-full h-11 px-4 rounded-xl border border-border bg-background text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition disabled:opacity-50"
-              >
-                <option value="">{filters.brand ? "Tous les modèles" : "Choisissez une marque"}</option>
-                {models.map((m) => <option key={m} value={m}>{m}</option>)}
-              </select>
-            </div>
-          </div>
-        </PopoverContent>
-      </Popover>
-
-      <span className="w-px h-5 bg-border/60" />
-
-      {/* Budget */}
+    <div className="hidden md:flex items-center gap-1 p-1.5 rounded-full bg-card border border-border/40 shadow-md">
+      {/* Prix max */}
       <Popover>
         <PopoverTrigger asChild>
           <Button variant="ghost" className={triggerCls}>
@@ -182,7 +162,7 @@ function PillFilterBar({ filters, updateFilter, brands, models, onOpenMore }: Fi
         <PopoverContent className="w-80 p-6 rounded-2xl" align="start">
           <div className="space-y-5">
             <div className="flex items-baseline justify-between">
-              <label className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-medium">Budget maximum</label>
+              <label className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-medium">Prix maximum</label>
               <span className="text-lg font-semibold text-foreground tabular-nums">
                 {filters.maxPrice >= 1000000 ? "∞" : `${filters.maxPrice.toLocaleString("fr-BE")} €`}
               </span>
@@ -253,12 +233,242 @@ function PillFilterBar({ filters, updateFilter, brands, models, onOpenMore }: Fi
 
       <span className="w-px h-5 bg-border/60" />
 
-      {/* Plus de filtres */}
+      {/* Kilométrage */}
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button variant="ghost" className={triggerCls}>
+            {kmLabel}
+            <ChevronDown className="w-3.5 h-3.5 opacity-60" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-80 p-6 rounded-2xl" align="start">
+          <div className="space-y-5">
+            <div className="flex items-baseline justify-between">
+              <label className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-medium">Kilométrage maximum</label>
+              <span className="text-lg font-semibold text-foreground tabular-nums">
+                {filters.kmMax >= 500000 ? "∞" : `${filters.kmMax.toLocaleString("fr-BE")} km`}
+              </span>
+            </div>
+            <Slider
+              value={[filters.kmMax >= 500000 ? 200000 : filters.kmMax]}
+              onValueChange={(v) => updateFilter("kmMax", v[0] >= 200000 ? 500000 : v[0])}
+              min={10000}
+              max={200000}
+              step={5000}
+            />
+            <div className="flex flex-wrap gap-1.5 pt-2">
+              {KM_PRESETS.map((km) => (
+                <button
+                  key={km}
+                  onClick={() => updateFilter("kmMax", km)}
+                  className={`text-[11px] px-2.5 py-1 rounded-full border transition-all ${
+                    filters.kmMax === km
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border/60 hover:border-primary/40 text-muted-foreground"
+                  }`}
+                >
+                  {km >= 500000 ? "Tous" : `≤ ${(km / 1000).toLocaleString("fr-BE")}k km`}
+                </button>
+              ))}
+            </div>
+          </div>
+        </PopoverContent>
+      </Popover>
+
+      <span className="w-px h-5 bg-border/60" />
+
+      {/* Plus de filtres → side drawer */}
       <Button variant="ghost" onClick={onOpenMore} className={triggerCls}>
         <SlidersHorizontal className="w-3.5 h-3.5" />
         Plus de filtres
       </Button>
     </div>
+  );
+}
+
+/* ─────────────── More Filters Sheet (side drawer) ─────────────── */
+
+interface MoreFiltersSheetProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  filters: ReturnType<typeof useVehicleSearch>["filters"];
+  updateFilter: ReturnType<typeof useVehicleSearch>["updateFilter"];
+  resetFilters: () => void;
+  resultsCount: number;
+  brands: string[];
+  models: string[];
+}
+
+function MoreFiltersSheet({
+  open, onOpenChange, filters, updateFilter, resetFilters, resultsCount, brands, models,
+}: MoreFiltersSheetProps) {
+  const fieldCls = "w-full h-11 px-4 rounded-xl border border-border bg-background text-sm focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition";
+  const eyebrow = "text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-medium block mb-2";
+
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent
+        side="right"
+        className="w-full sm:max-w-md p-0 flex flex-col gap-0 border-l border-border/60"
+      >
+        <SheetHeader className="px-6 py-5 border-b border-border/40 flex flex-row items-center justify-between space-y-0">
+          <SheetTitle className="font-serif text-xl font-medium tracking-tight">Plus de filtres</SheetTitle>
+          <button
+            onClick={() => onOpenChange(false)}
+            className="w-9 h-9 inline-flex items-center justify-center rounded-full hover:bg-secondary/60 transition-colors"
+            aria-label="Fermer"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </SheetHeader>
+
+        <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6 scrollbar-thin">
+          {/* Marque & Modèle */}
+          <div className="space-y-4">
+            <div>
+              <label className={eyebrow}>Marque</label>
+              <select
+                value={filters.brand}
+                onChange={(e) => updateFilter("brand", e.target.value)}
+                className={fieldCls}
+              >
+                <option value="">Toutes les marques</option>
+                {brands.map((b) => <option key={b} value={b}>{b}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className={eyebrow}>Modèle</label>
+              <select
+                value={filters.searchQuery}
+                onChange={(e) => updateFilter("searchQuery", e.target.value)}
+                disabled={!filters.brand}
+                className={`${fieldCls} disabled:opacity-50`}
+              >
+                <option value="">{filters.brand ? "Tous les modèles" : "Choisissez une marque"}</option>
+                {models.map((m) => <option key={m} value={m}>{m}</option>)}
+              </select>
+            </div>
+          </div>
+
+          {/* Année */}
+          <div>
+            <div className="flex items-baseline justify-between mb-2">
+              <label className={`${eyebrow} mb-0`}>Année</label>
+              <span className="text-xs text-muted-foreground tabular-nums">
+                {filters.yearMin} – {filters.yearMax}
+              </span>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <select
+                value={filters.yearMin}
+                onChange={(e) => updateFilter("yearMin", Number(e.target.value))}
+                className={fieldCls}
+              >
+                {Array.from({ length: CURRENT_YEAR - 1989 }, (_, i) => CURRENT_YEAR - i).map((y) => (
+                  <option key={y} value={y}>De {y}</option>
+                ))}
+              </select>
+              <select
+                value={filters.yearMax}
+                onChange={(e) => updateFilter("yearMax", Number(e.target.value))}
+                className={fieldCls}
+              >
+                {Array.from({ length: CURRENT_YEAR - 1989 }, (_, i) => CURRENT_YEAR + 1 - i).map((y) => (
+                  <option key={y} value={y}>À {y}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Transmission */}
+          <div>
+            <label className={eyebrow}>Transmission</label>
+            <div className="grid grid-cols-3 gap-2">
+              {TRANSMISSION_OPTIONS.map((t) => {
+                const active = filters.transmission === t.id;
+                return (
+                  <button
+                    key={t.id || "all"}
+                    onClick={() => updateFilter("transmission", t.id)}
+                    className={`h-11 rounded-xl text-sm font-medium border transition-all ${
+                      active
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border/60 hover:border-primary/40 text-foreground"
+                    }`}
+                  >
+                    {t.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Norme Euro */}
+          <div>
+            <label className={eyebrow}>Norme Euro (LEZ)</label>
+            <select
+              value={filters.euroNorm}
+              onChange={(e) => updateFilter("euroNorm", e.target.value)}
+              className={fieldCls}
+            >
+              <option value="">Toutes</option>
+              {EURO_NORMS.map((n) => <option key={n} value={n}>{n}</option>)}
+            </select>
+          </div>
+
+          {/* Couleur */}
+          <div>
+            <label className={eyebrow}>Couleur</label>
+            <div className="flex flex-wrap gap-2">
+              {COLOR_OPTIONS.map((c) => {
+                const active = filters.color === c.id;
+                return (
+                  <button
+                    key={c.id || "all"}
+                    onClick={() => updateFilter("color", c.id)}
+                    className={`px-4 h-9 rounded-full text-xs font-medium border transition-all ${
+                      active
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border/60 hover:border-primary/40 text-foreground"
+                    }`}
+                  >
+                    {c.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* LEZ-only */}
+          <div className="flex items-center justify-between pt-2 border-t border-border/40">
+            <Label htmlFor="lez-only" className="text-sm font-medium cursor-pointer">
+              Uniquement compatibles LEZ
+            </Label>
+            <Checkbox
+              id="lez-only"
+              checked={filters.lezOnly}
+              onCheckedChange={(v) => updateFilter("lezOnly", v === true)}
+            />
+          </div>
+        </div>
+
+        <SheetFooter className="px-6 py-4 border-t border-border/40 flex-row gap-3">
+          <Button
+            variant="outline"
+            onClick={resetFilters}
+            className="flex-1 rounded-full h-11"
+          >
+            Réinitialiser
+          </Button>
+          <Button
+            onClick={() => onOpenChange(false)}
+            className="flex-1 rounded-full h-11"
+          >
+            Voir {resultsCount.toLocaleString("fr-BE")} véhicules
+          </Button>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
   );
 }
 
@@ -340,15 +550,13 @@ const Recherche = () => {
           <PillFilterBar
             filters={filters}
             updateFilter={updateFilter}
-            brands={brands}
-            models={models}
             onOpenMore={() => setMoreFiltersOpen(true)}
           />
 
           {/* Mobile single button */}
           <Button
             onClick={() => setMoreFiltersOpen(true)}
-            className="md:hidden w-full rounded-full h-12 shadow-lg shadow-primary/20"
+            className="md:hidden w-full rounded-full h-12 shadow-md"
             size="lg"
           >
             <SlidersHorizontal className="w-4 h-4" />
@@ -387,7 +595,7 @@ const Recherche = () => {
           </div>
         </section>
 
-        {/* ── Content ── */}
+        {/* ── Content — perfect 1/3-column grid, no sidebar ── */}
         <section className="container mx-auto px-6 sm:px-8">
           <AnimatePresence mode="wait">
             {viewMode === "catalog" ? (
@@ -399,14 +607,14 @@ const Recherche = () => {
                 transition={{ duration: 0.3 }}
               >
                 {isLoading && cars.length === 0 ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 sm:gap-10">
                     {Array.from({ length: 6 }).map((_, i) => (
                       <div key={i} className="rounded-2xl bg-card border border-border/40 overflow-hidden">
                         <div className="aspect-video bg-muted animate-pulse" />
-                        <div className="p-6 space-y-3">
-                          <div className="h-5 w-2/3 bg-muted rounded animate-pulse" />
+                        <div className="p-7 space-y-3">
+                          <div className="h-6 w-2/3 bg-muted rounded animate-pulse" />
                           <div className="h-3 w-1/3 bg-muted rounded animate-pulse" />
-                          <div className="h-7 w-1/2 bg-muted rounded animate-pulse" />
+                          <div className="h-9 w-1/2 bg-muted rounded animate-pulse" />
                         </div>
                       </div>
                     ))}
@@ -420,13 +628,13 @@ const Recherche = () => {
                   </div>
                 ) : (
                   <>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 sm:gap-10">
                       {cars.map((car) => (
                         <LuxuryCarCard key={car.id} car={car} onClick={handleCarClick} />
                       ))}
                     </div>
                     {hasMore && (
-                      <div className="text-center mt-12">
+                      <div className="text-center mt-14">
                         <Button
                           onClick={loadMore}
                           disabled={isLoadingMore}
@@ -463,17 +671,17 @@ const Recherche = () => {
         </section>
       </main>
 
-      {/* More filters drawer (reuses existing FilterPanel) */}
-      <Suspense fallback={null}>
-        <FilterPanel
-          isOpen={moreFiltersOpen}
-          onClose={() => setMoreFiltersOpen(false)}
-          filters={filters}
-          onFilterChange={updateFilter}
-          onReset={resetFilters}
-          resultsCount={totalCount}
-        />
-      </Suspense>
+      {/* "Plus de filtres" — side drawer (Sheet) — slides only on click */}
+      <MoreFiltersSheet
+        open={moreFiltersOpen}
+        onOpenChange={setMoreFiltersOpen}
+        filters={filters}
+        updateFilter={updateFilter}
+        resetFilters={resetFilters}
+        resultsCount={totalCount}
+        brands={brands}
+        models={models}
+      />
 
       <Footer />
     </div>
