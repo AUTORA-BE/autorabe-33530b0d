@@ -15,42 +15,30 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
 
-import volkswagenLogo from "@/assets/brands/volkswagen.png";
-import bmwLogo from "@/assets/brands/bmw.png";
-import audiLogo from "@/assets/brands/audi.png";
-import mercedesLogo from "@/assets/brands/mercedes.png";
-import peugeotLogo from "@/assets/brands/peugeot.png";
-import renaultLogo from "@/assets/brands/renault.png";
-import citroenLogo from "@/assets/brands/citroen.png";
-import toyotaLogo from "@/assets/brands/toyota.png";
-import fordLogo from "@/assets/brands/ford.png";
-import opelLogo from "@/assets/brands/opel.png";
-import hyundaiLogo from "@/assets/brands/hyundai.png";
-import kiaLogo from "@/assets/brands/kia.png";
-import fiatLogo from "@/assets/brands/fiat.png";
-import volvoLogo from "@/assets/brands/volvo.png";
-import skodaLogo from "@/assets/brands/skoda.png";
-
 import type { BrandConfig } from "../types/search.types";
 import { BRAND_MODELS } from "@/data/brandModels";
 export { BRAND_MODELS } from "@/data/brandModels";
 
+// Logos: high-res transparent PNGs served from /public/logos/.
+// Drop replacement files at the same path to swap a logo without code changes.
 const BRANDS: BrandConfig[] = [
-  { name: "Volkswagen", logo: volkswagenLogo, color: "#001E50" },
-  { name: "BMW", logo: bmwLogo, color: "#0066B1" },
-  { name: "Audi", logo: audiLogo, color: "#000000" },
-  { name: "Mercedes-Benz", logo: mercedesLogo, color: "#000000" },
-  { name: "Peugeot", logo: peugeotLogo, color: "#000000" },
-  { name: "Renault", logo: renaultLogo, color: "#000000" },
-  { name: "Citroën", logo: citroenLogo, color: "#AC1521" },
-  { name: "Toyota", logo: toyotaLogo, color: "#EB0A1E" },
-  { name: "Ford", logo: fordLogo, color: "#003478" },
-  { name: "Opel", logo: opelLogo, color: "#FFD700" },
-  { name: "Hyundai", logo: hyundaiLogo, color: "#002C5F" },
-  { name: "Kia", logo: kiaLogo, color: "#05141F" },
-  { name: "Fiat", logo: fiatLogo, color: "#8B0000" },
-  { name: "Volvo", logo: volvoLogo, color: "#003057" },
-  { name: "Škoda", logo: skodaLogo, color: "#4BA82E" },
+  { name: "Volkswagen",    logo: "/logos/volkswagen.png",    color: "#001E50" },
+  { name: "BMW",           logo: "/logos/bmw.png",           color: "#0066B1" },
+  { name: "Audi",          logo: "/logos/audi.png",          color: "#000000" },
+  { name: "Mercedes-Benz", logo: "/logos/mercedes-benz.png", color: "#000000" },
+  { name: "Peugeot",       logo: "/logos/peugeot.png",       color: "#000000" },
+  { name: "Renault",       logo: "/logos/renault.png",       color: "#000000" },
+  { name: "Citroën",       logo: "/logos/citroen.png",       color: "#AC1521" },
+  { name: "Toyota",        logo: "/logos/toyota.png",        color: "#EB0A1E" },
+  { name: "Ford",          logo: "/logos/ford.png",          color: "#003478" },
+  { name: "Opel",          logo: "/logos/opel.png",          color: "#FFD700" },
+  { name: "Hyundai",       logo: "/logos/hyundai.png",       color: "#002C5F" },
+  { name: "Fiat",          logo: "/logos/fiat.png",          color: "#8B0000" },
+  { name: "Skoda",         logo: "/logos/skoda.png",         color: "#4BA82E" },
+  { name: "Dacia",         logo: "/logos/dacia.png",         color: "#646B52" },
+  { name: "Jeep",          logo: "/logos/jeep.png",          color: "#000000" },
+  { name: "Mini",          logo: "/logos/mini.png",          color: "#000000" },
+  { name: "Jaguar",        logo: "/logos/jaguar.png",        color: "#0A1F44" },
 ];
 
 export interface BrandCarouselProps {
@@ -123,26 +111,27 @@ const BrandCarousel = memo(function BrandCarousel({
                   >
                     <div
                       className={cn(
-                        "relative flex flex-col items-center justify-center p-3 sm:p-5 rounded-3xl transition-all duration-300",
+                        "relative flex flex-col items-center justify-center p-3 sm:p-5 rounded-3xl transition-all duration-300 border",
                         selectedBrand === brand.name
-                          ? "bg-primary/8 border border-primary/20"
-                          : "border border-transparent hover:border-border/30"
+                          ? "bg-primary/8 border-primary/40"
+                          : "border-transparent hover:border-primary/40"
                       )}
                     >
-                      <div className={cn(
-                        "w-14 h-14 sm:w-18 sm:h-18 flex items-center justify-center mb-2 sm:mb-3 rounded-2xl p-2.5 sm:p-3.5 transition-all duration-300 shadow-sm",
-                        "bg-white",
-                        selectedBrand === brand.name && "ring-2 ring-primary/40"
-                      )}>
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center mb-2 sm:mb-3 transition-all duration-300">
                         <img
                           src={brand.logo ?? undefined}
                           alt={`${brand.name} logo`}
-                          className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110"
+                          className={cn(
+                            "h-12 w-auto max-w-full object-contain transition-all duration-300",
+                            "grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110 dark:invert dark:group-hover:invert-0",
+                            selectedBrand === brand.name && "grayscale-0 opacity-100 dark:invert-0"
+                          )}
                           loading="lazy"
                           draggable="false"
+                          onError={(e) => { e.currentTarget.style.display = "none"; }}
                         />
                       </div>
-                      
+
                       <span className={cn(
                         "text-[10px] sm:text-xs font-light transition-all duration-300 text-center leading-tight truncate w-full",
                         selectedBrand === brand.name

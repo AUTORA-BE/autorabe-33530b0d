@@ -3,9 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAuth } from "@/features/auth";
 
 const SellCarBanner = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { language } = useLanguage();
   const [isVisible, setIsVisible] = useState(true);
   const [isDismissed, setIsDismissed] = useState(false);
@@ -72,7 +74,7 @@ const SellCarBanner = () => {
 
           <div className="flex items-center gap-1.5 shrink-0">
             <Button
-              onClick={() => navigate("/sell")}
+              onClick={() => navigate(user ? "/sell" : "/auth?returnTo=/sell")}
               size="sm"
               className="rounded-full group whitespace-nowrap font-semibold px-4 sm:px-5 text-xs sm:text-sm shadow-lg shadow-primary/15 hover:shadow-xl transition-all h-9 sm:h-10"
             >
