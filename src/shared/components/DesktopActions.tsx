@@ -72,9 +72,9 @@ const DesktopActions = ({ user, userProfile, onLogout, t, isAdmin }: DesktopActi
         </DropdownMenuContent>
       </DropdownMenu>
 
-      {/* Sell CTA */}
+      {/* Sell CTA — auth-gated: logged-in → /sell, else → /auth with returnTo */}
       <Button
-        onClick={() => navigate("/sell")}
+        onClick={() => navigate(user ? "/sell" : "/auth?returnTo=/sell")}
         className="rounded-full bg-gradient-to-r from-emerald-500 to-emerald-600 text-primary-foreground font-semibold px-5 shadow-lg shadow-emerald-600/30 hover:shadow-xl hover:brightness-110 transition-all duration-300 relative"
         size="sm"
       >

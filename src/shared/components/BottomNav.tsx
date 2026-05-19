@@ -35,7 +35,7 @@ const BottomNav = memo(function BottomNav() {
   const tabs = useMemo(() => [
     { to: "/", icon: Home, label: t("nav.buy"), badge: 0 },
     { to: user ? "/garage" : "/auth", icon: Heart, label: t("nav.garage") || t("nav.favorites"), badge: favoritesCount },
-    { to: "/sell", icon: PlusCircle, label: t("nav.sell") || "Vendre", badge: 0, isCta: true },
+    { to: user ? "/sell" : "/auth?returnTo=/sell", icon: PlusCircle, label: t("nav.sell") || "Vendre", badge: 0, isCta: true },
     { to: user ? "/messages" : "/auth", icon: MessageCircle, label: t("nav.messages"), badge: hasUnread ? unreadCount : 0 },
     { to: user ? "/settings" : "/auth", icon: User, label: t("nav.profile") || "Profil", badge: 0 },
   ], [t, favoritesCount, hasUnread, unreadCount, user]);
