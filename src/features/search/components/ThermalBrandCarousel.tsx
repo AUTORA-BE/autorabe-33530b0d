@@ -31,6 +31,7 @@ const BRANDS: BrandEntry[] = [
   { name: "Volkswagen",     logo: "/logos/volkswagen.png" },
   { name: "Peugeot",        logo: "/logos/peugeot.png" },
   { name: "Renault",        logo: "/logos/renault.png" },
+  { name: "Citroën",        logo: "/logos/citroen.png" },
   { name: "Ford",           logo: "/logos/ford.png" },
   { name: "Opel",           logo: "/logos/opel.png" },
   { name: "Fiat",           logo: "/logos/fiat.png" },
