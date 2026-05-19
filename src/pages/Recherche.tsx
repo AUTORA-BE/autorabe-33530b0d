@@ -68,26 +68,34 @@ function LuxuryCarCard({ car, onClick }: { car: Vehicle; onClick: (id: string) =
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
       onClick={() => onClick(car.id)}
-      className="group cursor-pointer rounded-2xl bg-card border border-border/40 overflow-hidden transition-all duration-500 hover:shadow-2xl hover:border-primary/30 hover:-translate-y-1"
+      className="group cursor-pointer rounded-2xl bg-card border border-border/40 overflow-hidden transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 hover:border-primary/50 hover:-translate-y-1"
     >
-      {/* Cinematic image — 16:9 with zoom on hover */}
+      {/* Cinematic image — 16:9 with smooth zoom contained by overflow-hidden */}
       <div className="aspect-video relative overflow-hidden bg-muted">
         <CarImage
           src={car.image}
           alt={`${car.brand} ${car.model}`}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          className="w-full h-full object-cover transition-transform duration-[900ms] ease-out group-hover:scale-105"
         />
 
-        {/* Subtle vignette */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        {/* Subtle vignette on hover */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-        {/* Green Car-Pass badge */}
-        {car.hasCarPass && (
-          <span className="absolute top-4 left-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary text-primary-foreground text-[11px] font-medium tracking-wide shadow-md">
-            <ShieldCheck className="w-3.5 h-3.5" strokeWidth={2.2} />
-            Car-Pass Certifié
-          </span>
-        )}
+        {/* Premium top-row badges (glass + bright text) */}
+        <div className="absolute top-3 left-3 right-3 flex items-start justify-between gap-2 pointer-events-none">
+          {car.hasCarPass && (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/15 backdrop-blur-md border border-primary/30 text-primary text-[11px] font-semibold tracking-wide shadow-lg shadow-primary/10">
+              <ShieldCheck className="w-3.5 h-3.5" strokeWidth={2.2} />
+              Car-Pass
+            </span>
+          )}
+          {car.isLezCompatible && (
+            <span className="ml-auto inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-emerald-400/15 backdrop-blur-md border border-emerald-400/40 text-emerald-300 text-[11px] font-semibold tracking-wide shadow-lg">
+              <Leaf className="w-3.5 h-3.5" strokeWidth={2} />
+              LEZ
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Content */}
@@ -109,16 +117,10 @@ function LuxuryCarCard({ car, onClick }: { car: Vehicle; onClick: (id: string) =
           </div>
         </div>
 
-        <div className="flex items-end justify-between pt-2">
-          <span className="text-3xl sm:text-4xl font-semibold text-foreground tracking-tight tabular-nums">
-            {car.price.toLocaleString("fr-BE")} €
+        <div className="flex items-end justify-between pt-2 border-t border-border/30">
+          <span className="font-serif text-4xl sm:text-5xl font-semibold text-foreground tracking-tight tabular-nums leading-none pt-3">
+            {car.price.toLocaleString("fr-BE")}<span className="text-2xl sm:text-3xl text-muted-foreground font-light ml-1">€</span>
           </span>
-          {car.isLezCompatible && (
-            <span className="inline-flex items-center gap-1 text-[10px] font-medium text-primary pb-1.5">
-              <Leaf className="w-3 h-3" strokeWidth={1.8} />
-              LEZ : OK
-            </span>
-          )}
         </div>
       </div>
     </motion.article>
@@ -150,7 +152,7 @@ function PillFilterBar({ filters, updateFilter, onOpenMore }: FilterBarProps) {
   const triggerCls = "rounded-full bg-transparent hover:bg-secondary/60 text-sm font-medium px-5 h-11 gap-1.5 border-0";
 
   return (
-    <div className="hidden md:flex items-center gap-1 p-1.5 rounded-full bg-card border border-border/40 shadow-md">
+    <div className="hidden md:flex items-center gap-1 p-2 rounded-full bg-background/60 backdrop-blur-xl border border-border/40 shadow-2xl shadow-primary/5 ring-1 ring-white/5">
       {/* Prix max */}
       <Popover>
         <PopoverTrigger asChild>
