@@ -4,17 +4,22 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { VitePWA } from "vite-plugin-pwa";
 
-// https://vitejs.dev/config/
+// Cloudflare Wrangler's AST modifier (`npx wrangler deploy` → "Configuring
+// project for Vite") requires the plugins array to be:
+//   1. Inside the OBJECT form `defineConfig({ ... })`, NOT the function form.
+//   2. A literal ArrayExpression — no `.filter(Boolean)`, no `as` casts.
+//   3. Containing ONLY CallExpression elements — no ObjectExpressions, no
+//      SpreadElements, no ConditionalExpressions.
+// Any deviation triggers: "Cannot modify Vite config: could not find a valid
+// plugins array."
 //
-// NOTE: object-form `defineConfig({ ... })` (not function form) is required so
-// Cloudflare Wrangler's static AST parser can find the `plugins` array. The
-// dev-only Lovable tagger is gated via Vite's `apply: "serve"` instead of a
-// chained `.filter(Boolean)` (which turns the ArrayExpression into a
-// MemberExpression and breaks the parser).
+// componentTagger() is intentionally called unconditionally. In production
+// builds it only injects harmless `data-lov-*` attributes on JSX — no runtime
+// overhead — and keeps the Lovable editor functional everywhere.
 export default defineConfig({
   plugins: [
     react(),
-    { ...componentTagger(), apply: "serve" },
+    componentTagger(),
     VitePWA({
       registerType: "autoUpdate",
       devOptions: { enabled: false },
