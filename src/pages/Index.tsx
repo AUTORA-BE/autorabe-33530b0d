@@ -274,7 +274,9 @@ const Index = () => {
           onSave={saveProfile}
           trigger={<button ref={profileModalRef} className="hidden" />}
         />
+        </div>
       </main>
+
 
       <Footer />
       </PullToRefresh>
