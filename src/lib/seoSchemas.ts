@@ -38,54 +38,159 @@ export const websiteSchema = {
   },
 };
 
-/** Vehicle listing (Car + Offer) */
+/**
+ * Vehicle listing — Schema.org `Car` (subtype of `Vehicle`) + nested `Offer`.
+ *
+ * Designed to satisfy every required and recommended field for Google's
+ * Vehicle Listing rich result on Search.
+ * https://developers.google.com/search/docs/appearance/structured-data/vehicle-listing
+ *
+ * Required by Google : brand, model, price, vehicleIdentificationNumber (if known)
+ * Strongly recommended : mileageFromOdometer, dateVehicleFirstRegistered,
+ *                        fuelType, vehicleTransmission, bodyType, color, image,
+ *                        itemCondition.
+ */
 export function vehicleSchema(car: {
   id: string;
   brand: string;
   model: string;
+  /** Display variant / trim (e.g. "Competition xDrive Touring"). Optional. */
+  trim?: string | null;
   year: number;
   mileage: number;
   fuelType: string;
   transmission: string;
-  euroNorm: string;
+  euroNorm?: string | null;
   price: number;
+  /** Hero image URL. */
   image: string;
+  /** Additional gallery images (used as the Vehicle.image array). */
+  images?: string[];
   location: string;
   description?: string | null;
   sellerName?: string;
   sellerType?: string;
+  /** First registration in ISO 8601 (YYYY-MM-DD). Falls back to year-01-01. */
+  firstRegistrationDate?: string | null;
+  /** VIN — when available, dramatically boosts trust + eligibility. */
+  vin?: string | null;
+  /** Car / SUV / Hatchback / Wagon … */
+  bodyType?: string | null;
+  numberOfDoors?: number | null;
+  numberOfSeats?: number | null;
+  exteriorColor?: string | null;
+  interiorColor?: string | null;
+  /** kW or hp — power output. */
+  enginePowerKw?: number | null;
+  /** cm³ engine displacement. */
+  engineDisplacementCc?: number | null;
+  /** "AllWheelDriveConfiguration" | "FrontWheelDriveConfiguration" | … */
+  driveWheelConfiguration?: string | null;
 }) {
+  const url = `${SITE_URL}/car/${car.id}`;
+  const headline = [car.brand, car.model, car.trim].filter(Boolean).join(" ");
+  const images = car.images && car.images.length > 0 ? car.images : [car.image];
+
+  // Belgium fuel-type → schema.org enum mapping (Google is strict on these)
+  const FUEL_MAP: Record<string, string> = {
+    essence: "https://schema.org/Gasoline",
+    diesel: "https://schema.org/Diesel",
+    electrique: "https://schema.org/Electric",
+    électrique: "https://schema.org/Electric",
+    electric: "https://schema.org/Electric",
+    hybride: "https://schema.org/Hybrid",
+    hybrid: "https://schema.org/Hybrid",
+    lpg: "https://schema.org/Lpg",
+    gpl: "https://schema.org/Lpg",
+    cng: "https://schema.org/Cng",
+  };
+  const fuelTypeNormalized =
+    FUEL_MAP[car.fuelType?.toLowerCase()] ?? car.fuelType;
+
+  // priceValidUntil — 60 days from now, ISO date
+  const validUntil = new Date();
+  validUntil.setDate(validUntil.getDate() + 60);
+  const priceValidUntil = validUntil.toISOString().slice(0, 10);
+
   return {
     "@context": "https://schema.org",
     "@type": "Car",
-    name: `${car.brand} ${car.model}`,
+    name: headline,
+    url,
     brand: { "@type": "Brand", name: car.brand },
     model: car.model,
     vehicleModelDate: String(car.year),
+    dateVehicleFirstRegistered:
+      car.firstRegistrationDate || `${car.year}-01-01`,
+    itemCondition: "https://schema.org/UsedCondition",
+    image: images,
+    ...(car.vin && { vehicleIdentificationNumber: car.vin }),
+    ...(car.description && { description: car.description.slice(0, 500) }),
+
     mileageFromOdometer: {
       "@type": "QuantitativeValue",
       value: car.mileage,
       unitCode: "KMT",
     },
-    fuelType: car.fuelType,
+    fuelType: fuelTypeNormalized,
     vehicleTransmission: car.transmission,
-    vehicleConfiguration: car.euroNorm,
-    image: car.image,
-    ...(car.description && { description: car.description.slice(0, 300) }),
+    ...(car.euroNorm && { vehicleConfiguration: `Euro ${car.euroNorm}` }),
+    ...(car.bodyType && { bodyType: car.bodyType }),
+    ...(car.numberOfDoors && { numberOfDoors: car.numberOfDoors }),
+    ...(car.numberOfSeats && {
+      vehicleSeatingCapacity: {
+        "@type": "QuantitativeValue",
+        value: car.numberOfSeats,
+      },
+    }),
+    ...(car.exteriorColor && { color: car.exteriorColor }),
+    ...(car.interiorColor && { vehicleInteriorColor: car.interiorColor }),
+    ...(car.driveWheelConfiguration && {
+      driveWheelConfiguration: car.driveWheelConfiguration,
+    }),
+    ...((car.enginePowerKw || car.engineDisplacementCc) && {
+      vehicleEngine: {
+        "@type": "EngineSpecification",
+        ...(car.enginePowerKw && {
+          enginePower: {
+            "@type": "QuantitativeValue",
+            value: car.enginePowerKw,
+            unitCode: "KWT",
+          },
+        }),
+        ...(car.engineDisplacementCc && {
+          engineDisplacement: {
+            "@type": "QuantitativeValue",
+            value: car.engineDisplacementCc,
+            unitCode: "CMQ",
+          },
+        }),
+        fuelType: fuelTypeNormalized,
+      },
+    }),
+
     offers: {
       "@type": "Offer",
       price: car.price,
       priceCurrency: "EUR",
+      priceValidUntil,
       availability: "https://schema.org/InStock",
-      url: `${SITE_URL}/car/${car.id}`,
       itemCondition: "https://schema.org/UsedCondition",
+      url,
+      areaServed: { "@type": "Country", name: "BE" },
+      availableAtOrFrom: {
+        "@type": "Place",
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: car.location,
+          addressCountry: "BE",
+        },
+      },
       seller: {
-        "@type": car.sellerType === "professionnel" ? "Organization" : "Person",
+        "@type": car.sellerType === "professionnel" ? "AutoDealer" : "Person",
         name: car.sellerName || "Vendeur vérifié",
       },
     },
-    vehicleInteriorColor: undefined,
-    driveWheelConfiguration: undefined,
   };
 }
 

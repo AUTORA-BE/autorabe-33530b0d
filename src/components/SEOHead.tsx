@@ -93,12 +93,37 @@ const SEOHead = ({
       {/* Canonical */}
       <link rel="canonical" href={canonicalUrl} />
       
-      {/* Alternate languages — real localized URLs */}
-      <link rel="alternate" hrefLang="fr" href={altFor("fr")} />
-      <link rel="alternate" hrefLang="nl" href={altFor("nl")} />
-      <link rel="alternate" hrefLang="de" href={altFor("de")} />
-      <link rel="alternate" hrefLang="en" href={altFor("en")} />
+      {/* ────────────────────────────────────────────────────────────────────
+          hreflang — Belgian-domestic targeting.
+
+          We emit BOTH the regional `xx-BE` codes (precise audience) AND the
+          generic `xx` codes (broader fallback), so Google understands the
+          page targets Belgian speakers of each language WITHOUT being
+          confused with .fr / .nl / .de national markets.
+
+          - fr-BE  → French-speaking Belgians (Wallonia + Brussels)
+          - nl-BE  → Dutch-speaking Belgians  (Flanders  + Brussels)
+          - de-BE  → German-speaking community (East Cantons / Ostbelgien)
+          - en     → international / generic English fallback
+          - x-default → most common audience (fr-BE)
+
+          The href URL itself doesn't need to encode "-BE" in the path —
+          the hreflang attribute does the geo-signal job for crawlers.
+          ──────────────────────────────────────────────────────────────────── */}
+      <link rel="alternate" hrefLang="fr-BE" href={altFor("fr")} />
+      <link rel="alternate" hrefLang="nl-BE" href={altFor("nl")} />
+      <link rel="alternate" hrefLang="de-BE" href={altFor("de")} />
+      <link rel="alternate" hrefLang="fr"    href={altFor("fr")} />
+      <link rel="alternate" hrefLang="nl"    href={altFor("nl")} />
+      <link rel="alternate" hrefLang="de"    href={altFor("de")} />
+      <link rel="alternate" hrefLang="en"    href={altFor("en")} />
       <link rel="alternate" hrefLang="x-default" href={altFor("fr")} />
+
+      {/* Geo-targeting meta (legacy but still parsed by some bots) */}
+      <meta name="geo.region" content="BE" />
+      <meta name="geo.placename" content="Belgium" />
+      <meta name="ICBM" content="50.8503, 4.3517" />
+      <meta name="DC.coverage" content="Belgium" />
 
       {/* JSON-LD Structured Data */}
       {jsonLdItems.map((item, i) => (
