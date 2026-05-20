@@ -156,11 +156,12 @@ const Index = () => {
 
         {/* Unified luxe canvas under the hero — single continuous slate-50 tapis */}
         <div className="relative bg-slate-50 [&_section]:!bg-transparent">
-          {/* Invisible fade merging the hero edge into the slate canvas */}
+          {/* Long, soft fade that dissolves the hero edge into the slate canvas */}
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-x-0 -top-24 h-24 bg-gradient-to-b from-transparent to-slate-50"
+            className="pointer-events-none absolute inset-x-0 -top-40 h-40 bg-gradient-to-b from-transparent via-slate-50/70 to-slate-50"
           />
+
 
 
         {/* Voice search summary */}
