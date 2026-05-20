@@ -154,6 +154,15 @@ const Index = () => {
         {/* Hero — cinematic parallax with editorial serif text */}
         <HeroSearch onSearch={handleSearch} />
 
+        {/* Unified luxe canvas under the hero — single continuous slate-50 tapis */}
+        <div className="relative bg-slate-50 [&_section]:!bg-transparent">
+          {/* Invisible fade merging the hero edge into the slate canvas */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 -top-24 h-24 bg-gradient-to-b from-transparent to-slate-50"
+          />
+
+
         {/* Voice search summary */}
         <div className="container mx-auto px-6 sm:px-8">
           <AnimatePresence>
