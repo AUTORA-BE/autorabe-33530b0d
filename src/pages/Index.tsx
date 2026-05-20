@@ -155,20 +155,28 @@ const Index = () => {
         <HeroSearch onSearch={handleSearch} />
 
         {/* Unified luxe canvas under the hero — single continuous slate-50 tapis */}
-        <div className="relative bg-slate-50 [&_section]:!bg-transparent">
-          {/* Hero → canvas dissolve: compact on mobile, ample on desktop, ultra-smooth multi-stop */}
+        <div className="relative bg-slate-50 dark:bg-[#0A0A0B] [&_section]:!bg-transparent">
+          {/* Hero → canvas dissolve, theme-aware (slate-50 / Elite Black) */}
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-x-0 -top-24 sm:-top-40 h-24 sm:h-40 z-[1]"
+            className="pointer-events-none absolute inset-x-0 -top-24 sm:-top-40 h-24 sm:h-40 z-[1] dark:hidden"
             style={{
               background:
                 "linear-gradient(to bottom, hsl(210 40% 98% / 0) 0%, hsl(210 40% 98% / 0.35) 35%, hsl(210 40% 98% / 0.75) 65%, hsl(210 40% 98% / 0.95) 85%, hsl(210 40% 98%) 100%)",
             }}
           />
-          {/* Premium ambient: soft emerald glow on the slate canvas */}
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-0 opacity-[0.55] mix-blend-soft-light"
+            className="pointer-events-none absolute inset-x-0 -top-24 sm:-top-40 h-24 sm:h-40 z-[1] hidden dark:block"
+            style={{
+              background:
+                "linear-gradient(to bottom, rgba(10,10,11,0) 0%, rgba(10,10,11,0.35) 35%, rgba(10,10,11,0.75) 65%, rgba(10,10,11,0.95) 85%, #0A0A0B 100%)",
+            }}
+          />
+          {/* Premium ambient: emerald halo — gentle on light, richer on dark */}
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 opacity-[0.55] mix-blend-soft-light dark:opacity-100 dark:mix-blend-screen"
             style={{
               background:
                 "radial-gradient(60% 40% at 50% 0%, hsl(var(--primary) / 0.10) 0%, transparent 60%), radial-gradient(40% 30% at 90% 30%, hsl(var(--primary) / 0.06) 0%, transparent 70%)",
@@ -177,7 +185,7 @@ const Index = () => {
           {/* Ultra-fine grain for tactile premium texture */}
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-0 opacity-[0.035] mix-blend-overlay"
+            className="pointer-events-none absolute inset-0 opacity-[0.035] mix-blend-overlay dark:opacity-[0.05]"
             style={{
               backgroundImage:
                 "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")",
