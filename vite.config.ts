@@ -2,154 +2,135 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
-import { VitePWA } from "vite-plugin-pwa";
+import { VitePWA, type VitePWAOptions } from "vite-plugin-pwa";
 
-// Cloudflare Wrangler's AST modifier (`npx wrangler deploy` → "Configuring
-// project for Vite") requires the plugins array to be:
-//   1. Inside the OBJECT form `defineConfig({ ... })`, NOT the function form.
-//   2. A literal ArrayExpression — no `.filter(Boolean)`, no `as` casts.
-//   3. Containing ONLY CallExpression elements — no ObjectExpressions, no
-//      SpreadElements, no ConditionalExpressions.
-// Any deviation triggers: "Cannot modify Vite config: could not find a valid
-// plugins array."
-//
-// componentTagger() is intentionally called unconditionally. In production
-// builds it only injects harmless `data-lov-*` attributes on JSX — no runtime
-// overhead — and keeps the Lovable editor functional everywhere.
-export default defineConfig({
-  plugins: [
-    react(),
-    componentTagger(),
-    VitePWA({
-      registerType: "autoUpdate",
-      devOptions: { enabled: false },
-      includeAssets: ["favicon.png", "favicon.ico", "notification.mp3", "sw-push.js", "offline.html"],
-      workbox: {
-        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
-        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
-        skipWaiting: true,
-        clientsClaim: true,
-        cleanupOutdatedCaches: true,
-        runtimeCaching: [
-          {
-            urlPattern: /^https:\/\/okeiblbufwhfirxrzkfo\.supabase\.co\/rest\/v1\/.*/i,
-            handler: "NetworkFirst",
-            options: {
-              cacheName: "autora-api-cache",
-              expiration: { maxEntries: 50, maxAgeSeconds: 5 * 60 },
-              networkTimeoutSeconds: 3,
-            },
-          },
-          {
-            urlPattern: /^https:\/\/okeiblbufwhfirxrzkfo\.supabase\.co\/storage\/.*/i,
-            handler: "CacheFirst",
-            options: {
-              cacheName: "autora-images-cache",
-              expiration: { maxEntries: 200, maxAgeSeconds: 30 * 24 * 60 * 60 },
-              cacheableResponse: { statuses: [0, 200] },
-            },
-          },
-          {
-            urlPattern: /^https:\/\/images\.unsplash\.com\/.*/i,
-            handler: "CacheFirst",
-            options: {
-              cacheName: "autora-external-images",
-              expiration: { maxEntries: 100, maxAgeSeconds: 30 * 24 * 60 * 60 },
-              cacheableResponse: { statuses: [0, 200] },
-            },
-          },
-          {
-            urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com\/.*/i,
-            handler: "CacheFirst",
-            options: {
-              cacheName: "autora-fonts",
-              expiration: { maxEntries: 20, maxAgeSeconds: 365 * 24 * 60 * 60 },
-              cacheableResponse: { statuses: [0, 200] },
-            },
-          },
-        ],
-        navigateFallback: "/index.html",
-        navigateFallbackDenylist: [/^\/~oauth/, /^\/api/],
-      },
-      manifest: {
-        name: "AutoRA — Marketplace automobile belge",
-        short_name: "AutoRA",
-        description: "Trouvez votre prochaine voiture en Belgique. Véhicules vérifiés Car-Pass, conformité LEZ garantie. Version 1.0.0-beta.3 — Analytics Plausible & FAQ home",
-        theme_color: "#0a0a14",
-        background_color: "#0a0a14",
-        display: "standalone",
-        display_override: ["window-controls-overlay", "standalone", "minimal-ui"],
-        orientation: "any",
-        start_url: "/?utm_source=pwa",
-        scope: "/",
-        id: "/",
-        lang: "fr-BE",
-        dir: "ltr",
-        categories: ["auto", "shopping"],
-        prefer_related_applications: false,
-        icons: [
-          { src: "/pwa-icon-192.png", sizes: "192x192", type: "image/png" },
-          { src: "/pwa-icon-512.png", sizes: "512x512", type: "image/png" },
-          { src: "/pwa-icon-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
-        ],
-        screenshots: [
-          {
-            src: "/pwa-icon-512.png",
-            sizes: "512x512",
-            type: "image/png",
-            form_factor: "narrow",
-            label: "AutoRA — Marketplace automobile belge",
-          },
-        ],
-        shortcuts: [
-          {
-            name: "Rechercher une voiture",
-            short_name: "Rechercher",
-            url: "/?source=shortcut",
-            icons: [{ src: "/pwa-icon-192.png", sizes: "192x192" }],
-          },
-          {
-            name: "Vendre ma voiture",
-            short_name: "Vendre",
-            url: "/sell?source=shortcut",
-            icons: [{ src: "/pwa-icon-192.png", sizes: "192x192" }],
-          },
-          {
-            name: "Mes favoris",
-            short_name: "Favoris",
-            url: "/favorites?source=shortcut",
-            icons: [{ src: "/pwa-icon-192.png", sizes: "192x192" }],
-          },
-          {
-            name: "Calculateur TCO",
-            short_name: "TCO",
-            url: "/calculateur-tco?source=shortcut",
-            icons: [{ src: "/pwa-icon-192.png", sizes: "192x192" }],
-          },
-        ],
-      },
-    }),
-  ],
-  server: {
-    host: "::",
-    port: 8080,
-  },
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
-  },
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          "vendor-react": ["react", "react-dom", "react-router-dom"],
-          "vendor-query": ["@tanstack/react-query"],
-          "vendor-motion": ["framer-motion"],
-          "vendor-icons": ["lucide-react"],
-          "vendor-supabase": ["@supabase/supabase-js"],
+// PWA options are kept out of the `plugins` ArrayExpression on purpose:
+// Cloudflare Wrangler's vite-config codemod can't reliably handle deeply
+// nested literals (the workbox runtimeCaching / manifest arrays contain
+// dozens of `[]` and `{}` that trip its parser). Keeping the inline call
+// shallow — `VitePWA(pwaOptions)` — keeps the plugins array trivially
+// parseable while preserving the exact PWA behavior.
+const pwaOptions: Partial<VitePWAOptions> = {
+  registerType: "autoUpdate",
+  devOptions: { enabled: false },
+  includeAssets: ["favicon.png", "favicon.ico", "notification.mp3", "sw-push.js", "offline.html"],
+  workbox: {
+    globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
+    maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
+    skipWaiting: true,
+    clientsClaim: true,
+    cleanupOutdatedCaches: true,
+    runtimeCaching: [
+      {
+        urlPattern: /^https:\/\/okeiblbufwhfirxrzkfo\.supabase\.co\/rest\/v1\/.*/i,
+        handler: "NetworkFirst",
+        options: {
+          cacheName: "autora-api-cache",
+          expiration: { maxEntries: 50, maxAgeSeconds: 5 * 60 },
+          networkTimeoutSeconds: 3,
         },
       },
-    },
+      {
+        urlPattern: /^https:\/\/okeiblbufwhfirxrzkfo\.supabase\.co\/storage\/.*/i,
+        handler: "CacheFirst",
+        options: {
+          cacheName: "autora-images-cache",
+          expiration: { maxEntries: 200, maxAgeSeconds: 30 * 24 * 60 * 60 },
+          cacheableResponse: { statuses: [0, 200] },
+        },
+      },
+      {
+        urlPattern: /^https:\/\/images\.unsplash\.com\/.*/i,
+        handler: "CacheFirst",
+        options: {
+          cacheName: "autora-external-images",
+          expiration: { maxEntries: 100, maxAgeSeconds: 30 * 24 * 60 * 60 },
+          cacheableResponse: { statuses: [0, 200] },
+        },
+      },
+      {
+        urlPattern: /^https:\/\/fonts\.(googleapis|gstatic)\.com\/.*/i,
+        handler: "CacheFirst",
+        options: {
+          cacheName: "autora-fonts",
+          expiration: { maxEntries: 20, maxAgeSeconds: 365 * 24 * 60 * 60 },
+          cacheableResponse: { statuses: [0, 200] },
+        },
+      },
+    ],
+    navigateFallback: "/index.html",
+    navigateFallbackDenylist: [/^\/~oauth/, /^\/api/],
   },
+  manifest: {
+    name: "AutoRA — Marketplace automobile belge",
+    short_name: "AutoRA",
+    description: "Trouvez votre prochaine voiture en Belgique. Véhicules vérifiés Car-Pass, conformité LEZ garantie.",
+    theme_color: "#0a0a14",
+    background_color: "#0a0a14",
+    display: "standalone",
+    display_override: ["window-controls-overlay", "standalone", "minimal-ui"],
+    orientation: "any",
+    start_url: "/?utm_source=pwa",
+    scope: "/",
+    id: "/",
+    lang: "fr-BE",
+    dir: "ltr",
+    categories: ["auto", "shopping"],
+    prefer_related_applications: false,
+    icons: [
+      { src: "/pwa-icon-192.png", sizes: "192x192", type: "image/png" },
+      { src: "/pwa-icon-512.png", sizes: "512x512", type: "image/png" },
+      { src: "/pwa-icon-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+    ],
+    screenshots: [
+      {
+        src: "/pwa-icon-512.png",
+        sizes: "512x512",
+        type: "image/png",
+        form_factor: "narrow",
+        label: "AutoRA — Marketplace automobile belge",
+      },
+    ],
+    shortcuts: [
+      {
+        name: "Rechercher une voiture",
+        short_name: "Rechercher",
+        url: "/?source=shortcut",
+        icons: [{ src: "/pwa-icon-192.png", sizes: "192x192" }],
+      },
+      {
+        name: "Vendre ma voiture",
+        short_name: "Vendre",
+        url: "/sell?source=shortcut",
+        icons: [{ src: "/pwa-icon-192.png", sizes: "192x192" }],
+      },
+      {
+        name: "Mes favoris",
+        short_name: "Favoris",
+        url: "/favorites?source=shortcut",
+        icons: [{ src: "/pwa-icon-192.png", sizes: "192x192" }],
+      },
+      {
+        name: "Calculateur TCO",
+        short_name: "TCO",
+        url: "/calculateur-tco?source=shortcut",
+        icons: [{ src: "/pwa-icon-192.png", sizes: "192x192" }],
+      },
+    ],
+  },
+};
+
+const manualChunks = {
+  "vendor-react": ["react", "react-dom", "react-router-dom"],
+  "vendor-query": ["@tanstack/react-query"],
+  "vendor-motion": ["framer-motion"],
+  "vendor-icons": ["lucide-react"],
+  "vendor-supabase": ["@supabase/supabase-js"],
+};
+
+export default defineConfig({
+  plugins: [react(), componentTagger(), VitePWA(pwaOptions)],
+  server: { host: "::", port: 8080 },
+  resolve: { alias: { "@": path.resolve(__dirname, "./src") } },
+  build: { rollupOptions: { output: { manualChunks } } },
 });

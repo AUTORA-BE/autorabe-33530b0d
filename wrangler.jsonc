@@ -1,19 +1,10 @@
-/**
- * Cloudflare Workers + Static Assets config — short-circuits the interactive
- * setup wizard during `npx wrangler deploy`. Matches the exact shape suggested
- * by Wrangler 4.x for a Vite SPA.
- *
- * Docs: https://developers.cloudflare.com/workers/static-assets/
- */
+// Cloudflare Workers + Static Assets — Vite SPA.
+// Docs: https://developers.cloudflare.com/workers/static-assets/
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "autorabe-33530b0d",
   "compatibility_date": "2026-05-20",
   "compatibility_flags": ["nodejs_compat"],
-  "observability": {
-    "enabled": true
-  },
-  "assets": {
-    "not_found_handling": "single-page-application"
-  }
+  "observability": { "enabled": true },
+  "assets": { "not_found_handling": "single-page-application" }
 }
