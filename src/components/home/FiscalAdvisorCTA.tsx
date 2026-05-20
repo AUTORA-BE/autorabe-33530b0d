@@ -41,13 +41,13 @@ const FiscalAdvisorCTA = memo(function FiscalAdvisorCTA() {
 
   return (
     <>
-      <section className="relative py-16 md:py-24 overflow-hidden">
+      <section className="relative py-10 md:py-24 overflow-hidden">
         {/* Subtle accent halo — keeps section airy on the unified slate canvas */}
         <div className="absolute inset-0 opacity-30 pointer-events-none"
           style={{ background: "radial-gradient(ellipse at 50% 50%, hsl(var(--accent-electric) / 0.10) 0%, transparent 65%)" }} />
 
 
-        <div className="container mx-auto px-6 sm:px-8 relative">
+        <div className="container mx-auto px-5 sm:px-8 relative">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -69,7 +69,7 @@ const FiscalAdvisorCTA = memo(function FiscalAdvisorCTA() {
                 {t.badge}
               </span>
 
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-light leading-[1.1] tracking-tight text-foreground max-w-3xl">
+              <h2 className="text-2xl sm:text-4xl md:text-5xl font-light leading-[1.15] md:leading-[1.1] tracking-tight text-foreground max-w-3xl">
                 {t.title}
               </h2>
 
@@ -92,7 +92,7 @@ const FiscalAdvisorCTA = memo(function FiscalAdvisorCTA() {
                 asChild
                 variant="primary"
                 size="lg"
-                className="mt-4 px-7 py-6 text-base"
+                className="mt-4 w-full max-w-sm md:w-auto md:max-w-none rounded-full px-7 py-4 md:py-6 text-base"
               >
                 <Link to="/fiscalite-auto-2026">
                   {t.cta}

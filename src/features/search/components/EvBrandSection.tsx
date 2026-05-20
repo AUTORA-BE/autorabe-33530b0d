@@ -55,21 +55,32 @@ const EvBrandSection = memo(function EvBrandSection({
   };
 
   return (
-    <section className="bg-white dark:bg-slate-950 py-16 md:py-24">
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
-        <div className="space-y-4 max-w-2xl mb-12">
+    <section className="bg-white dark:bg-slate-950 py-10 md:py-24">
+      <div className="max-w-7xl mx-auto px-5 md:px-12">
+        <div className="space-y-3 md:space-y-4 max-w-2xl mb-8 md:mb-12">
           <p className="text-[10.5px] font-medium uppercase tracking-[0.22em] text-primary/85">
             {eyebrow}
           </p>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-light leading-[1.1] tracking-tight text-slate-900 dark:text-white">
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-light leading-[1.15] md:leading-[1.1] tracking-tight text-slate-900 dark:text-white">
             {title}
           </h2>
-          <p className="text-sm sm:text-base font-light leading-relaxed text-slate-600 dark:text-slate-300">
+          <p className="text-[13.5px] sm:text-base font-light leading-relaxed text-slate-600 dark:text-slate-300">
             {subtitle}
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+        {/* Mobile = horizontal swipe carousel · Desktop = 4-col grid (single block) */}
+        <div
+          className={cn(
+            "flex md:grid md:grid-cols-4",
+            "gap-3 md:gap-6",
+            "-mx-5 md:mx-0 px-5 md:px-0 pb-2 md:pb-0",
+            "overflow-x-auto md:overflow-visible",
+            "snap-x snap-mandatory md:snap-none",
+            "scrollbar-hide",
+          )}
+          style={{ WebkitOverflowScrolling: "touch" }}
+        >
           {PURE_EV_BRANDS.map((name) => {
             const active = selectedBrand === name;
             return (
@@ -78,10 +89,13 @@ const EvBrandSection = memo(function EvBrandSection({
                 onClick={() => handleClick(name)}
                 aria-pressed={active}
                 className={cn(
-                  "group relative h-28 md:h-32 rounded-2xl border flex items-center justify-center",
+                  "group relative rounded-2xl border flex items-center justify-center",
+                  "shrink-0 md:shrink snap-start",
+                  "w-36 md:w-auto h-28 md:h-32",
                   "bg-white dark:bg-slate-900",
                   "transition-all duration-300 ease-out shadow-sm dark:shadow-black/30",
-                  "hover:scale-[1.02] hover:shadow-md dark:hover:shadow-primary/10 hover:border-primary",
+                  "active:scale-[0.98] md:active:scale-100",
+                  "md:hover:scale-[1.02] md:hover:shadow-md dark:md:hover:shadow-primary/10 md:hover:border-primary",
                   active
                     ? "border-primary shadow-md ring-1 ring-primary/20"
                     : "border-slate-200 dark:border-slate-800",
@@ -92,7 +106,7 @@ const EvBrandSection = memo(function EvBrandSection({
                     "text-base md:text-lg font-medium tracking-tight transition-colors",
                     active
                       ? "text-primary"
-                      : "text-slate-900 dark:text-white group-hover:text-primary",
+                      : "text-slate-900 dark:text-white md:group-hover:text-primary",
                   )}
                 >
                   {name}
@@ -102,10 +116,10 @@ const EvBrandSection = memo(function EvBrandSection({
           })}
         </div>
 
-        <div className="mt-12">
+        <div className="mt-8 md:mt-12">
           <Link
             to="/marques-electriques"
-            className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium transition-colors group"
+            className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium transition-colors group text-sm md:text-base"
           >
             <span>{cta}</span>
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" strokeWidth={1.75} />

@@ -82,7 +82,7 @@ const SellCarCTA = memo(() => {
               {/* Headline */}
               <motion.h2
                 {...fadeUp(0.06)}
-                className="text-3xl sm:text-4xl md:text-5xl font-light leading-[1.1] tracking-tight text-foreground mb-8"
+                className="text-2xl sm:text-4xl md:text-5xl font-light leading-[1.15] md:leading-[1.1] tracking-tight text-foreground mb-6 md:mb-8"
               >
                 {isNl
                   ? <>Uw auto verdient <span className="text-primary">de juiste koper</span></>
@@ -112,12 +112,12 @@ const SellCarCTA = memo(() => {
                 ))}
               </motion.div>
 
-              {/* CTA */}
-              <motion.div {...fadeUp(0.21)}>
+              {/* CTA — full-width thumb-friendly tap target on mobile */}
+              <motion.div {...fadeUp(0.21)} className="w-full max-w-sm md:max-w-none md:w-auto md:inline-block">
                 <Button
                   size="lg"
                   onClick={goToSell}
-                  className="rounded-full px-10 font-semibold text-sm group active:scale-[0.97] shadow-[0_8px_24px_-8px_hsl(var(--primary)/0.5)] hover:shadow-[0_14px_36px_-8px_hsl(var(--primary)/0.6)] hover:-translate-y-0.5 transition-all duration-300"
+                  className="w-full md:w-auto rounded-full px-8 md:px-10 py-4 md:py-3 font-semibold text-sm group active:scale-[0.97] shadow-[0_8px_24px_-8px_hsl(var(--primary)/0.5)] hover:shadow-[0_14px_36px_-8px_hsl(var(--primary)/0.6)] hover:-translate-y-0.5 transition-all duration-300"
                 >
                   {isNl ? "Start mijn advertentie" : "Publier mon annonce"}
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />

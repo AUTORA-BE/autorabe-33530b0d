@@ -128,7 +128,7 @@ const WhyAutoRA = memo(() => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.05 }}
-            className="text-3xl sm:text-4xl md:text-5xl font-light leading-[1.1] tracking-tight text-foreground mb-5"
+            className="text-2xl sm:text-4xl md:text-5xl font-light leading-[1.15] md:leading-[1.1] tracking-tight text-foreground mb-5"
           >
             {sectionTitle}
           </motion.h2>

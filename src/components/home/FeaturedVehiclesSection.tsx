@@ -89,18 +89,18 @@ const FeaturedVehiclesSection = () => {
   const vehicleHref = useLocalizedVehicleHref();
 
   return (
-    <section className="bg-background py-16 md:py-24">
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
+    <section className="bg-background py-10 md:py-24">
+      <div className="max-w-7xl mx-auto px-5 md:px-12">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
-          <div className="space-y-4 max-w-2xl">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 md:gap-6 mb-8 md:mb-12">
+          <div className="space-y-3 md:space-y-4 max-w-2xl">
             <p className="text-[10.5px] font-medium uppercase tracking-[0.22em] text-primary/85">
               Sélection de la semaine
             </p>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-light leading-[1.1] tracking-tight text-foreground">
+            <h2 className="text-2xl sm:text-4xl md:text-5xl font-light leading-[1.15] md:leading-[1.1] tracking-tight text-foreground">
               Véhicules en vedette
             </h2>
-            <p className="text-sm sm:text-base font-light leading-relaxed text-muted-foreground">
+            <p className="text-[13.5px] sm:text-base font-light leading-relaxed text-muted-foreground">
               Une sélection de voitures Car-Pass vérifiées, prêtes pour les zones LEZ belges.
             </p>
           </div>
@@ -138,9 +138,9 @@ const FeaturedVehiclesSection = () => {
                 <FeaturedListingCard key={v.id} vehicle={v} href={vehicleHref(v)} />
               ))}
             </div>
-            <div className="md:hidden flex overflow-x-auto snap-x snap-mandatory gap-4 -mx-6 px-6 pb-4 scrollbar-hide">
+            <div className="md:hidden flex overflow-x-auto snap-x snap-mandatory gap-4 -mx-5 px-5 pb-2 scrollbar-hide" style={{ WebkitOverflowScrolling: "touch" }}>
               {listings.map((v) => (
-                <div key={v.id} className="min-w-[280px] snap-start">
+                <div key={v.id} className="shrink-0 w-[78%] snap-start">
                   <FeaturedListingCard vehicle={v} href={vehicleHref(v)} />
                 </div>
               ))}

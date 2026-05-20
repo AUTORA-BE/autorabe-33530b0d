@@ -133,7 +133,7 @@ const HomeFAQ = memo(() => {
             <HelpCircle className="w-3.5 h-3.5" strokeWidth={1.5} />
             {t("Questions fréquentes", "Veelgestelde vragen", "Häufige Fragen", "Frequently asked")}
           </p>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-light leading-[1.1] tracking-tight text-foreground">
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-light leading-[1.15] md:leading-[1.1] tracking-tight text-foreground">
             {t(
               "Tout savoir avant d'acheter",
               "Alles weten vóór de aankoop",

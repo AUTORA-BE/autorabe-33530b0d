@@ -64,8 +64,8 @@ const ThermalBrandCarousel = memo(function ThermalBrandCarousel({
   };
 
   return (
-    <section className="bg-background py-12 md:py-16 border-t border-border/30">
-      <div className="max-w-7xl mx-auto px-6 md:px-12 mb-6 md:mb-8">
+    <section className="bg-background py-8 md:py-16 border-t border-border/30">
+      <div className="max-w-7xl mx-auto px-5 md:px-12 mb-5 md:mb-8">
         <p className="text-[10.5px] font-medium uppercase tracking-[0.22em] text-primary/85">
           {eyebrow}
         </p>
@@ -75,7 +75,7 @@ const ThermalBrandCarousel = memo(function ThermalBrandCarousel({
         className="overflow-x-auto scrollbar-hide snap-x snap-mandatory"
         style={{ WebkitOverflowScrolling: "touch" }}
       >
-        <div className="flex gap-3 md:gap-4 px-6 md:px-12 pb-2">
+        <div className="flex gap-3 md:gap-4 px-5 md:px-12 pb-2">
           {BRANDS.map((entry) => {
             const filterValue = entry.filterBrand ?? entry.name;
             const active = selectedBrand === filterValue;

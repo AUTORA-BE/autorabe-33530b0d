@@ -76,25 +76,40 @@ const FuelPricesSection = () => {
   }, []);
 
   return (
-    <section className="bg-background py-16 md:py-24">
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
-        <div className="space-y-4 max-w-2xl mb-12">
+    <section className="bg-background py-10 md:py-24">
+      <div className="max-w-7xl mx-auto px-5 md:px-12">
+        <div className="space-y-3 md:space-y-4 max-w-2xl mb-8 md:mb-12">
           <p className="text-[10.5px] font-medium uppercase tracking-[0.22em] text-primary/85">
             Données temps réel
           </p>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-light leading-[1.1] tracking-tight text-foreground">
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-light leading-[1.15] md:leading-[1.1] tracking-tight text-foreground">
             Prix carburants Belgique
           </h2>
-          <p className="text-sm sm:text-base font-light leading-relaxed text-muted-foreground">
+          <p className="text-[13.5px] sm:text-base font-light leading-relaxed text-muted-foreground">
             Moyennes nationales mises à jour quotidiennement — utilisées dans le calculateur TCO de chaque annonce.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {prices.map((f) => <FuelCard key={f.id} fuel={f} />)}
+        {/* Mobile horizontal swipe · Desktop 2/4-col grid */}
+        <div
+          className="
+            flex md:grid md:grid-cols-2 lg:grid-cols-4
+            gap-4 md:gap-6
+            -mx-5 md:mx-0 px-5 md:px-0 pb-2 md:pb-0
+            overflow-x-auto md:overflow-visible
+            snap-x snap-mandatory md:snap-none
+            scrollbar-hide
+          "
+          style={{ WebkitOverflowScrolling: "touch" }}
+        >
+          {prices.map((f) => (
+            <div key={f.id} className="shrink-0 md:shrink w-[78%] sm:w-[55%] md:w-auto snap-start">
+              <FuelCard fuel={f} />
+            </div>
+          ))}
         </div>
 
-        <p className="mt-12 text-xs text-muted-foreground text-center">
+        <p className="mt-8 md:mt-12 text-xs text-muted-foreground text-center">
           {formattedDate && <>Dernière mise à jour : {formattedDate} · </>}
           Source : données officielles SPF Économie + opérateurs de bornes.
         </p>
