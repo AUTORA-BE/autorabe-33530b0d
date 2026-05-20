@@ -42,10 +42,10 @@ const FiscalAdvisorCTA = memo(function FiscalAdvisorCTA() {
   return (
     <>
       <section className="relative py-16 md:py-24 overflow-hidden">
-        {/* Background continuum: dégradé qui se fond avec les sections voisines */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[hsl(var(--background-primary))] via-[hsl(var(--background-gradient-via))] to-[hsl(var(--background-primary))]" />
-        <div className="absolute inset-0 opacity-40"
-          style={{ background: "radial-gradient(ellipse at 50% 50%, hsl(var(--accent-electric) / 0.18) 0%, transparent 65%)" }} />
+        {/* Subtle accent halo — keeps section airy on the unified slate canvas */}
+        <div className="absolute inset-0 opacity-30 pointer-events-none"
+          style={{ background: "radial-gradient(ellipse at 50% 50%, hsl(var(--accent-electric) / 0.10) 0%, transparent 65%)" }} />
+
 
         <div className="container mx-auto px-6 sm:px-8 relative">
           <motion.div
