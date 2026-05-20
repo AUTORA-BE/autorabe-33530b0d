@@ -5,14 +5,16 @@ import { componentTagger } from "lovable-tagger";
 import { VitePWA } from "vite-plugin-pwa";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
-  server: {
-    host: "::",
-    port: 8080,
-  },
+//
+// NOTE: object-form `defineConfig({ ... })` (not function form) is required so
+// Cloudflare Wrangler's static AST parser can find the `plugins` array. The
+// dev-only Lovable tagger is gated via Vite's `apply: "serve"` instead of a
+// chained `.filter(Boolean)` (which turns the ArrayExpression into a
+// MemberExpression and breaks the parser).
+export default defineConfig({
   plugins: [
     react(),
-    mode === "development" && componentTagger(),
+    { ...componentTagger(), apply: "serve" },
     VitePWA({
       registerType: "autoUpdate",
       devOptions: { enabled: false },
@@ -122,7 +124,11 @@ export default defineConfig(({ mode }) => ({
         ],
       },
     }),
-  ].filter(Boolean),
+  ],
+  server: {
+    host: "::",
+    port: 8080,
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
@@ -132,13 +138,13 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       output: {
         manualChunks: {
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-query': ['@tanstack/react-query'],
-          'vendor-motion': ['framer-motion'],
-          'vendor-icons': ['lucide-react'],
-          'vendor-supabase': ['@supabase/supabase-js'],
+          "vendor-react": ["react", "react-dom", "react-router-dom"],
+          "vendor-query": ["@tanstack/react-query"],
+          "vendor-motion": ["framer-motion"],
+          "vendor-icons": ["lucide-react"],
+          "vendor-supabase": ["@supabase/supabase-js"],
         },
       },
     },
   },
-}));
+});

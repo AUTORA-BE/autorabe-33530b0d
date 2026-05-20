@@ -1,0 +1,13 @@
+/**
+ * Cloudflare Pages config — short-circuits the interactive setup wizard.
+ * Standard Vite SPA targeting Cloudflare Pages.
+ *
+ * Docs: https://developers.cloudflare.com/workers/wrangler/configuration/
+ */
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "autorabe-33530b0d",
+  "compatibility_date": "2026-05-19",
+  "compatibility_flags": ["nodejs_compat"],
+  "pages_build_output_dir": "./dist"
+}
