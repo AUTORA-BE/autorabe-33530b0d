@@ -2,15 +2,22 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
-import { VitePWA, type VitePWAOptions } from "vite-plugin-pwa";
+import { VitePWA } from "vite-plugin-pwa";
 
-// PWA options are kept out of the `plugins` ArrayExpression on purpose:
-// Cloudflare Wrangler's vite-config codemod can't reliably handle deeply
-// nested literals (the workbox runtimeCaching / manifest arrays contain
-// dozens of `[]` and `{}` that trip its parser). Keeping the inline call
-// shallow — `VitePWA(pwaOptions)` — keeps the plugins array trivially
-// parseable while preserving the exact PWA behavior.
-const pwaOptions: Partial<VitePWAOptions> = {
+// IMPORTANT: this file is intentionally written in plain JavaScript syntax
+// (no `type` imports, no `: Type` annotations, no `as` casts, no generics).
+//
+// Cloudflare Wrangler's vite-config codemod (esprima 4.0.1 + recast 0.23.11
+// + @cloudflare/codemod) parses the file as standard ECMAScript. Any
+// TypeScript-only syntax causes the parser to throw, and Wrangler then
+// reports the misleading "could not find a valid plugins array" error.
+// Vite itself still type-checks via tsc separately — keeping the file
+// JS-clean only affects the codemod path, not the build.
+//
+// Likewise the PWA options are hoisted into a top-level const so the
+// `plugins` array remains a trivially-shallow ArrayExpression of three
+// CallExpressions.
+const pwaOptions = {
   registerType: "autoUpdate",
   devOptions: { enabled: false },
   includeAssets: ["favicon.png", "favicon.ico", "notification.mp3", "sw-push.js", "offline.html"],
