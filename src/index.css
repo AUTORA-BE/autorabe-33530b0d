@@ -108,6 +108,9 @@ input[type="number"] {
     --text-primary: 215 28% 10%;
     --text-secondary: 215 18% 30%;
     --text-muted: 215 14% 50%;
+
+    /* Emerald halo intensity (0 → off, 1 → max). Tune to taste. */
+    --halo-intensity: 0.55;
   }
 
   .dark {
@@ -127,7 +130,8 @@ input[type="number"] {
     --secondary-foreground: 210 20% 98%;
 
     --muted: 222 20% 16%;
-    --muted-foreground: 215 15% 55%;
+    /* Bumped from 55% → 62% L to reach WCAG AA (>=4.5:1) on --muted bg */
+    --muted-foreground: 215 15% 62%;
 
     --accent: 160 84% 42%;
     --accent-foreground: 222 30% 7%;
@@ -175,7 +179,10 @@ input[type="number"] {
     --accent-electric-foreground: 222 30% 7%;
     --text-primary: 210 20% 98%;
     --text-secondary: 215 18% 78%;
-    --text-muted: 215 15% 55%;
+    --text-muted: 215 15% 62%;
+
+    /* Emerald halo intensity (dark). Reduce for less glow, raise for more presence. */
+    --halo-intensity: 0.45;
   }
 }
 

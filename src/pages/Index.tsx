@@ -173,11 +173,12 @@ const Index = () => {
                 "linear-gradient(to bottom, rgba(10,10,11,0) 0%, rgba(10,10,11,0.35) 35%, rgba(10,10,11,1) 65%, rgba(10,10,11,1) 85%, #0A0A0B 100%)",
             }}
           />
-          {/* Premium ambient: emerald halo — gentle on light, restrained on dark to preserve text contrast */}
+          {/* Premium ambient: emerald halo — intensity tunable via --halo-intensity in index.css */}
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-x-0 top-0 h-[720px] opacity-[0.55] mix-blend-soft-light dark:opacity-60 dark:mix-blend-screen"
+            className="pointer-events-none absolute inset-x-0 top-0 h-[720px] mix-blend-soft-light dark:mix-blend-screen"
             style={{
+              opacity: "var(--halo-intensity)",
               background:
                 "radial-gradient(55% 38% at 50% 0%, hsl(var(--primary) / 0.10) 0%, transparent 65%), radial-gradient(38% 28% at 88% 18%, hsl(var(--primary) / 0.05) 0%, transparent 72%)",
             }}
