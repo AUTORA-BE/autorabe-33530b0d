@@ -136,7 +136,7 @@ const manualChunks = {
 };
 
 export default defineConfig({
-  plugins: [react(), componentTagger(), VitePWA(pwaOptions)],
+  plugins: [react(), componentTagger(), VitePWA(pwaOptions as Parameters<typeof VitePWA>[0])],
   server: { host: "::", port: 8080 },
   resolve: { alias: { "@": path.resolve(__dirname, "./src") } },
   build: { rollupOptions: { output: { manualChunks } } },
