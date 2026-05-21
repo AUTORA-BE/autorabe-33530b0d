@@ -125,7 +125,7 @@ const pwaOptions = {
       },
     ],
   },
-};
+} as const;
 
 const manualChunks = {
   "vendor-react": ["react", "react-dom", "react-router-dom"],
