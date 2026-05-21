@@ -173,15 +173,16 @@ const Index = () => {
                 "linear-gradient(to bottom, rgba(10,10,11,0) 0%, rgba(10,10,11,0.35) 35%, rgba(10,10,11,1) 65%, rgba(10,10,11,1) 85%, #0A0A0B 100%)",
             }}
           />
-          {/* Premium ambient: emerald halo — gentle on light, richer on dark */}
+          {/* Premium ambient: emerald halo — gentle on light, restrained on dark to preserve text contrast */}
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-0 opacity-[0.55] mix-blend-soft-light dark:opacity-100 dark:mix-blend-screen"
+            className="pointer-events-none absolute inset-x-0 top-0 h-[720px] opacity-[0.55] mix-blend-soft-light dark:opacity-60 dark:mix-blend-screen"
             style={{
               background:
-                "radial-gradient(60% 40% at 50% 0%, hsl(var(--primary) / 0.10) 0%, transparent 60%), radial-gradient(40% 30% at 90% 30%, hsl(var(--primary) / 0.06) 0%, transparent 70%)",
+                "radial-gradient(55% 38% at 50% 0%, hsl(var(--primary) / 0.10) 0%, transparent 65%), radial-gradient(38% 28% at 88% 18%, hsl(var(--primary) / 0.05) 0%, transparent 72%)",
             }}
           />
+
           {/* Ultra-fine grain for tactile premium texture */}
           <div
             aria-hidden
