@@ -130,7 +130,8 @@ input[type="number"] {
     --secondary-foreground: 210 20% 98%;
 
     --muted: 222 20% 16%;
-    --muted-foreground: 215 15% 55%;
+    /* Bumped from 55% → 62% L to reach WCAG AA (>=4.5:1) on --muted bg */
+    --muted-foreground: 215 15% 62%;
 
     --accent: 160 84% 42%;
     --accent-foreground: 222 30% 7%;
