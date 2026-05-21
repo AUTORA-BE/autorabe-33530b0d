@@ -162,15 +162,15 @@ const Index = () => {
             className="pointer-events-none absolute inset-x-0 -top-40 h-40 z-[1] dark:hidden"
             style={{
               background:
-                "linear-gradient(to bottom, hsl(210 40% 98% / 1) 0%, hsl(210 40% 98% / 1) 25%, hsl(210 40% 98% / 0.55) 55%, hsl(210 40% 98% / 1) 75%, hsl(210 40% 98% / 1) 100%)",
+                "linear-gradient(to bottom, hsl(210 40% 98% / 0) 0%, hsl(210 40% 98% / 0.35) 35%, hsl(210 40% 98% / 0.75) 65%, hsl(210 40% 98% / 0.95) 85%, hsl(210 40% 98%) 100%)",
             }}
           />
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-x-0 -top-24 sm:-top-40 h-24 sm:h-40 z-[1] hidden dark:block"
+            className="pointer-events-none absolute inset-x-0 -top-40 h-40 z-[1] hidden dark:block"
             style={{
               background:
-                "linear-gradient(to bottom, rgba(10,10,11,0) 0%, rgba(10,10,11,0.35) 35%, rgba(10,10,11,0.75) 65%, rgba(10,10,11,0.95) 85%, #0A0A0B 100%)",
+                "linear-gradient(to bottom, rgba(10,10,11,0) 0%, rgba(10,10,11,0.35) 35%, rgba(10,10,11,1) 65%, rgba(10,10,11,1) 85%, #0A0A0B 100%)",
             }}
           />
           {/* Premium ambient: emerald halo — gentle on light, richer on dark */}
