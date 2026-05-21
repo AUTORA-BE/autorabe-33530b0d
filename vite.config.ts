@@ -18,7 +18,7 @@ import { VitePWA } from "vite-plugin-pwa";
 // `plugins` array remains a trivially-shallow ArrayExpression of three
 // CallExpressions.
 const pwaOptions = {
-  registerType: "autoUpdate",
+  registerType: "autoUpdate" as const,
   devOptions: { enabled: false },
   includeAssets: ["favicon.png", "favicon.ico", "notification.mp3", "sw-push.js", "offline.html"],
   workbox: {
