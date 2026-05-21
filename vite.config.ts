@@ -18,7 +18,7 @@ import { VitePWA } from "vite-plugin-pwa";
 // `plugins` array remains a trivially-shallow ArrayExpression of three
 // CallExpressions.
 const pwaOptions = {
-  registerType: "autoUpdate",
+  registerType: "autoUpdate" as const,
   devOptions: { enabled: false },
   includeAssets: ["favicon.png", "favicon.ico", "notification.mp3", "sw-push.js", "offline.html"],
   workbox: {
@@ -136,7 +136,7 @@ const manualChunks = {
 };
 
 export default defineConfig({
-  plugins: [react(), componentTagger(), VitePWA(pwaOptions)],
+  plugins: [react(), componentTagger(), VitePWA(pwaOptions as Parameters<typeof VitePWA>[0])],
   server: { host: "::", port: 8080 },
   resolve: { alias: { "@": path.resolve(__dirname, "./src") } },
   build: { rollupOptions: { output: { manualChunks } } },
