@@ -179,7 +179,10 @@ input[type="number"] {
     --accent-electric-foreground: 222 30% 7%;
     --text-primary: 210 20% 98%;
     --text-secondary: 215 18% 78%;
-    --text-muted: 215 15% 55%;
+    --text-muted: 215 15% 62%;
+
+    /* Emerald halo intensity (dark). Reduce for less glow, raise for more presence. */
+    --halo-intensity: 0.45;
   }
 }
 
