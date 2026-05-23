@@ -10,16 +10,20 @@ import { FUEL_PRICES, type FuelPrice } from '@/data/fuelPrices';
 
 const ICONS = { droplet: Droplet, flame: Flame, zap: Zap } as const;
 
-function FuelCard({ fuel }: { fuel: FuelPrice }) {
+function FuelCard({ fuel, glass = false }: { fuel: FuelPrice; glass?: boolean }) {
   const Icon = ICONS[fuel.iconName];
   const isDown = fuel.trend === 'down';
   const badgeClass = isDown
     ? 'bg-primary/10 text-primary'
     : 'bg-red-500/10 text-red-600';
 
+  const shell = glass
+    ? 'rounded-2xl border border-white/10 bg-neutral-900/40 backdrop-blur-md p-5 dark:bg-white/[0.03]'
+    : 'rounded-2xl border border-border bg-card p-6 transition-all duration-300 hover:border-primary/30 hover:-translate-y-1 hover:shadow-md';
+
   return (
-    <article className="rounded-2xl border border-border bg-card p-6 transition-all duration-300 hover:border-primary/30 hover:-translate-y-1 hover:shadow-md">
-      <div className="flex justify-between items-start mb-6">
+    <article className={shell}>
+      <div className="flex justify-between items-start mb-5 md:mb-6">
         <div className={`w-10 h-10 rounded-full flex items-center justify-center ${fuel.iconColor}`}>
           <Icon className="w-[18px] h-[18px]" strokeWidth={1.75} />
         </div>
@@ -33,7 +37,7 @@ function FuelCard({ fuel }: { fuel: FuelPrice }) {
       </p>
 
       <div className="flex items-baseline gap-1 mt-1">
-        <span className="text-4xl font-semibold text-foreground tabular-nums">
+        <span className="text-3xl md:text-4xl font-semibold text-foreground tabular-nums">
           {fuel.price.toFixed(fuel.decimals)}
         </span>
         <span className="text-sm text-muted-foreground">{fuel.unit}</span>
