@@ -64,15 +64,52 @@ const ThermalBrandCarousel = memo(function ThermalBrandCarousel({
   };
 
   return (
-    <section className="bg-background py-8 md:py-16 border-t border-border/30">
-      <div className="max-w-7xl mx-auto px-5 md:px-12 mb-5 md:mb-8">
+    <section className="bg-background py-12 md:py-16 border-t border-border/30">
+      <div className="max-w-7xl mx-auto px-5 md:px-12 mb-6 md:mb-8">
         <p className="text-[10.5px] font-medium uppercase tracking-[0.22em] text-primary/85">
           {eyebrow}
         </p>
       </div>
 
+      {/* Mobile : grille stricte 4 colonnes, carrés parfaits — Desktop : scroll horizontal intact */}
+      <div className="md:hidden px-5">
+        <div className="grid grid-cols-4 gap-4">
+          {BRANDS.slice(0, 12).map((entry) => {
+            const filterValue = entry.filterBrand ?? entry.name;
+            const active = selectedBrand === filterValue;
+            return (
+              <button
+                key={entry.name}
+                onClick={() => handleClick(entry)}
+                aria-pressed={active}
+                aria-label={entry.name}
+                className={[
+                  "group aspect-square rounded-2xl flex items-center justify-center",
+                  "border bg-card/60 dark:bg-white/[0.02]",
+                  "transition-transform duration-200 active:scale-[0.94]",
+                  active
+                    ? "border-primary/60 bg-primary/5"
+                    : "border-border/40 dark:border-white/5",
+                ].join(" ")}
+              >
+                <img
+                  src={entry.logo}
+                  alt={`Logo ${entry.name}`}
+                  loading="lazy"
+                  onError={(e) => { e.currentTarget.style.display = "none"; }}
+                  className={[
+                    "h-9 w-auto max-w-[70%] object-contain",
+                    active ? "opacity-100" : "opacity-80",
+                  ].join(" ")}
+                />
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       <div
-        className="overflow-x-auto scrollbar-hide snap-x snap-mandatory"
+        className="hidden md:block overflow-x-auto scrollbar-hide snap-x snap-mandatory"
         style={{ WebkitOverflowScrolling: "touch" }}
       >
         <div className="flex gap-3 md:gap-4 px-5 md:px-12 pb-2">
