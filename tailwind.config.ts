@@ -93,11 +93,16 @@ export default {
           "60%": { transform: "scale(1.25)" },
           "100%": { transform: "scale(1)", opacity: "1" },
         },
+        "marquee-x": {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "badge-pop": "badge-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
+        "marquee-x": "marquee-x 28s linear infinite",
       },
     },
   },

@@ -69,13 +69,46 @@ const EvBrandSection = memo(function EvBrandSection({
           </p>
         </div>
 
-        {/* Mobile = grille stricte 4 colonnes, carrés parfaits · Desktop = grille 4-col existante */}
+        {/* Mobile : Infinite Marquee (texte flottant, sans cartes) */}
         <div
-          className={cn(
-            "grid grid-cols-4 md:grid-cols-4",
-            "gap-3 md:gap-6",
-          )}
+          className="md:hidden -mx-5 overflow-hidden"
+          style={{
+            maskImage:
+              "linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%)",
+            WebkitMaskImage:
+              "linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%)",
+          }}
         >
+          <div className="flex w-max animate-marquee-x">
+            {[...PURE_EV_BRANDS, ...PURE_EV_BRANDS].map((name, idx) => {
+              const active = selectedBrand === name;
+              return (
+                <button
+                  key={`${name}-${idx}`}
+                  onClick={() => handleClick(name)}
+                  aria-pressed={active}
+                  aria-hidden={idx >= PURE_EV_BRANDS.length}
+                  tabIndex={idx >= PURE_EV_BRANDS.length ? -1 : 0}
+                  className="shrink-0 px-6 h-16 flex items-center justify-center bg-transparent border-0 rounded-none transition-opacity active:opacity-60"
+                >
+                  <span
+                    className={cn(
+                      "text-lg font-medium tracking-tight whitespace-nowrap",
+                      active
+                        ? "text-primary"
+                        : "text-slate-900 dark:text-white/90",
+                    )}
+                  >
+                    {name}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Desktop : grille 4-col existante */}
+        <div className="hidden md:grid md:grid-cols-4 md:gap-6">
           {PURE_EV_BRANDS.map((name) => {
             const active = selectedBrand === name;
             return (
@@ -84,23 +117,21 @@ const EvBrandSection = memo(function EvBrandSection({
                 onClick={() => handleClick(name)}
                 aria-pressed={active}
                 className={cn(
-                  "group relative rounded-2xl border flex items-center justify-center",
-                  "aspect-square md:aspect-auto md:h-32",
-                  "bg-white dark:bg-white/[0.02]",
+                  "group relative rounded-2xl border flex items-center justify-center h-32",
+                  "bg-white dark:bg-slate-900",
                   "transition-all duration-300 ease-out shadow-sm dark:shadow-black/30",
-                  "active:scale-[0.94] md:active:scale-100",
-                  "md:hover:scale-[1.02] md:hover:shadow-md dark:md:hover:shadow-primary/10 md:hover:border-primary",
+                  "hover:scale-[1.02] hover:shadow-md dark:hover:shadow-primary/10 hover:border-primary",
                   active
                     ? "border-primary shadow-md ring-1 ring-primary/20"
-                    : "border-slate-200 dark:border-white/5",
+                    : "border-slate-200 dark:border-slate-800",
                 )}
               >
                 <span
                   className={cn(
-                    "text-[11px] md:text-lg font-medium tracking-tight transition-colors text-center px-1 leading-tight",
+                    "text-lg font-medium tracking-tight transition-colors",
                     active
                       ? "text-primary"
-                      : "text-slate-900 dark:text-white md:group-hover:text-primary",
+                      : "text-slate-900 dark:text-white group-hover:text-primary",
                   )}
                 >
                   {name}
