@@ -71,26 +71,30 @@ const ThermalBrandCarousel = memo(function ThermalBrandCarousel({
         </p>
       </div>
 
-      {/* Mobile : grille stricte 4 colonnes, carrés parfaits — Desktop : scroll horizontal intact */}
-      <div className="md:hidden px-5">
-        <div className="grid grid-cols-4 gap-4">
-          {BRANDS.slice(0, 12).map((entry) => {
+      {/* Mobile : Infinite Marquee (logos flottants, sans cartes ni bordures) */}
+      <div
+        className="md:hidden overflow-hidden"
+        style={{
+          maskImage:
+            "linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%)",
+          WebkitMaskImage:
+            "linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%)",
+        }}
+      >
+        <div className="flex w-max animate-marquee-x">
+          {[...BRANDS, ...BRANDS].map((entry, idx) => {
             const filterValue = entry.filterBrand ?? entry.name;
             const active = selectedBrand === filterValue;
+            const isRangeRover = entry.name === "Range Rover";
             return (
               <button
-                key={entry.name}
+                key={`${entry.name}-${idx}`}
                 onClick={() => handleClick(entry)}
                 aria-pressed={active}
                 aria-label={entry.name}
-                className={[
-                  "group aspect-square rounded-2xl flex items-center justify-center",
-                  "border bg-card/60 dark:bg-white/[0.02]",
-                  "transition-transform duration-200 active:scale-[0.94]",
-                  active
-                    ? "border-primary/60 bg-primary/5"
-                    : "border-border/40 dark:border-white/5",
-                ].join(" ")}
+                aria-hidden={idx >= BRANDS.length}
+                tabIndex={idx >= BRANDS.length ? -1 : 0}
+                className="shrink-0 flex items-center justify-center w-24 h-16 px-2 rounded-none bg-transparent border-0 transition-opacity active:opacity-60"
               >
                 <img
                   src={entry.logo}
@@ -98,8 +102,9 @@ const ThermalBrandCarousel = memo(function ThermalBrandCarousel({
                   loading="lazy"
                   onError={(e) => { e.currentTarget.style.display = "none"; }}
                   className={[
-                    "h-9 w-auto max-w-[70%] object-contain",
-                    active ? "opacity-100" : "opacity-80",
+                    "h-10 w-auto max-w-full object-contain",
+                    active ? "opacity-100" : "opacity-90",
+                    isRangeRover ? "mix-blend-multiply dark:mix-blend-screen" : "",
                   ].join(" ")}
                 />
               </button>
