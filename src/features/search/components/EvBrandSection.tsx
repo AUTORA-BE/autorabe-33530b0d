@@ -69,17 +69,12 @@ const EvBrandSection = memo(function EvBrandSection({
           </p>
         </div>
 
-        {/* Mobile = horizontal swipe carousel · Desktop = 4-col grid (single block) */}
+        {/* Mobile = grille stricte 4 colonnes, carrés parfaits · Desktop = grille 4-col existante */}
         <div
           className={cn(
-            "flex md:grid md:grid-cols-4",
+            "grid grid-cols-4 md:grid-cols-4",
             "gap-3 md:gap-6",
-            "-mx-5 md:mx-0 px-5 md:px-0 pb-2 md:pb-0",
-            "overflow-x-auto md:overflow-visible",
-            "snap-x snap-mandatory md:snap-none",
-            "scrollbar-hide",
           )}
-          style={{ WebkitOverflowScrolling: "touch" }}
         >
           {PURE_EV_BRANDS.map((name) => {
             const active = selectedBrand === name;
@@ -90,20 +85,19 @@ const EvBrandSection = memo(function EvBrandSection({
                 aria-pressed={active}
                 className={cn(
                   "group relative rounded-2xl border flex items-center justify-center",
-                  "shrink-0 md:shrink snap-start",
-                  "w-36 md:w-auto h-28 md:h-32",
-                  "bg-white dark:bg-slate-900",
+                  "aspect-square md:aspect-auto md:h-32",
+                  "bg-white dark:bg-white/[0.02]",
                   "transition-all duration-300 ease-out shadow-sm dark:shadow-black/30",
-                  "active:scale-[0.98] md:active:scale-100",
+                  "active:scale-[0.94] md:active:scale-100",
                   "md:hover:scale-[1.02] md:hover:shadow-md dark:md:hover:shadow-primary/10 md:hover:border-primary",
                   active
                     ? "border-primary shadow-md ring-1 ring-primary/20"
-                    : "border-slate-200 dark:border-slate-800",
+                    : "border-slate-200 dark:border-white/5",
                 )}
               >
                 <span
                   className={cn(
-                    "text-base md:text-lg font-medium tracking-tight transition-colors",
+                    "text-[11px] md:text-lg font-medium tracking-tight transition-colors text-center px-1 leading-tight",
                     active
                       ? "text-primary"
                       : "text-slate-900 dark:text-white md:group-hover:text-primary",

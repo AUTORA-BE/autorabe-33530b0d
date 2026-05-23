@@ -144,42 +144,32 @@ const WhyAutoRA = memo(() => {
           </motion.p>
         </div>
 
-        {/* Mobile: horizontal scroll cards */}
+        {/* Mobile: editorial vertical typographic stack — no cards, no swipe */}
         {isMobile ? (
-          <div className="relative -mx-6">
-            <div
-              ref={scrollRef}
-              className="flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory px-6 pb-4"
-              style={{ WebkitOverflowScrolling: "touch" }}
-            >
-              {features.map((feature, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: i * 0.05 }}
-                  className="flex-shrink-0 w-[260px] snap-center rounded-2xl border border-border/15 bg-card/40 backdrop-blur-sm p-6 relative overflow-hidden"
-                >
-                  <span className="block font-mono text-[11px] text-muted-foreground/30 mb-5 tracking-widest">
-                    0{i + 1}
-                  </span>
-                  <div className="flex items-center gap-2.5 mb-3">
-                    <feature.icon className={`w-4 h-4 ${feature.color}`} strokeWidth={1.5} />
-                    <h3 className="text-[15px] font-medium text-foreground tracking-tight">
-                      {feature.title}
-                    </h3>
-                  </div>
-                  <p className="text-[13px] text-muted-foreground font-light leading-relaxed pl-[26px]">
-                    {feature.desc}
-                  </p>
-                </motion.div>
-              ))}
-            </div>
-            <div className="absolute right-0 top-0 bottom-4 w-12 bg-gradient-to-l from-background to-transparent pointer-events-none" />
+          <div ref={scrollRef} className="flex flex-col space-y-10 px-1">
+            {features.map((feature, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-40px" }}
+                transition={{ duration: 0.5, delay: i * 0.05 }}
+                className="relative"
+              >
+                <span className="block text-4xl font-light text-primary/50 mb-3 tabular-nums tracking-tight">
+                  0{i + 1}
+                </span>
+                <h3 className="text-lg font-semibold text-foreground tracking-tight mb-2 leading-snug">
+                  {feature.title}
+                </h3>
+                <p className="text-[14px] text-muted-foreground font-light leading-[1.7]">
+                  {feature.desc}
+                </p>
+              </motion.div>
+            ))}
           </div>
         ) : (
-          /* Desktop: editorial numbered grid */
+          /* Desktop: editorial numbered grid — unchanged */
           <div className="grid grid-cols-2 lg:grid-cols-3">
             {features.map((feature, i) => (
               <motion.div
@@ -190,12 +180,9 @@ const WhyAutoRA = memo(() => {
                 transition={{ duration: 0.6, delay: 0.05 + (i % 3) * 0.08 }}
                 className="group py-9 px-6 sm:px-8 lg:px-10 border-t border-border/10 hover:bg-card/20 transition-colors duration-500"
               >
-                {/* Number */}
                 <span className="block font-mono text-[11px] text-muted-foreground/25 mb-6 tracking-[0.2em] group-hover:text-primary/40 transition-colors duration-500">
                   0{i + 1}
                 </span>
-
-                {/* Icon + Title */}
                 <div className="flex items-center gap-3 mb-3">
                   <feature.icon
                     className={`w-4 h-4 ${feature.color} opacity-70 group-hover:opacity-100 transition-opacity duration-500`}
@@ -205,8 +192,6 @@ const WhyAutoRA = memo(() => {
                     {feature.title}
                   </h3>
                 </div>
-
-                {/* Description */}
                 <p className="text-[13px] sm:text-sm text-muted-foreground font-light leading-relaxed pl-[26px]">
                   {feature.desc}
                 </p>
