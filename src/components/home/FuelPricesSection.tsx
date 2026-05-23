@@ -94,22 +94,24 @@ const FuelPricesSection = () => {
           </p>
         </div>
 
-        {/* Mobile horizontal swipe · Desktop 2/4-col grid */}
-        <div
-          className="
-            flex md:grid md:grid-cols-2 lg:grid-cols-4
-            gap-4 md:gap-6
-            -mx-5 md:mx-0 px-5 md:px-0 pb-2 md:pb-0
-            overflow-x-auto md:overflow-visible
-            snap-x snap-mandatory md:snap-none
-            scrollbar-hide
-          "
-          style={{ WebkitOverflowScrolling: "touch" }}
-        >
+        {/* Mobile : Bento asymétrique (Diesel + Essence 2-col, Électricité full-width) */}
+        <div className="md:hidden grid grid-cols-2 gap-3">
+          {prices
+            .filter((f) => f.id !== 'essence-e98')
+            .map((f) => (
+              <div
+                key={f.id}
+                className={f.id === 'electricite' ? 'col-span-2' : ''}
+              >
+                <FuelCard fuel={f} glass />
+              </div>
+            ))}
+        </div>
+
+        {/* Desktop : grid 2/4-col classique */}
+        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-6">
           {prices.map((f) => (
-            <div key={f.id} className="shrink-0 md:shrink w-[78%] sm:w-[55%] md:w-auto snap-start">
-              <FuelCard fuel={f} />
-            </div>
+            <FuelCard key={f.id} fuel={f} />
           ))}
         </div>
 
