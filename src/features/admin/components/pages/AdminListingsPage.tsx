@@ -266,12 +266,34 @@ export default function AdminListingsPage() {
                 </div>
               )}
 
-              {/* Car-Pass link — XSS guard: only allow safe https URLs */}
-              {detailListing.car_pass_url && /^https:\/\//i.test(detailListing.car_pass_url) && (
-                <a href={detailListing.car_pass_url} target="_blank" rel="noopener noreferrer"
-                  className="mt-3 flex items-center gap-2 text-xs text-primary underline underline-offset-2">
+              {/* Car-Pass link — bucket is private, generate a short-lived signed URL on demand */}
+              {detailListing.car_pass_url && (
+                <button
+                  type="button"
+                  onClick={async () => {
+                    const raw = detailListing.car_pass_url as string;
+                    let path = raw;
+                    const m = raw.match(/\/storage\/v1\/object\/(?:public|sign)\/car-pass\/(.+?)(?:\?|$)/);
+                    if (m) path = m[1];
+                    // If a full https URL outside our storage was somehow stored, fall back to opening it.
+                    if (/^https?:\/\//i.test(path)) {
+                      window.open(path, '_blank', 'noopener,noreferrer');
+                      return;
+                    }
+                    const { supabase } = await import('@/integrations/supabase/client');
+                    const { data, error } = await supabase.storage
+                      .from('car-pass')
+                      .createSignedUrl(path, 60);
+                    if (error || !data?.signedUrl) {
+                      console.error('car-pass signed url error', error);
+                      return;
+                    }
+                    window.open(data.signedUrl, '_blank', 'noopener,noreferrer');
+                  }}
+                  className="mt-3 flex items-center gap-2 text-xs text-primary underline underline-offset-2"
+                >
                   📄 Voir le Car-Pass
-                </a>
+                </button>
               )}
 
               <Separator className="my-4" />

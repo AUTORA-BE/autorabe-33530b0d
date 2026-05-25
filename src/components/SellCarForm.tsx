@@ -573,8 +573,9 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
       return null;
     }
 
-    const { data: urlData } = supabase.storage.from('car-pass').getPublicUrl(fileName);
-    return urlData.publicUrl;
+    // Store only the storage object path — the 'car-pass' bucket is private,
+    // signed URLs must be generated at read time by admins.
+    return fileName;
   };
 
   const onSubmit = async (data: SellCarFormData) => {
