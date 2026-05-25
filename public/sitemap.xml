@@ -3,19 +3,19 @@
   <!-- Static pages sitemap -->
   <sitemap>
     <loc>https://autora.be/sitemap-pages.xml</loc>
-    <lastmod>2026-05-09</lastmod>
+    <lastmod>2026-05-25</lastmod>
   </sitemap>
-  <!-- Dynamic vehicle listings sitemaps per language -->
+  <!-- Dynamic vehicle listings sitemaps per language (proxied via Vercel rewrite to the edge function) -->
   <sitemap>
-    <loc>https://jbdsjqoonpieusfvkhyo.supabase.co/functions/v1/dynamic-sitemap?lang=fr</loc>
-  </sitemap>
-  <sitemap>
-    <loc>https://jbdsjqoonpieusfvkhyo.supabase.co/functions/v1/dynamic-sitemap?lang=nl</loc>
+    <loc>https://autora.be/sitemap-vehicles-fr.xml</loc>
   </sitemap>
   <sitemap>
-    <loc>https://jbdsjqoonpieusfvkhyo.supabase.co/functions/v1/dynamic-sitemap?lang=de</loc>
+    <loc>https://autora.be/sitemap-vehicles-nl.xml</loc>
   </sitemap>
   <sitemap>
-    <loc>https://jbdsjqoonpieusfvkhyo.supabase.co/functions/v1/dynamic-sitemap?lang=en</loc>
+    <loc>https://autora.be/sitemap-vehicles-de.xml</loc>
+  </sitemap>
+  <sitemap>
+    <loc>https://autora.be/sitemap-vehicles-en.xml</loc>
   </sitemap>
 </sitemapindex>
