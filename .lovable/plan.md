@@ -1,76 +1,86 @@
-# Refonte homepage AutoRA — Plan d'exécution
 
-## Phase 1 — Système de couleurs unifié (fondations)
+# Refonte page Paramètres — Style iOS-like premium
 
-**Fichiers :** `src/index.css`, `tailwind.config.ts`
+Refonte complète de `src/pages/Settings.tsx` (608 lignes) pour passer d'une liste plate de cartes glassmorphism à une expérience **iOS Settings native** : sections sémantiques claires, recherche instantanée, nouvelle zone Sécurité, et touch targets calibrés mobile.
 
-- Ajout des tokens HSL dans `:root` et `.dark` :
-  - `--background-primary`, `--background-elevated`
-  - `--background-gradient-from`, `--background-gradient-via`, `--background-gradient-to`
-  - `--surface-glass`, `--border-glass`
-  - `--accent-electric` (cyan/vert électrique distinct de `--primary` emerald)
-  - `--text-primary`, `--text-secondary`, `--text-muted`
-- Exposition dans `tailwind.config.ts` (`colors.surface.glass`, `colors.accent.electric`, etc.)
-- Suppression du `transition` global sur `html` (cause des saccades scroll)
-- Ajout d'un utilitaire `.hero-gradient-deep` (dégradé br from/via/to)
+## 1. Refonte visuelle — Sections iOS-like
 
-## Phase 2 — Anti-FOUC + Hero adaptatif
+**Hero profil** (conservé, allégé) : avatar + nom + email + badges (Premium / Admin) + CTA upgrade.
 
-**Fichiers :** `index.html`, `src/features/search/components/HeroSearch.tsx`
+**Sections regroupées** avec en-têtes sticky type iOS (`SF` style — Playfair pour le titre, Inter caps tracking pour les labels de section). Chaque section = un GlassCard avec **icône colorée carrée** (style iOS) par row :
 
-- Script inline `<head>` AVANT React : lit `localStorage.theme` ou `prefers-color-scheme`, applique `class="dark"` sur `<html>` immédiatement
-- Couleur de fond du body alignée sur le token via CSS dans `<style>` critique
-- HeroSearch : remplacement des couleurs hardcodées par tokens, image avec overlay glass adaptatif, dégradé profond derrière la BMW
-- Vérification que `next-themes` est bien `defaultTheme="dark" enableSystem` (déjà OK dans main.tsx)
+| Section | Icône / couleur | Rows |
+|---|---|---|
+| **Mon activité** | Bleu | Mes annonces, Favoris, Messages, Mes alertes |
+| **Compte** | Indigo | Nom affiché, Email, Téléphone, Avatar |
+| **Sécurité** *(nouvelle)* | Rouge | Changer mot de passe, Sessions actives, Déconnecter partout |
+| **Préférences** | Emerald (primary) | Langue, Thème (clair/sombre/auto), Région |
+| **Notifications** | Orange | Email, Push, Alertes véhicules, Messages |
+| **Confidentialité** | Violet | Cookies, Exporter mes données, Profil public |
+| **Abonnement** | Gold | Plan actuel, Gérer abonnement, Historique paiements |
+| **À propos** | Gris | Version app, CGU, Confidentialité, Contact support |
+| **Zone danger** | Destructive | Supprimer le compte, Déconnexion |
 
-## Phase 3 — Variants boutons stricts
+Les icônes carrées colorées (style iOS Settings — fond saturé, icône blanche 18px) remplacent les bulles `bg-primary/10` actuelles.
 
-**Fichier :** `src/components/ui/button.tsx`
+## 2. Recherche dans les paramètres
 
-- Ajout variants : `primary` (accent-electric + glow), `secondary` (glass), `ghost-link` (underline hover)
-- Border-radius uniforme `rounded-xl`, transitions `duration-200`
-- Tailles `sm` / `default` / `lg` cohérentes
-- Variants existants (`default`, `outline`, etc.) conservés pour ne pas casser le reste de l'app
+Barre de recherche **sticky** sous le header (style iOS Spotlight) :
+- Input `Rechercher dans les paramètres…` avec icône loupe
+- Filtre live sur **label + description + keywords** de chaque row (matching fuzzy basique, case-insensitive)
+- Résultats affichés en liste plate avec breadcrumb de section (`Préférences › Langue`)
+- État vide élégant si 0 résultat
 
-## Phase 4 — Réorganisation homepage avec transitions fluides
+Implémenté en client (registre statique de rows) — pas de backend nécessaire.
 
-**Fichier :** `src/pages/Index.tsx` + nouveau composant `src/components/home/FiscalAdvisorCTA.tsx`
+## 3. Section Sécurité (nouvelle)
 
-Ordre final :
-1. Hero (existant, ajusté Phase 2)
-2. **Bandeau confiance** (TrustBar remonté, cards glass translucides)
-3. **Marques 100% électriques** (EvBrandSection, déjà en place)
-4. **Annonces en vedette** (FeaturedVehiclesSection)
-5. **CTA Conseiller fiscal IA** (NOUVEAU — bandeau glass avec lien vers chatbot)
-6. **Marques gamme mixte** (BrandCarousel)
-7. **Pourquoi AutoRA** (WhyAutoRA)
-8. Sections existantes restantes (PopularVehicles, SellCarCTA, FAQ, Results)
-9. Footer
+Trois actions :
+1. **Changer le mot de passe** → modal avec champs *Mot de passe actuel / nouveau / confirmation* + validation force (réutilise `usePasswordValidation`). Appel `supabase.auth.updateUser({ password })` après ré-auth.
+2. **Sessions actives** → liste des sessions Supabase (`auth.admin.listUserSessions` côté edge function `list-user-sessions`, sinon affichage simplifié de la session courante avec user-agent et dernière activité)
+3. **Déconnecter tous les autres appareils** → `supabase.auth.signOut({ scope: 'others' })`
 
-Transitions : suppression des `bg-white`/`bg-black` durs dans chaque section, remplacement par token-based gradients qui se chaînent.
+Note technique : `list-user-sessions` nécessite une **edge function** (Supabase n'expose pas la liste côté client). Première version : afficher uniquement la session courante + bouton "Déconnecter partout". L'edge function peut être ajoutée en V2 si tu valides.
 
-## Phase 5 — Fixes UI ciblés
+## 4. UX mobile native
 
-- **Cards listing** : audit `VehicleCard` → `h-full`, `aspect-[4/3]`, footer `mt-auto`
-- **Nav mobile** : audit `MobileMenu` → drawer plein écran, backdrop-blur, body-scroll-lock
-- **Footer** : audit `Footer.tsx` → grid 4 cols desktop, alignement top
-- **Scroll** : `scroll-behavior: smooth` déjà présent ; retrait des transitions globales parasites
+- **Touch targets** : tous les rows passent à `min-h-[52px]` (au-dessus des 44px iOS)
+- **Pull-to-refresh** sur la page (réutilise `<PullToRefresh>` existant) pour recharger profil + prefs
+- **Transitions natives** : ChevronRight + active scale 0.97, haptic feedback (useHapticFeedback) sur tap des rows
+- **Sticky header compact** au scroll : titre "Paramètres" qui apparaît dans le header quand on scroll, hero profil qui réduit
+- **Safe area** : `pb-[calc(env(safe-area-inset-bottom)+96px)]` pour éviter BottomNav
+- **Séparateurs iOS** : `border-t border-border/15 ml-[60px]` (commence après l'icône, style iOS)
+- **Cards rounded** `rounded-[14px]` au lieu de `[20px]` pour matcher iOS Settings
 
-## Contraintes respectées
+## 5. Architecture fichiers
 
-- Aucune touche à Supabase / auth / Stripe / Resend / prompt chatbot IA
-- Routes inchangées
-- Branding "AutoRA" (R+A majuscules) préservé
-- Pas de nouvelle dépendance (`next-themes` déjà installé)
+```
+src/features/settings/
+├── components/
+│   ├── SettingsSection.tsx       (GlassCard + titre + rows)
+│   ├── SettingsRow.tsx           (extrait, icône carrée colorée)
+│   ├── SettingsSearch.tsx        (sticky search + résultats)
+│   ├── ProfileHero.tsx           (avatar + nom + badges)
+│   ├── SecuritySection.tsx       (mot de passe, sessions, logout all)
+│   └── ChangePasswordModal.tsx
+├── hooks/
+│   └── useSettingsSearch.ts      (registre + filtre)
+└── index.ts
+```
 
-## Risques identifiés
+`Settings.tsx` devient un orchestrateur léger (~150 lignes) qui assemble ces composants.
 
-- Variants boutons : si renommage de `default` → risque de casse → je garde `default` et j'**ajoute** `primary`/`secondary`/`ghost-link` à côté
-- Tokens renommés : je **n'écrase pas** `--background`/`--foreground` existants → j'**ajoute** la nouvelle famille à côté pour migration progressive
-- VehicleCard utilisé partout : modifs minimales (juste `h-full` + `mt-auto` sur footer)
+## Détails techniques
 
-## Estimation
+- Aucune migration DB requise (tout existe déjà : `user_preferences`, `profiles`, `auth.users`)
+- Réutilise hooks existants : `useFavorites`, `useSubscription`, `useIsAdmin`, `usePushNotifications`, `useSellerListings`, `usePasswordValidation`, `useHapticFeedback`
+- i18n : ajouter ~15 clés (`settings.search.placeholder`, `settings.security.title`, `settings.security.changePassword`, etc.) dans les 4 fichiers `fr/nl/de/en.json`
+- Pas de changement de comportement business — seulement la couche présentation et l'ajout de la section Sécurité (changement mot de passe + logout all)
+- Animations Framer Motion conservées (stagger), durées 200-300ms (respecte la mémoire projet)
+- Désactive le sticky search header sur desktop (`md:static`)
 
-~15 fichiers modifiés, ~3 nouveaux fichiers, 0 régression backend attendue.
+## Hors-scope (à confirmer en V2 si besoin)
 
-Validez le plan et je l'exécute dans l'ordre.
+- 2FA (TOTP) : Supabase MFA disponible mais demande un flow complet (enroll + verify + recovery codes) — peut être ajouté plus tard
+- Liste détaillée des sessions actives : nécessite edge function `list-user-sessions`
+- Authentification biométrique (WebAuthn / passkeys)
