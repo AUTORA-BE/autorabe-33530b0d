@@ -4,6 +4,7 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "rewrites": [
+    { "source": "/sitemap-vehicles-:lang.xml", "destination": "https://jbdsjqoonpieusfvkhyo.supabase.co/functions/v1/dynamic-sitemap?lang=:lang" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ],
   "headers": [
