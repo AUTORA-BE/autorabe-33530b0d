@@ -85,7 +85,6 @@ const ThermalBrandCarousel = memo(function ThermalBrandCarousel({
           {[...BRANDS, ...BRANDS].map((entry, idx) => {
             const filterValue = entry.filterBrand ?? entry.name;
             const active = selectedBrand === filterValue;
-            const isRangeRover = entry.name === "Range Rover";
             return (
               <button
                 key={`${entry.name}-${idx}`}
@@ -104,7 +103,6 @@ const ThermalBrandCarousel = memo(function ThermalBrandCarousel({
                   className={[
                     "h-10 w-auto max-w-full object-contain",
                     active ? "opacity-100" : "opacity-90",
-                    isRangeRover ? "mix-blend-multiply dark:mix-blend-screen" : "",
                   ].join(" ")}
                 />
               </button>
