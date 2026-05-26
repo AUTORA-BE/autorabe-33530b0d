@@ -18,7 +18,9 @@ import {
   Smartphone, Download, Trash2, Heart, Car, MessageCircle,
   LogOut, Crown, Globe, Moon, Sun, Search as SearchIcon,
   KeyRound, LogOut as LogoutAll, FileText, ScrollText, Mail,
-  Bell as AlertBell, ChevronRight, Info, X,
+  Bell as AlertBell, ChevronRight, Info, X, User as UserIcon,
+  SlidersHorizontal, Lock, CreditCard, AlertTriangle, Pencil,
+  type LucideIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useLanguage, type Language } from "@/contexts/LanguageContext";
