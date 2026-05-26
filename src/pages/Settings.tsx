@@ -448,182 +448,282 @@ export default function Settings() {
               </motion.div>
 
 
-              {/* Mon activité */}
-              <SettingsSection title="Mon activité">
-                <SettingsRow icon={Car} tone="blue" label="Mes annonces" description={`${totals.listings} publiée(s)`} onClick={() => navigate("/dashboard")} />
-                <SettingsRow icon={Heart} tone="blue" label="Favoris" description={`${favoritesCount} véhicule(s)`} onClick={() => navigate("/favorites")} />
-                <SettingsRow icon={MessageCircle} tone="blue" label="Messages" onClick={() => navigate("/messages")} />
-                <SettingsRow icon={AlertBell} tone="blue" label="Mes alertes" onClick={() => navigate("/mes-alertes")} />
-              </SettingsSection>
+              {/* Two-column layout on desktop: sidebar nav + content panel. Mobile keeps single column. */}
+              <div className="md:grid md:grid-cols-4 md:gap-8 md:items-start space-y-6 md:space-y-0">
+                {/* Sidebar nav (desktop only) */}
+                <aside className="hidden md:block md:col-span-1 sticky top-32">
+                  <nav className="rounded-2xl bg-card/40 backdrop-blur-md border border-border/40 p-2 space-y-0.5">
+                    {CATEGORIES.map((cat) => {
+                      const Icon = cat.icon;
+                      const active = activeCategory === cat.id;
+                      return (
+                        <button
+                          key={cat.id}
+                          onClick={() => setActiveCategory(cat.id)}
+                          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-sm font-medium transition-all ${
+                            active
+                              ? "bg-primary/15 text-primary"
+                              : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground"
+                          }`}
+                        >
+                          <Icon className={`w-4 h-4 flex-shrink-0 ${cat.id === "danger" && !active ? "text-destructive/70" : ""}`} strokeWidth={1.75} />
+                          <span className="truncate">{cat.label}</span>
+                        </button>
+                      );
+                    })}
+                  </nav>
+                </aside>
 
-              {/* Seller stats (premium) */}
-              {subscribed && (
-                <SettingsSection title="Statistiques vendeur">
-                  <div className="py-2">
-                    <div className="grid grid-cols-3 gap-2">
-                      {[
-                        { label: t("profile.views"), value: totals.views, icon: BarChart3 },
-                        { label: t("profile.messages"), value: totals.messages, icon: MessageCircle },
-                        { label: t("profile.favorites"), value: totals.favorites, icon: Heart },
-                      ].map((s) => (
-                        <div key={s.label} className="text-center py-3 rounded-xl bg-background/30 border border-border/20">
-                          <p className="text-lg font-bold text-foreground">{s.value}</p>
-                          <p className="text-[10px] text-muted-foreground">{s.label}</p>
+                {/* Content panel */}
+                <div className="md:col-span-3 space-y-6">
+                  {/* Mon activité */}
+                  <div className={activeCategory !== "activity" ? "md:hidden" : ""}>
+                    <SettingsSection title="Mon activité">
+                      <SettingsRow icon={Car} tone="blue" label="Mes annonces" description={`${totals.listings} publiée(s)`} onClick={() => navigate("/dashboard")} />
+                      <SettingsRow icon={Heart} tone="blue" label="Favoris" description={`${favoritesCount} véhicule(s)`} onClick={() => navigate("/favorites")} />
+                      <SettingsRow icon={MessageCircle} tone="blue" label="Messages" onClick={() => navigate("/messages")} />
+                      <SettingsRow icon={AlertBell} tone="blue" label="Mes alertes" onClick={() => navigate("/mes-alertes")} />
+                    </SettingsSection>
+                  </div>
+
+                  {/* Seller stats (premium) — show under activity on desktop */}
+                  {subscribed && (
+                    <div className={activeCategory !== "activity" ? "md:hidden" : ""}>
+                      <SettingsSection title="Statistiques vendeur">
+                        <div className="py-2">
+                          <div className="grid grid-cols-3 gap-2">
+                            {[
+                              { label: t("profile.views"), value: totals.views, icon: BarChart3 },
+                              { label: t("profile.messages"), value: totals.messages, icon: MessageCircle },
+                              { label: t("profile.favorites"), value: totals.favorites, icon: Heart },
+                            ].map((s) => (
+                              <div key={s.label} className="text-center py-3 rounded-xl bg-background/30 border border-border/20">
+                                <p className="text-lg font-bold text-foreground">{s.value}</p>
+                                <p className="text-[10px] text-muted-foreground">{s.label}</p>
+                              </div>
+                            ))}
+                          </div>
                         </div>
-                      ))}
+                      </SettingsSection>
+                    </div>
+                  )}
+
+                  {/* Compte — mobile rows */}
+                  <div className={`md:hidden ${activeCategory !== "account" ? "" : ""}`}>
+                    <SettingsSection title="Compte">
+                      <SettingsRow icon={Camera} tone="indigo" label="Modifier l'avatar" onClick={() => fileInputRef.current?.click()} />
+                      <SettingsRow icon={FileText} tone="indigo" label="Nom affiché" description={displayName || "—"} onClick={() => setEditingName(true)} />
+                      <SettingsRow icon={Mail} tone="indigo" label="Email" description={user?.email} noChevron />
+                    </SettingsSection>
+                  </div>
+
+                  {/* Compte — desktop bento with read-only fields + edit button */}
+                  <div className={`hidden md:block ${activeCategory !== "account" ? "md:hidden" : ""}`}>
+                    <div className="space-y-2">
+                      <h3 className="text-[11px] font-semibold text-muted-foreground uppercase tracking-[0.12em] px-4">Compte</h3>
+                      <div className="grid grid-cols-2 gap-4">
+                        {/* Nom affiché */}
+                        <div className="rounded-2xl bg-card/60 backdrop-blur-xl border border-border/30 p-5">
+                          <label className="block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">Nom affiché</label>
+                          {editingName ? (
+                            <div className="flex gap-2">
+                              <Input value={displayName} onChange={(e) => setDisplayName(e.target.value)} maxLength={50} autoFocus className="rounded-xl" />
+                              <Button size="sm" onClick={handleSaveProfile} disabled={isSavingProfile} className="rounded-xl">
+                                {isSavingProfile ? <Loader2 className="h-4 w-4 animate-spin" /> : "OK"}
+                              </Button>
+                            </div>
+                          ) : (
+                            <div className="flex items-center justify-between gap-3">
+                              <p className="text-[15px] font-medium text-foreground truncate">{displayName || "—"}</p>
+                              <Button size="sm" variant="ghost" onClick={() => setEditingName(true)} className="rounded-xl text-primary h-8 px-3 -mr-2">
+                                <Pencil className="w-3.5 h-3.5 mr-1.5" /> Modifier
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                        {/* Email */}
+                        <div className="rounded-2xl bg-card/60 backdrop-blur-xl border border-border/30 p-5">
+                          <label className="block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">Email</label>
+                          <p className="text-[15px] font-medium text-foreground truncate">{user?.email}</p>
+                        </div>
+                        {/* Avatar */}
+                        <div className="rounded-2xl bg-card/60 backdrop-blur-xl border border-border/30 p-5 col-span-2 flex items-center gap-4">
+                          <Avatar className="h-14 w-14 border border-border/40">
+                            <AvatarImage src={avatarUrl || undefined} alt={displayName} />
+                            <AvatarFallback className="bg-primary/10 text-primary">
+                              {(displayName || user?.email || "?").charAt(0).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Avatar</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">PNG ou JPG, max 2 Mo</p>
+                          </div>
+                          <Button size="sm" variant="outline" onClick={() => fileInputRef.current?.click()} disabled={isUploadingAvatar} className="rounded-xl">
+                            {isUploadingAvatar ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Camera className="w-3.5 h-3.5 mr-1.5" /> Changer</>}
+                          </Button>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </SettingsSection>
-              )}
 
-              {/* Compte */}
-              <SettingsSection title="Compte">
-                <SettingsRow icon={Camera} tone="indigo" label="Modifier l'avatar" onClick={() => fileInputRef.current?.click()} />
-                <SettingsRow icon={FileText} tone="indigo" label="Nom affiché" description={displayName || "—"} onClick={() => setEditingName(true)} />
-                <SettingsRow icon={Mail} tone="indigo" label="Email" description={user?.email} noChevron />
-              </SettingsSection>
-
-              {/* Sécurité */}
-              <SettingsSection title="Sécurité" footer="Gardez votre compte en sécurité. Changez régulièrement votre mot de passe.">
-                <SettingsRow icon={KeyRound} tone="red" label="Changer le mot de passe" onClick={() => setPwdModalOpen(true)} />
-                <SettingsRow
-                  icon={LogoutAll}
-                  tone="red"
-                  label="Déconnecter les autres appareils"
-                  description="Termine toutes les sessions sauf celle-ci"
-                  onClick={handleSignOutAll}
-                />
-              </SettingsSection>
-
-              {/* Préférences */}
-              <SettingsSection title="Préférences">
-                <div className="flex items-center gap-3 py-2.5 px-1 min-h-[52px]">
-                  <div className="w-7 h-7 rounded-[8px] flex items-center justify-center flex-shrink-0 bg-gradient-to-b from-emerald-500 to-emerald-600 shadow-sm">
-                    <Globe className="w-[15px] h-[15px] text-white" strokeWidth={2.2} />
+                  {/* Sécurité */}
+                  <div className={activeCategory !== "security" ? "md:hidden" : ""}>
+                    <SettingsSection title="Sécurité" footer="Gardez votre compte en sécurité. Changez régulièrement votre mot de passe.">
+                      <SettingsRow icon={KeyRound} tone="red" label="Changer le mot de passe" onClick={() => setPwdModalOpen(true)} />
+                      <SettingsRow
+                        icon={LogoutAll}
+                        tone="red"
+                        label="Déconnecter les autres appareils"
+                        description="Termine toutes les sessions sauf celle-ci"
+                        onClick={handleSignOutAll}
+                      />
+                    </SettingsSection>
                   </div>
-                  <span className="text-[15px] font-medium text-foreground flex-1">Langue</span>
-                  <div className="flex gap-1">
-                    {(Object.keys(langFlags) as Language[]).map((lang) => (
-                      <button
-                        key={lang}
-                        onClick={() => setLanguage(lang)}
-                        className={`w-8 h-8 rounded-lg text-base flex items-center justify-center transition-all active:scale-[0.9] ${
-                          language === lang ? "bg-primary/15 ring-1 ring-primary/30" : "hover:bg-secondary"
-                        }`}
-                      >
-                        {langFlags[lang].flag}
-                      </button>
-                    ))}
+
+                  {/* Préférences */}
+                  <div className={activeCategory !== "prefs" ? "md:hidden" : ""}>
+                    <SettingsSection title="Préférences">
+                      <div className="flex items-center gap-3 py-2.5 px-1 min-h-[52px]">
+                        <div className="w-7 h-7 rounded-[8px] flex items-center justify-center flex-shrink-0 bg-gradient-to-b from-emerald-500 to-emerald-600 shadow-sm">
+                          <Globe className="w-[15px] h-[15px] text-white" strokeWidth={2.2} />
+                        </div>
+                        <span className="text-[15px] font-medium text-foreground flex-1">Langue</span>
+                        <div className="flex gap-1">
+                          {(Object.keys(langFlags) as Language[]).map((lang) => (
+                            <button
+                              key={lang}
+                              onClick={() => setLanguage(lang)}
+                              className={`w-8 h-8 rounded-lg text-base flex items-center justify-center transition-all active:scale-[0.9] ${
+                                language === lang ? "bg-primary/15 ring-1 ring-primary/30" : "hover:bg-secondary"
+                              }`}
+                            >
+                              {langFlags[lang].flag}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      <SettingsRow
+                        icon={isDark ? Moon : Sun}
+                        tone="emerald"
+                        label={isDark ? "Thème sombre" : "Thème clair"}
+                        rightElement={<Switch checked={isDark} onCheckedChange={toggleDark} />}
+                      />
+                    </SettingsSection>
+                  </div>
+
+                  {/* Notifications */}
+                  <div className={activeCategory !== "notifs" ? "md:hidden" : ""}>
+                    <SettingsSection title="Notifications">
+                      <SettingsRow
+                        icon={Bell}
+                        tone="orange"
+                        label="Notifications par email"
+                        rightElement={
+                          <Switch
+                            checked={emailNotifications}
+                            onCheckedChange={handleToggleNotifications}
+                            disabled={isSaving}
+                          />
+                        }
+                      />
+                      {pushSupported && (
+                        <SettingsRow
+                          icon={Smartphone}
+                          tone="orange"
+                          label="Notifications push"
+                          rightElement={
+                            <Switch
+                              checked={pushSubscribed}
+                              onCheckedChange={(c) => (c ? pushSubscribe() : pushUnsubscribe())}
+                              disabled={pushLoading}
+                            />
+                          }
+                        />
+                      )}
+                    </SettingsSection>
+                  </div>
+
+                  {/* Confidentialité */}
+                  <div className={activeCategory !== "privacy" ? "md:hidden" : ""}>
+                    <SettingsSection title="Confidentialité" footer="Vos données vous appartiennent. Conforme RGPD.">
+                      <SettingsRow icon={Cookie} tone="violet" label="Préférences cookies" onClick={handleResetCookies} />
+                      <SettingsRow icon={Download} tone="violet" label="Exporter mes données" description="Téléchargement JSON" onClick={handleExport} />
+                    </SettingsSection>
+                  </div>
+
+                  {/* Abonnement */}
+                  <div className={activeCategory !== "subscription" ? "md:hidden" : ""}>
+                    <SettingsSection title="Abonnement">
+                      {subscribed && tier ? (
+                        <>
+                          <SettingsRow icon={Crown} tone="gold" label="Plan actuel" description={tier.name} noChevron />
+                          <SettingsRow icon={Crown} tone="gold" label="Gérer mon abonnement" onClick={openCustomerPortal} />
+                        </>
+                      ) : (
+                        <SettingsRow icon={Crown} tone="gold" label="Passer Premium" description="Boostez vos annonces" onClick={() => navigate("/pricing")} />
+                      )}
+                    </SettingsSection>
+                  </div>
+
+                  {/* À propos */}
+                  <div className={activeCategory !== "about" ? "md:hidden" : ""}>
+                    <SettingsSection title="À propos">
+                      <SettingsRow icon={ScrollText} tone="gray" label="Conditions d'utilisation" onClick={() => navigate("/cgu")} />
+                      <SettingsRow icon={Shield} tone="gray" label="Confidentialité" onClick={() => navigate("/confidentialite")} />
+                      <SettingsRow icon={Mail} tone="gray" label="Contacter le support" onClick={() => navigate("/contact")} />
+                      <SettingsRow icon={Info} tone="gray" label="Version" description="AutoRA · 2026.05" noChevron />
+                    </SettingsSection>
+                  </div>
+
+                  {/* Zone danger */}
+                  <div className={activeCategory !== "danger" ? "md:hidden" : ""}>
+                    <SettingsSection title="Zone danger">
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <div>
+                            <SettingsRow
+                              icon={Trash2}
+                              tone="destructive"
+                              label={t("profile.deleteAccount")}
+                              description={t("profile.deleteDesc")}
+                              destructive
+                              onClick={() => {}}
+                            />
+                          </div>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>{t("profile.deleteConfirmTitle")}</AlertDialogTitle>
+                            <AlertDialogDescription>{t("profile.deleteConfirmDesc")}</AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>{t("profile.deleteCancel")}</AlertDialogCancel>
+                            <AlertDialogAction
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              onClick={async () => {
+                                try {
+                                  toast.info(t("profile.deleteProgress"));
+                                  const { error } = await supabase.functions.invoke("delete-account");
+                                  if (error) throw error;
+                                  toast.success(t("profile.deleteSuccess"));
+                                  await supabase.auth.signOut();
+                                  navigate("/");
+                                } catch {
+                                  toast.error(t("profile.deleteError"));
+                                }
+                              }}
+                            >
+                              {t("profile.deleteConfirm")}
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                      <SettingsRow icon={LogOut} tone="destructive" label={t("nav.logout")} destructive onClick={handleSignOut} />
+                    </SettingsSection>
                   </div>
                 </div>
-                <SettingsRow
-                  icon={isDark ? Moon : Sun}
-                  tone="emerald"
-                  label={isDark ? "Thème sombre" : "Thème clair"}
-                  rightElement={<Switch checked={isDark} onCheckedChange={toggleDark} />}
-                />
-              </SettingsSection>
+              </div>
 
-              {/* Notifications */}
-              <SettingsSection title="Notifications">
-                <SettingsRow
-                  icon={Bell}
-                  tone="orange"
-                  label="Notifications par email"
-                  rightElement={
-                    <Switch
-                      checked={emailNotifications}
-                      onCheckedChange={handleToggleNotifications}
-                      disabled={isSaving}
-                    />
-                  }
-                />
-                {pushSupported && (
-                  <SettingsRow
-                    icon={Smartphone}
-                    tone="orange"
-                    label="Notifications push"
-                    rightElement={
-                      <Switch
-                        checked={pushSubscribed}
-                        onCheckedChange={(c) => (c ? pushSubscribe() : pushUnsubscribe())}
-                        disabled={pushLoading}
-                      />
-                    }
-                  />
-                )}
-              </SettingsSection>
-
-              {/* Confidentialité */}
-              <SettingsSection title="Confidentialité" footer="Vos données vous appartiennent. Conforme RGPD.">
-                <SettingsRow icon={Cookie} tone="violet" label="Préférences cookies" onClick={handleResetCookies} />
-                <SettingsRow icon={Download} tone="violet" label="Exporter mes données" description="Téléchargement JSON" onClick={handleExport} />
-              </SettingsSection>
-
-              {/* Abonnement */}
-              <SettingsSection title="Abonnement">
-                {subscribed && tier ? (
-                  <>
-                    <SettingsRow icon={Crown} tone="gold" label="Plan actuel" description={tier.name} noChevron />
-                    <SettingsRow icon={Crown} tone="gold" label="Gérer mon abonnement" onClick={openCustomerPortal} />
-                  </>
-                ) : (
-                  <SettingsRow icon={Crown} tone="gold" label="Passer Premium" description="Boostez vos annonces" onClick={() => navigate("/pricing")} />
-                )}
-              </SettingsSection>
-
-              {/* À propos */}
-              <SettingsSection title="À propos">
-                <SettingsRow icon={ScrollText} tone="gray" label="Conditions d'utilisation" onClick={() => navigate("/cgu")} />
-                <SettingsRow icon={Shield} tone="gray" label="Confidentialité" onClick={() => navigate("/confidentialite")} />
-                <SettingsRow icon={Mail} tone="gray" label="Contacter le support" onClick={() => navigate("/contact")} />
-                <SettingsRow icon={Info} tone="gray" label="Version" description="AutoRA · 2026.05" noChevron />
-              </SettingsSection>
-
-              {/* Zone danger */}
-              <SettingsSection title="Zone danger">
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <div>
-                      <SettingsRow
-                        icon={Trash2}
-                        tone="destructive"
-                        label={t("profile.deleteAccount")}
-                        description={t("profile.deleteDesc")}
-                        destructive
-                        onClick={() => {}}
-                      />
-                    </div>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>{t("profile.deleteConfirmTitle")}</AlertDialogTitle>
-                      <AlertDialogDescription>{t("profile.deleteConfirmDesc")}</AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>{t("profile.deleteCancel")}</AlertDialogCancel>
-                      <AlertDialogAction
-                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                        onClick={async () => {
-                          try {
-                            toast.info(t("profile.deleteProgress"));
-                            const { error } = await supabase.functions.invoke("delete-account");
-                            if (error) throw error;
-                            toast.success(t("profile.deleteSuccess"));
-                            await supabase.auth.signOut();
-                            navigate("/");
-                          } catch {
-                            toast.error(t("profile.deleteError"));
-                          }
-                        }}
-                      >
-                        {t("profile.deleteConfirm")}
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-                <SettingsRow icon={LogOut} tone="destructive" label={t("nav.logout")} destructive onClick={handleSignOut} />
-              </SettingsSection>
             </motion.div>
           )}
         </AnimatePresence>
