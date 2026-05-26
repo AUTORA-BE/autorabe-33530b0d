@@ -279,7 +279,7 @@ export default function Settings() {
     <div className="page-gradient min-h-screen">
       <SEOHead noIndex />
       <Header />
-      <main className="container mx-auto px-3 sm:px-4 max-w-lg pt-20 pb-[calc(env(safe-area-inset-bottom)+96px)]">
+      <main className="container mx-auto px-3 sm:px-4 max-w-lg md:max-w-6xl md:px-8 pt-20 pb-[calc(env(safe-area-inset-bottom)+96px)]">
         <div className="px-1 mb-3 flex items-center justify-between">
           <BackButton to="/" />
         </div>
