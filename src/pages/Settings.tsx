@@ -347,83 +347,106 @@ export default function Settings() {
               animate="show"
               className="space-y-6"
             >
-              {/* Hero profile */}
+              {/* Hero profile — vertical on mobile, horizontal banner on md+ */}
               <motion.div
                 variants={{ hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } }}
-                className="text-center pt-2 pb-2"
+                className="text-center pt-2 pb-2 md:text-left md:flex md:flex-row md:items-center md:justify-between md:gap-6 md:p-6 md:rounded-2xl md:bg-card/40 md:backdrop-blur-md md:border md:border-border/40 md:shadow-sm"
               >
-                <div className="relative inline-block mb-3">
-                  <Avatar className="h-24 w-24 border-2 border-primary/20 shadow-lg shadow-primary/10">
-                    <AvatarImage src={avatarUrl || undefined} alt={displayName} />
-                    <AvatarFallback className="text-3xl bg-primary/10 text-primary">
-                      {displayName ? displayName.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <button
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={isUploadingAvatar}
-                    className="absolute -bottom-1 -right-1 w-9 h-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg shadow-primary/30 active:scale-[0.9] transition-transform"
-                  >
-                    {isUploadingAvatar ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
-                  </button>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleAvatarUpload}
-                  />
-                </div>
-
-                {editingName ? (
-                  <div className="flex gap-2 max-w-[260px] mx-auto mb-2">
-                    <Input
-                      value={displayName}
-                      onChange={(e) => setDisplayName(e.target.value)}
-                      maxLength={50}
-                      className="text-center rounded-xl bg-background/50"
-                      autoFocus
+                <div className="md:flex md:items-center md:gap-5 md:flex-1 md:min-w-0">
+                  <div className="relative inline-block mb-3 md:mb-0 md:flex-shrink-0">
+                    <Avatar className="h-24 w-24 md:h-16 md:w-16 border-2 border-primary/20 shadow-lg shadow-primary/10">
+                      <AvatarImage src={avatarUrl || undefined} alt={displayName} />
+                      <AvatarFallback className="text-3xl md:text-xl bg-primary/10 text-primary">
+                        {displayName ? displayName.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isUploadingAvatar}
+                      className="absolute -bottom-1 -right-1 w-9 h-9 md:w-7 md:h-7 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg shadow-primary/30 active:scale-[0.9] transition-transform"
+                    >
+                      {isUploadingAvatar ? <Loader2 className="h-4 w-4 md:h-3 md:w-3 animate-spin" /> : <Camera className="h-4 w-4 md:h-3 md:w-3" />}
+                    </button>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleAvatarUpload}
                     />
-                    <Button size="sm" onClick={handleSaveProfile} disabled={isSavingProfile} className="rounded-xl">
-                      {isSavingProfile ? <Loader2 className="h-4 w-4 animate-spin" /> : "OK"}
-                    </Button>
                   </div>
-                ) : (
-                  <button
-                    onClick={() => setEditingName(true)}
-                    className="text-xl font-bold text-foreground mb-1 hover:text-primary transition-colors"
-                  >
-                    {displayName || user?.email?.split("@")[0]}
-                  </button>
-                )}
 
-                <p className="text-xs text-muted-foreground mb-3">{user?.email}</p>
+                  <div className="md:flex-1 md:min-w-0">
+                    {editingName ? (
+                      <div className="flex gap-2 max-w-[260px] mx-auto mb-2 md:mx-0">
+                        <Input
+                          value={displayName}
+                          onChange={(e) => setDisplayName(e.target.value)}
+                          maxLength={50}
+                          className="text-center md:text-left rounded-xl bg-background/50"
+                          autoFocus
+                        />
+                        <Button size="sm" onClick={handleSaveProfile} disabled={isSavingProfile} className="rounded-xl">
+                          {isSavingProfile ? <Loader2 className="h-4 w-4 animate-spin" /> : "OK"}
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="md:flex md:items-center md:gap-2 md:flex-wrap">
+                        <button
+                          onClick={() => setEditingName(true)}
+                          className="text-xl md:text-2xl font-bold text-foreground mb-1 md:mb-0 hover:text-primary transition-colors"
+                        >
+                          {displayName || user?.email?.split("@")[0]}
+                        </button>
+                        <span className="hidden md:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-amber-500/15 text-amber-600 border border-amber-500/30">
+                          Bêta
+                        </span>
+                        {subscribed && tier && (
+                          <span className="hidden md:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-primary/10 text-primary border border-primary/20">
+                            <Crown className="w-3 h-3" />
+                            {tier.name}
+                          </span>
+                        )}
+                        {isAdmin && (
+                          <span className="hidden md:inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-amber-500/10 text-amber-600 border border-amber-500/20">
+                            <Shield className="w-3 h-3" />
+                            Admin
+                          </span>
+                        )}
+                      </div>
+                    )}
 
-                <div className="flex items-center justify-center gap-2 flex-wrap">
-                  {subscribed && tier && (
-                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
-                      <Crown className="w-3 h-3" />
-                      {tier.name}
-                    </span>
-                  )}
-                  {isAdmin && (
-                    <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-600 border border-amber-500/20">
-                      <Shield className="w-3 h-3" />
-                      Admin
-                    </span>
-                  )}
+                    <p className="text-xs text-muted-foreground mb-3 md:mb-0 md:mt-1">{user?.email}</p>
+
+                    {/* Mobile-only badges */}
+                    <div className="flex items-center justify-center gap-2 flex-wrap md:hidden">
+                      {subscribed && tier && (
+                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
+                          <Crown className="w-3 h-3" />
+                          {tier.name}
+                        </span>
+                      )}
+                      {isAdmin && (
+                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-600 border border-amber-500/20">
+                          <Shield className="w-3 h-3" />
+                          Admin
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 </div>
 
                 {!subscribed && (
                   <Button
                     onClick={() => navigate("/pricing")}
-                    className="mt-4 rounded-full px-6 bg-gradient-to-r from-primary to-emerald-500 text-primary-foreground shadow-lg shadow-primary/25 active:scale-[0.97] transition-transform"
+                    className="mt-4 md:mt-0 md:flex-shrink-0 rounded-full px-6 bg-gradient-to-r from-primary to-emerald-500 text-primary-foreground shadow-lg shadow-primary/25 active:scale-[0.97] transition-transform"
                   >
                     <Crown className="w-4 h-4 mr-2" />
                     {t("profile.becomePremium")}
                   </Button>
                 )}
               </motion.div>
+
 
               {/* Mon activité */}
               <SettingsSection title="Mon activité">
