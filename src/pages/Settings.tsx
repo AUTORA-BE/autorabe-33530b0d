@@ -67,6 +67,19 @@ export default function Settings() {
 
   const [search, setSearch] = useState("");
   const [pwdModalOpen, setPwdModalOpen] = useState(false);
+  const [activeCategory, setActiveCategory] = useState<string>("activity");
+
+  const CATEGORIES: { id: string; label: string; icon: LucideIcon }[] = [
+    { id: "activity", label: "Mon activité", icon: BarChart3 },
+    { id: "account", label: "Compte", icon: UserIcon },
+    { id: "security", label: "Sécurité", icon: Lock },
+    { id: "prefs", label: "Préférences", icon: SlidersHorizontal },
+    { id: "notifs", label: "Notifications", icon: Bell },
+    { id: "privacy", label: "Confidentialité", icon: Shield },
+    { id: "subscription", label: "Abonnement", icon: CreditCard },
+    { id: "about", label: "À propos", icon: Info },
+    { id: "danger", label: "Zone danger", icon: AlertTriangle },
+  ];
 
   const { subscribed, tier, openCustomerPortal } = useSubscription();
   const isAdmin = useIsAdmin(user?.id);
