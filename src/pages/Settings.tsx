@@ -29,6 +29,7 @@ import { useFavorites } from "@/features/favorites";
 import { useSubscription } from "@/features/subscription";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useSellerListings } from "@/features/listings/hooks/useSellerListings";
+import { useLocalStorage } from "@/shared/hooks";
 import {
   SettingsSection,
   SettingsRow,
