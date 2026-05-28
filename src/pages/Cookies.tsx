@@ -33,9 +33,9 @@ export default function Cookies() {
       ],
       analyticsTitle: "Cookies analytiques",
       analyticsDesc:
-        "Nous utilisons Plausible Analytics, un outil sans cookie persistant et sans tracking inter-sites, hébergé en Europe. Aucune donnée personnelle n'est partagée avec des tiers à des fins publicitaires.",
+        "Nous utilisons Cloudflare Web Analytics, un outil de mesure d'audience sans cookie et sans tracking inter-sites. Aucune donnée personnelle identifiable n'est collectée ni partagée avec des tiers à des fins publicitaires.",
       analyticsList: [
-        "plausible.io — pages vues anonymisées (uniquement après votre accord)",
+        "cloudflareinsights.com — pages vues anonymisées, sans cookie",
       ],
       noTracking:
         "Nous n'utilisons aucun cookie publicitaire, aucun pixel Meta/Google Ads, et nous ne revendons aucune donnée.",
@@ -64,8 +64,8 @@ export default function Cookies() {
       ],
       analyticsTitle: "Analytics cookies",
       analyticsDesc:
-        "We use Plausible Analytics, a cookieless, EU-hosted tool with no cross-site tracking. No personal data is shared with third parties for advertising.",
-      analyticsList: ["plausible.io — anonymised pageviews (only after your consent)"],
+        "We use Cloudflare Web Analytics, a cookieless audience-measurement tool with no cross-site tracking. No identifiable personal data is collected or shared with third parties for advertising.",
+      analyticsList: ["cloudflareinsights.com — anonymised pageviews, cookieless"],
       noTracking:
         "We do not use ad cookies, Meta/Google Ads pixels, and we do not sell any data.",
       manageTitle: "Manage preferences",
@@ -92,8 +92,8 @@ export default function Cookies() {
       ],
       analyticsTitle: "Analytische cookies",
       analyticsDesc:
-        "We gebruiken Plausible Analytics, cookievrij en in de EU gehost. Geen tracking, geen verkoop van data.",
-      analyticsList: ["plausible.io — geanonimiseerde paginabezoeken (alleen na toestemming)"],
+        "We gebruiken Cloudflare Web Analytics, cookievrij en zonder cross-site tracking. Geen identificeerbare persoonsgegevens, geen verkoop van data.",
+      analyticsList: ["cloudflareinsights.com — geanonimiseerde paginabezoeken, cookievrij"],
       noTracking: "We gebruiken geen advertentiecookies en verkopen geen data.",
       manageTitle: "Voorkeuren beheren",
       manageDesc: "Uw huidige keuze:",
@@ -120,9 +120,9 @@ export default function Cookies() {
       ],
       analyticsTitle: "Analytische Cookies",
       analyticsDesc:
-        "Wir verwenden Plausible Analytics, cookielos und in der EU gehostet. Kein Cross-Site-Tracking.",
+        "Wir verwenden Cloudflare Web Analytics, cookielos und ohne Cross-Site-Tracking. Keine identifizierbaren personenbezogenen Daten, kein Datenverkauf.",
       analyticsList: [
-        "plausible.io — anonymisierte Seitenaufrufe (nur nach Einwilligung)",
+        "cloudflareinsights.com — anonymisierte Seitenaufrufe, cookielos",
       ],
       noTracking: "Keine Werbecookies, kein Datenverkauf.",
       manageTitle: "Einstellungen verwalten",

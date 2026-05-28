@@ -97,55 +97,19 @@ export function onConsentChange(listener: Listener): () => void {
 }
 
 // ============================================================================
-// Plausible loader — only injects the script AFTER analytics consent
+// Analytics loader — NO-OP.
+// ----------------------------------------------------------------------------
+// AutoRA migrated from Plausible to Cloudflare Web Analytics, which is
+// cookieless and loaded at the edge / via a single beacon in index.html.
+// There is therefore no client-side script to inject anymore.
+//
+// `loadPlausibleIfAllowed` is intentionally kept (as a no-op) so that its two
+// call sites — main.tsx boot + onConsentChange — keep working untouched.
+// The legacy `trackEvent()` calls scattered across the app also keep working:
+// analytics.ts guards them with `window.plausible?.(…)`, which is a harmless
+// no-op now that `window.plausible` is never defined.
 // ============================================================================
 
-const PLAUSIBLE_SRC =
-  "https://plausible.io/js/script.manual.tagged-events.outbound-links.js";
-const PLAUSIBLE_DOMAIN = "autora.be";
-let plausibleLoaded = false;
-
-function shouldSkipPlausible(): boolean {
-  if (typeof window === "undefined") return true;
-  try {
-    if (window.self !== window.top) return true; // iframe (lovable preview)
-  } catch {
-    return true;
-  }
-  const host = window.location.hostname;
-  if (host === "localhost") return true;
-  if (host.endsWith(".lovable.app") && host.includes("preview")) return true;
-  return false;
-}
-
 export function loadPlausibleIfAllowed(): void {
-  if (plausibleLoaded) return;
-  if (!analyticsAllowed()) return;
-  if (shouldSkipPlausible()) {
-    plausibleLoaded = true; // prevent retries
-    return;
-  }
-  try {
-    // queue stub so events called before script load are buffered
-    const w = window as unknown as {
-      plausible?: ((...args: unknown[]) => void) & { q?: unknown[] };
-    };
-    if (!w.plausible) {
-      const stub = function (...args: unknown[]) {
-        (stub.q = stub.q || []).push(args);
-      } as ((...args: unknown[]) => void) & { q?: unknown[] };
-      w.plausible = stub;
-    }
-    const script = document.createElement("script");
-    script.defer = true;
-    script.src = PLAUSIBLE_SRC;
-    script.setAttribute("data-domain", PLAUSIBLE_DOMAIN);
-    document.head.appendChild(script);
-    plausibleLoaded = true;
-  } catch {
-    /* noop */
-  }
+  /* no-op — Cloudflare Web Analytics needs no client-side loader */
 }
-
-// Auto-load on consent change
-onConsentChange(() => loadPlausibleIfAllowed());

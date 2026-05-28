@@ -97,8 +97,8 @@ San Francisco, CA, États-Unis — Données transférées aux États-Unis sur la
 **Anthropic PBC / Google LLC** (intelligence artificielle — fonctionnalités d'aide à la description et d'estimation fiscale)
 États-Unis — Les données envoyées au modèle d'IA (description du véhicule, type de transaction) sont traitées aux États-Unis sur la base de CCT. Aucune donnée directement identifiante (nom, email) n'est transmise au modèle.
 
-**Plausible Analytics** (mesure d'audience anonymisée)
-Tallinn, Estonie (UE) — Aucune donnée personnelle identifiable, aucun cookie tiers. Les données restent dans l'Union européenne.
+**Cloudflare Web Analytics** (mesure d'audience anonyme, sans cookie)
+États-Unis — Aucune donnée personnelle identifiable, aucun cookie, aucun identifiant persistant. Transfert encadré par CCT et DPA Cloudflare conforme au RGPD.
 
 Nous ne vendons jamais vos données à des tiers. Aucun partage à des fins publicitaires tierces.`,
     },
@@ -106,7 +106,7 @@ Nous ne vendons jamais vos données à des tiers. Aucun partage à des fins publ
       title: "5. Transferts hors Union européenne",
       body: `Plusieurs de nos prestataires sont établis aux États-Unis. Ces transferts sont encadrés par des clauses contractuelles types (CCT) adoptées par la Commission européenne, conformément à l'article 46 du RGPD, garantissant un niveau de protection adéquat de vos données.
 
-Plausible Analytics est hébergé dans l'UE — aucun transfert hors UE pour cet outil.
+Cloudflare Web Analytics (mesure d'audience agrégée et anonyme) est fourni par Cloudflare, Inc. (États-Unis) ; ce transfert est encadré par les CCT et le DPA de Cloudflare conforme au RGPD.
 
 Pour obtenir une copie des garanties mises en place, contactez-nous à autoracontact@gmail.com.`,
     },
@@ -158,7 +158,7 @@ Site web : [https://www.autoriteprotectiondonnees.be](https://www.autoriteprotec
 — Panier / comparateur de véhicules (sessionStorage)
 
 **Cookies analytiques** (soumis à consentement)
-— Plausible Analytics : mesure d'audience anonymisée, sans cookie tiers, sans identifiant persistant. Ces données restent dans l'UE.
+— Cloudflare Web Analytics : mesure d'audience anonyme, sans cookie, sans identifiant persistant. Aucune donnée personnelle identifiable n'est collectée.
 
 **Cookies de paiement** (chargés uniquement sur les pages de paiement)
 — Stripe.js : prévention de la fraude (chargé après affichage d'une page de paiement)
@@ -267,8 +267,8 @@ VS — Gegevens overgedragen op basis van SCB. Alleen e-mails die noodzakelijk z
 **Anthropic PBC / Google LLC** (kunstmatige intelligentie — hulp bij beschrijvingen en fiscale schattingen)
 VS — Gegevens verwerkt in de VS op basis van SCB. Geen direct identificeerbare gegevens (naam, e-mail) worden aan het AI-model doorgegeven.
 
-**Plausible Analytics** (geanonimiseerde publieksanalyse)
-Tallinn, Estland (EU) — Geen identificeerbare persoonsgegevens, geen cookies van derden. Gegevens blijven in de EU.
+**Cloudflare Web Analytics** (geanonimiseerde publieksanalyse, cookievrij)
+Verenigde Staten — Geen identificeerbare persoonsgegevens, geen cookies, geen persistente identifier. Doorgifte gedekt door SCC en de RGPD-conforme DPA van Cloudflare.
 
 Wij verkopen uw gegevens nooit aan derden. Geen gegevens worden gedeeld voor reclamedoeleinden van derden.`,
     },
@@ -276,7 +276,7 @@ Wij verkopen uw gegevens nooit aan derden. Geen gegevens worden gedeeld voor rec
       title: "5. Doorgifte buiten de Europese Unie",
       body: `Verschillende dienstverleners zijn gevestigd in de VS. Deze doorgiften zijn geregeld door standaardcontractbepalingen (SCB) van de Europese Commissie, conform artikel 46 AVG.
 
-Plausible Analytics is gehost in de EU — geen doorgifte buiten de EU voor dit instrument.
+Cloudflare Web Analytics (geaggregeerde, anonieme publieksmeting) wordt geleverd door Cloudflare, Inc. (VS); deze doorgifte is gedekt door SCC en de RGPD-conforme DPA van Cloudflare.
 
 Voor een kopie van de geldende garanties kunt u contact opnemen via autoracontact@gmail.com.`,
     },
@@ -328,7 +328,7 @@ Website : [https://www.gegevensbeschermingsautoriteit.be](https://www.gegevensbe
 — Winkelmandje / voertuigvergelijker (sessionStorage)
 
 **Analytische cookies** (met toestemming)
-— Plausible Analytics : geanonimiseerde publieksanalyse, zonder cookies van derden, zonder persistente identifier. Gegevens blijven in de EU.
+— Cloudflare Web Analytics : geanonimiseerde publieksanalyse, cookievrij, zonder persistente identifier. Er worden geen identificeerbare persoonsgegevens verzameld.
 
 **Betalingscookies** (alleen geladen op betalingspagina's)
 — Stripe.js : fraudepreventie
@@ -437,8 +437,8 @@ USA — Datenübermittlung auf Grundlage von SCC. Nur für den Dienst notwendige
 **Anthropic PBC / Google LLC** (Künstliche Intelligenz — Beschreibungshilfe und Steuereinschätzung)
 USA — Daten werden in den USA auf Grundlage von SCC verarbeitet. Keine direkt identifizierenden Daten (Name, E-Mail) werden an das KI-Modell übermittelt.
 
-**Plausible Analytics** (anonymisierte Reichweitenmessung)
-Tallinn, Estland (EU) — Keine identifizierbaren personenbezogenen Daten, keine Drittanbieter-Cookies. Daten verbleiben in der EU.
+**Cloudflare Web Analytics** (anonymisierte Reichweitenmessung, cookielos)
+USA — Keine identifizierbaren personenbezogenen Daten, keine Cookies, keine persistenten Kennungen. Übermittlung durch SCC und den DSGVO-konformen DPA von Cloudflare abgedeckt.
 
 Wir verkaufen Ihre Daten niemals an Dritte. Keine Weitergabe zu Werbezwecken Dritter.`,
     },
@@ -446,7 +446,7 @@ Wir verkaufen Ihre Daten niemals an Dritte. Keine Weitergabe zu Werbezwecken Dri
       title: "5. Übermittlungen außerhalb der EU",
       body: `Mehrere unserer Dienstleister sind in den USA ansässig. Diese Übermittlungen werden durch Standardvertragsklauseln (SCC) der Europäischen Kommission gemäß Artikel 46 DSGVO geregelt.
 
-Plausible Analytics wird in der EU gehostet — keine Übermittlung außerhalb der EU für dieses Instrument.
+Cloudflare Web Analytics (aggregierte, anonyme Reichweitenmessung) wird von Cloudflare, Inc. (USA) bereitgestellt; diese Übermittlung ist durch SCC und den DSGVO-konformen DPA von Cloudflare abgedeckt.
 
 Für eine Kopie der geltenden Garantien wenden Sie sich bitte an autoracontact@gmail.com.`,
     },
@@ -498,7 +498,7 @@ Website : [https://www.autoriteprotectiondonnees.be](https://www.autoriteprotect
 — Warenkorb / Fahrzeugvergleich (sessionStorage)
 
 **Analyse-Cookies** (mit Einwilligung)
-— Plausible Analytics : anonymisierte Reichweitenmessung, ohne Drittanbieter-Cookies, ohne persistente Kennungen. Daten verbleiben in der EU.
+— Cloudflare Web Analytics : anonymisierte Reichweitenmessung, cookielos, ohne persistente Kennungen. Es werden keine identifizierbaren personenbezogenen Daten erfasst.
 
 **Zahlungs-Cookies** (nur auf Zahlungsseiten geladen)
 — Stripe.js : Betrugsprävention
@@ -607,8 +607,8 @@ United States — Data transferred under SCCs. Only emails necessary for the ser
 **Anthropic PBC / Google LLC** (artificial intelligence — description assistance and tax estimation)
 United States — Data processed in the US under SCCs. No directly identifying data (name, email) is transmitted to the AI model.
 
-**Plausible Analytics** (anonymised audience measurement)
-Tallinn, Estonia (EU) — No identifiable personal data, no third-party cookies. Data remains within the EU.
+**Cloudflare Web Analytics** (anonymous, cookieless audience measurement)
+United States — No identifiable personal data, no cookies, no persistent identifiers. Transfer covered by SCCs and Cloudflare's GDPR-compliant DPA.
 
 We never sell your data to third parties. No sharing for third-party advertising purposes.`,
     },
@@ -616,7 +616,7 @@ We never sell your data to third parties. No sharing for third-party advertising
       title: "5. Transfers Outside the European Union",
       body: `Several of our service providers are established in the United States. These transfers are governed by Standard Contractual Clauses (SCCs) adopted by the European Commission, in accordance with Article 46 of the GDPR.
 
-Plausible Analytics is hosted within the EU — no transfer outside the EU for this tool.
+Cloudflare Web Analytics (aggregated, anonymous audience measurement) is provided by Cloudflare, Inc. (United States); this transfer is covered by SCCs and Cloudflare's GDPR-compliant DPA.
 
 To obtain a copy of the safeguards in place, please contact us at autoracontact@gmail.com.`,
     },
@@ -668,7 +668,7 @@ Website : [https://www.autoriteprotectiondonnees.be](https://www.autoriteprotect
 — Shopping basket / vehicle comparator (sessionStorage)
 
 **Analytics cookies** (subject to consent)
-— Plausible Analytics : anonymised audience measurement, no third-party cookies, no persistent identifiers. Data remains in the EU.
+— Cloudflare Web Analytics : anonymous audience measurement, cookieless, no persistent identifiers. No identifiable personal data is collected.
 
 **Payment cookies** (loaded only on payment pages)
 — Stripe.js : fraud prevention
