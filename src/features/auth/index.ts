@@ -7,6 +7,11 @@
 // Hooks
 export { useAuth, usePasswordValidation, useUserProfile } from './hooks';
 
+// Auth-prompt (positive friction for guests)
+export { AuthPromptProvider, useAuthPrompt, consumePendingFavorite } from './context/AuthPromptContext';
+export { AuthPromptModal, type AuthPromptReason } from './components/AuthPromptModal';
+
+
 // Types
 export type {
   AuthState,

@@ -21,6 +21,8 @@ import { CarCard, type Car, vehicleQueries } from "@/features/listings";
 import { Button } from "@/components/ui/button";
 import { getCarByIdFromDb, formatPrice, formatMileage, getSellerContact } from "@/utils/carUtils";
 import { useFavorites } from "@/features/favorites";
+import { useAuthPrompt } from "@/features/auth";
+
 import { useToast } from "@/hooks/use-toast";
 import { useTrackView } from "@/hooks/useTrackView";
 import { supabase } from "@/integrations/supabase/client";
@@ -62,6 +64,8 @@ const CarDetail = () => {
   const { t } = useLanguage();
   const { toast } = useToast();
   const { isFavorite, toggleFavorite } = useFavorites();
+  const { requireAuth } = useAuthPrompt();
+
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [fullscreenOpen, setFullscreenOpen] = useState(false);
   const [car, setCar] = useState<Car | null>(null);
@@ -292,6 +296,10 @@ const CarDetail = () => {
       car_id: car?.id ?? null,
       brand: car?.brand ?? null,
     });
+    // Gate all contact methods behind auth (positive friction modal for guests).
+    const reason = method === "Message" ? "message" : "contact";
+    if (!requireAuth({ reason })) return;
+
     if (sellerContact) {
       if (method === "Email" && sellerContact.contact_email) {
         window.location.href = `mailto:${sellerContact.contact_email}?subject=Intéressé par votre ${car.brand} ${car.model}`;
@@ -314,13 +322,13 @@ const CarDetail = () => {
       await startConversation();
       return;
     }
-    
+
     toast({
-      title: "Connexion requise",
-      description: "Connectez-vous pour accéder aux coordonnées du vendeur",
+      title: "Coordonnées indisponibles",
+      description: "Impossible de récupérer les coordonnées du vendeur pour le moment.",
     });
-    navigate('/auth');
   };
+
 
   const startConversation = async () => {
     if (!dbListing) {
@@ -332,17 +340,15 @@ const CarDetail = () => {
     }
 
     const { data: { session } } = await supabase.auth.getSession();
-    
+
     if (!session) {
-      toast({
-        title: "Connexion requise",
-        description: "Connectez-vous pour envoyer un message",
-      });
-      navigate('/auth');
+      // Should be intercepted earlier by requireAuth — keep modal fallback.
+      requireAuth({ reason: "message" });
       return;
     }
 
     const currentUserId = session.user.id;
+
 
     const contact = await getSellerContact(id ?? '');
     if (!contact) {

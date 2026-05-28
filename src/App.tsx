@@ -10,6 +10,8 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { CompareProvider } from "@/features/compare";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { AuthPromptProvider } from "@/features/auth";
+
 import PageTransition from "@/components/PageTransition";
 import ScrollToTop from "@/components/ScrollToTop";
 import ErrorBoundary from "@/components/ErrorBoundary";
@@ -227,6 +229,7 @@ const App = () => {
       <TooltipProvider>
         <BrowserRouter>
           <LanguageProvider>
+            <AuthPromptProvider>
             <CompareProvider>
               <Toaster />
               <Sonner />
@@ -244,7 +247,9 @@ const App = () => {
               <Suspense fallback={null}><CookieBanner /></Suspense>
               <Suspense fallback={null}><HelpButton /></Suspense>
             </CompareProvider>
+            </AuthPromptProvider>
           </LanguageProvider>
+
         </BrowserRouter>
       </TooltipProvider>
       {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
