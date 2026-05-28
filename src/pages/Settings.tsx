@@ -68,7 +68,7 @@ export default function Settings() {
 
   const [search, setSearch] = useState("");
   const [pwdModalOpen, setPwdModalOpen] = useState(false);
-  const [activeCategory, setActiveCategory] = useState<string>("activity");
+  const [activeCategory, setActiveCategory] = useLocalStorage<string>("autora_settings_active_category", "activity");
 
   const CATEGORIES: { id: string; label: string; icon: LucideIcon }[] = [
     { id: "activity", label: "Mon activité", icon: BarChart3 },
