@@ -23,7 +23,9 @@ import { trackEvent, EVENTS } from "@/lib/analytics";
  */
 const Auth = () => {
   // Form state
-  const [isLogin, setIsLogin] = useState(true);
+  const initialTab = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("tab") : null;
+  const [isLogin, setIsLogin] = useState(initialTab !== "signup");
+
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [accountType, setAccountType] = useState<"private" | "pro">("private");
   const [email, setEmail] = useState("");
