@@ -14,6 +14,18 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://autora.be/"/>
   </url>
 
+  <!-- /search (recherche / zoeken / suche) — top acquisition page -->
+  <url>
+    <loc>https://autora.be/recherche</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="fr-BE" href="https://autora.be/recherche"/>
+    <xhtml:link rel="alternate" hreflang="nl-BE" href="https://autora.be/zoeken"/>
+    <xhtml:link rel="alternate" hreflang="de-BE" href="https://autora.be/suche"/>
+    <xhtml:link rel="alternate" hreflang="en"    href="https://autora.be/search"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://autora.be/recherche"/>
+  </url>
+
   <!-- /sell (vendre / verkopen / verkaufen) -->
   <url>
     <loc>https://autora.be/vendre</loc>
@@ -43,6 +55,13 @@
     <loc>https://autora.be/calculateur-tco</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+
+  <!-- /compare (same slug across langs) -->
+  <url>
+    <loc>https://autora.be/compare</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
   </url>
 
   <!-- /marques-electriques -->
