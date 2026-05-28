@@ -296,6 +296,10 @@ const CarDetail = () => {
       car_id: car?.id ?? null,
       brand: car?.brand ?? null,
     });
+    // Gate all contact methods behind auth (positive friction modal for guests).
+    const reason = method === "Message" ? "message" : "contact";
+    if (!requireAuth({ reason })) return;
+
     if (sellerContact) {
       if (method === "Email" && sellerContact.contact_email) {
         window.location.href = `mailto:${sellerContact.contact_email}?subject=Intéressé par votre ${car.brand} ${car.model}`;
@@ -318,13 +322,13 @@ const CarDetail = () => {
       await startConversation();
       return;
     }
-    
+
     toast({
-      title: "Connexion requise",
-      description: "Connectez-vous pour accéder aux coordonnées du vendeur",
+      title: "Coordonnées indisponibles",
+      description: "Impossible de récupérer les coordonnées du vendeur pour le moment.",
     });
-    navigate('/auth');
   };
+
 
   const startConversation = async () => {
     if (!dbListing) {
