@@ -229,6 +229,7 @@ const App = () => {
       <TooltipProvider>
         <BrowserRouter>
           <LanguageProvider>
+            <AuthPromptProvider>
             <CompareProvider>
               <Toaster />
               <Sonner />
@@ -246,7 +247,9 @@ const App = () => {
               <Suspense fallback={null}><CookieBanner /></Suspense>
               <Suspense fallback={null}><HelpButton /></Suspense>
             </CompareProvider>
+            </AuthPromptProvider>
           </LanguageProvider>
+
         </BrowserRouter>
       </TooltipProvider>
       {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
