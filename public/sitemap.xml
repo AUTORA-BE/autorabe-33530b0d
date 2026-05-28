@@ -5,7 +5,9 @@
     <loc>https://autora.be/sitemap-pages.xml</loc>
     <lastmod>2026-05-25</lastmod>
   </sitemap>
-  <!-- Dynamic vehicle listings sitemaps per language (proxied via Vercel rewrite to the edge function) -->
+  <!-- Dynamic vehicle listings sitemaps per language.
+       Proxied via public/_redirects (Cloudflare Pages) → Supabase Edge Function
+       dynamic-sitemap on the PROD project (okei…). -->
   <sitemap>
     <loc>https://autora.be/sitemap-vehicles-fr.xml</loc>
   </sitemap>
