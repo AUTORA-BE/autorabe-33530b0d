@@ -15,7 +15,6 @@ import { parseVoiceTranscript } from "@/lib/voiceEntityDetection";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 import { trackEvent, EVENTS } from "@/lib/analytics";
-import heroMarketplace from "@/assets/hero-marketplace.jpg";
 
 /* ─── localStorage search history ─── */
 const HISTORY_KEY = "autora_search_history";
@@ -461,7 +460,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
           style={{ y: imgY }}
         >
           <img
-            src={heroMarketplace}
+            src="/hero-marketplace.jpg"
             alt=""
             width={1920}
             height={1080}

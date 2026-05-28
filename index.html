@@ -37,7 +37,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" as="style" onload="this.rel='stylesheet'" />
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" /></noscript>
-    <link rel="preload" href="/pwa-icon-192.png" as="image" fetchpriority="high" />
+    <!-- LCP optimisation: the homepage hero is the Largest Contentful Paint.
+         Preloading it here (stable /public URL) starts the fetch during HTML
+         parse — before the React bundle boots — instead of after, which is the
+         single biggest LCP win for an SPA. The <img> in HeroSearch.tsx uses the
+         exact same URL so the preload is reused (no double download). -->
+    <link rel="preload" href="/hero-marketplace.jpg" as="image" fetchpriority="high" />
     <style>
       /* Critical inline CSS to speed up FCP and avoid CLS across devices */
       *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
