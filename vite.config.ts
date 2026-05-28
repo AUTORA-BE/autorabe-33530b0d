@@ -140,4 +140,12 @@ export default defineConfig({
   server: { host: "::", port: 8080 },
   resolve: { alias: { "@": path.resolve(__dirname, "./src") } },
   build: { rollupOptions: { output: { manualChunks } } },
+  // Production hardening: strip dev-only console noise + debugger statements
+  // from the bundle. console.error / console.warn are kept on purpose so real
+  // runtime issues still surface (and can be forwarded to monitoring later).
+  // esbuild only applies `pure`/`drop` during `vite build`, never in dev.
+  esbuild: {
+    drop: ["debugger"],
+    pure: ["console.log", "console.info", "console.debug", "console.trace"],
+  },
 });

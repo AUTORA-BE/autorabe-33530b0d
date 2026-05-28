@@ -5,7 +5,7 @@
  */
 
 import { useState, useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import SEOHead from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
 import { Mail, Lock, User, Eye, EyeOff, ArrowLeft, CheckCircle, Phone, Building2, MapPin, ShieldCheck, BadgeCheck, MapPinned } from "lucide-react";
@@ -37,6 +37,7 @@ const Auth = () => {
   const [verificationEmailSent, setVerificationEmailSent] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string; name?: string; phone?: string }>({});
   
   const navigate = useNavigate();
@@ -133,8 +134,26 @@ const Auth = () => {
    */
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
+
+    // RGPD — explicit, provable consent is mandatory before account creation
+    if (!isLogin && !acceptedTerms) {
+      toast({
+        title:
+          language === "nl" ? "Aanvaard de voorwaarden" :
+          language === "de" ? "Bedingungen akzeptieren" :
+          language === "en" ? "Please accept the terms" :
+          "Veuillez accepter les conditions",
+        description:
+          language === "nl" ? "U moet de gebruiksvoorwaarden en het privacybeleid aanvaarden." :
+          language === "de" ? "Sie müssen die Nutzungsbedingungen und die Datenschutzrichtlinie akzeptieren." :
+          language === "en" ? "You must accept the Terms and the Privacy Policy to continue." :
+          "Vous devez accepter les CGU et la politique de confidentialité pour continuer.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     if (isLogin) {
       const result = await signIn({ email, password });
@@ -744,10 +763,38 @@ const Auth = () => {
                     </div>
                   )}
 
+                  {/* RGPD consent — required for signup only */}
+                  {!isLogin && (
+                    <div className="flex items-start gap-2.5 pt-1">
+                      <input
+                        type="checkbox"
+                        id="accept-terms"
+                        checked={acceptedTerms}
+                        onChange={(e) => setAcceptedTerms(e.target.checked)}
+                        required
+                        className="mt-0.5 h-4 w-4 shrink-0 rounded border-border accent-primary cursor-pointer"
+                      />
+                      <label
+                        htmlFor="accept-terms"
+                        className="text-xs text-muted-foreground leading-relaxed cursor-pointer select-none"
+                      >
+                        {language === "nl" ? "Ik aanvaard de " : language === "de" ? "Ich akzeptiere die " : language === "en" ? "I accept the " : "J'accepte les "}
+                        <Link to="/cgu" target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-2">
+                          {language === "nl" ? "gebruiksvoorwaarden" : language === "de" ? "Nutzungsbedingungen" : language === "en" ? "Terms of Use" : "CGU"}
+                        </Link>
+                        {language === "nl" ? " en het " : language === "de" ? " und die " : language === "en" ? " and the " : " et la "}
+                        <Link to="/confidentialite" target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-2">
+                          {language === "nl" ? "privacybeleid" : language === "de" ? "Datenschutzrichtlinie" : language === "en" ? "Privacy Policy" : "politique de confidentialité"}
+                        </Link>
+                        {language === "nl" || language === "de" ? "." : language === "en" ? "." : "."}
+                      </label>
+                    </div>
+                  )}
+
                   <Button
                     type="submit"
                     className="w-full h-12 btn-primary-gradient"
-                    disabled={authLoading}
+                    disabled={authLoading || (!isLogin && !acceptedTerms)}
                   >
                     {authLoading ? t("auth.loading") : isLogin ? t("auth.submit") : t("auth.submitSignup")}
                   </Button>
