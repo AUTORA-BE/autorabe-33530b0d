@@ -64,6 +64,8 @@ const CarDetail = () => {
   const { t } = useLanguage();
   const { toast } = useToast();
   const { isFavorite, toggleFavorite } = useFavorites();
+  const { requireAuth } = useAuthPrompt();
+
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [fullscreenOpen, setFullscreenOpen] = useState(false);
   const [car, setCar] = useState<Car | null>(null);
