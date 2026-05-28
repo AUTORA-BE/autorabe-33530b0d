@@ -340,17 +340,15 @@ const CarDetail = () => {
     }
 
     const { data: { session } } = await supabase.auth.getSession();
-    
+
     if (!session) {
-      toast({
-        title: "Connexion requise",
-        description: "Connectez-vous pour envoyer un message",
-      });
-      navigate('/auth');
+      // Should be intercepted earlier by requireAuth — keep modal fallback.
+      requireAuth({ reason: "message" });
       return;
     }
 
     const currentUserId = session.user.id;
+
 
     const contact = await getSellerContact(id ?? '');
     if (!contact) {
