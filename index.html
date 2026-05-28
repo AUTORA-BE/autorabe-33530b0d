@@ -54,6 +54,17 @@
       img{max-width:100%;height:auto;display:block}
       /* Avoid layout shift while React mounts */
       #root:empty::before{content:"";display:block;height:100vh;height:100dvh}
+      /* Instant LCP/FCP shell — painted before React boots, replaced on mount.
+         The hero <img> here is the LCP element; since it is preloaded it paints
+         in ~1-1.5s without waiting for the JS bundle. */
+      #app-shell{position:fixed;inset:0;overflow:hidden;background:#0a0a14}
+      #app-shell .sh-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
+      #app-shell .sh-grad{position:absolute;inset:0;background:linear-gradient(to top,#0a0a14 0%,rgba(10,10,20,.72) 45%,rgba(10,10,20,.25) 100%)}
+      #app-shell .sh-mark{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:14px}
+      #app-shell .sh-logo{font-family:Inter,system-ui,sans-serif;font-weight:600;font-size:22px;letter-spacing:-.02em;color:#fff;opacity:.95}
+      #app-shell .sh-spin{width:26px;height:26px;border:2.5px solid rgba(255,255,255,.22);border-top-color:#10b981;border-radius:50%;animation:autora-spin .8s linear infinite}
+      @keyframes autora-spin{to{transform:rotate(360deg)}}
+      @media (prefers-reduced-motion:reduce){#app-shell .sh-spin{animation:none}}
     </style>
     <script>
       /* Anti-FOUC : applique le theme AVANT le rendu React pour éviter le flash */
@@ -135,7 +146,11 @@
 </head>
 
   <body>
-    <div id="root"></div>
+    <div id="root"><div id="app-shell" aria-hidden="true">
+      <img class="sh-img" src="/hero-marketplace.jpg" alt="" decoding="async" fetchpriority="high" />
+      <div class="sh-grad"></div>
+      <div class="sh-mark"><div class="sh-logo">AutoRA</div><div class="sh-spin"></div></div>
+    </div></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
