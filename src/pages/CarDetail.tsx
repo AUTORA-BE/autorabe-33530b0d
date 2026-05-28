@@ -21,6 +21,8 @@ import { CarCard, type Car, vehicleQueries } from "@/features/listings";
 import { Button } from "@/components/ui/button";
 import { getCarByIdFromDb, formatPrice, formatMileage, getSellerContact } from "@/utils/carUtils";
 import { useFavorites } from "@/features/favorites";
+import { useAuthPrompt } from "@/features/auth";
+
 import { useToast } from "@/hooks/use-toast";
 import { useTrackView } from "@/hooks/useTrackView";
 import { supabase } from "@/integrations/supabase/client";
