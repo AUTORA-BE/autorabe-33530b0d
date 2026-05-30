@@ -1,86 +1,54 @@
 
-# Refonte page Paramètres — Style iOS-like premium
+# Plan — Audit de migration Lovable Cloud → Supabase externe
 
-Refonte complète de `src/pages/Settings.tsx` (608 lignes) pour passer d'une liste plate de cartes glassmorphism à une expérience **iOS Settings native** : sections sémantiques claires, recherche instantanée, nouvelle zone Sécurité, et touch targets calibrés mobile.
+## Objectif
+Produire **un seul fichier** `MIGRATION_ASSESSMENT.md` à la racine du repo, basé uniquement sur le contenu réel des fichiers (citations chemin:ligne + extraits). Aucune autre modification de code.
 
-## 1. Refonte visuelle — Sections iOS-like
+## Méthode (lecture seule)
 
-**Hero profil** (conservé, allégé) : avatar + nom + email + badges (Premium / Admin) + CTA upgrade.
+1. **Section 1 — `@lovable.dev/cloud-auth-js`**
+   - `rg -n "@lovable.dev/cloud-auth-js" src/`
+   - Pour chaque occurrence : ouvrir le fichier, extraire la ligne d'import + chaque méthode appelée (`signInWithOAuth`, `setSession`, etc.).
+   - Compter le nombre d'appels distincts à remplacer.
 
-**Sections regroupées** avec en-têtes sticky type iOS (`SF` style — Playfair pour le titre, Inter caps tracking pour les labels de section). Chaque section = un GlassCard avec **icône colorée carrée** (style iOS) par row :
+2. **Section 2 — `LOVABLE_API_KEY`**
+   - `rg -n "LOVABLE_API_KEY" supabase/functions/ src/`
+   - Pour chaque Edge Function : extraire le `Deno.env.get(...)`, l'URL appelée (`ai.gateway.lovable.dev/...`), et le `model` passé.
+   - Déterminer s'il s'agit uniquement du chatbot fiscal (`explain-taxes`, `car-chat`) ou aussi d'autres usages (matching, modération, embeddings).
 
-| Section | Icône / couleur | Rows |
-|---|---|---|
-| **Mon activité** | Bleu | Mes annonces, Favoris, Messages, Mes alertes |
-| **Compte** | Indigo | Nom affiché, Email, Téléphone, Avatar |
-| **Sécurité** *(nouvelle)* | Rouge | Changer mot de passe, Sessions actives, Déconnecter partout |
-| **Préférences** | Emerald (primary) | Langue, Thème (clair/sombre/auto), Région |
-| **Notifications** | Orange | Email, Push, Alertes véhicules, Messages |
-| **Confidentialité** | Violet | Cookies, Exporter mes données, Profil public |
-| **Abonnement** | Gold | Plan actuel, Gérer abonnement, Historique paiements |
-| **À propos** | Gris | Version app, CGU, Confidentialité, Contact support |
-| **Zone danger** | Destructive | Supprimer le compte, Déconnexion |
+3. **Section 3 — Edge Functions**
+   - `ls supabase/functions/` + `wc -l` sur chaque `index.ts`.
+   - Pour chaque fonction : `rg "Deno.env.get"` pour secrets, `rg "fetch\("` pour endpoints externes.
 
-Les icônes carrées colorées (style iOS Settings — fond saturé, icône blanche 18px) remplacent les bulles `bg-primary/10` actuelles.
+4. **Section 4 — Migrations SQL**
+   - `ls -la supabase/migrations/`
+   - Comptages via `rg -c` :
+     - `CREATE TABLE`, `CREATE POLICY`, `CREATE (OR REPLACE )?FUNCTION`, `CREATE TRIGGER`, `CREATE INDEX`, `CREATE EXTENSION`
+   - `rg "auth\.users" supabase/migrations/` pour détecter les FK directs.
 
-## 2. Recherche dans les paramètres
+5. **Section 5 — Dépendances Vercel**
+   - `rg -n "@vercel/speed-insights" src/`
+   - Vérifier présence de `vercel.json`, `.vercel/`, workflow GH Actions Vercel.
+   - Croiser avec `DEPLOYMENT.md` (déjà connu : il mentionne Vercel) pour conclure si c'est actif ou résiduel.
 
-Barre de recherche **sticky** sous le header (style iOS Spotlight) :
-- Input `Rechercher dans les paramètres…` avec icône loupe
-- Filtre live sur **label + description + keywords** de chaque row (matching fuzzy basique, case-insensitive)
-- Résultats affichés en liste plate avec breadcrumb de section (`Préférences › Langue`)
-- État vide élégant si 0 résultat
+6. **Section 6 — Realtime**
+   - Côté client : `rg -n "\.channel\(|\.subscribe\(" src/`
+   - Côté DB : `rg -n "ALTER PUBLICATION supabase_realtime" supabase/migrations/`
+   - Lister les tables effectivement publiées.
 
-Implémenté en client (registre statique de rows) — pas de backend nécessaire.
+7. **Section 7 — Estimation honnête**
+   - Fourchette d'heures par axe (schéma, edge functions, auth, AI Gateway, E2E) + marge de sécurité recommandée, basée sur les volumes mesurés aux sections 1–6.
 
-## 3. Section Sécurité (nouvelle)
+8. **Section 8 — Verdict**
+   - Choisir UNE des trois recommandations (A migrer maintenant / B post-launch / C rester définitivement) avec argumentation appuyée sur les chiffres des sections précédentes.
 
-Trois actions :
-1. **Changer le mot de passe** → modal avec champs *Mot de passe actuel / nouveau / confirmation* + validation force (réutilise `usePasswordValidation`). Appel `supabase.auth.updateUser({ password })` après ré-auth.
-2. **Sessions actives** → liste des sessions Supabase (`auth.admin.listUserSessions` côté edge function `list-user-sessions`, sinon affichage simplifié de la session courante avec user-agent et dernière activité)
-3. **Déconnecter tous les autres appareils** → `supabase.auth.signOut({ scope: 'others' })`
+## Règles d'or
+- Aucune invention. Toute affirmation = citation `chemin:ligne` + extrait.
+- Si non vérifiable depuis les fichiers → marquer **"À VÉRIFIER"** avec la raison.
+- Ton factuel, pas rassurant. Pas de marketing.
+- **Aucun autre fichier modifié.** Pas de commit. Pas de changement de code.
 
-Note technique : `list-user-sessions` nécessite une **edge function** (Supabase n'expose pas la liste côté client). Première version : afficher uniquement la session courante + bouton "Déconnecter partout". L'edge function peut être ajoutée en V2 si tu valides.
+## Livrable unique
+`MIGRATION_ASSESSMENT.md` à la racine, structuré exactement avec les 8 sections demandées.
 
-## 4. UX mobile native
-
-- **Touch targets** : tous les rows passent à `min-h-[52px]` (au-dessus des 44px iOS)
-- **Pull-to-refresh** sur la page (réutilise `<PullToRefresh>` existant) pour recharger profil + prefs
-- **Transitions natives** : ChevronRight + active scale 0.97, haptic feedback (useHapticFeedback) sur tap des rows
-- **Sticky header compact** au scroll : titre "Paramètres" qui apparaît dans le header quand on scroll, hero profil qui réduit
-- **Safe area** : `pb-[calc(env(safe-area-inset-bottom)+96px)]` pour éviter BottomNav
-- **Séparateurs iOS** : `border-t border-border/15 ml-[60px]` (commence après l'icône, style iOS)
-- **Cards rounded** `rounded-[14px]` au lieu de `[20px]` pour matcher iOS Settings
-
-## 5. Architecture fichiers
-
-```
-src/features/settings/
-├── components/
-│   ├── SettingsSection.tsx       (GlassCard + titre + rows)
-│   ├── SettingsRow.tsx           (extrait, icône carrée colorée)
-│   ├── SettingsSearch.tsx        (sticky search + résultats)
-│   ├── ProfileHero.tsx           (avatar + nom + badges)
-│   ├── SecuritySection.tsx       (mot de passe, sessions, logout all)
-│   └── ChangePasswordModal.tsx
-├── hooks/
-│   └── useSettingsSearch.ts      (registre + filtre)
-└── index.ts
-```
-
-`Settings.tsx` devient un orchestrateur léger (~150 lignes) qui assemble ces composants.
-
-## Détails techniques
-
-- Aucune migration DB requise (tout existe déjà : `user_preferences`, `profiles`, `auth.users`)
-- Réutilise hooks existants : `useFavorites`, `useSubscription`, `useIsAdmin`, `usePushNotifications`, `useSellerListings`, `usePasswordValidation`, `useHapticFeedback`
-- i18n : ajouter ~15 clés (`settings.search.placeholder`, `settings.security.title`, `settings.security.changePassword`, etc.) dans les 4 fichiers `fr/nl/de/en.json`
-- Pas de changement de comportement business — seulement la couche présentation et l'ajout de la section Sécurité (changement mot de passe + logout all)
-- Animations Framer Motion conservées (stagger), durées 200-300ms (respecte la mémoire projet)
-- Désactive le sticky search header sur desktop (`md:static`)
-
-## Hors-scope (à confirmer en V2 si besoin)
-
-- 2FA (TOTP) : Supabase MFA disponible mais demande un flow complet (enroll + verify + recovery codes) — peut être ajouté plus tard
-- Liste détaillée des sessions actives : nécessite edge function `list-user-sessions`
-- Authentification biométrique (WebAuthn / passkeys)
+Approuve ce plan pour que je passe en mode build et produise le rapport.
