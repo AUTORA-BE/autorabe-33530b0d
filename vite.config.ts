@@ -29,7 +29,7 @@ const pwaOptions = {
     cleanupOutdatedCaches: true,
     runtimeCaching: [
       {
-        urlPattern: /^https:\/\/okeiblbufwhfirxrzkfo\.supabase\.co\/rest\/v1\/.*/i,
+        urlPattern: /^https:\/\/jbdsjqoonpieusfvkhyo\.supabase\.co\/rest\/v1\/.*/i,
         handler: "NetworkFirst",
         options: {
           cacheName: "autora-api-cache",
@@ -38,7 +38,7 @@ const pwaOptions = {
         },
       },
       {
-        urlPattern: /^https:\/\/okeiblbufwhfirxrzkfo\.supabase\.co\/storage\/.*/i,
+        urlPattern: /^https:\/\/jbdsjqoonpieusfvkhyo\.supabase\.co\/storage\/.*/i,
         handler: "CacheFirst",
         options: {
           cacheName: "autora-images-cache",

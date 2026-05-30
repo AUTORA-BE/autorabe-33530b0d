@@ -2,13 +2,13 @@
 # Evaluated top→bottom. Real static files in /dist are served BEFORE these
 # rules, so /sitemap.xml, /sitemap-pages.xml and /assets/* are untouched.
 
-# ── Dynamic vehicle sitemaps → Supabase Edge Function (PROD project "okei") ──
+# ── Dynamic vehicle sitemaps → Supabase Edge Function (PROD project "jbds") ──
 # 302 so Googlebot follows through to the freshly generated XML. One line per
 # language because the edge function validates ?lang against its allow-list.
-/sitemap-vehicles-fr.xml   https://okeiblbufwhfirxrzkfo.supabase.co/functions/v1/dynamic-sitemap?lang=fr   302
-/sitemap-vehicles-nl.xml   https://okeiblbufwhfirxrzkfo.supabase.co/functions/v1/dynamic-sitemap?lang=nl   302
-/sitemap-vehicles-de.xml   https://okeiblbufwhfirxrzkfo.supabase.co/functions/v1/dynamic-sitemap?lang=de   302
-/sitemap-vehicles-en.xml   https://okeiblbufwhfirxrzkfo.supabase.co/functions/v1/dynamic-sitemap?lang=en   302
+/sitemap-vehicles-fr.xml   https://jbdsjqoonpieusfvkhyo.supabase.co/functions/v1/dynamic-sitemap?lang=fr   302
+/sitemap-vehicles-nl.xml   https://jbdsjqoonpieusfvkhyo.supabase.co/functions/v1/dynamic-sitemap?lang=nl   302
+/sitemap-vehicles-de.xml   https://jbdsjqoonpieusfvkhyo.supabase.co/functions/v1/dynamic-sitemap?lang=de   302
+/sitemap-vehicles-en.xml   https://jbdsjqoonpieusfvkhyo.supabase.co/functions/v1/dynamic-sitemap?lang=en   302
 
 # ── SPA fallback — MUST be the last rule ──
 # Every non-file route renders index.html so React Router can take over.
