@@ -69,7 +69,7 @@ const Footer = () => {
           {/* Brand column */}
           <div className="col-span-2 sm:col-span-2 lg:col-span-1 space-y-5">
             <Link to="/" className="flex items-center gap-2.5">
-              <img src={autoraLogo} alt="AutoRA" className="w-8 h-8 rounded-xl object-cover" />
+              <img src={autoraLogo} alt="Logo AutoRA marketplace auto belge" className="w-8 h-8 rounded-xl object-cover" />
               <span className="font-display text-lg font-bold tracking-wider">
                 <span className="text-foreground">Auto</span>
                 <span className="text-primary">RA</span>
