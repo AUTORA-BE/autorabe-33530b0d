@@ -1,10 +1,12 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Store } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 interface ChatHeaderProps {
   otherUserName: string;
   otherUserAvatar?: string;
+  otherUserId?: string;
   isOnline: boolean;
   isTyping: boolean;
   carBrand?: string;
@@ -16,6 +18,7 @@ interface ChatHeaderProps {
 export function ChatHeader({
   otherUserName,
   otherUserAvatar,
+  otherUserId,
   isOnline,
   isTyping,
   carBrand,
@@ -23,8 +26,8 @@ export function ChatHeader({
   onBack,
   showBackButton = false
 }: ChatHeaderProps) {
-  const { t } = useLanguage();
-  
+  const { t, language } = useLanguage();
+
   const getInitials = (name: string) => {
     return name
       .split(' ')
@@ -44,7 +47,7 @@ export function ChatHeader({
           <ArrowLeft className="h-5 w-5 text-foreground" />
         </button>
       )}
-      
+
       <div className="relative">
         <Avatar className="h-9 w-9">
           <AvatarImage src={otherUserAvatar} alt={otherUserName} />
@@ -52,13 +55,13 @@ export function ChatHeader({
             {getInitials(otherUserName || 'U')}
           </AvatarFallback>
         </Avatar>
-        <span 
+        <span
           className={`absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-card ${
             isOnline ? 'bg-primary' : 'bg-muted'
           }`}
         />
       </div>
-      
+
       <div className="flex-1 min-w-0">
         <h3 className="text-sm font-semibold text-foreground truncate leading-tight">
           {otherUserName || 'Utilisateur'}
@@ -80,6 +83,18 @@ export function ChatHeader({
           )}
         </p>
       </div>
+
+      {otherUserId && (
+        <Link
+          to={`/seller/${otherUserId}`}
+          className="shrink-0 inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-background px-3 py-1.5 text-xs font-medium text-foreground hover:bg-secondary transition-colors"
+        >
+          <Store className="h-3.5 w-3.5" strokeWidth={1.8} />
+          <span className="hidden sm:inline">
+            {language === 'nl' ? 'Bekijk vitrine' : 'Voir la vitrine'}
+          </span>
+        </Link>
+      )}
     </div>
   );
 }
