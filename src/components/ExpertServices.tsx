@@ -144,9 +144,10 @@ const ExpertServices = memo(() => {
                 size="sm"
                 className="group/btn gap-2 px-0 text-primary hover:text-primary hover:bg-transparent font-semibold"
                 onClick={() => navigate("/services")}
+                aria-label={t("En savoir plus sur nos services experts", "Meer info over onze expertdiensten", "Learn more about our expert services")}
               >
                 {t("En savoir plus", "Meer info", "Learn more")}
-                <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
+                <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" aria-hidden="true" />
               </Button>
             </motion.div>
           ))}

@@ -134,7 +134,7 @@ const ListingPreview = memo(function ListingPreview({ data, photoPreview, photoC
           {photoPreview ? (
             <img
               src={photoPreview}
-              alt="Aperçu"
+              alt="Aperçu de la photo principale de l'annonce"
               className="w-full h-full object-cover"
             />
           ) : (
