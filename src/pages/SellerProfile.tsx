@@ -241,100 +241,134 @@ const SellerProfile = () => {
           </button>
         </div>
 
-        {/* ── Profile Header Card ── */}
+        {/* ── Profile Header Card (with cover image) ── */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
           className="container mx-auto px-6 sm:px-8 mb-8"
         >
-          <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-card/80 backdrop-blur-sm p-6 sm:p-8">
-            {/* Subtle accent bar */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary/60 via-primary to-primary/60" />
+          <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-card/80 backdrop-blur-sm">
+            {/* Cover image banner */}
+            <div className="relative h-32 sm:h-48 w-full overflow-hidden bg-gradient-to-br from-primary/15 via-primary/5 to-background">
+              {profile.cover_image_url ? (
+                <img src={profile.cover_image_url} alt="" className="w-full h-full object-cover" />
+              ) : (
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/5 to-transparent" />
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-card/90 via-card/20 to-transparent" />
+              {isOwnProfile && (
+                <button
+                  onClick={() => setEditOpen(true)}
+                  className="absolute top-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-background/90 backdrop-blur-md border border-border/50 px-3 py-1.5 text-xs font-medium text-foreground shadow-md hover:bg-background transition-colors"
+                >
+                  <Pencil className="w-3 h-3" strokeWidth={2} />
+                  {language === "nl" ? "Vitrine bewerken" : "Modifier ma vitrine"}
+                </button>
+              )}
+            </div>
 
-            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-              {/* Avatar */}
-              <div className="relative shrink-0">
-                <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border-2 border-border/50 bg-secondary">
-                  {profile.avatar_url ? (
-                    <img src={profile.avatar_url} alt={displayName} className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-primary/[0.06]">
-                      <span className="text-3xl font-serif font-light text-primary">
-                        {displayName.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
-                  )}
-                </div>
-                {/* Pro badge */}
-                <div className="absolute -bottom-2 -right-2 bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md shadow-md">
-                  Pro
-                </div>
-              </div>
-
-              {/* Info */}
-              <div className="flex-1 text-center sm:text-left">
-                <h1 className="text-2xl sm:text-3xl font-serif font-light text-foreground mb-2">
-                  {displayName}
-                </h1>
-
-                {/* Rating */}
-                <div className="flex items-center justify-center sm:justify-start gap-2 mb-3">
-                  <div className="flex items-center gap-0.5">
-                    {[1, 2, 3, 4, 5].map(star => (
-                      <Star
-                        key={star}
-                        className={`w-4 h-4 ${star <= Math.round(avgRating) ? "text-amber-400 fill-amber-400" : "text-border"}`}
-                        strokeWidth={1.5}
-                      />
-                    ))}
+            <div className="relative px-6 sm:px-8 pb-6 sm:pb-8 -mt-12 sm:-mt-16">
+              <div className="flex flex-col sm:flex-row items-center sm:items-end gap-6">
+                {/* Avatar */}
+                <div className="relative shrink-0">
+                  <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border-4 border-card bg-secondary shadow-lg">
+                    {profile.avatar_url ? (
+                      <img src={profile.avatar_url} alt={displayName} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-primary/[0.06]">
+                        <span className="text-3xl font-serif font-light text-primary">
+                          {displayName.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                    )}
                   </div>
-                  <span className="text-sm font-medium text-foreground">{avgRating.toFixed(1)}</span>
-                  <span className="text-sm text-muted-foreground">
-                    ({reviews.length} {language === "nl" ? "beoordelingen" : "avis"})
-                  </span>
+                  <div className="absolute -bottom-2 -right-2 bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md shadow-md">
+                    Pro
+                  </div>
                 </div>
 
-                {/* Meta badges */}
-                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 text-sm text-muted-foreground">
-                  {profile.postal_code && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-background border border-border/50">
-                      <MapPin className="w-3.5 h-3.5" strokeWidth={1.5} />
-                      {profile.postal_code}
+                {/* Info */}
+                <div className="flex-1 text-center sm:text-left">
+                  <h1 className="text-2xl sm:text-3xl font-serif font-light text-foreground mb-2">
+                    {displayName}
+                  </h1>
+
+                  {/* Rating */}
+                  <div className="flex items-center justify-center sm:justify-start gap-2 mb-3">
+                    <div className="flex items-center gap-0.5">
+                      {[1, 2, 3, 4, 5].map(star => (
+                        <Star
+                          key={star}
+                          className={`w-4 h-4 ${star <= Math.round(avgRating) ? "text-amber-400 fill-amber-400" : "text-border"}`}
+                          strokeWidth={1.5}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-sm font-medium text-foreground">{avgRating.toFixed(1)}</span>
+                    <span className="text-sm text-muted-foreground">
+                      ({reviews.length} {language === "nl" ? "beoordelingen" : "avis"})
                     </span>
-                  )}
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-background border border-border/50">
-                    <Clock className="w-3.5 h-3.5" strokeWidth={1.5} />
-                    {language === "nl" ? "Lid sinds" : "Membre depuis"} {memberSince}
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-background border border-border/50">
-                    <Car className="w-3.5 h-3.5" strokeWidth={1.5} />
-                    {listings.length} {language === "nl" ? "advertenties" : "annonces"}
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/[0.06] border border-primary/15 text-primary">
-                    <Shield className="w-3.5 h-3.5" strokeWidth={1.5} />
-                    {language === "nl" ? "Geverifieerd" : "Vérifié"}
-                  </span>
-                </div>
+                  </div>
 
-                {/* Contact button */}
-                <div className="mt-5 flex justify-center sm:justify-start">
-                  <Button
-                    onClick={handleContact}
-                    disabled={contacting}
-                    className="btn-primary-gradient rounded-xl px-6 py-3 h-auto text-sm font-semibold shadow-md"
-                  >
-                    <MessageSquare className="w-4 h-4 mr-2" strokeWidth={1.5} />
-                    {contacting
-                      ? (language === "nl" ? "Even geduld..." : "Chargement...")
-                      : (language === "nl" ? "Contacteer verkoper" : "Contacter le vendeur")
-                    }
-                  </Button>
+                  {/* Meta badges */}
+                  <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-3 text-sm text-muted-foreground">
+                    {profile.postal_code && (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-background border border-border/50">
+                        <MapPin className="w-3.5 h-3.5" strokeWidth={1.5} />
+                        {profile.postal_code}
+                      </span>
+                    )}
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-background border border-border/50">
+                      <Clock className="w-3.5 h-3.5" strokeWidth={1.5} />
+                      {language === "nl" ? "Lid sinds" : "Membre depuis"} {memberSince}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-background border border-border/50">
+                      <Car className="w-3.5 h-3.5" strokeWidth={1.5} />
+                      {listings.length} {language === "nl" ? "advertenties" : "annonces"}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/[0.06] border border-primary/15 text-primary">
+                      <Shield className="w-3.5 h-3.5" strokeWidth={1.5} />
+                      {language === "nl" ? "Geverifieerd" : "Vérifié"}
+                    </span>
+                  </div>
+
+                  {/* Action buttons */}
+                  <div className="mt-5 flex flex-wrap justify-center sm:justify-start gap-2">
+                    <Button
+                      onClick={handleContact}
+                      disabled={contacting}
+                      className="btn-primary-gradient rounded-xl px-6 py-3 h-auto text-sm font-semibold shadow-md"
+                    >
+                      <MessageSquare className="w-4 h-4 mr-2" strokeWidth={1.5} />
+                      {contacting
+                        ? (language === "nl" ? "Even geduld..." : "Chargement...")
+                        : (language === "nl" ? "Contacteer verkoper" : "Contacter le vendeur")
+                      }
+                    </Button>
+                    {(profile.postal_code || profile.garage_name) && (
+                      <Button
+                        asChild
+                        variant="outline"
+                        className="rounded-xl px-5 py-3 h-auto text-sm font-semibold border-border/60"
+                      >
+                        <a
+                          href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent([profile.garage_name, profile.postal_code, "Belgique"].filter(Boolean).join(" "))}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Navigation className="w-4 h-4 mr-2" strokeWidth={1.5} />
+                          {language === "nl" ? "Route" : "Itinéraire"}
+                        </a>
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </motion.div>
+
 
         {/* ── Tabs ── */}
         <div className="container mx-auto px-6 sm:px-8">
