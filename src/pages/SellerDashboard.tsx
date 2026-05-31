@@ -6,6 +6,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SEOHead from "@/components/SEOHead";
+import { Link } from "react-router-dom";
+import { Store, ChevronRight } from "lucide-react";
 import { Header, Footer, BackButton } from "@/shared/components";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import SellerDashboardComponent from "@/features/listings/components/SellerDashboard";
