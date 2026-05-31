@@ -568,6 +568,57 @@ const SellerProfile = () => {
                 transition={{ duration: 0.3 }}
                 className="max-w-2xl mx-auto space-y-6"
               >
+                {/* Présentation libre */}
+                {profile.presentation && (
+                  <div className="rounded-2xl border border-border/50 bg-card/80 backdrop-blur-sm p-6 sm:p-8">
+                    <div className="flex items-center gap-2 mb-4">
+                      <FileText className="w-4 h-4 text-primary" strokeWidth={1.5} />
+                      <h3 className="font-serif text-lg font-light text-foreground">
+                        {language === "nl" ? "Voorstelling" : "Présentation"}
+                      </h3>
+                    </div>
+                    <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+                      {profile.presentation}
+                    </p>
+                  </div>
+                )}
+
+                {/* Services proposés */}
+                {profile.services && profile.services.length > 0 && (
+                  <div className="rounded-2xl border border-border/50 bg-card/80 backdrop-blur-sm p-6 sm:p-8">
+                    <div className="flex items-center gap-2 mb-4">
+                      <Wrench className="w-4 h-4 text-primary" strokeWidth={1.5} />
+                      <h3 className="font-serif text-lg font-light text-foreground">
+                        {language === "nl" ? "Aangeboden diensten" : "Services proposés"}
+                      </h3>
+                    </div>
+                    <ul className="space-y-2">
+                      {profile.services.map((s, i) => (
+                        <li key={i} className="flex items-start gap-2.5 text-sm text-foreground">
+                          <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                          <span>{s}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Horaires d'ouverture */}
+                {profile.opening_hours && (
+                  <div className="rounded-2xl border border-border/50 bg-card/80 backdrop-blur-sm p-6 sm:p-8">
+                    <div className="flex items-center gap-2 mb-4">
+                      <Clock className="w-4 h-4 text-primary" strokeWidth={1.5} />
+                      <h3 className="font-serif text-lg font-light text-foreground">
+                        {language === "nl" ? "Openingsuren" : "Horaires d'ouverture"}
+                      </h3>
+                    </div>
+                    <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+                      {profile.opening_hours}
+                    </p>
+                  </div>
+                )}
+
+
                 {/* Info card */}
                 <div className="rounded-2xl border border-border/50 bg-card/80 backdrop-blur-sm p-6 sm:p-8">
                   <h3 className="font-serif text-xl font-light text-foreground mb-6">
