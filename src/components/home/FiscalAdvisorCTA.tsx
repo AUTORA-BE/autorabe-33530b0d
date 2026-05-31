@@ -29,9 +29,9 @@ const FiscalAdvisorCTA = memo(function FiscalAdvisorCTA() {
       language === "en" ? "TMC, annual tax, LEZ — clear answers, region by region." :
       "TMC, taxe annuelle, LEZ — réponse claire, région par région.",
     cta:
-      language === "nl" ? "Meer informatie" :
-      language === "de" ? "Mehr erfahren" :
-      language === "en" ? "Learn more" : "En savoir plus",
+      language === "nl" ? "Meer info over de autofiscaliteit 2026" :
+      language === "de" ? "Mehr über die Kfz-Steuer 2026 erfahren" :
+      language === "en" ? "Learn more about car taxation 2026" : "En savoir plus sur la fiscalité auto 2026",
     chips: [
       { icon: Calculator, label: language === "nl" ? "TMC" : "TMC" },
       { icon: MapPin, label: "LEZ" },
