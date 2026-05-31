@@ -140,14 +140,6 @@ function LuxuryCarCard({
           )}
         </div>
 
-        {featured && (
-          <div className="absolute right-3 top-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-400/25 bg-amber-500/10 px-2.5 py-0.5 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-amber-300 backdrop-blur-md">
-              <Sparkles className="h-3 w-3" strokeWidth={2.5} />
-              Coup de cœur
-            </span>
-          </div>
-        )}
 
         <div className="absolute bottom-3 left-3 right-3">
           <p className="truncate text-[11px] font-medium uppercase tracking-[0.14em] text-white/65">
