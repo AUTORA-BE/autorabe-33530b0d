@@ -143,6 +143,7 @@ const Header = () => {
               variant="ghost"
               size="icon"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              aria-label={theme === "dark" ? "Activer le mode clair" : "Activer le mode sombre"}
               className="text-muted-foreground hover:text-foreground rounded-xl w-9 h-9"
             >
               {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
