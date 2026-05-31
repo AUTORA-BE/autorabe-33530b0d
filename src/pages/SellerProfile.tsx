@@ -256,7 +256,7 @@ const SellerProfile = () => {
               ) : (
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/5 to-transparent" />
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-card/90 via-card/20 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-card via-card/60 to-black/40" />
               {isOwnProfile && (
                 <button
                   onClick={() => setEditOpen(true)}
