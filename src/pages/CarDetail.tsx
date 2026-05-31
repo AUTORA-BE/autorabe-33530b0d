@@ -506,20 +506,10 @@ const CarDetail = () => {
                     </>
                   )}
 
-                  {/* Elegant dot indicators instead of counter */}
+                  {/* Discrete counter indicator (top right) */}
                   {images.length > 1 && (
-                    <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-black/30 backdrop-blur-md">
-                      {images.map((_: string, idx: number) => (
-                        <button
-                          key={idx}
-                          onClick={(e) => { e.stopPropagation(); setCurrentImageIndex(idx); }}
-                          className={`rounded-full transition-all duration-200 ${
-                            idx === currentImageIndex
-                              ? "w-5 h-1.5 bg-white"
-                              : "w-1.5 h-1.5 bg-white/40 hover:bg-white/60"
-                          }`}
-                        />
-                      ))}
+                    <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/55 backdrop-blur-md text-white text-[11px] font-medium tabular-nums tracking-wide pointer-events-none">
+                      {currentImageIndex + 1} / {images.length}
                     </div>
                   )}
 
@@ -540,24 +530,6 @@ const CarDetail = () => {
                   </div>
                 </div>
 
-                {/* Thumbnail strip */}
-                {images.length > 1 && (
-                  <div className="p-3 sm:p-4 flex gap-2 sm:gap-3 overflow-x-auto scrollbar-hide">
-                    {images.map((img: string, idx: number) => (
-                      <button
-                        key={idx}
-                        onClick={() => setCurrentImageIndex(idx)}
-                        className={`flex-shrink-0 w-20 h-16 sm:w-24 sm:h-[72px] rounded-xl overflow-hidden border-2 transition-all duration-200 ${
-                          idx === currentImageIndex
-                            ? "border-primary ring-2 ring-primary/20 scale-[1.02]"
-                            : "border-transparent opacity-60 hover:opacity-100 hover:border-border"
-                        }`}
-                      >
-                        <img src={img} alt={`Vue ${idx + 1}`} className="w-full h-full object-cover" loading="lazy" />
-                      </button>
-                    ))}
-                  </div>
-                )}
               </motion.div>
 
               {/* Fullscreen Gallery Overlay */}

@@ -635,7 +635,7 @@ const Recherche = () => {
     : "Marketplace · Sélection certifiée";
 
   return (
-    <div className="relative min-h-screen bg-[#010101] text-white">
+    <div className="page-gradient relative text-foreground">
       {/* Ambient halo — extremely subtle, no white tracery, no grid */}
       <div
         aria-hidden
