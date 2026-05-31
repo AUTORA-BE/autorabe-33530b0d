@@ -114,8 +114,8 @@ function FullscreenSearch({ isOpen, onClose, brands, onSearch, t }: FullscreenSe
         >
           {/* Header */}
           <div className="flex items-center gap-3 px-5 py-4 border-b border-border/30">
-            <button onClick={onClose} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-secondary transition-colors">
-              <X className="w-5 h-5 text-foreground" />
+            <button onClick={onClose} aria-label="Fermer la recherche" className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-secondary transition-colors">
+              <X className="w-5 h-5 text-foreground" aria-hidden="true" />
             </button>
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
