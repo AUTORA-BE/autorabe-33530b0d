@@ -51,6 +51,21 @@ const SellerDashboardPage = () => {
           <BackButton to="/" className="mb-4" />
           <div className="max-w-6xl mx-auto space-y-6">
             {isPro && (
+              <Link
+                to="/dashboard/vitrine"
+                className="group flex items-center gap-4 rounded-2xl border border-border/50 bg-card p-4 sm:p-5 hover:border-primary/40 hover:bg-card/80 transition-all"
+              >
+                <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                  <Store className="w-5 h-5 text-primary" strokeWidth={1.5} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-foreground">Ma vitrine garage</p>
+                  <p className="text-xs text-muted-foreground">Personnalisez la page publique de votre garage (couverture, présentation, services, horaires).</p>
+                </div>
+                <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" strokeWidth={1.5} />
+              </Link>
+            )}
+            {isPro && (
               <div className="rounded-2xl border border-border/50 bg-card p-4 sm:p-5">
                 <p className="text-sm font-semibold mb-1">Vérification KYC professionnelle (DSA art. 30)</p>
                 <p className="text-xs text-muted-foreground mb-3">
