@@ -77,8 +77,16 @@ const SellerProfile = () => {
   const [listings, setListings] = useState<SellerListing[]>([]);
   const [reviews, setReviews] = useState<SellerReview[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [editOpen, setEditOpen] = useState(false);
   const sellerListingIds = useMemo(() => listings.map(l => l.id), [listings]);
   const favCounts = useFavoriteCounts(sellerListingIds);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => setCurrentUserId(session?.user?.id ?? null));
+  }, []);
+
+  const isOwnProfile = currentUserId && userId && currentUserId === userId;
 
   /* Fetch all data in parallel */
   useEffect(() => {
@@ -87,12 +95,13 @@ const SellerProfile = () => {
       setLoading(true);
 
       const [profileRes, _listingsRes, _reviewsRes] = await Promise.all([
-        supabase.from("profiles").select("user_id, display_name, avatar_url, garage_name, phone, postal_code, created_at").eq("user_id", userId).single(),
+        supabase.from("profiles").select("user_id, display_name, avatar_url, garage_name, phone, postal_code, created_at, cover_image_url, opening_hours, services, presentation").eq("user_id", userId).single(),
         supabase.from("car_listings_public").select("id, brand, model, year, price, mileage, fuel_type, transmission, photos, location, created_at").eq("seller_type", "professionnel").order("created_at", { ascending: false }),
         supabase.from("reviews").select("id, user_id, rating, comment, created_at"),
       ]);
 
       if (profileRes.data) setProfile(profileRes.data as SellerProfile);
+
 
       // Use the secure RPC function to get seller listings without exposing sensitive columns
       const { data: sellerListings } = await supabase
