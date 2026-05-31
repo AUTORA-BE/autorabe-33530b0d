@@ -21,7 +21,7 @@ const fr = {
   sections: [
     {
       title: "1. Responsable du traitement",
-      body: `**Responsable du traitement** : Alperen [Nom — à compléter], en tant que personne physique éditrice du projet AutoRA.be
+      body: `**Responsable du traitement** : Alperen Gursever, en tant que personne physique éditrice du projet AutoRA.be
 **Statut** : Phase bêta — pré-lancement public, exploitation non commerciale
 **Email de contact RGPD** : autoracontact@gmail.com
 **Adresse de contact** : Belgique (adresse précise communiquée sur demande à l'email ci-dessus)

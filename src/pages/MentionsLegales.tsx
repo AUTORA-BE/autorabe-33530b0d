@@ -11,7 +11,7 @@ const content = {
         title: "1. Éditeur du site",
         body: `**Dénomination** : AutoRA.be (ci-après « AutoRA »)
 **Statut** : Plateforme en phase bêta — pré-lancement public
-**Responsable de la publication** : Alperen [Nom de famille à compléter]
+**Responsable de la publication** : Alperen Gursever
 **Adresse de contact** : autoracontact@gmail.com
 **Email** : autoracontact@gmail.com
 
