@@ -107,7 +107,7 @@ export function useAuth() {
 
       // Save phone, garage_name, postal_code to profile if provided
       if (signUpData.user) {
-        const profileUpdate: Record<string, string | undefined> = {};
+        const profileUpdate: { phone?: string; garage_name?: string; postal_code?: string } = {};
         if (credentials.phone) profileUpdate.phone = credentials.phone;
         if (credentials.garageName) profileUpdate.garage_name = credentials.garageName;
         if (credentials.postalCode) profileUpdate.postal_code = credentials.postalCode;
