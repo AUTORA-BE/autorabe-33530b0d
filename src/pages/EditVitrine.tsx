@@ -131,7 +131,7 @@ const EditVitrine = () => {
                 <div className="rounded-2xl border border-border/50 bg-card/80 backdrop-blur-sm p-6 space-y-5">
                   {/* Cover */}
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium">
+                    <Label htmlFor="vitrine-cover" className="text-sm font-medium">
                       {language === "nl" ? "Omslagfoto" : "Photo de couverture"}
                     </Label>
                     <div className="relative h-32 rounded-xl overflow-hidden border border-border/50 bg-secondary">
@@ -141,32 +141,34 @@ const EditVitrine = () => {
                           <button
                             type="button"
                             onClick={() => setCoverUrl("")}
-                            className="absolute top-2 right-2 w-7 h-7 rounded-full bg-background/90 backdrop-blur-md border border-border flex items-center justify-center hover:bg-background"
+                            aria-label={language === "nl" ? "Omslagfoto verwijderen" : "Supprimer la photo de couverture"}
+                            className="absolute top-2 right-2 w-7 h-7 rounded-full bg-background/90 backdrop-blur-md border border-border flex items-center justify-center hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                           >
-                            <X className="w-3.5 h-3.5" />
+                            <X className="w-3.5 h-3.5" aria-hidden="true" />
                           </button>
                         </>
                       ) : (
                         <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
-                          <ImagePlus className="w-8 h-8" strokeWidth={1.5} />
+                          <ImagePlus className="w-8 h-8" strokeWidth={1.5} aria-hidden="true" />
                         </div>
                       )}
                     </div>
-                    <label className="inline-flex items-center gap-2 cursor-pointer text-xs font-medium text-primary hover:text-primary/80">
-                      <Upload className="w-3.5 h-3.5" />
+                    <label htmlFor="vitrine-cover" className="inline-flex items-center gap-2 cursor-pointer text-xs font-medium text-primary hover:text-primary/80 focus-within:outline-none focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 focus-within:ring-offset-background rounded-md px-1 py-0.5">
+                      <Upload className="w-3.5 h-3.5" aria-hidden="true" />
                       {uploading
                         ? (language === "nl" ? "Bezig met uploaden..." : "Envoi en cours...")
                         : (language === "nl" ? "Foto uploaden (max 5MB)" : "Téléverser une photo (max 5MB)")}
-                      <input type="file" accept="image/*" className="hidden" onChange={handleCoverUpload} disabled={uploading} />
+                      <input id="vitrine-cover" type="file" accept="image/*" className="sr-only" onChange={handleCoverUpload} disabled={uploading} />
                     </label>
                   </div>
 
                   {/* Presentation */}
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium">
+                    <Label htmlFor="vitrine-presentation" className="text-sm font-medium">
                       {language === "nl" ? "Voorstelling" : "Présentation"}
                     </Label>
                     <Textarea
+                      id="vitrine-presentation"
                       value={presentation}
                       onChange={(e) => setPresentation(e.target.value)}
                       rows={4}
@@ -177,10 +179,11 @@ const EditVitrine = () => {
 
                   {/* Services */}
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium">
+                    <Label htmlFor="vitrine-services" className="text-sm font-medium">
                       {language === "nl" ? "Diensten (één per regel)" : "Services proposés (un par ligne)"}
                     </Label>
                     <Textarea
+                      id="vitrine-services"
                       value={servicesText}
                       onChange={(e) => setServicesText(e.target.value)}
                       rows={5}
@@ -190,10 +193,11 @@ const EditVitrine = () => {
 
                   {/* Horaires */}
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium">
+                    <Label htmlFor="vitrine-hours" className="text-sm font-medium">
                       {language === "nl" ? "Openingsuren" : "Horaires d'ouverture"}
                     </Label>
                     <Textarea
+                      id="vitrine-hours"
                       value={hours}
                       onChange={(e) => setHours(e.target.value)}
                       rows={4}
