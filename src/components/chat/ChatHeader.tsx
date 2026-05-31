@@ -87,9 +87,10 @@ export function ChatHeader({
       {otherUserId && (
         <Link
           to={`/seller/${otherUserId}`}
-          className="shrink-0 inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-background px-3 py-1.5 text-xs font-medium text-foreground hover:bg-secondary transition-colors"
+          aria-label={language === 'nl' ? 'Bekijk vitrine van verkoper' : 'Voir la vitrine du vendeur'}
+          className="shrink-0 inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-background px-3 py-1.5 text-xs font-medium text-foreground hover:bg-secondary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
-          <Store className="h-3.5 w-3.5" strokeWidth={1.8} />
+          <Store className="h-3.5 w-3.5" strokeWidth={1.8} aria-hidden="true" />
           <span className="hidden sm:inline">
             {language === 'nl' ? 'Bekijk vitrine' : 'Voir la vitrine'}
           </span>
