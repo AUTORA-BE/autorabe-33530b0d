@@ -724,10 +724,196 @@ const SellerProfile = () => {
         </div>
       </main>
 
+      {isOwnProfile && profile && (
+        <EditVitrineDialog
+          open={editOpen}
+          onOpenChange={setEditOpen}
+          userId={profile.user_id}
+          initial={{
+            cover_image_url: profile.cover_image_url,
+            opening_hours: profile.opening_hours,
+            services: profile.services,
+            presentation: profile.presentation,
+          }}
+          onSaved={(updates) => setProfile((p) => p ? { ...p, ...updates } : p)}
+          language={language}
+        />
+      )}
+
       <Footer />
     </div>
   );
 };
+
+/* ---------- Edit Vitrine Dialog ---------- */
+interface EditVitrineDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  userId: string;
+  initial: {
+    cover_image_url: string | null;
+    opening_hours: string | null;
+    services: string[] | null;
+    presentation: string | null;
+  };
+  onSaved: (updates: Partial<SellerProfile>) => void;
+  language: string;
+}
+
+function EditVitrineDialog({ open, onOpenChange, userId, initial, onSaved, language }: EditVitrineDialogProps) {
+  const { toast } = useToast();
+  const [coverUrl, setCoverUrl] = useState(initial.cover_image_url ?? "");
+  const [hours, setHours] = useState(initial.opening_hours ?? "");
+  const [servicesText, setServicesText] = useState((initial.services ?? []).join("\n"));
+  const [presentation, setPresentation] = useState(initial.presentation ?? "");
+  const [uploading, setUploading] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      setCoverUrl(initial.cover_image_url ?? "");
+      setHours(initial.opening_hours ?? "");
+      setServicesText((initial.services ?? []).join("\n"));
+      setPresentation(initial.presentation ?? "");
+    }
+  }, [open, initial]);
+
+  const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ title: language === "nl" ? "Bestand te groot (max 5MB)" : "Fichier trop volumineux (max 5MB)", variant: "destructive" });
+      return;
+    }
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop();
+      const fileName = `covers/${userId}-${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage.from("avatars").upload(fileName, file, { upsert: true });
+      if (upErr) throw upErr;
+      const { data: { publicUrl } } = supabase.storage.from("avatars").getPublicUrl(fileName);
+      setCoverUrl(publicUrl);
+    } catch (err) {
+      toast({ title: language === "nl" ? "Upload mislukt" : "Échec de l'envoi", variant: "destructive" });
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    const services = servicesText.split("\n").map(s => s.trim()).filter(Boolean);
+    const updates = {
+      cover_image_url: coverUrl || null,
+      opening_hours: hours || null,
+      services,
+      presentation: presentation || null,
+    };
+    const { error } = await supabase.from("profiles").update(updates).eq("user_id", userId);
+    setSaving(false);
+    if (error) {
+      toast({ title: language === "nl" ? "Opslaan mislukt" : "Échec de l'enregistrement", description: error.message, variant: "destructive" });
+      return;
+    }
+    onSaved(updates);
+    toast({ title: language === "nl" ? "Vitrine bijgewerkt" : "Vitrine mise à jour" });
+    onOpenChange(false);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="font-serif text-xl font-light">
+            {language === "nl" ? "Mijn vitrine bewerken" : "Modifier ma vitrine"}
+          </DialogTitle>
+        </DialogHeader>
+
+        <div className="space-y-5 py-2">
+          {/* Cover image */}
+          <div className="space-y-2">
+            <Label className="text-sm">{language === "nl" ? "Omslagfoto" : "Image de couverture"}</Label>
+            <div className="relative h-32 rounded-xl overflow-hidden border border-border/50 bg-secondary">
+              {coverUrl ? (
+                <>
+                  <img src={coverUrl} alt="" className="w-full h-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => setCoverUrl("")}
+                    className="absolute top-2 right-2 w-7 h-7 rounded-full bg-background/90 backdrop-blur-md border border-border flex items-center justify-center hover:bg-background"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </>
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
+                  <ImagePlus className="w-8 h-8" strokeWidth={1.5} />
+                </div>
+              )}
+            </div>
+            <label className="inline-flex items-center gap-2 cursor-pointer text-xs font-medium text-primary hover:text-primary/80">
+              <Upload className="w-3.5 h-3.5" />
+              {uploading
+                ? (language === "nl" ? "Bezig met uploaden..." : "Envoi en cours...")
+                : (language === "nl" ? "Foto uploaden (max 5MB)" : "Téléverser une photo (max 5MB)")}
+              <input type="file" accept="image/*" className="hidden" onChange={handleCoverUpload} disabled={uploading} />
+            </label>
+          </div>
+
+          {/* Presentation */}
+          <div className="space-y-2">
+            <Label className="text-sm">{language === "nl" ? "Voorstelling" : "Présentation"}</Label>
+            <Textarea
+              value={presentation}
+              onChange={(e) => setPresentation(e.target.value)}
+              rows={4}
+              maxLength={1000}
+              placeholder={language === "nl" ? "Beschrijf uw garage..." : "Décrivez votre garage..."}
+            />
+          </div>
+
+          {/* Services */}
+          <div className="space-y-2">
+            <Label className="text-sm">
+              {language === "nl" ? "Diensten (één per regel)" : "Services proposés (un par ligne)"}
+            </Label>
+            <Textarea
+              value={servicesText}
+              onChange={(e) => setServicesText(e.target.value)}
+              rows={5}
+              placeholder={language === "nl" ? "Onderhoud\nReparatie\nKeuring" : "Entretien\nRéparation\nContrôle technique"}
+            />
+          </div>
+
+          {/* Opening hours */}
+          <div className="space-y-2">
+            <Label className="text-sm">{language === "nl" ? "Openingsuren" : "Horaires d'ouverture"}</Label>
+            <Textarea
+              value={hours}
+              onChange={(e) => setHours(e.target.value)}
+              rows={4}
+              placeholder={language === "nl"
+                ? "Ma - Vr: 9u - 18u\nZa: 9u - 12u\nZo: gesloten"
+                : "Lun - Ven: 9h - 18h\nSam: 9h - 12h\nDim: fermé"}
+            />
+          </div>
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>
+            {language === "nl" ? "Annuleren" : "Annuler"}
+          </Button>
+          <Button onClick={handleSave} disabled={saving || uploading}>
+            {saving
+              ? (language === "nl" ? "Opslaan..." : "Enregistrement...")
+              : (language === "nl" ? "Opslaan" : "Enregistrer")}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 
 /* ---------- skeleton ---------- */
 function SellerProfileSkeleton() {
