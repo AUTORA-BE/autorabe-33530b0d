@@ -7,7 +7,7 @@
   </sitemap>
   <!-- Dynamic vehicle listings sitemaps per language.
        Proxied via public/_redirects (Cloudflare Pages) → Supabase Edge Function
-       dynamic-sitemap on the PROD project (okei…). -->
+       dynamic-sitemap on the PROD project (jbds…). -->
   <sitemap>
     <loc>https://autora.be/sitemap-vehicles-fr.xml</loc>
   </sitemap>
