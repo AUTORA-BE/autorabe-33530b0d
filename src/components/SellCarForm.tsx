@@ -679,9 +679,19 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
       };
 
       if (isEditMode && editId) {
+        // Strip fields not present on the car_listings table (handled only by the
+        // create-listing edge function on insert): fuel_consumption, latitude,
+        // longitude, reference_url.
+        const {
+          fuel_consumption: _fc,
+          latitude: _lat,
+          longitude: _lng,
+          reference_url: _ref,
+          ...updatePayload
+        } = listingData;
         const { error } = await supabase
           .from('car_listings')
-          .update(listingData)
+          .update(updatePayload)
           .eq('id', editId);
 
         if (error) {
