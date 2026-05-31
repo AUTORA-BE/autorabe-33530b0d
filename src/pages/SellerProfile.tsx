@@ -12,9 +12,13 @@ import { localBusinessSchema } from "@/lib/seoSchemas";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocalizedVehicleHref } from "@/lib/useLocalizedHref";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import {    Star, MapPin, Phone, Calendar, ArrowLeft, Car, MessageSquare, Info, Shield, Clock, Heart } from "lucide-react";
+import {    Star, MapPin, Phone, Calendar, ArrowLeft, Car, MessageSquare, Info, Shield, Clock, Heart, Navigation, Pencil, ImagePlus, Wrench, FileText, X, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { fr, nl, enUS } from "date-fns/locale";
@@ -30,7 +34,12 @@ interface SellerProfile {
   phone: string | null;
   postal_code: string | null;
   created_at: string;
+  cover_image_url: string | null;
+  opening_hours: string | null;
+  services: string[] | null;
+  presentation: string | null;
 }
+
 
 interface SellerListing {
   id: string;
