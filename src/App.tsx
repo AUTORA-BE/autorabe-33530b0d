@@ -40,6 +40,7 @@ const FAQ = lazy(() => import("./pages/FAQ"));
 const Compare = lazy(() => import("./pages/Compare"));
 const Recherche = lazy(() => import("./pages/Recherche"));
 const SellerDashboard = lazy(() => import("./pages/SellerDashboard"));
+const EditVitrine = lazy(() => import("./pages/EditVitrine"));
 const SellerStats = lazy(() => import("./pages/SellerStats"));
 const SellerProfile = lazy(() => import("./pages/SellerProfile"));
 const Settings = lazy(() => import("./pages/Settings"));
@@ -155,6 +156,7 @@ function AppPages() {
       <Route path="/search" element={<PageTransition><Recherche /></PageTransition>} />
       <Route path="/suche" element={<PageTransition><Recherche /></PageTransition>} />
       <Route path="/dashboard" element={<PageTransition><SellerDashboard /></PageTransition>} />
+      <Route path="/dashboard/vitrine" element={<PageTransition><EditVitrine /></PageTransition>} />
       <Route path="/dashboard/stats" element={<PageTransition><SellerStats /></PageTransition>} />
       <Route path="/seller/:userId" element={<PageTransition><SellerProfile /></PageTransition>} />
       <Route path="/admin/*" element={<PageTransition><AdminLayout /></PageTransition>} />

@@ -74,7 +74,7 @@ export default function MarquesElectriques() {
                 100% Électrique
               </span>
             </div>
-            <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-light text-white dark:text-foreground leading-[1.05] tracking-tight max-w-3xl">
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-light text-white dark:text-foreground leading-[1.05] tracking-tight max-w-3xl">
               L'électrique <span className="text-primary italic">de prestige</span>
             </h1>
             <p className="mt-5 max-w-2xl text-base sm:text-lg text-white/80 dark:text-muted-foreground font-light leading-relaxed">
@@ -94,7 +94,7 @@ export default function MarquesElectriques() {
             <p className="text-xs uppercase tracking-[0.2em] text-primary mb-3 font-medium">
               Pure Players
             </p>
-            <h2 className="font-serif text-3xl sm:text-4xl font-light text-foreground tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-light text-foreground tracking-tight">
               Marques 100% Électriques
             </h2>
           </div>
@@ -111,7 +111,7 @@ export default function MarquesElectriques() {
             <p className="text-xs uppercase tracking-[0.2em] text-primary mb-3 font-medium">
               Constructeurs historiques
             </p>
-            <h2 className="font-serif text-3xl sm:text-4xl font-light text-foreground tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-light text-foreground tracking-tight">
               Marques avec gamme électrique
             </h2>
           </div>
@@ -144,7 +144,7 @@ function BrandCard({ brand }: { brand: BrandInfo }) {
           </div>
         )}
         <div>
-          <h3 className="font-serif text-xl font-medium text-foreground">{brand.name}</h3>
+          <h3 className="text-xl font-medium text-foreground">{brand.name}</h3>
           <p className="text-xs text-muted-foreground mt-0.5 font-light">{brand.models}</p>
         </div>
       </div>

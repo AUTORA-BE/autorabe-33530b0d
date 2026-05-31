@@ -285,6 +285,7 @@ export function ChatWindow({
       <ChatHeader
         otherUserName={conversationDetails?.otherUserName || 'Utilisateur'}
         otherUserAvatar={conversationDetails?.otherUserAvatar}
+        otherUserId={conversationDetails?.otherUserId}
         isOnline={isOnline}
         isTyping={isOtherTyping}
         carBrand={conversationDetails?.carBrand}
