@@ -64,7 +64,7 @@ serve(async (req) => {
       customer_email: customerId ? undefined : user.email,
       line_items: [{ price: priceId, quantity: 1 }],
       mode: "subscription",
-      payment_method_types: ["card", "bancontact"],
+      payment_method_types: ["card", "bancontact", "sepa_debit"],
       success_url: `${origin}/payment-success`,
       cancel_url: `${origin}/payment-canceled`,
     });

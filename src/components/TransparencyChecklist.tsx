@@ -1,4 +1,5 @@
-import {  Check, FileCheck, Wrench, FileText } from "lucide-react";
+import { Check, FileCheck, Wrench, FileText, Info } from "lucide-react";
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
 
 interface TransparencyChecklistProps {
   carPassVerified?: boolean | null;
@@ -11,6 +12,7 @@ interface ChecklistItem {
   label: string;
   icon: React.ElementType;
   checked: boolean | null | undefined;
+  tooltip?: string;
 }
 
 const TransparencyChecklist = ({
@@ -20,7 +22,13 @@ const TransparencyChecklist = ({
   compact = false,
 }: TransparencyChecklistProps) => {
   const items: ChecklistItem[] = [
-    { label: "Car-Pass disponible", icon: FileCheck, checked: carPassVerified },
+    {
+      label: "Car-Pass vérifié par AutoRa (Contrôle manuel)",
+      icon: FileCheck,
+      checked: carPassVerified,
+      tooltip:
+        "L'équipe AutoRa vérifie manuellement chaque certificat Car-Pass fourni par le vendeur avant publication. Garantie de service premium — pas une vérification automatique.",
+    },
     { label: "Contrôle Technique valide", icon: FileText, checked: ctValid },
     { label: "Carnet d'entretien complet", icon: Wrench, checked: maintenanceBookComplete },
   ];
@@ -93,13 +101,28 @@ const TransparencyChecklist = ({
                 />
               </div>
               <span
-                className={`flex-1 ${
+                className={`flex-1 flex items-center gap-1.5 ${
                   isChecked
                     ? "text-foreground font-medium"
                     : "text-muted-foreground/70 line-through"
                 }`}
               >
                 {item.label}
+                {item.tooltip && isChecked && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Info
+                          className="w-3.5 h-3.5 text-muted-foreground/60 hover:text-primary cursor-help shrink-0"
+                          aria-label="Plus d'info"
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent side="top" className="max-w-xs text-xs leading-relaxed">
+                        {item.tooltip}
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
               </span>
               {isChecked ? (
                 <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center">
@@ -116,7 +139,7 @@ const TransparencyChecklist = ({
       </div>
 
       <p className="mt-4 text-xs text-muted-foreground text-center">
-        Ces informations sont fournies par le vendeur et n'engagent pas AutoRA.
+        Le Car-Pass est vérifié manuellement par AutoRa avant publication. Les autres indicateurs (CT, carnet d'entretien) sont déclarés par le vendeur.
       </p>
     </div>
   );

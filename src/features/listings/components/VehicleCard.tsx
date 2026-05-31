@@ -174,10 +174,19 @@ const VehicleCard = memo(function VehicleCard({
             </Tooltip>
           </TooltipProvider>
           {vehicle.hasCarPass && (
-            <Badge className="bg-primary/90 text-primary-foreground border-0 backdrop-blur-md shadow-lg text-[10px] font-semibold px-2 py-0.5">
-              <ShieldCheck className="w-3 h-3 mr-1" />
-              Car-Pass ✓
-            </Badge>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Badge className="bg-primary/90 text-primary-foreground border-0 backdrop-blur-md shadow-lg text-[10px] font-semibold px-2 py-0.5 cursor-help">
+                    <ShieldCheck className="w-3 h-3 mr-1" />
+                    Vérifié par AutoRa
+                  </Badge>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="max-w-xs text-xs leading-relaxed">
+                  L'équipe AutoRa vérifie manuellement chaque certificat Car-Pass fourni par le vendeur avant publication. Contrôle indépendant — pas d'auto-validation.
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
         </div>
 

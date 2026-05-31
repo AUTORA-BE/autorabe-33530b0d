@@ -10,14 +10,22 @@ const content = {
       {
         title: "1. Éditeur du site",
         body: `**Dénomination** : AutoRA.be (ci-après « AutoRA »)
-**Forme juridique** : [À compléter — ex. : SRL / Personne physique]
-**Adresse** : [Adresse complète à compléter]
-**Numéro d'entreprise BCE** : [BE 0000.000.000 — à compléter]
-**Numéro de TVA** : [BE 0000.000.000 — à compléter si assujetti]
+**Statut** : Plateforme en phase bêta — pré-lancement public
+**Responsable de la publication** : Alperen [Nom de famille à compléter]
+**Adresse de contact** : autoracontact@gmail.com
 **Email** : autoracontact@gmail.com
-**Directeur de publication** : [Nom du responsable — à compléter]
 
-AutoRA est une marketplace de mise en relation entre vendeurs et acheteurs de véhicules d'occasion en Belgique. La plateforme n'intervient pas dans les transactions entre particuliers et n'est pas partie aux contrats de vente conclus entre utilisateurs.`,
+⚠️ **Phase bêta — Activité non commerciale**
+
+AutoRA est actuellement mis à disposition à des fins d'évaluation et de pré-lancement public. Pendant cette phase :
+
+— Aucune transaction commerciale n'est réalisée par la plateforme elle-même.
+— Aucun paiement n'est traité par AutoRA. L'inscription et l'utilisation sont gratuites.
+— Les éventuelles transactions entre utilisateurs se déroulent directement entre eux, hors plateforme.
+
+L'éditeur procédera à son inscription à la Banque-Carrefour des Entreprises (BCE) **avant l'activation des fonctionnalités payantes**. La présente page sera alors mise à jour avec les coordonnées complètes (numéro BCE, numéro de TVA si assujetti, forme juridique définitive, adresse de siège).
+
+AutoRA est une plateforme de mise en relation entre vendeurs et acheteurs de véhicules d'occasion en Belgique. La plateforme n'intervient pas dans les transactions entre particuliers et n'est pas partie aux contrats de vente conclus entre utilisateurs.`,
       },
       {
         title: "2. Hébergement",
@@ -65,7 +73,7 @@ La création de liens hypertextes pointant vers le site AutoRA.be est soumise à
         title: "6. Droit applicable et juridiction",
         body: `Les présentes mentions légales sont régies par le droit belge.
 
-En cas de litige relatif à l'interprétation ou à l'exécution des présentes, et à défaut de résolution amiable, les tribunaux compétents seront ceux du ressort de l'arrondissement judiciaire de [arrondissement à compléter], Belgique, sauf disposition légale impérative contraire.
+En cas de litige relatif à l'interprétation ou à l'exécution des présentes, et à défaut de résolution amiable, les tribunaux compétents seront ceux du ressort de l'arrondissement judiciaire du domicile de l'éditeur, Belgique, sauf disposition légale impérative contraire. L'arrondissement précis sera mentionné lors de l'inscription définitive de l'éditeur à la BCE.
 
 Pour les litiges de consommation, le consommateur belge peut également recourir au service de médiation pour le consommateur : https://www.mediationconsommateur.be ou à la plateforme européenne de règlement en ligne des litiges (RLL) : https://ec.europa.eu/consumers/odr`,
       },
@@ -347,15 +355,29 @@ const MentionsLegales = () => {
     en: "Last updated: May 2026",
   };
 
+  // C5 — Highlight [...] placeholders that contain a "to be filled" marker so
+  // the editor can spot them before publishing. Matches FR/NL/DE/EN keywords.
+  const PLACEHOLDER_RE = /\[([^\]]*(?:compl[ée]ter|in te vullen|auszufüllen|to be completed|completed)[^\]]*)\]/gi;
+
   const renderBody = (body: string) =>
     body.split("\n").map((line, i) => {
-      const bold = line.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+      const withPlaceholders = line.replace(
+        PLACEHOLDER_RE,
+        '<span class="font-bold text-red-500 bg-red-500/10 px-1 rounded">[$1]</span>'
+      );
+      const bold = withPlaceholders.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
       return line.trim() === "" ? (
         <br key={i} />
       ) : (
         <p key={i} className="mb-1" dangerouslySetInnerHTML={{ __html: bold }} />
       );
     });
+
+  // Visual warning banner shown until placeholders are filled
+  const placeholderCount = t.sections.reduce(
+    (acc, s) => acc + (s.body.match(PLACEHOLDER_RE)?.length ?? 0),
+    0
+  );
 
   return (
     <>
@@ -368,7 +390,15 @@ const MentionsLegales = () => {
       <main className="container mx-auto px-4 py-12 max-w-3xl">
         <BackButton to="/" className="mb-6" />
         <h1 className="text-3xl font-bold mb-2 font-display">{t.title}</h1>
-        <p className="text-sm text-muted-foreground mb-10 italic">{t.subtitle}</p>
+        <p className="text-sm text-muted-foreground mb-6 italic">{t.subtitle}</p>
+
+        {placeholderCount > 0 && (
+          <div className="mb-8 p-4 bg-red-500/10 border border-red-500/30 rounded-xl">
+            <p className="text-sm text-red-500 font-medium">
+              ⚠️ <span className="font-bold">{placeholderCount} champ{placeholderCount > 1 ? "s" : ""}</span> reste{placeholderCount > 1 ? "nt" : ""} à compléter (surlignés en rouge ci-dessous). Remplissez-les depuis le code source avant le lancement public — exigences légales (art. 1.III.7 CDE belge).
+            </p>
+          </div>
+        )}
 
         <div className="space-y-10">
           {t.sections.map((s) => (

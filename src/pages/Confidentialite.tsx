@@ -21,11 +21,14 @@ const fr = {
   sections: [
     {
       title: "1. Responsable du traitement",
-      body: `**Responsable du traitement** : AutoRA.be — [Nom complet / Société — à compléter]
-**Adresse** : [Adresse — à compléter], Belgique
+      body: `**Responsable du traitement** : Alperen [Nom — à compléter], en tant que personne physique éditrice du projet AutoRA.be
+**Statut** : Phase bêta — pré-lancement public, exploitation non commerciale
 **Email de contact RGPD** : autoracontact@gmail.com
+**Adresse de contact** : Belgique (adresse précise communiquée sur demande à l'email ci-dessus)
 
-Pour toute question relative au traitement de vos données personnelles, vous pouvez nous contacter à l'adresse ci-dessus.`,
+⚠️ Pendant la phase bêta, aucune transaction commerciale n'est traitée par AutoRA. Les coordonnées complètes (numéro BCE, adresse de siège, forme juridique) seront publiées sur cette page lors de l'activation des fonctionnalités payantes.
+
+Pour toute question relative au traitement de vos données personnelles, vous pouvez nous contacter à l'adresse e-mail ci-dessus. Nous répondons dans un délai maximum de 30 jours conformément au RGPD art. 12.`,
     },
     {
       title: "2. Données collectées",

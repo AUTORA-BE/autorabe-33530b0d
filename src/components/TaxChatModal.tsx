@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calculator, Send, Bot, User, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import ComplianceBanner from '@/components/ComplianceBanner';
 
 interface VehicleContext {
   brand: string;
@@ -167,6 +168,8 @@ export default function TaxChatModal({ vehicle }: TaxChatModalProps) {
             Conseiller fiscal – {vehicle.brand} {vehicle.model}
           </DialogTitle>
         </DialogHeader>
+
+        <ComplianceBanner className="mt-2" />
 
         {!hasStarted ? (
           <div className="space-y-4 py-4">

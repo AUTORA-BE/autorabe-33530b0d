@@ -3,6 +3,7 @@ import { MessageCircle, X, Send, Bot, User, Loader2, Car, Search } from "lucide-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import ComplianceBanner from "@/components/ComplianceBanner";
 
 interface Message {
   role: "user" | "assistant";
@@ -182,6 +183,11 @@ const CarChatbot = forwardRef<HTMLDivElement>(function CarChatbot(_props, ref) {
             >
               <X className="w-5 h-5 text-muted-foreground" />
             </button>
+          </div>
+
+          {/* Compliance banner — C8 audit pré-launch (AI fiscal/conseil disclaimer) */}
+          <div className="px-3 pt-2">
+            <ComplianceBanner />
           </div>
 
           {/* Messages */}

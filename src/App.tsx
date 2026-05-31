@@ -21,6 +21,7 @@ const BottomNav = lazy(() => import("@/shared/components/BottomNav"));
 const CarChatbot = lazy(() => import("@/components/CarChatbot"));
 const PWAInstallBanner = lazy(() => import("@/components/PWAInstallBanner"));
 const CookieBanner = lazy(() => import("@/components/CookieBanner"));
+const BetaBanner = lazy(() => import("@/components/BetaBanner"));
 const HelpButton = lazy(() => import("@/shared/components/HelpButton"));
 
 // Lazy-loaded — reduces main bundle unused JS
@@ -233,6 +234,7 @@ const App = () => {
             <CompareProvider>
               <Toaster />
               <Sonner />
+              <Suspense fallback={null}><BetaBanner /></Suspense>
               <Suspense fallback={<PageLoader />}>
                 <ScrollToTopOnNavigate />
                 <ErrorBoundary>
