@@ -156,6 +156,7 @@ function AppPages() {
       <Route path="/search" element={<PageTransition><Recherche /></PageTransition>} />
       <Route path="/suche" element={<PageTransition><Recherche /></PageTransition>} />
       <Route path="/dashboard" element={<PageTransition><SellerDashboard /></PageTransition>} />
+      <Route path="/dashboard/vitrine" element={<PageTransition><EditVitrine /></PageTransition>} />
       <Route path="/dashboard/stats" element={<PageTransition><SellerStats /></PageTransition>} />
       <Route path="/seller/:userId" element={<PageTransition><SellerProfile /></PageTransition>} />
       <Route path="/admin/*" element={<PageTransition><AdminLayout /></PageTransition>} />
