@@ -457,14 +457,31 @@ const CarDetail = () => {
               {/* Main Image Gallery with swipe */}
               <motion.div {...fadeUp(0.05)} className="rounded-2xl sm:rounded-3xl overflow-hidden border border-border/20 bg-card shadow-[var(--shadow-card)]">
                 <div
-                  className="relative aspect-[16/10] sm:aspect-video cursor-pointer group"
+                  className="relative aspect-[16/10] sm:aspect-video cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background rounded-2xl sm:rounded-3xl"
                   onClick={() => setFullscreenOpen(true)}
+                  role="region"
+                  aria-roledescription="carousel"
+                  aria-label={`Galerie photos ${car.brand} ${car.model}`}
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (images.length <= 1) return;
+                    if (e.key === 'ArrowLeft') {
+                      e.preventDefault();
+                      setCurrentImageIndex(prev => prev === 0 ? images.length - 1 : prev - 1);
+                    } else if (e.key === 'ArrowRight') {
+                      e.preventDefault();
+                      setCurrentImageIndex(prev => prev === images.length - 1 ? 0 : prev + 1);
+                    } else if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setFullscreenOpen(true);
+                    }
+                  }}
                 >
                   <AnimatePresence initial={false} mode="popLayout">
                     <motion.img
                       key={currentImageIndex}
                       src={images[currentImageIndex]}
-                      alt={`${car.brand} ${car.model}`}
+                      alt={`${car.brand} ${car.model} — photo ${currentImageIndex + 1} sur ${images.length}`}
                       className="absolute inset-0 w-full h-full object-cover"
                       initial={{ opacity: 0, scale: 1.02 }}
                       animate={{ opacity: 1, scale: 1 }}
@@ -492,24 +509,32 @@ const CarDetail = () => {
                   {images.length > 1 && (
                     <>
                       <button
+                        type="button"
+                        aria-label="Photo précédente"
                         onClick={(e) => { e.stopPropagation(); setCurrentImageIndex(prev => prev === 0 ? images.length - 1 : prev - 1); }}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-background/60 backdrop-blur-md flex items-center justify-center hover:bg-background/80 transition-all shadow-lg active:scale-90 opacity-0 group-hover:opacity-100"
+                        className="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-background/60 backdrop-blur-md flex items-center justify-center hover:bg-background/80 transition-all shadow-lg active:scale-90 opacity-0 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                       >
-                        <ChevronLeft className="w-5 h-5" />
+                        <ChevronLeft className="w-5 h-5" aria-hidden="true" />
                       </button>
                       <button
+                        type="button"
+                        aria-label="Photo suivante"
                         onClick={(e) => { e.stopPropagation(); setCurrentImageIndex(prev => prev === images.length - 1 ? 0 : prev + 1); }}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-background/60 backdrop-blur-md flex items-center justify-center hover:bg-background/80 transition-all shadow-lg active:scale-90 opacity-0 group-hover:opacity-100"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-background/60 backdrop-blur-md flex items-center justify-center hover:bg-background/80 transition-all shadow-lg active:scale-90 opacity-0 group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
                       >
-                        <ChevronRight className="w-5 h-5" />
+                        <ChevronRight className="w-5 h-5" aria-hidden="true" />
                       </button>
                     </>
                   )}
 
                   {/* Discrete counter indicator (top right) */}
                   {images.length > 1 && (
-                    <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/55 backdrop-blur-md text-white text-[11px] font-medium tabular-nums tracking-wide pointer-events-none">
-                      {currentImageIndex + 1} / {images.length}
+                    <div
+                      className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/55 backdrop-blur-md text-white text-[11px] font-medium tabular-nums tracking-wide pointer-events-none"
+                      aria-live="polite"
+                      aria-atomic="true"
+                    >
+                      <span className="sr-only">Photo </span>{currentImageIndex + 1} / {images.length}
                     </div>
                   )}
 
