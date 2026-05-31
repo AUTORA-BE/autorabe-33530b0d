@@ -40,6 +40,7 @@ const FAQ = lazy(() => import("./pages/FAQ"));
 const Compare = lazy(() => import("./pages/Compare"));
 const Recherche = lazy(() => import("./pages/Recherche"));
 const SellerDashboard = lazy(() => import("./pages/SellerDashboard"));
+const EditVitrine = lazy(() => import("./pages/EditVitrine"));
 const SellerStats = lazy(() => import("./pages/SellerStats"));
 const SellerProfile = lazy(() => import("./pages/SellerProfile"));
 const Settings = lazy(() => import("./pages/Settings"));
