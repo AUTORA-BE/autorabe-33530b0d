@@ -12,7 +12,7 @@ import { Header, Footer } from "@/shared/components";
 import SEOHead from "@/components/SEOHead";
 import {
   ShieldCheck, Leaf, ChevronDown, SlidersHorizontal, Grid3x3, Flame,
-  Calendar, Gauge, X, Sparkles, ImageOff,
+  Calendar, Gauge, X, ImageOff,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
