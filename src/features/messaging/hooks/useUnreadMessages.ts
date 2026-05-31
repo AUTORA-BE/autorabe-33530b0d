@@ -79,9 +79,12 @@ export function useUnreadMessages(): UseUnreadMessagesResult {
 
     fetchUnreadCount();
 
-    // Subscribe to new messages
+    // Subscribe to new messages — unique channel name per user + instance
+    // to avoid "cannot add postgres_changes callbacks after subscribe()" when
+    // the hook remounts (StrictMode, auth re-init, OAuth return in private browsing).
+    const channelName = `unread-messages-count:${userId}:${Math.random().toString(36).slice(2, 8)}`;
     const channel = supabase
-      .channel('unread-messages-count')
+      .channel(channelName)
       .on(
         'postgres_changes',
         {
