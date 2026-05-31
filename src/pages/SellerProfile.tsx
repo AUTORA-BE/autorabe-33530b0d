@@ -12,9 +12,13 @@ import { localBusinessSchema } from "@/lib/seoSchemas";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocalizedVehicleHref } from "@/lib/useLocalizedHref";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import {    Star, MapPin, Phone, Calendar, ArrowLeft, Car, MessageSquare, Info, Shield, Clock, Heart } from "lucide-react";
+import {    Star, MapPin, Phone, Calendar, ArrowLeft, Car, MessageSquare, Info, Shield, Clock, Heart, Navigation, Pencil, ImagePlus, Wrench, FileText, X, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { fr, nl, enUS } from "date-fns/locale";
@@ -30,7 +34,12 @@ interface SellerProfile {
   phone: string | null;
   postal_code: string | null;
   created_at: string;
+  cover_image_url: string | null;
+  opening_hours: string | null;
+  services: string[] | null;
+  presentation: string | null;
 }
+
 
 interface SellerListing {
   id: string;
@@ -68,8 +77,16 @@ const SellerProfile = () => {
   const [listings, setListings] = useState<SellerListing[]>([]);
   const [reviews, setReviews] = useState<SellerReview[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [editOpen, setEditOpen] = useState(false);
   const sellerListingIds = useMemo(() => listings.map(l => l.id), [listings]);
   const favCounts = useFavoriteCounts(sellerListingIds);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => setCurrentUserId(session?.user?.id ?? null));
+  }, []);
+
+  const isOwnProfile = currentUserId && userId && currentUserId === userId;
 
   /* Fetch all data in parallel */
   useEffect(() => {
@@ -78,12 +95,13 @@ const SellerProfile = () => {
       setLoading(true);
 
       const [profileRes, _listingsRes, _reviewsRes] = await Promise.all([
-        supabase.from("profiles").select("user_id, display_name, avatar_url, garage_name, phone, postal_code, created_at").eq("user_id", userId).single(),
+        supabase.from("profiles").select("user_id, display_name, avatar_url, garage_name, phone, postal_code, created_at, cover_image_url, opening_hours, services, presentation").eq("user_id", userId).single(),
         supabase.from("car_listings_public").select("id, brand, model, year, price, mileage, fuel_type, transmission, photos, location, created_at").eq("seller_type", "professionnel").order("created_at", { ascending: false }),
         supabase.from("reviews").select("id, user_id, rating, comment, created_at"),
       ]);
 
       if (profileRes.data) setProfile(profileRes.data as SellerProfile);
+
 
       // Use the secure RPC function to get seller listings without exposing sensitive columns
       const { data: sellerListings } = await supabase
@@ -223,100 +241,134 @@ const SellerProfile = () => {
           </button>
         </div>
 
-        {/* ── Profile Header Card ── */}
+        {/* ── Profile Header Card (with cover image) ── */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
           className="container mx-auto px-6 sm:px-8 mb-8"
         >
-          <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-card/80 backdrop-blur-sm p-6 sm:p-8">
-            {/* Subtle accent bar */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary/60 via-primary to-primary/60" />
+          <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-card/80 backdrop-blur-sm">
+            {/* Cover image banner */}
+            <div className="relative h-32 sm:h-48 w-full overflow-hidden bg-gradient-to-br from-primary/15 via-primary/5 to-background">
+              {profile.cover_image_url ? (
+                <img src={profile.cover_image_url} alt="" className="w-full h-full object-cover" />
+              ) : (
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/5 to-transparent" />
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-card/90 via-card/20 to-transparent" />
+              {isOwnProfile && (
+                <button
+                  onClick={() => setEditOpen(true)}
+                  className="absolute top-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-background/90 backdrop-blur-md border border-border/50 px-3 py-1.5 text-xs font-medium text-foreground shadow-md hover:bg-background transition-colors"
+                >
+                  <Pencil className="w-3 h-3" strokeWidth={2} />
+                  {language === "nl" ? "Vitrine bewerken" : "Modifier ma vitrine"}
+                </button>
+              )}
+            </div>
 
-            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-              {/* Avatar */}
-              <div className="relative shrink-0">
-                <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border-2 border-border/50 bg-secondary">
-                  {profile.avatar_url ? (
-                    <img src={profile.avatar_url} alt={displayName} className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-primary/[0.06]">
-                      <span className="text-3xl font-serif font-light text-primary">
-                        {displayName.charAt(0).toUpperCase()}
-                      </span>
-                    </div>
-                  )}
-                </div>
-                {/* Pro badge */}
-                <div className="absolute -bottom-2 -right-2 bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md shadow-md">
-                  Pro
-                </div>
-              </div>
-
-              {/* Info */}
-              <div className="flex-1 text-center sm:text-left">
-                <h1 className="text-2xl sm:text-3xl font-serif font-light text-foreground mb-2">
-                  {displayName}
-                </h1>
-
-                {/* Rating */}
-                <div className="flex items-center justify-center sm:justify-start gap-2 mb-3">
-                  <div className="flex items-center gap-0.5">
-                    {[1, 2, 3, 4, 5].map(star => (
-                      <Star
-                        key={star}
-                        className={`w-4 h-4 ${star <= Math.round(avgRating) ? "text-amber-400 fill-amber-400" : "text-border"}`}
-                        strokeWidth={1.5}
-                      />
-                    ))}
+            <div className="relative px-6 sm:px-8 pb-6 sm:pb-8 -mt-12 sm:-mt-16">
+              <div className="flex flex-col sm:flex-row items-center sm:items-end gap-6">
+                {/* Avatar */}
+                <div className="relative shrink-0">
+                  <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border-4 border-card bg-secondary shadow-lg">
+                    {profile.avatar_url ? (
+                      <img src={profile.avatar_url} alt={displayName} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-primary/[0.06]">
+                        <span className="text-3xl font-serif font-light text-primary">
+                          {displayName.charAt(0).toUpperCase()}
+                        </span>
+                      </div>
+                    )}
                   </div>
-                  <span className="text-sm font-medium text-foreground">{avgRating.toFixed(1)}</span>
-                  <span className="text-sm text-muted-foreground">
-                    ({reviews.length} {language === "nl" ? "beoordelingen" : "avis"})
-                  </span>
+                  <div className="absolute -bottom-2 -right-2 bg-primary text-primary-foreground text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md shadow-md">
+                    Pro
+                  </div>
                 </div>
 
-                {/* Meta badges */}
-                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 text-sm text-muted-foreground">
-                  {profile.postal_code && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-background border border-border/50">
-                      <MapPin className="w-3.5 h-3.5" strokeWidth={1.5} />
-                      {profile.postal_code}
+                {/* Info */}
+                <div className="flex-1 text-center sm:text-left">
+                  <h1 className="text-2xl sm:text-3xl font-serif font-light text-foreground mb-2">
+                    {displayName}
+                  </h1>
+
+                  {/* Rating */}
+                  <div className="flex items-center justify-center sm:justify-start gap-2 mb-3">
+                    <div className="flex items-center gap-0.5">
+                      {[1, 2, 3, 4, 5].map(star => (
+                        <Star
+                          key={star}
+                          className={`w-4 h-4 ${star <= Math.round(avgRating) ? "text-amber-400 fill-amber-400" : "text-border"}`}
+                          strokeWidth={1.5}
+                        />
+                      ))}
+                    </div>
+                    <span className="text-sm font-medium text-foreground">{avgRating.toFixed(1)}</span>
+                    <span className="text-sm text-muted-foreground">
+                      ({reviews.length} {language === "nl" ? "beoordelingen" : "avis"})
                     </span>
-                  )}
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-background border border-border/50">
-                    <Clock className="w-3.5 h-3.5" strokeWidth={1.5} />
-                    {language === "nl" ? "Lid sinds" : "Membre depuis"} {memberSince}
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-background border border-border/50">
-                    <Car className="w-3.5 h-3.5" strokeWidth={1.5} />
-                    {listings.length} {language === "nl" ? "advertenties" : "annonces"}
-                  </span>
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/[0.06] border border-primary/15 text-primary">
-                    <Shield className="w-3.5 h-3.5" strokeWidth={1.5} />
-                    {language === "nl" ? "Geverifieerd" : "Vérifié"}
-                  </span>
-                </div>
+                  </div>
 
-                {/* Contact button */}
-                <div className="mt-5 flex justify-center sm:justify-start">
-                  <Button
-                    onClick={handleContact}
-                    disabled={contacting}
-                    className="btn-primary-gradient rounded-xl px-6 py-3 h-auto text-sm font-semibold shadow-md"
-                  >
-                    <MessageSquare className="w-4 h-4 mr-2" strokeWidth={1.5} />
-                    {contacting
-                      ? (language === "nl" ? "Even geduld..." : "Chargement...")
-                      : (language === "nl" ? "Contacteer verkoper" : "Contacter le vendeur")
-                    }
-                  </Button>
+                  {/* Meta badges */}
+                  <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-3 text-sm text-muted-foreground">
+                    {profile.postal_code && (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-background border border-border/50">
+                        <MapPin className="w-3.5 h-3.5" strokeWidth={1.5} />
+                        {profile.postal_code}
+                      </span>
+                    )}
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-background border border-border/50">
+                      <Clock className="w-3.5 h-3.5" strokeWidth={1.5} />
+                      {language === "nl" ? "Lid sinds" : "Membre depuis"} {memberSince}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-background border border-border/50">
+                      <Car className="w-3.5 h-3.5" strokeWidth={1.5} />
+                      {listings.length} {language === "nl" ? "advertenties" : "annonces"}
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/[0.06] border border-primary/15 text-primary">
+                      <Shield className="w-3.5 h-3.5" strokeWidth={1.5} />
+                      {language === "nl" ? "Geverifieerd" : "Vérifié"}
+                    </span>
+                  </div>
+
+                  {/* Action buttons */}
+                  <div className="mt-5 flex flex-wrap justify-center sm:justify-start gap-2">
+                    <Button
+                      onClick={handleContact}
+                      disabled={contacting}
+                      className="btn-primary-gradient rounded-xl px-6 py-3 h-auto text-sm font-semibold shadow-md"
+                    >
+                      <MessageSquare className="w-4 h-4 mr-2" strokeWidth={1.5} />
+                      {contacting
+                        ? (language === "nl" ? "Even geduld..." : "Chargement...")
+                        : (language === "nl" ? "Contacteer verkoper" : "Contacter le vendeur")
+                      }
+                    </Button>
+                    {(profile.postal_code || profile.garage_name) && (
+                      <Button
+                        asChild
+                        variant="outline"
+                        className="rounded-xl px-5 py-3 h-auto text-sm font-semibold border-border/60"
+                      >
+                        <a
+                          href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent([profile.garage_name, profile.postal_code, "Belgique"].filter(Boolean).join(" "))}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Navigation className="w-4 h-4 mr-2" strokeWidth={1.5} />
+                          {language === "nl" ? "Route" : "Itinéraire"}
+                        </a>
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </motion.div>
+
 
         {/* ── Tabs ── */}
         <div className="container mx-auto px-6 sm:px-8">
@@ -516,6 +568,57 @@ const SellerProfile = () => {
                 transition={{ duration: 0.3 }}
                 className="max-w-2xl mx-auto space-y-6"
               >
+                {/* Présentation libre */}
+                {profile.presentation && (
+                  <div className="rounded-2xl border border-border/50 bg-card/80 backdrop-blur-sm p-6 sm:p-8">
+                    <div className="flex items-center gap-2 mb-4">
+                      <FileText className="w-4 h-4 text-primary" strokeWidth={1.5} />
+                      <h3 className="font-serif text-lg font-light text-foreground">
+                        {language === "nl" ? "Voorstelling" : "Présentation"}
+                      </h3>
+                    </div>
+                    <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+                      {profile.presentation}
+                    </p>
+                  </div>
+                )}
+
+                {/* Services proposés */}
+                {profile.services && profile.services.length > 0 && (
+                  <div className="rounded-2xl border border-border/50 bg-card/80 backdrop-blur-sm p-6 sm:p-8">
+                    <div className="flex items-center gap-2 mb-4">
+                      <Wrench className="w-4 h-4 text-primary" strokeWidth={1.5} />
+                      <h3 className="font-serif text-lg font-light text-foreground">
+                        {language === "nl" ? "Aangeboden diensten" : "Services proposés"}
+                      </h3>
+                    </div>
+                    <ul className="space-y-2">
+                      {profile.services.map((s, i) => (
+                        <li key={i} className="flex items-start gap-2.5 text-sm text-foreground">
+                          <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                          <span>{s}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Horaires d'ouverture */}
+                {profile.opening_hours && (
+                  <div className="rounded-2xl border border-border/50 bg-card/80 backdrop-blur-sm p-6 sm:p-8">
+                    <div className="flex items-center gap-2 mb-4">
+                      <Clock className="w-4 h-4 text-primary" strokeWidth={1.5} />
+                      <h3 className="font-serif text-lg font-light text-foreground">
+                        {language === "nl" ? "Openingsuren" : "Horaires d'ouverture"}
+                      </h3>
+                    </div>
+                    <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+                      {profile.opening_hours}
+                    </p>
+                  </div>
+                )}
+
+
                 {/* Info card */}
                 <div className="rounded-2xl border border-border/50 bg-card/80 backdrop-blur-sm p-6 sm:p-8">
                   <h3 className="font-serif text-xl font-light text-foreground mb-6">
@@ -621,10 +724,196 @@ const SellerProfile = () => {
         </div>
       </main>
 
+      {isOwnProfile && profile && (
+        <EditVitrineDialog
+          open={editOpen}
+          onOpenChange={setEditOpen}
+          userId={profile.user_id}
+          initial={{
+            cover_image_url: profile.cover_image_url,
+            opening_hours: profile.opening_hours,
+            services: profile.services,
+            presentation: profile.presentation,
+          }}
+          onSaved={(updates) => setProfile((p) => p ? { ...p, ...updates } : p)}
+          language={language}
+        />
+      )}
+
       <Footer />
     </div>
   );
 };
+
+/* ---------- Edit Vitrine Dialog ---------- */
+interface EditVitrineDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  userId: string;
+  initial: {
+    cover_image_url: string | null;
+    opening_hours: string | null;
+    services: string[] | null;
+    presentation: string | null;
+  };
+  onSaved: (updates: Partial<SellerProfile>) => void;
+  language: string;
+}
+
+function EditVitrineDialog({ open, onOpenChange, userId, initial, onSaved, language }: EditVitrineDialogProps) {
+  const { toast } = useToast();
+  const [coverUrl, setCoverUrl] = useState(initial.cover_image_url ?? "");
+  const [hours, setHours] = useState(initial.opening_hours ?? "");
+  const [servicesText, setServicesText] = useState((initial.services ?? []).join("\n"));
+  const [presentation, setPresentation] = useState(initial.presentation ?? "");
+  const [uploading, setUploading] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      setCoverUrl(initial.cover_image_url ?? "");
+      setHours(initial.opening_hours ?? "");
+      setServicesText((initial.services ?? []).join("\n"));
+      setPresentation(initial.presentation ?? "");
+    }
+  }, [open, initial]);
+
+  const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ title: language === "nl" ? "Bestand te groot (max 5MB)" : "Fichier trop volumineux (max 5MB)", variant: "destructive" });
+      return;
+    }
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop();
+      const fileName = `covers/${userId}-${Date.now()}.${ext}`;
+      const { error: upErr } = await supabase.storage.from("avatars").upload(fileName, file, { upsert: true });
+      if (upErr) throw upErr;
+      const { data: { publicUrl } } = supabase.storage.from("avatars").getPublicUrl(fileName);
+      setCoverUrl(publicUrl);
+    } catch (err) {
+      toast({ title: language === "nl" ? "Upload mislukt" : "Échec de l'envoi", variant: "destructive" });
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    const services = servicesText.split("\n").map(s => s.trim()).filter(Boolean);
+    const updates = {
+      cover_image_url: coverUrl || null,
+      opening_hours: hours || null,
+      services,
+      presentation: presentation || null,
+    };
+    const { error } = await supabase.from("profiles").update(updates).eq("user_id", userId);
+    setSaving(false);
+    if (error) {
+      toast({ title: language === "nl" ? "Opslaan mislukt" : "Échec de l'enregistrement", description: error.message, variant: "destructive" });
+      return;
+    }
+    onSaved(updates);
+    toast({ title: language === "nl" ? "Vitrine bijgewerkt" : "Vitrine mise à jour" });
+    onOpenChange(false);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="font-serif text-xl font-light">
+            {language === "nl" ? "Mijn vitrine bewerken" : "Modifier ma vitrine"}
+          </DialogTitle>
+        </DialogHeader>
+
+        <div className="space-y-5 py-2">
+          {/* Cover image */}
+          <div className="space-y-2">
+            <Label className="text-sm">{language === "nl" ? "Omslagfoto" : "Image de couverture"}</Label>
+            <div className="relative h-32 rounded-xl overflow-hidden border border-border/50 bg-secondary">
+              {coverUrl ? (
+                <>
+                  <img src={coverUrl} alt="" className="w-full h-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => setCoverUrl("")}
+                    className="absolute top-2 right-2 w-7 h-7 rounded-full bg-background/90 backdrop-blur-md border border-border flex items-center justify-center hover:bg-background"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </>
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
+                  <ImagePlus className="w-8 h-8" strokeWidth={1.5} />
+                </div>
+              )}
+            </div>
+            <label className="inline-flex items-center gap-2 cursor-pointer text-xs font-medium text-primary hover:text-primary/80">
+              <Upload className="w-3.5 h-3.5" />
+              {uploading
+                ? (language === "nl" ? "Bezig met uploaden..." : "Envoi en cours...")
+                : (language === "nl" ? "Foto uploaden (max 5MB)" : "Téléverser une photo (max 5MB)")}
+              <input type="file" accept="image/*" className="hidden" onChange={handleCoverUpload} disabled={uploading} />
+            </label>
+          </div>
+
+          {/* Presentation */}
+          <div className="space-y-2">
+            <Label className="text-sm">{language === "nl" ? "Voorstelling" : "Présentation"}</Label>
+            <Textarea
+              value={presentation}
+              onChange={(e) => setPresentation(e.target.value)}
+              rows={4}
+              maxLength={1000}
+              placeholder={language === "nl" ? "Beschrijf uw garage..." : "Décrivez votre garage..."}
+            />
+          </div>
+
+          {/* Services */}
+          <div className="space-y-2">
+            <Label className="text-sm">
+              {language === "nl" ? "Diensten (één per regel)" : "Services proposés (un par ligne)"}
+            </Label>
+            <Textarea
+              value={servicesText}
+              onChange={(e) => setServicesText(e.target.value)}
+              rows={5}
+              placeholder={language === "nl" ? "Onderhoud\nReparatie\nKeuring" : "Entretien\nRéparation\nContrôle technique"}
+            />
+          </div>
+
+          {/* Opening hours */}
+          <div className="space-y-2">
+            <Label className="text-sm">{language === "nl" ? "Openingsuren" : "Horaires d'ouverture"}</Label>
+            <Textarea
+              value={hours}
+              onChange={(e) => setHours(e.target.value)}
+              rows={4}
+              placeholder={language === "nl"
+                ? "Ma - Vr: 9u - 18u\nZa: 9u - 12u\nZo: gesloten"
+                : "Lun - Ven: 9h - 18h\nSam: 9h - 12h\nDim: fermé"}
+            />
+          </div>
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>
+            {language === "nl" ? "Annuleren" : "Annuler"}
+          </Button>
+          <Button onClick={handleSave} disabled={saving || uploading}>
+            {saving
+              ? (language === "nl" ? "Opslaan..." : "Enregistrement...")
+              : (language === "nl" ? "Opslaan" : "Enregistrer")}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 
 /* ---------- skeleton ---------- */
 function SellerProfileSkeleton() {

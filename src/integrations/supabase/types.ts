@@ -708,12 +708,16 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          cover_image_url: string | null
           created_at: string
           display_name: string | null
           garage_name: string | null
           id: string
+          opening_hours: string | null
           phone: string | null
           postal_code: string | null
+          presentation: string | null
+          services: string[] | null
           suspended_at: string | null
           suspended_reason: string | null
           updated_at: string
@@ -721,12 +725,16 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
+          cover_image_url?: string | null
           created_at?: string
           display_name?: string | null
           garage_name?: string | null
           id?: string
+          opening_hours?: string | null
           phone?: string | null
           postal_code?: string | null
+          presentation?: string | null
+          services?: string[] | null
           suspended_at?: string | null
           suspended_reason?: string | null
           updated_at?: string
@@ -734,12 +742,16 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
+          cover_image_url?: string | null
           created_at?: string
           display_name?: string | null
           garage_name?: string | null
           id?: string
+          opening_hours?: string | null
           phone?: string | null
           postal_code?: string | null
+          presentation?: string | null
+          services?: string[] | null
           suspended_at?: string | null
           suspended_reason?: string | null
           updated_at?: string
