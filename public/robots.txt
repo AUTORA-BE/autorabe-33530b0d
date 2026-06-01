@@ -14,6 +14,9 @@ Disallow: /payment-canceled
 # Sitemaps
 Sitemap: https://autora.be/sitemap.xml
 Sitemap: https://autora.be/sitemap-pages.xml
+# Dynamic vehicle sitemaps temporarily disabled (Cloudflare Pages _redirects
+# proxy issue, see public/sitemap.xml). Vehicle listings indexed organically
+# via internal links.
 
 # LLM crawlers — welcome
 User-agent: GPTBot
