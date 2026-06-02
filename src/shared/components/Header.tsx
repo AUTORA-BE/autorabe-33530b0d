@@ -5,10 +5,9 @@
  */
 
 import { Menu, Heart, MessageCircle, GitCompareArrows, Sun, Moon, Bell, Search } from "lucide-react";
-import { useRef } from "react";
 import autoraLogo from "@/assets/autora-logo.png";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User as SupabaseUser } from "@supabase/supabase-js";
