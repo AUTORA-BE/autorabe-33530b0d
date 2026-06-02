@@ -4,7 +4,8 @@
  * @module shared/components
  */
 
-import { Menu, Heart, MessageCircle, GitCompareArrows, Sun, Moon, Bell } from "lucide-react";
+import { Menu, Heart, MessageCircle, GitCompareArrows, Sun, Moon, Bell, Search } from "lucide-react";
+import { useRef } from "react";
 import autoraLogo from "@/assets/autora-logo.png";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
