@@ -136,7 +136,7 @@ function BrandCard({ brand }: { brand: BrandInfo }) {
       <div className="flex items-center gap-4 mb-4">
         {brand.logo ? (
           <div className="w-14 h-14 rounded-xl bg-white p-2.5 shadow-sm flex items-center justify-center shrink-0">
-            <img src={brand.logo} alt={brand.name} className="w-full h-full object-contain" loading="lazy" />
+            <img src={brand.logo} alt={`${brand.name} logo voiture électrique`} className="w-full h-full object-contain" loading="lazy" />
           </div>
         ) : (
           <div className="w-14 h-14 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
