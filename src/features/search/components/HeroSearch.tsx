@@ -4,7 +4,7 @@
  */
 
 import { memo, useState, useEffect, useRef, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Search, ChevronDown, X, Clock, TrendingUp, ArrowRight, ShieldCheck, MapPin, Sparkles, Car, Truck, Caravan, GitCompareArrows } from "lucide-react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { getAllBrands, getModelsByBrand } from "@/utils/carUtils";
@@ -361,6 +361,20 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
   const { t } = useLanguage();
   const isMobile = useIsMobile();
   const prefersReduced = useReducedMotion();
+  const navigate = useNavigate();
+
+  /** Build /recherche URL with query params matching useFiltersUrlSync keys */
+  const buildSearchUrl = useCallback(
+    (brand: string, model: string, maxPrice: number) => {
+      const params = new URLSearchParams();
+      if (brand) params.set("brand", brand);
+      if (model) params.set("model", model);
+      if (maxPrice && maxPrice < 1000000) params.set("pmax", String(maxPrice));
+      const qs = params.toString();
+      return qs ? `/recherche?${qs}` : "/recherche";
+    },
+    [],
+  );
 
   // Parallax — photo scrolls slower than viewport
   const heroRef = useRef<HTMLElement>(null);
@@ -393,13 +407,12 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
       max_price: selectedBudget || undefined,
       source: "hero",
     });
-    onSearch(selectedBrand, model, selectedBudget || 1000000);
+    // Redirect to dedicated /recherche page with query params so the catalog
+    // page reads them on mount via useFiltersUrlSync and filters the stock.
+    navigate(buildSearchUrl(selectedBrand, model, selectedBudget || 0));
   };
 
   const handleMobileSearch = useCallback((brand: string, mdl: string, maxPrice: number) => {
-    setSelectedBrand(brand);
-    setModel(mdl);
-    setSelectedBudget(maxPrice >= 1000000 ? 0 : maxPrice);
     addSearchHistory({ brand, model: mdl, budget: maxPrice >= 1000000 ? 0 : maxPrice });
     trackEvent(EVENTS.SEARCH_PERFORMED, {
       brand: brand || undefined,
@@ -407,11 +420,8 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
       max_price: maxPrice,
       source: "mobile",
     });
-    onSearch(brand, mdl, maxPrice);
-    setTimeout(() => {
-      document.getElementById("results-section")?.scrollIntoView({ behavior: "smooth" });
-    }, 100);
-  }, [onSearch]);
+    navigate(buildSearchUrl(brand, mdl, maxPrice >= 1000000 ? 0 : maxPrice));
+  }, [buildSearchUrl, navigate]);
 
   const handleVoiceResult = useCallback((transcript: string) => {
     const parsed = parseVoiceTranscript(transcript, brands);
@@ -542,9 +552,9 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
         </motion.div>
 
         {/* ── Floating marketplace action cards — bottom of hero ──
-             Mobile: pb-28 leaves breathing room above the BottomNav (~72px tall)
-             so the search bar isn't visually "eaten" by the nav. */}
-        <div className="container mx-auto px-6 sm:px-10 relative z-10 pb-28 sm:pb-14">
+             Mobile: pb-36 leaves breathing room above the BottomNav (~68px + safe-bottom)
+             so the search bar isn't visually "eaten" by the nav and feels properly centered. */}
+        <div className="container mx-auto px-6 sm:px-10 relative z-10 pb-36 sm:pb-14">
           {isMobile ? (
             <motion.button
               {...fadeUp(0.25)}

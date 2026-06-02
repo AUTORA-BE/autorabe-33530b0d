@@ -126,17 +126,17 @@ function LuxuryCarCard({
           <span aria-hidden className="search-shimmer pointer-events-none absolute inset-0" />
         )}
 
-        <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
-          {car.hasCarPass && (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/25 bg-emerald-500/10 px-2.5 py-0.5 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-emerald-300 backdrop-blur-md">
-              <ShieldCheck className="h-3 w-3" strokeWidth={2.5} />
-              Car-Pass Certifié
-            </span>
-          )}
+        <div className="absolute left-2.5 top-2.5 z-10 flex flex-col gap-1.5">
           {car.isLezCompatible && (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-400/25 bg-sky-500/10 px-2.5 py-0.5 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-sky-300 backdrop-blur-md">
+            <span className="inline-flex items-center gap-1 rounded-full border-0 bg-emerald-500/90 px-2 py-0.5 text-[10px] font-semibold text-white shadow-lg backdrop-blur-md">
               <Leaf className="h-3 w-3" strokeWidth={2.5} />
               LEZ OK
+            </span>
+          )}
+          {car.hasCarPass && (
+            <span className="inline-flex items-center gap-1 rounded-full border-0 bg-primary/90 px-2 py-0.5 text-[10px] font-semibold text-primary-foreground shadow-lg backdrop-blur-md">
+              <ShieldCheck className="h-3 w-3" strokeWidth={2.5} />
+              Vérifié par AutoRa
             </span>
           )}
         </div>
@@ -671,10 +671,10 @@ const Recherche = () => {
       />
       <Header />
 
-      <main className="relative pt-[88px] pb-32 sm:pt-28">
+      <main className="relative pt-[116px] pb-32 sm:pt-28">
         {/* Mobile-only sticky search toolbar (input + Filters button) */}
         <div
-          className="md:hidden sticky top-[60px] z-40 -mx-0 mb-4 border-b border-white/10 bg-slate-950/85 px-4 py-2.5 backdrop-blur-xl"
+          className="md:hidden sticky top-[64px] z-40 -mx-0 mb-4 border-b border-border/30 bg-background/85 px-4 py-2.5 backdrop-blur-xl"
           role="search"
           aria-label="Filtres de recherche"
         >
@@ -688,7 +688,7 @@ const Recherche = () => {
               }}
             >
               <label htmlFor="recherche-mobile-input" className="sr-only">Rechercher</label>
-              <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/60" strokeWidth={1.8} />
+              <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" strokeWidth={1.8} />
               <input
                 ref={mobileSearchRef}
                 id="recherche-mobile-input"
@@ -697,14 +697,14 @@ const Recherche = () => {
                 defaultValue={filters.searchQuery}
                 onBlur={(e) => updateFilter("searchQuery", e.target.value.trim())}
                 placeholder="Marque, modèle, ville…"
-                className="h-11 w-full rounded-2xl border border-white/10 bg-white/[0.05] pl-9 pr-3 text-sm text-white placeholder:text-white/45 outline-none focus-visible:border-primary/60 focus-visible:ring-2 focus-visible:ring-primary/30"
+                className="h-11 w-full rounded-2xl border border-border/40 bg-card/60 pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus-visible:border-primary/60 focus-visible:ring-2 focus-visible:ring-primary/30"
               />
             </form>
             <button
               type="button"
               onClick={() => setMoreFiltersOpen(true)}
               aria-label={`Ouvrir les filtres${activeFilterCount > 0 ? ` (${activeFilterCount} actifs)` : ""}`}
-              className="relative inline-flex h-11 min-w-11 items-center justify-center gap-1.5 rounded-2xl border border-white/10 bg-white/[0.05] px-3.5 text-sm font-medium text-white transition active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-primary/40"
+              className="relative inline-flex h-11 min-w-11 items-center justify-center gap-1.5 rounded-2xl border border-border/40 bg-card/60 px-3.5 text-sm font-medium text-foreground transition active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-primary/40"
             >
               <SlidersHorizontal className="h-4 w-4" strokeWidth={1.8} />
               <span>Filtres</span>
@@ -730,7 +730,7 @@ const Recherche = () => {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.05 }}
-            className="mt-3 text-3xl font-light leading-[1.1] tracking-tight text-white sm:text-4xl md:text-5xl"
+            className="mt-3 text-3xl font-light leading-[1.1] tracking-tight text-foreground sm:text-4xl md:text-5xl"
           >
             {title}
           </motion.h1>
@@ -738,7 +738,7 @@ const Recherche = () => {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.12 }}
-            className="mx-auto mt-4 max-w-2xl text-sm font-light leading-relaxed text-white/65 sm:text-base"
+            className="mx-auto mt-4 max-w-2xl text-sm font-light leading-relaxed text-muted-foreground sm:text-base"
           >
             {subtitle(totalCount || 482)}
           </motion.p>
