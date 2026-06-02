@@ -105,23 +105,56 @@ export function useAuth() {
         };
       }
 
-      // Save phone, garage_name, postal_code to profile if provided
+      // Persist profile + (if pro) enqueue dealer verification request
       if (signUpData.user) {
-        const profileUpdate: { phone?: string; garage_name?: string; postal_code?: string } = {};
+        const isPro = credentials.userType === 'professionnel';
+        const profileUpdate: {
+          phone?: string;
+          garage_name?: string;
+          postal_code?: string;
+          user_type?: 'particulier' | 'professionnel';
+          bce_number?: string;
+        } = {
+          user_type: isPro ? 'professionnel' : 'particulier',
+        };
         if (credentials.phone) profileUpdate.phone = credentials.phone;
-        if (credentials.garageName) profileUpdate.garage_name = credentials.garageName;
         if (credentials.postalCode) profileUpdate.postal_code = credentials.postalCode;
-        
-        if (Object.keys(profileUpdate).length > 0) {
-          await supabase
-            .from('profiles')
-            .update(profileUpdate)
-            .eq('user_id', signUpData.user.id);
+        if (isPro) {
+          if (credentials.garageName) profileUpdate.garage_name = credentials.garageName;
+          if (credentials.bceNumber) profileUpdate.bce_number = credentials.bceNumber;
         }
-      }
 
-      // Send welcome email (fire-and-forget)
-      if (signUpData.user) {
+        // @ts-expect-error — user_type / bce_number are present in the DB but not yet in generated types
+        await supabase.from('profiles').update(profileUpdate).eq('user_id', signUpData.user.id);
+
+        if (isPro) {
+          // @ts-expect-error — dealer_verification_queue not yet in generated types
+          await supabase.from('dealer_verification_queue').insert({
+            user_id: signUpData.user.id,
+            status: 'pending',
+            garage_name_snapshot: credentials.garageName ?? null,
+            bce_snapshot: credentials.bceNumber ?? null,
+          });
+
+          // Notify admin (fire-and-forget)
+          supabase.functions.invoke('send-transactional-email', {
+            body: {
+              templateName: 'new-dealer-signup',
+              recipientEmail: 'autoracontact@gmail.com',
+              idempotencyKey: `dealer-signup-${signUpData.user.id}`,
+              templateData: {
+                fullName: credentials.fullName,
+                email: credentials.email,
+                phone: credentials.phone,
+                garageName: credentials.garageName,
+                bceNumber: credentials.bceNumber,
+                postalCode: credentials.postalCode,
+              },
+            },
+          }).catch(() => {});
+        }
+
+        // Welcome email for every new user (fire-and-forget)
         supabase.functions.invoke('send-transactional-email', {
           body: {
             templateName: 'welcome',

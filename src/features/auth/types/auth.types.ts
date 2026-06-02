@@ -31,6 +31,10 @@ export interface SignupCredentials extends LoginCredentials {
   phone?: string;
   garageName?: string;
   postalCode?: string;
+  /** 'particulier' (default) or 'professionnel' — drives the pro validation queue. */
+  userType?: 'particulier' | 'professionnel';
+  /** Belgian enterprise number (BCE/KBO), optional, only meaningful when pro. */
+  bceNumber?: string;
 }
 
 /**
