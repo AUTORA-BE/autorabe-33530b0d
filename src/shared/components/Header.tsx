@@ -30,6 +30,8 @@ const Header = () => {
   const [userProfile, setUserProfile] = useState<{ avatar_url: string | null; display_name: string | null } | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const isSearchPage = location.pathname.startsWith("/recherche");
   const { toast } = useToast();
   const { unreadCount, hasUnread } = useUnreadMessages();
   const { compareCount } = useCompareContext();
