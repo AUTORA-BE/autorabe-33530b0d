@@ -81,6 +81,7 @@ export function useAuth() {
    */
   const signUp = useCallback(async (credentials: SignupCredentials): Promise<AuthResult> => {
     try {
+      const isPro = credentials.userType === 'professionnel';
       const { data: signUpData, error } = await supabase.auth.signUp({
         email: credentials.email,
         password: credentials.password,
@@ -88,6 +89,11 @@ export function useAuth() {
           emailRedirectTo: `${window.location.origin}/`,
           data: {
             full_name: credentials.fullName,
+            user_type: isPro ? 'professionnel' : 'particulier',
+            phone: credentials.phone ?? null,
+            postal_code: credentials.postalCode ?? null,
+            garage_name: isPro ? (credentials.garageName ?? null) : null,
+            bce_number: isPro ? (credentials.bceNumber ?? null) : null,
           },
         },
       });
@@ -105,35 +111,11 @@ export function useAuth() {
         };
       }
 
-      // Persist profile + (if pro) enqueue dealer verification request
+      // Profile + dealer queue are created by the handle_new_user_profile trigger
+      // (SECURITY DEFINER) using raw_user_meta_data, since the session isn't
+      // available immediately after signup when email confirmation is required.
       if (signUpData.user) {
-        const isPro = credentials.userType === 'professionnel';
-        const profileUpdate: {
-          phone?: string;
-          garage_name?: string;
-          postal_code?: string;
-          user_type?: 'particulier' | 'professionnel';
-          bce_number?: string;
-        } = {
-          user_type: isPro ? 'professionnel' : 'particulier',
-        };
-        if (credentials.phone) profileUpdate.phone = credentials.phone;
-        if (credentials.postalCode) profileUpdate.postal_code = credentials.postalCode;
         if (isPro) {
-          if (credentials.garageName) profileUpdate.garage_name = credentials.garageName;
-          if (credentials.bceNumber) profileUpdate.bce_number = credentials.bceNumber;
-        }
-
-        await supabase.from('profiles').update(profileUpdate).eq('user_id', signUpData.user.id);
-
-        if (isPro) {
-          await supabase.from('dealer_verification_queue').insert({
-            user_id: signUpData.user.id,
-            status: 'pending',
-            garage_name_snapshot: credentials.garageName ?? null,
-            bce_snapshot: credentials.bceNumber ?? null,
-          });
-
           // Notify admin (fire-and-forget)
           supabase.functions.invoke('send-transactional-email', {
             body: {
