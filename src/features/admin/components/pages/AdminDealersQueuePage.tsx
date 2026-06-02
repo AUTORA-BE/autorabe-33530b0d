@@ -400,11 +400,17 @@ export default function AdminDealersQueuePage() {
 }
 
 /**
- * Best-effort lookup for a user's email — auth.users is not directly queryable
- * from the client, so we fall back to the most recent car_listing.contact_email.
- * Returns null if nothing is found.
+ * Resolves a user's email via the admin-only RPC `admin_get_user_emails`
+ * (SECURITY DEFINER, reads auth.users). Falls back to the most recent
+ * car_listing.contact_email if the RPC returns nothing.
  */
 async function resolveUserEmail(userId: string): Promise<string | null> {
+  const { data: rpcData } = await supabase.rpc('admin_get_user_emails', {
+    _user_ids: [userId],
+  });
+  const email = (rpcData as Array<{ email: string | null }> | null)?.[0]?.email;
+  if (email) return email;
+
   const { data } = await supabase
     .from('car_listings')
     .select('contact_email')
