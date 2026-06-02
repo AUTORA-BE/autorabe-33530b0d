@@ -266,20 +266,39 @@ const SellerProfile = () => {
   }, [userId, navigate, toast, language, displayName]);
 
   if (loading) return <SellerProfileSkeleton />;
-  if (!profile) {
+  // Slug route: gate publication. Owners see an unpublished preview banner.
+  const isUnpublishedForVisitor = isSlugRoute && profile && !profile.vitrine_published && !isOwnProfile;
+  if (notFound || !profile || isUnpublishedForVisitor) {
     return (
       <div className="page-gradient min-h-screen">
+        <SEOHead noIndex title="Vitrine introuvable | AutoRA" />
         <Header />
         <main className="pt-24 pb-32 container mx-auto px-6 text-center">
-          <h1 className="text-2xl font-semibold text-foreground mb-4">Vendeur introuvable</h1>
+          <h1 className="text-2xl font-semibold text-foreground mb-4">
+            {language === "nl" ? "Pagina niet gevonden" : "Page introuvable"}
+          </h1>
+          <p className="text-sm text-muted-foreground mb-6">
+            {language === "nl"
+              ? "Deze vitrine bestaat niet of is niet gepubliceerd."
+              : "Cette vitrine n'existe pas ou n'est pas publiée."}
+          </p>
           <Button variant="outline" onClick={() => navigate(-1)}>
-            <ArrowLeft className="w-4 h-4 mr-2" /> Retour
+            <ArrowLeft className="w-4 h-4 mr-2" /> {language === "nl" ? "Terug" : "Retour"}
           </Button>
         </main>
         <Footer />
       </div>
     );
   }
+
+  // Effective vitrine values (prefer vitrine_* fields, fall back to legacy)
+  const effectiveCover = profile.vitrine_cover_url || profile.cover_image_url;
+  const effectiveAbout = profile.vitrine_about || profile.presentation;
+  const effectiveServices = (profile.vitrine_services && profile.vitrine_services.length > 0)
+    ? profile.vitrine_services
+    : profile.services;
+  const effectivePhone = profile.vitrine_phone || profile.phone;
+  const effectiveEmail = profile.vitrine_email_public;
 
   return (
     <div className="page-gradient min-h-screen">
