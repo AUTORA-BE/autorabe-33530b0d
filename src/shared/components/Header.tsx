@@ -8,7 +8,7 @@ import { Menu, Heart, MessageCircle, GitCompareArrows, Sun, Moon, Bell, Search }
 import autoraLogo from "@/assets/autora-logo.png";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import { useToast } from "@/hooks/use-toast";
@@ -30,6 +30,8 @@ const Header = () => {
   const [userProfile, setUserProfile] = useState<{ avatar_url: string | null; display_name: string | null } | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  const isSearchPage = location.pathname.startsWith("/recherche");
   const { toast } = useToast();
   const { unreadCount, hasUnread } = useUnreadMessages();
   const { compareCount } = useCompareContext();
@@ -160,7 +162,8 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Mobile-only premium "Rechercher" pill button — sits just under the logo row, hides on scroll-down */}
+        {/* Mobile-only premium "Rechercher" pill button — hidden on the Recherche page itself */}
+        {!isSearchPage && (
         <div
           className={`lg:hidden overflow-hidden transition-all duration-300 ease-out ${
             scrolled ? "max-h-0 opacity-0 mt-0" : "max-h-14 opacity-100 mt-1.5"
@@ -192,6 +195,7 @@ const Header = () => {
             </span>
           </button>
         </div>
+        )}
 
         {/* Mobile Menu (now a drawer — renders via portal-like AnimatePresence) */}
         <MobileMenu
