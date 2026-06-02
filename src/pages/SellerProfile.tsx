@@ -300,16 +300,50 @@ const SellerProfile = () => {
   const effectivePhone = profile.vitrine_phone || profile.phone;
   const effectiveEmail = profile.vitrine_email_public;
 
+  // AutoDealer JSON-LD (when on a published vitrine)
+  const dealerSchema = profile.vitrine_published ? {
+    "@context": "https://schema.org",
+    "@type": "AutoDealer",
+    name: displayName,
+    image: effectiveCover || profile.avatar_url || undefined,
+    description: effectiveAbout || undefined,
+    telephone: effectivePhone || undefined,
+    email: effectiveEmail || undefined,
+    address: profile.postal_code ? {
+      "@type": "PostalAddress",
+      postalCode: profile.postal_code,
+      addressCountry: "BE",
+    } : undefined,
+    url: profile.vitrine_slug ? `https://autora.be/garage/${profile.vitrine_slug}` : undefined,
+  } : localBusinessSchema;
+
   return (
     <div className="page-gradient min-h-screen">
       <SEOHead
         title={`${displayName} | AutoRA`}
         description={`Profil vendeur de ${displayName} sur AutoRA. Consultez les annonces, avis et coordonnées.`}
-        jsonLd={localBusinessSchema}
+        jsonLd={dealerSchema}
+        noIndex={isSlugRoute && !profile.vitrine_published}
       />
       <Header />
 
       <main className="pt-20 pb-32">
+        {/* Owner unpublished preview banner */}
+        {isOwnProfile && isSlugRoute && !profile.vitrine_published && (
+          <div className="container mx-auto px-6 sm:px-8 mb-4">
+            <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-700 dark:text-amber-300 flex items-center justify-between gap-3 flex-wrap">
+              <span>
+                {language === "nl"
+                  ? "Voorbeeld — uw vitrine is nog niet gepubliceerd. Alleen u kunt deze pagina zien."
+                  : "Aperçu — votre vitrine n'est pas encore publiée. Vous seul·e voyez cette page."}
+              </span>
+              <Button asChild size="sm" variant="outline" className="rounded-lg">
+                <Link to="/dashboard/vitrine">{language === "nl" ? "Vitrine bewerken" : "Modifier la vitrine"}</Link>
+              </Button>
+            </div>
+          </div>
+        )}
+
         {/* Back button */}
         <div className="container mx-auto px-6 sm:px-8 mb-6">
           <button
@@ -331,8 +365,8 @@ const SellerProfile = () => {
           <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-card/80 backdrop-blur-sm">
             {/* Cover image banner */}
             <div className="relative h-32 sm:h-48 w-full overflow-hidden bg-gradient-to-br from-primary/15 via-primary/5 to-background">
-              {profile.cover_image_url ? (
-                <img src={profile.cover_image_url} alt="" className="w-full h-full object-cover" />
+              {effectiveCover ? (
+                <img src={effectiveCover} alt="" className="w-full h-full object-cover" />
               ) : (
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/5 to-transparent" />
               )}
