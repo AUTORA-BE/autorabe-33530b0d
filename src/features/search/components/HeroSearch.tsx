@@ -361,6 +361,20 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
   const { t } = useLanguage();
   const isMobile = useIsMobile();
   const prefersReduced = useReducedMotion();
+  const navigate = useNavigate();
+
+  /** Build /recherche URL with query params matching useFiltersUrlSync keys */
+  const buildSearchUrl = useCallback(
+    (brand: string, model: string, maxPrice: number) => {
+      const params = new URLSearchParams();
+      if (brand) params.set("brand", brand);
+      if (model) params.set("model", model);
+      if (maxPrice && maxPrice < 1000000) params.set("pmax", String(maxPrice));
+      const qs = params.toString();
+      return qs ? `/recherche?${qs}` : "/recherche";
+    },
+    [],
+  );
 
   // Parallax — photo scrolls slower than viewport
   const heroRef = useRef<HTMLElement>(null);
