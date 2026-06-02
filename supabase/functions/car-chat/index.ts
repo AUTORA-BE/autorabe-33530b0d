@@ -30,10 +30,37 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
-    const ip = (req.headers.get("x-forwarded-for") || "unknown").split(",")[0].trim();
+
+    // Prefer authenticated user id as rate-limit key; fall back to a stricter per-IP cap
+    let rlKey: string;
+    let rlMax = 30;
+    const authHeader = req.headers.get("Authorization") || "";
+    let authed = false;
+    if (authHeader.startsWith("Bearer ")) {
+      try {
+        const supabaseAuth = createClient(
+          Deno.env.get("SUPABASE_URL") ?? "",
+          Deno.env.get("SUPABASE_ANON_KEY") ?? ""
+        );
+        const token = authHeader.replace("Bearer ", "").trim();
+        const { data: claimsData } = await supabaseAuth.auth.getClaims(token);
+        const sub = claimsData?.claims?.sub;
+        if (sub) {
+          rlKey = `car_chat_user:${sub}`;
+          rlMax = 30;
+          authed = true;
+        }
+      } catch { /* fall through to IP */ }
+    }
+    if (!authed) {
+      const ip = (req.headers.get("x-forwarded-for") || "unknown").split(",")[0].trim();
+      rlKey = `car_chat_ip:${ip}`;
+      rlMax = 5;
+    }
+
     const { data: rlAllowed } = await supabaseAdmin.rpc("check_rate_limit", {
-      _key: `car_chat_ip:${ip}`,
-      _max_attempts: 15,
+      _key: rlKey!,
+      _max_attempts: rlMax,
       _window_seconds: 3600,
     });
     if (rlAllowed === false) {
