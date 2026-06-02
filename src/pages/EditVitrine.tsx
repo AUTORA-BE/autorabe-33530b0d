@@ -95,10 +95,15 @@ const EditVitrine = () => {
       toast({ title: language === "nl" ? "Bestand te groot (max 5MB)" : "Fichier trop volumineux (max 5MB)", variant: "destructive" });
       return;
     }
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      toast({ title: language === "nl" ? "Formaat niet ondersteund (jpg/png/webp)" : "Format non supporté (jpg/png/webp)", variant: "destructive" });
+      return;
+    }
     setUploading(true);
     try {
       const ext = file.name.split(".").pop();
-      const fileName = `covers/${user.id}-${Date.now()}.${ext}`;
+      // Stored in `avatars` bucket under owner-scoped vitrine-covers/{user_id}/ path
+      const fileName = `vitrine-covers/${user.id}/${Date.now()}.${ext}`;
       const { error: upErr } = await supabase.storage.from("avatars").upload(fileName, file, { upsert: true });
       if (upErr) throw upErr;
       const { data: { publicUrl } } = supabase.storage.from("avatars").getPublicUrl(fileName);
@@ -112,12 +117,33 @@ const EditVitrine = () => {
 
   const handleSave = async () => {
     if (!user) return;
+    if (slug && !slugRegex.test(slug)) {
+      toast({ title: language === "nl" ? "Ongeldige slug" : "Slug invalide", description: "a-z, 0-9, -, 3-60 chars", variant: "destructive" });
+      return;
+    }
+    if (published && !slug) {
+      toast({ title: language === "nl" ? "Slug vereist om te publiceren" : "Slug requis pour publier", variant: "destructive" });
+      return;
+    }
+    if (slug && slugStatus === "taken") {
+      toast({ title: language === "nl" ? "Slug al in gebruik" : "Slug déjà pris", variant: "destructive" });
+      return;
+    }
     setSaving(true);
     const updates = {
+      // Legacy fields kept in sync for back-compat
       cover_image_url: coverUrl || null,
       opening_hours: hours || null,
       services,
       presentation: presentation || null,
+      // New vitrine fields
+      vitrine_slug: slug || null,
+      vitrine_cover_url: coverUrl || null,
+      vitrine_about: presentation || null,
+      vitrine_services: services,
+      vitrine_phone: vitrinePhone || null,
+      vitrine_email_public: vitrineEmail || null,
+      vitrine_published: published,
     };
     const { error } = await supabase.from("profiles").update(updates).eq("user_id", user.id);
     setSaving(false);
