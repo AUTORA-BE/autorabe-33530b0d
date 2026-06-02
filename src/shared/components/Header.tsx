@@ -195,6 +195,7 @@ const Header = () => {
             </span>
           </button>
         </div>
+        )}
 
         {/* Mobile Menu (now a drawer — renders via portal-like AnimatePresence) */}
         <MobileMenu
