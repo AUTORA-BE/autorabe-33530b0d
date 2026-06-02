@@ -13,8 +13,10 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload, ImagePlus, X, Eye, MessageSquare, Navigation, MapPin, Clock, Shield } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Upload, ImagePlus, X, Eye, MessageSquare, Navigation, MapPin, Clock, Shield, Check, AlertCircle } from "lucide-react";
 
 const EditVitrine = () => {
   const { user, isLoading } = useAuth();
