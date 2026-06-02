@@ -85,21 +85,42 @@ export default function AdminDealersQueuePage() {
     }
 
     const userIds = queueRows.map((r) => r.user_id);
-    const { data: profiles } = await supabase
-      .from('profiles')
-      .select('user_id, display_name, phone, postal_code')
-      .in('user_id', userIds);
+    const [{ data: profiles }, { data: listings }] = await Promise.all([
+      supabase
+        .from('profiles')
+        .select('user_id, display_name, phone, postal_code')
+        .in('user_id', userIds),
+      supabase
+        .from('car_listings')
+        .select('user_id, car_pass_verified, euro_norm, status')
+        .in('user_id', userIds),
+    ]);
 
     const profileMap = new Map((profiles ?? []).map((p) => [p.user_id, p]));
+
+    // Aggregate Car-Pass + LEZ per user from approved listings only
+    const stats = new Map<string, { total: number; cp: number; lez: number }>();
+    for (const l of listings ?? []) {
+      if (l.status !== 'approved') continue;
+      const s = stats.get(l.user_id) ?? { total: 0, cp: 0, lez: 0 };
+      s.total += 1;
+      if (l.car_pass_verified) s.cp += 1;
+      if (l.euro_norm && LEZ_OK_NORMS.has(l.euro_norm)) s.lez += 1;
+      stats.set(l.user_id, s);
+    }
 
     setRows(
       queueRows.map((r) => {
         const p = profileMap.get(r.user_id);
+        const s = stats.get(r.user_id);
         return {
           ...r,
           display_name: p?.display_name ?? null,
           phone: p?.phone ?? null,
           postal_code: p?.postal_code ?? null,
+          listings_count: s?.total ?? 0,
+          car_pass_verified_count: s?.cp ?? 0,
+          lez_eligible_count: s?.lez ?? 0,
         };
       }),
     );
