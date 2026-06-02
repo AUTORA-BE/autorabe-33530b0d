@@ -407,13 +407,12 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
       max_price: selectedBudget || undefined,
       source: "hero",
     });
-    onSearch(selectedBrand, model, selectedBudget || 1000000);
+    // Redirect to dedicated /recherche page with query params so the catalog
+    // page reads them on mount via useFiltersUrlSync and filters the stock.
+    navigate(buildSearchUrl(selectedBrand, model, selectedBudget || 0));
   };
 
   const handleMobileSearch = useCallback((brand: string, mdl: string, maxPrice: number) => {
-    setSelectedBrand(brand);
-    setModel(mdl);
-    setSelectedBudget(maxPrice >= 1000000 ? 0 : maxPrice);
     addSearchHistory({ brand, model: mdl, budget: maxPrice >= 1000000 ? 0 : maxPrice });
     trackEvent(EVENTS.SEARCH_PERFORMED, {
       brand: brand || undefined,
@@ -421,11 +420,8 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
       max_price: maxPrice,
       source: "mobile",
     });
-    onSearch(brand, mdl, maxPrice);
-    setTimeout(() => {
-      document.getElementById("results-section")?.scrollIntoView({ behavior: "smooth" });
-    }, 100);
-  }, [onSearch]);
+    navigate(buildSearchUrl(brand, mdl, maxPrice >= 1000000 ? 0 : maxPrice));
+  }, [buildSearchUrl, navigate]);
 
   const handleVoiceResult = useCallback((transcript: string) => {
     const parsed = parseVoiceTranscript(transcript, brands);
