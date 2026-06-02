@@ -99,25 +99,74 @@ const SellerProfile = () => {
 
   const isOwnProfile = !!(currentUserId && userId && currentUserId === userId);
 
-  /* Fetch all data in parallel */
+  /* Resolve seller (by userId or by slug) then fetch listings + reviews */
   useEffect(() => {
-    if (!userId) return;
+    if (!paramUserId && !paramSlug) return;
+    let cancelled = false;
     const load = async () => {
       setLoading(true);
+      setNotFound(false);
 
-      const [profileRes, _listingsRes, _reviewsRes] = await Promise.all([
-        supabase.from("profiles").select("user_id, display_name, avatar_url, garage_name, phone, postal_code, created_at, cover_image_url, opening_hours, services, presentation").eq("user_id", userId).single(),
-        supabase.from("car_listings_public").select("id, brand, model, year, price, mileage, fuel_type, transmission, photos, location, created_at").eq("seller_type", "professionnel").order("created_at", { ascending: false }),
-        supabase.from("reviews").select("id, user_id, rating, comment, created_at"),
-      ]);
+      const PROFILE_COLS = "user_id, display_name, avatar_url, garage_name, phone, postal_code, created_at, cover_image_url, opening_hours, services, presentation, vitrine_slug, vitrine_cover_url, vitrine_about, vitrine_services, vitrine_phone, vitrine_email_public, vitrine_published";
 
-      if (profileRes.data) setProfile(profileRes.data as SellerProfile);
+      let resolvedProfile: SellerProfile | null = null;
 
+      if (isSlugRoute && paramSlug) {
+        // 1. Try the public RPC (only published vitrines)
+        const { data: pub } = await supabase.rpc("get_public_vitrine", { _slug_or_user: paramSlug });
+        const pubRow = Array.isArray(pub) ? pub[0] : pub;
+        if (pubRow) {
+          // Fetch full row for created_at + legacy fallbacks (RLS lets owner only see all; anon sees published row via RPC already)
+          const { data: full } = await supabase
+            .from("profiles")
+            .select(PROFILE_COLS)
+            .eq("user_id", pubRow.user_id)
+            .maybeSingle();
+          resolvedProfile = (full as SellerProfile) ?? {
+            ...pubRow,
+            phone: null,
+            postal_code: pubRow.postal_code ?? null,
+            created_at: new Date().toISOString(),
+            cover_image_url: pubRow.vitrine_cover_url,
+            opening_hours: null,
+            services: pubRow.vitrine_services,
+            presentation: pubRow.vitrine_about,
+            vitrine_published: true,
+          } as SellerProfile;
+        } else {
+          // 2. Owner-preview fallback: query by slug (RLS lets owner see their own row only)
+          const { data: own } = await supabase
+            .from("profiles")
+            .select(PROFILE_COLS)
+            .eq("vitrine_slug", paramSlug)
+            .maybeSingle();
+          if (own) resolvedProfile = own as SellerProfile;
+        }
+      } else if (paramUserId) {
+        const { data } = await supabase
+          .from("profiles")
+          .select(PROFILE_COLS)
+          .eq("user_id", paramUserId)
+          .maybeSingle();
+        if (data) resolvedProfile = data as SellerProfile;
+      }
+
+      if (cancelled) return;
+
+      if (!resolvedProfile) {
+        setNotFound(true);
+        setLoading(false);
+        return;
+      }
+      setProfile(resolvedProfile);
+
+      const sellerUserId = resolvedProfile.user_id;
 
       // Use the secure RPC function to get seller listings without exposing sensitive columns
       const { data: sellerListings } = await supabase
-        .rpc("get_seller_public_listings", { _seller_id: userId });
+        .rpc("get_seller_public_listings", { _seller_id: sellerUserId });
 
+      if (cancelled) return;
       if (sellerListings) setListings(sellerListings as SellerListing[]);
 
       // Filter reviews: get all car_listing_ids for this seller, then filter reviews
@@ -129,8 +178,8 @@ const SellerProfile = () => {
           .in("car_listing_id", listingIds)
           .order("created_at", { ascending: false });
 
+        if (cancelled) return;
         if (sellerReviews) {
-          // Fetch reviewer names
           const reviewerIds = [...new Set(sellerReviews.map(r => r.user_id))];
           const { data: reviewerProfiles } = await supabase
             .from("profiles")
@@ -138,14 +187,15 @@ const SellerProfile = () => {
             .in("user_id", reviewerIds);
 
           const nameMap = new Map(reviewerProfiles?.map(p => [p.user_id, p.display_name]) || []);
-          setReviews(sellerReviews.map(r => ({ ...r, reviewer_name: nameMap.get(r.user_id) || undefined })));
+          if (!cancelled) setReviews(sellerReviews.map(r => ({ ...r, reviewer_name: nameMap.get(r.user_id) || undefined })));
         }
       }
 
-      setLoading(false);
+      if (!cancelled) setLoading(false);
     };
     load();
-  }, [userId]);
+    return () => { cancelled = true; };
+  }, [paramUserId, paramSlug, isSlugRoute]);
 
   /* Computed stats */
   const avgRating = useMemo(() => {
