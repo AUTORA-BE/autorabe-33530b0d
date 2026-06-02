@@ -4,7 +4,7 @@
  */
 
 import { memo, useState, useEffect, useRef, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Search, ChevronDown, X, Clock, TrendingUp, ArrowRight, ShieldCheck, MapPin, Sparkles, Car, Truck, Caravan, GitCompareArrows } from "lucide-react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { getAllBrands, getModelsByBrand } from "@/utils/carUtils";
