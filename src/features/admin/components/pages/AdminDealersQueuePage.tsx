@@ -8,6 +8,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   CheckCircle2, XCircle, Mail, ExternalLink, Clock, Loader2, ShieldCheck, AlertTriangle,
+  FileCheck2, Leaf,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
