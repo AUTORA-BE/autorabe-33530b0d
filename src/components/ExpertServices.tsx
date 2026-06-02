@@ -146,7 +146,7 @@ const ExpertServices = memo(() => {
                 onClick={() => navigate("/services")}
                 aria-label={t("En savoir plus sur nos services experts", "Meer info over onze expertdiensten", "Learn more about our expert services")}
               >
-                {t("En savoir plus", "Meer info", "Learn more")}
+                {t("En savoir plus sur nos services", "Meer info over onze diensten", "Learn more about our services")}
                 <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" aria-hidden="true" />
               </Button>
             </motion.div>
