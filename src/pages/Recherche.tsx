@@ -575,11 +575,13 @@ function MoreFiltersSheet({
 const Recherche = () => {
   const { language } = useLanguage();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const [viewMode, setViewMode] = useState<ViewMode>("catalog");
   const [moreFiltersOpen, setMoreFiltersOpen] = useState(false);
   const [models, setModels] = useState<string[]>([]);
   const [shrunk, setShrunk] = useState(false);
   const brands = useMemo(() => getAllBrands(), []);
+  const mobileSearchRef = useRef<HTMLInputElement>(null);
 
   const {
     cars, isLoading, hasMore, loadMore, isLoadingMore, totalCount,
@@ -600,6 +602,23 @@ const Recherche = () => {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Count "active" filters for the mobile toolbar badge
+  const activeFilterCount = useMemo(() => {
+    let n = 0;
+    if (filters.brand) n++;
+    if (filters.searchQuery) n++;
+    if (filters.maxPrice < 1000000) n++;
+    if (filters.kmMax < 500000) n++;
+    if (filters.fuelTypes?.length) n++;
+    if (filters.transmission) n++;
+    if (filters.color) n++;
+    if (filters.euroNorm) n++;
+    if (filters.lezOnly) n++;
+    if (filters.yearMin > 1990) n++;
+    if (filters.yearMax < CURRENT_YEAR) n++;
+    return n;
+  }, [filters]);
 
   const handleCarClick = (id: string) => {
     const car = cars.find((c) => c.id === id);
