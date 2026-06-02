@@ -171,22 +171,24 @@ const Header = () => {
             onClick={() => navigate("/recherche")}
             aria-label="Rechercher une voiture"
             className="group relative w-full h-11 rounded-full overflow-hidden
-                       bg-gradient-to-r from-background/60 via-background/40 to-background/60
-                       backdrop-blur-md border border-primary/30
+                       bg-card/35 backdrop-blur-xl
+                       border border-primary/25 ring-1 ring-inset ring-white/5
+                       shadow-[0_4px_24px_-8px_hsl(var(--primary)/0.25)]
                        hover:border-primary/60 active:scale-[0.98]
                        transition-all duration-300
-                       hover:shadow-[0_0_24px_-4px_hsl(var(--primary)/0.45)]"
+                       hover:shadow-[0_0_28px_-4px_hsl(var(--primary)/0.55),inset_0_1px_0_0_hsl(var(--primary)/0.15)]
+                       focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
           >
             {/* Glow sweep on hover */}
             <span
               aria-hidden="true"
               className="pointer-events-none absolute inset-0 -translate-x-full
-                         bg-gradient-to-r from-transparent via-primary/15 to-transparent
-                         group-hover:translate-x-full transition-transform duration-1000 ease-out"
+                         bg-gradient-to-r from-transparent via-primary/25 to-transparent
+                         group-hover:translate-x-full transition-transform duration-[1100ms] ease-out"
             />
-            <span className="relative flex items-center justify-center gap-2 text-sm font-medium text-foreground">
-              <Search className="w-4 h-4 text-primary" strokeWidth={2.2} />
-              <span>Rechercher une voiture</span>
+            <span className="relative flex items-center justify-center gap-2 text-[13px] font-medium tracking-wide text-foreground">
+              <Search className="w-4 h-4 text-primary drop-shadow-[0_0_6px_hsl(var(--primary)/0.6)]" strokeWidth={2.2} />
+              <span>Rechercher</span>
             </span>
           </button>
         </div>
