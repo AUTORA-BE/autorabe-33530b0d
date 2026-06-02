@@ -8,7 +8,7 @@ import { Menu, Heart, MessageCircle, GitCompareArrows, Sun, Moon, Bell, Search }
 import autoraLogo from "@/assets/autora-logo.png";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import { useToast } from "@/hooks/use-toast";
