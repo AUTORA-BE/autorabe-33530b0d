@@ -50,7 +50,7 @@ const EditVitrine = () => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("avatar_url, garage_name, postal_code, display_name, cover_image_url, opening_hours, services, presentation")
+      .select("avatar_url, garage_name, postal_code, display_name, cover_image_url, opening_hours, services, presentation, vitrine_slug, vitrine_cover_url, vitrine_about, vitrine_services, vitrine_phone, vitrine_email_public, vitrine_published")
       .eq("user_id", user.id)
       .maybeSingle()
       .then(({ data }) => {
@@ -59,17 +59,34 @@ const EditVitrine = () => {
           setGarageName(data.garage_name);
           setPostalCode(data.postal_code);
           setDisplayName(data.display_name);
-          setCoverUrl(data.cover_image_url ?? "");
+          setCoverUrl(data.vitrine_cover_url ?? data.cover_image_url ?? "");
           setHours(data.opening_hours ?? "");
-          setServicesText((data.services ?? []).join("\n"));
-          setPresentation(data.presentation ?? "");
+          setServicesText(((data.vitrine_services?.length ? data.vitrine_services : data.services) ?? []).join("\n"));
+          setPresentation(data.vitrine_about ?? data.presentation ?? "");
+          setSlug(data.vitrine_slug ?? "");
+          setVitrinePhone(data.vitrine_phone ?? "");
+          setVitrineEmail(data.vitrine_email_public ?? "");
+          setPublished(!!data.vitrine_published);
         }
         setLoading(false);
       });
   }, [user]);
 
-  const services = servicesText.split("\n").map(s => s.trim()).filter(Boolean);
+  const services = servicesText.split("\n").map(s => s.trim()).filter(Boolean).slice(0, 10);
   const name = garageName || displayName || (language === "nl" ? "Mijn garage" : "Mon garage");
+  const slugRegex = /^[a-z0-9-]{3,60}$/;
+
+  // Debounced slug availability check
+  useEffect(() => {
+    if (!user || !slug) { setSlugStatus("idle"); return; }
+    if (!slugRegex.test(slug)) { setSlugStatus("invalid"); return; }
+    setSlugStatus("checking");
+    const t = setTimeout(async () => {
+      const { data } = await supabase.rpc("is_vitrine_slug_available", { _slug: slug, _user_id: user.id });
+      setSlugStatus(data ? "available" : "taken");
+    }, 400);
+    return () => clearTimeout(t);
+  }, [slug, user]);
 
   const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
