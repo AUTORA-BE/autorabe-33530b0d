@@ -471,6 +471,42 @@ export type Database = {
         }
         Relationships: []
       }
+      dealer_verification_queue: {
+        Row: {
+          admin_notes: string | null
+          bce_snapshot: string | null
+          garage_name_snapshot: string | null
+          id: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          submitted_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          bce_snapshot?: string | null
+          garage_name_snapshot?: string | null
+          id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          submitted_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          bce_snapshot?: string | null
+          garage_name_snapshot?: string | null
+          id?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          submitted_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       email_send_log: {
         Row: {
           created_at: string
@@ -708,6 +744,7 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          bce_number: string | null
           cover_image_url: string | null
           created_at: string
           display_name: string | null
@@ -722,6 +759,7 @@ export type Database = {
           suspended_reason: string | null
           updated_at: string
           user_id: string
+          user_type: string
           vitrine_about: string | null
           vitrine_cover_url: string | null
           vitrine_email_public: string | null
@@ -732,6 +770,7 @@ export type Database = {
         }
         Insert: {
           avatar_url?: string | null
+          bce_number?: string | null
           cover_image_url?: string | null
           created_at?: string
           display_name?: string | null
@@ -746,6 +785,7 @@ export type Database = {
           suspended_reason?: string | null
           updated_at?: string
           user_id: string
+          user_type?: string
           vitrine_about?: string | null
           vitrine_cover_url?: string | null
           vitrine_email_public?: string | null
@@ -756,6 +796,7 @@ export type Database = {
         }
         Update: {
           avatar_url?: string | null
+          bce_number?: string | null
           cover_image_url?: string | null
           created_at?: string
           display_name?: string | null
@@ -770,6 +811,7 @@ export type Database = {
           suspended_reason?: string | null
           updated_at?: string
           user_id?: string
+          user_type?: string
           vitrine_about?: string | null
           vitrine_cover_url?: string | null
           vitrine_email_public?: string | null
