@@ -74,6 +74,14 @@ const Header = () => {
     toast({ title: t("logout.success"), description: t("logout.description") });
   };
 
+  const mobileSearchRef = useRef<HTMLInputElement>(null);
+
+  const submitMobileSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const q = mobileSearchRef.current?.value.trim() ?? "";
+    navigate(q ? `/recherche?q=${encodeURIComponent(q)}` : "/recherche");
+  };
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -83,10 +91,10 @@ const Header = () => {
       }`}
       style={{ paddingTop: 'var(--safe-area-top, env(safe-area-inset-top, 0px))' }}
     >
-      <div className={`container mx-auto px-4 sm:px-6 transition-all duration-300 ${scrolled ? "py-1.5 sm:py-2" : "py-2.5 sm:py-3"}`}>
-        <div className="flex items-center justify-between">
+      <div className={`container mx-auto px-4 sm:px-6 transition-all duration-300 ${scrolled ? "py-1 sm:py-2" : "py-1.5 sm:py-3"}`}>
+        <div className="flex items-center justify-between gap-2">
           {/* Logo */}
-          <Link to={localized("/")} className="flex items-center gap-2 group">
+          <Link to={localized("/")} className="flex items-center gap-2 group shrink-0" aria-label="AutoRA — Accueil">
             <img
               src={autoraLogo}
               alt="AutoRA Logo"
@@ -139,25 +147,51 @@ const Header = () => {
           <DesktopActions user={user} userProfile={userProfile} onLogout={handleLogout} t={t} isAdmin={isAdmin} />
 
           {/* Mobile + Tablet: theme toggle + hamburger (lg breakpoint to cover Galaxy Tab) */}
-          <div className="lg:hidden flex items-center gap-1.5">
+          <div className="lg:hidden flex items-center gap-1.5 shrink-0">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               aria-label={theme === "dark" ? "Activer le mode clair" : "Activer le mode sombre"}
-              className="text-muted-foreground hover:text-foreground rounded-xl w-9 h-9"
+              className="text-muted-foreground hover:text-foreground rounded-xl min-w-11 min-h-11 w-11 h-11"
             >
-              {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </Button>
             <button
-              className="w-9 h-9 flex items-center justify-center text-foreground rounded-xl hover:bg-secondary/60 transition-colors"
+              type="button"
+              className="min-w-11 min-h-11 w-11 h-11 flex items-center justify-center text-foreground rounded-xl hover:bg-secondary/60 transition-colors"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Menu"
+              aria-label="Ouvrir le menu"
+              aria-expanded={mobileMenuOpen}
             >
               <Menu className="w-5 h-5" strokeWidth={1.8} />
             </button>
           </div>
         </div>
+
+        {/* Mobile-only search bar — sits just under the logo row, hides on scroll-down */}
+        <form
+          onSubmit={submitMobileSearch}
+          className={`lg:hidden overflow-hidden transition-all duration-300 ease-out ${
+            scrolled ? "max-h-0 opacity-0 mt-0" : "max-h-14 opacity-100 mt-1.5"
+          }`}
+          role="search"
+          aria-label="Rechercher une voiture"
+        >
+          <label htmlFor="header-mobile-search" className="sr-only">Rechercher une voiture</label>
+          <div className="relative">
+            <Search className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" strokeWidth={1.8} />
+            <input
+              ref={mobileSearchRef}
+              id="header-mobile-search"
+              type="search"
+              inputMode="search"
+              placeholder="Marque, modèle, ville…"
+              onFocus={() => navigate("/recherche")}
+              className="w-full h-11 pl-10 pr-3 rounded-2xl text-sm bg-background/85 text-foreground placeholder:text-muted-foreground border border-border/40 backdrop-blur-md outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:border-primary/60"
+            />
+          </div>
+        </form>
 
         {/* Mobile Menu (now a drawer — renders via portal-like AnimatePresence) */}
         <MobileMenu
