@@ -32,6 +32,12 @@ const EditVitrine = () => {
   const [garageName, setGarageName] = useState<string | null>(null);
   const [postalCode, setPostalCode] = useState<string | null>(null);
   const [displayName, setDisplayName] = useState<string | null>(null);
+  // Vitrine-specific fields
+  const [slug, setSlug] = useState("");
+  const [slugStatus, setSlugStatus] = useState<"idle" | "checking" | "available" | "taken" | "invalid">("idle");
+  const [vitrinePhone, setVitrinePhone] = useState("");
+  const [vitrineEmail, setVitrineEmail] = useState("");
+  const [published, setPublished] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
