@@ -665,8 +665,53 @@ const Recherche = () => {
       />
       <Header />
 
-      <main className="relative pt-24 pb-32 sm:pt-28">
-        <section className="container mx-auto mb-10 px-6 text-center sm:mb-14 sm:px-8">
+      <main className="relative pt-[88px] pb-32 sm:pt-28">
+        {/* Mobile-only sticky search toolbar (input + Filters button) */}
+        <div
+          className="md:hidden sticky top-[60px] z-40 -mx-0 mb-4 border-b border-white/10 bg-slate-950/85 px-4 py-2.5 backdrop-blur-xl"
+          role="search"
+          aria-label="Filtres de recherche"
+        >
+          <div className="flex items-center gap-2">
+            <form
+              className="relative flex-1"
+              onSubmit={(e) => {
+                e.preventDefault();
+                const v = mobileSearchRef.current?.value.trim() ?? "";
+                updateFilter("searchQuery", v);
+              }}
+            >
+              <label htmlFor="recherche-mobile-input" className="sr-only">Rechercher</label>
+              <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/60" strokeWidth={1.8} />
+              <input
+                ref={mobileSearchRef}
+                id="recherche-mobile-input"
+                type="search"
+                inputMode="search"
+                defaultValue={filters.searchQuery}
+                onBlur={(e) => updateFilter("searchQuery", e.target.value.trim())}
+                placeholder="Marque, modèle, ville…"
+                className="h-11 w-full rounded-2xl border border-white/10 bg-white/[0.05] pl-9 pr-3 text-sm text-white placeholder:text-white/45 outline-none focus-visible:border-primary/60 focus-visible:ring-2 focus-visible:ring-primary/30"
+              />
+            </form>
+            <button
+              type="button"
+              onClick={() => setMoreFiltersOpen(true)}
+              aria-label={`Ouvrir les filtres${activeFilterCount > 0 ? ` (${activeFilterCount} actifs)` : ""}`}
+              className="relative inline-flex h-11 min-w-11 items-center justify-center gap-1.5 rounded-2xl border border-white/10 bg-white/[0.05] px-3.5 text-sm font-medium text-white transition active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-primary/40"
+            >
+              <SlidersHorizontal className="h-4 w-4" strokeWidth={1.8} />
+              <span>Filtres</span>
+              {activeFilterCount > 0 && (
+                <span className="ml-0.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[10px] font-bold text-primary-foreground">
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
+          </div>
+        </div>
+
+        <section className="container mx-auto mb-10 px-6 text-center sm:mb-14 sm:px-8 hidden md:block">
           <motion.p
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
@@ -693,23 +738,15 @@ const Recherche = () => {
           </motion.p>
         </section>
 
-        <section className="container sticky top-6 z-50 mx-auto mb-10 flex justify-center px-6 sm:mb-12 sm:px-8">
+        <section className="container sticky top-6 z-30 mx-auto mb-10 hidden justify-center px-6 sm:mb-12 sm:px-8 md:flex">
           <PillFilterBar
             filters={filters}
             updateFilter={updateFilter}
             onOpenMore={() => setMoreFiltersOpen(true)}
             shrunk={shrunk}
           />
-
-          <Button
-            onClick={() => setMoreFiltersOpen(true)}
-            className="h-12 w-full rounded-full border border-white/10 bg-slate-900/60 text-white shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] backdrop-blur-xl hover:bg-slate-900/80 md:hidden"
-            size="lg"
-          >
-            <SlidersHorizontal className="h-4 w-4" />
-            Filtrer la recherche
-          </Button>
         </section>
+
 
         <section className="container mx-auto mb-8 flex items-center justify-between px-6 sm:px-8">
           <p className="text-xs font-light tabular-nums text-white/70 sm:text-sm">
