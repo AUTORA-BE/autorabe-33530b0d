@@ -730,7 +730,7 @@ const Recherche = () => {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.05 }}
-            className="mt-3 text-3xl font-light leading-[1.1] tracking-tight text-white sm:text-4xl md:text-5xl"
+            className="mt-3 text-3xl font-light leading-[1.1] tracking-tight text-foreground sm:text-4xl md:text-5xl"
           >
             {title}
           </motion.h1>
@@ -738,7 +738,7 @@ const Recherche = () => {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.12 }}
-            className="mx-auto mt-4 max-w-2xl text-sm font-light leading-relaxed text-white/65 sm:text-base"
+            className="mx-auto mt-4 max-w-2xl text-sm font-light leading-relaxed text-muted-foreground sm:text-base"
           >
             {subtitle(totalCount || 482)}
           </motion.p>
