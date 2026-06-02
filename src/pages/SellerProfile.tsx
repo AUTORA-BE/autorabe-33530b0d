@@ -770,7 +770,7 @@ const SellerProfile = () => {
                       </div>
                     )}
 
-                    {profile.phone && (
+                    {effectivePhone && (
                       <div className="flex items-start gap-4">
                         <div className="w-10 h-10 rounded-xl bg-primary/[0.06] border border-border/50 flex items-center justify-center shrink-0">
                           <Phone className="w-5 h-5 text-primary" strokeWidth={1.5} />
@@ -779,8 +779,24 @@ const SellerProfile = () => {
                           <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
                             {language === "nl" ? "Telefoon" : "Téléphone"}
                           </p>
-                          <a href={`tel:${profile.phone}`} className="text-foreground font-medium hover:text-primary transition-colors">
-                            {profile.phone}
+                          <a href={`tel:${effectivePhone}`} className="text-foreground font-medium hover:text-primary transition-colors">
+                            {effectivePhone}
+                          </a>
+                        </div>
+                      </div>
+                    )}
+
+                    {effectiveEmail && (
+                      <div className="flex items-start gap-4">
+                        <div className="w-10 h-10 rounded-xl bg-primary/[0.06] border border-border/50 flex items-center justify-center shrink-0">
+                          <MessageSquare className="w-5 h-5 text-primary" strokeWidth={1.5} />
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
+                            {language === "nl" ? "E-mail" : "Email"}
+                          </p>
+                          <a href={`mailto:${effectiveEmail}`} className="text-foreground font-medium hover:text-primary transition-colors">
+                            {effectiveEmail}
                           </a>
                         </div>
                       </div>
