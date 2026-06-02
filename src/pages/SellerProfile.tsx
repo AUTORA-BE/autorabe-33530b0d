@@ -74,19 +74,22 @@ interface SellerReview {
 
 /* ---------- component ---------- */
 const SellerProfile = () => {
-  const { userId } = useParams<{ userId: string }>();
+  const { userId: paramUserId, slug: paramSlug } = useParams<{ userId?: string; slug?: string }>();
   const navigate = useNavigate();
   const vehicleHref = useLocalizedVehicleHref();
   const { language } = useLanguage();
   const { toast } = useToast();
   const dateLocale = language === "fr" ? fr : language === "nl" ? nl : enUS;
 
+  const isSlugRoute = !!paramSlug;
   const [profile, setProfile] = useState<SellerProfile | null>(null);
   const [listings, setListings] = useState<SellerListing[]>([]);
   const [reviews, setReviews] = useState<SellerReview[]>([]);
   const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [editOpen, setEditOpen] = useState(false);
+  const userId = profile?.user_id ?? paramUserId ?? null;
   const sellerListingIds = useMemo(() => listings.map(l => l.id), [listings]);
   const favCounts = useFavoriteCounts(sellerListingIds);
 
@@ -94,7 +97,7 @@ const SellerProfile = () => {
     supabase.auth.getSession().then(({ data: { session } }) => setCurrentUserId(session?.user?.id ?? null));
   }, []);
 
-  const isOwnProfile = currentUserId && userId && currentUserId === userId;
+  const isOwnProfile = !!(currentUserId && userId && currentUserId === userId);
 
   /* Fetch all data in parallel */
   useEffect(() => {
