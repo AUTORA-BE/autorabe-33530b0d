@@ -256,6 +256,101 @@ const EditVitrine = () => {
                         ? "Ma - Vr: 9u - 18u\nZa: 9u - 12u\nZo: gesloten"
                         : "Lun - Ven: 9h - 18h\nSam: 9h - 12h\nDim: fermé"}
                     />
+                </div>
+                </div>
+
+                {/* ── Bloc Publication & Contact ── */}
+                <div className="rounded-2xl border border-border/50 bg-card/80 backdrop-blur-sm p-6 space-y-5">
+                  {/* Slug */}
+                  <div className="space-y-2">
+                    <Label htmlFor="vitrine-slug" className="text-sm font-medium">
+                      {language === "nl" ? "URL van uw vitrine" : "URL de votre vitrine"}
+                    </Label>
+                    <div className="relative">
+                      <div className="flex items-stretch rounded-xl border border-border/60 bg-background overflow-hidden focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 focus-within:ring-offset-background">
+                        <span className="inline-flex items-center px-3 text-xs text-muted-foreground bg-secondary/60 border-r border-border/60 select-none">
+                          autora.be/garage/
+                        </span>
+                        <input
+                          id="vitrine-slug"
+                          type="text"
+                          value={slug}
+                          onChange={(e) => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
+                          maxLength={60}
+                          placeholder="mon-garage"
+                          aria-describedby="vitrine-slug-status"
+                          className="flex-1 bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted-foreground/60"
+                        />
+                        <span className="inline-flex items-center pr-3" id="vitrine-slug-status" aria-live="polite">
+                          {slugStatus === "checking" && (
+                            <span className="w-3.5 h-3.5 border-2 border-muted-foreground/40 border-t-primary rounded-full animate-spin" aria-label={language === "nl" ? "Controleren..." : "Vérification..."} />
+                          )}
+                          {slugStatus === "available" && <Check className="w-4 h-4 text-emerald-500" aria-label={language === "nl" ? "Beschikbaar" : "Disponible"} />}
+                          {(slugStatus === "taken" || slugStatus === "invalid") && <AlertCircle className="w-4 h-4 text-destructive" aria-label={language === "nl" ? "Niet beschikbaar" : "Indisponible"} />}
+                        </span>
+                      </div>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground">
+                      {slugStatus === "invalid"
+                        ? (language === "nl" ? "Alleen a-z, 0-9 en -, 3 tot 60 tekens." : "Uniquement a-z, 0-9 et -, 3 à 60 caractères.")
+                        : slugStatus === "taken"
+                          ? (language === "nl" ? "Deze URL is al in gebruik." : "Cette URL est déjà utilisée.")
+                          : slugStatus === "available"
+                            ? (language === "nl" ? "Beschikbaar ✓" : "Disponible ✓")
+                            : (language === "nl" ? "Kies een unieke URL voor uw publieke vitrine." : "Choisissez une URL unique pour votre vitrine publique.")}
+                    </p>
+                  </div>
+
+                  {/* Phone */}
+                  <div className="space-y-2">
+                    <Label htmlFor="vitrine-phone" className="text-sm font-medium">
+                      {language === "nl" ? "Telefoon (publiek)" : "Téléphone (public)"}
+                    </Label>
+                    <Input
+                      id="vitrine-phone"
+                      type="tel"
+                      value={vitrinePhone}
+                      onChange={(e) => setVitrinePhone(e.target.value)}
+                      maxLength={30}
+                      placeholder="+32 470 12 34 56"
+                      autoComplete="tel"
+                    />
+                  </div>
+
+                  {/* Public Email */}
+                  <div className="space-y-2">
+                    <Label htmlFor="vitrine-email" className="text-sm font-medium">
+                      {language === "nl" ? "E-mail (publiek)" : "E-mail (public)"}
+                    </Label>
+                    <Input
+                      id="vitrine-email"
+                      type="email"
+                      value={vitrineEmail}
+                      onChange={(e) => setVitrineEmail(e.target.value)}
+                      maxLength={255}
+                      placeholder="contact@mongarage.be"
+                      autoComplete="email"
+                    />
+                  </div>
+
+                  {/* Publish switch */}
+                  <div className="flex items-start justify-between gap-4 pt-2 border-t border-border/40">
+                    <div className="flex-1 min-w-0">
+                      <Label htmlFor="vitrine-published" className="text-sm font-medium cursor-pointer">
+                        {language === "nl" ? "Vitrine publiceren" : "Publier la vitrine"}
+                      </Label>
+                      <p className="text-[11px] text-muted-foreground mt-1">
+                        {published
+                          ? (language === "nl" ? "Zichtbaar op uw publieke URL." : "Visible sur votre URL publique.")
+                          : (language === "nl" ? "Privé — alleen u ziet een voorbeeld." : "Privée — vous seul voyez l'aperçu.")}
+                      </p>
+                    </div>
+                    <Switch
+                      id="vitrine-published"
+                      checked={published}
+                      onCheckedChange={setPublished}
+                      aria-label={language === "nl" ? "Vitrine publiceren" : "Publier la vitrine"}
+                    />
                   </div>
                 </div>
 
@@ -265,10 +360,20 @@ const EditVitrine = () => {
                       ? (language === "nl" ? "Opslaan..." : "Enregistrement...")
                       : (language === "nl" ? "Wijzigingen opslaan" : "Enregistrer les modifications")}
                   </Button>
-                  <Button asChild variant="outline" className="rounded-xl">
-                    <Link to={`/seller/${user.id}`}>
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="rounded-xl"
+                    disabled={!slug || slugStatus === "invalid" || slugStatus === "taken"}
+                  >
+                    <Link
+                      to={slug && slugStatus !== "invalid" && slugStatus !== "taken" ? `/garage/${slug}` : "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-disabled={!slug || slugStatus === "invalid" || slugStatus === "taken"}
+                    >
                       <Eye className="w-4 h-4 mr-2" strokeWidth={1.5} />
-                      {language === "nl" ? "Publieke pagina bekijken" : "Voir la page publique"}
+                      {language === "nl" ? "Mijn vitrine bekijken" : "Voir ma vitrine"}
                     </Link>
                   </Button>
                 </div>
