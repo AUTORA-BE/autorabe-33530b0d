@@ -38,6 +38,14 @@ interface SellerProfile {
   opening_hours: string | null;
   services: string[] | null;
   presentation: string | null;
+  // Vitrine fields (slug-based public showcase)
+  vitrine_slug: string | null;
+  vitrine_cover_url: string | null;
+  vitrine_about: string | null;
+  vitrine_services: string[] | null;
+  vitrine_phone: string | null;
+  vitrine_email_public: string | null;
+  vitrine_published: boolean;
 }
 
 
