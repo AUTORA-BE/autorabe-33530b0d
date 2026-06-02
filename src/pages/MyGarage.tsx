@@ -192,9 +192,9 @@ const MyGarage = () => {
                       <Heart className="w-4 h-4 text-destructive/50" />
                     </motion.div>
                   </div>
-                  <h3 className="font-display text-xl font-bold text-foreground mb-2">
+                  <h2 className="font-display text-xl font-bold text-foreground mb-2">
                     {t("favorites.empty")}
-                  </h3>
+                  </h2>
                   <p className="text-sm text-muted-foreground max-w-xs mx-auto mb-8">
                     {t("favorites.emptyDescription")}
                   </p>
