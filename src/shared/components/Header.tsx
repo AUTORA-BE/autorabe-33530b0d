@@ -162,7 +162,8 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Mobile-only premium "Rechercher" pill button — sits just under the logo row, hides on scroll-down */}
+        {/* Mobile-only premium "Rechercher" pill button — hidden on the Recherche page itself */}
+        {!isSearchPage && (
         <div
           className={`lg:hidden overflow-hidden transition-all duration-300 ease-out ${
             scrolled ? "max-h-0 opacity-0 mt-0" : "max-h-14 opacity-100 mt-1.5"
