@@ -386,10 +386,11 @@ interface MoreFiltersSheetProps {
   resultsCount: number;
   brands: string[];
   models: string[];
+  isMobile: boolean;
 }
 
 function MoreFiltersSheet({
-  open, onOpenChange, filters, updateFilter, resetFilters, resultsCount, brands, models,
+  open, onOpenChange, filters, updateFilter, resetFilters, resultsCount, brands, models, isMobile,
 }: MoreFiltersSheetProps) {
   const fieldCls =
     "w-full h-11 px-4 rounded-xl border border-white/10 bg-white/[0.04] text-sm text-white outline-none transition focus:border-primary/50 focus:bg-white/[0.08] focus:ring-2 focus:ring-primary/20";
@@ -399,8 +400,13 @@ function MoreFiltersSheet({
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
-        side="right"
-        className="flex w-full flex-col gap-0 border-l border-white/10 bg-slate-950 p-0 text-white shadow-[-40px_0_80px_-20px_rgba(0,0,0,0.7)] sm:max-w-md"
+        side={isMobile ? "bottom" : "right"}
+        className={cn(
+          "flex flex-col gap-0 border-white/10 bg-slate-950 p-0 text-white",
+          isMobile
+            ? "h-[92dvh] w-full rounded-t-3xl border-t shadow-[0_-30px_80px_-20px_rgba(0,0,0,0.7)]"
+            : "w-full border-l shadow-[-40px_0_80px_-20px_rgba(0,0,0,0.7)] sm:max-w-md",
+        )}
       >
         <SheetHeader className="flex flex-row items-center justify-between space-y-0 border-b border-white/5 px-6 py-5">
           <div>
