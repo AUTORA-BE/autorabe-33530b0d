@@ -171,6 +171,19 @@ export default function AdminDealersQueuePage() {
         metadata: { queue_id: row.id, garage: row.garage_name_snapshot, bce: row.bce_snapshot },
       });
 
+      // Minimal structured log (no PII)
+      await supabase.from('dealer_events').insert({
+        event_type: 'dealer_approved',
+        user_id: row.user_id,
+        queue_id: row.id,
+        actor_id: auth.user!.id,
+        meta: {
+          listings_count: row.listings_count ?? 0,
+          car_pass_verified_count: row.car_pass_verified_count ?? 0,
+          lez_eligible_count: row.lez_eligible_count ?? 0,
+        },
+      });
+
       // Resolve recipient email from auth via display_name fallback — we need real email.
       // Use admin_get_listing_contacts is listing-only. We rely on auth.users via the
       // welcome/notification: pull from user_preferences? Simpler — call notify by user_id pattern.
