@@ -37,7 +37,15 @@ interface DealerRow {
   phone?: string | null;
   postal_code?: string | null;
   email?: string | null;
+  // Aggregated from car_listings
+  listings_count?: number;
+  car_pass_verified_count?: number;
+  lez_eligible_count?: number;
 }
+
+// Euro norms autorisées en LEZ Bruxelles/Anvers/Gand en 2026 (essence ≥ Euro 4, diesel ≥ Euro 6).
+// Approximation conservatrice : on flag "LEZ-OK" si euro_norm ∈ {Euro 5, Euro 6, Euro 6d}.
+const LEZ_OK_NORMS = new Set(['Euro 5', 'Euro 6', 'Euro 6d', 'Euro 6d-TEMP']);
 
 const STATUS_META: Record<QueueStatus, { label: string; cls: string; icon: typeof Clock }> = {
   pending: { label: 'En attente', cls: 'bg-amber-500/15 text-amber-500 border-amber-500/30', icon: Clock },
