@@ -6,13 +6,13 @@
  * @module pages
  */
 
-import { useState, useEffect, lazy, Suspense, useMemo } from "react";
+import { useState, useEffect, lazy, Suspense, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header, Footer } from "@/shared/components";
 import SEOHead from "@/components/SEOHead";
 import {
   ShieldCheck, Leaf, ChevronDown, SlidersHorizontal, Grid3x3, Flame,
-  Calendar, Gauge, X, ImageOff,
+  Calendar, Gauge, X, ImageOff, Search,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -27,6 +27,7 @@ import { useLocalizedVehicleHref } from "@/lib/useLocalizedHref";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getAllBrands, getModelsByBrand } from "@/utils/carUtils";
 import { BUDGET_OPTIONS, EURO_NORMS } from "@/features/search/types/search.types";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import type { Vehicle } from "@/features/listings/types/vehicle.types";
 
