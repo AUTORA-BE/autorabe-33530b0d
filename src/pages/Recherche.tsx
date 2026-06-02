@@ -890,6 +890,7 @@ const Recherche = () => {
         resultsCount={totalCount}
         brands={brands}
         models={models}
+        isMobile={isMobile}
       />
 
       <Footer />
