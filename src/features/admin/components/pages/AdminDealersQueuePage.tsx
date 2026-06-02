@@ -8,6 +8,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   CheckCircle2, XCircle, Mail, ExternalLink, Clock, Loader2, ShieldCheck, AlertTriangle,
+  FileCheck2, Leaf,
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -36,7 +37,15 @@ interface DealerRow {
   phone?: string | null;
   postal_code?: string | null;
   email?: string | null;
+  // Aggregated from car_listings
+  listings_count?: number;
+  car_pass_verified_count?: number;
+  lez_eligible_count?: number;
 }
+
+// Euro norms autorisées en LEZ Bruxelles/Anvers/Gand en 2026 (essence ≥ Euro 4, diesel ≥ Euro 6).
+// Approximation conservatrice : on flag "LEZ-OK" si euro_norm ∈ {Euro 5, Euro 6, Euro 6d}.
+const LEZ_OK_NORMS = new Set(['Euro 5', 'Euro 6', 'Euro 6d', 'Euro 6d-TEMP']);
 
 const STATUS_META: Record<QueueStatus, { label: string; cls: string; icon: typeof Clock }> = {
   pending: { label: 'En attente', cls: 'bg-amber-500/15 text-amber-500 border-amber-500/30', icon: Clock },
@@ -76,21 +85,42 @@ export default function AdminDealersQueuePage() {
     }
 
     const userIds = queueRows.map((r) => r.user_id);
-    const { data: profiles } = await supabase
-      .from('profiles')
-      .select('user_id, display_name, phone, postal_code')
-      .in('user_id', userIds);
+    const [{ data: profiles }, { data: listings }] = await Promise.all([
+      supabase
+        .from('profiles')
+        .select('user_id, display_name, phone, postal_code')
+        .in('user_id', userIds),
+      supabase
+        .from('car_listings')
+        .select('user_id, car_pass_verified, euro_norm, status')
+        .in('user_id', userIds),
+    ]);
 
     const profileMap = new Map((profiles ?? []).map((p) => [p.user_id, p]));
+
+    // Aggregate Car-Pass + LEZ per user from approved listings only
+    const stats = new Map<string, { total: number; cp: number; lez: number }>();
+    for (const l of listings ?? []) {
+      if (l.status !== 'approved') continue;
+      const s = stats.get(l.user_id) ?? { total: 0, cp: 0, lez: 0 };
+      s.total += 1;
+      if (l.car_pass_verified) s.cp += 1;
+      if (l.euro_norm && LEZ_OK_NORMS.has(l.euro_norm)) s.lez += 1;
+      stats.set(l.user_id, s);
+    }
 
     setRows(
       queueRows.map((r) => {
         const p = profileMap.get(r.user_id);
+        const s = stats.get(r.user_id);
         return {
           ...r,
           display_name: p?.display_name ?? null,
           phone: p?.phone ?? null,
           postal_code: p?.postal_code ?? null,
+          listings_count: s?.total ?? 0,
+          car_pass_verified_count: s?.cp ?? 0,
+          lez_eligible_count: s?.lez ?? 0,
         };
       }),
     );
@@ -139,6 +169,19 @@ export default function AdminDealersQueuePage() {
         action_type: 'dealer_approved',
         reason: 'Approved from /admin/dealers',
         metadata: { queue_id: row.id, garage: row.garage_name_snapshot, bce: row.bce_snapshot },
+      });
+
+      // Minimal structured log (no PII)
+      await supabase.from('dealer_events').insert({
+        event_type: 'dealer_approved',
+        user_id: row.user_id,
+        queue_id: row.id,
+        actor_id: auth.user!.id,
+        meta: {
+          listings_count: row.listings_count ?? 0,
+          car_pass_verified_count: row.car_pass_verified_count ?? 0,
+          lez_eligible_count: row.lez_eligible_count ?? 0,
+        },
       });
 
       // Resolve recipient email from auth via display_name fallback — we need real email.
@@ -206,6 +249,15 @@ export default function AdminDealersQueuePage() {
         action_type: 'dealer_rejected',
         reason,
         metadata: { queue_id: rejectTarget.id },
+      });
+
+      // Minimal structured log (only reason length, no free text PII)
+      await supabase.from('dealer_events').insert({
+        event_type: 'dealer_rejected',
+        user_id: rejectTarget.user_id,
+        queue_id: rejectTarget.id,
+        actor_id: auth.user!.id,
+        meta: { reason_length: reason.length },
       });
 
       const email = await resolveUserEmail(rejectTarget.user_id);
@@ -314,6 +366,35 @@ export default function AdminDealersQueuePage() {
                             </span>
                           )}
                         </div>
+                        {(row.listings_count ?? 0) > 0 && (
+                          <div className="flex flex-wrap gap-2 mt-3">
+                            <Badge variant="outline" className="bg-muted/40">
+                              {row.listings_count} annonce{(row.listings_count ?? 0) > 1 ? 's' : ''}
+                            </Badge>
+                            <Badge
+                              variant="outline"
+                              className={
+                                (row.car_pass_verified_count ?? 0) > 0
+                                  ? 'bg-emerald-500/15 text-emerald-500 border-emerald-500/30'
+                                  : 'bg-muted/40'
+                              }
+                            >
+                              <FileCheck2 className="h-3 w-3 mr-1" />
+                              Car-Pass : {row.car_pass_verified_count}/{row.listings_count}
+                            </Badge>
+                            <Badge
+                              variant="outline"
+                              className={
+                                (row.lez_eligible_count ?? 0) > 0
+                                  ? 'bg-sky-500/15 text-sky-500 border-sky-500/30'
+                                  : 'bg-muted/40'
+                              }
+                            >
+                              <Leaf className="h-3 w-3 mr-1" />
+                              LEZ-OK : {row.lez_eligible_count}/{row.listings_count}
+                            </Badge>
+                          </div>
+                        )}
                       </div>
 
                       <div className="flex flex-wrap gap-2 lg:justify-end">

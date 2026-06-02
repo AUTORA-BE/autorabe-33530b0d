@@ -471,6 +471,36 @@ export type Database = {
         }
         Relationships: []
       }
+      dealer_events: {
+        Row: {
+          actor_id: string | null
+          created_at: string
+          event_type: string
+          id: string
+          meta: Json
+          queue_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          actor_id?: string | null
+          created_at?: string
+          event_type: string
+          id?: string
+          meta?: Json
+          queue_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          actor_id?: string | null
+          created_at?: string
+          event_type?: string
+          id?: string
+          meta?: Json
+          queue_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       dealer_verification_queue: {
         Row: {
           admin_notes: string | null
