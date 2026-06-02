@@ -251,6 +251,15 @@ export default function AdminDealersQueuePage() {
         metadata: { queue_id: rejectTarget.id },
       });
 
+      // Minimal structured log (only reason length, no free text PII)
+      await supabase.from('dealer_events').insert({
+        event_type: 'dealer_rejected',
+        user_id: rejectTarget.user_id,
+        queue_id: rejectTarget.id,
+        actor_id: auth.user!.id,
+        meta: { reason_length: reason.length },
+      });
+
       const email = await resolveUserEmail(rejectTarget.user_id);
       if (email) {
         supabase.functions.invoke('send-transactional-email', {
