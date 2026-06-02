@@ -366,6 +366,35 @@ export default function AdminDealersQueuePage() {
                             </span>
                           )}
                         </div>
+                        {(row.listings_count ?? 0) > 0 && (
+                          <div className="flex flex-wrap gap-2 mt-3">
+                            <Badge variant="outline" className="bg-muted/40">
+                              {row.listings_count} annonce{(row.listings_count ?? 0) > 1 ? 's' : ''}
+                            </Badge>
+                            <Badge
+                              variant="outline"
+                              className={
+                                (row.car_pass_verified_count ?? 0) > 0
+                                  ? 'bg-emerald-500/15 text-emerald-500 border-emerald-500/30'
+                                  : 'bg-muted/40'
+                              }
+                            >
+                              <FileCheck2 className="h-3 w-3 mr-1" />
+                              Car-Pass : {row.car_pass_verified_count}/{row.listings_count}
+                            </Badge>
+                            <Badge
+                              variant="outline"
+                              className={
+                                (row.lez_eligible_count ?? 0) > 0
+                                  ? 'bg-sky-500/15 text-sky-500 border-sky-500/30'
+                                  : 'bg-muted/40'
+                              }
+                            >
+                              <Leaf className="h-3 w-3 mr-1" />
+                              LEZ-OK : {row.lez_eligible_count}/{row.listings_count}
+                            </Badge>
+                          </div>
+                        )}
                       </div>
 
                       <div className="flex flex-wrap gap-2 lg:justify-end">
