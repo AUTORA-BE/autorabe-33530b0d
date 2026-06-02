@@ -1291,6 +1291,13 @@ export type Database = {
           id: string
         }[]
       }
+      admin_get_user_emails: {
+        Args: { _user_ids: string[] }
+        Returns: {
+          email: string
+          user_id: string
+        }[]
+      }
       admin_list_listings_with_contacts: {
         Args: { _limit?: number }
         Returns: {
