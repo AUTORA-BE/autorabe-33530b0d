@@ -124,11 +124,9 @@ export function useAuth() {
           if (credentials.bceNumber) profileUpdate.bce_number = credentials.bceNumber;
         }
 
-        // @ts-expect-error — user_type / bce_number are present in the DB but not yet in generated types
         await supabase.from('profiles').update(profileUpdate).eq('user_id', signUpData.user.id);
 
         if (isPro) {
-          // @ts-expect-error — dealer_verification_queue not yet in generated types
           await supabase.from('dealer_verification_queue').insert({
             user_id: signUpData.user.id,
             status: 'pending',

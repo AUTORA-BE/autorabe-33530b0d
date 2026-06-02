@@ -55,7 +55,6 @@ export default function AdminDealersQueuePage() {
 
   const load = async () => {
     setLoading(true);
-    // @ts-expect-error — dealer_verification_queue not in generated types yet
     const { data, error } = await supabase
       .from('dealer_verification_queue')
       .select('id, user_id, status, submitted_at, reviewed_at, garage_name_snapshot, bce_snapshot, admin_notes')
@@ -120,7 +119,6 @@ export default function AdminDealersQueuePage() {
     setBusyId(row.id);
     try {
       const { data: auth } = await supabase.auth.getUser();
-      // @ts-expect-error — queue table not in generated types yet
       const { error: qErr } = await supabase
         .from('dealer_verification_queue')
         .update({
@@ -132,7 +130,6 @@ export default function AdminDealersQueuePage() {
         .eq('id', row.id);
       if (qErr) throw qErr;
 
-      // @ts-expect-error — user_type not in generated types yet
       await supabase.from('profiles').update({ user_type: 'professionnel' }).eq('user_id', row.user_id);
 
       await supabase.from('admin_actions').insert({
@@ -189,7 +186,6 @@ export default function AdminDealersQueuePage() {
     setBusyId(rejectTarget.id);
     try {
       const { data: auth } = await supabase.auth.getUser();
-      // @ts-expect-error — queue table not in generated types
       const { error: qErr } = await supabase
         .from('dealer_verification_queue')
         .update({
@@ -201,7 +197,6 @@ export default function AdminDealersQueuePage() {
         .eq('id', rejectTarget.id);
       if (qErr) throw qErr;
 
-      // @ts-expect-error — user_type not in generated types
       await supabase.from('profiles').update({ user_type: 'particulier' }).eq('user_id', rejectTarget.user_id);
 
       await supabase.from('admin_actions').insert({
