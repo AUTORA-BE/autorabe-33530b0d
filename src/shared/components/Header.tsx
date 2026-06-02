@@ -7,7 +7,7 @@
 import { Menu, Heart, MessageCircle, GitCompareArrows, Sun, Moon, Bell, Search } from "lucide-react";
 import autoraLogo from "@/assets/autora-logo.png";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User as SupabaseUser } from "@supabase/supabase-js";
@@ -71,14 +71,6 @@ const Header = () => {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     toast({ title: t("logout.success"), description: t("logout.description") });
-  };
-
-  const mobileSearchRef = useRef<HTMLInputElement>(null);
-
-  const submitMobileSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    const q = mobileSearchRef.current?.value.trim() ?? "";
-    navigate(q ? `/recherche?q=${encodeURIComponent(q)}` : "/recherche");
   };
 
   return (
@@ -168,29 +160,36 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Mobile-only search bar — sits just under the logo row, hides on scroll-down */}
-        <form
-          onSubmit={submitMobileSearch}
+        {/* Mobile-only premium "Rechercher" pill button — sits just under the logo row, hides on scroll-down */}
+        <div
           className={`lg:hidden overflow-hidden transition-all duration-300 ease-out ${
             scrolled ? "max-h-0 opacity-0 mt-0" : "max-h-14 opacity-100 mt-1.5"
           }`}
-          role="search"
-          aria-label="Rechercher une voiture"
         >
-          <label htmlFor="header-mobile-search" className="sr-only">Rechercher une voiture</label>
-          <div className="relative">
-            <Search className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" strokeWidth={1.8} />
-            <input
-              ref={mobileSearchRef}
-              id="header-mobile-search"
-              type="search"
-              inputMode="search"
-              placeholder="Marque, modèle, ville…"
-              onFocus={() => navigate("/recherche")}
-              className="w-full h-11 pl-10 pr-3 rounded-2xl text-sm bg-background/85 text-foreground placeholder:text-muted-foreground border border-border/40 backdrop-blur-md outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:border-primary/60"
+          <button
+            type="button"
+            onClick={() => navigate("/recherche")}
+            aria-label="Rechercher une voiture"
+            className="group relative w-full h-11 rounded-full overflow-hidden
+                       bg-gradient-to-r from-background/60 via-background/40 to-background/60
+                       backdrop-blur-md border border-primary/30
+                       hover:border-primary/60 active:scale-[0.98]
+                       transition-all duration-300
+                       hover:shadow-[0_0_24px_-4px_hsl(var(--primary)/0.45)]"
+          >
+            {/* Glow sweep on hover */}
+            <span
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 -translate-x-full
+                         bg-gradient-to-r from-transparent via-primary/15 to-transparent
+                         group-hover:translate-x-full transition-transform duration-1000 ease-out"
             />
-          </div>
-        </form>
+            <span className="relative flex items-center justify-center gap-2 text-sm font-medium text-foreground">
+              <Search className="w-4 h-4 text-primary" strokeWidth={2.2} />
+              <span>Rechercher une voiture</span>
+            </span>
+          </button>
+        </div>
 
         {/* Mobile Menu (now a drawer — renders via portal-like AnimatePresence) */}
         <MobileMenu
