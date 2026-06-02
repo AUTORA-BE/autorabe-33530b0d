@@ -13,8 +13,10 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload, ImagePlus, X, Eye, MessageSquare, Navigation, MapPin, Clock, Shield } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Upload, ImagePlus, X, Eye, MessageSquare, Navigation, MapPin, Clock, Shield, Check, AlertCircle } from "lucide-react";
 
 const EditVitrine = () => {
   const { user, isLoading } = useAuth();
@@ -30,6 +32,12 @@ const EditVitrine = () => {
   const [garageName, setGarageName] = useState<string | null>(null);
   const [postalCode, setPostalCode] = useState<string | null>(null);
   const [displayName, setDisplayName] = useState<string | null>(null);
+  // Vitrine-specific fields
+  const [slug, setSlug] = useState("");
+  const [slugStatus, setSlugStatus] = useState<"idle" | "checking" | "available" | "taken" | "invalid">("idle");
+  const [vitrinePhone, setVitrinePhone] = useState("");
+  const [vitrineEmail, setVitrineEmail] = useState("");
+  const [published, setPublished] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -42,7 +50,7 @@ const EditVitrine = () => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("avatar_url, garage_name, postal_code, display_name, cover_image_url, opening_hours, services, presentation")
+      .select("avatar_url, garage_name, postal_code, display_name, cover_image_url, opening_hours, services, presentation, vitrine_slug, vitrine_cover_url, vitrine_about, vitrine_services, vitrine_phone, vitrine_email_public, vitrine_published")
       .eq("user_id", user.id)
       .maybeSingle()
       .then(({ data }) => {
@@ -51,17 +59,34 @@ const EditVitrine = () => {
           setGarageName(data.garage_name);
           setPostalCode(data.postal_code);
           setDisplayName(data.display_name);
-          setCoverUrl(data.cover_image_url ?? "");
+          setCoverUrl(data.vitrine_cover_url ?? data.cover_image_url ?? "");
           setHours(data.opening_hours ?? "");
-          setServicesText((data.services ?? []).join("\n"));
-          setPresentation(data.presentation ?? "");
+          setServicesText(((data.vitrine_services?.length ? data.vitrine_services : data.services) ?? []).join("\n"));
+          setPresentation(data.vitrine_about ?? data.presentation ?? "");
+          setSlug(data.vitrine_slug ?? "");
+          setVitrinePhone(data.vitrine_phone ?? "");
+          setVitrineEmail(data.vitrine_email_public ?? "");
+          setPublished(!!data.vitrine_published);
         }
         setLoading(false);
       });
   }, [user]);
 
-  const services = servicesText.split("\n").map(s => s.trim()).filter(Boolean);
+  const services = servicesText.split("\n").map(s => s.trim()).filter(Boolean).slice(0, 10);
   const name = garageName || displayName || (language === "nl" ? "Mijn garage" : "Mon garage");
+  const slugRegex = /^[a-z0-9-]{3,60}$/;
+
+  // Debounced slug availability check
+  useEffect(() => {
+    if (!user || !slug) { setSlugStatus("idle"); return; }
+    if (!slugRegex.test(slug)) { setSlugStatus("invalid"); return; }
+    setSlugStatus("checking");
+    const t = setTimeout(async () => {
+      const { data } = await supabase.rpc("is_vitrine_slug_available", { _slug: slug, _user_id: user.id });
+      setSlugStatus(data ? "available" : "taken");
+    }, 400);
+    return () => clearTimeout(t);
+  }, [slug, user]);
 
   const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -70,10 +95,15 @@ const EditVitrine = () => {
       toast({ title: language === "nl" ? "Bestand te groot (max 5MB)" : "Fichier trop volumineux (max 5MB)", variant: "destructive" });
       return;
     }
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      toast({ title: language === "nl" ? "Formaat niet ondersteund (jpg/png/webp)" : "Format non supporté (jpg/png/webp)", variant: "destructive" });
+      return;
+    }
     setUploading(true);
     try {
       const ext = file.name.split(".").pop();
-      const fileName = `covers/${user.id}-${Date.now()}.${ext}`;
+      // Stored in `avatars` bucket under owner-scoped vitrine-covers/{user_id}/ path
+      const fileName = `vitrine-covers/${user.id}/${Date.now()}.${ext}`;
       const { error: upErr } = await supabase.storage.from("avatars").upload(fileName, file, { upsert: true });
       if (upErr) throw upErr;
       const { data: { publicUrl } } = supabase.storage.from("avatars").getPublicUrl(fileName);
@@ -87,12 +117,33 @@ const EditVitrine = () => {
 
   const handleSave = async () => {
     if (!user) return;
+    if (slug && !slugRegex.test(slug)) {
+      toast({ title: language === "nl" ? "Ongeldige slug" : "Slug invalide", description: "a-z, 0-9, -, 3-60 chars", variant: "destructive" });
+      return;
+    }
+    if (published && !slug) {
+      toast({ title: language === "nl" ? "Slug vereist om te publiceren" : "Slug requis pour publier", variant: "destructive" });
+      return;
+    }
+    if (slug && slugStatus === "taken") {
+      toast({ title: language === "nl" ? "Slug al in gebruik" : "Slug déjà pris", variant: "destructive" });
+      return;
+    }
     setSaving(true);
     const updates = {
+      // Legacy fields kept in sync for back-compat
       cover_image_url: coverUrl || null,
       opening_hours: hours || null,
       services,
       presentation: presentation || null,
+      // New vitrine fields
+      vitrine_slug: slug || null,
+      vitrine_cover_url: coverUrl || null,
+      vitrine_about: presentation || null,
+      vitrine_services: services,
+      vitrine_phone: vitrinePhone || null,
+      vitrine_email_public: vitrineEmail || null,
+      vitrine_published: published,
     };
     const { error } = await supabase.from("profiles").update(updates).eq("user_id", user.id);
     setSaving(false);

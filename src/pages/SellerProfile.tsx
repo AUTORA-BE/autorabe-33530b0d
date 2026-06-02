@@ -38,6 +38,14 @@ interface SellerProfile {
   opening_hours: string | null;
   services: string[] | null;
   presentation: string | null;
+  // Vitrine fields (slug-based public showcase)
+  vitrine_slug: string | null;
+  vitrine_cover_url: string | null;
+  vitrine_about: string | null;
+  vitrine_services: string[] | null;
+  vitrine_phone: string | null;
+  vitrine_email_public: string | null;
+  vitrine_published: boolean;
 }
 
 
@@ -66,19 +74,22 @@ interface SellerReview {
 
 /* ---------- component ---------- */
 const SellerProfile = () => {
-  const { userId } = useParams<{ userId: string }>();
+  const { userId: paramUserId, slug: paramSlug } = useParams<{ userId?: string; slug?: string }>();
   const navigate = useNavigate();
   const vehicleHref = useLocalizedVehicleHref();
   const { language } = useLanguage();
   const { toast } = useToast();
   const dateLocale = language === "fr" ? fr : language === "nl" ? nl : enUS;
 
+  const isSlugRoute = !!paramSlug;
   const [profile, setProfile] = useState<SellerProfile | null>(null);
   const [listings, setListings] = useState<SellerListing[]>([]);
   const [reviews, setReviews] = useState<SellerReview[]>([]);
   const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [editOpen, setEditOpen] = useState(false);
+  const userId = profile?.user_id ?? paramUserId ?? null;
   const sellerListingIds = useMemo(() => listings.map(l => l.id), [listings]);
   const favCounts = useFavoriteCounts(sellerListingIds);
 
@@ -86,27 +97,76 @@ const SellerProfile = () => {
     supabase.auth.getSession().then(({ data: { session } }) => setCurrentUserId(session?.user?.id ?? null));
   }, []);
 
-  const isOwnProfile = currentUserId && userId && currentUserId === userId;
+  const isOwnProfile = !!(currentUserId && userId && currentUserId === userId);
 
-  /* Fetch all data in parallel */
+  /* Resolve seller (by userId or by slug) then fetch listings + reviews */
   useEffect(() => {
-    if (!userId) return;
+    if (!paramUserId && !paramSlug) return;
+    let cancelled = false;
     const load = async () => {
       setLoading(true);
+      setNotFound(false);
 
-      const [profileRes, _listingsRes, _reviewsRes] = await Promise.all([
-        supabase.from("profiles").select("user_id, display_name, avatar_url, garage_name, phone, postal_code, created_at, cover_image_url, opening_hours, services, presentation").eq("user_id", userId).single(),
-        supabase.from("car_listings_public").select("id, brand, model, year, price, mileage, fuel_type, transmission, photos, location, created_at").eq("seller_type", "professionnel").order("created_at", { ascending: false }),
-        supabase.from("reviews").select("id, user_id, rating, comment, created_at"),
-      ]);
+      const PROFILE_COLS = "user_id, display_name, avatar_url, garage_name, phone, postal_code, created_at, cover_image_url, opening_hours, services, presentation, vitrine_slug, vitrine_cover_url, vitrine_about, vitrine_services, vitrine_phone, vitrine_email_public, vitrine_published";
 
-      if (profileRes.data) setProfile(profileRes.data as SellerProfile);
+      let resolvedProfile: SellerProfile | null = null;
 
+      if (isSlugRoute && paramSlug) {
+        // 1. Try the public RPC (only published vitrines)
+        const { data: pub } = await supabase.rpc("get_public_vitrine", { _slug_or_user: paramSlug });
+        const pubRow = Array.isArray(pub) ? pub[0] : pub;
+        if (pubRow) {
+          // Fetch full row for created_at + legacy fallbacks (RLS lets owner only see all; anon sees published row via RPC already)
+          const { data: full } = await supabase
+            .from("profiles")
+            .select(PROFILE_COLS)
+            .eq("user_id", pubRow.user_id)
+            .maybeSingle();
+          resolvedProfile = (full as SellerProfile) ?? {
+            ...pubRow,
+            phone: null,
+            postal_code: pubRow.postal_code ?? null,
+            created_at: new Date().toISOString(),
+            cover_image_url: pubRow.vitrine_cover_url,
+            opening_hours: null,
+            services: pubRow.vitrine_services,
+            presentation: pubRow.vitrine_about,
+            vitrine_published: true,
+          } as SellerProfile;
+        } else {
+          // 2. Owner-preview fallback: query by slug (RLS lets owner see their own row only)
+          const { data: own } = await supabase
+            .from("profiles")
+            .select(PROFILE_COLS)
+            .eq("vitrine_slug", paramSlug)
+            .maybeSingle();
+          if (own) resolvedProfile = own as SellerProfile;
+        }
+      } else if (paramUserId) {
+        const { data } = await supabase
+          .from("profiles")
+          .select(PROFILE_COLS)
+          .eq("user_id", paramUserId)
+          .maybeSingle();
+        if (data) resolvedProfile = data as SellerProfile;
+      }
+
+      if (cancelled) return;
+
+      if (!resolvedProfile) {
+        setNotFound(true);
+        setLoading(false);
+        return;
+      }
+      setProfile(resolvedProfile);
+
+      const sellerUserId = resolvedProfile.user_id;
 
       // Use the secure RPC function to get seller listings without exposing sensitive columns
       const { data: sellerListings } = await supabase
-        .rpc("get_seller_public_listings", { _seller_id: userId });
+        .rpc("get_seller_public_listings", { _seller_id: sellerUserId });
 
+      if (cancelled) return;
       if (sellerListings) setListings(sellerListings as SellerListing[]);
 
       // Filter reviews: get all car_listing_ids for this seller, then filter reviews
@@ -118,8 +178,8 @@ const SellerProfile = () => {
           .in("car_listing_id", listingIds)
           .order("created_at", { ascending: false });
 
+        if (cancelled) return;
         if (sellerReviews) {
-          // Fetch reviewer names
           const reviewerIds = [...new Set(sellerReviews.map(r => r.user_id))];
           const { data: reviewerProfiles } = await supabase
             .from("profiles")
@@ -127,14 +187,15 @@ const SellerProfile = () => {
             .in("user_id", reviewerIds);
 
           const nameMap = new Map(reviewerProfiles?.map(p => [p.user_id, p.display_name]) || []);
-          setReviews(sellerReviews.map(r => ({ ...r, reviewer_name: nameMap.get(r.user_id) || undefined })));
+          if (!cancelled) setReviews(sellerReviews.map(r => ({ ...r, reviewer_name: nameMap.get(r.user_id) || undefined })));
         }
       }
 
-      setLoading(false);
+      if (!cancelled) setLoading(false);
     };
     load();
-  }, [userId]);
+    return () => { cancelled = true; };
+  }, [paramUserId, paramSlug, isSlugRoute]);
 
   /* Computed stats */
   const avgRating = useMemo(() => {
@@ -205,14 +266,24 @@ const SellerProfile = () => {
   }, [userId, navigate, toast, language, displayName]);
 
   if (loading) return <SellerProfileSkeleton />;
-  if (!profile) {
+  // Slug route: gate publication. Owners see an unpublished preview banner.
+  const isUnpublishedForVisitor = isSlugRoute && profile && !profile.vitrine_published && !isOwnProfile;
+  if (notFound || !profile || isUnpublishedForVisitor) {
     return (
       <div className="page-gradient min-h-screen">
+        <SEOHead noIndex title="Vitrine introuvable | AutoRA" />
         <Header />
         <main className="pt-24 pb-32 container mx-auto px-6 text-center">
-          <h1 className="text-2xl font-semibold text-foreground mb-4">Vendeur introuvable</h1>
+          <h1 className="text-2xl font-semibold text-foreground mb-4">
+            {language === "nl" ? "Pagina niet gevonden" : "Page introuvable"}
+          </h1>
+          <p className="text-sm text-muted-foreground mb-6">
+            {language === "nl"
+              ? "Deze vitrine bestaat niet of is niet gepubliceerd."
+              : "Cette vitrine n'existe pas ou n'est pas publiée."}
+          </p>
           <Button variant="outline" onClick={() => navigate(-1)}>
-            <ArrowLeft className="w-4 h-4 mr-2" /> Retour
+            <ArrowLeft className="w-4 h-4 mr-2" /> {language === "nl" ? "Terug" : "Retour"}
           </Button>
         </main>
         <Footer />
@@ -220,16 +291,59 @@ const SellerProfile = () => {
     );
   }
 
+  // Effective vitrine values (prefer vitrine_* fields, fall back to legacy)
+  const effectiveCover = profile.vitrine_cover_url || profile.cover_image_url;
+  const effectiveAbout = profile.vitrine_about || profile.presentation;
+  const effectiveServices = (profile.vitrine_services && profile.vitrine_services.length > 0)
+    ? profile.vitrine_services
+    : profile.services;
+  const effectivePhone = profile.vitrine_phone || profile.phone;
+  const effectiveEmail = profile.vitrine_email_public;
+
+  // AutoDealer JSON-LD (when on a published vitrine)
+  const dealerSchema = profile.vitrine_published ? {
+    "@context": "https://schema.org",
+    "@type": "AutoDealer",
+    name: displayName,
+    image: effectiveCover || profile.avatar_url || undefined,
+    description: effectiveAbout || undefined,
+    telephone: effectivePhone || undefined,
+    email: effectiveEmail || undefined,
+    address: profile.postal_code ? {
+      "@type": "PostalAddress",
+      postalCode: profile.postal_code,
+      addressCountry: "BE",
+    } : undefined,
+    url: profile.vitrine_slug ? `https://autora.be/garage/${profile.vitrine_slug}` : undefined,
+  } : localBusinessSchema;
+
   return (
     <div className="page-gradient min-h-screen">
       <SEOHead
         title={`${displayName} | AutoRA`}
         description={`Profil vendeur de ${displayName} sur AutoRA. Consultez les annonces, avis et coordonnées.`}
-        jsonLd={localBusinessSchema}
+        jsonLd={dealerSchema}
+        noIndex={isSlugRoute && !profile.vitrine_published}
       />
       <Header />
 
       <main className="pt-20 pb-32">
+        {/* Owner unpublished preview banner */}
+        {isOwnProfile && isSlugRoute && !profile.vitrine_published && (
+          <div className="container mx-auto px-6 sm:px-8 mb-4">
+            <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-700 dark:text-amber-300 flex items-center justify-between gap-3 flex-wrap">
+              <span>
+                {language === "nl"
+                  ? "Voorbeeld — uw vitrine is nog niet gepubliceerd. Alleen u kunt deze pagina zien."
+                  : "Aperçu — votre vitrine n'est pas encore publiée. Vous seul·e voyez cette page."}
+              </span>
+              <Button asChild size="sm" variant="outline" className="rounded-lg">
+                <Link to="/dashboard/vitrine">{language === "nl" ? "Vitrine bewerken" : "Modifier la vitrine"}</Link>
+              </Button>
+            </div>
+          </div>
+        )}
+
         {/* Back button */}
         <div className="container mx-auto px-6 sm:px-8 mb-6">
           <button
@@ -251,8 +365,8 @@ const SellerProfile = () => {
           <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-card/80 backdrop-blur-sm">
             {/* Cover image banner */}
             <div className="relative h-32 sm:h-48 w-full overflow-hidden bg-gradient-to-br from-primary/15 via-primary/5 to-background">
-              {profile.cover_image_url ? (
-                <img src={profile.cover_image_url} alt="" className="w-full h-full object-cover" />
+              {effectiveCover ? (
+                <img src={effectiveCover} alt="" className="w-full h-full object-cover" />
               ) : (
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary/5 to-transparent" />
               )}
@@ -569,22 +683,22 @@ const SellerProfile = () => {
                 className="max-w-2xl mx-auto space-y-6"
               >
                 {/* Présentation libre */}
-                {profile.presentation && (
+                {effectiveAbout && (
                   <div className="rounded-2xl border border-border/50 bg-card/80 backdrop-blur-sm p-6 sm:p-8">
                     <div className="flex items-center gap-2 mb-4">
                       <FileText className="w-4 h-4 text-primary" strokeWidth={1.5} />
                       <h3 className="font-serif text-lg font-light text-foreground">
-                        {language === "nl" ? "Voorstelling" : "Présentation"}
+                        {language === "nl" ? "Voorstelling" : "À propos"}
                       </h3>
                     </div>
                     <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
-                      {profile.presentation}
+                      {effectiveAbout}
                     </p>
                   </div>
                 )}
 
                 {/* Services proposés */}
-                {profile.services && profile.services.length > 0 && (
+                {effectiveServices && effectiveServices.length > 0 && (
                   <div className="rounded-2xl border border-border/50 bg-card/80 backdrop-blur-sm p-6 sm:p-8">
                     <div className="flex items-center gap-2 mb-4">
                       <Wrench className="w-4 h-4 text-primary" strokeWidth={1.5} />
@@ -592,14 +706,16 @@ const SellerProfile = () => {
                         {language === "nl" ? "Aangeboden diensten" : "Services proposés"}
                       </h3>
                     </div>
-                    <ul className="space-y-2">
-                      {profile.services.map((s, i) => (
-                        <li key={i} className="flex items-start gap-2.5 text-sm text-foreground">
-                          <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
-                          <span>{s}</span>
-                        </li>
+                    <div className="flex flex-wrap gap-2">
+                      {effectiveServices.map((s, i) => (
+                        <span
+                          key={i}
+                          className="inline-flex items-center px-3 py-1.5 rounded-full bg-primary/[0.06] border border-primary/15 text-xs font-medium text-foreground"
+                        >
+                          {s}
+                        </span>
                       ))}
-                    </ul>
+                    </div>
                   </div>
                 )}
 
@@ -654,7 +770,7 @@ const SellerProfile = () => {
                       </div>
                     )}
 
-                    {profile.phone && (
+                    {effectivePhone && (
                       <div className="flex items-start gap-4">
                         <div className="w-10 h-10 rounded-xl bg-primary/[0.06] border border-border/50 flex items-center justify-center shrink-0">
                           <Phone className="w-5 h-5 text-primary" strokeWidth={1.5} />
@@ -663,8 +779,24 @@ const SellerProfile = () => {
                           <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
                             {language === "nl" ? "Telefoon" : "Téléphone"}
                           </p>
-                          <a href={`tel:${profile.phone}`} className="text-foreground font-medium hover:text-primary transition-colors">
-                            {profile.phone}
+                          <a href={`tel:${effectivePhone}`} className="text-foreground font-medium hover:text-primary transition-colors">
+                            {effectivePhone}
+                          </a>
+                        </div>
+                      </div>
+                    )}
+
+                    {effectiveEmail && (
+                      <div className="flex items-start gap-4">
+                        <div className="w-10 h-10 rounded-xl bg-primary/[0.06] border border-border/50 flex items-center justify-center shrink-0">
+                          <MessageSquare className="w-5 h-5 text-primary" strokeWidth={1.5} />
+                        </div>
+                        <div>
+                          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
+                            {language === "nl" ? "E-mail" : "Email"}
+                          </p>
+                          <a href={`mailto:${effectiveEmail}`} className="text-foreground font-medium hover:text-primary transition-colors">
+                            {effectiveEmail}
                           </a>
                         </div>
                       </div>

@@ -722,6 +722,13 @@ export type Database = {
           suspended_reason: string | null
           updated_at: string
           user_id: string
+          vitrine_about: string | null
+          vitrine_cover_url: string | null
+          vitrine_email_public: string | null
+          vitrine_phone: string | null
+          vitrine_published: boolean
+          vitrine_services: string[]
+          vitrine_slug: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -739,6 +746,13 @@ export type Database = {
           suspended_reason?: string | null
           updated_at?: string
           user_id: string
+          vitrine_about?: string | null
+          vitrine_cover_url?: string | null
+          vitrine_email_public?: string | null
+          vitrine_phone?: string | null
+          vitrine_published?: boolean
+          vitrine_services?: string[]
+          vitrine_slug?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -756,6 +770,13 @@ export type Database = {
           suspended_reason?: string | null
           updated_at?: string
           user_id?: string
+          vitrine_about?: string | null
+          vitrine_cover_url?: string | null
+          vitrine_email_public?: string | null
+          vitrine_phone?: string | null
+          vitrine_published?: boolean
+          vitrine_services?: string[]
+          vitrine_slug?: string | null
         }
         Relationships: []
       }
@@ -1355,6 +1376,22 @@ export type Database = {
           year: number
         }[]
       }
+      get_public_vitrine: {
+        Args: { _slug_or_user: string }
+        Returns: {
+          avatar_url: string
+          display_name: string
+          garage_name: string
+          postal_code: string
+          user_id: string
+          vitrine_about: string
+          vitrine_cover_url: string
+          vitrine_email_public: string
+          vitrine_phone: string
+          vitrine_services: string[]
+          vitrine_slug: string
+        }[]
+      }
       get_seller_contact: {
         Args: { listing_id: string }
         Returns: {
@@ -1440,6 +1477,10 @@ export type Database = {
         Returns: boolean
       }
       is_user_suspended: { Args: { _user_id: string }; Returns: boolean }
+      is_vitrine_slug_available: {
+        Args: { _slug: string; _user_id: string }
+        Returns: boolean
+      }
       move_to_dlq: {
         Args: {
           dlq_name: string
