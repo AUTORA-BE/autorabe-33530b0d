@@ -126,17 +126,17 @@ function LuxuryCarCard({
           <span aria-hidden className="search-shimmer pointer-events-none absolute inset-0" />
         )}
 
-        <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
-          {car.hasCarPass && (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/25 bg-emerald-500/10 px-2.5 py-0.5 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-emerald-300 backdrop-blur-md">
-              <ShieldCheck className="h-3 w-3" strokeWidth={2.5} />
-              Car-Pass Certifié
-            </span>
-          )}
+        <div className="absolute left-2.5 top-2.5 z-10 flex flex-col gap-1.5">
           {car.isLezCompatible && (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-sky-400/25 bg-sky-500/10 px-2.5 py-0.5 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-sky-300 backdrop-blur-md">
+            <span className="inline-flex items-center gap-1 rounded-full border-0 bg-emerald-500/90 px-2 py-0.5 text-[10px] font-semibold text-white shadow-lg backdrop-blur-md">
               <Leaf className="h-3 w-3" strokeWidth={2.5} />
               LEZ OK
+            </span>
+          )}
+          {car.hasCarPass && (
+            <span className="inline-flex items-center gap-1 rounded-full border-0 bg-primary/90 px-2 py-0.5 text-[10px] font-semibold text-primary-foreground shadow-lg backdrop-blur-md">
+              <ShieldCheck className="h-3 w-3" strokeWidth={2.5} />
+              Vérifié par AutoRa
             </span>
           )}
         </div>
