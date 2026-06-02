@@ -94,18 +94,13 @@ const FuelPricesSection = () => {
           </p>
         </div>
 
-        {/* Mobile : Bento asymétrique (Diesel + Essence 2-col, Électricité full-width) */}
+        {/* Mobile : grille 2x2 avec les 4 carburants (Diesel, E10, E98, Électricité) */}
         <div className="md:hidden grid grid-cols-2 gap-3">
-          {prices
-            .filter((f) => f.id !== 'essence-e98')
-            .map((f) => (
-              <div
-                key={f.id}
-                className={f.id === 'electricite' ? 'col-span-2' : ''}
-              >
-                <FuelCard fuel={f} glass />
-              </div>
-            ))}
+          {prices.map((f) => (
+            <div key={f.id}>
+              <FuelCard fuel={f} glass />
+            </div>
+          ))}
         </div>
 
         {/* Desktop : grid 2/4-col classique */}
