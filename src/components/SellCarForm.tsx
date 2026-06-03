@@ -165,7 +165,45 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
   const pricingHref = localized("/pricing");
   const { t } = useLanguage();
   const queryClient = useQueryClient();
-  const [currentStep, setCurrentStep] = useState(1);
+
+  // Persisted step key — survives mobile WebView re-mounts caused by the
+  // native photo picker on iOS Safari / Chrome iOS under memory pressure.
+  // Without this, the user would be sent back to step 1 every time they
+  // add a photo on mobile (bug reported pre-launch).
+  const STEP_STORAGE_KEY = "autora_sellcar_step";
+
+  const [currentStep, setCurrentStep] = useState<number>(() => {
+    try {
+      if (editId) return 1; // edit mode always starts on step 1 (vehicle info)
+      const stored = sessionStorage.getItem(STEP_STORAGE_KEY);
+      const parsed = stored ? Number(stored) : 1;
+      return Number.isFinite(parsed) && parsed >= 1 && parsed <= 3 ? parsed : 1;
+    } catch {
+      return 1; // sessionStorage may be blocked (private mode, sandboxed iframe)
+    }
+  });
+
+  // Persist currentStep to sessionStorage at every change
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(STEP_STORAGE_KEY, String(currentStep));
+    } catch {
+      // ignore — sessionStorage may be unavailable
+    }
+  }, [currentStep]);
+
+  // Clear persisted step when the wizard unmounts so a fresh visit
+  // (after navigating away and coming back) always starts at step 1
+  useEffect(() => {
+    return () => {
+      try {
+        sessionStorage.removeItem(STEP_STORAGE_KEY);
+      } catch {
+        // ignore
+      }
+    };
+  }, []);
+
   // Fire listing_started once when wizard mounts in create mode
   useEffect(() => {
     if (!editId) trackEvent(EVENTS.LISTING_STARTED);
