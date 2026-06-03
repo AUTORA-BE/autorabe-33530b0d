@@ -32,8 +32,9 @@ import { cn } from "@/lib/utils";
 import type { Vehicle } from "@/features/listings/types/vehicle.types";
 
 const SwipeDiscovery = lazy(() => import("@/features/listings/components/SwipeDiscovery"));
+const GaragesSearchView = lazy(() => import("@/features/garages/components/GaragesSearchView"));
 
-type ViewMode = "catalog" | "match";
+type ViewMode = "catalog" | "match" | "garages";
 
 const FUEL_OPTIONS = [
   { id: "essence",    labelFr: "Essence" },
