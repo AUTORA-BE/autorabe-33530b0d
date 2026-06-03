@@ -418,13 +418,6 @@ function MoreFiltersSheet({
               Plus de filtres
             </SheetTitle>
           </div>
-          <button
-            onClick={() => onOpenChange(false)}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-white/80 transition-colors hover:bg-white/[0.08] hover:text-white"
-            aria-label="Fermer"
-          >
-            <X className="h-4 w-4" />
-          </button>
         </SheetHeader>
 
         <div className="flex-1 space-y-6 overflow-y-auto px-6 py-6">
