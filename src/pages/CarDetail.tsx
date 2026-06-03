@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import {  useState, useEffect } from "react";
 import type { Tables } from "@/integrations/supabase/types";
@@ -13,7 +13,9 @@ import {
   ChevronLeft,
   ChevronRight,
   Trash2,
+  Store,
 } from "lucide-react";
+
 import { motion, AnimatePresence, type PanInfo } from "framer-motion";
 import FullscreenGallery from "@/components/cars/FullscreenGallery";
 import { Header, Footer } from "@/shared/components";
