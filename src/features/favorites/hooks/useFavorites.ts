@@ -16,6 +16,17 @@ import { useAuthPrompt, consumePendingFavorite } from "@/features/auth";
 import { toast } from "sonner";
 import type { User } from "@supabase/supabase-js";
 
+/** Bulk-remove all favorites for the current user */
+const clearAllFavorites = async (): Promise<void> => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+  const { error } = await supabase
+    .from("favorites")
+    .delete()
+    .eq("user_id", user.id);
+  if (error) throw new Error(error.message);
+};
+
 const FAVORITES_QUERY_KEY = ["favorites"] as const;
 
 export const useFavorites = () => {
@@ -99,9 +110,29 @@ export const useFavorites = () => {
     [requireAuth, isFavorite, addMutation, removeMutation, isToggling],
   );
 
+  const clearMutation = useMutation({
+    mutationFn: clearAllFavorites,
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: FAVORITES_QUERY_KEY });
+      const previous = queryClient.getQueryData(FAVORITES_QUERY_KEY);
+      queryClient.setQueryData(FAVORITES_QUERY_KEY, []);
+      return { previous };
+    },
+    onError: (_err, _vars, ctx) => {
+      if (ctx?.previous) queryClient.setQueryData(FAVORITES_QUERY_KEY, ctx.previous);
+      toast.error("Impossible de vider les favoris");
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: FAVORITES_QUERY_KEY });
+    },
+  });
+
   const clearFavorites = useCallback(() => {
-    // No-op for guests; authenticated bulk-clear handled elsewhere if needed
-  }, []);
+    if (!user || favoriteIds.length === 0 || clearMutation.isPending) return;
+    clearMutation.mutate(undefined, {
+      onSuccess: () => toast.success("Tous les favoris ont été supprimés"),
+    });
+  }, [user, favoriteIds.length, clearMutation]);
 
   return {
     favorites: favoriteIds,
