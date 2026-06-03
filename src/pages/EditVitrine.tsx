@@ -349,8 +349,16 @@ const EditVitrine = () => {
                           ? (language === "nl" ? "Zichtbaar op uw publieke URL." : "Visible sur votre URL publique.")
                           : (language === "nl" ? "Privé — alleen u ziet een voorbeeld." : "Privée — vous seul voyez l'aperçu.")}
                       </p>
+                    </div>
+                    <Switch
+                      id="vitrine-published"
+                      checked={published}
+                      onCheckedChange={setPublished}
+                      aria-label={language === "nl" ? "Vitrine publiceren" : "Publier la vitrine"}
+                    />
+                  </div>
                 </div>
-                </div>
+
 
                 {/* ── Bloc Partage ── */}
                 {(() => {
