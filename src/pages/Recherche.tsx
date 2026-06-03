@@ -943,7 +943,7 @@ const Recherche = () => {
                   </>
                 )}
               </motion.div>
-            ) : (
+            ) : viewMode === "match" ? (
               <motion.div
                 key="match"
                 initial={{ opacity: 0, scale: 0.98 }}
@@ -958,6 +958,18 @@ const Recherche = () => {
                     onToggleFavorite={toggleFavorite}
                     onVehicleClick={handleCarClick}
                   />
+                </Suspense>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="garages"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 8 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Suspense fallback={<div className="flex h-[400px] items-center justify-center text-white/65">Chargement des garages…</div>}>
+                  <GaragesSearchView />
                 </Suspense>
               </motion.div>
             )}
