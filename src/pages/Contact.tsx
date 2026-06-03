@@ -56,6 +56,13 @@ const Contact = () => {
   });
 
   const onSubmit = async (data: ContactFormData) => {
+    // Honeypot: silently "succeed" for bots without hitting the backend
+    if (isHoneypotTriggered(honeypotRef.current)) {
+      setIsSuccess(true);
+      form.reset();
+      return;
+    }
+
     const now = Date.now();
     if (now - lastSubmitTime < RATE_LIMIT_MS) {
       toast.error("Veuillez attendre 60 secondes entre chaque envoi.");
