@@ -19,6 +19,7 @@ import { fr } from 'date-fns/locale';
 import { useAdminUsers } from '../../hooks/useAdminUsers';
 import { exportData } from '../../utils/exportData';
 import { SUBSCRIPTION_TIERS } from '@/features/subscription/constants/tiers';
+import { UserContactCard } from '../UserContactCard';
 import type { ExportFormat } from '../../types/admin.types';
 import type { AdminUser } from '../../types/admin.types';
 
@@ -42,6 +43,7 @@ export default function AdminUsersPage() {
   const [editUser, setEditUser] = useState<AdminUser | null>(null);
   const [editProductId, setEditProductId] = useState<string>('free');
   const [editEndDate, setEditEndDate] = useState('');
+  const [detailUserId, setDetailUserId] = useState<string | null>(null);
 
   const filtered = users.filter(u => {
     if (!search) return true;
@@ -125,27 +127,34 @@ export default function AdminUsersPage() {
           {filtered.map(user => {
             const tier = getTierInfo(user.subscription_product_id, user.subscription_status);
             return (
-              <Card key={user.user_id} className="border-border">
+              <Card key={user.user_id} className="border-border hover:border-primary/40 transition-colors">
                 <CardContent className="p-3 flex items-center gap-3">
-                  <Avatar className="h-9 w-9 flex-shrink-0">
-                    <AvatarImage src={user.avatar_url || ''} />
-                    <AvatarFallback className="text-xs">{(user.display_name || '?')[0]}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <p className="text-sm font-medium truncate">{user.display_name || 'Sans nom'}</p>
-                      {user.suspended_at && <Badge variant="destructive" className="text-[9px] px-1.5">Suspendu</Badge>}
-                      {user.garage_name && <Badge variant="outline" className="text-[9px] px-1.5">Pro</Badge>}
-                      <Badge className={`text-[9px] px-1.5 border ${tier.color}`}>{tier.label}</Badge>
+                  <button
+                    type="button"
+                    onClick={() => setDetailUserId(user.user_id)}
+                    className="flex items-center gap-3 flex-1 min-w-0 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg"
+                    aria-label={`Voir la fiche de ${user.display_name || 'utilisateur'}`}
+                  >
+                    <Avatar className="h-9 w-9 flex-shrink-0">
+                      <AvatarImage src={user.avatar_url || ''} />
+                      <AvatarFallback className="text-xs">{(user.display_name || '?')[0]}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <p className="text-sm font-medium truncate">{user.display_name || 'Sans nom'}</p>
+                        {user.suspended_at && <Badge variant="destructive" className="text-[9px] px-1.5">Suspendu</Badge>}
+                        {user.garage_name && <Badge variant="outline" className="text-[9px] px-1.5">Pro</Badge>}
+                        <Badge className={`text-[9px] px-1.5 border ${tier.color}`}>{tier.label}</Badge>
+                      </div>
+                      <p className="text-[10px] text-muted-foreground">
+                        {user.listing_count} annonce{user.listing_count !== 1 ? 's' : ''}
+                        {' · '}{format(new Date(user.created_at), 'dd MMM yyyy', { locale: fr })}
+                        {user.subscription_end && user.subscription_status === 'active' && (
+                          <> · Exp. {format(new Date(user.subscription_end), 'dd/MM/yy')}</>
+                        )}
+                      </p>
                     </div>
-                    <p className="text-[10px] text-muted-foreground">
-                      {user.listing_count} annonce{user.listing_count !== 1 ? 's' : ''}
-                      {' · '}{format(new Date(user.created_at), 'dd MMM yyyy', { locale: fr })}
-                      {user.subscription_end && user.subscription_status === 'active' && (
-                        <> · Exp. {format(new Date(user.subscription_end), 'dd/MM/yy')}</>
-                      )}
-                    </p>
-                  </div>
+                  </button>
                   <div className="flex gap-1 flex-shrink-0">
                     <Button size="sm" variant="outline" onClick={() => openEditModal(user)} disabled={isActing} title="Gérer abonnement">
                       <Crown className="h-3.5 w-3.5" />
@@ -221,6 +230,13 @@ export default function AdminUsersPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* User contact card (click on row) */}
+      <UserContactCard
+        userId={detailUserId}
+        open={!!detailUserId}
+        onOpenChange={(o) => !o && setDetailUserId(null)}
+      />
     </div>
   );
 }
