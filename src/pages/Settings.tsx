@@ -246,6 +246,7 @@ export default function Settings() {
       { id: "favs", section: "Mon activité", label: "Favoris", action: () => navigate("/favorites"), keywords: ["coeur", "like"] },
       { id: "msg", section: "Mon activité", label: "Messages", action: () => navigate("/messages"), keywords: ["chat", "conversations"] },
       { id: "alerts", section: "Mon activité", label: "Mes alertes", action: () => navigate("/mes-alertes"), keywords: ["notifications", "recherche"] },
+      { id: "vitrine", section: "Mon activité", label: "Édition vitrine", description: "Couverture, présentation, services, horaires", action: () => user?.id && navigate(`/seller/${user.id}?edit=1`), keywords: ["garage", "boutique", "showroom", "vitrine"] },
       { id: "profile", section: "Compte", label: "Nom & avatar", action: () => { setEditingName(true); window.scrollTo({ top: 0, behavior: "smooth" }); } },
       { id: "pwd", section: "Sécurité", label: "Changer le mot de passe", action: () => setPwdModalOpen(true), keywords: ["password", "sécurité"] },
       { id: "logoutall", section: "Sécurité", label: "Déconnecter les autres appareils", action: handleSignOutAll, keywords: ["sessions"] },
