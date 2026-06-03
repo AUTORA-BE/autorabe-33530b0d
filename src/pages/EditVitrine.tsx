@@ -438,24 +438,34 @@ const EditVitrine = () => {
                     document.body.removeChild(ta);
                   };
                   const handleShare = async () => {
+                    // ⚠️ iOS Safari : on déclenche la copie SYNCHRONEMENT dans le
+                    // thread du click (avant tout await) pour préserver le
+                    // user-gesture requis par clipboard.writeText. Si Web Share
+                    // réussit ensuite, ce n'est pas grave — le lien est aussi
+                    // dans le presse-papiers.
+                    let copyOk = false;
+                    try {
+                      copyToClipboard();
+                      copyOk = true;
+                    } catch { /* silent */ }
+
                     // Mobile / tablets: native Web Share API (WhatsApp, Messenger, SMS, …)
                     if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
                       try {
                         await navigator.share({ title: shareTitle, text: shareText, url: shareUrl });
                         return;
                       } catch (err) {
-                        // User cancelled — silent, do not fall back to copy
                         if ((err as DOMException)?.name === "AbortError") return;
-                        // Other errors → fall through to clipboard
+                        // sinon on retombe sur le toast clipboard ci-dessous
                       }
                     }
-                    try {
-                      await copyToClipboard();
+
+                    if (copyOk) {
                       toast({
-                        title: language === "nl" ? "Link van vitrine gekopieerd!" : "Lien de la vitrine copié !",
+                        title: language === "nl" ? "Link gekopieerd!" : "Lien copié !",
                         description: language === "nl" ? "Klaar om te delen." : "Prêt à être partagé.",
                       });
-                    } catch {
+                    } else {
                       toast({
                         title: language === "nl" ? "Kopiëren mislukt" : "Échec de la copie",
                         variant: "destructive",
@@ -468,7 +478,9 @@ const EditVitrine = () => {
                       <div className="flex items-center gap-2">
                         <Share2 className="w-4 h-4 text-primary" strokeWidth={1.8} aria-hidden="true" />
                         <h3 className="text-sm font-medium text-foreground">
-                          {language === "nl" ? "Mijn vitrine delen" : "Partager ma vitrine"}
+                          {language === "nl"
+                            ? "Mijn vitrine delen op sociale netwerken"
+                            : "Partager ma vitrine sur les réseaux sociaux"}
                         </h3>
                       </div>
                       <p className="text-[11px] text-muted-foreground">
