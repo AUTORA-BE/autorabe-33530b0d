@@ -95,18 +95,19 @@ input[type="number"] {
 
 
     /* === Unified design tokens (Refonte 2026) === */
-    --background-primary: 210 40% 98%;
+    --background-primary: 0 0% 99%;
     --background-elevated: 0 0% 100%;
-    --background-gradient-from: 215 50% 96%;
-    --background-gradient-via: 210 30% 97%;
-    --background-gradient-to: 220 40% 98%;
+    --background-gradient-from: 0 0% 100%;
+    --background-gradient-via: 220 20% 99%;
+    --background-gradient-to: 220 15% 98%;
     --surface-glass: 0 0% 100%;
-    --border-glass: 215 30% 80%;
-    --accent-electric: 165 90% 42%;
+    --border-glass: 220 13% 88%;
+    --accent-electric: 165 90% 40%;
     --accent-electric-foreground: 0 0% 100%;
-    --text-primary: 215 28% 10%;
-    --text-secondary: 215 18% 30%;
-    --text-muted: 215 14% 50%;
+    --text-primary: 220 25% 8%;
+    --text-secondary: 220 15% 28%;
+    --text-muted: 220 9% 42%;
+
 
     /* Emerald halo intensity (0 → off, 1 → max). Tune to taste. */
     --halo-intensity: 0.55;
