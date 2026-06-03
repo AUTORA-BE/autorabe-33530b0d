@@ -573,13 +573,21 @@ const Auth = () => {
                           <div className="relative">
                             <FileBadge className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                             <Input
-                              id="signup-bce" type="text" aria-label="Numéro BCE (optionnel)"
-                              placeholder="N° BCE (optionnel — ex. 0123.456.789)"
+                              id="signup-tva" type="text" aria-label="Numéro de TVA (optionnel)"
+                              placeholder="N° TVA (optionnel — ex. BE 0123.456.789)"
                               value={bceNumber}
-                              onChange={(e) => setBceNumber(e.target.value)}
+                              onChange={(e) => {
+                                // Normalisation format TVA belge : majuscules + autorise BE, chiffres, points, espaces
+                                const v = e.target.value.toUpperCase().replace(/[^BE0-9. ]/g, "");
+                                setBceNumber(v);
+                              }}
+                              inputMode="text"
                               maxLength={20}
                               className="pl-10 h-12 bg-background/60 border-border/50 focus:border-primary"
                             />
+                            <p className="text-xs text-muted-foreground mt-1 ml-1">
+                              Format belge : BE suivi de 10 chiffres (ex. BE0123.456.789)
+                            </p>
                           </div>
                         </div>
                       )}
