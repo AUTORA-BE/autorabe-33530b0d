@@ -349,14 +349,82 @@ const EditVitrine = () => {
                           ? (language === "nl" ? "Zichtbaar op uw publieke URL." : "Visible sur votre URL publique.")
                           : (language === "nl" ? "Privé — alleen u ziet een voorbeeld." : "Privée — vous seul voyez l'aperçu.")}
                       </p>
+                </div>
+
+                {/* ── Bloc Partage ── */}
+                {(() => {
+                  const effectiveSlug =
+                    slug && slugRegex.test(slug)
+                      ? slug
+                      : (garageName ? slugifyName(garageName) : "") || (user?.id ?? "");
+                  const shareUrl = `https://autora.be/garage/${effectiveSlug}`;
+                  const canShare = !!effectiveSlug && (slug ? slugStatus !== "taken" && slugStatus !== "invalid" : true);
+                  const handleCopy = async () => {
+                    try {
+                      if (navigator.clipboard?.writeText) {
+                        await navigator.clipboard.writeText(shareUrl);
+                      } else {
+                        // Fallback for older mobile browsers / insecure contexts
+                        const ta = document.createElement("textarea");
+                        ta.value = shareUrl;
+                        ta.setAttribute("readonly", "");
+                        ta.style.position = "fixed";
+                        ta.style.opacity = "0";
+                        document.body.appendChild(ta);
+                        ta.select();
+                        document.execCommand("copy");
+                        document.body.removeChild(ta);
+                      }
+                      toast({
+                        title: language === "nl" ? "Link gekopieerd!" : "Lien copié !",
+                        description: language === "nl" ? "Klaar om te delen." : "Prêt à être partagé.",
+                      });
+                    } catch {
+                      toast({
+                        title: language === "nl" ? "Kopiëren mislukt" : "Échec de la copie",
+                        variant: "destructive",
+                      });
+                    }
+                  };
+                  return (
+                    <div className="rounded-2xl border border-border/50 bg-card/80 backdrop-blur-sm p-6 space-y-3">
+                      <div className="flex items-center gap-2">
+                        <Share2 className="w-4 h-4 text-primary" strokeWidth={1.8} aria-hidden="true" />
+                        <h3 className="text-sm font-medium text-foreground">
+                          {language === "nl" ? "Mijn vitrine delen" : "Partager ma vitrine"}
+                        </h3>
+                      </div>
+                      <p className="text-[11px] text-muted-foreground">
+                        {language === "nl"
+                          ? "Deel deze openbare URL met uw klanten."
+                          : "Partagez cette URL publique avec vos clients."}
+                      </p>
+                      <div className="flex flex-col sm:flex-row gap-2">
+                        <div className="flex-1 min-w-0 rounded-xl border border-border/60 bg-background/60 px-3 py-2.5 text-xs sm:text-sm font-mono text-foreground truncate" aria-label={language === "nl" ? "URL van vitrine" : "URL de la vitrine"}>
+                          {shareUrl}
+                        </div>
+                        <Button
+                          type="button"
+                          onClick={handleCopy}
+                          disabled={!canShare}
+                          className="btn-primary-gradient rounded-xl px-4 shrink-0"
+                          aria-label={language === "nl" ? "Link kopiëren" : "Copier le lien"}
+                        >
+                          <Copy className="w-4 h-4 mr-2" strokeWidth={1.8} aria-hidden="true" />
+                          {language === "nl" ? "Link kopiëren" : "Copier le lien"}
+                        </Button>
+                      </div>
+                      {!published && (
+                        <p className="text-[11px] text-muted-foreground/80">
+                          {language === "nl"
+                            ? "Tip: publiceer uw vitrine zodat de link openbaar toegankelijk is."
+                            : "Astuce : publiez votre vitrine pour que le lien soit accessible publiquement."}
+                        </p>
+                      )}
                     </div>
-                    <Switch
-                      id="vitrine-published"
-                      checked={published}
-                      onCheckedChange={setPublished}
-                      aria-label={language === "nl" ? "Vitrine publiceren" : "Publier la vitrine"}
-                    />
-                  </div>
+                  );
+                })()}
+
                 </div>
 
                 <div className="flex flex-wrap gap-3">
