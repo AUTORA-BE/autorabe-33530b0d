@@ -1321,6 +1321,27 @@ export type Database = {
           id: string
         }[]
       }
+      admin_get_user_contact: {
+        Args: { _user_id: string }
+        Returns: {
+          avatar_url: string
+          bce_number: string
+          created_at: string
+          display_name: string
+          email: string
+          garage_name: string
+          listing_count: number
+          phone: string
+          postal_code: string
+          subscription_end: string
+          subscription_product_id: string
+          subscription_status: string
+          suspended_at: string
+          suspended_reason: string
+          user_id: string
+          user_type: string
+        }[]
+      }
       admin_get_user_emails: {
         Args: { _user_ids: string[] }
         Returns: {
