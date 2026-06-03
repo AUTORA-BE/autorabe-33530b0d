@@ -315,21 +315,32 @@ const SellerProfile = () => {
   const effectivePhone = profile.vitrine_phone || profile.phone;
   const effectiveEmail = profile.vitrine_email_public;
 
-  // AutoDealer JSON-LD (when on a published vitrine)
+  // AutomotiveBusiness / LocalBusiness JSON-LD (when on a published vitrine) — SEO local BE
+  const vitrineUrlAbs = profile.vitrine_slug
+    ? `https://autora.be/garage/${profile.vitrine_slug}`
+    : `https://autora.be/seller/${profile.user_id}`;
+  const ogImageAbs = effectiveCover || profile.avatar_url || "https://autora.be/og-image.jpg";
+
   const dealerSchema = profile.vitrine_published ? {
     "@context": "https://schema.org",
-    "@type": "AutoDealer",
+    "@type": ["AutomotiveBusiness", "LocalBusiness", "Organization"],
+    "@id": vitrineUrlAbs,
     name: displayName,
-    image: effectiveCover || profile.avatar_url || undefined,
-    description: effectiveAbout || undefined,
+    legalName: profile.garage_name || displayName,
+    image: ogImageAbs,
+    logo: profile.avatar_url || undefined,
+    description: effectiveAbout || `Vitrine professionnelle ${displayName} sur AutoRA — véhicules d'occasion vérifiés Car-Pass en Belgique.`,
     telephone: effectivePhone || undefined,
     email: effectiveEmail || undefined,
-    address: profile.postal_code ? {
+    url: vitrineUrlAbs,
+    address: {
       "@type": "PostalAddress",
-      postalCode: profile.postal_code,
+      postalCode: profile.postal_code || undefined,
       addressCountry: "BE",
-    } : undefined,
-    url: profile.vitrine_slug ? `https://autora.be/garage/${profile.vitrine_slug}` : undefined,
+      addressRegion: "BE",
+    },
+    areaServed: { "@type": "Country", name: "Belgium" },
+    priceRange: "€€",
   } : localBusinessSchema;
 
   // ── Dynamic Open Graph meta for vitrine pages ──
@@ -340,10 +351,8 @@ const SellerProfile = () => {
   const ogDescription = isPublishedVitrine
     ? `Découvrez le stock de véhicules d'occasion de ${displayName}. Voitures vérifiées Car-Pass et prêtes pour le marché belge.`
     : `Profil vendeur de ${displayName} sur AutoRA. Consultez les annonces, avis et coordonnées.`;
-  const ogImage = effectiveCover || profile.avatar_url || undefined;
-  const ogUrl = profile.vitrine_slug
-    ? `https://autora.be/garage/${profile.vitrine_slug}`
-    : `https://autora.be/seller/${profile.user_id}`;
+  const ogImage = ogImageAbs;
+  const ogUrl = vitrineUrlAbs;
 
   return (
     <div className="page-gradient min-h-screen">
