@@ -19,7 +19,7 @@ import FullscreenGallery from "@/components/cars/FullscreenGallery";
 import { Header, Footer } from "@/shared/components";
 import { CarCard, type Car, vehicleQueries } from "@/features/listings";
 import { Button } from "@/components/ui/button";
-import { getCarByIdFromDb, formatPrice, formatMileage, getSellerContact } from "@/utils/carUtils";
+import { getCarByIdFromDb, formatPrice, formatMileage, getSellerContact, getSellerDisplay } from "@/utils/carUtils";
 import { useFavorites } from "@/features/favorites";
 import { useAuthPrompt } from "@/features/auth";
 
@@ -75,6 +75,12 @@ const CarDetail = () => {
     contact_phone: string | null;
     contact_email: string;
     user_id: string;
+  } | null>(null);
+  const [sellerDisplay, setSellerDisplay] = useState<{
+    user_id: string;
+    display_name: string | null;
+    garage_name: string | null;
+    user_type: string | null;
   } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [relatedCars, setRelatedCars] = useState<Car[]>([]);
@@ -135,10 +141,12 @@ const CarDetail = () => {
           setDbListing(data);
         }
 
-        const contact = await getSellerContact(id);
-        if (contact) {
-          setSellerContact(contact);
-        }
+        const [contact, display] = await Promise.all([
+          getSellerContact(id),
+          getSellerDisplay(id),
+        ]);
+        if (contact) setSellerContact(contact);
+        if (display) setSellerDisplay(display);
 
         // Fetch similar listings: same brand + body type, price ±30%, max 3
         const similar = await vehicleQueries.getSimilar(
@@ -413,7 +421,14 @@ const CarDetail = () => {
 
   const description = dbListing?.description ?? "";
 
-  const sellerName = sellerContact?.contact_name || "Vendeur vérifié";
+  // Public seller name: garage_name for Pro, display_name for private,
+  // fallback to authenticated contact_name then a generic label.
+  const isProSeller = (sellerDisplay?.user_type ?? dbListing?.seller_type) === "professionnel";
+  const sellerName =
+    (isProSeller ? sellerDisplay?.garage_name : sellerDisplay?.display_name) ||
+    sellerDisplay?.display_name ||
+    sellerContact?.contact_name ||
+    "Vendeur vérifié";
 
   return (
     <div className="page-gradient">
