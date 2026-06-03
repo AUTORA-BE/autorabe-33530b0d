@@ -31,7 +31,8 @@ const Header = () => {
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const isSearchPage = location.pathname.startsWith("/recherche");
+  // Pill "Rechercher" visible UNIQUEMENT sur la page d'accueil (root + locales)
+  const isHomePage = /^\/(fr|nl|de|en)?\/?$/.test(location.pathname);
   const { toast } = useToast();
   const { unreadCount, hasUnread } = useUnreadMessages();
   const { compareCount } = useCompareContext();
@@ -162,8 +163,8 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Mobile-only premium "Rechercher" pill button — hidden on the Recherche page itself */}
-        {!isSearchPage && (
+        {/* Mobile-only premium "Rechercher" pill button — visible UNIQUEMENT sur la page d'accueil */}
+        {isHomePage && (
         <div
           className={`lg:hidden overflow-hidden transition-all duration-300 ease-out ${
             scrolled ? "max-h-0 opacity-0 mt-0" : "max-h-14 opacity-100 mt-1.5"
