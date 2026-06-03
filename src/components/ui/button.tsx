@@ -49,9 +49,22 @@ export interface ButtonProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+  ({ className, variant, size, asChild = false, type, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
-    return <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props} />;
+    // Force type="button" by default to prevent accidental form submissions
+    // when a Button is rendered inside a <form> without an explicit type.
+    // Without this, every <Button> in a form behaves as a submit button by
+    // HTML spec — which caused mobile photo upload bugs in the Sell wizard.
+    // Explicit type="submit" / "reset" still works (caller wins).
+    const resolvedType = asChild ? undefined : (type ?? "button");
+    return (
+      <Comp
+        type={resolvedType}
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+      />
+    );
   },
 );
 Button.displayName = "Button";
