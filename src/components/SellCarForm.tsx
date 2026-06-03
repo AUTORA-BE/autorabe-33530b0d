@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, lazy, Suspense } from 'react';
+import { useState, useEffect, useCallback, useRef, lazy, Suspense } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useQueryClient } from '@tanstack/react-query';
@@ -780,10 +780,20 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
       tva_number: watchedData.tva_number,
     };
 
-    onFormDataChange?.(draftFields, photosPreviews[0], photosPreviews.length);
-
-    // Auto-save draft — only persist actual uploaded URLs, never base64 data URLs
+    // Dedupe — react-hook-form's watch() returns a new object reference on each
+    // render. Without this guard, the parent setState below + updateDraft's setState
+    // re-trigger this effect every render → "Maximum update depth exceeded".
     const persistablePhotoUrls = uploadedPhotoUrls.filter(url => url.startsWith('http'));
+    const broadcastKey = JSON.stringify({
+      d: draftFields,
+      p: photosPreviews[0] ?? null,
+      n: photosPreviews.length,
+      u: persistablePhotoUrls,
+    });
+    if (broadcastKey === lastBroadcastKeyRef.current) return;
+    lastBroadcastKeyRef.current = broadcastKey;
+
+    onFormDataChange?.(draftFields, photosPreviews[0], photosPreviews.length);
     updateDraft(draftFields, persistablePhotoUrls);
   }, [watchedData, photosPreviews, uploadedPhotoUrls, onFormDataChange, updateDraft]);
 
