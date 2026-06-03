@@ -695,10 +695,10 @@ const Recherche = () => {
   };
 
   const title =
-    language === "nl" ? "Vind uw volgende auto"
-    : language === "en" ? "Find your next car"
-    : language === "de" ? "Finden Sie Ihr nächstes Auto"
-    : "Trouvez votre prochaine voiture";
+    language === "nl" ? "AutoRA — Tweedehands auto's kopen in België"
+    : language === "en" ? "AutoRA — Used cars marketplace in Belgium"
+    : language === "de" ? "AutoRA — Gebrauchtwagen-Marktplatz in Belgien"
+    : "AutoRA — Marketplace de voitures d'occasion en Belgique";
 
   const subtitle = (count: number) =>
     language === "nl"
