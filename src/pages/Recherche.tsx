@@ -442,8 +442,8 @@ function MoreFiltersSheet({
             <div>
               <label className={eyebrow}>Modèle</label>
               <select
-                value={filters.searchQuery}
-                onChange={(e) => updateFilter("searchQuery", e.target.value)}
+                value={filters.model}
+                onChange={(e) => updateFilter("model", e.target.value)}
                 disabled={!filters.brand}
                 className={cn(fieldCls, "disabled:opacity-50")}
               >
@@ -454,6 +454,78 @@ function MoreFiltersSheet({
               </select>
             </div>
           </div>
+
+          <div>
+            <label className={eyebrow}>Ville</label>
+            <input
+              type="text"
+              value={filters.location ?? ""}
+              onChange={(e) => updateFilter("location", e.target.value)}
+              placeholder="Ex : Bruxelles, Liège, Anvers…"
+              className={fieldCls}
+            />
+          </div>
+
+          <div>
+            <div className="mb-2 flex items-baseline justify-between">
+              <label className={cn(eyebrow, "mb-0")}>Budget</label>
+              <span className="text-xs tabular-nums text-white/55">
+                {filters.minPrice.toLocaleString("fr-BE")} € – {filters.maxPrice.toLocaleString("fr-BE")} €
+              </span>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <input
+                type="number"
+                inputMode="numeric"
+                min={0}
+                value={filters.minPrice || ""}
+                onChange={(e) => updateFilter("minPrice", Math.max(0, Number(e.target.value) || 0))}
+                placeholder="Min €"
+                className={fieldCls}
+              />
+              <input
+                type="number"
+                inputMode="numeric"
+                min={0}
+                value={filters.maxPrice === 1000000 ? "" : filters.maxPrice}
+                onChange={(e) => updateFilter("maxPrice", Number(e.target.value) || 1000000)}
+                placeholder="Max €"
+                className={fieldCls}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className={eyebrow}>Carburant</label>
+            <div className="grid grid-cols-2 gap-2">
+              {FUEL_OPTIONS.map((f) => {
+                const active = filters.fuelTypes?.includes(f.id);
+                return (
+                  <button
+                    key={f.id}
+                    onClick={() => {
+                      const current = filters.fuelTypes ?? [];
+                      const next = active
+                        ? current.filter((x) => x !== f.id)
+                        : [...current, f.id];
+                      updateFilter("fuelTypes", next);
+                    }}
+                    className={cn(
+                      "h-11 rounded-xl border text-sm font-medium transition-all",
+                      active
+                        ? "border-primary/50 bg-primary/15 text-primary"
+                        : "border-white/10 bg-white/[0.02] text-white hover:border-primary/50 hover:bg-white/[0.06]",
+                    )}
+                  >
+                    {f.labelFr}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4">
+            <div>
 
           <div>
             <div className="mb-2 flex items-baseline justify-between">
