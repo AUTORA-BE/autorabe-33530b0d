@@ -139,6 +139,8 @@ export interface VehicleFilters {
   color: string;
   /** Filter by Belgian province (matched against location field server-side) */
   province: string;
+  /** Free-text city/location filter (ilike on location column) */
+  location: string;
   /** Required equipment features (AND logic — all selected must be present) */
   features: string[];
   /** Maximum distance in km from userLat/userLng (null = disabled) */
