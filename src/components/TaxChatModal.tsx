@@ -42,6 +42,8 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/explain-taxe
  * Modal interactive pour expliquer les taxes belges d'un véhicule
  */
 export default function TaxChatModal({ vehicle }: TaxChatModalProps) {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [region, setRegion] = useState<Region>('bruxelles');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
