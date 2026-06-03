@@ -146,20 +146,32 @@ const CarChatbot = forwardRef<HTMLDivElement>(function CarChatbot(_props, ref) {
     { icon: Search, label: "Comparer", query: "Peux-tu comparer une Peugeot 308 et une Volkswagen Golf ?" },
   ];
 
+  // Don't render anything while auth state is loading (prevents flicker)
+  if (authLoading) return <div ref={ref} />;
+
+  const handleOpenClick = () => {
+    if (!isAuthenticated) {
+      navigate('/auth?redirect=' + encodeURIComponent(window.location.pathname));
+      return;
+    }
+    setIsOpen(true);
+  };
+
   return (
     <div ref={ref}>
-      {/* Chat Button */}
+      {/* Chat Button — for non-connected users, redirects to login */}
       <button
         data-hide-on-filter
-        onClick={() => setIsOpen(true)}
+        onClick={handleOpenClick}
         style={{ bottom: 'calc(5.5rem + env(safe-area-inset-bottom, 0px))' }}
         className={`fixed right-3 lg:right-6 lg:!bottom-6 z-[60] w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-primary text-primary-foreground shadow-xl shadow-primary/40 flex items-center justify-center transition-all hover:scale-110 active:scale-95 ${
           isOpen ? "hidden" : ""
         }`}
-        aria-label="Ouvrir l'assistant AutoRA"
+        aria-label={isAuthenticated ? "Ouvrir l'assistant AutoRA" : "Se connecter pour utiliser l'assistant AutoRA"}
       >
-        <MessageCircle className="w-5 h-5 lg:w-6 lg:h-6" />
+        {isAuthenticated ? <MessageCircle className="w-5 h-5 lg:w-6 lg:h-6" /> : <Lock className="w-5 h-5 lg:w-6 lg:h-6" />}
       </button>
+
 
       {/* Chat Window — mobile: full-width sheet from bottom; tablet: centered; desktop: bottom-right */}
       {isOpen && (
