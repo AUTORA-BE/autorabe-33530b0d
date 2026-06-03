@@ -1215,6 +1215,115 @@ function EditVitrineDialog({ open, onOpenChange, userId, garageName, vitrineSlug
         </DialogHeader>
 
         <div className="space-y-5 py-2">
+          {/* ── Partage Vitrine (premium) ── */}
+          {(() => {
+            const effSlug = vitrineSlug || (garageName ? slugifyGarage(garageName) : "");
+            const shareUrl = effSlug ? `https://autora.be/garage/${effSlug}` : `https://autora.be/seller/${userId}`;
+            const shareTitle = `${garageName || "AutoRA"} — Vitrine sur AutoRA`;
+            const shareText = language === "nl"
+              ? "Bekijk de voertuigen in onze vitrine op AutoRA."
+              : "Découvrez les véhicules de notre vitrine sur AutoRA.";
+
+            const handleShare = () => {
+              const legacyCopy = () => {
+                try {
+                  const ta = document.createElement("textarea");
+                  ta.value = shareUrl;
+                  ta.setAttribute("readonly", "");
+                  ta.style.position = "fixed";
+                  ta.style.opacity = "0";
+                  document.body.appendChild(ta);
+                  ta.select();
+                  const ok = document.execCommand("copy");
+                  document.body.removeChild(ta);
+                  return ok;
+                } catch { return false; }
+              };
+              const notifyCopied = () => toast({
+                title: language === "nl" ? "Link gekopieerd!" : "Lien copié !",
+                description: language === "nl" ? "Klaar om te delen." : "Prêt à être partagé.",
+              });
+              const notifyFail = () => toast({
+                title: language === "nl" ? "Kopiëren mislukt" : "Échec de la copie",
+                variant: "destructive",
+              });
+
+              const shareData = { title: shareTitle, text: shareText, url: shareUrl } as ShareData;
+              const canUseShare = typeof navigator !== "undefined"
+                && typeof navigator.share === "function"
+                && (typeof (navigator as Navigator).canShare !== "function" || (navigator as Navigator).canShare!(shareData));
+
+              if (canUseShare) {
+                try {
+                  const p = navigator.share(shareData);
+                  if (p && typeof p.catch === "function") {
+                    p.catch((err: unknown) => {
+                      if ((err as DOMException)?.name === "AbortError") return;
+                      if (navigator.clipboard?.writeText) {
+                        navigator.clipboard.writeText(shareUrl).then(notifyCopied).catch(() => {
+                          legacyCopy() ? notifyCopied() : notifyFail();
+                        });
+                      } else {
+                        legacyCopy() ? notifyCopied() : notifyFail();
+                      }
+                    });
+                  }
+                  return;
+                } catch { /* fall through */ }
+              }
+
+              if (navigator.clipboard?.writeText) {
+                navigator.clipboard.writeText(shareUrl).then(notifyCopied).catch(() => {
+                  legacyCopy() ? notifyCopied() : notifyFail();
+                });
+              } else {
+                legacyCopy() ? notifyCopied() : notifyFail();
+              }
+            };
+
+            return (
+              <div className="rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm p-4 sm:p-5 space-y-3">
+                <div className="flex items-center gap-2">
+                  <Share2 className="w-4 h-4 text-primary" strokeWidth={1.8} aria-hidden="true" />
+                  <h3 className="text-sm font-medium text-foreground">
+                    {language === "nl"
+                      ? "Mijn vitrine delen op sociale netwerken"
+                      : "Partager ma vitrine sur les réseaux sociaux"}
+                  </h3>
+                </div>
+                <p className="text-[11px] text-muted-foreground">
+                  {language === "nl"
+                    ? "Plak deze link in uw Instagram-, Facebook- of WhatsApp-bio."
+                    : "Collez ce lien dans votre bio Instagram, Facebook ou WhatsApp."}
+                </p>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <div
+                    className="flex-1 min-w-0 rounded-xl border border-border/60 bg-background/60 px-3 py-2.5 text-xs sm:text-sm font-mono text-foreground truncate"
+                    aria-label={language === "nl" ? "URL van vitrine" : "URL de la vitrine"}
+                  >
+                    {shareUrl}
+                  </div>
+                  <Button
+                    type="button"
+                    onClick={handleShare}
+                    className="rounded-xl px-4 shrink-0"
+                    aria-label={language === "nl" ? "Vitrine delen" : "Partager la vitrine"}
+                  >
+                    <Share2 className="w-4 h-4 mr-2" strokeWidth={1.8} aria-hidden="true" />
+                    {language === "nl" ? "Kopiëren / Delen" : "Copier / Partager"}
+                  </Button>
+                </div>
+                {!vitrinePublished && (
+                  <p className="text-[11px] text-muted-foreground/80">
+                    {language === "nl"
+                      ? "Tip: publiceer uw vitrine zodat de link openbaar toegankelijk is."
+                      : "Astuce : publiez votre vitrine pour que le lien soit accessible publiquement."}
+                  </p>
+                )}
+              </div>
+            );
+          })()}
+
           {/* Cover image */}
           <div className="space-y-2">
             <Label className="text-sm">{language === "nl" ? "Omslagfoto" : "Image de couverture"}</Label>
