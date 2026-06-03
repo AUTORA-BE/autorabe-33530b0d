@@ -106,16 +106,13 @@ const FeaturedVehiclesSection = () => {
           </div>
 
           <Link
-            to="/"
-            onClick={(e) => {
-              e.preventDefault();
-              document.getElementById('results-section')?.scrollIntoView({ behavior: 'smooth' });
-            }}
+            to="/recherche"
             className="hidden md:inline-flex items-center gap-2 text-primary hover:text-primary font-medium transition-colors group"
           >
             Voir toutes les annonces
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" strokeWidth={1.75} />
           </Link>
+
         </div>
 
         {/* Content */}
@@ -147,16 +144,13 @@ const FeaturedVehiclesSection = () => {
             </div>
             <div className="md:hidden mt-6 flex justify-center">
               <Link
-                to="/"
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.getElementById('results-section')?.scrollIntoView({ behavior: 'smooth' });
-                }}
+                to="/recherche"
                 className="inline-flex items-center gap-2 text-primary hover:text-primary font-medium transition-colors"
               >
                 Voir toutes les annonces
                 <ArrowRight className="w-4 h-4" strokeWidth={1.75} />
               </Link>
+
             </div>
           </>
         )}

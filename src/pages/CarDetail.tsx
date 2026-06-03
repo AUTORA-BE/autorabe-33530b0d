@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import {  useState, useEffect } from "react";
 import type { Tables } from "@/integrations/supabase/types";
@@ -13,7 +13,9 @@ import {
   ChevronLeft,
   ChevronRight,
   Trash2,
+  Store,
 } from "lucide-react";
+
 import { motion, AnimatePresence, type PanInfo } from "framer-motion";
 import FullscreenGallery from "@/components/cars/FullscreenGallery";
 import { Header, Footer } from "@/shared/components";
@@ -81,7 +83,11 @@ const CarDetail = () => {
     display_name: string | null;
     garage_name: string | null;
     user_type: string | null;
+    avatar_url?: string | null;
+    vitrine_slug?: string | null;
+    vitrine_published?: boolean | null;
   } | null>(null);
+
   const [isLoading, setIsLoading] = useState(true);
   const [relatedCars, setRelatedCars] = useState<Car[]>([]);
   const [currentUser, setCurrentUser] = useState<string | undefined>(undefined);
@@ -626,6 +632,17 @@ const CarDetail = () => {
                   tvaNumber={undefined}
                   sellerId={sellerContact?.user_id}
                 />
+
+                {isProSeller && sellerDisplay?.vitrine_published && sellerDisplay.vitrine_slug && (
+                  <Link
+                    to={`/garage/${sellerDisplay.vitrine_slug}`}
+                    className="inline-flex items-center justify-center gap-2 w-full h-10 rounded-xl border border-primary/30 bg-primary/5 text-primary text-sm font-medium hover:bg-primary/10 hover:border-primary/50 transition-colors"
+                  >
+                    <Store className="w-4 h-4" strokeWidth={1.75} />
+                    Voir la vitrine du garage
+                  </Link>
+                )}
+
 
                 {isAdmin && (
                   <Button onClick={handleAdminDelete} variant="destructive" className="w-full h-11 mt-2">

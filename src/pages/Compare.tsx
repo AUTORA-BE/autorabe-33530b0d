@@ -418,9 +418,10 @@ const Compare = () => {
                 <p className="text-sm sm:text-base text-muted-foreground mb-6">
                   Ajoutez jusqu'à 3 véhicules pour les comparer côte à côte.
                 </p>
-                <Link to="/">
+                <Link to="/recherche">
                   <Button className="btn-primary-gradient">Parcourir les véhicules</Button>
                 </Link>
+
               </div>
             ) : (
               <>
