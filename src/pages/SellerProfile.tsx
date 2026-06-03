@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { useParams, useNavigate, Link, useSearchParams } from "react-router-dom";
+import { useParams, useNavigate, Link, useSearchParams, Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Header, Footer } from "@/shared/components";
 import SEOHead from "@/components/SEOHead";
@@ -12,7 +12,7 @@ import { localBusinessSchema } from "@/lib/seoSchemas";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocalizedVehicleHref } from "@/lib/useLocalizedHref";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import {    Star, MapPin, Phone, Calendar, ArrowLeft, Car, MessageSquare, Info, Shield, Clock, Heart, Navigation, Pencil, ImagePlus, Wrench, FileText, X, Upload } from "lucide-react";
+import {    Star, MapPin, Phone, Calendar, ArrowLeft, Car, MessageSquare, Info, Shield, Clock, Heart, Navigation, Pencil, ImagePlus, Wrench, FileText, X, Upload, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -280,6 +280,10 @@ const SellerProfile = () => {
   // Slug route: gate publication. Owners see an unpublished preview banner.
   const isUnpublishedForVisitor = isSlugRoute && profile && !profile.vitrine_published && !isOwnProfile;
   if (notFound || !profile || isUnpublishedForVisitor) {
+    // Spec: if slug + UUID lookups both fail, redirect cleanly to /recherche
+    if (isSlugRoute && notFound) {
+      return <Navigate to="/recherche" replace />;
+    }
     return (
       <div className="page-gradient min-h-screen">
         <SEOHead noIndex title="Vitrine introuvable | AutoRA" />
@@ -328,15 +332,32 @@ const SellerProfile = () => {
     url: profile.vitrine_slug ? `https://autora.be/garage/${profile.vitrine_slug}` : undefined,
   } : localBusinessSchema;
 
+  // ── Dynamic Open Graph meta for vitrine pages ──
+  const isPublishedVitrine = isSlugRoute && profile.vitrine_published;
+  const ogTitle = isPublishedVitrine
+    ? `${displayName} — Vitrine Professionnelle sur AutoRA`
+    : `${displayName} | AutoRA`;
+  const ogDescription = isPublishedVitrine
+    ? `Découvrez le stock de véhicules d'occasion de ${displayName}. Voitures vérifiées Car-Pass et prêtes pour le marché belge.`
+    : `Profil vendeur de ${displayName} sur AutoRA. Consultez les annonces, avis et coordonnées.`;
+  const ogImage = effectiveCover || profile.avatar_url || undefined;
+  const ogUrl = profile.vitrine_slug
+    ? `https://autora.be/garage/${profile.vitrine_slug}`
+    : `https://autora.be/seller/${profile.user_id}`;
+
   return (
     <div className="page-gradient min-h-screen">
       <SEOHead
-        title={`${displayName} | AutoRA`}
-        description={`Profil vendeur de ${displayName} sur AutoRA. Consultez les annonces, avis et coordonnées.`}
+        title={ogTitle}
+        description={ogDescription}
+        image={ogImage}
+        url={ogUrl}
+        type="profile"
         jsonLd={dealerSchema}
         noIndex={isSlugRoute && !profile.vitrine_published}
       />
       <Header />
+
 
       <main className="pt-20 pb-32">
         {/* Owner unpublished preview banner */}
@@ -487,7 +508,52 @@ const SellerProfile = () => {
                         </a>
                       </Button>
                     )}
+                    {profile.vitrine_published && profile.vitrine_slug && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="rounded-xl px-5 py-3 h-auto text-sm font-semibold border-border/60"
+                        onClick={async () => {
+                          const url = `https://autora.be/garage/${profile.vitrine_slug}`;
+                          const title = `${displayName} — Vitrine sur AutoRA`;
+                          const text = language === "nl"
+                            ? "Bekijk de voertuigen in deze vitrine op AutoRA."
+                            : "Découvrez les véhicules de cette vitrine sur AutoRA.";
+                          if (typeof navigator.share === "function") {
+                            try {
+                              await navigator.share({ title, text, url });
+                              return;
+                            } catch (err) {
+                              if ((err as DOMException)?.name === "AbortError") return;
+                            }
+                          }
+                          try {
+                            if (navigator.clipboard?.writeText) {
+                              await navigator.clipboard.writeText(url);
+                            } else {
+                              const ta = document.createElement("textarea");
+                              ta.value = url; ta.style.position = "fixed"; ta.style.opacity = "0";
+                              document.body.appendChild(ta); ta.select();
+                              document.execCommand("copy");
+                              document.body.removeChild(ta);
+                            }
+                            toast({
+                              title: language === "nl" ? "Link van vitrine gekopieerd!" : "Lien de la vitrine copié !",
+                            });
+                          } catch {
+                            toast({
+                              title: language === "nl" ? "Kopiëren mislukt" : "Échec de la copie",
+                              variant: "destructive",
+                            });
+                          }
+                        }}
+                      >
+                        <Share2 className="w-4 h-4 mr-2" strokeWidth={1.5} />
+                        {language === "nl" ? "Delen" : "Partager"}
+                      </Button>
+                    )}
                   </div>
+
                 </div>
               </div>
             </div>

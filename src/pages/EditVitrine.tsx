@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Upload, ImagePlus, X, Eye, MessageSquare, Navigation, MapPin, Clock, Shield, Check, AlertCircle, Copy, Share2 } from "lucide-react";
+import { Upload, ImagePlus, X, Eye, MessageSquare, Navigation, MapPin, Clock, Shield, Check, AlertCircle, Share2 } from "lucide-react";
 
 /** Slugify a free-text garage name for URL fallback. */
 const slugifyName = (s: string): string =>
@@ -368,24 +368,42 @@ const EditVitrine = () => {
                       : (garageName ? slugifyName(garageName) : "") || (user?.id ?? "");
                   const shareUrl = `https://autora.be/garage/${effectiveSlug}`;
                   const canShare = !!effectiveSlug && (slug ? slugStatus !== "taken" && slugStatus !== "invalid" : true);
-                  const handleCopy = async () => {
-                    try {
-                      if (navigator.clipboard?.writeText) {
-                        await navigator.clipboard.writeText(shareUrl);
-                      } else {
-                        // Fallback for older mobile browsers / insecure contexts
-                        const ta = document.createElement("textarea");
-                        ta.value = shareUrl;
-                        ta.setAttribute("readonly", "");
-                        ta.style.position = "fixed";
-                        ta.style.opacity = "0";
-                        document.body.appendChild(ta);
-                        ta.select();
-                        document.execCommand("copy");
-                        document.body.removeChild(ta);
+                  const shareTitle = `${garageName || displayName || "AutoRA"} — Vitrine sur AutoRA`;
+                  const shareText = language === "nl"
+                    ? "Bekijk de voertuigen in onze vitrine op AutoRA."
+                    : "Découvrez les véhicules de notre vitrine sur AutoRA.";
+                  const copyToClipboard = async () => {
+                    if (navigator.clipboard?.writeText) {
+                      await navigator.clipboard.writeText(shareUrl);
+                      return;
+                    }
+                    // Fallback for older mobile browsers / insecure contexts
+                    const ta = document.createElement("textarea");
+                    ta.value = shareUrl;
+                    ta.setAttribute("readonly", "");
+                    ta.style.position = "fixed";
+                    ta.style.opacity = "0";
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand("copy");
+                    document.body.removeChild(ta);
+                  };
+                  const handleShare = async () => {
+                    // Mobile / tablets: native Web Share API (WhatsApp, Messenger, SMS, …)
+                    if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
+                      try {
+                        await navigator.share({ title: shareTitle, text: shareText, url: shareUrl });
+                        return;
+                      } catch (err) {
+                        // User cancelled — silent, do not fall back to copy
+                        if ((err as DOMException)?.name === "AbortError") return;
+                        // Other errors → fall through to clipboard
                       }
+                    }
+                    try {
+                      await copyToClipboard();
                       toast({
-                        title: language === "nl" ? "Link gekopieerd!" : "Lien copié !",
+                        title: language === "nl" ? "Link van vitrine gekopieerd!" : "Lien de la vitrine copié !",
                         description: language === "nl" ? "Klaar om te delen." : "Prêt à être partagé.",
                       });
                     } catch {
@@ -395,6 +413,7 @@ const EditVitrine = () => {
                       });
                     }
                   };
+
                   return (
                     <div className="rounded-2xl border border-border/50 bg-card/80 backdrop-blur-sm p-6 space-y-3">
                       <div className="flex items-center gap-2">
@@ -414,13 +433,13 @@ const EditVitrine = () => {
                         </div>
                         <Button
                           type="button"
-                          onClick={handleCopy}
+                          onClick={handleShare}
                           disabled={!canShare}
                           className="btn-primary-gradient rounded-xl px-4 shrink-0"
-                          aria-label={language === "nl" ? "Link kopiëren" : "Copier le lien"}
+                          aria-label={language === "nl" ? "Vitrine delen" : "Partager la vitrine"}
                         >
-                          <Copy className="w-4 h-4 mr-2" strokeWidth={1.8} aria-hidden="true" />
-                          {language === "nl" ? "Link kopiëren" : "Copier le lien"}
+                          <Share2 className="w-4 h-4 mr-2" strokeWidth={1.8} aria-hidden="true" />
+                          {language === "nl" ? "Delen" : "Partager"}
                         </Button>
                       </div>
                       {!published && (

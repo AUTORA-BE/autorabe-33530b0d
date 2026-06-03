@@ -1366,6 +1366,10 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
+      generate_unique_vitrine_slug: {
+        Args: { _desired: string; _user_id: string }
+        Returns: string
+      }
       get_active_cities_count: { Args: never; Returns: number }
       get_favorite_counts: {
         Args: { listing_ids: string[] }
@@ -1605,6 +1609,8 @@ export type Database = {
       }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
+      slugify_garage_name: { Args: { _input: string }; Returns: string }
+      unaccent: { Args: { "": string }; Returns: string }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
