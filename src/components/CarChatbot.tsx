@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect, forwardRef } from "react";
-import { MessageCircle, X, Send, Bot, User, Loader2, Car, Search } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { MessageCircle, X, Send, Bot, User, Loader2, Car, Search, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/features/auth";
 import ComplianceBanner from "@/components/ComplianceBanner";
 
 interface Message {
@@ -13,6 +15,8 @@ interface Message {
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/car-chat`;
 
 const CarChatbot = forwardRef<HTMLDivElement>(function CarChatbot(_props, ref) {
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
