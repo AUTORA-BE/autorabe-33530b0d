@@ -26,7 +26,7 @@ const fr = {
 **Email de contact RGPD** : autoracontact@gmail.com
 **Adresse de contact** : Belgique (adresse précise communiquée sur demande à l'email ci-dessus)
 
-⚠️ Pendant la phase bêta, aucune transaction commerciale n'est traitée par AutoRA. Les coordonnées complètes (numéro BCE, adresse de siège, forme juridique) seront publiées sur cette page lors de l'activation des fonctionnalités payantes.
+⚠️ Pendant la phase bêta, aucune transaction commerciale n'est traitée par AutoRA et l'inscription est gratuite.
 
 Pour toute question relative au traitement de vos données personnelles, vous pouvez nous contacter à l'adresse e-mail ci-dessus. Nous répondons dans un délai maximum de 30 jours conformément au RGPD art. 12.`,
     },
@@ -194,11 +194,14 @@ const nl = {
   sections: [
     {
       title: "1. Verwerkingsverantwoordelijke",
-      body: `**Verwerkingsverantwoordelijke** : AutoRA.be — [Volledige naam / Vennootschap — in te vullen]
-**Adres** : [Adres — in te vullen], België
+      body: `**Verwerkingsverantwoordelijke** : Alperen Gursever, als natuurlijke persoon uitgever van het project AutoRA.be
+**Status** : Bètafase — publieke pre-lancering, niet-commerciële exploitatie
 **GDPR-contactadres** : autoracontact@gmail.com
+**Contactadres** : België (precies adres op verzoek meegedeeld via bovenstaand e-mailadres)
 
-Voor vragen over de verwerking van uw persoonsgegevens kunt u contact opnemen via bovenstaand adres.`,
+⚠️ Tijdens de bètafase worden door AutoRA geen commerciële transacties verwerkt en is de inschrijving gratis.
+
+Voor vragen over de verwerking van uw persoonsgegevens kunt u contact opnemen via bovenstaand adres. Wij antwoorden binnen maximaal 30 dagen conform art. 12 AVG.`,
     },
     {
       title: "2. Verzamelde gegevens",
@@ -364,11 +367,14 @@ const de = {
   sections: [
     {
       title: "1. Verantwortlicher",
-      body: `**Verantwortlicher** : AutoRA.be — [Vollständiger Name / Gesellschaft — auszufüllen]
-**Adresse** : [Adresse — auszufüllen], Belgien
+      body: `**Verantwortlicher** : Alperen Gursever, als natürliche Person und Herausgeber des Projekts AutoRA.be
+**Status** : Beta-Phase — öffentlicher Pre-Launch, nicht-kommerzieller Betrieb
 **DSGVO-Kontakt** : autoracontact@gmail.com
+**Kontaktadresse** : Belgien (genaue Anschrift auf Anfrage über die oben genannte E-Mail-Adresse)
 
-Bei Fragen zur Verarbeitung Ihrer personenbezogenen Daten wenden Sie sich bitte an die oben genannte Adresse.`,
+⚠️ Während der Beta-Phase werden von AutoRA keine kommerziellen Transaktionen abgewickelt und die Registrierung ist kostenlos.
+
+Bei Fragen zur Verarbeitung Ihrer personenbezogenen Daten wenden Sie sich bitte an die oben genannte Adresse. Wir antworten innerhalb von maximal 30 Tagen gemäß Art. 12 DSGVO.`,
     },
     {
       title: "2. Erhobene Daten",
@@ -534,11 +540,14 @@ const en = {
   sections: [
     {
       title: "1. Data Controller",
-      body: `**Data Controller** : AutoRA.be — [Full name / Company — to be completed]
-**Address** : [Address — to be completed], Belgium
+      body: `**Data Controller** : Alperen Gursever, as a natural person publishing the AutoRA.be project
+**Status** : Beta phase — public pre-launch, non-commercial operation
 **GDPR contact** : autoracontact@gmail.com
+**Contact address** : Belgium (exact address provided on request via the above email)
 
-For any questions regarding the processing of your personal data, please contact us at the above address.`,
+⚠️ During the beta phase, no commercial transactions are processed by AutoRA and registration is free of charge.
+
+For any questions regarding the processing of your personal data, please contact us at the above address. We respond within a maximum of 30 days in accordance with Art. 12 GDPR.`,
     },
     {
       title: "2. Data Collected",

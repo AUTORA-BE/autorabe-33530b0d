@@ -17,7 +17,7 @@ const renderBody = (body: string) =>
 const fr = {
   title: "Conditions Générales d'Utilisation",
   subtitle: "Version en vigueur — mai 2026",
-  intro: `Les présentes Conditions Générales d'Utilisation (ci-après « CGU ») régissent l'accès et l'utilisation de la plateforme AutoRA.be (ci-après « AutoRA » ou « la Plateforme »), exploitée par [Nom / Société — à compléter], [adresse — à compléter], Belgique.
+  intro: `Les présentes Conditions Générales d'Utilisation (ci-après « CGU ») régissent l'accès et l'utilisation de la plateforme AutoRA.be (ci-après « AutoRA » ou « la Plateforme »), éditée par Alperen Gursever (personne physique éditrice — phase bêta, pré-lancement public), Belgique. Contact : autoracontact@gmail.com.
 
 En accédant à la Plateforme ou en créant un compte, l'utilisateur accepte sans réserve les présentes CGU. Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser la Plateforme.
 
@@ -148,7 +148,7 @@ Cette licence prend fin lors de la suppression du contenu ou du compte, sauf si 
       title: "12. Droit applicable et règlement des litiges",
       body: `Les présentes CGU sont régies par le droit belge, à l'exclusion de ses règles de conflit de lois.
 
-Tout litige relatif à l'interprétation ou à l'exécution des présentes fera l'objet d'une tentative de résolution amiable préalable. À défaut d'accord dans les 30 jours, les tribunaux de l'arrondissement judiciaire de [à compléter] seront seuls compétents, sauf disposition légale impérative contraire.
+Tout litige relatif à l'interprétation ou à l'exécution des présentes fera l'objet d'une tentative de résolution amiable préalable. À défaut d'accord dans les 30 jours, les tribunaux compétents seront ceux du ressort de l'arrondissement judiciaire du domicile de l'éditeur, Belgique, sauf disposition légale impérative contraire.
 
 Les consommateurs résidant en Belgique peuvent également recourir au service de médiation pour le consommateur (www.mediationconsommateur.be) ou à la plateforme européenne de résolution des litiges en ligne (https://ec.europa.eu/consumers/odr).`,
     },
@@ -158,7 +158,7 @@ Les consommateurs résidant en Belgique peuvent également recourir au service d
 const nl = {
   title: "Algemene Gebruiksvoorwaarden",
   subtitle: "Van kracht — mei 2026",
-  intro: `Deze Algemene Gebruiksvoorwaarden (hierna « AGV ») regelen de toegang tot en het gebruik van het AutoRA.be platform (hierna « AutoRA » of « het Platform »), uitgebaat door [Naam / Vennootschap — in te vullen], [adres — in te vullen], België.
+  intro: `Deze Algemene Gebruiksvoorwaarden (hierna « AGV ») regelen de toegang tot en het gebruik van het AutoRA.be platform (hierna « AutoRA » of « het Platform »), uitgegeven door Alperen Gursever (natuurlijke persoon uitgever — bètafase, publieke pre-lancering), België. Contact: autoracontact@gmail.com.
 
 Door toegang te nemen tot het Platform of een account aan te maken, aanvaardt de gebruiker deze AGV zonder voorbehoud. Indien u deze voorwaarden niet aanvaardt, gelieve het Platform niet te gebruiken.
 
@@ -289,7 +289,7 @@ Deze licentie eindigt bij de verwijdering van de inhoud of het account, tenzij d
       title: "12. Toepasselijk recht en geschillenbeslechting",
       body: `Deze AGV worden beheerst door het Belgisch recht, met uitsluiting van de conflictregels.
 
-Elk geschil over de interpretatie of uitvoering van deze AGV zal vooraf het voorwerp uitmaken van een poging tot minnelijke schikking. Bij gebrek aan akkoord binnen 30 dagen zijn de rechtbanken van het gerechtelijk arrondissement [in te vullen] als enige bevoegd, behoudens dwingende wettelijke bepalingen.
+Elk geschil over de interpretatie of uitvoering van deze AGV zal vooraf het voorwerp uitmaken van een poging tot minnelijke schikking. Bij gebrek aan akkoord binnen 30 dagen zijn de rechtbanken bevoegd van het gerechtelijk arrondissement van de woonplaats van de uitgever, België, behoudens dwingende wettelijke bepalingen.
 
 Consumenten die in België verblijven, kunnen ook een beroep doen op de consumentenombudsdienst (www.consumentenombudsdienst.be) of op het Europees platform voor onlinegeschillenbeslechting (https://ec.europa.eu/consumers/odr).`,
     },
@@ -299,7 +299,7 @@ Consumenten die in België verblijven, kunnen ook een beroep doen op de consumen
 const de = {
   title: "Allgemeine Nutzungsbedingungen",
   subtitle: "Gültige Version — Mai 2026",
-  intro: `Diese Allgemeinen Nutzungsbedingungen (nachfolgend „ANB") regeln den Zugang zu und die Nutzung der Plattform AutoRA.be (nachfolgend „AutoRA" oder „die Plattform"), betrieben von [Name / Gesellschaft — auszufüllen], [Adresse — auszufüllen], Belgien.
+  intro: `Diese Allgemeinen Nutzungsbedingungen (nachfolgend „ANB") regeln den Zugang zu und die Nutzung der Plattform AutoRA.be (nachfolgend „AutoRA" oder „die Plattform"), herausgegeben von Alperen Gursever (natürliche Person als Herausgeber — Beta-Phase, öffentlicher Pre-Launch), Belgien. Kontakt: autoracontact@gmail.com.
 
 Durch den Zugang zur Plattform oder die Erstellung eines Kontos akzeptiert der Nutzer diese ANB ohne Vorbehalt. Wenn Sie diesen Bedingungen nicht zustimmen, nutzen Sie die Plattform bitte nicht.
 
@@ -430,7 +430,7 @@ Diese Lizenz endet bei der Löschung des Inhalts oder des Kontos, es sei denn, d
       title: "12. Anwendbares Recht und Streitbeilegung",
       body: `Diese ANB unterliegen belgischem Recht unter Ausschluss der Kollisionsnormen.
 
-Jeder Streit über die Auslegung oder Durchführung dieser ANB wird zunächst einer gütlichen Einigung unterworfen. Wird innerhalb von 30 Tagen keine Einigung erzielt, sind die Gerichte des Gerichtsbezirks [auszufüllen] ausschließlich zuständig, vorbehaltlich zwingender gesetzlicher Bestimmungen.
+Jeder Streit über die Auslegung oder Durchführung dieser ANB wird zunächst einer gütlichen Einigung unterworfen. Wird innerhalb von 30 Tagen keine Einigung erzielt, sind die Gerichte des Gerichtsbezirks des Wohnsitzes des Herausgebers, Belgien, ausschließlich zuständig, vorbehaltlich zwingender gesetzlicher Bestimmungen.
 
 Verbraucher mit Wohnsitz in Belgien können auch den Verbraucherschlichtungsdienst in Anspruch nehmen (www.mediationconsommateur.be) oder die europäische Online-Streitbeilegungsplattform (https://ec.europa.eu/consumers/odr).`,
     },
@@ -440,7 +440,7 @@ Verbraucher mit Wohnsitz in Belgien können auch den Verbraucherschlichtungsdien
 const en = {
   title: "Terms of Use",
   subtitle: "Version in force — May 2026",
-  intro: `These Terms of Use (hereinafter "ToU") govern access to and use of the AutoRA.be platform (hereinafter "AutoRA" or "the Platform"), operated by [Name / Company — to be completed], [address — to be completed], Belgium.
+  intro: `These Terms of Use (hereinafter "ToU") govern access to and use of the AutoRA.be platform (hereinafter "AutoRA" or "the Platform"), published by Alperen Gursever (natural person publisher — beta phase, public pre-launch), Belgium. Contact: autoracontact@gmail.com.
 
 By accessing the Platform or creating an account, the user accepts these ToU without reservation. If you do not accept these terms, please do not use the Platform.
 
@@ -571,7 +571,7 @@ This licence ends upon deletion of the content or account, unless the content ha
       title: "12. Applicable Law and Dispute Resolution",
       body: `These ToU are governed by Belgian law, excluding its conflict-of-laws rules.
 
-Any dispute relating to the interpretation or performance of these ToU shall first be subject to an attempt at amicable resolution. Failing agreement within 30 days, the courts of the judicial district of [to be completed] shall have exclusive jurisdiction, subject to mandatory legal provisions.
+Any dispute relating to the interpretation or performance of these ToU shall first be subject to an attempt at amicable resolution. Failing agreement within 30 days, the courts of the judicial district of the publisher's domicile, Belgium, shall have exclusive jurisdiction, subject to mandatory legal provisions.
 
 Consumers residing in Belgium may also use the consumer mediation service (www.mediationconsommateur.be) or the European online dispute resolution platform (https://ec.europa.eu/consumers/odr).`,
     },

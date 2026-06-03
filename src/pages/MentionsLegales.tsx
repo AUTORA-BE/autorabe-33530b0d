@@ -104,12 +104,18 @@ Les autorités belges (SPF Économie, APD, autorités judiciaires) peuvent adres
       {
         title: "1. Uitgever van de website",
         body: `**Naam** : AutoRA.be (hierna « AutoRA »)
-**Rechtsvorm** : [In te vullen — bv. : BV / Natuurlijk persoon]
-**Adres** : [Volledig adres in te vullen]
-**KBO-nummer** : [BE 0000.000.000 — in te vullen]
-**BTW-nummer** : [BE 0000.000.000 — in te vullen indien BTW-plichtig]
+**Status** : Platform in bètafase — publieke pre-lancering
+**Verantwoordelijke voor de publicatie** : Alperen Gursever
+**Contactadres** : autoracontact@gmail.com
 **E-mail** : autoracontact@gmail.com
-**Verantwoordelijke voor de publicatie** : [Naam in te vullen]
+
+⚠️ **Bètafase — Niet-commerciële activiteit**
+
+AutoRA wordt momenteel beschikbaar gesteld voor evaluatie en publieke pre-lancering. Tijdens deze fase :
+
+— Er worden geen commerciële transacties uitgevoerd door het platform zelf.
+— Geen enkele betaling wordt door AutoRA verwerkt. Inschrijving en gebruik zijn gratis.
+— Eventuele transacties tussen gebruikers verlopen rechtstreeks tussen hen, buiten het platform.
 
 AutoRA is een marktplaats voor de bemiddeling tussen verkopers en kopers van tweedehandse voertuigen in België. Het platform neemt niet deel aan transacties tussen particulieren en is geen partij bij koopovereenkomsten tussen gebruikers.`,
       },
@@ -155,7 +161,9 @@ Het plaatsen van hyperlinks naar de website AutoRA.be vereist de voorafgaande sc
       },
       {
         title: "6. Toepasselijk recht en bevoegde rechtbank",
-        body: `Deze wettelijke vermeldingen worden beheerst door het Belgisch recht. Bij geschillen zijn de rechtbanken van het gerechtelijk arrondissement [in te vullen] bevoegd, behoudens dwingende wettelijke bepalingen.
+        body: `Deze wettelijke vermeldingen worden beheerst door het Belgisch recht.
+
+Bij geschillen zijn de rechtbanken bevoegd van het gerechtelijk arrondissement van de woonplaats van de uitgever, België, behoudens dwingende wettelijke bepalingen. Het precieze arrondissement zal worden vermeld bij de definitieve inschrijving van de uitgever bij de KBO.
 
 Voor consumentengeschillen kan de Belgische consument ook een klacht indienen bij de Consumentenombudsdienst: https://www.consumentenombudsdienst.be of via het Europees platform voor onlinegeschillenbeslechting: https://ec.europa.eu/consumers/odr`,
       },
@@ -186,12 +194,18 @@ De Belgische autoriteiten (FOD Economie, GBA, gerechtelijke autoriteiten) kunnen
       {
         title: "1. Herausgeber der Website",
         body: `**Name** : AutoRA.be (nachfolgend „AutoRA")
-**Rechtsform** : [Auszufüllen — z.B. : SRL / Natürliche Person]
-**Adresse** : [Vollständige Adresse auszufüllen]
-**Unternehmensnummer BCE** : [BE 0000.000.000 — auszufüllen]
-**USt-IdNr.** : [BE 0000.000.000 — auszufüllen, falls MwSt-pflichtig]
+**Status** : Plattform in der Beta-Phase — öffentlicher Pre-Launch
+**Verantwortlicher für die Veröffentlichung** : Alperen Gursever
+**Kontaktadresse** : autoracontact@gmail.com
 **E-Mail** : autoracontact@gmail.com
-**Verantwortlicher für die Veröffentlichung** : [Name auszufüllen]
+
+⚠️ **Beta-Phase — Nicht-kommerzielle Tätigkeit**
+
+AutoRA wird derzeit zu Evaluierungs- und öffentlichen Pre-Launch-Zwecken zur Verfügung gestellt. Während dieser Phase :
+
+— Es werden keine kommerziellen Transaktionen über die Plattform selbst abgewickelt.
+— Es werden keine Zahlungen von AutoRA verarbeitet. Registrierung und Nutzung sind kostenlos.
+— Eventuelle Transaktionen zwischen Nutzern finden direkt zwischen ihnen außerhalb der Plattform statt.
 
 AutoRA ist ein Marktplatz zur Vermittlung zwischen Verkäufern und Käufern von Gebrauchtfahrzeugen in Belgien. Die Plattform ist nicht an Transaktionen zwischen Privatpersonen beteiligt und ist keine Vertragspartei der zwischen Nutzern abgeschlossenen Kaufverträge.`,
       },
@@ -235,7 +249,9 @@ Das Setzen von Hyperlinks zur Website AutoRA.be erfordert die vorherige schriftl
       },
       {
         title: "6. Anwendbares Recht und Gerichtsstand",
-        body: `Dieses Impressum unterliegt belgischem Recht. Bei Streitigkeiten sind die Gerichte des Gerichtsbezirks [auszufüllen], Belgien, zuständig, vorbehaltlich zwingender gesetzlicher Bestimmungen.
+        body: `Dieses Impressum unterliegt belgischem Recht.
+
+Bei Streitigkeiten sind die Gerichte des Gerichtsbezirks des Wohnsitzes des Herausgebers, Belgien, zuständig, vorbehaltlich zwingender gesetzlicher Bestimmungen. Der genaue Gerichtsbezirk wird bei der endgültigen Eintragung des Herausgebers bei der ZUD (BCE/KBO) angegeben.
 
 Verbraucher können Beschwerden auch beim belgischen Verbraucherschlichtungsdienst einreichen: https://www.mediationconsommateur.be oder über die europäische Online-Streitbeilegungsplattform: https://ec.europa.eu/consumers/odr`,
       },
@@ -266,12 +282,18 @@ Die belgischen Behörden (FÖD Wirtschaft, APD, Justizbehörden) können ihre of
       {
         title: "1. Website Publisher",
         body: `**Name** : AutoRA.be (hereinafter "AutoRA")
-**Legal form** : [To be completed — e.g. : SRL / Sole trader]
-**Address** : [Full address to be completed]
-**Company number BCE** : [BE 0000.000.000 — to be completed]
-**VAT number** : [BE 0000.000.000 — to be completed if VAT-registered]
+**Status** : Platform in beta phase — public pre-launch
+**Publication director** : Alperen Gursever
+**Contact address** : autoracontact@gmail.com
 **Email** : autoracontact@gmail.com
-**Publication director** : [Name to be completed]
+
+⚠️ **Beta phase — Non-commercial activity**
+
+AutoRA is currently made available for evaluation and public pre-launch purposes. During this phase :
+
+— No commercial transactions are carried out by the platform itself.
+— No payment is processed by AutoRA. Registration and use are free of charge.
+— Any transactions between users take place directly between them, outside the platform.
 
 AutoRA is a marketplace connecting sellers and buyers of second-hand vehicles in Belgium. The platform does not take part in transactions between individuals and is not a party to sale contracts concluded between users.`,
       },
@@ -315,7 +337,9 @@ Creating hyperlinks to the AutoRA.be website requires the prior written consent 
       },
       {
         title: "6. Applicable Law and Jurisdiction",
-        body: `This legal notice is governed by Belgian law. In the event of a dispute, the courts of the judicial district of [to be completed], Belgium, shall have exclusive jurisdiction, subject to mandatory legal provisions.
+        body: `This legal notice is governed by Belgian law.
+
+In the event of a dispute, the courts of the judicial district of the publisher's domicile, Belgium, shall have jurisdiction, subject to mandatory legal provisions. The exact district will be specified upon the publisher's final registration with the Crossroads Bank for Enterprises (BCE/KBO).
 
 Consumers may also lodge complaints with the Belgian Consumer Mediation Service: https://www.mediationconsommateur.be or via the European online dispute resolution platform: https://ec.europa.eu/consumers/odr`,
       },
