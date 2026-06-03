@@ -185,6 +185,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
   const [showConfetti, setShowConfetti] = useState(false);
   const [slideDirection, setSlideDirection] = useState<1 | -1>(1);
   const isEditMode = !!editId;
+  const lastBroadcastKeyRef = useRef<string>('');
   const { canPublish, activeCount, maxAllowed, isLoading: limitLoading } = useListingLimit();
   const { updateDraft, loadDraft, clearDraft, lastSaved, isSaving } = useAutoSaveDraft(isEditMode);
 
