@@ -1480,6 +1480,18 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_seller_display: {
+        Args: { listing_id: string }
+        Returns: {
+          avatar_url: string
+          display_name: string
+          garage_name: string
+          user_id: string
+          user_type: string
+          vitrine_published: boolean
+          vitrine_slug: string
+        }[]
+      }
       get_seller_public_listings: {
         Args: { _seller_id: string }
         Returns: {

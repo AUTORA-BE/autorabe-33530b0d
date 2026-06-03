@@ -50,9 +50,11 @@ const BentoSpecs = ({
   const formatMileage = (km: number) =>
     new Intl.NumberFormat("fr-BE").format(km) + " km";
 
-  const formatPower = (kw: number) => {
-    const ch = Math.round(kw * 1.36);
-    return `${kw} kW / ${ch} ch`;
+  // `power` is stored in horsepower (ch/HP) — matches the sell wizard input label.
+  // Derive kW for completeness so the spec aligns with the value used in the TCO calculator.
+  const formatPower = (ch: number) => {
+    const kw = Math.round(ch / 1.36);
+    return `${ch} ch / ${kw} kW`;
   };
 
   const container = {
