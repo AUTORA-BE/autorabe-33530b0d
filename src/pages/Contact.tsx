@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { Honeypot, isHoneypotTriggered } from "@/components/Honeypot";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -42,6 +43,7 @@ const Contact = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [lastSubmitTime, setLastSubmitTime] = useState(0);
+  const honeypotRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
@@ -54,6 +56,13 @@ const Contact = () => {
   });
 
   const onSubmit = async (data: ContactFormData) => {
+    // Honeypot: silently "succeed" for bots without hitting the backend
+    if (isHoneypotTriggered(honeypotRef.current)) {
+      setIsSuccess(true);
+      form.reset();
+      return;
+    }
+
     const now = Date.now();
     if (now - lastSubmitTime < RATE_LIMIT_MS) {
       toast.error("Veuillez attendre 60 secondes entre chaque envoi.");
@@ -221,6 +230,7 @@ const Contact = () => {
                 <CardContent>
                   <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                      <Honeypot ref={honeypotRef} />
                       <div className="grid sm:grid-cols-2 gap-4">
                         <FormField
                           control={form.control}

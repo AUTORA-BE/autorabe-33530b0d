@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef, lazy, Suspense } from 'react';
+import { Honeypot, isHoneypotTriggered } from '@/components/Honeypot';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useQueryClient } from '@tanstack/react-query';
@@ -186,6 +187,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
   const [slideDirection, setSlideDirection] = useState<1 | -1>(1);
   const isEditMode = !!editId;
   const lastBroadcastKeyRef = useRef<string>('');
+  const honeypotRef = useRef<HTMLInputElement>(null);
   const { canPublish, activeCount, maxAllowed, isLoading: limitLoading } = useListingLimit();
   const { updateDraft, loadDraft, clearDraft, lastSaved, isSaving } = useAutoSaveDraft(isEditMode);
 
@@ -580,6 +582,13 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
   };
 
   const onSubmit = async (data: SellCarFormData) => {
+    // Honeypot: silently pretend the listing was created so bots leave us alone
+    if (isHoneypotTriggered(honeypotRef.current)) {
+      toast.success(t('sellForm.publishSuccess') || 'Annonce publiée');
+      navigate('/dashboard');
+      return;
+    }
+
     if (!isEditMode && !canPublish) {
       toast.error(`Vous avez atteint la limite de ${maxAllowed} annonces simultanées. Passez à un plan supérieur pour publier davantage.`);
       return;
@@ -1013,6 +1022,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <Honeypot ref={honeypotRef} />
 
           <AnimatePresence mode="wait" custom={slideDirection}>
           {/* ===== STEP 1: Vehicle Info + Contact ===== */}

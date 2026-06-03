@@ -4,7 +4,8 @@
  * @module pages/Auth
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Honeypot, isHoneypotTriggered } from "@/components/Honeypot";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import SEOHead from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
@@ -49,6 +50,7 @@ const Auth = () => {
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const honeypotRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const { t, language } = useLanguage();
 
@@ -119,6 +121,13 @@ const Auth = () => {
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Honeypot: fake a benign success on signup so bots think they made it
+    if (!isLogin && isHoneypotTriggered(honeypotRef.current)) {
+      setVerificationEmailSent(true);
+      return;
+    }
+
     if (!validateForm()) return;
 
     if (!isLogin && !acceptedTerms) {
@@ -420,6 +429,7 @@ const Auth = () => {
                 </div>
 
                 <form onSubmit={handleEmailAuth} className="space-y-4">
+                  {!isLogin && <Honeypot ref={honeypotRef} />}
                   {/* Signup-only fields */}
                   {!isLogin && (
                     <>
