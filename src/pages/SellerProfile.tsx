@@ -1209,7 +1209,7 @@ function EditVitrineDialog({ open, onOpenChange, userId, garageName, vitrineSlug
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="font-serif text-xl font-light">
+          <DialogTitle className="font-sans text-xl font-semibold tracking-wider">
             {language === "nl" ? "Mijn vitrine bewerken" : "Modifier ma vitrine"}
           </DialogTitle>
         </DialogHeader>
