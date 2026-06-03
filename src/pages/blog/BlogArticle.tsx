@@ -111,7 +111,7 @@ const BlogArticle = () => {
             <p className="text-sm text-muted-foreground mb-4">
               Parcourez des milliers de véhicules vérifiés sur AutoRA.
             </p>
-            <Link to="/">
+            <Link to="/recherche">
               <Button className="font-semibold">Rechercher un véhicule</Button>
             </Link>
           </div>
