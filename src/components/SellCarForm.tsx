@@ -582,6 +582,13 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
   };
 
   const onSubmit = async (data: SellCarFormData) => {
+    // Honeypot: silently pretend the listing was created so bots leave us alone
+    if (isHoneypotTriggered(honeypotRef.current)) {
+      toast.success(t('sellForm.publishSuccess') || 'Annonce publiée');
+      navigate('/dashboard');
+      return;
+    }
+
     if (!isEditMode && !canPublish) {
       toast.error(`Vous avez atteint la limite de ${maxAllowed} annonces simultanées. Passez à un plan supérieur pour publier davantage.`);
       return;
