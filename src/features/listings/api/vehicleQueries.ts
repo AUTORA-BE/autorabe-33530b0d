@@ -203,6 +203,11 @@ export function applyFilters<T>(query: T, filters: VehicleFilters): T {
     q = q.or(conditions);
   }
 
+  // Free-text city filter (typed by user)
+  if (filters.location && filters.location.trim()) {
+    q = q.ilike('location', `%${filters.location.trim()}%`);
+  }
+
   // Features filter — AND logic: all selected features must be present
   // Uses the GIN-indexed text[] column with Postgres @> (contains) operator
   if (filters.features && filters.features.length > 0) {

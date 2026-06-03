@@ -26,6 +26,7 @@ const PARAM_KEYS = {
   sellerType: 'seller',
   bodyType: 'body',
   province: 'prov',
+  location: 'city',
   sort: 'sort',
 } as const;
 
@@ -58,6 +59,7 @@ export function parseFiltersFromParams(params: URLSearchParams): {
     bodyType: params.get(PARAM_KEYS.bodyType) || d.bodyType,
     color: params.get('color') || d.color,
     province: params.get(PARAM_KEYS.province) || d.province,
+    location: params.get(PARAM_KEYS.location) || d.location,
     features: d.features,
     maxDistanceKm: d.maxDistanceKm,
     userLat: d.userLat,
@@ -93,6 +95,7 @@ function filtersToParams(filters: VehicleFilters, sortBy: VehicleSortOption): UR
   if (filters.bodyType) params.set(PARAM_KEYS.bodyType, filters.bodyType);
   if (filters.color) params.set('color', filters.color);
   if (filters.province) params.set(PARAM_KEYS.province, filters.province);
+  if (filters.location) params.set(PARAM_KEYS.location, filters.location);
   if (sortBy !== 'recent') params.set(PARAM_KEYS.sort, sortBy);
 
   return params;

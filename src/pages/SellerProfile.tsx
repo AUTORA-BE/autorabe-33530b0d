@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate, Link, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Header, Footer } from "@/shared/components";
 import SEOHead from "@/components/SEOHead";
@@ -98,6 +98,17 @@ const SellerProfile = () => {
   }, []);
 
   const isOwnProfile = !!(currentUserId && userId && currentUserId === userId);
+
+  // Deep-link: ouvrir auto le dialog d'édition vitrine si ?edit=1 (depuis Réglages)
+  const [searchParams, setSearchParams] = useSearchParams();
+  useEffect(() => {
+    if (isOwnProfile && profile && searchParams.get("edit") === "1") {
+      setEditOpen(true);
+      const next = new URLSearchParams(searchParams);
+      next.delete("edit");
+      setSearchParams(next, { replace: true });
+    }
+  }, [isOwnProfile, profile, searchParams, setSearchParams]);
 
   /* Resolve seller (by userId or by slug) then fetch listings + reviews */
   useEffect(() => {
