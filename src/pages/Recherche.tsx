@@ -71,7 +71,7 @@ function CardImage({ src, alt }: { src: string; alt: string }) {
 
   if (empty || errored) {
     return (
-      <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-white/[0.03] text-white/40">
+      <div className="flex h-full w-full flex-col items-center justify-center gap-2 bg-foreground/[0.03] text-foreground/40">
         <ImageOff className="h-8 w-8" strokeWidth={1.5} />
         <span className="text-[11px] uppercase tracking-[0.12em]">Photo à venir</span>
       </div>
@@ -111,14 +111,14 @@ function LuxuryCarCard({
       onClick={() => onClick(car.id)}
       className={cn(
         "group relative isolate cursor-pointer overflow-hidden rounded-2xl",
-        "border border-white/5 bg-white/[0.03]",
+        "border border-foreground/5 bg-foreground/[0.03]",
         "transition-all duration-500 ease-out",
-        "hover:-translate-y-0.5 hover:border-primary/50 hover:bg-white/[0.05]",
+        "hover:-translate-y-0.5 hover:border-primary/50 hover:bg-foreground/[0.05]",
         "hover:shadow-[0_30px_60px_-20px_rgba(0,0,0,0.7),0_0_0_1px_hsl(var(--primary)/0.18),0_0_50px_-10px_hsl(var(--primary)/0.28)]",
       )}
     >
       {/* Image frame — strictly contained 16:9 */}
-      <div className="relative aspect-video overflow-hidden rounded-t-2xl bg-black">
+      <div className="relative aspect-video overflow-hidden rounded-t-2xl bg-muted">
         <CardImage src={car.image} alt={`${car.brand} ${car.model}`} />
 
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
@@ -144,7 +144,7 @@ function LuxuryCarCard({
 
 
         <div className="absolute bottom-3 left-3 right-3">
-          <p className="truncate text-[11px] font-medium uppercase tracking-[0.14em] text-white/65">
+          <p className="truncate text-[11px] font-medium uppercase tracking-[0.14em] text-foreground/65">
             {car.brand}
           </p>
           <h3 className="truncate text-xl font-medium tracking-tight text-white">
@@ -154,29 +154,29 @@ function LuxuryCarCard({
       </div>
 
       <div className="relative space-y-4 p-6">
-        <div className="flex items-center gap-4 text-[13px] text-white/70">
+        <div className="flex items-center gap-4 text-[13px] text-foreground/70">
           <span className="inline-flex items-center gap-1.5">
-            <Calendar className="h-3.5 w-3.5 text-white/45" strokeWidth={2} />
+            <Calendar className="h-3.5 w-3.5 text-foreground/45" strokeWidth={2} />
             {car.year}
           </span>
-          <span className="text-white/20">·</span>
+          <span className="text-foreground/20">·</span>
           <span className="inline-flex items-center gap-1.5">
-            <Gauge className="h-3.5 w-3.5 text-white/45" strokeWidth={2} />
+            <Gauge className="h-3.5 w-3.5 text-foreground/45" strokeWidth={2} />
             {car.mileage.toLocaleString("fr-BE")} km
           </span>
         </div>
 
-        <div className="flex items-end justify-between border-t border-white/5 pt-4">
+        <div className="flex items-end justify-between border-t border-foreground/5 pt-4">
           <div>
-            <p className="text-[10.5px] font-medium uppercase tracking-[0.14em] text-white/50">
+            <p className="text-[10.5px] font-medium uppercase tracking-[0.14em] text-foreground/50">
               Prix
             </p>
-            <p className="mt-0.5 text-3xl font-bold tracking-tight tabular-nums text-white">
+            <p className="mt-0.5 text-3xl font-bold tracking-tight tabular-nums text-foreground">
               {car.price.toLocaleString("fr-BE")}
-              <span className="ml-1 text-xl font-light text-white/65">€</span>
+              <span className="ml-1 text-xl font-light text-foreground/65">€</span>
             </p>
           </div>
-          <span className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-[11px] font-medium uppercase tracking-[0.12em] text-white/85 transition-all duration-300 group-hover:border-primary/50 group-hover:bg-primary/15 group-hover:text-primary">
+          <span className="rounded-full border border-foreground/10 bg-foreground/[0.04] px-4 py-2 text-[11px] font-medium uppercase tracking-[0.12em] text-foreground/85 transition-all duration-300 group-hover:border-primary/50 group-hover:bg-primary/15 group-hover:text-primary">
             Voir →
           </span>
         </div>
@@ -210,20 +210,20 @@ function PillFilterBar({ filters, updateFilter, onOpenMore, shrunk }: FilterBarP
 
   const triggerCls = cn(
     "rounded-full bg-transparent text-[13px] font-medium gap-1.5 border-0",
-    "text-white hover:bg-white/[0.08] hover:text-white",
+    "text-foreground hover:bg-foreground/[0.08] hover:text-foreground",
     shrunk ? "px-4 h-9" : "px-5 h-10",
   );
   const activeTriggerCls =
     "bg-primary/15 text-primary hover:bg-primary/20 hover:text-primary ring-1 ring-inset ring-primary/35";
 
   const popoverCls =
-    "rounded-2xl border border-white/10 bg-slate-950 p-6 text-white shadow-[0_30px_80px_-20px_rgba(0,0,0,0.85)]";
+    "rounded-2xl border border-foreground/10 bg-popover p-6 text-foreground shadow-[0_30px_80px_-20px_rgba(0,0,0,0.85)]";
 
   return (
     <div
       className={cn(
         "hidden md:flex items-center gap-1 rounded-full",
-        "border border-white/10 bg-slate-900/60 backdrop-blur-xl",
+        "border border-foreground/10 bg-card/80 backdrop-blur-xl",
         "shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)]",
         "transition-all duration-300 ease-out",
         shrunk ? "p-1.5 scale-[0.97]" : "p-2",
@@ -239,10 +239,10 @@ function PillFilterBar({ filters, updateFilter, onOpenMore, shrunk }: FilterBarP
         <PopoverContent className={cn(popoverCls, "w-80")} align="start">
           <div className="space-y-5">
             <div className="flex items-baseline justify-between">
-              <label className="text-[10px] font-medium uppercase tracking-[0.15em] text-white/55">
+              <label className="text-[10px] font-medium uppercase tracking-[0.15em] text-foreground/55">
                 Prix maximum
               </label>
-              <span className="text-lg font-semibold tabular-nums text-white">
+              <span className="text-lg font-semibold tabular-nums text-foreground">
                 {filters.maxPrice >= 1000000 ? "∞" : `${filters.maxPrice.toLocaleString("fr-BE")} €`}
               </span>
             </div>
@@ -262,7 +262,7 @@ function PillFilterBar({ filters, updateFilter, onOpenMore, shrunk }: FilterBarP
                     "rounded-full border px-2.5 py-1 text-[11px] transition-all",
                     filters.maxPrice === b.value
                       ? "border-primary bg-primary text-primary-foreground"
-                      : "border-white/10 text-white/70 hover:border-primary/50 hover:text-white",
+                      : "border-foreground/10 text-foreground/70 hover:border-primary/50 hover:text-foreground",
                   )}
                 >
                   {b.label}
@@ -273,7 +273,7 @@ function PillFilterBar({ filters, updateFilter, onOpenMore, shrunk }: FilterBarP
         </PopoverContent>
       </Popover>
 
-      <span className="h-5 w-px bg-white/10" />
+      <span className="h-5 w-px bg-foreground/10" />
 
       <Popover>
         <PopoverTrigger asChild>
@@ -283,7 +283,7 @@ function PillFilterBar({ filters, updateFilter, onOpenMore, shrunk }: FilterBarP
           </Button>
         </PopoverTrigger>
         <PopoverContent className={cn(popoverCls, "w-72 p-4")} align="start">
-          <label className="mb-3 block text-[10px] font-medium uppercase tracking-[0.15em] text-white/55">
+          <label className="mb-3 block text-[10px] font-medium uppercase tracking-[0.15em] text-foreground/55">
             Type d'énergie
           </label>
           <div className="grid grid-cols-2 gap-2">
@@ -302,7 +302,7 @@ function PillFilterBar({ filters, updateFilter, onOpenMore, shrunk }: FilterBarP
                     "rounded-xl border px-3 py-2.5 text-sm font-medium transition-all",
                     active
                       ? "border-primary/40 bg-primary/15 text-primary"
-                      : "border-white/10 bg-white/[0.02] text-white hover:border-primary/50 hover:bg-white/[0.06]",
+                      : "border-foreground/10 bg-foreground/[0.02] text-foreground hover:border-primary/50 hover:bg-foreground/[0.06]",
                   )}
                 >
                   {f.labelFr}
@@ -313,7 +313,7 @@ function PillFilterBar({ filters, updateFilter, onOpenMore, shrunk }: FilterBarP
         </PopoverContent>
       </Popover>
 
-      <span className="h-5 w-px bg-white/10" />
+      <span className="h-5 w-px bg-foreground/10" />
 
       <Popover>
         <PopoverTrigger asChild>
@@ -325,10 +325,10 @@ function PillFilterBar({ filters, updateFilter, onOpenMore, shrunk }: FilterBarP
         <PopoverContent className={cn(popoverCls, "w-80")} align="start">
           <div className="space-y-5">
             <div className="flex items-baseline justify-between">
-              <label className="text-[10px] font-medium uppercase tracking-[0.15em] text-white/55">
+              <label className="text-[10px] font-medium uppercase tracking-[0.15em] text-foreground/55">
                 Kilométrage maximum
               </label>
-              <span className="text-lg font-semibold tabular-nums text-white">
+              <span className="text-lg font-semibold tabular-nums text-foreground">
                 {filters.kmMax >= 500000 ? "∞" : `${filters.kmMax.toLocaleString("fr-BE")} km`}
               </span>
             </div>
@@ -348,7 +348,7 @@ function PillFilterBar({ filters, updateFilter, onOpenMore, shrunk }: FilterBarP
                     "rounded-full border px-2.5 py-1 text-[11px] transition-all",
                     filters.kmMax === km
                       ? "border-primary bg-primary text-primary-foreground"
-                      : "border-white/10 text-white/70 hover:border-primary/50 hover:text-white",
+                      : "border-foreground/10 text-foreground/70 hover:border-primary/50 hover:text-foreground",
                   )}
                 >
                   {km >= 500000 ? "Tous" : `≤ ${(km / 1000).toLocaleString("fr-BE")}k km`}
@@ -359,14 +359,14 @@ function PillFilterBar({ filters, updateFilter, onOpenMore, shrunk }: FilterBarP
         </PopoverContent>
       </Popover>
 
-      <span className="h-5 w-px bg-white/10" />
+      <span className="h-5 w-px bg-foreground/10" />
 
       <Button
         variant="ghost"
         onClick={onOpenMore}
         className={cn(
           triggerCls,
-          "border border-white/10 bg-white/[0.04] hover:border-primary/50 hover:bg-primary/10 hover:text-primary",
+          "border border-foreground/10 bg-foreground/[0.04] hover:border-primary/50 hover:bg-primary/10 hover:text-primary",
         )}
       >
         <SlidersHorizontal className="h-3.5 w-3.5" />
@@ -394,27 +394,27 @@ function MoreFiltersSheet({
   open, onOpenChange, filters, updateFilter, resetFilters, resultsCount, brands, models, isMobile,
 }: MoreFiltersSheetProps) {
   const fieldCls =
-    "w-full h-11 px-4 rounded-xl border border-white/10 bg-white/[0.04] text-sm text-white outline-none transition focus:border-primary/50 focus:bg-white/[0.08] focus:ring-2 focus:ring-primary/20";
+    "w-full h-11 px-4 rounded-xl border border-foreground/10 bg-foreground/[0.04] text-sm text-foreground outline-none transition focus:border-primary/50 focus:bg-foreground/[0.08] focus:ring-2 focus:ring-primary/20";
   const eyebrow =
-    "text-[10px] uppercase tracking-[0.15em] text-white/60 font-medium block mb-2";
+    "text-[10px] uppercase tracking-[0.15em] text-foreground/60 font-medium block mb-2";
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side={isMobile ? "bottom" : "right"}
         className={cn(
-          "flex flex-col gap-0 border-white/10 bg-slate-950 p-0 text-white",
+          "flex flex-col gap-0 border-foreground/10 bg-popover p-0 text-foreground",
           isMobile
             ? "h-[92dvh] w-full rounded-t-3xl border-t shadow-[0_-30px_80px_-20px_rgba(0,0,0,0.7)]"
             : "w-full border-l shadow-[-40px_0_80px_-20px_rgba(0,0,0,0.7)] sm:max-w-md",
         )}
       >
-        <SheetHeader className="flex flex-row items-center justify-between space-y-0 border-b border-white/5 px-6 py-5">
+        <SheetHeader className="flex flex-row items-center justify-between space-y-0 border-b border-foreground/5 px-6 py-5">
           <div>
-            <p className="text-[10.5px] font-medium uppercase tracking-[0.16em] text-white/55">
+            <p className="text-[10.5px] font-medium uppercase tracking-[0.16em] text-foreground/55">
               Affiner
             </p>
-            <SheetTitle className="mt-1 text-xl font-medium tracking-tight text-white">
+            <SheetTitle className="mt-1 text-xl font-medium tracking-tight text-foreground">
               Plus de filtres
             </SheetTitle>
           </div>
@@ -429,8 +429,8 @@ function MoreFiltersSheet({
                 onChange={(e) => updateFilter("brand", e.target.value)}
                 className={fieldCls}
               >
-                <option value="" className="bg-slate-950">Toutes les marques</option>
-                {brands.map((b) => <option key={b} value={b} className="bg-slate-950">{b}</option>)}
+                <option value="" className="bg-popover">Toutes les marques</option>
+                {brands.map((b) => <option key={b} value={b} className="bg-popover">{b}</option>)}
               </select>
             </div>
             <div>
@@ -441,10 +441,10 @@ function MoreFiltersSheet({
                 disabled={!filters.brand}
                 className={cn(fieldCls, "disabled:opacity-50")}
               >
-                <option value="" className="bg-slate-950">
+                <option value="" className="bg-popover">
                   {filters.brand ? "Tous les modèles" : "Choisissez une marque"}
                 </option>
-                {models.map((m) => <option key={m} value={m} className="bg-slate-950">{m}</option>)}
+                {models.map((m) => <option key={m} value={m} className="bg-popover">{m}</option>)}
               </select>
             </div>
           </div>
@@ -463,7 +463,7 @@ function MoreFiltersSheet({
           <div>
             <div className="mb-2 flex items-baseline justify-between">
               <label className={cn(eyebrow, "mb-0")}>Budget</label>
-              <span className="text-xs tabular-nums text-white/55">
+              <span className="text-xs tabular-nums text-foreground/55">
                 {filters.minPrice.toLocaleString("fr-BE")} € – {filters.maxPrice.toLocaleString("fr-BE")} €
               </span>
             </div>
@@ -508,7 +508,7 @@ function MoreFiltersSheet({
                       "h-11 rounded-xl border text-sm font-medium transition-all",
                       active
                         ? "border-primary/50 bg-primary/15 text-primary"
-                        : "border-white/10 bg-white/[0.02] text-white hover:border-primary/50 hover:bg-white/[0.06]",
+                        : "border-foreground/10 bg-foreground/[0.02] text-foreground hover:border-primary/50 hover:bg-foreground/[0.06]",
                     )}
                   >
                     {f.labelFr}
@@ -521,7 +521,7 @@ function MoreFiltersSheet({
           <div>
             <div className="mb-2 flex items-baseline justify-between">
               <label className={cn(eyebrow, "mb-0")}>Année</label>
-              <span className="text-xs tabular-nums text-white/55">
+              <span className="text-xs tabular-nums text-foreground/55">
                 {filters.yearMin} – {filters.yearMax}
               </span>
             </div>
@@ -532,7 +532,7 @@ function MoreFiltersSheet({
                 className={fieldCls}
               >
                 {Array.from({ length: CURRENT_YEAR - 1989 }, (_, i) => CURRENT_YEAR - i).map((y) => (
-                  <option key={y} value={y} className="bg-slate-950">De {y}</option>
+                  <option key={y} value={y} className="bg-popover">De {y}</option>
                 ))}
               </select>
               <select
@@ -541,7 +541,7 @@ function MoreFiltersSheet({
                 className={fieldCls}
               >
                 {Array.from({ length: CURRENT_YEAR - 1989 }, (_, i) => CURRENT_YEAR + 1 - i).map((y) => (
-                  <option key={y} value={y} className="bg-slate-950">À {y}</option>
+                  <option key={y} value={y} className="bg-popover">À {y}</option>
                 ))}
               </select>
             </div>
@@ -560,7 +560,7 @@ function MoreFiltersSheet({
                       "h-11 rounded-xl border text-sm font-medium transition-all",
                       active
                         ? "border-primary/50 bg-primary/15 text-primary"
-                        : "border-white/10 bg-white/[0.02] text-white hover:border-primary/50 hover:bg-white/[0.06]",
+                        : "border-foreground/10 bg-foreground/[0.02] text-foreground hover:border-primary/50 hover:bg-foreground/[0.06]",
                     )}
                   >
                     {t.label}
@@ -577,9 +577,9 @@ function MoreFiltersSheet({
               onChange={(e) => updateFilter("euroNorm", e.target.value)}
               className={fieldCls}
             >
-              <option value="" className="bg-slate-950">Toutes</option>
+              <option value="" className="bg-popover">Toutes</option>
               {EURO_NORMS.map((n) => (
-                <option key={n} value={n} className="bg-slate-950">{n}</option>
+                <option key={n} value={n} className="bg-popover">{n}</option>
               ))}
             </select>
           </div>
@@ -597,7 +597,7 @@ function MoreFiltersSheet({
                       "h-9 rounded-full border px-4 text-xs font-medium transition-all",
                       active
                         ? "border-primary bg-primary text-primary-foreground"
-                        : "border-white/10 bg-white/[0.02] text-white hover:border-primary/50 hover:bg-white/[0.06]",
+                        : "border-foreground/10 bg-foreground/[0.02] text-foreground hover:border-primary/50 hover:bg-foreground/[0.06]",
                     )}
                   >
                     {c.label}
@@ -607,8 +607,8 @@ function MoreFiltersSheet({
             </div>
           </div>
 
-          <div className="flex items-center justify-between border-t border-white/5 pt-4">
-            <Label htmlFor="lez-only" className="cursor-pointer text-sm font-medium text-white">
+          <div className="flex items-center justify-between border-t border-foreground/5 pt-4">
+            <Label htmlFor="lez-only" className="cursor-pointer text-sm font-medium text-foreground">
               Uniquement compatibles LEZ
             </Label>
             <Checkbox
@@ -619,11 +619,11 @@ function MoreFiltersSheet({
           </div>
         </div>
 
-        <SheetFooter className="flex-row gap-3 border-t border-white/5 bg-slate-950 px-6 py-4">
+        <SheetFooter className="flex-row gap-3 border-t border-foreground/5 bg-popover px-6 py-4">
           <Button
             variant="outline"
             onClick={resetFilters}
-            className="h-11 flex-1 rounded-full border-white/10 bg-transparent text-white hover:bg-white/[0.06]"
+            className="h-11 flex-1 rounded-full border-foreground/10 bg-transparent text-foreground hover:bg-foreground/[0.06]"
           >
             Réinitialiser
           </Button>
@@ -718,7 +718,7 @@ const Recherche = () => {
   return (
     // Force le scope "dark" sur toute la page Recherche (incluant les portails Popover/Sheet enfants)
     // pour éviter les contrastes cassés en mode Light, tant que la refonte light n'est pas faite.
-    <div className="dark page-gradient relative text-foreground bg-background">
+    <div className="page-gradient relative text-foreground bg-background">
       {/* Ambient halo — extremely subtle, no white tracery, no grid */}
       <div
         aria-hidden
@@ -820,20 +820,20 @@ const Recherche = () => {
 
 
         <section className="container mx-auto mb-8 flex items-center justify-between px-6 sm:px-8">
-          <p className="text-xs font-light tabular-nums text-white/70 sm:text-sm">
-            <span className="font-semibold text-white">
+          <p className="text-xs font-light tabular-nums text-foreground/70 sm:text-sm">
+            <span className="font-semibold text-foreground">
               {(totalCount || cars.length).toLocaleString("fr-BE")}
             </span>{" "}
             véhicules disponibles
           </p>
-          <div className="flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] p-1">
+          <div className="flex items-center gap-1 rounded-full border border-foreground/10 bg-foreground/[0.04] p-1">
             <button
               onClick={() => setViewMode("catalog")}
               className={cn(
                 "flex h-9 items-center gap-1.5 rounded-full px-3 text-xs font-medium transition-all sm:px-4 sm:text-sm",
                 viewMode === "catalog"
                   ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-white/65 hover:text-white",
+                  : "text-foreground/65 hover:text-foreground",
               )}
             >
               <Grid3x3 className="h-3.5 w-3.5" />
@@ -845,7 +845,7 @@ const Recherche = () => {
                 "flex h-9 items-center gap-1.5 rounded-full px-3 text-xs font-medium transition-all sm:px-4 sm:text-sm",
                 viewMode === "match"
                   ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-white/65 hover:text-white",
+                  : "text-foreground/65 hover:text-foreground",
               )}
             >
               <Flame className="h-3.5 w-3.5" />
@@ -857,7 +857,7 @@ const Recherche = () => {
                 "flex h-9 items-center gap-1.5 rounded-full px-3 text-xs font-medium transition-all sm:px-4 sm:text-sm",
                 viewMode === "garages"
                   ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-white/65 hover:text-white",
+                  : "text-foreground/65 hover:text-foreground",
               )}
             >
               <Store className="h-3.5 w-3.5" />
@@ -880,25 +880,25 @@ const Recherche = () => {
                 {isLoading && cars.length === 0 ? (
                   <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
                     {Array.from({ length: 6 }).map((_, i) => (
-                      <div key={i} className="overflow-hidden rounded-2xl border border-white/5 bg-white/[0.03]">
-                        <div className="aspect-video animate-pulse bg-white/[0.04]" />
+                      <div key={i} className="overflow-hidden rounded-2xl border border-foreground/5 bg-foreground/[0.03]">
+                        <div className="aspect-video animate-pulse bg-foreground/[0.04]" />
                         <div className="space-y-3 p-6">
-                          <div className="h-6 w-2/3 animate-pulse rounded bg-white/[0.04]" />
-                          <div className="h-3 w-1/3 animate-pulse rounded bg-white/[0.04]" />
-                          <div className="h-9 w-1/2 animate-pulse rounded bg-white/[0.04]" />
+                          <div className="h-6 w-2/3 animate-pulse rounded bg-foreground/[0.04]" />
+                          <div className="h-3 w-1/3 animate-pulse rounded bg-foreground/[0.04]" />
+                          <div className="h-9 w-1/2 animate-pulse rounded bg-foreground/[0.04]" />
                         </div>
                       </div>
                     ))}
                   </div>
                 ) : cars.length === 0 ? (
-                  <div className="mx-auto max-w-md rounded-2xl border border-white/5 bg-white/[0.03] px-8 py-12 text-center">
-                    <div className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-white/70">
+                  <div className="mx-auto max-w-md rounded-2xl border border-foreground/5 bg-foreground/[0.03] px-8 py-12 text-center">
+                    <div className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-full border border-foreground/10 bg-foreground/[0.04] text-foreground/70">
                       <span className="text-xl">∅</span>
                     </div>
-                    <h3 className="text-base font-medium text-white">
+                    <h3 className="text-base font-medium text-foreground">
                       Aucun véhicule ne correspond à vos critères
                     </h3>
-                    <p className="mt-2 text-[13px] text-white/65">
+                    <p className="mt-2 text-[13px] text-foreground/65">
                       Élargissez vos critères ou réinitialisez les filtres.
                     </p>
                     <Button
@@ -927,7 +927,7 @@ const Recherche = () => {
                           disabled={isLoadingMore}
                           variant="outline"
                           size="lg"
-                          className="rounded-full border-white/10 bg-white/[0.04] px-10 text-white hover:border-primary/50 hover:bg-primary/10 hover:text-primary"
+                          className="rounded-full border-foreground/10 bg-foreground/[0.04] px-10 text-foreground hover:border-primary/50 hover:bg-primary/10 hover:text-primary"
                         >
                           {isLoadingMore ? "Chargement…" : "Voir plus de véhicules"}
                         </Button>
@@ -944,7 +944,7 @@ const Recherche = () => {
                 exit={{ opacity: 0, scale: 0.98 }}
                 transition={{ duration: 0.3 }}
               >
-                <Suspense fallback={<div className="flex h-[600px] items-center justify-center text-white/65">Chargement du mode Match…</div>}>
+                <Suspense fallback={<div className="flex h-[600px] items-center justify-center text-foreground/65">Chargement du mode Match…</div>}>
                   <SwipeDiscovery
                     vehicles={cars}
                     isFavorite={isFavorite}
@@ -961,7 +961,7 @@ const Recherche = () => {
                 exit={{ opacity: 0, y: 8 }}
                 transition={{ duration: 0.3 }}
               >
-                <Suspense fallback={<div className="flex h-[400px] items-center justify-center text-white/65">Chargement des garages…</div>}>
+                <Suspense fallback={<div className="flex h-[400px] items-center justify-center text-foreground/65">Chargement des garages…</div>}>
                   <GaragesSearchView />
                 </Suspense>
               </motion.div>
