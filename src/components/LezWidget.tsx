@@ -221,91 +221,96 @@ const LezWidget = ({ euroNorm, fuelType, compact = false }: LezWidgetProps) => {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-4 mt-4">
+          <div className="space-y-5 mt-4">
             {/* Bruxelles */}
-            <div className="space-y-3">
-              <h4 className="font-semibold text-foreground">Bruxelles</h4>
-              <div className="grid grid-cols-3 gap-2 text-xs">
-                <div className="font-medium text-muted-foreground">Norme</div>
-                <div className="font-medium text-muted-foreground">Diesel</div>
-                <div className="font-medium text-muted-foreground">Essence</div>
+            <section>
+              <h4 className="font-semibold text-foreground text-base mb-3">Bruxelles</h4>
+              <div className="grid grid-cols-3 gap-y-2 gap-x-4 text-sm">
+                <div className="text-xs font-medium text-muted-foreground">Norme</div>
+                <div className="text-xs font-medium text-muted-foreground">Diesel</div>
+                <div className="text-xs font-medium text-muted-foreground">Essence</div>
 
-                <div>Euro 0-2</div>
+                <div className="text-foreground/80">Euro 0-1</div>
                 <div className="text-red-600">❌ Interdit</div>
                 <div className="text-red-600">❌ Interdit</div>
 
-                <div>Euro 3</div>
+                <div className="text-foreground/80">Euro 2</div>
                 <div className="text-red-600">❌ Interdit</div>
-                <div className="text-primary">✅ Autorisé</div>
-
-                <div>Euro 4-5</div>
-                <div className="text-red-600">❌ Interdit</div>
-                <div className="text-primary">✅ Autorisé</div>
-
-                <div className="font-medium">Euro 6</div>
-                <div className="text-amber-600">⚠️ Jusqu'en 2031</div>
-                <div className="text-primary">✅ Autorisé</div>
-
-                <div>Euro 6d</div>
                 <div className="text-emerald-600">✅ Autorisé</div>
-                <div className="text-primary">✅ Autorisé</div>
+
+                <div className="text-foreground/80">Euro 3</div>
+                <div className="text-red-600">❌ Interdit</div>
+                <div className="text-emerald-600">✅ Autorisé</div>
+
+                <div className="text-foreground/80">Euro 4</div>
+                <div className="text-emerald-600">✅ Autorisé</div>
+                <div className="text-emerald-600">✅ Autorisé</div>
+
+                <div className="text-foreground/80">Euro 6d</div>
+                <div className="text-amber-600">⚠️ Jusqu'en 2030</div>
+                <div className="text-emerald-600">✅ Autorisé</div>
               </div>
-            </div>
+            </section>
 
             {/* Anvers & Gand */}
-            <div className="space-y-3">
-              <h4 className="font-semibold text-foreground">Anvers & Gand</h4>
-              <div className="grid grid-cols-3 gap-2 text-xs">
-                <div className="font-medium text-muted-foreground">Norme</div>
-                <div className="font-medium text-muted-foreground">Diesel</div>
-                <div className="font-medium text-muted-foreground">Essence</div>
+            <section>
+              <h4 className="font-semibold text-foreground text-base mb-3">Anvers &amp; Gand</h4>
+              <div className="grid grid-cols-3 gap-y-2 gap-x-4 text-sm">
+                <div className="text-xs font-medium text-muted-foreground">Norme</div>
+                <div className="text-xs font-medium text-muted-foreground">Diesel</div>
+                <div className="text-xs font-medium text-muted-foreground">Essence</div>
 
-                <div>Euro 0-3</div>
-                <div className="text-amber-600">⚠️ Dérogation</div>
-                <div className="text-primary">✅ Autorisé</div>
+                <div className="text-foreground/80">Euro 0-1</div>
+                <div className="text-amber-600">⚠️ Pass journalier requis</div>
+                <div className="text-red-600">Interdit (Pass journalier)</div>
 
-                <div>Euro 4+</div>
+                <div className="text-foreground/80">Euro 2-3</div>
+                <div className="text-amber-600">⚠️ Pass journalier requis</div>
                 <div className="text-emerald-600">✅ Autorisé</div>
-                <div className="text-primary">✅ Autorisé</div>
+
+                <div className="text-foreground/80">Euro 4</div>
+                <div className="text-amber-600">⚠️ Interdit (Pass payant)</div>
+                <div className="text-emerald-600">✅ Autorisé</div>
+
+                <div className="text-foreground/80">Euro 5+</div>
+                <div className="text-emerald-600">✅ Autorisé</div>
+                <div className="text-emerald-600">✅ Autorisé</div>
               </div>
-            </div>
+            </section>
 
             <div className="p-3 rounded-xl bg-primary/10 text-xs text-primary">
-              <strong>🔌 Électrique & Hybride :</strong> Toujours autorisé dans toutes les zones.
+              <strong>🔌 Électrique &amp; Hybride :</strong> Toujours autorisé dans toutes les zones.
             </div>
 
             <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-700 dark:text-amber-400">
               ⚠️ Ces informations sont <strong>indicatives</strong>. Les règles LEZ évoluent régulièrement — vérifiez toujours votre situation sur les sites officiels ci-dessous.
             </div>
 
-            <div className="grid grid-cols-3 gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-xs"
-                onClick={() => window.open("https://www.lez.brussels/", "_blank")}
+            <div className="flex items-center gap-5 pt-1 text-sm">
+              <a
+                href="https://www.lez.brussels/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-foreground hover:text-primary transition-colors"
               >
-                Bruxelles
-                <ExternalLink className="w-3 h-3 ml-1" />
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-xs"
-                onClick={() => window.open("https://www.slimnaarantwerpen.be/nl/lez", "_blank")}
+                Bruxelles <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+              <a
+                href="https://www.slimnaarantwerpen.be/nl/lez"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-foreground hover:text-primary transition-colors"
               >
-                Anvers
-                <ExternalLink className="w-3 h-3 ml-1" />
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-xs"
-                onClick={() => window.open("https://stad.gent/nl/mobiliteit-openbare-werken/lez", "_blank")}
+                Anvers <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+              <a
+                href="https://stad.gent/nl/mobiliteit-openbare-werken/lez"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-foreground hover:text-primary transition-colors"
               >
-                Gand
-                <ExternalLink className="w-3 h-3 ml-1" />
-              </Button>
+                Gand <ExternalLink className="w-3.5 h-3.5" />
+              </a>
             </div>
           </div>
         </DialogContent>
