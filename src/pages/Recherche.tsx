@@ -858,6 +858,18 @@ const Recherche = () => {
               <Flame className="h-3.5 w-3.5" />
               Match
             </button>
+            <button
+              onClick={() => setViewMode("garages")}
+              className={cn(
+                "flex h-9 items-center gap-1.5 rounded-full px-3 text-xs font-medium transition-all sm:px-4 sm:text-sm",
+                viewMode === "garages"
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-white/65 hover:text-white",
+              )}
+            >
+              <Store className="h-3.5 w-3.5" />
+              Garages
+            </button>
           </div>
         </section>
 
