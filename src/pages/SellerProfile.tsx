@@ -1209,7 +1209,7 @@ function EditVitrineDialog({ open, onOpenChange, userId, garageName, vitrineSlug
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="font-serif text-xl font-light">
+          <DialogTitle className="font-sans text-xl font-semibold tracking-wider">
             {language === "nl" ? "Mijn vitrine bewerken" : "Modifier ma vitrine"}
           </DialogTitle>
         </DialogHeader>
@@ -1297,12 +1297,16 @@ function EditVitrineDialog({ open, onOpenChange, userId, garageName, vitrineSlug
                     : "Collez ce lien dans votre bio Instagram, Facebook ou WhatsApp."}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-2">
-                  <div
-                    className="flex-1 min-w-0 rounded-xl border border-border/60 bg-background/60 px-3 py-2.5 text-xs sm:text-sm font-mono text-foreground truncate"
-                    aria-label={language === "nl" ? "URL van vitrine" : "URL de la vitrine"}
+                  <a
+                    href={shareUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 min-w-0 rounded-xl border border-border/60 bg-background/60 px-3 py-2.5 text-xs sm:text-sm font-mono text-foreground truncate hover:border-primary/60 hover:text-primary transition-colors"
+                    aria-label={language === "nl" ? "Open mijn vitrine in een nieuw tabblad" : "Ouvrir ma vitrine dans un nouvel onglet"}
+                    title={language === "nl" ? "Klik om te openen" : "Cliquer pour ouvrir"}
                   >
                     {shareUrl}
-                  </div>
+                  </a>
                   <Button
                     type="button"
                     onClick={handleShare}
