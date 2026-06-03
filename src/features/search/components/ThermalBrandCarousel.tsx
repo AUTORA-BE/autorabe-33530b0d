@@ -1,13 +1,21 @@
 /**
- * ThermalBrandCarousel — horizontal scroll carousel of popular brands
- * with real brand logos served from /public/logos/.
+ * ThermalBrandCarousel — popular brand logos.
+ * - Mobile: infinite marquee (auto-scroll).
+ * - Desktop: Embla carousel with autoplay loop + visible prev/next arrows.
  *
  * Logo files (PNG, transparent background) must be placed at:
  *   /public/logos/{slug}.png
- * Slugs are listed below per brand.
  * @module features/search/components
  */
-import { memo } from "react";
+import { memo, useState } from "react";
+import Autoplay from "embla-carousel-autoplay";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  type CarouselApi,
+} from "@/components/ui/carousel";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 interface ThermalBrandCarouselProps {
@@ -16,9 +24,7 @@ interface ThermalBrandCarouselProps {
 }
 
 interface BrandEntry {
-  /** Display name shown to user */
   name: string;
-  /** Path to logo PNG (transparent background) */
   logo: string;
   /** Optional override for the brand filter value when display name differs from DB brand (e.g., "Range Rover" → "Land Rover") */
   filterBrand?: string;
@@ -50,6 +56,7 @@ const ThermalBrandCarousel = memo(function ThermalBrandCarousel({
   selectedBrand,
 }: ThermalBrandCarouselProps) {
   const { language } = useLanguage();
+  const [api, setApi] = useState<CarouselApi>();
 
   const eyebrow =
     language === "nl" ? "Zoeken op populair merk"
@@ -71,7 +78,7 @@ const ThermalBrandCarousel = memo(function ThermalBrandCarousel({
         </p>
       </div>
 
-      {/* Mobile : Infinite Marquee (logos flottants, sans cartes ni bordures) */}
+      {/* Mobile : Infinite Marquee (auto-scroll, touch-friendly) */}
       <div
         className="md:hidden overflow-hidden"
         style={{
@@ -111,52 +118,83 @@ const ThermalBrandCarousel = memo(function ThermalBrandCarousel({
         </div>
       </div>
 
-      <div
-        className="hidden md:block overflow-x-auto scrollbar-hide snap-x snap-mandatory"
-        style={{ WebkitOverflowScrolling: "touch" }}
-      >
-        <div className="flex gap-3 md:gap-4 px-5 md:px-12 pb-2">
-          {BRANDS.map((entry) => {
-            const filterValue = entry.filterBrand ?? entry.name;
-            const active = selectedBrand === filterValue;
-            return (
-              <button
-                key={entry.name}
-                onClick={() => handleClick(entry)}
-                aria-pressed={active}
-                aria-label={entry.name}
-                className={[
-                  "group flex-shrink-0 snap-start flex flex-col items-center justify-center gap-3",
-                  "w-32 sm:w-36 h-28 sm:h-32 rounded-2xl border bg-card px-4",
-                  "transition-all duration-300 hover:-translate-y-1 hover:shadow-lg",
-                  active
-                    ? "border-primary/60 shadow-md shadow-primary/10 bg-primary/5"
-                    : "border-border/40 hover:border-primary/50",
-                ].join(" ")}
-              >
-                <img
-                  src={entry.logo}
-                  alt={`Logo ${entry.name}`}
-                  loading="lazy"
-                  onError={(e) => { e.currentTarget.style.display = "none"; }}
-                  className={[
-                    "h-12 w-auto max-w-[85%] object-contain",
-                    "transition-all duration-300 group-hover:scale-110",
-                    active ? "opacity-100" : "opacity-70 group-hover:opacity-100",
-                  ].join(" ")}
-                />
-                <span
-                  className={[
-                    "text-[10px] sm:text-[11px] font-medium tracking-wide text-center leading-tight",
-                    "transition-colors duration-300 whitespace-nowrap",
-                    active ? "text-primary" : "text-muted-foreground group-hover:text-foreground",
-                  ].join(" ")}
-                >
-                  {entry.name}
-                </span>
-              </button>
-            );
-          })}
+      {/* Desktop : Embla carousel — autoplay loop + arrows + drag */}
+      <div className="hidden md:block max-w-7xl mx-auto px-5 md:px-12">
+        <div className="relative">
+          <Carousel
+            setApi={setApi}
+            opts={{ align: "start", loop: true, dragFree: true }}
+            plugins={[
+              Autoplay({ delay: 2800, stopOnInteraction: false, stopOnMouseEnter: true }),
+            ]}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-3">
+              {BRANDS.map((entry) => {
+                const filterValue = entry.filterBrand ?? entry.name;
+                const active = selectedBrand === filterValue;
+                return (
+                  <CarouselItem
+                    key={entry.name}
+                    className="pl-3 basis-1/4 lg:basis-1/5 xl:basis-1/6"
+                  >
+                    <button
+                      onClick={() => handleClick(entry)}
+                      aria-pressed={active}
+                      aria-label={entry.name}
+                      className={[
+                        "group w-full flex flex-col items-center justify-center gap-3",
+                        "h-28 sm:h-32 rounded-2xl border bg-card px-4",
+                        "transition-all duration-300 hover:-translate-y-1 hover:shadow-lg",
+                        active
+                          ? "border-primary/60 shadow-md shadow-primary/10 bg-primary/5"
+                          : "border-border/40 hover:border-primary/50",
+                      ].join(" ")}
+                    >
+                      <img
+                        src={entry.logo}
+                        alt={`Logo ${entry.name}`}
+                        loading="lazy"
+                        onError={(e) => { e.currentTarget.style.display = "none"; }}
+                        className={[
+                          "h-12 w-auto max-w-[85%] object-contain",
+                          "transition-all duration-300 group-hover:scale-110",
+                          active ? "opacity-100" : "opacity-70 group-hover:opacity-100",
+                        ].join(" ")}
+                      />
+                      <span
+                        className={[
+                          "text-[11px] font-medium tracking-wide text-center leading-tight",
+                          "transition-colors duration-300 whitespace-nowrap",
+                          active ? "text-primary" : "text-muted-foreground group-hover:text-foreground",
+                        ].join(" ")}
+                      >
+                        {entry.name}
+                      </span>
+                    </button>
+                  </CarouselItem>
+                );
+              })}
+            </CarouselContent>
+          </Carousel>
+
+          {/* Functional arrows — glass effect, visible on light & dark */}
+          <button
+            type="button"
+            onClick={() => api?.scrollPrev()}
+            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 w-10 h-10 rounded-full bg-card/90 backdrop-blur border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/40 hover:bg-card transition-all shadow-sm z-10"
+            aria-label="Marques précédentes"
+          >
+            <ChevronLeft className="w-4 h-4" strokeWidth={1.5} />
+          </button>
+          <button
+            type="button"
+            onClick={() => api?.scrollNext()}
+            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 w-10 h-10 rounded-full bg-card/90 backdrop-blur border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:border-primary/40 hover:bg-card transition-all shadow-sm z-10"
+            aria-label="Marques suivantes"
+          >
+            <ChevronRight className="w-4 h-4" strokeWidth={1.5} />
+          </button>
         </div>
       </div>
     </section>

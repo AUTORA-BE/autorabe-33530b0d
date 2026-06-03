@@ -6,12 +6,14 @@
  */
 
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calculator, Send, Bot, User, Loader2 } from 'lucide-react';
+import { Calculator, Send, Bot, User, Loader2, Lock } from 'lucide-react';
 import { toast } from 'sonner';
+import { useAuth } from '@/features/auth';
 import ComplianceBanner from '@/components/ComplianceBanner';
 
 interface VehicleContext {
@@ -40,6 +42,8 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/explain-taxe
  * Modal interactive pour expliquer les taxes belges d'un véhicule
  */
 export default function TaxChatModal({ vehicle }: TaxChatModalProps) {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [region, setRegion] = useState<Region>('bruxelles');
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -152,6 +156,20 @@ export default function TaxChatModal({ vehicle }: TaxChatModalProps) {
     setMessages(prev => [...prev, { role: 'user', content: question }]);
     streamQuestion(question);
   }, [input, isLoading, streamQuestion]);
+
+  // Gate access — non-authenticated users get redirected to /auth
+  if (!isAuthenticated) {
+    return (
+      <Button
+        variant="outline"
+        className="gap-2"
+        onClick={() => navigate('/auth?redirect=' + encodeURIComponent(window.location.pathname))}
+      >
+        <Lock className="w-4 h-4" />
+        Se connecter pour utiliser le conseiller
+      </Button>
+    );
+  }
 
   return (
     <Dialog open={open} onOpenChange={(v: boolean) => { setOpen(v); if (!v) { setHasStarted(false); setMessages([]); } }}>

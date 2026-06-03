@@ -50,26 +50,39 @@ interface Props {
 export function UserContactCard({ userId, open, onOpenChange }: Props) {
   const [data, setData] = useState<UserContactInfo | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!open || !userId) return;
     let cancelled = false;
     setLoading(true);
     setData(null);
+    setError(null);
     (async () => {
-      const { data: rows, error } = await (supabase.rpc as unknown as (
-        fn: string, args: Record<string, unknown>
-      ) => Promise<{ data: UserContactInfo[] | null; error: { message: string } | null }>)(
-        'admin_get_user_contact', { _user_id: userId },
-      );
-      if (cancelled) return;
-      if (error) {
-        toast.error('Impossible de charger la fiche utilisateur');
+      try {
+        const { data: rows, error: rpcError } = await (supabase.rpc as unknown as (
+          fn: string, args: Record<string, unknown>
+        ) => Promise<{ data: UserContactInfo[] | null; error: { message: string } | null }>)(
+          'admin_get_user_contact', { _user_id: userId },
+        );
+        if (cancelled) return;
+        if (rpcError) {
+          setError(rpcError.message || 'Erreur de chargement');
+          toast.error('Impossible de charger la fiche utilisateur');
+          setLoading(false);
+          return;
+        }
+        const row = rows?.[0] ?? null;
+        if (!row) {
+          setError('Utilisateur introuvable');
+        }
+        setData(row);
         setLoading(false);
-        return;
+      } catch (e) {
+        if (cancelled) return;
+        setError(e instanceof Error ? e.message : 'Erreur inattendue');
+        setLoading(false);
       }
-      setData(rows?.[0] ?? null);
-      setLoading(false);
     })();
     return () => { cancelled = true; };
   }, [userId, open]);
@@ -88,9 +101,14 @@ export function UserContactCard({ userId, open, onOpenChange }: Props) {
           <DialogTitle>Fiche utilisateur</DialogTitle>
         </DialogHeader>
 
-        {loading || !data ? (
+        {loading ? (
           <div className="flex justify-center py-10">
             <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          </div>
+        ) : error || !data ? (
+          <div className="py-10 text-center space-y-2">
+            <p className="text-sm text-muted-foreground">{error || 'Aucune donnée disponible'}</p>
+            <Button size="sm" variant="outline" onClick={() => onOpenChange(false)}>Fermer</Button>
           </div>
         ) : (
           <div className="space-y-4">
