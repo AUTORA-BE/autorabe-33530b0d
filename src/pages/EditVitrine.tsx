@@ -433,13 +433,13 @@ const EditVitrine = () => {
                         </div>
                         <Button
                           type="button"
-                          onClick={handleCopy}
+                          onClick={handleShare}
                           disabled={!canShare}
                           className="btn-primary-gradient rounded-xl px-4 shrink-0"
-                          aria-label={language === "nl" ? "Link kopiëren" : "Copier le lien"}
+                          aria-label={language === "nl" ? "Vitrine delen" : "Partager la vitrine"}
                         >
-                          <Copy className="w-4 h-4 mr-2" strokeWidth={1.8} aria-hidden="true" />
-                          {language === "nl" ? "Link kopiëren" : "Copier le lien"}
+                          <Share2 className="w-4 h-4 mr-2" strokeWidth={1.8} aria-hidden="true" />
+                          {language === "nl" ? "Delen" : "Partager"}
                         </Button>
                       </div>
                       {!published && (
