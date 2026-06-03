@@ -99,6 +99,17 @@ const SellerProfile = () => {
 
   const isOwnProfile = !!(currentUserId && userId && currentUserId === userId);
 
+  // Deep-link: ouvrir auto le dialog d'édition vitrine si ?edit=1 (depuis Réglages)
+  const [searchParams, setSearchParams] = useSearchParams();
+  useEffect(() => {
+    if (isOwnProfile && profile && searchParams.get("edit") === "1") {
+      setEditOpen(true);
+      const next = new URLSearchParams(searchParams);
+      next.delete("edit");
+      setSearchParams(next, { replace: true });
+    }
+  }, [isOwnProfile, profile, searchParams, setSearchParams]);
+
   /* Resolve seller (by userId or by slug) then fetch listings + reviews */
   useEffect(() => {
     if (!paramUserId && !paramSlug) return;
