@@ -260,7 +260,7 @@ const LEZBelgiumMap = memo(function LEZBelgiumMap() {
         <h3 className="font-display text-lg sm:text-xl md:text-2xl font-bold text-white">
           {isNl ? "Sereen rijden in België" : "Rouler sereinement en Belgique"}
         </h3>
-        <p className="text-xs sm:text-sm text-gray-500 mt-1.5 max-w-md mx-auto">
+        <p className="text-xs sm:text-sm text-muted-foreground mt-1.5 max-w-md mx-auto">
           {isNl
             ? "Elke advertentie op AutoRA toont duidelijk de LEZ-compatibiliteit. Geen verrassingen."
             : "Chaque annonce sur AutoRA affiche clairement la compatibilité LEZ. Aucune surprise."}
@@ -305,7 +305,7 @@ const LEZBelgiumMap = memo(function LEZBelgiumMap() {
               ].map((item, i) => (
                 <div key={i} className="flex items-center gap-2.5">
                   <span className={`w-2.5 h-2.5 rounded-full ${item.color} shrink-0`} />
-                  <span className="text-xs sm:text-sm text-gray-400">
+                  <span className="text-xs sm:text-sm text-muted-foreground">
                     {isNl ? item.labelNl : item.labelFr}
                   </span>
                 </div>

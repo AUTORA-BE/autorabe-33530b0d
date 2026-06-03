@@ -65,23 +65,23 @@ const LezMapFooter = () => {
         <div className="space-y-3 text-sm">
           <div className="flex items-center gap-2">
             <span className="w-3 h-3 rounded-full bg-primary shrink-0" />
-            <span className="text-gray-400">
+            <span className="text-muted-foreground">
               {language === "nl" ? "Toegang toegestaan (Euro 5/6)" : language === "de" ? "Zugang erlaubt (Euro 5/6)" : language === "en" ? "Access allowed (Euro 5/6)" : "Accès autorisé (Euro 5/6)"}
             </span>
           </div>
           <div className="flex items-center gap-2">
             <span className="w-3 h-3 rounded-full bg-amber-500 shrink-0" />
-            <span className="text-gray-400">
+            <span className="text-muted-foreground">
               {language === "nl" ? "Beperkingen / overgang" : language === "de" ? "Einschränkungen / Übergang" : language === "en" ? "Restrictions / transition" : "Restrictions / transition"}
             </span>
           </div>
           <div className="flex items-center gap-2">
             <span className="w-3 h-3 rounded-full bg-red-500 shrink-0" />
-            <span className="text-gray-400">
+            <span className="text-muted-foreground">
               {language === "nl" ? "Verboden toegang (Euro 0-3)" : language === "de" ? "Zugang verboten (Euro 0-3)" : language === "en" ? "Access prohibited (Euro 0-3)" : "Accès interdit (Euro 0-3)"}
             </span>
           </div>
-          <p className="text-[11px] text-gray-500 mt-2">
+          <p className="text-[11px] text-muted-foreground mt-2">
             {language === "nl"
               ? "Controleer de LEZ-compatibiliteit van elk voertuig op AutoRA."
               : language === "de"
