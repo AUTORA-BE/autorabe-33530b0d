@@ -1,7 +1,10 @@
 /**
- * Fullscreen photo gallery with swipe gestures, keyboard nav, and pinch-to-zoom
+ * Fullscreen photo gallery with swipe gestures, keyboard nav, and pinch-to-zoom.
+ * Rendered via a portal on document.body so it escapes any ancestor
+ * `transform`/`overflow:hidden` stacking context (e.g. framer-motion wrappers).
  */
 import { memo, useState, useCallback, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import {  motion, AnimatePresence, type PanInfo, useMotionValue } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
