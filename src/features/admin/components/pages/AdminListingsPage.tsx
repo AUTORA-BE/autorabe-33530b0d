@@ -214,7 +214,7 @@ export default function AdminListingsPage() {
               <div className="mt-4 flex items-center justify-between">
                 <p className="text-2xl font-bold text-foreground">€{detailListing.price?.toLocaleString('fr-BE')}</p>
                 <a
-                  href={`/vehicles/${detailListing.id}`}
+                  href={`/car/${detailListing.id}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-xs text-primary underline underline-offset-2"

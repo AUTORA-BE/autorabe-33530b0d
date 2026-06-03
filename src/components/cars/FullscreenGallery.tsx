@@ -155,13 +155,14 @@ const FullscreenGallery = memo(function FullscreenGallery({
     exit: (dir: number) => ({ x: dir > 0 ? -300 : 300, opacity: 0 }),
   };
 
-  return (
+  const overlay = (
     <motion.div
       className="fixed inset-0 z-[100] flex flex-col bg-black/95 backdrop-blur-xl"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.25 }}
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
       {/* Top bar */}
       <div className="relative z-10 flex items-center justify-between px-4 py-3 sm:px-6 safe-top">
@@ -266,6 +267,10 @@ const FullscreenGallery = memo(function FullscreenGallery({
       )}
     </motion.div>
   );
+
+  return typeof document !== "undefined"
+    ? createPortal(overlay, document.body)
+    : overlay;
 });
 
 export default FullscreenGallery;
