@@ -230,6 +230,7 @@ const Contact = () => {
                 <CardContent>
                   <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                      <Honeypot ref={honeypotRef} />
                       <div className="grid sm:grid-cols-2 gap-4">
                         <FormField
                           control={form.control}
