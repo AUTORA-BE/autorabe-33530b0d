@@ -782,7 +782,7 @@ const Recherche = () => {
           </div>
         </div>
 
-        <section className="container mx-auto mb-10 px-6 text-center sm:mb-14 sm:px-8 hidden md:block">
+        <section className="container mx-auto mb-10 px-6 text-center sm:mb-14 sm:px-8">
           <motion.p
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
