@@ -257,21 +257,39 @@ const ReviewsSection = ({ carListingId, sellerId }: ReviewsSectionProps) => {
         </p>
       ) : (
         <div className="space-y-4">
-          {reviews.map((review) => (
+          {reviews.map((review) => {
+            const profile = reviewers[review.user_id];
+            const name = profile?.display_name || t("reviews.anonymous") || "Utilisateur";
+            return (
             <div
               key={review.id}
               className="p-4 rounded-xl bg-secondary"
             >
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <User className="w-5 h-5 text-primary" />
-                  </div>
+                  {profile?.avatar_url ? (
+                    <img
+                      src={profile.avatar_url}
+                      alt={name}
+                      className="w-10 h-10 rounded-full object-cover"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                      <User className="w-5 h-5 text-primary" />
+                    </div>
+                  )}
                   <div>
-                    <StarRating value={review.rating} />
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {format(new Date(review.created_at), "dd MMMM yyyy", { locale: dateLocale })}
-                    </p>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-sm font-semibold text-foreground">{name}</span>
+                      {profile?.is_admin && <AdminBadge size="sm" />}
+                    </div>
+                    <div className="flex items-center gap-2 mt-1">
+                      <StarRating value={review.rating} />
+                      <p className="text-xs text-muted-foreground">
+                        {format(new Date(review.created_at), "dd MMMM yyyy", { locale: dateLocale })}
+                      </p>
+                    </div>
                   </div>
                 </div>
                 {currentUserId === review.user_id && (
@@ -295,7 +313,8 @@ const ReviewsSection = ({ carListingId, sellerId }: ReviewsSectionProps) => {
                 </p>
               )}
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
