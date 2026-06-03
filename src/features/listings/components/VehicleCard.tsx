@@ -234,7 +234,7 @@ const VehicleCard = memo(function VehicleCard({
             { icon: Gauge, value: `${formatMileage(vehicle.mileage)} km` },
             { icon: Fuel, value: vehicle.fuelType },
             { icon: Cog, value: vehicle.transmission },
-            ...('power' in vehicle && (vehicle as Record<string, unknown>).power ? [{ icon: Zap, value: `${(vehicle as Record<string, unknown>).power} CV` }] : []),
+            ...('power' in vehicle && (vehicle as Record<string, unknown>).power ? [{ icon: Zap, value: `${(vehicle as Record<string, unknown>).power} ch` }] : []),
             ...(vehicle.euroNorm ? [{ icon: ShieldCheck, value: vehicle.euroNorm }] : []),
           ].map((spec, i) => (
             <div key={i} className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
