@@ -524,9 +524,6 @@ function MoreFiltersSheet({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-4">
-            <div>
-
           <div>
             <div className="mb-2 flex items-baseline justify-between">
               <label className={cn(eyebrow, "mb-0")}>Année</label>
