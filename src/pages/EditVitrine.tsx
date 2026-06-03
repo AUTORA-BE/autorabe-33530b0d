@@ -57,11 +57,25 @@ const EditVitrine = () => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("avatar_url, garage_name, postal_code, display_name, cover_image_url, opening_hours, services, presentation, vitrine_slug, vitrine_cover_url, vitrine_about, vitrine_services, vitrine_phone, vitrine_email_public, vitrine_published")
+      .select("user_type, avatar_url, garage_name, postal_code, display_name, cover_image_url, opening_hours, services, presentation, vitrine_slug, vitrine_cover_url, vitrine_about, vitrine_services, vitrine_phone, vitrine_email_public, vitrine_published")
       .eq("user_id", user.id)
       .maybeSingle()
       .then(({ data }) => {
         if (data) {
+          setUserType(data.user_type ?? null);
+          // ❗ Gate: Édition Vitrine réservée aux comptes Professionnels
+          if (data.user_type !== "professionnel") {
+            setAccessDenied(true);
+            toast({
+              title: language === "nl" ? "Toegang geweigerd" : "Accès refusé",
+              description: language === "nl"
+                ? "De vitrine-editor is voorbehouden aan professionele accounts."
+                : "L'édition de vitrine est réservée aux comptes Professionnels.",
+              variant: "destructive",
+            });
+            setLoading(false);
+            return;
+          }
           setAvatarUrl(data.avatar_url);
           setGarageName(data.garage_name);
           setPostalCode(data.postal_code);
@@ -77,7 +91,7 @@ const EditVitrine = () => {
         }
         setLoading(false);
       });
-  }, [user]);
+  }, [user, language, toast]);
 
   const services = servicesText.split("\n").map(s => s.trim()).filter(Boolean).slice(0, 10);
   const name = garageName || displayName || (language === "nl" ? "Mijn garage" : "Mon garage");
