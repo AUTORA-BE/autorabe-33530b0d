@@ -43,6 +43,7 @@ const Contact = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [lastSubmitTime, setLastSubmitTime] = useState(0);
+  const honeypotRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
