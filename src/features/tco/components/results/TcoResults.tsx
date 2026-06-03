@@ -220,7 +220,7 @@ const TcoResults = ({ breakdown, alternatives, onReset, onBack }: Props) => {
         {/* CTAs */}
         <div className="flex flex-wrap items-center justify-center gap-3">
           <Button asChild className="h-12 px-6 rounded-2xl bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
-            <Link to="/">
+            <Link to="/recherche">
               <Car className="w-4 h-4 mr-2" />
               Voir véhicules correspondants
             </Link>

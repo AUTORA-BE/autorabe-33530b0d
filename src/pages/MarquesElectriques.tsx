@@ -127,7 +127,7 @@ export default function MarquesElectriques() {
 }
 
 function BrandCard({ brand }: { brand: BrandInfo }) {
-  const href = `/?brand=${encodeURIComponent(brand.name)}`;
+  const href = `/recherche?brand=${encodeURIComponent(brand.name)}&fuel=electrique`;
   return (
     <Link
       to={href}
