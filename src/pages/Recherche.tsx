@@ -653,7 +653,9 @@ const Recherche = () => {
     : "Marketplace · Sélection certifiée";
 
   return (
-    <div className="page-gradient relative text-foreground">
+    // Force le scope "dark" sur toute la page Recherche (incluant les portails Popover/Sheet enfants)
+    // pour éviter les contrastes cassés en mode Light, tant que la refonte light n'est pas faite.
+    <div className="dark page-gradient relative text-foreground bg-background">
       {/* Ambient halo — extremely subtle, no white tracery, no grid */}
       <div
         aria-hidden
