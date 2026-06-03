@@ -445,7 +445,7 @@ const SellerProfile = () => {
 
                 {/* Info */}
                 <div className="flex-1 text-center sm:text-left">
-                  <h1 className="text-2xl sm:text-3xl font-serif font-light text-foreground mb-2">
+                  <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-light tracking-tight text-foreground mb-2">
                     {displayName}
                   </h1>
 
@@ -517,14 +517,16 @@ const SellerProfile = () => {
                         </a>
                       </Button>
                     )}
-                    {profile.vitrine_published && profile.vitrine_slug && (
+                    {(profile.vitrine_slug || profile.user_id) && (
                       <Button
                         type="button"
                         variant="outline"
                         className="rounded-xl px-5 py-3 h-auto text-sm font-semibold border-border/60"
                         onClick={(e) => {
                           e.preventDefault();
-                          const url = `https://autora.be/garage/${profile.vitrine_slug}`;
+                          const url = profile.vitrine_slug
+                            ? `https://autora.be/garage/${profile.vitrine_slug}`
+                            : `https://autora.be/seller/${profile.user_id}`;
                           const title = `${displayName} — Vitrine sur AutoRA`;
                           const text = language === "nl"
                             ? "Bekijk de voertuigen in deze vitrine op AutoRA."
@@ -625,7 +627,7 @@ const SellerProfile = () => {
                     <Shield className="w-3 h-3" strokeWidth={2} />
                     {language === "nl" ? "Vitrine" : "Vitrine"}
                   </span>
-                  <h2 id="vitrine-heading" className="font-serif text-xl font-light text-foreground">
+                  <h2 id="vitrine-heading" className="font-serif text-2xl sm:text-3xl font-light tracking-tight text-foreground">
                     {language === "nl" ? "Onze garage" : "Notre garage"}
                   </h2>
                 </div>
