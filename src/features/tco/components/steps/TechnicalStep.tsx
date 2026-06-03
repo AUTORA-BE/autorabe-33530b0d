@@ -71,6 +71,7 @@ const TechnicalStep = ({ formData, updateField }: Props) => {
                 const v = clamp(Math.round(Number(fpInput) || 7), 4, 20);
                 updateField('fiscalPower', v);
                 setFpInput(String(v));
+                setFpTouched(true);
               }}
               min={4}
               max={20}
@@ -80,12 +81,17 @@ const TechnicalStep = ({ formData, updateField }: Props) => {
           </div>
           <Slider
             value={[formData.fiscalPower]}
-            onValueChange={([v]) => { updateField('fiscalPower', v); setFpInput(String(v)); }}
+            onValueChange={([v]) => { updateField('fiscalPower', v); setFpInput(String(v)); setFpTouched(true); }}
             min={4}
             max={20}
             step={1}
             className="[&_[role=slider]]:border-primary [&_[role=slider]]:bg-background [&_span:first-child>span]:bg-primary"
           />
+          {!fpTouched && (
+            <p className="text-xs text-muted-foreground mt-2">
+              Calculé automatiquement depuis la puissance moteur. Modifiez pour personnaliser.
+            </p>
+          )}
         </div>
 
         {/* Horsepower */}
@@ -106,8 +112,7 @@ const TechnicalStep = ({ formData, updateField }: Props) => {
               onChange={e => setHpInput(e.target.value)}
               onBlur={() => {
                 const v = clamp(Math.round(Number(hpInput) || 150), 50, 800);
-                updateField('horsepower', v);
-                setHpInput(String(v));
+                syncFromHp(v);
               }}
               min={50}
               max={800}
@@ -117,13 +122,14 @@ const TechnicalStep = ({ formData, updateField }: Props) => {
           </div>
           <Slider
             value={[formData.horsepower]}
-            onValueChange={([v]) => { updateField('horsepower', v); setHpInput(String(v)); }}
+            onValueChange={([v]) => syncFromHp(v)}
             min={50}
             max={800}
             step={1}
             className="[&_[role=slider]]:border-primary [&_[role=slider]]:bg-background [&_span:first-child>span]:bg-primary"
           />
         </div>
+
 
         {/* Consumption */}
         <div>
