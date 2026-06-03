@@ -23,6 +23,14 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { SUBSCRIPTION_TIERS } from "@/features/subscription/constants/tiers";
+import { UserContactCard } from "../UserContactCard";
+
+function planLabel(productId: string | null, status: string): string {
+  if (!productId || status !== "active") return "Gratuit";
+  const t = Object.values(SUBSCRIPTION_TIERS).find(x => x.product_id === productId);
+  return t ? t.name : "Inconnu";
+}
 
 interface SubscriptionRow {
   id: string;
@@ -61,6 +69,7 @@ function StatusIcon({ status }: { status: string }) {
 export default function AdminPaymentsPage() {
   const [subSearch, setSubSearch] = useState("");
   const [evtSearch, setEvtSearch] = useState("");
+  const [detailUserId, setDetailUserId] = useState<string | null>(null);
 
   const { data: subs = [], isLoading: subsLoading } = useQuery({
     queryKey: ["admin", "subscriptions"],
@@ -164,7 +173,14 @@ export default function AdminPaymentsPage() {
           ) : (
             <div className="space-y-1.5">
               {filteredSubs.map((s) => (
-                <Card key={s.id} className="border-border">
+                <Card
+                  key={s.id}
+                  className="border-border hover:border-primary/40 cursor-pointer transition-colors"
+                  onClick={() => setDetailUserId(s.user_id)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setDetailUserId(s.user_id); }}
+                >
                   <CardContent className="p-3 flex flex-col sm:flex-row sm:items-center gap-2">
                     <div className="flex items-center gap-2 flex-1 min-w-0">
                       <StatusIcon status={s.status} />
@@ -174,16 +190,16 @@ export default function AdminPaymentsPage() {
                       >
                         {s.status}
                       </Badge>
-                      <span className="text-xs font-mono text-foreground truncate">
+                      <Badge variant="outline" className="text-[10px] flex-shrink-0 border-primary/40 text-primary">
+                        {planLabel(s.product_id, s.status)}
+                      </Badge>
+                      <span className="text-xs font-mono text-muted-foreground truncate hidden sm:inline">
                         {s.stripe_subscription_id || "—"}
                       </span>
                     </div>
                     <div className="flex items-center gap-3 text-[10px] text-muted-foreground flex-shrink-0">
                       <span className="font-mono truncate max-w-[120px]">
                         user: {s.user_id.slice(0, 8)}…
-                      </span>
-                      <span className="hidden sm:inline">
-                        {s.product_id || "—"}
                       </span>
                       <span>
                         {s.current_period_end
@@ -248,6 +264,12 @@ export default function AdminPaymentsPage() {
           )}
         </TabsContent>
       </Tabs>
+
+      <UserContactCard
+        userId={detailUserId}
+        open={!!detailUserId}
+        onOpenChange={(o) => !o && setDetailUserId(null)}
+      />
     </div>
   );
 }

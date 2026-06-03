@@ -1,5 +1,7 @@
 /**
- * Hook for viewing audit logs
+ * Hook for viewing admin activity logs.
+ * Reads `admin_actions` (where every admin mutation is recorded) and
+ * enriches with admin display names.
  * @module features/admin/hooks
  */
 
@@ -15,13 +17,13 @@ interface AuditLogFilters {
 
 async function fetchAuditLogs(filters: AuditLogFilters): Promise<AuditLogEntry[]> {
   let query = supabase
-    .from('audit_log')
-    .select('*')
+    .from('admin_actions')
+    .select('id, admin_id, action_type, target_type, target_id, reason, metadata, created_at')
     .order('created_at', { ascending: false })
     .limit(200);
 
   if (filters.action && filters.action !== 'all') {
-    query = query.eq('action', filters.action);
+    query = query.eq('action_type', filters.action);
   }
   if (filters.dateFrom) {
     query = query.gte('created_at', filters.dateFrom);
@@ -33,21 +35,29 @@ async function fetchAuditLogs(filters: AuditLogFilters): Promise<AuditLogEntry[]
   const { data, error } = await query;
   if (error) throw error;
 
-  // Enrich with user names
   const entries = data || [];
-  const userIds = [...new Set(entries.map(e => e.user_id))];
+  const adminIds = [...new Set(entries.map(e => e.admin_id))];
   const { data: profiles } = await supabase
     .from('profiles')
     .select('user_id, display_name')
-    .in('user_id', userIds);
+    .in('user_id', adminIds);
 
   const nameMap: Record<string, string> = {};
-  (profiles || []).forEach(p => { nameMap[p.user_id] = p.display_name || 'Inconnu'; });
+  (profiles || []).forEach(p => { nameMap[p.user_id] = p.display_name || 'Admin'; });
 
   return entries.map(e => ({
-    ...e,
-    details: e.details as Record<string, unknown> | null,
-    user_name: nameMap[e.user_id] || 'Inconnu',
+    id: e.id,
+    user_id: e.admin_id,
+    action: e.action_type,
+    details: {
+      ...(e.metadata as Record<string, unknown> | null ?? {}),
+      target_type: e.target_type,
+      target_id: e.target_id,
+      ...(e.reason ? { reason: e.reason } : {}),
+    },
+    ip_hash: null,
+    created_at: e.created_at,
+    user_name: nameMap[e.admin_id] || 'Admin',
   }));
 }
 

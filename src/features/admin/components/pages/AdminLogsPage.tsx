@@ -50,13 +50,15 @@ export default function AdminLogsPage() {
 
       <div className="flex gap-2 flex-wrap">
         <Select value={actionFilter} onValueChange={setActionFilter}>
-          <SelectTrigger className="w-40"><SelectValue placeholder="Action" /></SelectTrigger>
+          <SelectTrigger className="w-48"><SelectValue placeholder="Action" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Toutes actions</SelectItem>
-            <SelectItem value="login">Connexion</SelectItem>
-            <SelectItem value="create_listing">Création annonce</SelectItem>
-            <SelectItem value="report">Signalement</SelectItem>
-            <SelectItem value="ban_user">Bannissement</SelectItem>
+            <SelectItem value="suspend_user">Suspension utilisateur</SelectItem>
+            <SelectItem value="unsuspend_user">Réactivation utilisateur</SelectItem>
+            <SelectItem value="update_subscription">MAJ abonnement</SelectItem>
+            <SelectItem value="approve_listing">Annonce approuvée</SelectItem>
+            <SelectItem value="reject_listing">Annonce rejetée</SelectItem>
+            <SelectItem value="resolve_report">Signalement traité</SelectItem>
           </SelectContent>
         </Select>
         <Input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} className="w-36" placeholder="Du" />

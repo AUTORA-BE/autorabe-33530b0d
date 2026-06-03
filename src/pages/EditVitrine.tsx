@@ -112,6 +112,8 @@ const EditVitrine = () => {
 
   const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    // Reset value so the same file can be re-selected after an error
+    e.target.value = "";
     if (!file || !user) return;
     if (file.size > 5 * 1024 * 1024) {
       toast({ title: language === "nl" ? "Bestand te groot (max 5MB)" : "Fichier trop volumineux (max 5MB)", variant: "destructive" });
@@ -123,15 +125,30 @@ const EditVitrine = () => {
     }
     setUploading(true);
     try {
-      const ext = file.name.split(".").pop();
+      const extRaw = (file.name.split(".").pop() || "jpg").toLowerCase();
+      const ext = extRaw.replace(/[^a-z0-9]/g, "").slice(0, 5) || "jpg";
       // Stored in `avatars` bucket under owner-scoped vitrine-covers/{user_id}/ path
+      // (matches storage policy "Vitrine covers owner insert").
       const fileName = `vitrine-covers/${user.id}/${Date.now()}.${ext}`;
-      const { error: upErr } = await supabase.storage.from("avatars").upload(fileName, file, { upsert: true });
+      const { error: upErr } = await supabase.storage
+        .from("avatars")
+        .upload(fileName, file, {
+          upsert: false,
+          contentType: file.type,
+          cacheControl: "3600",
+        });
       if (upErr) throw upErr;
       const { data: { publicUrl } } = supabase.storage.from("avatars").getPublicUrl(fileName);
       setCoverUrl(publicUrl);
-    } catch {
-      toast({ title: language === "nl" ? "Upload mislukt" : "Échec de l'envoi", variant: "destructive" });
+      toast({ title: language === "nl" ? "Foto geüpload" : "Photo téléversée" });
+    } catch (err) {
+      const msg = (err as { message?: string })?.message || (language === "nl" ? "Onbekende fout" : "Erreur inconnue");
+      console.error("vitrine cover upload failed", err);
+      toast({
+        title: language === "nl" ? "Upload mislukt" : "Échec de l'envoi",
+        description: msg,
+        variant: "destructive",
+      });
     } finally {
       setUploading(false);
     }

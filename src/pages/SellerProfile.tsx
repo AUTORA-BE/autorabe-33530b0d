@@ -445,7 +445,7 @@ const SellerProfile = () => {
 
                 {/* Info */}
                 <div className="flex-1 text-center sm:text-left">
-                  <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-light tracking-tight text-foreground mb-2">
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-light leading-[1.1] tracking-tight text-foreground mb-2">
                     {displayName}
                   </h1>
 
