@@ -33,7 +33,7 @@ import { useVehicleSearch } from "@/features/listings";
 import { useFavorites } from "@/features/favorites";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocalizedVehicleHref } from "@/lib/useLocalizedHref";
-import { BUDGET_OPTIONS } from "@/features/search/types/search.types";
+
 import { useBuyerProfile, BuyerProfileModal } from "@/features/tco";
 
 const Index = () => {
