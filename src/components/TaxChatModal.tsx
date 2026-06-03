@@ -157,6 +157,20 @@ export default function TaxChatModal({ vehicle }: TaxChatModalProps) {
     streamQuestion(question);
   }, [input, isLoading, streamQuestion]);
 
+  // Gate access — non-authenticated users get redirected to /auth
+  if (!isAuthenticated) {
+    return (
+      <Button
+        variant="outline"
+        className="gap-2"
+        onClick={() => navigate('/auth?redirect=' + encodeURIComponent(window.location.pathname))}
+      >
+        <Lock className="w-4 h-4" />
+        Se connecter pour utiliser le conseiller
+      </Button>
+    );
+  }
+
   return (
     <Dialog open={open} onOpenChange={(v: boolean) => { setOpen(v); if (!v) { setHasStarted(false); setMessages([]); } }}>
       <DialogTrigger asChild>
