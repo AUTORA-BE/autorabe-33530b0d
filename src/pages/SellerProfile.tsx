@@ -1099,6 +1099,9 @@ const SellerProfile = () => {
           open={editOpen}
           onOpenChange={setEditOpen}
           userId={profile.user_id}
+          garageName={profile.garage_name || profile.display_name || ""}
+          vitrineSlug={profile.vitrine_slug}
+          vitrinePublished={!!profile.vitrine_published}
           initial={{
             cover_image_url: profile.cover_image_url,
             opening_hours: profile.opening_hours,
@@ -1120,6 +1123,9 @@ interface EditVitrineDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   userId: string;
+  garageName: string;
+  vitrineSlug: string | null;
+  vitrinePublished: boolean;
   initial: {
     cover_image_url: string | null;
     opening_hours: string | null;
@@ -1130,7 +1136,11 @@ interface EditVitrineDialogProps {
   language: string;
 }
 
-function EditVitrineDialog({ open, onOpenChange, userId, initial, onSaved, language }: EditVitrineDialogProps) {
+const slugifyGarage = (s: string): string =>
+  s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60);
+
+function EditVitrineDialog({ open, onOpenChange, userId, garageName, vitrineSlug, vitrinePublished, initial, onSaved, language }: EditVitrineDialogProps) {
   const { toast } = useToast();
   const [coverUrl, setCoverUrl] = useState(initial.cover_image_url ?? "");
   const [hours, setHours] = useState(initial.opening_hours ?? "");
