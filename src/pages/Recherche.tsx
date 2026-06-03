@@ -695,10 +695,10 @@ const Recherche = () => {
   };
 
   const title =
-    language === "nl" ? "Vind uw volgende auto"
-    : language === "en" ? "Find your next car"
-    : language === "de" ? "Finden Sie Ihr nächstes Auto"
-    : "Trouvez votre prochaine voiture";
+    language === "nl" ? "AutoRA — Tweedehands auto's kopen in België"
+    : language === "en" ? "AutoRA — Used cars marketplace in Belgium"
+    : language === "de" ? "AutoRA — Gebrauchtwagen-Marktplatz in Belgien"
+    : "AutoRA — Marketplace de voitures d'occasion en Belgique";
 
   const subtitle = (count: number) =>
     language === "nl"
@@ -782,7 +782,7 @@ const Recherche = () => {
           </div>
         </div>
 
-        <section className="container mx-auto mb-10 px-6 text-center sm:mb-14 sm:px-8 hidden md:block">
+        <section className="container mx-auto mb-10 px-6 text-center sm:mb-14 sm:px-8">
           <motion.p
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
@@ -819,7 +819,8 @@ const Recherche = () => {
         </section>
 
 
-        <section className="container mx-auto mb-8 flex items-center justify-between px-6 sm:px-8">
+        <section aria-labelledby="results-heading" className="container mx-auto mb-8 flex items-center justify-between px-6 sm:px-8">
+          <h2 id="results-heading" className="sr-only">Véhicules disponibles</h2>
           <p className="text-xs font-light tabular-nums text-foreground/70 sm:text-sm">
             <span className="font-semibold text-foreground">
               {(totalCount || cars.length).toLocaleString("fr-BE")}
