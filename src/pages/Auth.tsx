@@ -121,6 +121,13 @@ const Auth = () => {
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Honeypot: fake a benign success on signup so bots think they made it
+    if (!isLogin && isHoneypotTriggered(honeypotRef.current)) {
+      setVerificationEmailSent(true);
+      return;
+    }
+
     if (!validateForm()) return;
 
     if (!isLogin && !acceptedTerms) {
