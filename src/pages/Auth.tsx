@@ -50,6 +50,7 @@ const Auth = () => {
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const honeypotRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const { t, language } = useLanguage();
 
