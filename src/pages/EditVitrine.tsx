@@ -426,7 +426,7 @@ const EditVitrine = () => {
                   );
                 })()}
 
-                </div>
+
 
                 <div className="flex flex-wrap gap-3">
                   <Button onClick={handleSave} disabled={saving || uploading} className="btn-primary-gradient rounded-xl px-6">
