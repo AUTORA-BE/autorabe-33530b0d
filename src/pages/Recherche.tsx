@@ -118,7 +118,7 @@ function LuxuryCarCard({
       )}
     >
       {/* Image frame — strictly contained 16:9 */}
-      <div className="relative aspect-video overflow-hidden rounded-t-2xl bg-black">
+      <div className="relative aspect-video overflow-hidden rounded-t-2xl bg-muted">
         <CardImage src={car.image} alt={`${car.brand} ${car.model}`} />
 
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
@@ -171,7 +171,7 @@ function LuxuryCarCard({
             <p className="text-[10.5px] font-medium uppercase tracking-[0.14em] text-foreground/50">
               Prix
             </p>
-            <p className="mt-0.5 text-3xl font-bold tracking-tight tabular-nums text-white">
+            <p className="mt-0.5 text-3xl font-bold tracking-tight tabular-nums text-foreground">
               {car.price.toLocaleString("fr-BE")}
               <span className="ml-1 text-xl font-light text-foreground/65">€</span>
             </p>
@@ -210,14 +210,14 @@ function PillFilterBar({ filters, updateFilter, onOpenMore, shrunk }: FilterBarP
 
   const triggerCls = cn(
     "rounded-full bg-transparent text-[13px] font-medium gap-1.5 border-0",
-    "text-white hover:bg-foreground/[0.08] hover:text-white",
+    "text-foreground hover:bg-foreground/[0.08] hover:text-foreground",
     shrunk ? "px-4 h-9" : "px-5 h-10",
   );
   const activeTriggerCls =
     "bg-primary/15 text-primary hover:bg-primary/20 hover:text-primary ring-1 ring-inset ring-primary/35";
 
   const popoverCls =
-    "rounded-2xl border border-foreground/10 bg-popover p-6 text-white shadow-[0_30px_80px_-20px_rgba(0,0,0,0.85)]";
+    "rounded-2xl border border-foreground/10 bg-popover p-6 text-foreground shadow-[0_30px_80px_-20px_rgba(0,0,0,0.85)]";
 
   return (
     <div
@@ -242,7 +242,7 @@ function PillFilterBar({ filters, updateFilter, onOpenMore, shrunk }: FilterBarP
               <label className="text-[10px] font-medium uppercase tracking-[0.15em] text-foreground/55">
                 Prix maximum
               </label>
-              <span className="text-lg font-semibold tabular-nums text-white">
+              <span className="text-lg font-semibold tabular-nums text-foreground">
                 {filters.maxPrice >= 1000000 ? "∞" : `${filters.maxPrice.toLocaleString("fr-BE")} €`}
               </span>
             </div>
@@ -262,7 +262,7 @@ function PillFilterBar({ filters, updateFilter, onOpenMore, shrunk }: FilterBarP
                     "rounded-full border px-2.5 py-1 text-[11px] transition-all",
                     filters.maxPrice === b.value
                       ? "border-primary bg-primary text-primary-foreground"
-                      : "border-foreground/10 text-foreground/70 hover:border-primary/50 hover:text-white",
+                      : "border-foreground/10 text-foreground/70 hover:border-primary/50 hover:text-foreground",
                   )}
                 >
                   {b.label}
@@ -302,7 +302,7 @@ function PillFilterBar({ filters, updateFilter, onOpenMore, shrunk }: FilterBarP
                     "rounded-xl border px-3 py-2.5 text-sm font-medium transition-all",
                     active
                       ? "border-primary/40 bg-primary/15 text-primary"
-                      : "border-foreground/10 bg-foreground/[0.02] text-white hover:border-primary/50 hover:bg-foreground/[0.06]",
+                      : "border-foreground/10 bg-foreground/[0.02] text-foreground hover:border-primary/50 hover:bg-foreground/[0.06]",
                   )}
                 >
                   {f.labelFr}
@@ -328,7 +328,7 @@ function PillFilterBar({ filters, updateFilter, onOpenMore, shrunk }: FilterBarP
               <label className="text-[10px] font-medium uppercase tracking-[0.15em] text-foreground/55">
                 Kilométrage maximum
               </label>
-              <span className="text-lg font-semibold tabular-nums text-white">
+              <span className="text-lg font-semibold tabular-nums text-foreground">
                 {filters.kmMax >= 500000 ? "∞" : `${filters.kmMax.toLocaleString("fr-BE")} km`}
               </span>
             </div>
@@ -348,7 +348,7 @@ function PillFilterBar({ filters, updateFilter, onOpenMore, shrunk }: FilterBarP
                     "rounded-full border px-2.5 py-1 text-[11px] transition-all",
                     filters.kmMax === km
                       ? "border-primary bg-primary text-primary-foreground"
-                      : "border-foreground/10 text-foreground/70 hover:border-primary/50 hover:text-white",
+                      : "border-foreground/10 text-foreground/70 hover:border-primary/50 hover:text-foreground",
                   )}
                 >
                   {km >= 500000 ? "Tous" : `≤ ${(km / 1000).toLocaleString("fr-BE")}k km`}
@@ -394,7 +394,7 @@ function MoreFiltersSheet({
   open, onOpenChange, filters, updateFilter, resetFilters, resultsCount, brands, models, isMobile,
 }: MoreFiltersSheetProps) {
   const fieldCls =
-    "w-full h-11 px-4 rounded-xl border border-foreground/10 bg-foreground/[0.04] text-sm text-white outline-none transition focus:border-primary/50 focus:bg-foreground/[0.08] focus:ring-2 focus:ring-primary/20";
+    "w-full h-11 px-4 rounded-xl border border-foreground/10 bg-foreground/[0.04] text-sm text-foreground outline-none transition focus:border-primary/50 focus:bg-foreground/[0.08] focus:ring-2 focus:ring-primary/20";
   const eyebrow =
     "text-[10px] uppercase tracking-[0.15em] text-foreground/60 font-medium block mb-2";
 
@@ -403,7 +403,7 @@ function MoreFiltersSheet({
       <SheetContent
         side={isMobile ? "bottom" : "right"}
         className={cn(
-          "flex flex-col gap-0 border-foreground/10 bg-popover p-0 text-white",
+          "flex flex-col gap-0 border-foreground/10 bg-popover p-0 text-foreground",
           isMobile
             ? "h-[92dvh] w-full rounded-t-3xl border-t shadow-[0_-30px_80px_-20px_rgba(0,0,0,0.7)]"
             : "w-full border-l shadow-[-40px_0_80px_-20px_rgba(0,0,0,0.7)] sm:max-w-md",
@@ -414,7 +414,7 @@ function MoreFiltersSheet({
             <p className="text-[10.5px] font-medium uppercase tracking-[0.16em] text-foreground/55">
               Affiner
             </p>
-            <SheetTitle className="mt-1 text-xl font-medium tracking-tight text-white">
+            <SheetTitle className="mt-1 text-xl font-medium tracking-tight text-foreground">
               Plus de filtres
             </SheetTitle>
           </div>
@@ -508,7 +508,7 @@ function MoreFiltersSheet({
                       "h-11 rounded-xl border text-sm font-medium transition-all",
                       active
                         ? "border-primary/50 bg-primary/15 text-primary"
-                        : "border-foreground/10 bg-foreground/[0.02] text-white hover:border-primary/50 hover:bg-foreground/[0.06]",
+                        : "border-foreground/10 bg-foreground/[0.02] text-foreground hover:border-primary/50 hover:bg-foreground/[0.06]",
                     )}
                   >
                     {f.labelFr}
@@ -560,7 +560,7 @@ function MoreFiltersSheet({
                       "h-11 rounded-xl border text-sm font-medium transition-all",
                       active
                         ? "border-primary/50 bg-primary/15 text-primary"
-                        : "border-foreground/10 bg-foreground/[0.02] text-white hover:border-primary/50 hover:bg-foreground/[0.06]",
+                        : "border-foreground/10 bg-foreground/[0.02] text-foreground hover:border-primary/50 hover:bg-foreground/[0.06]",
                     )}
                   >
                     {t.label}
@@ -597,7 +597,7 @@ function MoreFiltersSheet({
                       "h-9 rounded-full border px-4 text-xs font-medium transition-all",
                       active
                         ? "border-primary bg-primary text-primary-foreground"
-                        : "border-foreground/10 bg-foreground/[0.02] text-white hover:border-primary/50 hover:bg-foreground/[0.06]",
+                        : "border-foreground/10 bg-foreground/[0.02] text-foreground hover:border-primary/50 hover:bg-foreground/[0.06]",
                     )}
                   >
                     {c.label}
@@ -608,7 +608,7 @@ function MoreFiltersSheet({
           </div>
 
           <div className="flex items-center justify-between border-t border-foreground/5 pt-4">
-            <Label htmlFor="lez-only" className="cursor-pointer text-sm font-medium text-white">
+            <Label htmlFor="lez-only" className="cursor-pointer text-sm font-medium text-foreground">
               Uniquement compatibles LEZ
             </Label>
             <Checkbox
@@ -623,7 +623,7 @@ function MoreFiltersSheet({
           <Button
             variant="outline"
             onClick={resetFilters}
-            className="h-11 flex-1 rounded-full border-foreground/10 bg-transparent text-white hover:bg-foreground/[0.06]"
+            className="h-11 flex-1 rounded-full border-foreground/10 bg-transparent text-foreground hover:bg-foreground/[0.06]"
           >
             Réinitialiser
           </Button>
@@ -718,7 +718,7 @@ const Recherche = () => {
   return (
     // Force le scope "dark" sur toute la page Recherche (incluant les portails Popover/Sheet enfants)
     // pour éviter les contrastes cassés en mode Light, tant que la refonte light n'est pas faite.
-    <div className="dark page-gradient relative text-foreground bg-background">
+    <div className="page-gradient relative text-foreground bg-background">
       {/* Ambient halo — extremely subtle, no white tracery, no grid */}
       <div
         aria-hidden
@@ -821,7 +821,7 @@ const Recherche = () => {
 
         <section className="container mx-auto mb-8 flex items-center justify-between px-6 sm:px-8">
           <p className="text-xs font-light tabular-nums text-foreground/70 sm:text-sm">
-            <span className="font-semibold text-white">
+            <span className="font-semibold text-foreground">
               {(totalCount || cars.length).toLocaleString("fr-BE")}
             </span>{" "}
             véhicules disponibles
@@ -833,7 +833,7 @@ const Recherche = () => {
                 "flex h-9 items-center gap-1.5 rounded-full px-3 text-xs font-medium transition-all sm:px-4 sm:text-sm",
                 viewMode === "catalog"
                   ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-foreground/65 hover:text-white",
+                  : "text-foreground/65 hover:text-foreground",
               )}
             >
               <Grid3x3 className="h-3.5 w-3.5" />
@@ -845,7 +845,7 @@ const Recherche = () => {
                 "flex h-9 items-center gap-1.5 rounded-full px-3 text-xs font-medium transition-all sm:px-4 sm:text-sm",
                 viewMode === "match"
                   ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-foreground/65 hover:text-white",
+                  : "text-foreground/65 hover:text-foreground",
               )}
             >
               <Flame className="h-3.5 w-3.5" />
@@ -857,7 +857,7 @@ const Recherche = () => {
                 "flex h-9 items-center gap-1.5 rounded-full px-3 text-xs font-medium transition-all sm:px-4 sm:text-sm",
                 viewMode === "garages"
                   ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-foreground/65 hover:text-white",
+                  : "text-foreground/65 hover:text-foreground",
               )}
             >
               <Store className="h-3.5 w-3.5" />
@@ -895,7 +895,7 @@ const Recherche = () => {
                     <div className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-full border border-foreground/10 bg-foreground/[0.04] text-foreground/70">
                       <span className="text-xl">∅</span>
                     </div>
-                    <h3 className="text-base font-medium text-white">
+                    <h3 className="text-base font-medium text-foreground">
                       Aucun véhicule ne correspond à vos critères
                     </h3>
                     <p className="mt-2 text-[13px] text-foreground/65">
@@ -927,7 +927,7 @@ const Recherche = () => {
                           disabled={isLoadingMore}
                           variant="outline"
                           size="lg"
-                          className="rounded-full border-foreground/10 bg-foreground/[0.04] px-10 text-white hover:border-primary/50 hover:bg-primary/10 hover:text-primary"
+                          className="rounded-full border-foreground/10 bg-foreground/[0.04] px-10 text-foreground hover:border-primary/50 hover:bg-primary/10 hover:text-primary"
                         >
                           {isLoadingMore ? "Chargement…" : "Voir plus de véhicules"}
                         </Button>
