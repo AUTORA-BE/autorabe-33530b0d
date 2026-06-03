@@ -4,7 +4,8 @@
  * @module pages/Auth
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Honeypot, isHoneypotTriggered } from "@/components/Honeypot";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import SEOHead from "@/components/SEOHead";
 import { supabase } from "@/integrations/supabase/client";
