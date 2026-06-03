@@ -59,6 +59,7 @@ export function parseFiltersFromParams(params: URLSearchParams): {
     bodyType: params.get(PARAM_KEYS.bodyType) || d.bodyType,
     color: params.get('color') || d.color,
     province: params.get(PARAM_KEYS.province) || d.province,
+    location: params.get(PARAM_KEYS.location) || d.location,
     features: d.features,
     maxDistanceKm: d.maxDistanceKm,
     userLat: d.userLat,
