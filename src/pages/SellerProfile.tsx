@@ -280,6 +280,10 @@ const SellerProfile = () => {
   // Slug route: gate publication. Owners see an unpublished preview banner.
   const isUnpublishedForVisitor = isSlugRoute && profile && !profile.vitrine_published && !isOwnProfile;
   if (notFound || !profile || isUnpublishedForVisitor) {
+    // Spec: if slug + UUID lookups both fail, redirect cleanly to /recherche
+    if (isSlugRoute && notFound) {
+      return <RedirectTo path="/recherche" />;
+    }
     return (
       <div className="page-gradient min-h-screen">
         <SEOHead noIndex title="Vitrine introuvable | AutoRA" />
@@ -328,15 +332,32 @@ const SellerProfile = () => {
     url: profile.vitrine_slug ? `https://autora.be/garage/${profile.vitrine_slug}` : undefined,
   } : localBusinessSchema;
 
+  // ── Dynamic Open Graph meta for vitrine pages ──
+  const isPublishedVitrine = isSlugRoute && profile.vitrine_published;
+  const ogTitle = isPublishedVitrine
+    ? `${displayName} — Vitrine Professionnelle sur AutoRA`
+    : `${displayName} | AutoRA`;
+  const ogDescription = isPublishedVitrine
+    ? `Découvrez le stock de véhicules d'occasion de ${displayName}. Voitures vérifiées Car-Pass et prêtes pour le marché belge.`
+    : `Profil vendeur de ${displayName} sur AutoRA. Consultez les annonces, avis et coordonnées.`;
+  const ogImage = effectiveCover || profile.avatar_url || undefined;
+  const ogUrl = profile.vitrine_slug
+    ? `https://autora.be/garage/${profile.vitrine_slug}`
+    : `https://autora.be/seller/${profile.user_id}`;
+
   return (
     <div className="page-gradient min-h-screen">
       <SEOHead
-        title={`${displayName} | AutoRA`}
-        description={`Profil vendeur de ${displayName} sur AutoRA. Consultez les annonces, avis et coordonnées.`}
+        title={ogTitle}
+        description={ogDescription}
+        image={ogImage}
+        url={ogUrl}
+        type="profile"
         jsonLd={dealerSchema}
         noIndex={isSlugRoute && !profile.vitrine_published}
       />
       <Header />
+
 
       <main className="pt-20 pb-32">
         {/* Owner unpublished preview banner */}
