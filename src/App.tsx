@@ -107,10 +107,12 @@ supabase.auth.onAuthStateChange((_evt, session) => {
   _lastUserId = uid;
 });
 
-/** Scroll to top on route change + trigger idle prefetching + global analytics */
+/** Scroll to top on route change + trigger idle prefetching + global analytics + session guard */
+import { useAuthSessionGuard } from "@/lib/authGuard";
 function ScrollToTopOnNavigate() {
   const { pathname } = useLocation();
   useAnalytics();
+  useAuthSessionGuard();
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);

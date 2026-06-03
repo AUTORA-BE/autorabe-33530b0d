@@ -37,6 +37,8 @@ const EditVitrine = () => {
   const [garageName, setGarageName] = useState<string | null>(null);
   const [postalCode, setPostalCode] = useState<string | null>(null);
   const [displayName, setDisplayName] = useState<string | null>(null);
+  const [userType, setUserType] = useState<string | null>(null);
+  const [accessDenied, setAccessDenied] = useState(false);
   // Vitrine-specific fields
   const [slug, setSlug] = useState("");
   const [slugStatus, setSlugStatus] = useState<"idle" | "checking" | "available" | "taken" | "invalid">("idle");
@@ -55,11 +57,25 @@ const EditVitrine = () => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("avatar_url, garage_name, postal_code, display_name, cover_image_url, opening_hours, services, presentation, vitrine_slug, vitrine_cover_url, vitrine_about, vitrine_services, vitrine_phone, vitrine_email_public, vitrine_published")
+      .select("user_type, avatar_url, garage_name, postal_code, display_name, cover_image_url, opening_hours, services, presentation, vitrine_slug, vitrine_cover_url, vitrine_about, vitrine_services, vitrine_phone, vitrine_email_public, vitrine_published")
       .eq("user_id", user.id)
       .maybeSingle()
       .then(({ data }) => {
         if (data) {
+          setUserType(data.user_type ?? null);
+          // ❗ Gate: Édition Vitrine réservée aux comptes Professionnels
+          if (data.user_type !== "professionnel") {
+            setAccessDenied(true);
+            toast({
+              title: language === "nl" ? "Toegang geweigerd" : "Accès refusé",
+              description: language === "nl"
+                ? "De vitrine-editor is voorbehouden aan professionele accounts."
+                : "L'édition de vitrine est réservée aux comptes Professionnels.",
+              variant: "destructive",
+            });
+            setLoading(false);
+            return;
+          }
           setAvatarUrl(data.avatar_url);
           setGarageName(data.garage_name);
           setPostalCode(data.postal_code);
@@ -75,7 +91,7 @@ const EditVitrine = () => {
         }
         setLoading(false);
       });
-  }, [user]);
+  }, [user, language, toast]);
 
   const services = servicesText.split("\n").map(s => s.trim()).filter(Boolean).slice(0, 10);
   const name = garageName || displayName || (language === "nl" ? "Mijn garage" : "Mon garage");
@@ -160,6 +176,39 @@ const EditVitrine = () => {
   };
 
   if (isLoading || !user || loading) return null;
+
+  // Pro gate — redirect non-pro accounts to their dashboard with a clean fallback
+  if (accessDenied) {
+    return (
+      <div className="page-gradient min-h-screen flex flex-col">
+        <SEOHead noIndex title="Accès réservé | AutoRA" />
+        <Header />
+        <main className="flex-1 flex items-center justify-center px-6 py-24">
+          <div className="max-w-md text-center space-y-5">
+            <Shield className="w-12 h-12 mx-auto text-primary" strokeWidth={1.5} />
+            <h1 className="text-2xl font-light tracking-tight text-foreground">
+              {language === "nl" ? "Alleen voor professionals" : "Réservé aux Professionnels"}
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              {language === "nl"
+                ? "Upgrade uw account naar een professioneel profiel om uw vitrine te beheren."
+                : "Passez votre compte en profil Professionnel pour gérer votre vitrine garage."}
+            </p>
+            <div className="flex gap-3 justify-center">
+              <Button variant="outline" onClick={() => navigate("/dashboard")}>
+                {language === "nl" ? "Naar dashboard" : "Retour au dashboard"}
+              </Button>
+              <Button onClick={() => navigate("/profile")}>
+                {language === "nl" ? "Profiel bewerken" : "Modifier mon profil"}
+              </Button>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
 
   return (
     <div className="page-gradient min-h-screen">
