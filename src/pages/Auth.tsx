@@ -429,7 +429,7 @@ const Auth = () => {
                 </div>
 
                 <form onSubmit={handleEmailAuth} className="space-y-4">
-                  {!isLogin && <Honeypot ref={honeypotRef} />
+                  {!isLogin && <Honeypot ref={honeypotRef} />}
                   {/* Signup-only fields */}
                   {!isLogin && (
                     <>
