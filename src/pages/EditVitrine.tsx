@@ -188,19 +188,19 @@ const EditVitrine = () => {
           <div className="max-w-md text-center space-y-5">
             <Shield className="w-12 h-12 mx-auto text-primary" strokeWidth={1.5} />
             <h1 className="text-2xl font-light tracking-tight text-foreground">
-              {language === "nl" ? "Alleen voor professionals" : "Réservé aux Professionnels"}
+              {language === "nl" ? "Alleen voor Pro & Premium" : "Réservé aux abonnements Pro & Premium"}
             </h1>
             <p className="text-sm text-muted-foreground">
               {language === "nl"
-                ? "Upgrade uw account naar een professioneel profiel om uw vitrine te beheren."
-                : "Passez votre compte en profil Professionnel pour gérer votre vitrine garage."}
+                ? "Upgrade naar een Pro- of Premium-abonnement om uw vitrine te beheren. Beheerders kunnen abonnementen toekennen vanuit het admin dashboard."
+                : "Passez à un abonnement Pro ou Premium pour gérer votre vitrine. Les administrateurs peuvent attribuer un abonnement depuis le dashboard admin."}
             </p>
             <div className="flex gap-3 justify-center">
               <Button variant="outline" onClick={() => navigate("/dashboard")}>
                 {language === "nl" ? "Naar dashboard" : "Retour au dashboard"}
               </Button>
-              <Button onClick={() => navigate("/profile")}>
-                {language === "nl" ? "Profiel bewerken" : "Modifier mon profil"}
+              <Button onClick={() => navigate("/pricing")}>
+                {language === "nl" ? "Abonnementen bekijken" : "Voir les abonnements"}
               </Button>
             </div>
           </div>
