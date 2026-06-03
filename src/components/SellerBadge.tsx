@@ -53,7 +53,7 @@ const SellerBadge = ({
   return (
     <div className="p-4 rounded-2xl bg-secondary/50">
       {/* Seller Type Badge */}
-      <div className="flex items-center gap-2 mb-2">
+      <div className="flex items-center gap-2 mb-2 flex-wrap">
         {isProfessional ? (
           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-sm font-semibold bg-primary/10 text-primary">
             <Building2 className="w-4 h-4" />
@@ -65,6 +65,7 @@ const SellerBadge = ({
             Particulier
           </span>
         )}
+        {isAdmin && <AdminBadge size="sm" />}
       </div>
 
       {/* Seller Name */}
