@@ -150,6 +150,30 @@ export const getSellerContact = async (listingId: string): Promise<{
   }
 };
 
+/**
+ * Public seller display info for an approved listing.
+ * Used on the public car detail page so anonymous visitors can see
+ * the seller's display name (garage_name for Pro, display_name for private).
+ */
+export const getSellerDisplay = async (listingId: string): Promise<{
+  user_id: string;
+  display_name: string | null;
+  garage_name: string | null;
+  user_type: string | null;
+  avatar_url: string | null;
+  vitrine_slug: string | null;
+  vitrine_published: boolean | null;
+} | null> => {
+  try {
+    const { data, error } = await supabase
+      .rpc('get_seller_display', { listing_id: listingId });
+    if (error || !data || data.length === 0) return null;
+    return data[0];
+  } catch {
+    return null;
+  }
+};
+
 export const getRelatedCarsFromList = (car: Car, allCars: Car[], limit: number = 4) => {
   return allCars
     .filter((c) => c.id !== car.id && (c.brand === car.brand || c.fuelType === car.fuelType))
