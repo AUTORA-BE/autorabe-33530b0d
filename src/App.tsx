@@ -162,6 +162,7 @@ function AppPages() {
       <Route path="/dashboard/stats" element={<PageTransition><SellerStats /></PageTransition>} />
       <Route path="/seller/:userId" element={<PageTransition><SellerProfile /></PageTransition>} />
       <Route path="/garage/:slug" element={<PageTransition><SellerProfile /></PageTransition>} />
+      <Route path="/vitrine/:slug" element={<PageTransition><SellerProfile /></PageTransition>} />
       <Route path="/admin/*" element={<PageTransition><AdminLayout /></PageTransition>} />
       <Route path="/settings" element={<PageTransition><Settings /></PageTransition>} />
       <Route path="/reset-password" element={<PageTransition><ResetPassword /></PageTransition>} />
