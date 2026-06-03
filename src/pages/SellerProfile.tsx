@@ -315,21 +315,32 @@ const SellerProfile = () => {
   const effectivePhone = profile.vitrine_phone || profile.phone;
   const effectiveEmail = profile.vitrine_email_public;
 
-  // AutoDealer JSON-LD (when on a published vitrine)
+  // AutomotiveBusiness / LocalBusiness JSON-LD (when on a published vitrine) — SEO local BE
+  const vitrineUrlAbs = profile.vitrine_slug
+    ? `https://autora.be/garage/${profile.vitrine_slug}`
+    : `https://autora.be/seller/${profile.user_id}`;
+  const ogImageAbs = effectiveCover || profile.avatar_url || "https://autora.be/og-image.jpg";
+
   const dealerSchema = profile.vitrine_published ? {
     "@context": "https://schema.org",
-    "@type": "AutoDealer",
+    "@type": ["AutomotiveBusiness", "LocalBusiness", "Organization"],
+    "@id": vitrineUrlAbs,
     name: displayName,
-    image: effectiveCover || profile.avatar_url || undefined,
-    description: effectiveAbout || undefined,
+    legalName: profile.garage_name || displayName,
+    image: ogImageAbs,
+    logo: profile.avatar_url || undefined,
+    description: effectiveAbout || `Vitrine professionnelle ${displayName} sur AutoRA — véhicules d'occasion vérifiés Car-Pass en Belgique.`,
     telephone: effectivePhone || undefined,
     email: effectiveEmail || undefined,
-    address: profile.postal_code ? {
+    url: vitrineUrlAbs,
+    address: {
       "@type": "PostalAddress",
-      postalCode: profile.postal_code,
+      postalCode: profile.postal_code || undefined,
       addressCountry: "BE",
-    } : undefined,
-    url: profile.vitrine_slug ? `https://autora.be/garage/${profile.vitrine_slug}` : undefined,
+      addressRegion: "BE",
+    },
+    areaServed: { "@type": "Country", name: "Belgium" },
+    priceRange: "€€",
   } : localBusinessSchema;
 
   // ── Dynamic Open Graph meta for vitrine pages ──
@@ -340,10 +351,8 @@ const SellerProfile = () => {
   const ogDescription = isPublishedVitrine
     ? `Découvrez le stock de véhicules d'occasion de ${displayName}. Voitures vérifiées Car-Pass et prêtes pour le marché belge.`
     : `Profil vendeur de ${displayName} sur AutoRA. Consultez les annonces, avis et coordonnées.`;
-  const ogImage = effectiveCover || profile.avatar_url || undefined;
-  const ogUrl = profile.vitrine_slug
-    ? `https://autora.be/garage/${profile.vitrine_slug}`
-    : `https://autora.be/seller/${profile.user_id}`;
+  const ogImage = ogImageAbs;
+  const ogUrl = vitrineUrlAbs;
 
   return (
     <div className="page-gradient min-h-screen">
@@ -513,38 +522,78 @@ const SellerProfile = () => {
                         type="button"
                         variant="outline"
                         className="rounded-xl px-5 py-3 h-auto text-sm font-semibold border-border/60"
-                        onClick={async () => {
+                        onClick={(e) => {
+                          e.preventDefault();
                           const url = `https://autora.be/garage/${profile.vitrine_slug}`;
                           const title = `${displayName} — Vitrine sur AutoRA`;
                           const text = language === "nl"
                             ? "Bekijk de voertuigen in deze vitrine op AutoRA."
                             : "Découvrez les véhicules de cette vitrine sur AutoRA.";
-                          if (typeof navigator.share === "function") {
+
+                          // iOS/Safari fallback: synchronous textarea copy (preserves user gesture)
+                          const legacyCopy = () => {
                             try {
-                              await navigator.share({ title, text, url });
+                              const ta = document.createElement("textarea");
+                              ta.value = url;
+                              ta.setAttribute("readonly", "");
+                              ta.style.position = "fixed";
+                              ta.style.top = "0";
+                              ta.style.left = "0";
+                              ta.style.opacity = "0";
+                              document.body.appendChild(ta);
+                              ta.focus();
+                              ta.select();
+                              ta.setSelectionRange(0, url.length);
+                              const ok = document.execCommand("copy");
+                              document.body.removeChild(ta);
+                              return ok;
+                            } catch { return false; }
+                          };
+
+                          const notifyCopied = () => toast({
+                            title: language === "nl" ? "Link van vitrine gekopieerd!" : "Lien de la vitrine copié !",
+                          });
+                          const notifyFail = () => toast({
+                            title: language === "nl" ? "Kopiëren mislukt" : "Échec de la copie",
+                            variant: "destructive",
+                          });
+
+                          // 1) Web Share API — must be invoked synchronously inside the gesture (iOS Safari)
+                          const shareData = { title, text, url } as ShareData;
+                          const canUseShare = typeof navigator !== "undefined"
+                            && typeof navigator.share === "function"
+                            && (typeof (navigator as Navigator).canShare !== "function" || (navigator as Navigator).canShare!(shareData));
+
+                          if (canUseShare) {
+                            try {
+                              const p = navigator.share(shareData);
+                              if (p && typeof p.catch === "function") {
+                                p.catch((err: unknown) => {
+                                  const name = (err as DOMException)?.name;
+                                  if (name === "AbortError") return;
+                                  // Permission/NotAllowed on iOS → fallback clipboard
+                                  if (navigator.clipboard?.writeText) {
+                                    navigator.clipboard.writeText(url).then(notifyCopied).catch(() => {
+                                      legacyCopy() ? notifyCopied() : notifyFail();
+                                    });
+                                  } else {
+                                    legacyCopy() ? notifyCopied() : notifyFail();
+                                  }
+                                });
+                              }
                               return;
-                            } catch (err) {
-                              if ((err as DOMException)?.name === "AbortError") return;
+                            } catch {
+                              // synchronous throw → fall through to clipboard
                             }
                           }
-                          try {
-                            if (navigator.clipboard?.writeText) {
-                              await navigator.clipboard.writeText(url);
-                            } else {
-                              const ta = document.createElement("textarea");
-                              ta.value = url; ta.style.position = "fixed"; ta.style.opacity = "0";
-                              document.body.appendChild(ta); ta.select();
-                              document.execCommand("copy");
-                              document.body.removeChild(ta);
-                            }
-                            toast({
-                              title: language === "nl" ? "Link van vitrine gekopieerd!" : "Lien de la vitrine copié !",
+
+                          // 2) Clipboard fallback — try async then legacy (both inside this gesture tick)
+                          if (navigator.clipboard?.writeText) {
+                            navigator.clipboard.writeText(url).then(notifyCopied).catch(() => {
+                              legacyCopy() ? notifyCopied() : notifyFail();
                             });
-                          } catch {
-                            toast({
-                              title: language === "nl" ? "Kopiëren mislukt" : "Échec de la copie",
-                              variant: "destructive",
-                            });
+                          } else {
+                            legacyCopy() ? notifyCopied() : notifyFail();
                           }
                         }}
                       >
