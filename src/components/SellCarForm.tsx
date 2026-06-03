@@ -192,17 +192,12 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
     }
   }, [currentStep]);
 
-  // Clear persisted step when the wizard unmounts so a fresh visit
-  // (after navigating away and coming back) always starts at step 1
-  useEffect(() => {
-    return () => {
-      try {
-        sessionStorage.removeItem(STEP_STORAGE_KEY);
-      } catch {
-        // ignore
-      }
-    };
-  }, []);
+  // NOTE: we intentionally do NOT clear sessionStorage on unmount.
+  // If we did, an accidental form submit (or a mobile WebView reload during
+  // photo selection) would unmount the component, clear the key, then remount
+  // with currentStep = 1 again. Persisting the key across reloads is the
+  // entire point of this fix. The key is cleared explicitly when the listing
+  // is published successfully (see end of onSubmit).
 
   // Fire listing_started once when wizard mounts in create mode
   useEffect(() => {
@@ -620,6 +615,15 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
   };
 
   const onSubmit = async (data: SellCarFormData) => {
+    // Triple safety: only allow a real submit when the user is on the final step
+    // and explicitly clicked "Publier". Anything else (accidental button submit,
+    // file input bubbling, form keyboard Enter) is silently ignored.
+    // This is the last line of defense against mobile WebView reloads that
+    // bounce the user back to step 1 mid-upload.
+    if (currentStep !== 3) {
+      return;
+    }
+
     // Honeypot: silently pretend the listing was created so bots leave us alone
     if (isHoneypotTriggered(honeypotRef.current)) {
       toast.success(t('sellForm.publishSuccess') || 'Annonce publiée');
@@ -748,6 +752,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
           return;
         }
         queryClient.invalidateQueries({ queryKey: vehicleKeys.all });
+        try { sessionStorage.removeItem(STEP_STORAGE_KEY); } catch { /* ignore */ }
         toast.success(t('sellForm.successEdit'));
         navigate('/dashboard');
       } else {
@@ -765,6 +770,8 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
         queryClient.invalidateQueries({ queryKey: vehicleKeys.all });
         // Supprimer le brouillon après publication
         await clearDraft();
+        // Reset persisted wizard step so next listing starts fresh
+        try { sessionStorage.removeItem(STEP_STORAGE_KEY); } catch { /* ignore */ }
         trackEvent(EVENTS.LISTING_PUBLISHED, {
           brand: data.brand,
           model: data.model,
