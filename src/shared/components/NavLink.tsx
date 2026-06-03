@@ -31,7 +31,7 @@ const NavLink = forwardRef<HTMLAnchorElement, NavLinkProps>(({ to, children, bad
       className={`relative font-medium transition-all duration-200 hover:scale-105 link-hover ${
         isActive
           ? "text-primary"
-          : "text-muted-foreground hover:text-foreground"
+          : "text-foreground/80 hover:text-foreground"
       }`}
     >
       {children}
