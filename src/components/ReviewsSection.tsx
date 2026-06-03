@@ -45,7 +45,7 @@ const ReviewsSection = ({ carListingId, sellerId }: ReviewsSectionProps) => {
 
   const loadReviewerProfiles = async (userIds: string[]) => {
     if (userIds.length === 0) return;
-    const { data } = await supabase.rpc("get_reviewers_profiles", { _user_ids: userIds });
+    const { data } = await (supabase.rpc as any)("get_reviewers_profiles", { _user_ids: userIds });
     if (data) {
       const map: Record<string, ReviewerProfile> = {};
       for (const r of data as Array<{ user_id: string; display_name: string | null; avatar_url: string | null; is_admin: boolean }>) {
