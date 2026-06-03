@@ -26,6 +26,7 @@ const PARAM_KEYS = {
   sellerType: 'seller',
   bodyType: 'body',
   province: 'prov',
+  location: 'city',
   sort: 'sort',
 } as const;
 
