@@ -95,6 +95,7 @@ function filtersToParams(filters: VehicleFilters, sortBy: VehicleSortOption): UR
   if (filters.bodyType) params.set(PARAM_KEYS.bodyType, filters.bodyType);
   if (filters.color) params.set('color', filters.color);
   if (filters.province) params.set(PARAM_KEYS.province, filters.province);
+  if (filters.location) params.set(PARAM_KEYS.location, filters.location);
   if (sortBy !== 'recent') params.set(PARAM_KEYS.sort, sortBy);
 
   return params;
