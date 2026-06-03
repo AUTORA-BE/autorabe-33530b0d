@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { format } from "date-fns";
 import { fr, nl, enUS } from "date-fns/locale";
+import AdminBadge from "@/components/AdminBadge";
 
 interface Review {
   id: string;
@@ -14,6 +15,12 @@ interface Review {
   rating: number;
   comment: string | null;
   created_at: string;
+}
+
+interface ReviewerProfile {
+  display_name: string | null;
+  avatar_url: string | null;
+  is_admin: boolean;
 }
 
 interface ReviewsSectionProps {
