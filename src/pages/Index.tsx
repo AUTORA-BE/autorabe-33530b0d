@@ -65,50 +65,20 @@ const Index = () => {
   const profileModalRef = useRef<HTMLButtonElement>(null);
 
   const handleSearch = useCallback((brand: string, model: string, maxPrice: number, maxMileage?: number, fuelType?: string, transmission?: string, euroNorm?: string, color?: string) => {
-    const newVoiceFilters: VoiceFilter[] = [];
-    
-    if (brand) {
-      updateFilter("brand", brand);
-      newVoiceFilters.push({ type: 'brand', label: language === 'nl' ? 'Merk' : 'Marque', value: brand });
-    }
-    if (model) {
-      updateFilter("searchQuery", model);
-      newVoiceFilters.push({ type: 'model', label: language === 'nl' ? 'Model' : 'Modèle', value: model });
-    }
-    if (maxPrice && maxPrice < 1000000) {
-      updateFilter("maxPrice", maxPrice);
-      const budgetLabel = BUDGET_OPTIONS.find(o => o.value === maxPrice)?.label || `< ${maxPrice.toLocaleString('fr-BE')}€`;
-      newVoiceFilters.push({ type: 'budget', label: 'Budget', value: budgetLabel });
-    }
-    if (maxMileage) {
-      updateFilter("kmMax", maxMileage);
-      newVoiceFilters.push({ type: 'mileage', label: 'Km max', value: `${maxMileage.toLocaleString('fr-BE')} km` });
-    }
-    if (fuelType) {
-      updateFilter("fuelTypes", [fuelType]);
-      const fuelLabels: Record<string, string> = { essence: 'Essence', diesel: 'Diesel', electrique: 'Électrique', hybride: 'Hybride' };
-      newVoiceFilters.push({ type: 'fuel', label: language === 'nl' ? 'Brandstof' : 'Carburant', value: fuelLabels[fuelType] || fuelType });
-    }
-    if (transmission) {
-      updateFilter("transmission", transmission);
-      newVoiceFilters.push({ type: 'transmission', label: 'Transmission', value: transmission === 'automatique' ? 'Automatique' : 'Manuelle' });
-    }
-    if (euroNorm) {
-      updateFilter("euroNorm", euroNorm);
-      newVoiceFilters.push({ type: 'euroNorm', label: 'Norme Euro', value: `Euro ${euroNorm}` });
-    }
-    if (color) {
-      updateFilter("color", color);
-      const colorLabels: Record<string, string> = { blanc: 'Blanc', noir: 'Noir', gris: 'Gris', rouge: 'Rouge', bleu: 'Bleu', vert: 'Vert' };
-      newVoiceFilters.push({ type: 'color', label: 'Couleur', value: colorLabels[color] || color });
-    }
-    
-    setVoiceFilters(newVoiceFilters);
-    
-    setTimeout(() => {
-      document.getElementById("results-section")?.scrollIntoView({ behavior: "smooth" });
-    }, 100);
-  }, [updateFilter, language]);
+    // Centralisation : tous les CTA de recherche redirigent vers /recherche
+    // avec query params parsés par useFiltersUrlSync → parseFiltersFromParams.
+    const params = new URLSearchParams();
+    if (brand) params.set("brand", brand);
+    if (model) params.set("q", model);
+    if (maxPrice && maxPrice < 1000000) params.set("pmax", String(maxPrice));
+    if (maxMileage) params.set("kmax", String(maxMileage));
+    if (fuelType) params.set("fuel", fuelType);
+    if (transmission) params.set("trans", transmission);
+    if (euroNorm) params.set("euro", euroNorm);
+    if (color) params.set("color", color);
+    const qs = params.toString();
+    navigate(qs ? `/recherche?${qs}` : "/recherche");
+  }, [navigate]);
 
   const handleRemoveVoiceFilter = useCallback((type: VoiceFilter['type']) => {
     setVoiceFilters(prev => prev.filter(f => f.type !== type));
