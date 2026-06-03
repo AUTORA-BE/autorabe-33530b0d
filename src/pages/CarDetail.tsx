@@ -81,7 +81,11 @@ const CarDetail = () => {
     display_name: string | null;
     garage_name: string | null;
     user_type: string | null;
+    avatar_url?: string | null;
+    vitrine_slug?: string | null;
+    vitrine_published?: boolean | null;
   } | null>(null);
+
   const [isLoading, setIsLoading] = useState(true);
   const [relatedCars, setRelatedCars] = useState<Car[]>([]);
   const [currentUser, setCurrentUser] = useState<string | undefined>(undefined);
