@@ -16,7 +16,12 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Upload, ImagePlus, X, Eye, MessageSquare, Navigation, MapPin, Clock, Shield, Check, AlertCircle } from "lucide-react";
+import { Upload, ImagePlus, X, Eye, MessageSquare, Navigation, MapPin, Clock, Shield, Check, AlertCircle, Copy, Share2 } from "lucide-react";
+
+/** Slugify a free-text garage name for URL fallback. */
+const slugifyName = (s: string): string =>
+  s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60);
 
 const EditVitrine = () => {
   const { user, isLoading } = useAuth();
