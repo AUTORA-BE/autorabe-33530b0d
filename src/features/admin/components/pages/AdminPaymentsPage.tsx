@@ -264,6 +264,12 @@ export default function AdminPaymentsPage() {
           )}
         </TabsContent>
       </Tabs>
+
+      <UserContactCard
+        userId={detailUserId}
+        open={!!detailUserId}
+        onOpenChange={(o) => !o && setDetailUserId(null)}
+      />
     </div>
   );
 }
