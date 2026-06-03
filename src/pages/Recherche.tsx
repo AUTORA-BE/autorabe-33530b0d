@@ -819,7 +819,8 @@ const Recherche = () => {
         </section>
 
 
-        <section className="container mx-auto mb-8 flex items-center justify-between px-6 sm:px-8">
+        <section aria-labelledby="results-heading" className="container mx-auto mb-8 flex items-center justify-between px-6 sm:px-8">
+          <h2 id="results-heading" className="sr-only">Véhicules disponibles</h2>
           <p className="text-xs font-light tabular-nums text-foreground/70 sm:text-sm">
             <span className="font-semibold text-foreground">
               {(totalCount || cars.length).toLocaleString("fr-BE")}
