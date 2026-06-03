@@ -86,6 +86,7 @@ const CarDetail = () => {
     avatar_url?: string | null;
     vitrine_slug?: string | null;
     vitrine_published?: boolean | null;
+    is_admin?: boolean | null;
   } | null>(null);
 
   const [isLoading, setIsLoading] = useState(true);
@@ -631,6 +632,7 @@ const CarDetail = () => {
                   sellerName={sellerName}
                   tvaNumber={undefined}
                   sellerId={sellerContact?.user_id}
+                  isAdmin={!!sellerDisplay?.is_admin}
                 />
 
                 {isProSeller && (sellerDisplay?.vitrine_slug || sellerContact?.user_id) && (
@@ -901,6 +903,7 @@ const CarDetail = () => {
                   sellerName={sellerName}
                   tvaNumber={undefined}
                   sellerId={sellerContact?.user_id}
+                  isAdmin={!!sellerDisplay?.is_admin}
                 />
 
                 {/* Desktop "Vitrine Garage" link — mirrors the mobile block under the seller name */}

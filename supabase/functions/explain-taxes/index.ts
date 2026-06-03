@@ -103,7 +103,7 @@ Contexte du véhicule :
 - Marque/Modèle : ${brand} ${model}
 - Année : ${year ?? "inconnue"}
 - Carburant : ${fuelType}
-- Puissance : ${power ?? "inconnue"} kW
+- Puissance : ${power ?? "inconnue"} ch (chevaux DIN — convertis en kW si besoin : 1 kW ≈ 1,36 ch)
 - Norme Euro : ${euroNorm || "inconnue"}
 - Région de l'acheteur : ${region}
 

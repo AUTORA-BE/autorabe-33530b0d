@@ -61,12 +61,38 @@ export function useSubscription() {
       checkSubscription();
     });
 
-    // Refresh every 60 seconds
+    // Refresh every 60 seconds as a safety net
     const interval = setInterval(checkSubscription, 60_000);
+
+    // Refetch when the tab regains focus / visibility (admin changes a sub elsewhere)
+    const onVisible = () => {
+      if (document.visibilityState === "visible") checkSubscription();
+    };
+    window.addEventListener("focus", checkSubscription);
+    document.addEventListener("visibilitychange", onVisible);
+
+    // Realtime: instant refresh when the current user's subscription row changes
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+    (async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      const uid = session?.user?.id;
+      if (!uid) return;
+      channel = supabase
+        .channel(`subscription-sync-${uid}`)
+        .on(
+          "postgres_changes",
+          { event: "*", schema: "public", table: "subscriptions", filter: `user_id=eq.${uid}` },
+          () => checkSubscription()
+        )
+        .subscribe();
+    })();
 
     return () => {
       subscription.unsubscribe();
       clearInterval(interval);
+      window.removeEventListener("focus", checkSubscription);
+      document.removeEventListener("visibilitychange", onVisible);
+      if (channel) supabase.removeChannel(channel);
     };
   }, [checkSubscription]);
 

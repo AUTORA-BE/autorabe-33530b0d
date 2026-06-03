@@ -1,6 +1,7 @@
 import { Building2, User, Shield, AlertCircle, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useLocalizedHref } from "@/lib/useLocalizedHref";
+import AdminBadge from "@/components/AdminBadge";
 
 interface SellerBadgeProps {
   sellerType?: string | null;
@@ -8,6 +9,7 @@ interface SellerBadgeProps {
   tvaNumber?: string | null;
   compact?: boolean;
   sellerId?: string;
+  isAdmin?: boolean;
 }
 
 const SellerBadge = ({
@@ -16,30 +18,34 @@ const SellerBadge = ({
   tvaNumber,
   compact = false,
   sellerId,
+  isAdmin = false,
 }: SellerBadgeProps) => {
   const isProfessional = sellerType === "professionnel";
   const localized = useLocalizedHref();
 
   if (compact) {
     return (
-      <span
-        className={`inline-flex items-center gap-1 px-2 py-1 rounded-2xl text-xs font-medium ${
-          isProfessional
-            ? "bg-primary/10 text-primary"
-            : "bg-muted text-muted-foreground"
-        }`}
-      >
-        {isProfessional ? (
-          <>
-            <Building2 className="w-3 h-3" />
-            Pro
-          </>
-        ) : (
-          <>
-            <User className="w-3 h-3" />
-            Particulier
-          </>
-        )}
+      <span className="inline-flex items-center gap-1.5">
+        <span
+          className={`inline-flex items-center gap-1 px-2 py-1 rounded-2xl text-xs font-medium ${
+            isProfessional
+              ? "bg-primary/10 text-primary"
+              : "bg-muted text-muted-foreground"
+          }`}
+        >
+          {isProfessional ? (
+            <>
+              <Building2 className="w-3 h-3" />
+              Pro
+            </>
+          ) : (
+            <>
+              <User className="w-3 h-3" />
+              Particulier
+            </>
+          )}
+        </span>
+        {isAdmin && <AdminBadge size="xs" />}
       </span>
     );
   }
@@ -47,7 +53,7 @@ const SellerBadge = ({
   return (
     <div className="p-4 rounded-2xl bg-secondary/50">
       {/* Seller Type Badge */}
-      <div className="flex items-center gap-2 mb-2">
+      <div className="flex items-center gap-2 mb-2 flex-wrap">
         {isProfessional ? (
           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl text-sm font-semibold bg-primary/10 text-primary">
             <Building2 className="w-4 h-4" />
@@ -59,6 +65,7 @@ const SellerBadge = ({
             Particulier
           </span>
         )}
+        {isAdmin && <AdminBadge size="sm" />}
       </div>
 
       {/* Seller Name */}
