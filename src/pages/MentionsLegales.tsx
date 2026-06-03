@@ -23,7 +23,7 @@ AutoRA est actuellement mis à disposition à des fins d'évaluation et de pré-
 — Aucun paiement n'est traité par AutoRA. L'inscription et l'utilisation sont gratuites.
 — Les éventuelles transactions entre utilisateurs se déroulent directement entre eux, hors plateforme.
 
-L'éditeur procédera à son inscription à la Banque-Carrefour des Entreprises (BCE) **avant l'activation des fonctionnalités payantes**. La présente page sera alors mise à jour avec les coordonnées complètes (numéro BCE, numéro de TVA si assujetti, forme juridique définitive, adresse de siège).
+
 
 AutoRA est une plateforme de mise en relation entre vendeurs et acheteurs de véhicules d'occasion en Belgique. La plateforme n'intervient pas dans les transactions entre particuliers et n'est pas partie aux contrats de vente conclus entre utilisateurs.`,
       },
