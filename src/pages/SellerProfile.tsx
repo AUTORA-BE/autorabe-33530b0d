@@ -935,11 +935,16 @@ function EditVitrineDialog({ open, onOpenChange, userId, initial, onSaved, langu
   const handleSave = async () => {
     setSaving(true);
     const services = servicesText.split("\n").map(s => s.trim()).filter(Boolean);
+    // Écrit en MIROIR : colonnes legacy + vitrine_* pour que la vitrine soit visible
+    // à la fois sur /seller/:userId (lecture directe) et sur /garage/:slug (RPC get_public_vitrine).
     const updates = {
       cover_image_url: coverUrl || null,
       opening_hours: hours || null,
       services,
       presentation: presentation || null,
+      vitrine_cover_url: coverUrl || null,
+      vitrine_about: presentation || null,
+      vitrine_services: services,
     };
     const { error } = await supabase.from("profiles").update(updates).eq("user_id", userId);
     setSaving(false);
