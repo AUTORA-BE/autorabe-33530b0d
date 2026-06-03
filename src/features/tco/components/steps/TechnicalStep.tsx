@@ -15,6 +15,13 @@ interface Props {
 
 const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
 
+// Belgian fiscal power approximation from HP (kW = ch * 0.7355).
+// Rough mapping: CV fiscaux ≈ round(kW / 8) + 2, clamped 4..20.
+const deriveFiscalPower = (hp: number) => {
+  const kw = hp * 0.7355;
+  return clamp(Math.round(kw / 8) + 2, 4, 20);
+};
+
 const TechnicalStep = ({ formData, updateField }: Props) => {
   const isElectric = formData.fuelType === 'electric';
   const consoUnit = isElectric ? 'kWh/100km' : 'L/100km';
@@ -22,6 +29,17 @@ const TechnicalStep = ({ formData, updateField }: Props) => {
   const [fpInput, setFpInput] = useState(String(formData.fiscalPower));
   const [hpInput, setHpInput] = useState(String(formData.horsepower));
   const [consoInput, setConsoInput] = useState(String(formData.consumption));
+  const [fpTouched, setFpTouched] = useState(false);
+
+  const syncFromHp = (hp: number) => {
+    updateField('horsepower', hp);
+    setHpInput(String(hp));
+    if (!fpTouched) {
+      const fp = deriveFiscalPower(hp);
+      updateField('fiscalPower', fp);
+      setFpInput(String(fp));
+    }
+  };
 
   return (
     <div>
@@ -53,6 +71,7 @@ const TechnicalStep = ({ formData, updateField }: Props) => {
                 const v = clamp(Math.round(Number(fpInput) || 7), 4, 20);
                 updateField('fiscalPower', v);
                 setFpInput(String(v));
+                setFpTouched(true);
               }}
               min={4}
               max={20}
@@ -62,12 +81,17 @@ const TechnicalStep = ({ formData, updateField }: Props) => {
           </div>
           <Slider
             value={[formData.fiscalPower]}
-            onValueChange={([v]) => { updateField('fiscalPower', v); setFpInput(String(v)); }}
+            onValueChange={([v]) => { updateField('fiscalPower', v); setFpInput(String(v)); setFpTouched(true); }}
             min={4}
             max={20}
             step={1}
             className="[&_[role=slider]]:border-primary [&_[role=slider]]:bg-background [&_span:first-child>span]:bg-primary"
           />
+          {!fpTouched && (
+            <p className="text-xs text-muted-foreground mt-2">
+              Calculé automatiquement depuis la puissance moteur. Modifiez pour personnaliser.
+            </p>
+          )}
         </div>
 
         {/* Horsepower */}
@@ -88,8 +112,7 @@ const TechnicalStep = ({ formData, updateField }: Props) => {
               onChange={e => setHpInput(e.target.value)}
               onBlur={() => {
                 const v = clamp(Math.round(Number(hpInput) || 150), 50, 800);
-                updateField('horsepower', v);
-                setHpInput(String(v));
+                syncFromHp(v);
               }}
               min={50}
               max={800}
@@ -99,13 +122,14 @@ const TechnicalStep = ({ formData, updateField }: Props) => {
           </div>
           <Slider
             value={[formData.horsepower]}
-            onValueChange={([v]) => { updateField('horsepower', v); setHpInput(String(v)); }}
+            onValueChange={([v]) => syncFromHp(v)}
             min={50}
             max={800}
             step={1}
             className="[&_[role=slider]]:border-primary [&_[role=slider]]:bg-background [&_span:first-child>span]:bg-primary"
           />
         </div>
+
 
         {/* Consumption */}
         <div>

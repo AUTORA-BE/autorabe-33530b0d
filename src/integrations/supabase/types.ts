@@ -1476,6 +1476,15 @@ export type Database = {
           vitrine_slug: string
         }[]
       }
+      get_reviewers_profiles: {
+        Args: { _user_ids: string[] }
+        Returns: {
+          avatar_url: string
+          display_name: string
+          is_admin: boolean
+          user_id: string
+        }[]
+      }
       get_seller_contact: {
         Args: { listing_id: string }
         Returns: {
@@ -1573,6 +1582,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_admin_user: { Args: { _user_id: string }; Returns: boolean }
       is_user_suspended: { Args: { _user_id: string }; Returns: boolean }
       is_vitrine_eligible: { Args: { _user_id: string }; Returns: boolean }
       is_vitrine_slug_available: {
