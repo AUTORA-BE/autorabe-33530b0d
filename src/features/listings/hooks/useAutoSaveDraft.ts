@@ -54,6 +54,7 @@ export function useAutoSaveDraft(isEditMode: boolean) {
   const draftRef = useRef<DraftData | null>(null);
   const savedRef = useRef(false);
   const draftLoadedRef = useRef(false); // prevents auto-save from overwriting before draft is loaded
+  const lastDraftKeyRef = useRef<string>(''); // dedupe identical payloads to avoid setState loops
   const [debouncedDraft, setDebouncedDraft] = useState<DraftData | null>(null);
   const debouncedValue = useDebounce(debouncedDraft, 2000);
 
@@ -67,7 +68,13 @@ export function useAutoSaveDraft(isEditMode: boolean) {
     const hasMeaningfulData = formData.brand || formData.model || (formData.price && formData.price > 0);
     if (!hasMeaningfulData) return;
 
+    // Dedupe: react-hook-form's watch() returns a new object reference on each render,
+    // so we must compare payload content to avoid an infinite setState→render loop.
     const draft = { formData, photoUrls };
+    const key = JSON.stringify(draft);
+    if (key === lastDraftKeyRef.current) return;
+    lastDraftKeyRef.current = key;
+
     draftRef.current = draft;
     savedRef.current = false;
     setDebouncedDraft(draft);
