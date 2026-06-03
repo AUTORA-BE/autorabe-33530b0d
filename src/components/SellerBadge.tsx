@@ -1,6 +1,7 @@
 import { Building2, User, Shield, AlertCircle, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useLocalizedHref } from "@/lib/useLocalizedHref";
+import AdminBadge from "@/components/AdminBadge";
 
 interface SellerBadgeProps {
   sellerType?: string | null;
@@ -8,6 +9,7 @@ interface SellerBadgeProps {
   tvaNumber?: string | null;
   compact?: boolean;
   sellerId?: string;
+  isAdmin?: boolean;
 }
 
 const SellerBadge = ({
@@ -16,6 +18,7 @@ const SellerBadge = ({
   tvaNumber,
   compact = false,
   sellerId,
+  isAdmin = false,
 }: SellerBadgeProps) => {
   const isProfessional = sellerType === "professionnel";
   const localized = useLocalizedHref();
