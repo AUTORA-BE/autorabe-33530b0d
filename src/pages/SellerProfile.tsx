@@ -483,6 +483,118 @@ const SellerProfile = () => {
           </div>
         </motion.div>
 
+        {/* ── Vitrine Section — visible immédiatement (au-dessus des onglets) ── */}
+        {(effectiveAbout || (effectiveServices && effectiveServices.length > 0) || profile.opening_hours) && (
+          <motion.section
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: "easeOut", delay: 0.05 }}
+            className="container mx-auto px-6 sm:px-8 mb-8"
+            aria-labelledby="vitrine-heading"
+          >
+            <div className="rounded-2xl border border-primary/15 bg-card/80 backdrop-blur-sm overflow-hidden">
+              <div className="px-6 sm:px-8 pt-6 pb-2 flex items-center justify-between gap-3 flex-wrap">
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 text-primary text-[11px] font-semibold uppercase tracking-wider">
+                    <Shield className="w-3 h-3" strokeWidth={2} />
+                    {language === "nl" ? "Vitrine" : "Vitrine"}
+                  </span>
+                  <h2 id="vitrine-heading" className="font-serif text-xl font-light text-foreground">
+                    {language === "nl" ? "Onze garage" : "Notre garage"}
+                  </h2>
+                </div>
+                {isOwnProfile && (
+                  <Button
+                    asChild
+                    size="sm"
+                    variant="ghost"
+                    className="h-8 rounded-lg text-xs text-muted-foreground hover:text-foreground"
+                  >
+                    <Link to="/dashboard/vitrine">
+                      <Pencil className="w-3 h-3 mr-1.5" />
+                      {language === "nl" ? "Vitrine beheren" : "Gérer la vitrine"}
+                    </Link>
+                  </Button>
+                )}
+              </div>
+
+              <div className="px-6 sm:px-8 py-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* About */}
+                {effectiveAbout && (
+                  <div className="md:col-span-2">
+                    <div className="flex items-center gap-2 mb-2.5">
+                      <FileText className="w-4 h-4 text-primary" strokeWidth={1.5} />
+                      <h3 className="text-sm font-medium text-foreground uppercase tracking-wider">
+                        {language === "nl" ? "Voorstelling" : "Présentation"}
+                      </h3>
+                    </div>
+                    <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line line-clamp-6">
+                      {effectiveAbout}
+                    </p>
+                  </div>
+                )}
+
+                {/* Opening hours */}
+                {profile.opening_hours && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-2.5">
+                      <Clock className="w-4 h-4 text-primary" strokeWidth={1.5} />
+                      <h3 className="text-sm font-medium text-foreground uppercase tracking-wider">
+                        {language === "nl" ? "Openingsuren" : "Horaires"}
+                      </h3>
+                    </div>
+                    <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+                      {profile.opening_hours}
+                    </p>
+                  </div>
+                )}
+
+                {/* Services */}
+                {effectiveServices && effectiveServices.length > 0 && (
+                  <div className="md:col-span-3">
+                    <div className="flex items-center gap-2 mb-2.5">
+                      <Wrench className="w-4 h-4 text-primary" strokeWidth={1.5} />
+                      <h3 className="text-sm font-medium text-foreground uppercase tracking-wider">
+                        {language === "nl" ? "Diensten" : "Services proposés"}
+                      </h3>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {effectiveServices.map((s, i) => (
+                        <span
+                          key={i}
+                          className="inline-flex items-center px-3 py-1.5 rounded-full bg-primary/[0.06] border border-primary/15 text-xs font-medium text-foreground"
+                        >
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </motion.section>
+        )}
+
+        {/* Vitrine vide — incite le propriétaire à la remplir */}
+        {isOwnProfile && !effectiveAbout && !(effectiveServices && effectiveServices.length > 0) && !profile.opening_hours && (
+          <div className="container mx-auto px-6 sm:px-8 mb-8">
+            <div className="rounded-2xl border border-dashed border-border bg-card/40 px-6 py-8 text-center">
+              <Shield className="w-6 h-6 text-primary mx-auto mb-3" strokeWidth={1.5} />
+              <h3 className="font-serif text-lg font-light text-foreground mb-1.5">
+                {language === "nl" ? "Personaliseer uw vitrine" : "Personnalisez votre vitrine"}
+              </h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                {language === "nl"
+                  ? "Voeg een omslagfoto, voorstelling, diensten en openingsuren toe."
+                  : "Ajoutez une photo de couverture, une présentation, vos services et vos horaires."}
+              </p>
+              <Button onClick={() => setEditOpen(true)} className="rounded-lg">
+                <Pencil className="w-4 h-4 mr-2" strokeWidth={1.5} />
+                {language === "nl" ? "Vitrine instellen" : "Configurer ma vitrine"}
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* ── Tabs ── */}
         <div className="container mx-auto px-6 sm:px-8">
@@ -935,11 +1047,16 @@ function EditVitrineDialog({ open, onOpenChange, userId, initial, onSaved, langu
   const handleSave = async () => {
     setSaving(true);
     const services = servicesText.split("\n").map(s => s.trim()).filter(Boolean);
+    // Écrit en MIROIR : colonnes legacy + vitrine_* pour que la vitrine soit visible
+    // à la fois sur /seller/:userId (lecture directe) et sur /garage/:slug (RPC get_public_vitrine).
     const updates = {
       cover_image_url: coverUrl || null,
       opening_hours: hours || null,
       services,
       presentation: presentation || null,
+      vitrine_cover_url: coverUrl || null,
+      vitrine_about: presentation || null,
+      vitrine_services: services,
     };
     const { error } = await supabase.from("profiles").update(updates).eq("user_id", userId);
     setSaving(false);
