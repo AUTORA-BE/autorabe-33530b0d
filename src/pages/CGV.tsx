@@ -17,7 +17,7 @@ const renderBody = (body: string) =>
 const fr = {
   title: "Conditions Générales de Vente",
   subtitle: "Abonnements et services payants — Version mai 2026",
-  intro: `Les présentes Conditions Générales de Vente (ci-après « CGV ») s'appliquent à tous les achats de services payants effectués sur la plateforme AutoRA.be (ci-après « AutoRA »), exploitée par [Nom / Société — à compléter], [adresse — à compléter], Belgique.
+  intro: `Les présentes Conditions Générales de Vente (ci-après « CGV ») s'appliquent à tous les achats de services payants effectués sur la plateforme AutoRA.be (ci-après « AutoRA »), éditée par Alperen Gursever (personne physique éditrice — phase bêta, pré-lancement public), Belgique. Contact : autoracontact@gmail.com.
 
 Les présentes CGV constituent le contrat conclu entre AutoRA et l'acheteur. Elles prévalent sur tout document de l'acheteur.`,
   sections: [
@@ -111,7 +111,7 @@ AutoRA ne peut être tenue responsable de l'inexécution de ses obligations en c
       title: "7. Facturation et TVA",
       body: `Les utilisateurs professionnels (vendeurs déclarés comme professionnels lors de l'inscription) peuvent renseigner leur numéro de TVA intracommunautaire pour bénéficier du mécanisme d'autoliquidation applicable aux services B2B.
 
-Les factures sont disponibles au format PDF dans l'espace client et sont émises par AutoRA ([n° TVA — à compléter]).`,
+Durant la phase bêta, AutoRA n'est pas assujettie à la TVA et aucun service payant n'est facturé. Les factures électroniques (au format PDF, disponibles dans l'espace client) seront émises dès l'activation des fonctionnalités payantes, avec mention du numéro BCE et, le cas échéant, du numéro de TVA de l'éditeur.`,
     },
     {
       title: "8. Service après-vente et litiges",
@@ -123,7 +123,7 @@ Les factures sont disponibles au format PDF dans l'espace client et sont émises
     },
     {
       title: "9. Droit applicable",
-      body: `Les présentes CGV sont régies par le droit belge. Tout litige est soumis à la compétence exclusive des tribunaux de l'arrondissement judiciaire de [à compléter], sous réserve des dispositions légales impératives applicables aux consommateurs.`,
+      body: `Les présentes CGV sont régies par le droit belge. Tout litige est soumis à la compétence exclusive des tribunaux de l'arrondissement judiciaire du domicile de l'éditeur, Belgique, sous réserve des dispositions légales impératives applicables aux consommateurs.`,
     },
   ],
 };
@@ -131,7 +131,7 @@ Les factures sont disponibles au format PDF dans l'espace client et sont émises
 const nl = {
   title: "Algemene Verkoopvoorwaarden",
   subtitle: "Abonnementen en betalende diensten — Versie mei 2026",
-  intro: `Deze Algemene Verkoopvoorwaarden (hierna « AVV ») zijn van toepassing op alle aankopen van betalende diensten op het AutoRA.be platform, uitgebaat door [Naam / Vennootschap — in te vullen], [adres — in te vullen], België.
+  intro: `Deze Algemene Verkoopvoorwaarden (hierna « AVV ») zijn van toepassing op alle aankopen van betalende diensten op het AutoRA.be platform, uitgegeven door Alperen Gursever (natuurlijke persoon uitgever — bètafase, publieke pre-lancering), België. Contact: autoracontact@gmail.com.
 
 Deze AVV vormen het contract tussen AutoRA en de koper. Zij hebben voorrang op elk document van de koper.`,
   sections: [
@@ -223,7 +223,7 @@ AutoRA kan niet aansprakelijk worden gesteld voor het niet-nakomen van haar verp
       title: "7. Facturatie en BTW",
       body: `Professionele gebruikers (verkopers die bij de registratie als professioneel zijn opgegeven) kunnen hun intracommunautair BTW-nummer opgeven om te profiteren van het verleggingsmechanisme dat van toepassing is op B2B-diensten.
 
-Facturen zijn beschikbaar in PDF-formaat in de klantenruimte en worden uitgesteld door AutoRA ([BTW-nummer — in te vullen]).`,
+Tijdens de bètafase is AutoRA niet BTW-plichtig en wordt er geen enkele betalende dienst gefactureerd. Elektronische facturen (PDF, beschikbaar in de klantenruimte) zullen worden uitgereikt zodra de betalende functies geactiveerd zijn, met vermelding van het KBO-nummer en, in voorkomend geval, het BTW-nummer van de uitgever.`,
     },
     {
       title: "8. Klantenservice en geschillen",
@@ -235,7 +235,7 @@ Facturen zijn beschikbaar in PDF-formaat in de klantenruimte en worden uitgestel
     },
     {
       title: "9. Toepasselijk recht",
-      body: `Deze AVV worden beheerst door het Belgisch recht. Elk geschil valt onder de exclusieve bevoegdheid van de rechtbanken van het gerechtelijk arrondissement [in te vullen], onder voorbehoud van de dwingende wettelijke bepalingen die op consumenten van toepassing zijn.`,
+      body: `Deze AVV worden beheerst door het Belgisch recht. Elk geschil valt onder de exclusieve bevoegdheid van de rechtbanken van het gerechtelijk arrondissement van de woonplaats van de uitgever, België, onder voorbehoud van de dwingende wettelijke bepalingen die op consumenten van toepassing zijn.`,
     },
   ],
 };
@@ -243,7 +243,7 @@ Facturen zijn beschikbaar in PDF-formaat in de klantenruimte en worden uitgestel
 const de = {
   title: "Allgemeine Verkaufsbedingungen",
   subtitle: "Abonnements und kostenpflichtige Dienste — Version Mai 2026",
-  intro: `Diese Allgemeinen Verkaufsbedingungen (nachfolgend „AVB") gelten für alle Käufe kostenpflichtiger Dienste auf der Plattform AutoRA.be (nachfolgend „AutoRA"), betrieben von [Name / Gesellschaft — auszufüllen], [Adresse — auszufüllen], Belgien.
+  intro: `Diese Allgemeinen Verkaufsbedingungen (nachfolgend „AVB") gelten für alle Käufe kostenpflichtiger Dienste auf der Plattform AutoRA.be (nachfolgend „AutoRA"), herausgegeben von Alperen Gursever (natürliche Person als Herausgeber — Beta-Phase, öffentlicher Pre-Launch), Belgien. Kontakt: autoracontact@gmail.com.
 
 Diese AVB bilden den zwischen AutoRA und dem Käufer geschlossenen Vertrag. Sie haben Vorrang vor allen Dokumenten des Käufers.`,
   sections: [
@@ -335,7 +335,7 @@ AutoRA kann nicht für die Nichterfüllung ihrer Verpflichtungen im Falle höher
       title: "7. Rechnungsstellung und Mehrwertsteuer",
       body: `Gewerbliche Nutzer (bei der Registrierung als professionell gemeldete Verkäufer) können ihre innergemeinschaftliche Umsatzsteuer-ID angeben, um vom Reverse-Charge-Mechanismus für B2B-Dienstleistungen zu profitieren.
 
-Rechnungen stehen im PDF-Format im Kundenbereich zur Verfügung und werden von AutoRA ausgestellt ([USt-IdNr. — auszufüllen]).`,
+Während der Beta-Phase ist AutoRA nicht mehrwertsteuerpflichtig und es werden keine kostenpflichtigen Dienste in Rechnung gestellt. Elektronische Rechnungen (PDF, im Kundenbereich verfügbar) werden ausgestellt, sobald die kostenpflichtigen Funktionen aktiviert sind, mit Angabe der ZUD-Nummer (BCE/KBO) und gegebenenfalls der USt-IdNr. des Herausgebers.`,
     },
     {
       title: "8. Kundendienst und Streitbeilegung",
@@ -347,7 +347,7 @@ Rechnungen stehen im PDF-Format im Kundenbereich zur Verfügung und werden von A
     },
     {
       title: "9. Anwendbares Recht",
-      body: `Diese AVB unterliegen belgischem Recht. Alle Streitigkeiten fallen unter die ausschließliche Zuständigkeit der Gerichte des Gerichtsbezirks [auszufüllen], vorbehaltlich der auf Verbraucher anwendbaren zwingenden gesetzlichen Bestimmungen.`,
+      body: `Diese AVB unterliegen belgischem Recht. Alle Streitigkeiten fallen unter die ausschließliche Zuständigkeit der Gerichte des Gerichtsbezirks des Wohnsitzes des Herausgebers, Belgien, vorbehaltlich der auf Verbraucher anwendbaren zwingenden gesetzlichen Bestimmungen.`,
     },
   ],
 };
@@ -355,7 +355,7 @@ Rechnungen stehen im PDF-Format im Kundenbereich zur Verfügung und werden von A
 const en = {
   title: "Terms of Sale",
   subtitle: "Subscriptions and paid services — Version May 2026",
-  intro: `These Terms of Sale (hereinafter "ToS") apply to all purchases of paid services made on the AutoRA.be platform (hereinafter "AutoRA"), operated by [Name / Company — to be completed], [address — to be completed], Belgium.
+  intro: `These Terms of Sale (hereinafter "ToS") apply to all purchases of paid services made on the AutoRA.be platform (hereinafter "AutoRA"), published by Alperen Gursever (natural person publisher — beta phase, public pre-launch), Belgium. Contact: autoracontact@gmail.com.
 
 These ToS constitute the contract concluded between AutoRA and the buyer. They prevail over any buyer document.`,
   sections: [
@@ -447,7 +447,7 @@ AutoRA cannot be held liable for the non-performance of its obligations in the e
       title: "7. Invoicing and VAT",
       body: `Professional users (sellers declared as professionals at registration) may provide their intra-community VAT number to benefit from the reverse charge mechanism applicable to B2B services.
 
-Invoices are available in PDF format in the customer area and are issued by AutoRA ([VAT number — to be completed]).`,
+During the beta phase, AutoRA is not VAT-registered and no paid service is invoiced. Electronic invoices (PDF, available in the customer area) will be issued as soon as paid features are activated, with the publisher's BCE/KBO number and, where applicable, VAT number.`,
     },
     {
       title: "8. Customer service and disputes",
@@ -459,7 +459,7 @@ Invoices are available in PDF format in the customer area and are issued by Auto
     },
     {
       title: "9. Applicable law",
-      body: `These ToS are governed by Belgian law. All disputes are subject to the exclusive jurisdiction of the courts of the judicial district of [to be completed], subject to mandatory legal provisions applicable to consumers.`,
+      body: `These ToS are governed by Belgian law. All disputes are subject to the exclusive jurisdiction of the courts of the judicial district of the publisher's domicile, Belgium, subject to mandatory legal provisions applicable to consumers.`,
     },
   ],
 };
