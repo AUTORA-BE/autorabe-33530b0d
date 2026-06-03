@@ -1022,6 +1022,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <Honeypot ref={honeypotRef} />
 
           <AnimatePresence mode="wait" custom={slideDirection}>
           {/* ===== STEP 1: Vehicle Info + Contact ===== */}
