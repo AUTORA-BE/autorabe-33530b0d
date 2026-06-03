@@ -32,6 +32,7 @@ const ReviewsSection = ({ carListingId, sellerId }: ReviewsSectionProps) => {
   const { t, language } = useLanguage();
   const { toast } = useToast();
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviewers, setReviewers] = useState<Record<string, ReviewerProfile>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
@@ -42,15 +43,25 @@ const ReviewsSection = ({ carListingId, sellerId }: ReviewsSectionProps) => {
 
   const dateLocale = language === "fr" ? fr : language === "nl" ? nl : enUS;
 
+  const loadReviewerProfiles = async (userIds: string[]) => {
+    if (userIds.length === 0) return;
+    const { data } = await supabase.rpc("get_reviewers_profiles", { _user_ids: userIds });
+    if (data) {
+      const map: Record<string, ReviewerProfile> = {};
+      for (const r of data as Array<{ user_id: string; display_name: string | null; avatar_url: string | null; is_admin: boolean }>) {
+        map[r.user_id] = { display_name: r.display_name, avatar_url: r.avatar_url, is_admin: !!r.is_admin };
+      }
+      setReviewers(prev => ({ ...prev, ...map }));
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
-      // Get current user
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
         setCurrentUserId(session.user.id);
       }
 
-      // Fetch reviews
       const { data, error } = await supabase
         .from("reviews")
         .select("*")
@@ -59,10 +70,10 @@ const ReviewsSection = ({ carListingId, sellerId }: ReviewsSectionProps) => {
 
       if (!error && data) {
         setReviews(data);
-        // Check if user already reviewed
         if (session) {
           setUserHasReviewed(data.some((r: Review) => r.user_id === session.user.id));
         }
+        await loadReviewerProfiles([...new Set(data.map((r: Review) => r.user_id))]);
       }
       setIsLoading(false);
     };
