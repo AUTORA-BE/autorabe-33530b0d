@@ -15,6 +15,13 @@ interface Props {
 
 const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
 
+// Belgian fiscal power approximation from HP (kW = ch * 0.7355).
+// Rough mapping: CV fiscaux ≈ round(kW / 8) + 2, clamped 4..20.
+const deriveFiscalPower = (hp: number) => {
+  const kw = hp * 0.7355;
+  return clamp(Math.round(kw / 8) + 2, 4, 20);
+};
+
 const TechnicalStep = ({ formData, updateField }: Props) => {
   const isElectric = formData.fuelType === 'electric';
   const consoUnit = isElectric ? 'kWh/100km' : 'L/100km';
@@ -22,6 +29,17 @@ const TechnicalStep = ({ formData, updateField }: Props) => {
   const [fpInput, setFpInput] = useState(String(formData.fiscalPower));
   const [hpInput, setHpInput] = useState(String(formData.horsepower));
   const [consoInput, setConsoInput] = useState(String(formData.consumption));
+  const [fpTouched, setFpTouched] = useState(false);
+
+  const syncFromHp = (hp: number) => {
+    updateField('horsepower', hp);
+    setHpInput(String(hp));
+    if (!fpTouched) {
+      const fp = deriveFiscalPower(hp);
+      updateField('fiscalPower', fp);
+      setFpInput(String(fp));
+    }
+  };
 
   return (
     <div>
