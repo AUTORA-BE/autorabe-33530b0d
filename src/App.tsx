@@ -72,6 +72,7 @@ const ServerError = lazy(() => import("./pages/ServerError"));
 const MarquesElectriques = lazy(() => import("./pages/MarquesElectriques"));
 const FiscaliteAuto2026 = lazy(() => import("./pages/FiscaliteAuto2026"));
 const AutoFiscaliteit2026 = lazy(() => import("./pages/AutoFiscaliteit2026"));
+const Invitation = lazy(() => import("./pages/Invitation"));
 
 /** Minimal loading fallback shown while lazy chunks load */
 function PageLoader() {
@@ -203,6 +204,10 @@ function AppPages() {
       <Route path="/blog/:slug" element={<PageTransition><BlogArticle /></PageTransition>} />
       <Route path="/fiscalite-auto-2026" element={<PageTransition><FiscaliteAuto2026 /></PageTransition>} />
       <Route path="/autofiscaliteit-2026" element={<PageTransition><AutoFiscaliteit2026 /></PageTransition>} />
+      <Route path="/invitation" element={<PageTransition><Invitation /></PageTransition>} />
+      <Route path="/uitnodiging" element={<PageTransition><Invitation /></PageTransition>} />
+      <Route path="/invite" element={<PageTransition><Invitation /></PageTransition>} />
+      <Route path="/einladung" element={<PageTransition><Invitation /></PageTransition>} />
       <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
     </Routes>
   );
