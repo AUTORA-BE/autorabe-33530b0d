@@ -187,6 +187,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
   const [slideDirection, setSlideDirection] = useState<1 | -1>(1);
   const isEditMode = !!editId;
   const lastBroadcastKeyRef = useRef<string>('');
+  const honeypotRef = useRef<HTMLInputElement>(null);
   const { canPublish, activeCount, maxAllowed, isLoading: limitLoading } = useListingLimit();
   const { updateDraft, loadDraft, clearDraft, lastSaved, isSaving } = useAutoSaveDraft(isEditMode);
 
