@@ -171,6 +171,7 @@ export const defaultVehicleFilters: VehicleFilters = {
   bodyType: "",
   color: "",
   province: "",
+  location: "",
   features: [],
   maxDistanceKm: null,
   userLat: null,
