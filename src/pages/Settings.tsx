@@ -484,6 +484,7 @@ export default function Settings() {
                       <SettingsRow icon={Heart} tone="blue" label="Favoris" description={`${favoritesCount} véhicule(s)`} onClick={() => navigate("/favorites")} />
                       <SettingsRow icon={MessageCircle} tone="blue" label="Messages" onClick={() => navigate("/messages")} />
                       <SettingsRow icon={AlertBell} tone="blue" label="Mes alertes" onClick={() => navigate("/mes-alertes")} />
+                      <SettingsRow icon={Pencil} tone="indigo" label="Édition vitrine" description="Couverture, présentation, services, horaires" onClick={() => user?.id && navigate(`/seller/${user.id}?edit=1`)} />
                     </SettingsSection>
                   </div>
 
