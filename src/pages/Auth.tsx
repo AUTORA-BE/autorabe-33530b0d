@@ -205,8 +205,20 @@ const Auth = () => {
     }
   };
 
+  // OAuth redirects users back to window.location.origin (root), which loses
+  // the ?returnTo= query parameter. We persist it in sessionStorage right before
+  // launching the OAuth flow so the global OAuth return handler can recover it
+  // and navigate to the intended page after the user signs in.
+  const persistReturnToBeforeOAuth = () => {
+    const rawReturnTo = searchParams.get("returnTo");
+    if (rawReturnTo && rawReturnTo.startsWith("/") && !rawReturnTo.startsWith("//")) {
+      sessionStorage.setItem("autora_oauth_return", rawReturnTo);
+    }
+  };
+
   const handleGoogleAuth = async () => {
     trackEvent(isLogin ? EVENTS.LOGIN_COMPLETED : EVENTS.SIGNUP_STARTED, { method: "google" });
+    persistReturnToBeforeOAuth();
     const result = await signInWithGoogle();
     if (!result.success && result.error) {
       toast({ title: t("auth.error"), description: result.error.message, variant: "destructive" });
@@ -215,6 +227,7 @@ const Auth = () => {
 
   const handleAppleAuth = async () => {
     trackEvent(isLogin ? EVENTS.LOGIN_COMPLETED : EVENTS.SIGNUP_STARTED, { method: "apple" });
+    persistReturnToBeforeOAuth();
     const result = await signInWithApple();
     if (!result.success && result.error) {
       toast({ title: t("auth.error"), description: result.error.message, variant: "destructive" });

@@ -110,6 +110,7 @@ supabase.auth.onAuthStateChange((_evt, session) => {
 /** Scroll to top on route change + trigger idle prefetching + global analytics */
 function ScrollToTopOnNavigate() {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   useAnalytics();
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -117,6 +118,25 @@ function ScrollToTopOnNavigate() {
   useEffect(() => {
     prefetchCriticalRoutes();
   }, []);
+
+  // OAuth return handler — after a Google/Apple sign-in, the user lands on
+  // window.location.origin (root). If we previously persisted a returnTo in
+  // sessionStorage (see Auth.tsx persistReturnToBeforeOAuth), navigate there
+  // now that the session is established.
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" && session?.user) {
+        const target = sessionStorage.getItem("autora_oauth_return");
+        if (target && target.startsWith("/") && !target.startsWith("//")) {
+          sessionStorage.removeItem("autora_oauth_return");
+          // Defer to next tick so React Router has finished hydrating
+          setTimeout(() => navigate(target, { replace: true }), 0);
+        }
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
   return null;
 }
 
