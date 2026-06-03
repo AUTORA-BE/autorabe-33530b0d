@@ -86,6 +86,7 @@ const CarDetail = () => {
     avatar_url?: string | null;
     vitrine_slug?: string | null;
     vitrine_published?: boolean | null;
+    is_admin?: boolean | null;
   } | null>(null);
 
   const [isLoading, setIsLoading] = useState(true);
