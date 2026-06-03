@@ -180,7 +180,7 @@ const WhyAutoRA = memo(() => {
                 transition={{ duration: 0.6, delay: 0.05 + (i % 3) * 0.08 }}
                 className="group py-9 px-6 sm:px-8 lg:px-10 border-t border-border/10 hover:bg-card/20 transition-colors duration-500"
               >
-                <span className="block font-mono text-[11px] text-muted-foreground/25 mb-6 tracking-[0.2em] group-hover:text-primary/40 transition-colors duration-500">
+                <span className="block font-mono text-[11px] text-muted-foreground mb-6 tracking-[0.2em] group-hover:text-primary transition-colors duration-500">
                   0{i + 1}
                 </span>
                 <div className="flex items-center gap-3 mb-3">
