@@ -177,6 +177,39 @@ const EditVitrine = () => {
 
   if (isLoading || !user || loading) return null;
 
+  // Pro gate — redirect non-pro accounts to their dashboard with a clean fallback
+  if (accessDenied) {
+    return (
+      <div className="page-gradient min-h-screen flex flex-col">
+        <SEOHead noIndex title="Accès réservé | AutoRA" />
+        <Header />
+        <main className="flex-1 flex items-center justify-center px-6 py-24">
+          <div className="max-w-md text-center space-y-5">
+            <Shield className="w-12 h-12 mx-auto text-primary" strokeWidth={1.5} />
+            <h1 className="text-2xl font-light tracking-tight text-foreground">
+              {language === "nl" ? "Alleen voor professionals" : "Réservé aux Professionnels"}
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              {language === "nl"
+                ? "Upgrade uw account naar een professioneel profiel om uw vitrine te beheren."
+                : "Passez votre compte en profil Professionnel pour gérer votre vitrine garage."}
+            </p>
+            <div className="flex gap-3 justify-center">
+              <Button variant="outline" onClick={() => navigate("/dashboard")}>
+                {language === "nl" ? "Naar dashboard" : "Retour au dashboard"}
+              </Button>
+              <Button onClick={() => navigate("/profile")}>
+                {language === "nl" ? "Profiel bewerken" : "Modifier mon profil"}
+              </Button>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+
   return (
     <div className="page-gradient min-h-screen">
       <SEOHead noIndex title="Édition Vitrine | AutoRA" />
