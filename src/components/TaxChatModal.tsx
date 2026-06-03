@@ -6,12 +6,14 @@
  */
 
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Calculator, Send, Bot, User, Loader2 } from 'lucide-react';
+import { Calculator, Send, Bot, User, Loader2, Lock } from 'lucide-react';
 import { toast } from 'sonner';
+import { useAuth } from '@/features/auth';
 import ComplianceBanner from '@/components/ComplianceBanner';
 
 interface VehicleContext {
