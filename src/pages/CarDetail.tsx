@@ -633,9 +633,11 @@ const CarDetail = () => {
                   sellerId={sellerContact?.user_id}
                 />
 
-                {isProSeller && sellerDisplay?.vitrine_published && sellerDisplay.vitrine_slug && (
+                {isProSeller && (sellerDisplay?.vitrine_slug || sellerContact?.user_id) && (
                   <Link
-                    to={`/garage/${sellerDisplay.vitrine_slug}`}
+                    to={sellerDisplay?.vitrine_slug
+                      ? `/garage/${sellerDisplay.vitrine_slug}`
+                      : `/seller/${sellerContact?.user_id}`}
                     className="inline-flex items-center justify-center gap-2 w-full h-10 rounded-xl border border-primary/30 bg-primary/5 text-primary text-sm font-medium hover:bg-primary/10 hover:border-primary/50 transition-colors"
                   >
                     <Store className="w-4 h-4" strokeWidth={1.75} />
@@ -898,7 +900,21 @@ const CarDetail = () => {
                   sellerType={dbListing?.seller_type}
                   sellerName={sellerName}
                   tvaNumber={undefined}
+                  sellerId={sellerContact?.user_id}
                 />
+
+                {/* Desktop "Vitrine Garage" link — mirrors the mobile block under the seller name */}
+                {isProSeller && (sellerDisplay?.vitrine_slug || sellerContact?.user_id) && (
+                  <Link
+                    to={sellerDisplay?.vitrine_slug
+                      ? `/garage/${sellerDisplay.vitrine_slug}`
+                      : `/seller/${sellerContact?.user_id}`}
+                    className="inline-flex items-center justify-center gap-2 w-full h-11 rounded-xl border border-primary/30 bg-primary/5 text-primary text-sm font-medium hover:bg-primary/10 hover:border-primary/50 transition-colors"
+                  >
+                    <Store className="w-4 h-4" strokeWidth={1.75} />
+                    Voir la vitrine du garage
+                  </Link>
+                )}
 
                 {/* Disclaimer */}
                 <p className="text-xs text-muted-foreground text-center leading-relaxed">
