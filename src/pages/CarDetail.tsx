@@ -631,6 +631,17 @@ const CarDetail = () => {
                   sellerId={sellerContact?.user_id}
                 />
 
+                {isProSeller && sellerDisplay?.vitrine_published && sellerDisplay.vitrine_slug && (
+                  <Link
+                    to={`/garage/${sellerDisplay.vitrine_slug}`}
+                    className="inline-flex items-center justify-center gap-2 w-full h-10 rounded-xl border border-primary/30 bg-primary/5 text-primary text-sm font-medium hover:bg-primary/10 hover:border-primary/50 transition-colors"
+                  >
+                    <Store className="w-4 h-4" strokeWidth={1.75} />
+                    Voir la vitrine du garage
+                  </Link>
+                )}
+
+
                 {isAdmin && (
                   <Button onClick={handleAdminDelete} variant="destructive" className="w-full h-11 mt-2">
                     <Trash2 className="w-4 h-4 mr-2" />
