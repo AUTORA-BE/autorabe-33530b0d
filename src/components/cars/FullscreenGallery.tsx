@@ -185,19 +185,18 @@ const FullscreenGallery = memo(function FullscreenGallery({
             animate="center"
             exit="exit"
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            drag={isZoomed ? "x" : "x"}
+            drag="x"
             dragConstraints={isZoomed ? { left: -200, right: 200, top: -200, bottom: 200 } : { left: 0, right: 0 }}
             dragElastic={isZoomed ? 0.05 : 0.15}
             onDragEnd={handleDragEnd}
-            className="absolute inset-0 flex items-center justify-center"
+            className="absolute inset-0 flex items-center justify-center p-4 sm:p-8"
             onClick={handleTap}
-            style={isZoomed ? { x: offsetX, y: offsetY } : undefined}
+            style={isZoomed ? { x: offsetX, y: offsetY, scale } : { scale }}
           >
-            <motion.img
+            <img
               src={images[index]}
               alt={`${alt} – photo ${index + 1}`}
-              className="max-h-full max-w-full object-contain select-none"
-              style={{ scale }}
+              className="max-h-full max-w-full w-auto h-auto object-contain select-none pointer-events-none"
               draggable={false}
               onError={(e) => {
                 (e.currentTarget as HTMLImageElement).src =
