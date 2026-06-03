@@ -12,7 +12,7 @@ import { localBusinessSchema } from "@/lib/seoSchemas";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocalizedVehicleHref } from "@/lib/useLocalizedHref";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import {    Star, MapPin, Phone, Calendar, ArrowLeft, Car, MessageSquare, Info, Shield, Clock, Heart, Navigation, Pencil, ImagePlus, Wrench, FileText, X, Upload } from "lucide-react";
+import {    Star, MapPin, Phone, Calendar, ArrowLeft, Car, MessageSquare, Info, Shield, Clock, Heart, Navigation, Pencil, ImagePlus, Wrench, FileText, X, Upload, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
