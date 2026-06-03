@@ -1589,6 +1589,20 @@ export type Database = {
           read_ct: number
         }[]
       }
+      search_public_vitrines: {
+        Args: { _city?: string; _limit?: number; _q?: string }
+        Returns: {
+          avatar_url: string
+          display_name: string
+          garage_name: string
+          postal_code: string
+          user_id: string
+          vitrine_about: string
+          vitrine_cover_url: string
+          vitrine_services: string[]
+          vitrine_slug: string
+        }[]
+      }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
     }

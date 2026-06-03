@@ -12,7 +12,7 @@ import { Header, Footer } from "@/shared/components";
 import SEOHead from "@/components/SEOHead";
 import {
   ShieldCheck, Leaf, ChevronDown, SlidersHorizontal, Grid3x3, Flame,
-  Calendar, Gauge, X, ImageOff, Search,
+  Calendar, Gauge, X, ImageOff, Search, Store,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -32,8 +32,9 @@ import { cn } from "@/lib/utils";
 import type { Vehicle } from "@/features/listings/types/vehicle.types";
 
 const SwipeDiscovery = lazy(() => import("@/features/listings/components/SwipeDiscovery"));
+const GaragesSearchView = lazy(() => import("@/features/garages/components/GaragesSearchView"));
 
-type ViewMode = "catalog" | "match";
+type ViewMode = "catalog" | "match" | "garages";
 
 const FUEL_OPTIONS = [
   { id: "essence",    labelFr: "Essence" },
@@ -857,6 +858,18 @@ const Recherche = () => {
               <Flame className="h-3.5 w-3.5" />
               Match
             </button>
+            <button
+              onClick={() => setViewMode("garages")}
+              className={cn(
+                "flex h-9 items-center gap-1.5 rounded-full px-3 text-xs font-medium transition-all sm:px-4 sm:text-sm",
+                viewMode === "garages"
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-white/65 hover:text-white",
+              )}
+            >
+              <Store className="h-3.5 w-3.5" />
+              Garages
+            </button>
           </div>
         </section>
 
@@ -930,7 +943,7 @@ const Recherche = () => {
                   </>
                 )}
               </motion.div>
-            ) : (
+            ) : viewMode === "match" ? (
               <motion.div
                 key="match"
                 initial={{ opacity: 0, scale: 0.98 }}
@@ -945,6 +958,18 @@ const Recherche = () => {
                     onToggleFavorite={toggleFavorite}
                     onVehicleClick={handleCarClick}
                   />
+                </Suspense>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="garages"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 8 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Suspense fallback={<div className="flex h-[400px] items-center justify-center text-white/65">Chargement des garages…</div>}>
+                  <GaragesSearchView />
                 </Suspense>
               </motion.div>
             )}
