@@ -350,6 +350,7 @@ const EditVitrine = () => {
                           : (language === "nl" ? "Privé — alleen u ziet een voorbeeld." : "Privée — vous seul voyez l'aperçu.")}
                       </p>
                 </div>
+                </div>
 
                 {/* ── Bloc Partage ── */}
                 {(() => {
