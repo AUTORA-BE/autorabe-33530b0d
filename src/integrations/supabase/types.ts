@@ -1465,6 +1465,7 @@ export type Database = {
           avatar_url: string
           display_name: string
           garage_name: string
+          is_admin: boolean
           postal_code: string
           user_id: string
           vitrine_about: string
@@ -1490,6 +1491,7 @@ export type Database = {
           avatar_url: string
           display_name: string
           garage_name: string
+          is_admin: boolean
           user_id: string
           user_type: string
           vitrine_published: boolean
