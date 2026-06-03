@@ -508,7 +508,52 @@ const SellerProfile = () => {
                         </a>
                       </Button>
                     )}
+                    {profile.vitrine_published && profile.vitrine_slug && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="rounded-xl px-5 py-3 h-auto text-sm font-semibold border-border/60"
+                        onClick={async () => {
+                          const url = `https://autora.be/garage/${profile.vitrine_slug}`;
+                          const title = `${displayName} — Vitrine sur AutoRA`;
+                          const text = language === "nl"
+                            ? "Bekijk de voertuigen in deze vitrine op AutoRA."
+                            : "Découvrez les véhicules de cette vitrine sur AutoRA.";
+                          if (typeof navigator.share === "function") {
+                            try {
+                              await navigator.share({ title, text, url });
+                              return;
+                            } catch (err) {
+                              if ((err as DOMException)?.name === "AbortError") return;
+                            }
+                          }
+                          try {
+                            if (navigator.clipboard?.writeText) {
+                              await navigator.clipboard.writeText(url);
+                            } else {
+                              const ta = document.createElement("textarea");
+                              ta.value = url; ta.style.position = "fixed"; ta.style.opacity = "0";
+                              document.body.appendChild(ta); ta.select();
+                              document.execCommand("copy");
+                              document.body.removeChild(ta);
+                            }
+                            toast({
+                              title: language === "nl" ? "Link van vitrine gekopieerd!" : "Lien de la vitrine copié !",
+                            });
+                          } catch {
+                            toast({
+                              title: language === "nl" ? "Kopiëren mislukt" : "Échec de la copie",
+                              variant: "destructive",
+                            });
+                          }
+                        }}
+                      >
+                        <Share2 className="w-4 h-4 mr-2" strokeWidth={1.5} />
+                        {language === "nl" ? "Delen" : "Partager"}
+                      </Button>
+                    )}
                   </div>
+
                 </div>
               </div>
             </div>
