@@ -305,10 +305,6 @@ const Index = () => {
           document.body,
         )}
 
-      {/* Floating widgets */}
-      <Suspense fallback={null}>
-        <TcoFloatingButton />
-      </Suspense>
 
       {/* Debug overlay — activable via ?debug=1 ou Ctrl+Shift+D */}
       <DebugOverlay filtersOpen={filtersOpen} isDesktopFiltersViewport={isDesktopFiltersViewport} />
