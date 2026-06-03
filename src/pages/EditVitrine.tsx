@@ -55,42 +55,43 @@ const EditVitrine = () => {
 
   useEffect(() => {
     if (!user) return;
-    supabase
-      .from("profiles")
-      .select("user_type, avatar_url, garage_name, postal_code, display_name, cover_image_url, opening_hours, services, presentation, vitrine_slug, vitrine_cover_url, vitrine_about, vitrine_services, vitrine_phone, vitrine_email_public, vitrine_published")
-      .eq("user_id", user.id)
-      .maybeSingle()
-      .then(({ data }) => {
-        if (data) {
-          setUserType(data.user_type ?? null);
-          // ❗ Gate: Édition Vitrine réservée aux comptes Professionnels
-          if (data.user_type !== "professionnel") {
-            setAccessDenied(true);
-            toast({
-              title: language === "nl" ? "Toegang geweigerd" : "Accès refusé",
-              description: language === "nl"
-                ? "De vitrine-editor is voorbehouden aan professionele accounts."
-                : "L'édition de vitrine est réservée aux comptes Professionnels.",
-              variant: "destructive",
-            });
-            setLoading(false);
-            return;
-          }
-          setAvatarUrl(data.avatar_url);
-          setGarageName(data.garage_name);
-          setPostalCode(data.postal_code);
-          setDisplayName(data.display_name);
-          setCoverUrl(data.vitrine_cover_url ?? data.cover_image_url ?? "");
-          setHours(data.opening_hours ?? "");
-          setServicesText(((data.vitrine_services?.length ? data.vitrine_services : data.services) ?? []).join("\n"));
-          setPresentation(data.vitrine_about ?? data.presentation ?? "");
-          setSlug(data.vitrine_slug ?? "");
-          setVitrinePhone(data.vitrine_phone ?? "");
-          setVitrineEmail(data.vitrine_email_public ?? "");
-          setPublished(!!data.vitrine_published);
-        }
+    (async () => {
+      // Gate: vitrine reserved for Pro / Premium subscribers and admins
+      const { data: eligible } = await supabase.rpc("is_vitrine_eligible", { _user_id: user.id });
+      if (!eligible) {
+        setAccessDenied(true);
+        toast({
+          title: language === "nl" ? "Toegang geweigerd" : "Accès refusé",
+          description: language === "nl"
+            ? "De vitrine is voorbehouden aan Pro- en Premium-abonnementen."
+            : "La vitrine est réservée aux abonnements Pro et Premium.",
+          variant: "destructive",
+        });
         setLoading(false);
-      });
+        return;
+      }
+      const { data } = await supabase
+        .from("profiles")
+        .select("user_type, avatar_url, garage_name, postal_code, display_name, cover_image_url, opening_hours, services, presentation, vitrine_slug, vitrine_cover_url, vitrine_about, vitrine_services, vitrine_phone, vitrine_email_public, vitrine_published")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (data) {
+        setUserType(data.user_type ?? null);
+        setAvatarUrl(data.avatar_url);
+        setGarageName(data.garage_name);
+        setPostalCode(data.postal_code);
+        setDisplayName(data.display_name);
+        setCoverUrl(data.vitrine_cover_url ?? data.cover_image_url ?? "");
+        setHours(data.opening_hours ?? "");
+        setServicesText(((data.vitrine_services?.length ? data.vitrine_services : data.services) ?? []).join("\n"));
+        setPresentation(data.vitrine_about ?? data.presentation ?? "");
+        setSlug(data.vitrine_slug ?? "");
+        setVitrinePhone(data.vitrine_phone ?? "");
+        setVitrineEmail(data.vitrine_email_public ?? "");
+        setPublished(!!data.vitrine_published);
+      }
+      setLoading(false);
+    })();
   }, [user, language, toast]);
 
   const services = servicesText.split("\n").map(s => s.trim()).filter(Boolean).slice(0, 10);
@@ -187,19 +188,19 @@ const EditVitrine = () => {
           <div className="max-w-md text-center space-y-5">
             <Shield className="w-12 h-12 mx-auto text-primary" strokeWidth={1.5} />
             <h1 className="text-2xl font-light tracking-tight text-foreground">
-              {language === "nl" ? "Alleen voor professionals" : "Réservé aux Professionnels"}
+              {language === "nl" ? "Alleen voor Pro & Premium" : "Réservé aux abonnements Pro & Premium"}
             </h1>
             <p className="text-sm text-muted-foreground">
               {language === "nl"
-                ? "Upgrade uw account naar een professioneel profiel om uw vitrine te beheren."
-                : "Passez votre compte en profil Professionnel pour gérer votre vitrine garage."}
+                ? "Upgrade naar een Pro- of Premium-abonnement om uw vitrine te beheren. Beheerders kunnen abonnementen toekennen vanuit het admin dashboard."
+                : "Passez à un abonnement Pro ou Premium pour gérer votre vitrine. Les administrateurs peuvent attribuer un abonnement depuis le dashboard admin."}
             </p>
             <div className="flex gap-3 justify-center">
               <Button variant="outline" onClick={() => navigate("/dashboard")}>
                 {language === "nl" ? "Naar dashboard" : "Retour au dashboard"}
               </Button>
-              <Button onClick={() => navigate("/profile")}>
-                {language === "nl" ? "Profiel bewerken" : "Modifier mon profil"}
+              <Button onClick={() => navigate("/pricing")}>
+                {language === "nl" ? "Abonnementen bekijken" : "Voir les abonnements"}
               </Button>
             </div>
           </div>

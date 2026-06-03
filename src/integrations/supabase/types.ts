@@ -1572,6 +1572,7 @@ export type Database = {
         Returns: boolean
       }
       is_user_suspended: { Args: { _user_id: string }; Returns: boolean }
+      is_vitrine_eligible: { Args: { _user_id: string }; Returns: boolean }
       is_vitrine_slug_available: {
         Args: { _slug: string; _user_id: string }
         Returns: boolean
