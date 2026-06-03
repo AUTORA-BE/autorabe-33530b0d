@@ -282,7 +282,7 @@ const SellerProfile = () => {
   if (notFound || !profile || isUnpublishedForVisitor) {
     // Spec: if slug + UUID lookups both fail, redirect cleanly to /recherche
     if (isSlugRoute && notFound) {
-      return <RedirectTo path="/recherche" />;
+      return <Navigate to="/recherche" replace />;
     }
     return (
       <div className="page-gradient min-h-screen">
