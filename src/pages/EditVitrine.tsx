@@ -37,6 +37,8 @@ const EditVitrine = () => {
   const [garageName, setGarageName] = useState<string | null>(null);
   const [postalCode, setPostalCode] = useState<string | null>(null);
   const [displayName, setDisplayName] = useState<string | null>(null);
+  const [userType, setUserType] = useState<string | null>(null);
+  const [accessDenied, setAccessDenied] = useState(false);
   // Vitrine-specific fields
   const [slug, setSlug] = useState("");
   const [slugStatus, setSlugStatus] = useState<"idle" | "checking" | "available" | "taken" | "invalid">("idle");
