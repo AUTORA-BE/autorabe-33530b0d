@@ -142,7 +142,7 @@ const Footer = () => {
           </div>
 
           {/* Contact & copyright */}
-          <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-6 text-[11px] text-muted-foreground/40">
+          <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-6 text-[11px] text-muted-foreground">
             <a href="mailto:autoracontact@gmail.com" className="flex items-center gap-1.5 hover:text-muted-foreground transition-colors">
               <Mail className="w-3 h-3" />
               autoracontact@gmail.com
