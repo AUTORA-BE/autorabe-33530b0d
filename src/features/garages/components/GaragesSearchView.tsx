@@ -44,8 +44,8 @@ export default function GaragesSearchView() {
     setLoading(true);
     (async () => {
       const { data, error } = await supabase.rpc("search_public_vitrines", {
-        _q: dq || null,
-        _city: dcity || null,
+        _q: dq || undefined,
+        _city: dcity || undefined,
         _limit: 60,
       });
       if (cancelled) return;
