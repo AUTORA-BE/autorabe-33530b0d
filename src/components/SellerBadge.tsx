@@ -25,24 +25,27 @@ const SellerBadge = ({
 
   if (compact) {
     return (
-      <span
-        className={`inline-flex items-center gap-1 px-2 py-1 rounded-2xl text-xs font-medium ${
-          isProfessional
-            ? "bg-primary/10 text-primary"
-            : "bg-muted text-muted-foreground"
-        }`}
-      >
-        {isProfessional ? (
-          <>
-            <Building2 className="w-3 h-3" />
-            Pro
-          </>
-        ) : (
-          <>
-            <User className="w-3 h-3" />
-            Particulier
-          </>
-        )}
+      <span className="inline-flex items-center gap-1.5">
+        <span
+          className={`inline-flex items-center gap-1 px-2 py-1 rounded-2xl text-xs font-medium ${
+            isProfessional
+              ? "bg-primary/10 text-primary"
+              : "bg-muted text-muted-foreground"
+          }`}
+        >
+          {isProfessional ? (
+            <>
+              <Building2 className="w-3 h-3" />
+              Pro
+            </>
+          ) : (
+            <>
+              <User className="w-3 h-3" />
+              Particulier
+            </>
+          )}
+        </span>
+        {isAdmin && <AdminBadge size="xs" />}
       </span>
     );
   }
