@@ -214,10 +214,26 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
   const [photos, setPhotos] = useState<File[]>([]);
   const [photosPreviews, setPhotosPreviews] = useState<string[]>([]);
   const [existingPhotos, setExistingPhotos] = useState<string[]>([]);
-  const [uploadedPhotoUrls, setUploadedPhotoUrls] = useState<string[]>([]);
+  const [uploadedPhotoUrls, setUploadedPhotoUrls] = useState<string[]>(() => {
+    try {
+      if (editId) return [];
+      const raw = localStorage.getItem(PHOTOS_STORAGE_KEY);
+      const parsed = raw ? JSON.parse(raw) : null;
+      return Array.isArray(parsed) ? parsed.filter((u) => typeof u === 'string' && u.startsWith('http')) : [];
+    } catch {
+      return [];
+    }
+  });
   const [carPassFile, setCarPassFile] = useState<File | null>(null);
   const [carPassFileName, setCarPassFileName] = useState<string>('');
-  const [carPassUrl, setCarPassUrl] = useState<string | null>(null);
+  const [carPassUrl, setCarPassUrl] = useState<string | null>(() => {
+    try {
+      if (editId) return null;
+      return localStorage.getItem(CARPASS_URL_STORAGE_KEY);
+    } catch {
+      return null;
+    }
+  });
   const [carPassPreview, setCarPassPreview] = useState<string | null>(null);
   const [carPassUploading, setCarPassUploading] = useState(false);
   const [carPassError, setCarPassError] = useState<string | null>(null);
