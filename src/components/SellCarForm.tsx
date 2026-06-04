@@ -302,6 +302,36 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
     }
   });
 
+  // Persist Car-Pass URL & uploaded photo URLs to localStorage so progress
+  // survives iOS WebView reloads (memory pressure during photo picker).
+  useEffect(() => {
+    try {
+      if (isEditMode) return;
+      if (carPassUrl) localStorage.setItem(CARPASS_URL_STORAGE_KEY, carPassUrl);
+      else localStorage.removeItem(CARPASS_URL_STORAGE_KEY);
+    } catch { /* ignore */ }
+  }, [carPassUrl, isEditMode]);
+
+  useEffect(() => {
+    try {
+      if (isEditMode) return;
+      const persistable = uploadedPhotoUrls.filter((u) => u.startsWith('http'));
+      if (persistable.length > 0) {
+        localStorage.setItem(PHOTOS_STORAGE_KEY, JSON.stringify(persistable));
+      } else {
+        localStorage.removeItem(PHOTOS_STORAGE_KEY);
+      }
+    } catch { /* ignore */ }
+  }, [uploadedPhotoUrls, isEditMode]);
+
+  // Keep car_pass_verified in sync with carPassUrl — otherwise professional
+  // sellers (whose Zod schema requires car_pass_verified === true) get a
+  // silent validation failure when publishing.
+  useEffect(() => {
+    form.setValue('car_pass_verified', !!carPassUrl, { shouldValidate: false });
+  }, [carPassUrl, form]);
+
+
   // Pre-fill seller info from user profile
   useEffect(() => {
     if (isEditMode) return; // Don't override in edit mode
