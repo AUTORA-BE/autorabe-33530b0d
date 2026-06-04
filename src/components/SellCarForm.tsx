@@ -171,24 +171,31 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
   // Without this, the user would be sent back to step 1 every time they
   // add a photo on mobile (bug reported pre-launch).
   const STEP_STORAGE_KEY = "autora_sellcar_step";
+  const CARPASS_URL_STORAGE_KEY = "autora_sellcar_carpass_url";
+  const PHOTOS_STORAGE_KEY = "autora_sellcar_photo_urls";
 
-  const [currentStep, setCurrentStep] = useState<number>(() => {
+  // Read from localStorage first (survives full page reloads in iOS WebViews
+  // under memory pressure), fall back to sessionStorage for back-compat.
+  const readPersistedStep = (): number => {
     try {
-      if (editId) return 1; // edit mode always starts on step 1 (vehicle info)
-      const stored = sessionStorage.getItem(STEP_STORAGE_KEY);
+      if (editId) return 1;
+      const stored = localStorage.getItem(STEP_STORAGE_KEY) ?? sessionStorage.getItem(STEP_STORAGE_KEY);
       const parsed = stored ? Number(stored) : 1;
       return Number.isFinite(parsed) && parsed >= 1 && parsed <= 3 ? parsed : 1;
     } catch {
-      return 1; // sessionStorage may be blocked (private mode, sandboxed iframe)
+      return 1;
     }
-  });
+  };
 
-  // Persist currentStep to sessionStorage at every change
+  const [currentStep, setCurrentStep] = useState<number>(readPersistedStep);
+
+  // Persist currentStep at every change to BOTH stores
   useEffect(() => {
     try {
+      localStorage.setItem(STEP_STORAGE_KEY, String(currentStep));
       sessionStorage.setItem(STEP_STORAGE_KEY, String(currentStep));
     } catch {
-      // ignore — sessionStorage may be unavailable
+      /* ignore — storage may be unavailable */
     }
   }, [currentStep]);
 
