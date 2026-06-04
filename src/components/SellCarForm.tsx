@@ -1378,80 +1378,60 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div>
-                    <h3 className="text-sm font-semibold text-foreground mb-1">Car-Pass obligatoire</h3>
+                    <h3 className="text-sm font-semibold text-foreground mb-1">Lien Car-Pass obligatoire</h3>
                     <p className="text-sm text-muted-foreground mb-4">
-                      Document du contrôle technique (valide de préférence moins de 2 mois)
+                      Collez le lien officiel reçu par email après commande sur{" "}
+                      <a href="https://www.car-pass.be" target="_blank" rel="noopener noreferrer" className="underline text-primary">
+                        car-pass.be
+                      </a>{" "}
+                      (format : <span className="font-mono text-xs">https://www.car-pass.be/...</span>)
                     </p>
 
-                    {carPassFile ? (
-                      <div className="flex items-center gap-3 p-4 rounded-xl border border-primary/30 bg-primary/5">
-                        {carPassPreview ? (
-                          <img src={carPassPreview} alt="Car-Pass" className="h-16 w-16 rounded-lg object-cover flex-shrink-0 border border-border" />
-                        ) : (
-                          <div className="h-16 w-16 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                            <FileText className="h-8 w-8 text-primary" />
-                          </div>
-                        )}
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-foreground truncate">{carPassFileName}</p>
-                          <p className="text-xs text-muted-foreground">
-                            {carPassFile.type === 'application/pdf' ? 'Document PDF' : 'Image'}
-                          </p>
-                        </div>
-                        {carPassUploading ? (
-                          <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                        ) : carPassUrl ? (
-                          <Badge className="bg-green-500/10 text-green-600 dark:text-green-400 border-0 shrink-0">
-                            <CheckCircle className="w-3 h-3 mr-1" />
-                            Car-Pass vérifié
-                          </Badge>
-                        ) : null}
-                        <button
-                          type="button"
-                          onClick={removeCarPass}
-                          className="p-1.5 text-muted-foreground hover:text-destructive transition-colors rounded-full hover:bg-destructive/10"
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
-                      </div>
-                    ) : (
-                      <div
-                        onDragOver={(e) => { e.preventDefault(); }}
-                        onDrop={handleCarPassDrop}
-                        className="border-2 border-dashed border-border hover:border-primary transition-colors rounded-xl p-8 text-center cursor-pointer"
-                      >
-                        <label className="cursor-pointer flex flex-col items-center gap-3">
-                          <div className="w-14 h-14 rounded-2xl bg-secondary flex items-center justify-center">
-                            <Upload className="h-6 w-6 text-muted-foreground" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium text-foreground">
-                              Glissez-déposez votre Car-Pass ici
-                            </p>
-                            <p className="text-xs text-muted-foreground mt-1">
-                              ou cliquez pour sélectionner · PDF, JPG ou PNG (max {MAX_PDF_SIZE_MB} Mo)
-                            </p>
-                          </div>
-                          <input
-                            type="file"
-                            accept="application/pdf,image/jpeg,image/png"
-                            onChange={handleCarPassUpload}
-                            className="hidden"
-                          />
-                        </label>
-                      </div>
-                    )}
-
-                    {/* Error message */}
-                    {!carPassUrl && !carPassUploading && carPassError !== null && (
-                      <p className="text-sm text-destructive mt-2 flex items-center gap-1.5">
-                        <AlertTriangle className="h-4 w-4" />
-                        {carPassError}
-                      </p>
-                    )}
+                    <div className="relative">
+                      <Input
+                        type="url"
+                        inputMode="url"
+                        autoComplete="off"
+                        placeholder="https://www.car-pass.be/..."
+                        value={carPassUrl ?? ""}
+                        onChange={(e) => {
+                          const value = e.target.value.trim();
+                          // Accept empty (user is clearing) OR a URL that mentions car-pass.be
+                          if (value === "") {
+                            setCarPassUrl(null);
+                          } else {
+                            try {
+                              const u = new URL(value);
+                              // Light validation: must be https and mention car-pass.be
+                              if (u.protocol === "https:" && u.hostname.includes("car-pass.be")) {
+                                setCarPassUrl(value);
+                              } else {
+                                // Still store the value so the field reflects user typing, but
+                                // carPassUrl stays whatever it was — better UX is to keep typing.
+                                setCarPassUrl(value);
+                              }
+                            } catch {
+                              // Invalid URL while typing — keep the raw value visible
+                              setCarPassUrl(value);
+                            }
+                          }
+                        }}
+                        className={
+                          carPassUrl && carPassUrl.includes("car-pass.be")
+                            ? "border-green-500/50 focus-visible:ring-green-500/40 pr-24"
+                            : "pr-24"
+                        }
+                      />
+                      {carPassUrl && carPassUrl.includes("car-pass.be") && (
+                        <span className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-500/10 text-green-600 dark:text-green-400 text-[10px] font-medium">
+                          <CheckCircle className="w-3 h-3" />
+                          Vérifié
+                        </span>
+                      )}
+                    </div>
 
                     <p className="text-xs text-muted-foreground mt-3">
-                      Le Car-Pass est obligatoire en Belgique lors de la vente d'un véhicule d'occasion. Il garantit l'historique du kilométrage.
+                      Le Car-Pass est obligatoire en Belgique lors de la vente d'un véhicule d'occasion. Il garantit l'historique du kilométrage. L'équipe AutoRa vérifie manuellement le lien avant publication.
                     </p>
                   </div>
 
