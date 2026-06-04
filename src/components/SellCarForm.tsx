@@ -1129,7 +1129,20 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form
+          onSubmit={form.handleSubmit(onSubmit, (errors) => {
+            // Surface silent Zod validation failures (otherwise the user clicks
+            // "Publier" on step 3 and nothing visible happens).
+            const firstError = Object.values(errors)[0] as { message?: string } | undefined;
+            const msg = firstError?.message || 'Certains champs obligatoires sont manquants ou invalides.';
+            toast.error(msg);
+            // If a step-1 field is missing, bring the user back to step 1 so they can fix it.
+            const step1Fields = ['brand','model','year','price','mileage','fuel_type','transmission','body_type','color','contact_name','contact_email','tva_number'];
+            const hasStep1Error = Object.keys(errors).some((k) => step1Fields.includes(k));
+            if (hasStep1Error) setCurrentStep(1);
+          })}
+          className="space-y-8"
+        >
           <Honeypot ref={honeypotRef} />
 
           <AnimatePresence mode="wait" custom={slideDirection}>
