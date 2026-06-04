@@ -829,7 +829,12 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
         // Supprimer le brouillon après publication
         await clearDraft();
         // Reset persisted wizard step so next listing starts fresh
-        try { sessionStorage.removeItem(STEP_STORAGE_KEY); } catch { /* ignore */ }
+        try {
+          sessionStorage.removeItem(STEP_STORAGE_KEY);
+          localStorage.removeItem(STEP_STORAGE_KEY);
+          localStorage.removeItem(CARPASS_URL_STORAGE_KEY);
+          localStorage.removeItem(PHOTOS_STORAGE_KEY);
+        } catch { /* ignore */ }
         trackEvent(EVENTS.LISTING_PUBLISHED, {
           brand: data.brand,
           model: data.model,
