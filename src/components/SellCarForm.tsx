@@ -171,24 +171,31 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
   // Without this, the user would be sent back to step 1 every time they
   // add a photo on mobile (bug reported pre-launch).
   const STEP_STORAGE_KEY = "autora_sellcar_step";
+  const CARPASS_URL_STORAGE_KEY = "autora_sellcar_carpass_url";
+  const PHOTOS_STORAGE_KEY = "autora_sellcar_photo_urls";
 
-  const [currentStep, setCurrentStep] = useState<number>(() => {
+  // Read from localStorage first (survives full page reloads in iOS WebViews
+  // under memory pressure), fall back to sessionStorage for back-compat.
+  const readPersistedStep = (): number => {
     try {
-      if (editId) return 1; // edit mode always starts on step 1 (vehicle info)
-      const stored = sessionStorage.getItem(STEP_STORAGE_KEY);
+      if (editId) return 1;
+      const stored = localStorage.getItem(STEP_STORAGE_KEY) ?? sessionStorage.getItem(STEP_STORAGE_KEY);
       const parsed = stored ? Number(stored) : 1;
       return Number.isFinite(parsed) && parsed >= 1 && parsed <= 3 ? parsed : 1;
     } catch {
-      return 1; // sessionStorage may be blocked (private mode, sandboxed iframe)
+      return 1;
     }
-  });
+  };
 
-  // Persist currentStep to sessionStorage at every change
+  const [currentStep, setCurrentStep] = useState<number>(readPersistedStep);
+
+  // Persist currentStep at every change to BOTH stores
   useEffect(() => {
     try {
+      localStorage.setItem(STEP_STORAGE_KEY, String(currentStep));
       sessionStorage.setItem(STEP_STORAGE_KEY, String(currentStep));
     } catch {
-      // ignore — sessionStorage may be unavailable
+      /* ignore — storage may be unavailable */
     }
   }, [currentStep]);
 
@@ -207,10 +214,26 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
   const [photos, setPhotos] = useState<File[]>([]);
   const [photosPreviews, setPhotosPreviews] = useState<string[]>([]);
   const [existingPhotos, setExistingPhotos] = useState<string[]>([]);
-  const [uploadedPhotoUrls, setUploadedPhotoUrls] = useState<string[]>([]);
+  const [uploadedPhotoUrls, setUploadedPhotoUrls] = useState<string[]>(() => {
+    try {
+      if (editId) return [];
+      const raw = localStorage.getItem(PHOTOS_STORAGE_KEY);
+      const parsed = raw ? JSON.parse(raw) : null;
+      return Array.isArray(parsed) ? parsed.filter((u) => typeof u === 'string' && u.startsWith('http')) : [];
+    } catch {
+      return [];
+    }
+  });
   const [carPassFile, setCarPassFile] = useState<File | null>(null);
   const [carPassFileName, setCarPassFileName] = useState<string>('');
-  const [carPassUrl, setCarPassUrl] = useState<string | null>(null);
+  const [carPassUrl, setCarPassUrl] = useState<string | null>(() => {
+    try {
+      if (editId) return null;
+      return localStorage.getItem(CARPASS_URL_STORAGE_KEY);
+    } catch {
+      return null;
+    }
+  });
   const [carPassPreview, setCarPassPreview] = useState<string | null>(null);
   const [carPassUploading, setCarPassUploading] = useState(false);
   const [carPassError, setCarPassError] = useState<string | null>(null);
@@ -278,6 +301,36 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
       maintenance_book_complete: false,
     }
   });
+
+  // Persist Car-Pass URL & uploaded photo URLs to localStorage so progress
+  // survives iOS WebView reloads (memory pressure during photo picker).
+  useEffect(() => {
+    try {
+      if (isEditMode) return;
+      if (carPassUrl) localStorage.setItem(CARPASS_URL_STORAGE_KEY, carPassUrl);
+      else localStorage.removeItem(CARPASS_URL_STORAGE_KEY);
+    } catch { /* ignore */ }
+  }, [carPassUrl, isEditMode]);
+
+  useEffect(() => {
+    try {
+      if (isEditMode) return;
+      const persistable = uploadedPhotoUrls.filter((u) => u.startsWith('http'));
+      if (persistable.length > 0) {
+        localStorage.setItem(PHOTOS_STORAGE_KEY, JSON.stringify(persistable));
+      } else {
+        localStorage.removeItem(PHOTOS_STORAGE_KEY);
+      }
+    } catch { /* ignore */ }
+  }, [uploadedPhotoUrls, isEditMode]);
+
+  // Keep car_pass_verified in sync with carPassUrl — otherwise professional
+  // sellers (whose Zod schema requires car_pass_verified === true) get a
+  // silent validation failure when publishing.
+  useEffect(() => {
+    form.setValue('car_pass_verified', !!carPassUrl, { shouldValidate: false });
+  }, [carPassUrl, form]);
+
 
   // Pre-fill seller info from user profile
   useEffect(() => {
@@ -752,7 +805,12 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
           return;
         }
         queryClient.invalidateQueries({ queryKey: vehicleKeys.all });
-        try { sessionStorage.removeItem(STEP_STORAGE_KEY); } catch { /* ignore */ }
+        try {
+          sessionStorage.removeItem(STEP_STORAGE_KEY);
+          localStorage.removeItem(STEP_STORAGE_KEY);
+          localStorage.removeItem(CARPASS_URL_STORAGE_KEY);
+          localStorage.removeItem(PHOTOS_STORAGE_KEY);
+        } catch { /* ignore */ }
         toast.success(t('sellForm.successEdit'));
         navigate('/dashboard');
       } else {
@@ -771,7 +829,12 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
         // Supprimer le brouillon après publication
         await clearDraft();
         // Reset persisted wizard step so next listing starts fresh
-        try { sessionStorage.removeItem(STEP_STORAGE_KEY); } catch { /* ignore */ }
+        try {
+          sessionStorage.removeItem(STEP_STORAGE_KEY);
+          localStorage.removeItem(STEP_STORAGE_KEY);
+          localStorage.removeItem(CARPASS_URL_STORAGE_KEY);
+          localStorage.removeItem(PHOTOS_STORAGE_KEY);
+        } catch { /* ignore */ }
         trackEvent(EVENTS.LISTING_PUBLISHED, {
           brand: data.brand,
           model: data.model,
@@ -1066,7 +1129,20 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form
+          onSubmit={form.handleSubmit(onSubmit, (errors) => {
+            // Surface silent Zod validation failures (otherwise the user clicks
+            // "Publier" on step 3 and nothing visible happens).
+            const firstError = Object.values(errors)[0] as { message?: string } | undefined;
+            const msg = firstError?.message || 'Certains champs obligatoires sont manquants ou invalides.';
+            toast.error(msg);
+            // If a step-1 field is missing, bring the user back to step 1 so they can fix it.
+            const step1Fields = ['brand','model','year','price','mileage','fuel_type','transmission','body_type','color','contact_name','contact_email','tva_number'];
+            const hasStep1Error = Object.keys(errors).some((k) => step1Fields.includes(k));
+            if (hasStep1Error) setCurrentStep(1);
+          })}
+          className="space-y-8"
+        >
           <Honeypot ref={honeypotRef} />
 
           <AnimatePresence mode="wait" custom={slideDirection}>
