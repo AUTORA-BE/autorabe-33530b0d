@@ -805,7 +805,12 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
           return;
         }
         queryClient.invalidateQueries({ queryKey: vehicleKeys.all });
-        try { sessionStorage.removeItem(STEP_STORAGE_KEY); } catch { /* ignore */ }
+        try {
+          sessionStorage.removeItem(STEP_STORAGE_KEY);
+          localStorage.removeItem(STEP_STORAGE_KEY);
+          localStorage.removeItem(CARPASS_URL_STORAGE_KEY);
+          localStorage.removeItem(PHOTOS_STORAGE_KEY);
+        } catch { /* ignore */ }
         toast.success(t('sellForm.successEdit'));
         navigate('/dashboard');
       } else {
