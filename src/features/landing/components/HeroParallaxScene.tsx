@@ -1,9 +1,10 @@
-import { useRef, memo } from "react";
+import { useRef, memo, useEffect, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Leaf, ShieldCheck, Gauge } from "lucide-react";
 import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 import { HeroSearch } from "@/features/search";
 import FloatingTrustChip from "./FloatingTrustChip";
+import { supabase } from "@/integrations/supabase/client";
 import heroImg from "@/assets/hero-marketplace.jpg";
 
 interface HeroParallaxSceneProps {
