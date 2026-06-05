@@ -43,8 +43,8 @@ serve(async (req) => {
           Deno.env.get("SUPABASE_ANON_KEY") ?? ""
         );
         const token = authHeader.replace("Bearer ", "").trim();
-        const { data: claimsData } = await supabaseAuth.auth.getClaims(token);
-        const sub = claimsData?.claims?.sub;
+        const { data: userData } = await supabaseAuth.auth.getUser(token);
+        const sub = userData?.user?.id;
         if (sub) {
           rlKey = `car_chat_user:${sub}`;
           rlMax = 30;

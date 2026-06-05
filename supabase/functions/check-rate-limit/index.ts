@@ -50,11 +50,11 @@ Deno.serve(async (req) => {
         Deno.env.get("SUPABASE_URL")!,
         Deno.env.get("SUPABASE_ANON_KEY")!,
       );
-      const { data: claimsData, error: claimsErr } = await supabaseAuth.auth.getClaims(token);
-      if (claimsErr || !claimsData?.claims?.sub) {
+      const { data: userData, error: userErr } = await supabaseAuth.auth.getUser(token);
+      if (userErr || !userData?.user?.id) {
         return jsonResponse(req, { error: "Unauthorized" }, { status: 401 });
       }
-      identifier = claimsData.claims.sub;
+      identifier = userData.user.id;
     } else {
       identifier = ip;
     }
