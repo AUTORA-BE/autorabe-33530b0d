@@ -172,8 +172,6 @@ Deno.serve(async (req) => {
         contact_phone: payload.contact_phone ?? null,
         contact_email: payload.contact_email,
         location: payload.location ?? null,
-        latitude: payload.latitude ?? null,
-        longitude: payload.longitude ?? null,
         photos: payload.photos ?? [],
         car_pass_verified: !!payload.car_pass_url,
         car_pass_url: payload.car_pass_url ?? null,
@@ -183,7 +181,6 @@ Deno.serve(async (req) => {
         seller_type: payload.seller_type ?? 'particulier',
         tva_number: payload.tva_number ?? null,
         features: payload.features ?? null,
-        reference_url: payload.reference_url ?? null,
       })
       .select('id')
       .single();
