@@ -815,13 +815,38 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
         navigate('/dashboard');
       } else {
         // Publication via edge function sécurisée (seule voie autorisée)
-        const { error } = await supabase.functions.invoke('create-listing', {
+        const { data: insertResult, error } = await supabase.functions.invoke('create-listing', {
           body: listingData,
         });
 
         if (error) {
           console.error('Insert error:', error);
-          toast.error(t('sellForm.error'));
+          // Try to read the real error body returned by the edge function
+          // (supabase-js wraps non-2xx into FunctionsHttpError; the body lives
+          // on error.context as a Response).
+          let serverMsg: string | null = null;
+          let serverCode: string | null = null;
+          try {
+            const ctx = (error as { context?: Response }).context;
+            if (ctx && typeof ctx.clone === 'function') {
+              const body = await ctx.clone().json();
+              serverMsg = body?.error ?? null;
+              serverCode = body?.code ?? null;
+            }
+          } catch { /* ignore parse failure */ }
+
+          if (serverCode === 'RATE_LIMIT_EXCEEDED') {
+            toast.error('Limite atteinte : 10 annonces par jour. Réessayez demain.');
+          } else if (serverCode === 'DUPLICATE_LISTING') {
+            toast.error('Une annonce identique existe déjà. Modifiez-la depuis votre tableau de bord.');
+          } else if (serverMsg) {
+            toast.error(serverMsg);
+          } else if (error.message?.toLowerCase().includes('jwt') || error.message?.toLowerCase().includes('session')) {
+            toast.error('Session expirée — reconnectez-vous pour publier.');
+            navigate('/auth');
+          } else {
+            toast.error("Impossible de publier l'annonce. Vérifiez votre connexion et réessayez.");
+          }
           return;
         }
         // Invalider le cache React Query
@@ -844,8 +869,10 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
         });
         // Confetti !
         setShowConfetti(true);
-        toast.success('✅ Votre annonce est en ligne — des milliers d\'acheteurs belges vont la découvrir. Bonne vente !', { duration: 5000 });
-        setTimeout(() => navigate('/dashboard'), 3500);
+        toast.success('✅ Annonce envoyée — elle sera visible après validation par notre équipe.', { duration: 5000 });
+        // Redirect to dashboard where the seller will see her listing
+        const newId = (insertResult as { id?: string } | null)?.id;
+        setTimeout(() => navigate(newId ? `/dashboard?new=${newId}` : '/dashboard'), 2500);
       }
       
     } catch (error) {

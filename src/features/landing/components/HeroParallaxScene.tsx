@@ -1,9 +1,10 @@
-import { useRef, memo } from "react";
+import { useRef, memo, useEffect, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Leaf, ShieldCheck, Gauge } from "lucide-react";
 import { useReducedMotion } from "@/shared/hooks/useReducedMotion";
 import { HeroSearch } from "@/features/search";
 import FloatingTrustChip from "./FloatingTrustChip";
+import { supabase } from "@/integrations/supabase/client";
 import heroImg from "@/assets/hero-marketplace.jpg";
 
 interface HeroParallaxSceneProps {
@@ -49,6 +50,19 @@ const SHOWCASE_CARS = [
 const HeroParallaxScene = memo(function HeroParallaxScene({ onSearch }: HeroParallaxSceneProps) {
   const heroRef = useRef<HTMLDivElement>(null);
   const prefersReduced = useReducedMotion();
+  const [activeListings, setActiveListings] = useState<number | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    supabase
+      .from('car_listings_public')
+      .select('id', { count: 'exact', head: true })
+      .then(({ count, error }) => {
+        if (cancelled || error) return;
+        setActiveListings(count ?? 0);
+      });
+    return () => { cancelled = true; };
+  }, []);
 
   const { scrollYProgress } = useScroll({
     target: heroRef,
@@ -141,13 +155,15 @@ const HeroParallaxScene = memo(function HeroParallaxScene({ onSearch }: HeroPara
         />
       </motion.div>
 
-      {/* ── Layer 3: Floating trust chip ── */}
-      <motion.div
-        style={{ y: chipY, x: chipX }}
-        className="absolute top-[14%] sm:top-[18%] left-1/2 -translate-x-1/2 z-20"
-      >
-        <FloatingTrustChip count={12482} />
-      </motion.div>
+      {/* ── Layer 3: Floating trust chip (only shown when we have real data > 0) ── */}
+      {activeListings !== null && activeListings > 0 && (
+        <motion.div
+          style={{ y: chipY, x: chipX }}
+          className="absolute top-[14%] sm:top-[18%] left-1/2 -translate-x-1/2 z-20"
+        >
+          <FloatingTrustChip count={activeListings} />
+        </motion.div>
+      )}
 
       {/* ── Layer 4: Text + Search (embedded HeroSearch) ── */}
       <motion.div

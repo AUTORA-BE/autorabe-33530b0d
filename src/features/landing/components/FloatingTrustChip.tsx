@@ -3,10 +3,10 @@ import { motion } from "framer-motion";
 import { ShieldCheck } from "lucide-react";
 
 interface FloatingTrustChipProps {
-  count?: number;
+  count: number;
 }
 
-const FloatingTrustChip = memo(function FloatingTrustChip({ count = 12482 }: FloatingTrustChipProps) {
+const FloatingTrustChip = memo(function FloatingTrustChip({ count }: FloatingTrustChipProps) {
   return (
     <motion.div
       animate={{ y: [0, -4, 0] }}
