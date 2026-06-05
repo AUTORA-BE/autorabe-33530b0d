@@ -50,6 +50,20 @@ const SHOWCASE_CARS = [
 const HeroParallaxScene = memo(function HeroParallaxScene({ onSearch }: HeroParallaxSceneProps) {
   const heroRef = useRef<HTMLDivElement>(null);
   const prefersReduced = useReducedMotion();
+  const [activeListings, setActiveListings] = useState<number | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    supabase
+      .from('car_listings')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'approved')
+      .then(({ count, error }) => {
+        if (cancelled || error) return;
+        setActiveListings(count ?? 0);
+      });
+    return () => { cancelled = true; };
+  }, []);
 
   const { scrollYProgress } = useScroll({
     target: heroRef,
