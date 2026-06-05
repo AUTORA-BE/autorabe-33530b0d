@@ -55,9 +55,8 @@ const HeroParallaxScene = memo(function HeroParallaxScene({ onSearch }: HeroPara
   useEffect(() => {
     let cancelled = false;
     supabase
-      .from('car_listings')
+      .from('car_listings_public')
       .select('id', { count: 'exact', head: true })
-      .eq('status', 'approved')
       .then(({ count, error }) => {
         if (cancelled || error) return;
         setActiveListings(count ?? 0);
