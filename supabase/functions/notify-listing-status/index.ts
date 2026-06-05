@@ -39,14 +39,14 @@ const handler = async (req: Request): Promise<Response> => {
       Deno.env.get("SUPABASE_ANON_KEY") ?? ""
     );
 
-    const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
-    if (claimsError || !claimsData?.claims?.sub) {
+    const { data: userData, error: userError } = await supabaseAuth.auth.getUser(token);
+    if (userError || !userData?.user?.id) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-    const callerId = claimsData.claims.sub;
+    const callerId = userData.user.id;
 
     // Verify admin role
     const { data: isAdmin, error: roleErr } = await supabaseAdmin.rpc("has_role", {
