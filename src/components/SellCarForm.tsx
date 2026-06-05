@@ -1342,6 +1342,9 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
                     <FormItem>
                       <FormLabel>{t('sellForm.power')}</FormLabel>
                       <FormControl><Input type="number" placeholder="150" {...field} onChange={e => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)} /></FormControl>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        En chevaux (ch). Votre carte grise indique des kW (case P.2) — multipliez-les par 1,36.
+                      </p>
                       <FormMessage />
                     </FormItem>
                   )} />
