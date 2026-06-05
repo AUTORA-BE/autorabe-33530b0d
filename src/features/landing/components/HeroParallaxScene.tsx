@@ -156,13 +156,15 @@ const HeroParallaxScene = memo(function HeroParallaxScene({ onSearch }: HeroPara
         />
       </motion.div>
 
-      {/* ── Layer 3: Floating trust chip ── */}
-      <motion.div
-        style={{ y: chipY, x: chipX }}
-        className="absolute top-[14%] sm:top-[18%] left-1/2 -translate-x-1/2 z-20"
-      >
-        <FloatingTrustChip count={12482} />
-      </motion.div>
+      {/* ── Layer 3: Floating trust chip (only shown when we have real data > 0) ── */}
+      {activeListings !== null && activeListings > 0 && (
+        <motion.div
+          style={{ y: chipY, x: chipX }}
+          className="absolute top-[14%] sm:top-[18%] left-1/2 -translate-x-1/2 z-20"
+        >
+          <FloatingTrustChip count={activeListings} />
+        </motion.div>
+      )}
 
       {/* ── Layer 4: Text + Search (embedded HeroSearch) ── */}
       <motion.div
