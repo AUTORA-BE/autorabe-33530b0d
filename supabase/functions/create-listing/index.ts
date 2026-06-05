@@ -55,7 +55,7 @@ function sanitizeText(input: unknown, maxLen = 5000): string | null {
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return handlePreflight(req);
-  const cors = buildCorsHeaders(req);
+  void buildCorsHeaders;
 
   try {
     // 1. Auth — JWT requis
@@ -146,9 +146,9 @@ Deno.serve(async (req) => {
     }
 
     // 5. Insertion via service_role (seule voie autorisée).
-    //    NOTE: car_pass_verified is a generated column now → never set explicitly.
-    //    Listings start with car_pass_status='unverified'; the seller must
-    //    request verification via the verify-car-pass Edge Function.
+    //    The live database currently stores Car-Pass with the legacy boolean
+    //    `car_pass_verified`; do not send async-verification columns unless the
+    //    migration exists, otherwise PostgREST returns PGRST204 and publishing fails.
     const { data, error } = await admin
       .from('car_listings')
       .insert({
@@ -175,7 +175,7 @@ Deno.serve(async (req) => {
         latitude: payload.latitude ?? null,
         longitude: payload.longitude ?? null,
         photos: payload.photos ?? [],
-        car_pass_status: 'unverified',
+        car_pass_verified: !!payload.car_pass_url,
         car_pass_url: payload.car_pass_url ?? null,
         car_pass_date: payload.car_pass_date ?? null,
         ct_valid: payload.ct_valid ?? false,
