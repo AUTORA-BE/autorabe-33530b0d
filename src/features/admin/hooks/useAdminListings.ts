@@ -102,6 +102,33 @@ export function useAdminListings() {
       qc.invalidateQueries({ queryKey: ['admin'] });
       toast.success('Annonce supprimée');
     },
+    onError: (e: Error) => toast.error(e.message || 'Suppression impossible'),
+  });
+
+  const markSoldMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from('car_listings').update({ status: 'sold' }).eq('id', id);
+      if (error) throw error;
+      await logAction('mark_sold', id);
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['admin'] });
+      toast.success('Annonce marquée comme vendue ✓');
+    },
+    onError: (e: Error) => toast.error(e.message || 'Impossible de marquer comme vendue'),
+  });
+
+  const reactivateMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from('car_listings').update({ status: 'approved' }).eq('id', id);
+      if (error) throw error;
+      await logAction('reactivate_listing', id);
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['admin'] });
+      toast.success('Annonce réactivée ✓');
+    },
+    onError: (e: Error) => toast.error(e.message || 'Réactivation impossible'),
   });
 
   const bulkApproveMutation = useMutation({
@@ -118,6 +145,7 @@ export function useAdminListings() {
       qc.invalidateQueries({ queryKey: ['admin'] });
       toast.success('Annonces approuvées en lot ✓');
     },
+    onError: (e: Error) => toast.error(e.message || 'Approbation en lot impossible'),
   });
 
   return {
@@ -125,7 +153,15 @@ export function useAdminListings() {
     approve: approveMutation.mutate,
     reject: rejectMutation.mutate,
     remove: deleteMutation.mutate,
+    markSold: markSoldMutation.mutate,
+    reactivate: reactivateMutation.mutate,
     bulkApprove: bulkApproveMutation.mutate,
-    isActing: approveMutation.isPending || rejectMutation.isPending || deleteMutation.isPending || bulkApproveMutation.isPending,
+    isActing:
+      approveMutation.isPending ||
+      rejectMutation.isPending ||
+      deleteMutation.isPending ||
+      markSoldMutation.isPending ||
+      reactivateMutation.isPending ||
+      bulkApproveMutation.isPending,
   };
 }
