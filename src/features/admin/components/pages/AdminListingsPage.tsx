@@ -14,7 +14,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
-import { Search, Check, X, Trash2, Download, Loader2, CheckCheck, History, Clock, AlertTriangle } from 'lucide-react';
+import { Search, Check, X, Trash2, Download, Loader2, CheckCheck, History, Clock, AlertTriangle, Pencil, BadgeCheck, RotateCcw } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { useAdminListings } from '../../hooks/useAdminListings';
@@ -27,6 +28,7 @@ const STATUS_COLORS: Record<string, string> = {
   pending: 'bg-amber-500/10 text-amber-500',
   approved: 'bg-emerald-500/10 text-emerald-500',
   rejected: 'bg-destructive/10 text-destructive',
+  sold: 'bg-sky-500/10 text-sky-500',
 };
 
 const ACTION_LABELS: Record<string, string> = {
@@ -34,10 +36,12 @@ const ACTION_LABELS: Record<string, string> = {
   reject_listing: 'Rejetée',
   delete_listing: 'Supprimée',
   bulk_approve: 'Approuvée (lot)',
+  mark_sold: 'Marquée vendue',
+  reactivate_listing: 'Réactivée',
 };
 
 export default function AdminListingsPage() {
-  const { data: listings = [], isLoading, approve, reject, remove, bulkApprove, isActing } = useAdminListings();
+  const { data: listings = [], isLoading, approve, reject, remove, markSold, reactivate, bulkApprove, isActing } = useAdminListings();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [rejectDialog, setRejectDialog] = useState<{ open: boolean; listingId: string | null }>({ open: false, listingId: null });
@@ -103,6 +107,7 @@ export default function AdminListingsPage() {
             <SelectItem value="all">Tous</SelectItem>
             <SelectItem value="pending">En attente</SelectItem>
             <SelectItem value="approved">Approuvées</SelectItem>
+            <SelectItem value="sold">Vendues</SelectItem>
             <SelectItem value="rejected">Rejetées</SelectItem>
           </SelectContent>
         </Select>
@@ -221,6 +226,56 @@ export default function AdminListingsPage() {
                 >
                   Voir la fiche →
                 </a>
+              </div>
+
+              {/* Quick admin actions */}
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Button asChild size="sm" variant="outline">
+                  <Link to={`/sell?edit=${detailListing.id}`}>
+                    <Pencil className="h-3.5 w-3.5 mr-1.5" />
+                    Modifier
+                  </Link>
+                </Button>
+
+                {detailListing.status !== 'sold' && (
+                  <Button
+                    size="sm"
+                    variant="default"
+                    className="bg-sky-600 hover:bg-sky-700 text-white"
+                    disabled={isActing}
+                    onClick={() => {
+                      if (window.confirm('Marquer cette annonce comme vendue ?')) markSold(detailListing.id);
+                    }}
+                  >
+                    <BadgeCheck className="h-3.5 w-3.5 mr-1.5" />
+                    Marquer vendue
+                  </Button>
+                )}
+
+                {(detailListing.status === 'sold' || detailListing.status === 'rejected') && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={isActing}
+                    onClick={() => reactivate(detailListing.id)}
+                  >
+                    <RotateCcw className="h-3.5 w-3.5 mr-1.5" />
+                    Réactiver
+                  </Button>
+                )}
+
+                {detailListing.status === 'pending' && (
+                  <>
+                    <Button size="sm" variant="default" disabled={isActing} onClick={() => approve(detailListing.id)}>
+                      <Check className="h-3.5 w-3.5 mr-1.5" />
+                      Approuver
+                    </Button>
+                    <Button size="sm" variant="destructive" disabled={isActing} onClick={() => openRejectDialog(detailListing.id)}>
+                      <X className="h-3.5 w-3.5 mr-1.5" />
+                      Rejeter
+                    </Button>
+                  </>
+                )}
               </div>
 
               {/* All specs */}
