@@ -28,6 +28,7 @@ const STATUS_COLORS: Record<string, string> = {
   pending: 'bg-amber-500/10 text-amber-500',
   approved: 'bg-emerald-500/10 text-emerald-500',
   rejected: 'bg-destructive/10 text-destructive',
+  sold: 'bg-sky-500/10 text-sky-500',
 };
 
 const ACTION_LABELS: Record<string, string> = {
@@ -35,10 +36,12 @@ const ACTION_LABELS: Record<string, string> = {
   reject_listing: 'Rejetée',
   delete_listing: 'Supprimée',
   bulk_approve: 'Approuvée (lot)',
+  mark_sold: 'Marquée vendue',
+  reactivate_listing: 'Réactivée',
 };
 
 export default function AdminListingsPage() {
-  const { data: listings = [], isLoading, approve, reject, remove, bulkApprove, isActing } = useAdminListings();
+  const { data: listings = [], isLoading, approve, reject, remove, markSold, reactivate, bulkApprove, isActing } = useAdminListings();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [rejectDialog, setRejectDialog] = useState<{ open: boolean; listingId: string | null }>({ open: false, listingId: null });
