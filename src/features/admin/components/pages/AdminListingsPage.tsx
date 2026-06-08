@@ -107,6 +107,7 @@ export default function AdminListingsPage() {
             <SelectItem value="all">Tous</SelectItem>
             <SelectItem value="pending">En attente</SelectItem>
             <SelectItem value="approved">Approuvées</SelectItem>
+            <SelectItem value="sold">Vendues</SelectItem>
             <SelectItem value="rejected">Rejetées</SelectItem>
           </SelectContent>
         </Select>
