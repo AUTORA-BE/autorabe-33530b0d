@@ -228,6 +228,56 @@ export default function AdminListingsPage() {
                 </a>
               </div>
 
+              {/* Quick admin actions */}
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Button asChild size="sm" variant="outline">
+                  <Link to={`/sell?edit=${detailListing.id}`}>
+                    <Pencil className="h-3.5 w-3.5 mr-1.5" />
+                    Modifier
+                  </Link>
+                </Button>
+
+                {detailListing.status !== 'sold' && (
+                  <Button
+                    size="sm"
+                    variant="default"
+                    className="bg-sky-600 hover:bg-sky-700 text-white"
+                    disabled={isActing}
+                    onClick={() => {
+                      if (window.confirm('Marquer cette annonce comme vendue ?')) markSold(detailListing.id);
+                    }}
+                  >
+                    <BadgeCheck className="h-3.5 w-3.5 mr-1.5" />
+                    Marquer vendue
+                  </Button>
+                )}
+
+                {(detailListing.status === 'sold' || detailListing.status === 'rejected') && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={isActing}
+                    onClick={() => reactivate(detailListing.id)}
+                  >
+                    <RotateCcw className="h-3.5 w-3.5 mr-1.5" />
+                    Réactiver
+                  </Button>
+                )}
+
+                {detailListing.status === 'pending' && (
+                  <>
+                    <Button size="sm" variant="default" disabled={isActing} onClick={() => approve(detailListing.id)}>
+                      <Check className="h-3.5 w-3.5 mr-1.5" />
+                      Approuver
+                    </Button>
+                    <Button size="sm" variant="destructive" disabled={isActing} onClick={() => openRejectDialog(detailListing.id)}>
+                      <X className="h-3.5 w-3.5 mr-1.5" />
+                      Rejeter
+                    </Button>
+                  </>
+                )}
+              </div>
+
               {/* All specs */}
               <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
                 {[
