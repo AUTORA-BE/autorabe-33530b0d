@@ -399,9 +399,16 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
 
         const { data: { user } } = await supabase.auth.getUser();
         if (data.user_id !== user?.id) {
-          toast.error(t('sellForm.notAuthorized'));
-          navigate('/dashboard');
-          return;
+          // Allow admins to edit any listing from the moderation dashboard
+          const { data: isAdmin } = await supabase.rpc('has_role', {
+            _user_id: user?.id ?? '00000000-0000-0000-0000-000000000000',
+            _role: 'admin',
+          });
+          if (!isAdmin) {
+            toast.error(t('sellForm.notAuthorized'));
+            navigate('/dashboard');
+            return;
+          }
         }
 
         form.reset({
