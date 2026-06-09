@@ -147,9 +147,18 @@ export function useAdminUsers() {
         user_type?: 'particulier' | 'professionnel';
       };
     }) => {
-      const cleanPatch: Record<string, unknown> = {};
-      Object.entries(patch).forEach(([k, v]) => {
+      const cleanPatch: {
+        display_name?: string | null;
+        phone?: string | null;
+        garage_name?: string | null;
+        bce_number?: string | null;
+        postal_code?: string | null;
+        user_type?: 'particulier' | 'professionnel';
+      } = {};
+      (Object.keys(patch) as Array<keyof typeof patch>).forEach((k) => {
+        const v = patch[k];
         if (v === undefined) return;
+        // @ts-expect-error narrow per key
         cleanPatch[k] = typeof v === 'string' ? (v.trim() === '' ? null : v.trim()) : v;
       });
       if (Object.keys(cleanPatch).length === 0) return;
