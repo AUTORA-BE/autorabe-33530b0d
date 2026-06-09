@@ -261,6 +261,56 @@ export default function AdminUsersPage() {
         </DialogContent>
       </Dialog>
 
+      {/* Edit profile dialog (admin can fill missing fields) */}
+      <Dialog open={!!profileUser} onOpenChange={() => setProfileUser(null)}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2"><UserCog className="h-4 w-4" /> Modifier le profil</DialogTitle>
+            <DialogDescription>Compléter ou corriger les informations manquantes.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div>
+              <label className="text-sm font-medium mb-1.5 block">Nom complet</label>
+              <Input value={profileForm.display_name} onChange={e => setProfileForm(f => ({ ...f, display_name: e.target.value }))} placeholder="Nom Prénom" />
+            </div>
+            <div>
+              <label className="text-sm font-medium mb-1.5 block">Téléphone</label>
+              <Input value={profileForm.phone} onChange={e => setProfileForm(f => ({ ...f, phone: e.target.value }))} placeholder="+32 ..." />
+            </div>
+            <div>
+              <label className="text-sm font-medium mb-1.5 block">Code postal</label>
+              <Input value={profileForm.postal_code} onChange={e => setProfileForm(f => ({ ...f, postal_code: e.target.value }))} placeholder="1000" />
+            </div>
+            <div>
+              <label className="text-sm font-medium mb-1.5 block">Type de compte</label>
+              <Select value={profileForm.user_type} onValueChange={(v) => setProfileForm(f => ({ ...f, user_type: v as 'particulier' | 'professionnel' }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="particulier">Particulier</SelectItem>
+                  <SelectItem value="professionnel">Professionnel</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            {profileForm.user_type === 'professionnel' && (
+              <>
+                <div>
+                  <label className="text-sm font-medium mb-1.5 block">Nom du garage</label>
+                  <Input value={profileForm.garage_name} onChange={e => setProfileForm(f => ({ ...f, garage_name: e.target.value }))} placeholder="Garage XYZ" />
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-1.5 block">N° BCE / TVA</label>
+                  <Input value={profileForm.bce_number} onChange={e => setProfileForm(f => ({ ...f, bce_number: e.target.value }))} placeholder="BE0123456789" />
+                </div>
+              </>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setProfileUser(null)}>Annuler</Button>
+            <Button onClick={handleSaveProfile} disabled={isActing}>Enregistrer</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* User contact card (click on row) */}
       <UserContactCard
         userId={detailUserId}
