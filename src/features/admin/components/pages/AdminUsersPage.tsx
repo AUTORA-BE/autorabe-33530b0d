@@ -36,7 +36,7 @@ function getTierInfo(productId: string | null, status: string | null) {
 }
 
 export default function AdminUsersPage() {
-  const { data: users = [], isLoading, suspendUser, unsuspendUser, updateSubscription, isActing } = useAdminUsers();
+  const { data: users = [], isLoading, suspendUser, unsuspendUser, updateSubscription, updateProfile, isActing } = useAdminUsers();
   const [search, setSearch] = useState('');
   const [suspendDialog, setSuspendDialog] = useState<string | null>(null);
   const [suspendReason, setSuspendReason] = useState('');
@@ -44,6 +44,15 @@ export default function AdminUsersPage() {
   const [editProductId, setEditProductId] = useState<string>('free');
   const [editEndDate, setEditEndDate] = useState('');
   const [detailUserId, setDetailUserId] = useState<string | null>(null);
+  const [profileUser, setProfileUser] = useState<AdminUser | null>(null);
+  const [profileForm, setProfileForm] = useState({
+    display_name: '',
+    phone: '',
+    garage_name: '',
+    bce_number: '',
+    postal_code: '',
+    user_type: 'particulier' as 'particulier' | 'professionnel',
+  });
 
   const filtered = users.filter(u => {
     if (!search) return true;
