@@ -132,11 +132,53 @@ export function useAdminUsers() {
     onError: (e: Error) => toast.error(e.message || 'Erreur lors de la mise à jour'),
   });
 
+  const updateProfileMutation = useMutation({
+    mutationFn: async ({
+      userId,
+      patch,
+    }: {
+      userId: string;
+      patch: {
+        display_name?: string | null;
+        phone?: string | null;
+        garage_name?: string | null;
+        bce_number?: string | null;
+        postal_code?: string | null;
+        user_type?: 'particulier' | 'professionnel';
+      };
+    }) => {
+      const cleanPatch: Record<string, unknown> = {};
+      Object.entries(patch).forEach(([k, v]) => {
+        if (v === undefined) return;
+        cleanPatch[k] = typeof v === 'string' ? (v.trim() === '' ? null : v.trim()) : v;
+      });
+      if (Object.keys(cleanPatch).length === 0) return;
+
+      const { error } = await supabase
+        .from('profiles')
+        .update(cleanPatch)
+        .eq('user_id', userId);
+      if (error) throw error;
+      await logAction('update_profile', userId, undefined, cleanPatch);
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['admin', 'users'] });
+      qc.invalidateQueries({ queryKey: ['admin', 'user-contact'] });
+      toast.success('Profil mis à jour');
+    },
+    onError: (e: Error) => toast.error(e.message || 'Erreur lors de la mise à jour'),
+  });
+
   return {
     ...query,
     suspendUser: suspendMutation.mutate,
     unsuspendUser: unsuspendMutation.mutate,
     updateSubscription: updateSubscriptionMutation.mutate,
-    isActing: suspendMutation.isPending || unsuspendMutation.isPending || updateSubscriptionMutation.isPending,
+    updateProfile: updateProfileMutation.mutate,
+    isActing:
+      suspendMutation.isPending ||
+      unsuspendMutation.isPending ||
+      updateSubscriptionMutation.isPending ||
+      updateProfileMutation.isPending,
   };
 }
