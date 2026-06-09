@@ -104,6 +104,24 @@ export default function AdminUsersPage() {
     setEditEndDate(user.subscription_end ? new Date(user.subscription_end).toISOString().slice(0, 10) : '');
   };
 
+  const openProfileModal = (user: AdminUser) => {
+    setProfileUser(user);
+    setProfileForm({
+      display_name: user.display_name ?? '',
+      phone: user.phone ?? '',
+      garage_name: user.garage_name ?? '',
+      bce_number: '',
+      postal_code: user.postal_code ?? '',
+      user_type: user.garage_name ? 'professionnel' : 'particulier',
+    });
+  };
+
+  const handleSaveProfile = () => {
+    if (!profileUser) return;
+    updateProfile({ userId: profileUser.user_id, patch: profileForm });
+    setProfileUser(null);
+  };
+
   const handleSaveSubscription = () => {
     if (!editUser) return;
     const productId = editProductId === 'free' ? null : editProductId;
