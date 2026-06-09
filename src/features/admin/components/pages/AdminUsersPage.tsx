@@ -183,6 +183,9 @@ export default function AdminUsersPage() {
                     </div>
                   </button>
                   <div className="flex gap-1 flex-shrink-0">
+                    <Button size="sm" variant="outline" onClick={() => openProfileModal(user)} disabled={isActing} title="Modifier le profil">
+                      <UserCog className="h-3.5 w-3.5" />
+                    </Button>
                     <Button size="sm" variant="outline" onClick={() => openEditModal(user)} disabled={isActing} title="Gérer abonnement">
                       <Crown className="h-3.5 w-3.5" />
                     </Button>
