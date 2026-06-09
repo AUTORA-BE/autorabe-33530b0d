@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { SidebarTrigger } from '@/components/ui/sidebar';
-import { Search, Ban, UserCheck, Download, Loader2, Crown, Edit } from 'lucide-react';
+import { Search, Ban, UserCheck, Download, Loader2, Crown, Edit, UserCog } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { useAdminUsers } from '../../hooks/useAdminUsers';
