@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { SidebarTrigger } from '@/components/ui/sidebar';
-import { Search, Ban, UserCheck, Download, Loader2, Crown, Edit } from 'lucide-react';
+import { Search, Ban, UserCheck, Download, Loader2, Crown, Edit, UserCog } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { useAdminUsers } from '../../hooks/useAdminUsers';
@@ -36,7 +36,7 @@ function getTierInfo(productId: string | null, status: string | null) {
 }
 
 export default function AdminUsersPage() {
-  const { data: users = [], isLoading, suspendUser, unsuspendUser, updateSubscription, isActing } = useAdminUsers();
+  const { data: users = [], isLoading, suspendUser, unsuspendUser, updateSubscription, updateProfile, isActing } = useAdminUsers();
   const [search, setSearch] = useState('');
   const [suspendDialog, setSuspendDialog] = useState<string | null>(null);
   const [suspendReason, setSuspendReason] = useState('');
@@ -44,6 +44,15 @@ export default function AdminUsersPage() {
   const [editProductId, setEditProductId] = useState<string>('free');
   const [editEndDate, setEditEndDate] = useState('');
   const [detailUserId, setDetailUserId] = useState<string | null>(null);
+  const [profileUser, setProfileUser] = useState<AdminUser | null>(null);
+  const [profileForm, setProfileForm] = useState({
+    display_name: '',
+    phone: '',
+    garage_name: '',
+    bce_number: '',
+    postal_code: '',
+    user_type: 'particulier' as 'particulier' | 'professionnel',
+  });
 
   const filtered = users.filter(u => {
     if (!search) return true;
@@ -93,6 +102,24 @@ export default function AdminUsersPage() {
       setEditProductId('free');
     }
     setEditEndDate(user.subscription_end ? new Date(user.subscription_end).toISOString().slice(0, 10) : '');
+  };
+
+  const openProfileModal = (user: AdminUser) => {
+    setProfileUser(user);
+    setProfileForm({
+      display_name: user.display_name ?? '',
+      phone: user.phone ?? '',
+      garage_name: user.garage_name ?? '',
+      bce_number: '',
+      postal_code: user.postal_code ?? '',
+      user_type: user.garage_name ? 'professionnel' : 'particulier',
+    });
+  };
+
+  const handleSaveProfile = () => {
+    if (!profileUser) return;
+    updateProfile({ userId: profileUser.user_id, patch: profileForm });
+    setProfileUser(null);
   };
 
   const handleSaveSubscription = () => {
@@ -156,6 +183,9 @@ export default function AdminUsersPage() {
                     </div>
                   </button>
                   <div className="flex gap-1 flex-shrink-0">
+                    <Button size="sm" variant="outline" onClick={() => openProfileModal(user)} disabled={isActing} title="Modifier le profil">
+                      <UserCog className="h-3.5 w-3.5" />
+                    </Button>
                     <Button size="sm" variant="outline" onClick={() => openEditModal(user)} disabled={isActing} title="Gérer abonnement">
                       <Crown className="h-3.5 w-3.5" />
                     </Button>
@@ -227,6 +257,56 @@ export default function AdminUsersPage() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditUser(null)}>Annuler</Button>
             <Button onClick={handleSaveSubscription} disabled={isActing}>Enregistrer</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit profile dialog (admin can fill missing fields) */}
+      <Dialog open={!!profileUser} onOpenChange={() => setProfileUser(null)}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2"><UserCog className="h-4 w-4" /> Modifier le profil</DialogTitle>
+            <DialogDescription>Compléter ou corriger les informations manquantes.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div>
+              <label className="text-sm font-medium mb-1.5 block">Nom complet</label>
+              <Input value={profileForm.display_name} onChange={e => setProfileForm(f => ({ ...f, display_name: e.target.value }))} placeholder="Nom Prénom" />
+            </div>
+            <div>
+              <label className="text-sm font-medium mb-1.5 block">Téléphone</label>
+              <Input value={profileForm.phone} onChange={e => setProfileForm(f => ({ ...f, phone: e.target.value }))} placeholder="+32 ..." />
+            </div>
+            <div>
+              <label className="text-sm font-medium mb-1.5 block">Code postal</label>
+              <Input value={profileForm.postal_code} onChange={e => setProfileForm(f => ({ ...f, postal_code: e.target.value }))} placeholder="1000" />
+            </div>
+            <div>
+              <label className="text-sm font-medium mb-1.5 block">Type de compte</label>
+              <Select value={profileForm.user_type} onValueChange={(v) => setProfileForm(f => ({ ...f, user_type: v as 'particulier' | 'professionnel' }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="particulier">Particulier</SelectItem>
+                  <SelectItem value="professionnel">Professionnel</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            {profileForm.user_type === 'professionnel' && (
+              <>
+                <div>
+                  <label className="text-sm font-medium mb-1.5 block">Nom du garage</label>
+                  <Input value={profileForm.garage_name} onChange={e => setProfileForm(f => ({ ...f, garage_name: e.target.value }))} placeholder="Garage XYZ" />
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-1.5 block">N° BCE / TVA</label>
+                  <Input value={profileForm.bce_number} onChange={e => setProfileForm(f => ({ ...f, bce_number: e.target.value }))} placeholder="BE0123456789" />
+                </div>
+              </>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setProfileUser(null)}>Annuler</Button>
+            <Button onClick={handleSaveProfile} disabled={isActing}>Enregistrer</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
