@@ -18,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getUserDisplayName, getUserInitials } from "@/lib/userDisplay";
 
 interface DesktopActionsProps {
   user: SupabaseUser | null;
@@ -89,12 +90,12 @@ const DesktopActions = ({ user, userProfile, onLogout, t, isAdmin }: DesktopActi
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="sm" className="rounded-2xl gap-2 shadow-sm hover:shadow-lg transition-shadow pl-1.5">
               <Avatar className="h-6 w-6">
-                <AvatarImage src={userProfile?.avatar_url || undefined} alt={userProfile?.display_name || user.email || ''} />
+                <AvatarImage src={userProfile?.avatar_url || undefined} alt={getUserDisplayName(user, userProfile)} />
                 <AvatarFallback className="bg-primary/10 text-primary text-xs font-medium">
-                  {(userProfile?.display_name || user.email || 'U').slice(0, 2).toUpperCase()}
+                  {getUserInitials(user, userProfile)}
                 </AvatarFallback>
               </Avatar>
-              {userProfile?.display_name || user.email?.split("@")[0]}
+              <span className="max-w-[160px] truncate">{getUserDisplayName(user, userProfile)}</span>
               <ChevronDown className="w-3 h-3" />
             </Button>
           </DropdownMenuTrigger>
