@@ -81,6 +81,8 @@ export default function AdminUsersPage() {
     postal_code: '',
     user_type: 'particulier' as 'particulier' | 'professionnel',
   });
+  const [profileStatus, setProfileStatus] = useState<{ suspended: boolean; reason: string }>({ suspended: false, reason: '' });
+  const [profileErrors, setProfileErrors] = useState<ProfileErrors>({});
 
   const filtered = users.filter(u => {
     if (!search) return true;
