@@ -13,15 +13,43 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { SidebarTrigger } from '@/components/ui/sidebar';
-import { Search, Ban, UserCheck, Download, Loader2, Crown, Edit, UserCog } from 'lucide-react';
+import { Search, Ban, UserCheck, Download, Loader2, Crown, Edit, UserCog, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { z } from 'zod';
 import { useAdminUsers } from '../../hooks/useAdminUsers';
 import { exportData } from '../../utils/exportData';
 import { SUBSCRIPTION_TIERS } from '@/features/subscription/constants/tiers';
 import { UserContactCard } from '../UserContactCard';
+import { belgianPhoneSchema, belgianPostalSchema, belgianVatSchema, displayNameSchema } from '@/lib/validation/belgian';
 import type { ExportFormat } from '../../types/admin.types';
 import type { AdminUser } from '../../types/admin.types';
+
+/** Optional-string wrapper around a Zod schema (empty/undefined → pass). */
+const optional = <T extends z.ZodTypeAny>(s: T) =>
+  z.preprocess((v) => (v === '' || v == null ? undefined : v), s.optional());
+
+const profileSchema = z
+  .object({
+    display_name: optional(displayNameSchema),
+    phone: optional(belgianPhoneSchema),
+    postal_code: optional(belgianPostalSchema),
+    user_type: z.enum(['particulier', 'professionnel']),
+    garage_name: optional(z.string().trim().min(2, 'Nom de garage trop court').max(120)),
+    bce_number: optional(belgianVatSchema),
+  })
+  .superRefine((val, ctx) => {
+    if (val.user_type === 'professionnel') {
+      if (!val.garage_name) {
+        ctx.addIssue({ code: 'custom', path: ['garage_name'], message: 'Obligatoire pour un professionnel' });
+      }
+      if (!val.bce_number) {
+        ctx.addIssue({ code: 'custom', path: ['bce_number'], message: 'BCE/TVA obligatoire pour un professionnel' });
+      }
+    }
+  });
+
+type ProfileErrors = Partial<Record<'display_name' | 'phone' | 'postal_code' | 'garage_name' | 'bce_number' | 'user_type', string>>;
 
 /** Map product_id → tier info */
 function getTierInfo(productId: string | null, status: string | null) {
