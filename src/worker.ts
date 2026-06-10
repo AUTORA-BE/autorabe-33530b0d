@@ -12,7 +12,7 @@
  */
 
 export interface Env {
-  ASSETS: Fetcher;
+  ASSETS: { fetch: (request: Request) => Promise<Response> };
 }
 
 const SUPABASE_URL = "https://jbdsjqoonpieusfvkhyo.supabase.co";
