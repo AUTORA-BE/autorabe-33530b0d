@@ -76,7 +76,7 @@ const extractUuid = (s: string): string | null => {
 // --- Supabase RPC calls (anon, read-only) --------------------------------
 async function rpc<T>(fn: string, body: Record<string, unknown>): Promise<T | null> {
   try {
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, {
+    const init: RequestInit & { cf?: { cacheTtl?: number; cacheEverything?: boolean } } = {
       method: "POST",
       headers: {
         apikey: SUPABASE_ANON_KEY,
@@ -86,7 +86,8 @@ async function rpc<T>(fn: string, body: Record<string, unknown>): Promise<T | nu
       body: JSON.stringify(body),
       // cf-specific: cache RPC responses at the edge for 5 min to limit cost
       cf: { cacheTtl: 300, cacheEverything: true },
-    });
+    };
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, init);
     if (!res.ok) return null;
     const data = (await res.json()) as T | T[];
     if (Array.isArray(data)) return (data[0] ?? null) as T | null;
