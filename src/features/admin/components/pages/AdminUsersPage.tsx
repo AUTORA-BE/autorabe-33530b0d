@@ -13,15 +13,43 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { SidebarTrigger } from '@/components/ui/sidebar';
-import { Search, Ban, UserCheck, Download, Loader2, Crown, Edit, UserCog } from 'lucide-react';
+import { Search, Ban, UserCheck, Download, Loader2, Crown, Edit, UserCog, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { z } from 'zod';
 import { useAdminUsers } from '../../hooks/useAdminUsers';
 import { exportData } from '../../utils/exportData';
 import { SUBSCRIPTION_TIERS } from '@/features/subscription/constants/tiers';
 import { UserContactCard } from '../UserContactCard';
+import { belgianPhoneSchema, belgianPostalSchema, belgianVatSchema, displayNameSchema } from '@/lib/validation/belgian';
 import type { ExportFormat } from '../../types/admin.types';
 import type { AdminUser } from '../../types/admin.types';
+
+/** Optional-string wrapper around a Zod schema (empty/undefined → pass). */
+const optional = <T extends z.ZodTypeAny>(s: T) =>
+  z.preprocess((v) => (v === '' || v == null ? undefined : v), s.optional());
+
+const profileSchema = z
+  .object({
+    display_name: optional(displayNameSchema),
+    phone: optional(belgianPhoneSchema),
+    postal_code: optional(belgianPostalSchema),
+    user_type: z.enum(['particulier', 'professionnel']),
+    garage_name: optional(z.string().trim().min(2, 'Nom de garage trop court').max(120)),
+    bce_number: optional(belgianVatSchema),
+  })
+  .superRefine((val, ctx) => {
+    if (val.user_type === 'professionnel') {
+      if (!val.garage_name) {
+        ctx.addIssue({ code: 'custom', path: ['garage_name'], message: 'Obligatoire pour un professionnel' });
+      }
+      if (!val.bce_number) {
+        ctx.addIssue({ code: 'custom', path: ['bce_number'], message: 'BCE/TVA obligatoire pour un professionnel' });
+      }
+    }
+  });
+
+type ProfileErrors = Partial<Record<'display_name' | 'phone' | 'postal_code' | 'garage_name' | 'bce_number' | 'user_type', string>>;
 
 /** Map product_id → tier info */
 function getTierInfo(productId: string | null, status: string | null) {
@@ -53,6 +81,8 @@ export default function AdminUsersPage() {
     postal_code: '',
     user_type: 'particulier' as 'particulier' | 'professionnel',
   });
+  const [profileStatus, setProfileStatus] = useState<{ suspended: boolean; reason: string }>({ suspended: false, reason: '' });
+  const [profileErrors, setProfileErrors] = useState<ProfileErrors>({});
 
   const filtered = users.filter(u => {
     if (!search) return true;
@@ -106,6 +136,7 @@ export default function AdminUsersPage() {
 
   const openProfileModal = (user: AdminUser) => {
     setProfileUser(user);
+    setProfileErrors({});
     setProfileForm({
       display_name: user.display_name ?? '',
       phone: user.phone ?? '',
@@ -114,11 +145,31 @@ export default function AdminUsersPage() {
       postal_code: user.postal_code ?? '',
       user_type: user.garage_name ? 'professionnel' : 'particulier',
     });
+    setProfileStatus({ suspended: !!user.suspended_at, reason: user.suspended_reason ?? '' });
   };
 
   const handleSaveProfile = () => {
     if (!profileUser) return;
-    updateProfile({ userId: profileUser.user_id, patch: profileForm });
+    const parsed = profileSchema.safeParse(profileForm);
+    if (!parsed.success) {
+      const errs: ProfileErrors = {};
+      parsed.error.issues.forEach((iss) => {
+        const key = iss.path[0] as keyof ProfileErrors;
+        if (key && !errs[key]) errs[key] = iss.message;
+      });
+      setProfileErrors(errs);
+      return;
+    }
+    setProfileErrors({});
+    // Status change first (if any)
+    const wasSuspended = !!profileUser.suspended_at;
+    if (profileStatus.suspended && !wasSuspended) {
+      suspendUser({ userId: profileUser.user_id, reason: profileStatus.reason.trim() || 'Violation des conditions' });
+    } else if (!profileStatus.suspended && wasSuspended) {
+      unsuspendUser(profileUser.user_id);
+    }
+    // Profile patch — normalized values from zod
+    updateProfile({ userId: profileUser.user_id, patch: parsed.data });
     setProfileUser(null);
   };
 
@@ -271,15 +322,18 @@ export default function AdminUsersPage() {
           <div className="space-y-3">
             <div>
               <label className="text-sm font-medium mb-1.5 block">Nom complet</label>
-              <Input value={profileForm.display_name} onChange={e => setProfileForm(f => ({ ...f, display_name: e.target.value }))} placeholder="Nom Prénom" />
+              <Input value={profileForm.display_name} onChange={e => setProfileForm(f => ({ ...f, display_name: e.target.value }))} placeholder="Nom Prénom" aria-invalid={!!profileErrors.display_name} />
+              {profileErrors.display_name && <p className="text-xs text-destructive mt-1 flex items-center gap-1"><AlertCircle className="h-3 w-3" />{profileErrors.display_name}</p>}
             </div>
             <div>
               <label className="text-sm font-medium mb-1.5 block">Téléphone</label>
-              <Input value={profileForm.phone} onChange={e => setProfileForm(f => ({ ...f, phone: e.target.value }))} placeholder="+32 ..." />
+              <Input value={profileForm.phone} onChange={e => setProfileForm(f => ({ ...f, phone: e.target.value }))} placeholder="+32 470 12 34 56" aria-invalid={!!profileErrors.phone} />
+              {profileErrors.phone && <p className="text-xs text-destructive mt-1 flex items-center gap-1"><AlertCircle className="h-3 w-3" />{profileErrors.phone}</p>}
             </div>
             <div>
               <label className="text-sm font-medium mb-1.5 block">Code postal</label>
-              <Input value={profileForm.postal_code} onChange={e => setProfileForm(f => ({ ...f, postal_code: e.target.value }))} placeholder="1000" />
+              <Input value={profileForm.postal_code} onChange={e => setProfileForm(f => ({ ...f, postal_code: e.target.value }))} placeholder="1000" aria-invalid={!!profileErrors.postal_code} />
+              {profileErrors.postal_code && <p className="text-xs text-destructive mt-1 flex items-center gap-1"><AlertCircle className="h-3 w-3" />{profileErrors.postal_code}</p>}
             </div>
             <div>
               <label className="text-sm font-medium mb-1.5 block">Type de compte</label>
@@ -295,14 +349,36 @@ export default function AdminUsersPage() {
               <>
                 <div>
                   <label className="text-sm font-medium mb-1.5 block">Nom du garage</label>
-                  <Input value={profileForm.garage_name} onChange={e => setProfileForm(f => ({ ...f, garage_name: e.target.value }))} placeholder="Garage XYZ" />
+                  <Input value={profileForm.garage_name} onChange={e => setProfileForm(f => ({ ...f, garage_name: e.target.value }))} placeholder="Garage XYZ" aria-invalid={!!profileErrors.garage_name} />
+                  {profileErrors.garage_name && <p className="text-xs text-destructive mt-1 flex items-center gap-1"><AlertCircle className="h-3 w-3" />{profileErrors.garage_name}</p>}
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-1.5 block">N° BCE / TVA</label>
-                  <Input value={profileForm.bce_number} onChange={e => setProfileForm(f => ({ ...f, bce_number: e.target.value }))} placeholder="BE0123456789" />
+                  <Input value={profileForm.bce_number} onChange={e => setProfileForm(f => ({ ...f, bce_number: e.target.value }))} placeholder="BE0123456789" aria-invalid={!!profileErrors.bce_number} />
+                  {profileErrors.bce_number && <p className="text-xs text-destructive mt-1 flex items-center gap-1"><AlertCircle className="h-3 w-3" />{profileErrors.bce_number}</p>}
                 </div>
               </>
             )}
+
+            {/* Statut du compte */}
+            <div className="border-t pt-3 mt-2">
+              <label className="text-sm font-medium mb-1.5 block">Statut du compte</label>
+              <Select value={profileStatus.suspended ? 'suspended' : 'active'} onValueChange={(v) => setProfileStatus(s => ({ ...s, suspended: v === 'suspended' }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="active">Actif</SelectItem>
+                  <SelectItem value="suspended">Suspendu</SelectItem>
+                </SelectContent>
+              </Select>
+              {profileStatus.suspended && (
+                <Textarea
+                  className="mt-2"
+                  placeholder="Raison de la suspension..."
+                  value={profileStatus.reason}
+                  onChange={e => setProfileStatus(s => ({ ...s, reason: e.target.value }))}
+                />
+              )}
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setProfileUser(null)}>Annuler</Button>
