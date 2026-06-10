@@ -136,6 +136,7 @@ export default function AdminUsersPage() {
 
   const openProfileModal = (user: AdminUser) => {
     setProfileUser(user);
+    setProfileErrors({});
     setProfileForm({
       display_name: user.display_name ?? '',
       phone: user.phone ?? '',
@@ -144,11 +145,31 @@ export default function AdminUsersPage() {
       postal_code: user.postal_code ?? '',
       user_type: user.garage_name ? 'professionnel' : 'particulier',
     });
+    setProfileStatus({ suspended: !!user.suspended_at, reason: user.suspended_reason ?? '' });
   };
 
   const handleSaveProfile = () => {
     if (!profileUser) return;
-    updateProfile({ userId: profileUser.user_id, patch: profileForm });
+    const parsed = profileSchema.safeParse(profileForm);
+    if (!parsed.success) {
+      const errs: ProfileErrors = {};
+      parsed.error.issues.forEach((iss) => {
+        const key = iss.path[0] as keyof ProfileErrors;
+        if (key && !errs[key]) errs[key] = iss.message;
+      });
+      setProfileErrors(errs);
+      return;
+    }
+    setProfileErrors({});
+    // Status change first (if any)
+    const wasSuspended = !!profileUser.suspended_at;
+    if (profileStatus.suspended && !wasSuspended) {
+      suspendUser({ userId: profileUser.user_id, reason: profileStatus.reason.trim() || 'Violation des conditions' });
+    } else if (!profileStatus.suspended && wasSuspended) {
+      unsuspendUser(profileUser.user_id);
+    }
+    // Profile patch — normalized values from zod
+    updateProfile({ userId: profileUser.user_id, patch: parsed.data });
     setProfileUser(null);
   };
 
