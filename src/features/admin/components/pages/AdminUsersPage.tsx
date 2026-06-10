@@ -322,15 +322,18 @@ export default function AdminUsersPage() {
           <div className="space-y-3">
             <div>
               <label className="text-sm font-medium mb-1.5 block">Nom complet</label>
-              <Input value={profileForm.display_name} onChange={e => setProfileForm(f => ({ ...f, display_name: e.target.value }))} placeholder="Nom Prénom" />
+              <Input value={profileForm.display_name} onChange={e => setProfileForm(f => ({ ...f, display_name: e.target.value }))} placeholder="Nom Prénom" aria-invalid={!!profileErrors.display_name} />
+              {profileErrors.display_name && <p className="text-xs text-destructive mt-1 flex items-center gap-1"><AlertCircle className="h-3 w-3" />{profileErrors.display_name}</p>}
             </div>
             <div>
               <label className="text-sm font-medium mb-1.5 block">Téléphone</label>
-              <Input value={profileForm.phone} onChange={e => setProfileForm(f => ({ ...f, phone: e.target.value }))} placeholder="+32 ..." />
+              <Input value={profileForm.phone} onChange={e => setProfileForm(f => ({ ...f, phone: e.target.value }))} placeholder="+32 470 12 34 56" aria-invalid={!!profileErrors.phone} />
+              {profileErrors.phone && <p className="text-xs text-destructive mt-1 flex items-center gap-1"><AlertCircle className="h-3 w-3" />{profileErrors.phone}</p>}
             </div>
             <div>
               <label className="text-sm font-medium mb-1.5 block">Code postal</label>
-              <Input value={profileForm.postal_code} onChange={e => setProfileForm(f => ({ ...f, postal_code: e.target.value }))} placeholder="1000" />
+              <Input value={profileForm.postal_code} onChange={e => setProfileForm(f => ({ ...f, postal_code: e.target.value }))} placeholder="1000" aria-invalid={!!profileErrors.postal_code} />
+              {profileErrors.postal_code && <p className="text-xs text-destructive mt-1 flex items-center gap-1"><AlertCircle className="h-3 w-3" />{profileErrors.postal_code}</p>}
             </div>
             <div>
               <label className="text-sm font-medium mb-1.5 block">Type de compte</label>
@@ -346,14 +349,36 @@ export default function AdminUsersPage() {
               <>
                 <div>
                   <label className="text-sm font-medium mb-1.5 block">Nom du garage</label>
-                  <Input value={profileForm.garage_name} onChange={e => setProfileForm(f => ({ ...f, garage_name: e.target.value }))} placeholder="Garage XYZ" />
+                  <Input value={profileForm.garage_name} onChange={e => setProfileForm(f => ({ ...f, garage_name: e.target.value }))} placeholder="Garage XYZ" aria-invalid={!!profileErrors.garage_name} />
+                  {profileErrors.garage_name && <p className="text-xs text-destructive mt-1 flex items-center gap-1"><AlertCircle className="h-3 w-3" />{profileErrors.garage_name}</p>}
                 </div>
                 <div>
                   <label className="text-sm font-medium mb-1.5 block">N° BCE / TVA</label>
-                  <Input value={profileForm.bce_number} onChange={e => setProfileForm(f => ({ ...f, bce_number: e.target.value }))} placeholder="BE0123456789" />
+                  <Input value={profileForm.bce_number} onChange={e => setProfileForm(f => ({ ...f, bce_number: e.target.value }))} placeholder="BE0123456789" aria-invalid={!!profileErrors.bce_number} />
+                  {profileErrors.bce_number && <p className="text-xs text-destructive mt-1 flex items-center gap-1"><AlertCircle className="h-3 w-3" />{profileErrors.bce_number}</p>}
                 </div>
               </>
             )}
+
+            {/* Statut du compte */}
+            <div className="border-t pt-3 mt-2">
+              <label className="text-sm font-medium mb-1.5 block">Statut du compte</label>
+              <Select value={profileStatus.suspended ? 'suspended' : 'active'} onValueChange={(v) => setProfileStatus(s => ({ ...s, suspended: v === 'suspended' }))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="active">Actif</SelectItem>
+                  <SelectItem value="suspended">Suspendu</SelectItem>
+                </SelectContent>
+              </Select>
+              {profileStatus.suspended && (
+                <Textarea
+                  className="mt-2"
+                  placeholder="Raison de la suspension..."
+                  value={profileStatus.reason}
+                  onChange={e => setProfileStatus(s => ({ ...s, reason: e.target.value }))}
+                />
+              )}
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setProfileUser(null)}>Annuler</Button>
