@@ -6,7 +6,6 @@ Disallow: /settings
 Disallow: /auth
 Disallow: /reset-password
 Disallow: /messages
-Disallow: /garage
 Disallow: /mes-alertes
 Disallow: /payment-success
 Disallow: /payment-canceled
