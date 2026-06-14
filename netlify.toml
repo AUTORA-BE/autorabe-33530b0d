@@ -1,0 +1,44 @@
+# Netlify configuration for autora.be
+# - Builds the Vite SPA (output: dist/)
+# - Runs the og-meta Edge Function on public garage/listing routes to serve
+#   dynamic Open Graph / Twitter / JSON-LD HTML for social crawlers.
+# - Falls back to index.html for SPA client-side routing.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# ── Edge Functions ─────────────────────────────────────────────────────────
+# The og-meta function inspects the User-Agent. For real users it calls
+# context.next() and the SPA is served normally; for known crawlers it
+# returns a minimal HTML with the real OG tags fetched from Supabase.
+
+[[edge_functions]]
+  path = "/garage/*"
+  function = "og-meta"
+
+[[edge_functions]]
+  path = "/vitrine/*"
+  function = "og-meta"
+
+[[edge_functions]]
+  path = "/seller/*"
+  function = "og-meta"
+
+[[edge_functions]]
+  path = "/car/*"
+  function = "og-meta"
+
+[[edge_functions]]
+  path = "/voiture/*"
+  function = "og-meta"
+
+[[edge_functions]]
+  path = "/auto/*"
+  function = "og-meta"
+
+# ── SPA fallback (must come AFTER edge functions) ──────────────────────────
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
