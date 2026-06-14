@@ -1,27 +1,9 @@
-// Cloudflare Workers + Static Assets — Vite SPA.
-// Docs: https://developers.cloudflare.com/workers/static-assets/
+// ⚠️ DEPRECATED — not used.
 //
-// `main` + `assets.binding: "ASSETS"` + `assets.run_worker_first` ensures
-// our Worker (src/worker.ts) runs BEFORE static assets are served, so we
-// can return SSR meta tags for social crawlers without breaking the SPA.
-{
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "autorabe-33530b0d",
-  "compatibility_date": "2026-05-20",
-  "compatibility_flags": ["nodejs_compat"],
-  "observability": { "enabled": true },
-  "main": "src/worker.ts",
-  "assets": {
-    "directory": "./dist",
-    "binding": "ASSETS",
-    "not_found_handling": "single-page-application",
-    "run_worker_first": [
-      "/garage/*",
-      "/vitrine/*",
-      "/seller/*",
-      "/car/*",
-      "/voiture/*",
-      "/auto/*"
-    ]
-  }
-}
+// Production hosting has moved to Netlify (see netlify.toml and
+// netlify/edge-functions/og-meta.ts). This Cloudflare Wrangler config is
+// kept as an empty stub to avoid confusion; no Cloudflare Worker is ever
+// deployed for autora.be from Lovable Hosting.
+//
+// Safe to delete.
+{}
