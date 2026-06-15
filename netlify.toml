@@ -8,6 +8,17 @@
   command = "npm run build"
   publish = "dist"
 
+# ── Build environment ──────────────────────────────────────────────────────
+# The Netlify secrets scanner flags the Supabase URL + the public anon key
+# because Vite inlines them into dist/ during the build. These keys are NOT
+# secrets — they are intentionally public and protected by RLS at the
+# database level. We omit them from scanning so the deploy is not blocked,
+# but keep the scanner ACTIVE so any real secret leak (e.g. service_role,
+# Stripe sk_live_, Resend API key) is still caught.
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "SUPABASE_URL,SUPABASE_ANON_KEY,VITE_SUPABASE_URL,VITE_SUPABASE_PUBLISHABLE_KEY"
+
+
 # ── Edge Functions ─────────────────────────────────────────────────────────
 # The og-meta function inspects the User-Agent. For real users it calls
 # context.next() and the SPA is served normally; for known crawlers it
