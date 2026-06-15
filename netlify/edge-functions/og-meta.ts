@@ -163,6 +163,14 @@ const renderMetaHtml = (m: MetaPayload): string => `<!doctype html>
 const GARAGE_RE = /^\/(?:garage|vitrine|seller)\/([^/]+)\/?$/;
 const LISTING_RE = /^\/(?:car|voiture|auto)\/([^/]+)\/?$/;
 
+// Inline declaration in addition to netlify.toml. Netlify accepts both; this
+// makes the binding travel with the function file even if a deploy setting or
+// future config edit causes netlify.toml declarations to be ignored.
+export const config = {
+  path: ["/garage/*", "/vitrine/*", "/seller/*", "/car/*", "/voiture/*", "/auto/*"],
+  method: "GET",
+};
+
 async function handleGarage(
   supabaseUrl: string,
   anonKey: string,
