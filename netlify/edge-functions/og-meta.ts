@@ -81,11 +81,16 @@ async function rpc<T>(
       },
       body: JSON.stringify(body),
     });
-    if (!res.ok) return null;
+    if (!res.ok) {
+      const errBody = await res.text();
+      console.error(`[og-meta] Supabase RPC ${fn} failed: ${res.status}`, errBody);
+      return null;
+    }
     const data = (await res.json()) as T | T[];
     if (Array.isArray(data)) return (data[0] ?? null) as T | null;
     return data as T;
-  } catch {
+  } catch (err) {
+    console.error(`[og-meta] Supabase RPC ${fn} threw:`, err);
     return null;
   }
 }
