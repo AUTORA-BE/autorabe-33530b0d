@@ -13,7 +13,7 @@
  *   - SUPABASE_ANON_KEY
  */
 
-import type { Context } from "https://edge.netlify.com/";
+import type { Context } from "https://edge.netlify.com/v1/index.ts";
 
 const SITE_ORIGIN = "https://autora.be";
 const BRAND_NAME = "AutoRA";
@@ -81,11 +81,16 @@ async function rpc<T>(
       },
       body: JSON.stringify(body),
     });
-    if (!res.ok) return null;
+    if (!res.ok) {
+      const errBody = await res.text();
+      console.error(`[og-meta] Supabase RPC ${fn} failed: ${res.status}`, errBody);
+      return null;
+    }
     const data = (await res.json()) as T | T[];
     if (Array.isArray(data)) return (data[0] ?? null) as T | null;
     return data as T;
-  } catch {
+  } catch (err) {
+    console.error(`[og-meta] Supabase RPC ${fn} threw:`, err);
     return null;
   }
 }
@@ -281,7 +286,10 @@ async function handleListing(
 }
 
 export default async (request: Request, context: Context): Promise<Response> => {
-  if (request.method !== "GET" || !isCrawler(request.headers.get("user-agent"))) {
+  const ua = request.headers.get("user-agent") ?? "";
+  const crawler = isCrawler(ua);
+  console.log(`[og-meta] hit path=${new URL(request.url).pathname} crawler=${crawler} ua="${ua.slice(0, 80)}"`);
+  if (request.method !== "GET" || !crawler) {
     return context.next();
   }
 
