@@ -13,7 +13,7 @@
  *   - SUPABASE_ANON_KEY
  */
 
-import type { Context } from "https://edge.netlify.com/";
+import type { Context } from "https://edge.netlify.com/v1/index.ts";
 
 const SITE_ORIGIN = "https://autora.be";
 const BRAND_NAME = "AutoRA";
