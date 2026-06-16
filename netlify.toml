@@ -20,36 +20,7 @@
   SECRETS_SCAN_OMIT_KEYS = "SUPABASE_URL,SUPABASE_ANON_KEY,VITE_SUPABASE_URL,VITE_SUPABASE_PUBLISHABLE_KEY"
 
 
-# ── Edge Functions ─────────────────────────────────────────────────────────
-# The og-meta function inspects the User-Agent. For real users it calls
-# context.next() and the SPA is served normally; for known crawlers it
-# returns a minimal HTML with the real OG tags fetched from Supabase.
-
-[[edge_functions]]
-  path = "/garage/*"
-  function = "og-meta"
-
-[[edge_functions]]
-  path = "/vitrine/*"
-  function = "og-meta"
-
-[[edge_functions]]
-  path = "/seller/*"
-  function = "og-meta"
-
-[[edge_functions]]
-  path = "/car/*"
-  function = "og-meta"
-
-[[edge_functions]]
-  path = "/voiture/*"
-  function = "og-meta"
-
-[[edge_functions]]
-  path = "/auto/*"
-  function = "og-meta"
-
-# ── SPA fallback (must come AFTER edge functions) ──────────────────────────
+# ── SPA fallback ───────────────────────────────────────────────────────────
 [[redirects]]
   from = "/*"
   to = "/index.html"
