@@ -286,7 +286,10 @@ async function handleListing(
 }
 
 export default async (request: Request, context: Context): Promise<Response> => {
-  if (request.method !== "GET" || !isCrawler(request.headers.get("user-agent"))) {
+  const ua = request.headers.get("user-agent") ?? "";
+  const crawler = isCrawler(ua);
+  console.log(`[og-meta] hit path=${new URL(request.url).pathname} crawler=${crawler} ua="${ua.slice(0, 80)}"`);
+  if (request.method !== "GET" || !crawler) {
     return context.next();
   }
 
