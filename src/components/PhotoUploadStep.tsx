@@ -196,12 +196,27 @@ export function PhotoUploadStep({ existingPhotos, onPhotosChange, t }: PhotoUplo
       return currentPhotos;
     }
 
+    let blob: Blob;
+    let extension: string;
     try {
-      const { blob, extension } = await compressImage(file, {
-        maxDimension: 1920,
-        quality: 0.82,
-      });
+      const result = await compressImage(file, { maxDimension: 1920, quality: 0.82 });
+      blob = result.blob;
+      extension = result.extension;
+    } catch (err) {
+      console.error('Compression error:', err);
+      toast.error(`Échec de ${file.name} — réessaie ou convertis en JPEG.`);
+      return currentPhotos.filter((_, i) => i !== index);
+    }
 
+    // Post-compression size guard
+    if (blob.size > MAX_PHOTO_SIZE_BYTES) {
+      toast.error(
+        `${file.name} est trop lourd même après compression (${(blob.size / 1024 / 1024).toFixed(1)} Mo > ${MAX_PHOTO_SIZE_MB} Mo). Réduis la résolution.`
+      );
+      return currentPhotos.filter((_, i) => i !== index);
+    }
+
+    try {
       const fileName = `${user.id}/${Date.now()}-${Math.random().toString(36).substr(2, 9)}.${extension}`;
 
       const { error } = await supabase.storage
@@ -213,24 +228,21 @@ export function PhotoUploadStep({ existingPhotos, onPhotosChange, t }: PhotoUplo
 
       if (error) {
         console.error('Upload error:', error);
-        toast.error(`Erreur upload: ${file.name}`);
-        // Remove failed photo
-        const updated = currentPhotos.filter((_, i) => i !== index);
-        return updated;
+        toast.error(`Échec de ${file.name} — réessaie ou convertis en JPEG. (${error.message})`);
+        return currentPhotos.filter((_, i) => i !== index);
       }
 
       const { data: urlData } = supabase.storage
         .from('vehicle-photos')
         .getPublicUrl(fileName);
 
-      const updated = currentPhotos.map((p, i) =>
+      return currentPhotos.map((p, i) =>
         i === index ? { ...p, url: urlData.publicUrl, uploading: false, progress: 100 } : p
       );
-      return updated;
     } catch (err) {
-      console.error('Compression/upload error:', err);
-      const updated = currentPhotos.filter((_, i) => i !== index);
-      return updated;
+      console.error('Upload error:', err);
+      toast.error(`Échec de ${file.name} — réessaie ou convertis en JPEG.`);
+      return currentPhotos.filter((_, i) => i !== index);
     }
   };
 
@@ -241,39 +253,54 @@ export function PhotoUploadStep({ existingPhotos, onPhotosChange, t }: PhotoUplo
       return;
     }
 
-    const validFiles = files.slice(0, remaining).filter(file => {
-      if (file.size > MAX_PHOTO_SIZE_BYTES) {
-        toast.error(`${file.name} dépasse ${MAX_PHOTO_SIZE_MB} Mo.`);
-        return false;
+    // Step 1: basic validation (raw size guard + image type / HEIC detection)
+    const accepted: File[] = [];
+    for (const raw of files.slice(0, remaining)) {
+      if (raw.size > MAX_RAW_SIZE_BYTES) {
+        toast.error(`${raw.name} dépasse ${MAX_RAW_SIZE_MB} Mo (fichier source trop volumineux).`);
+        continue;
       }
-      if (!file.type.startsWith('image/')) {
-        toast.error(`${file.name} n'est pas une image.`);
-        return false;
+
+      // HEIC/HEIF — convert client-side (iPhone photos opened on PC/Android)
+      if (isHeic(raw)) {
+        try {
+          const converted = await convertHeicToJpeg(raw);
+          accepted.push(converted);
+        } catch (err) {
+          console.error('HEIC conversion failed:', err);
+          toast.error(`${raw.name} : format HEIC non supporté sur ce navigateur. Convertis-le en JPEG/PNG.`);
+        }
+        continue;
       }
-      return true;
-    });
 
-    if (validFiles.length === 0) return;
+      if (!raw.type.startsWith('image/')) {
+        toast.error(`${raw.name} n'est pas une image.`);
+        continue;
+      }
+      accepted.push(raw);
+    }
 
-    // Create previews
-    const newItems: PhotoItem[] = await Promise.all(
-      validFiles.map(file => new Promise<PhotoItem>((resolve) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          resolve({ id: nextPhotoId(), preview: e.target?.result as string, uploading: true, progress: 0 });
-        };
-        reader.readAsDataURL(file);
-      }))
-    );
+    if (accepted.length === 0) return;
+
+    // Step 2: previews via blob URLs (much lighter than data URLs on mobile)
+    const newItems: PhotoItem[] = accepted.map(file => ({
+      id: nextPhotoId(),
+      preview: URL.createObjectURL(file),
+      uploading: true,
+      progress: 0,
+    }));
 
     let currentPhotos = [...photos, ...newItems];
     setPhotos(currentPhotos);
     notifyParent(currentPhotos);
 
-    // Upload each file sequentially to avoid rate limits
-    const startIndex = photos.length;
-    for (let i = 0; i < validFiles.length; i++) {
-      currentPhotos = await uploadFile(validFiles[i], startIndex + i, currentPhotos);
+    // Step 3: upload sequentially
+    // We track by stable id rather than index, because failures can shift indices.
+    for (let i = 0; i < accepted.length; i++) {
+      const item = newItems[i];
+      const idx = currentPhotos.findIndex(p => p.id === item.id);
+      if (idx === -1) continue;
+      currentPhotos = await uploadFile(accepted[i], idx, currentPhotos);
       setPhotos([...currentPhotos]);
       notifyParent(currentPhotos);
     }
