@@ -34,8 +34,27 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 
 const MAX_PHOTOS = 15;
+/** Hard guard against absurd files (camera RAWs etc.) — applies to RAW input */
+const MAX_RAW_SIZE_MB = 50;
+const MAX_RAW_SIZE_BYTES = MAX_RAW_SIZE_MB * 1024 * 1024;
+/** Limit applied AFTER client-side compression */
 const MAX_PHOTO_SIZE_MB = 8;
 const MAX_PHOTO_SIZE_BYTES = MAX_PHOTO_SIZE_MB * 1024 * 1024;
+
+const HEIC_EXT_RE = /\.(heic|heif)$/i;
+const isHeic = (file: File) =>
+  HEIC_EXT_RE.test(file.name) ||
+  file.type === 'image/heic' ||
+  file.type === 'image/heif';
+
+async function convertHeicToJpeg(file: File): Promise<File> {
+  const mod = await import('heic2any');
+  const heic2any = (mod as any).default ?? mod;
+  const out = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.92 });
+  const blob = Array.isArray(out) ? out[0] : (out as Blob);
+  const newName = file.name.replace(HEIC_EXT_RE, '.jpg');
+  return new File([blob], newName, { type: 'image/jpeg', lastModified: Date.now() });
+}
 
 interface PhotoItem {
   /** Stable unique ID for sorting */
