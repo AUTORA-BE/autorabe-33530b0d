@@ -18,9 +18,10 @@ interface ListingPayload {
   euro_norm?: string | null;
   first_registration?: string | null;
   description?: string | null;
-  contact_name: string;
+  contact_name?: string | null;
   contact_phone?: string | null;
-  contact_email: string;
+  contact_email?: string | null;
+  contact_override?: boolean;
   location?: string | null;
   latitude?: number | null;
   longitude?: number | null;
@@ -35,7 +36,9 @@ interface ListingPayload {
   reference_url?: string | null;
 }
 
-const REQUIRED = ['brand', 'model', 'year', 'price', 'mileage', 'fuel_type', 'transmission', 'body_type', 'color', 'contact_name', 'contact_email'] as const;
+// Identité (contact_name/email/phone/seller_type) dérivée serveur depuis le
+// profil — ne PAS l'inclure dans REQUIRED côté payload client.
+const REQUIRED = ['brand', 'model', 'year', 'price', 'mileage', 'fuel_type', 'transmission', 'body_type', 'color'] as const;
 
 /**
  * Server-side defense in depth: strip control chars + any chevrons / on-* attrs
