@@ -349,6 +349,14 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
 
       if (!profile) return;
 
+      // Identity displayed in the read-only "Vous publiez en tant que" block.
+      // The server re-derives these from auth + profiles; we only show them.
+      setSellerIdentity({
+        name: profile.garage_name || profile.display_name || user.email || '',
+        email: user.email || '',
+        phone: profile.phone || null,
+      });
+
       const currentValues = form.getValues();
 
       // Pre-fill contact name from profile display_name or garage_name
