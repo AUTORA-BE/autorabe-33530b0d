@@ -1171,7 +1171,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
             const msg = firstError?.message || 'Certains champs obligatoires sont manquants ou invalides.';
             toast.error(msg);
             // If a step-1 field is missing, bring the user back to step 1 so they can fix it.
-            const step1Fields = ['brand','model','year','price','mileage','fuel_type','transmission','body_type','color','contact_name','contact_email','tva_number'];
+            const step1Fields = ['brand','model','year','price','mileage','fuel_type','transmission','body_type','color','tva_number'];
             const hasStep1Error = Object.keys(errors).some((k) => step1Fields.includes(k));
             if (hasStep1Error) setCurrentStep(1);
           })}
