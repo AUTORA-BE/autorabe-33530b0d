@@ -780,9 +780,13 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
         fuel_consumption: data.fuel_consumption ?? null,
         first_registration: data.first_registration || null,
         description: data.description || null,
-        contact_name: data.contact_name,
-        contact_phone: data.contact_phone || null,
-        contact_email: data.contact_email,
+        // Coordonnées : envoyées UNIQUEMENT si l'utilisateur a explicitement
+        // ouvert le bloc "Modifier mes coordonnées". Sinon le serveur les
+        // dérive de profiles + auth (anti-usurpation d'identité).
+        contact_override: overrideContact || undefined,
+        contact_name: overrideContact ? (data.contact_name || undefined) : undefined,
+        contact_phone: overrideContact ? (data.contact_phone || undefined) : undefined,
+        contact_email: overrideContact ? (data.contact_email || undefined) : undefined,
         location: data.location || null,
         latitude,
         longitude,
