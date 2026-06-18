@@ -58,6 +58,8 @@ export async function compressImage(
 
   return new Promise((resolve, reject) => {
     const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+    const cleanup = () => URL.revokeObjectURL(objectUrl);
     img.onload = () => {
       try {
         let { width, height } = img;
@@ -86,6 +88,7 @@ export async function compressImage(
 
         canvas.toBlob(
           (blob) => {
+            cleanup();
             if (!blob) {
               resolve({ blob: file, extension: file.name.split(".").pop() || "jpg" });
               return;
@@ -101,10 +104,14 @@ export async function compressImage(
           opts.quality
         );
       } catch {
+        cleanup();
         resolve({ blob: file, extension: file.name.split(".").pop() || "jpg" });
       }
     };
-    img.onerror = () => reject(new Error("Failed to load image for compression"));
-    img.src = URL.createObjectURL(file);
+    img.onerror = () => {
+      cleanup();
+      reject(new Error("Failed to load image for compression"));
+    };
+    img.src = objectUrl;
   });
 }
