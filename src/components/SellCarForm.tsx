@@ -60,9 +60,9 @@ const sellCarSchema = z.object({
   description: z.string().optional(),
   reference_url: z.string().url("URL invalide").optional().or(z.literal("")),
   features: z.array(z.string()).optional(),
-  contact_name: z.string().min(1, "Le nom de contact est obligatoire"),
+  contact_name: z.string().optional(),
   contact_phone: z.string().optional(),
-  contact_email: z.string().email("Adresse email invalide"),
+  contact_email: z.string().email("Adresse email invalide").optional().or(z.literal("")),
   location: z.string().optional(),
   car_pass_verified: z.boolean().optional(),
   ct_valid: z.boolean().optional(),
@@ -241,6 +241,8 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
   const [isLoading, setIsLoading] = useState(!!editId);
   const [showConfetti, setShowConfetti] = useState(false);
   const [slideDirection, setSlideDirection] = useState<1 | -1>(1);
+  const [sellerIdentity, setSellerIdentity] = useState<{ name: string; email: string; phone: string | null } | null>(null);
+  const [overrideContact, setOverrideContact] = useState(false);
   const isEditMode = !!editId;
   const lastBroadcastKeyRef = useRef<string>('');
   const honeypotRef = useRef<HTMLInputElement>(null);
@@ -346,6 +348,14 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
         .maybeSingle();
 
       if (!profile) return;
+
+      // Identity displayed in the read-only "Vous publiez en tant que" block.
+      // The server re-derives these from auth + profiles; we only show them.
+      setSellerIdentity({
+        name: profile.garage_name || profile.display_name || user.email || '',
+        email: user.email || '',
+        phone: profile.phone || null,
+      });
 
       const currentValues = form.getValues();
 
@@ -770,9 +780,15 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
         fuel_consumption: data.fuel_consumption ?? null,
         first_registration: data.first_registration || null,
         description: data.description || null,
-        contact_name: data.contact_name,
-        contact_phone: data.contact_phone || null,
-        contact_email: data.contact_email,
+        // Coordonnées : en création, on n'envoie ces champs au serveur QUE si
+        // l'utilisateur a explicitement ouvert "Modifier mes coordonnées".
+        // Sinon, le serveur les dérive du profil + auth (anti-usurpation).
+        // En édition, on conserve les valeurs du formulaire (déjà pré-remplies
+        // depuis l'annonce existante).
+        contact_override: isEditMode ? undefined : (overrideContact || undefined),
+        contact_name: isEditMode ? data.contact_name : (overrideContact ? (data.contact_name || undefined) : undefined),
+        contact_phone: isEditMode ? (data.contact_phone || null) : (overrideContact ? (data.contact_phone || undefined) : undefined),
+        contact_email: isEditMode ? data.contact_email : (overrideContact ? (data.contact_email || undefined) : undefined),
         location: data.location || null,
         latitude,
         longitude,
@@ -799,6 +815,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
           latitude: _lat,
           longitude: _lng,
           reference_url: _ref,
+          contact_override: _co,
           ...updatePayload
         } = listingData;
         const { error } = await supabase
@@ -954,7 +971,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
   // Step validation
   const validateStep = async (step: number): Promise<boolean> => {
     if (step === 1) {
-      const result = await form.trigger(['brand', 'model', 'year', 'price', 'mileage', 'fuel_type', 'transmission', 'body_type', 'color', 'contact_name', 'contact_email']);
+      const result = await form.trigger(['brand', 'model', 'year', 'price', 'mileage', 'fuel_type', 'transmission', 'body_type', 'color']);
       return result;
     }
     if (step === 2) {
@@ -1171,7 +1188,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
             const msg = firstError?.message || 'Certains champs obligatoires sont manquants ou invalides.';
             toast.error(msg);
             // If a step-1 field is missing, bring the user back to step 1 so they can fix it.
-            const step1Fields = ['brand','model','year','price','mileage','fuel_type','transmission','body_type','color','contact_name','contact_email','tva_number'];
+            const step1Fields = ['brand','model','year','price','mileage','fuel_type','transmission','body_type','color','tva_number'];
             const hasStep1Error = Object.keys(errors).some((k) => step1Fields.includes(k));
             if (hasStep1Error) setCurrentStep(1);
           })}
@@ -1192,15 +1209,47 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
               transition={{ duration: 0.3, ease: 'easeInOut' }}
               className="space-y-8"
             >
-              {/* Profile incomplete warning */}
-              {!form.watch('contact_email') && (
-                <div className="flex items-start gap-3 rounded-xl border border-amber-500/40 bg-amber-500/5 px-4 py-3 text-sm">
-                  <span className="shrink-0 text-amber-500">⚠️</span>
-                  <span className="text-foreground">
-                    Votre profil est incomplet — ajoutez votre email dans{" "}
-                    <a href="/settings" className="font-semibold text-primary underline underline-offset-2">vos paramètres</a>{" "}
-                    avant de publier une annonce.
-                  </span>
+              {/* Identité du vendeur — auto-remplie depuis le compte */}
+              {sellerIdentity && (
+                <div className="rounded-xl border border-border/60 bg-card/40 backdrop-blur-sm px-4 py-3 text-sm">
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-foreground">
+                    <span className="text-muted-foreground">Vous publiez en tant que :</span>
+                    <span className="font-semibold">{sellerIdentity.name}</span>
+                    {sellerIdentity.email && <><span className="text-muted-foreground">·</span><span>{sellerIdentity.email}</span></>}
+                    {sellerIdentity.phone && <><span className="text-muted-foreground">·</span><span>{sellerIdentity.phone}</span></>}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setOverrideContact((v) => !v)}
+                    className="mt-2 text-xs font-medium text-primary underline underline-offset-2"
+                  >
+                    {overrideContact ? 'Utiliser mes coordonnées du compte' : 'Modifier mes coordonnées (optionnel)'}
+                  </button>
+                  {overrideContact && (
+                    <div className="mt-3 grid md:grid-cols-3 gap-3">
+                      <FormField control={form.control} name="contact_name" render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nom affiché</FormLabel>
+                          <FormControl><Input placeholder={sellerIdentity.name} {...field} value={field.value ?? ''} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                      <FormField control={form.control} name="contact_email" render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email de contact</FormLabel>
+                          <FormControl><Input type="email" placeholder={sellerIdentity.email} {...field} value={field.value ?? ''} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                      <FormField control={form.control} name="contact_phone" render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Téléphone</FormLabel>
+                          <FormControl><Input placeholder={sellerIdentity.phone ?? '+32…'} {...field} value={field.value ?? ''} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                    </div>
+                  )}
                 </div>
               )}
 
