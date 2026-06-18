@@ -433,7 +433,7 @@ export function PhotoUploadStep({ existingPhotos, onPhotosChange, t }: PhotoUplo
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/jpeg,image/png,image/webp,image/heic"
+              accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif"
               multiple
               onChange={handleFileInput}
               className="hidden"
@@ -463,7 +463,7 @@ export function PhotoUploadStep({ existingPhotos, onPhotosChange, t }: PhotoUplo
                     <span className="text-[10px] text-muted-foreground font-medium">Ajouter</span>
                     <input
                       type="file"
-                      accept="image/jpeg,image/png,image/webp,image/heic"
+                      accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif"
                       multiple
                       onChange={handleFileInput}
                       className="hidden"
