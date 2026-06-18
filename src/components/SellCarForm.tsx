@@ -954,7 +954,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
   // Step validation
   const validateStep = async (step: number): Promise<boolean> => {
     if (step === 1) {
-      const result = await form.trigger(['brand', 'model', 'year', 'price', 'mileage', 'fuel_type', 'transmission', 'body_type', 'color', 'contact_name', 'contact_email']);
+      const result = await form.trigger(['brand', 'model', 'year', 'price', 'mileage', 'fuel_type', 'transmission', 'body_type', 'color']);
       return result;
     }
     if (step === 2) {
