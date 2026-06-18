@@ -1256,7 +1256,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
                   <FormField control={form.control} name="year" render={({ field }) => (
                     <FormItem>
                       <FormLabel>{t('sellForm.year')} *</FormLabel>
-                      <FormControl><Input type="number" {...field} onChange={e => field.onChange(parseInt(e.target.value))} /></FormControl>
+                      <FormControl><Input type="number" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : parseInt(e.target.value, 10))} /></FormControl>
                       <FormMessage />
                     </FormItem>
                   )} />
@@ -1264,7 +1264,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
                   <FormField control={form.control} name="price" render={({ field }) => (
                     <FormItem>
                       <FormLabel>{t('sellForm.price')} *</FormLabel>
-                      <FormControl><Input type="number" placeholder="25000" {...field} onChange={e => field.onChange(parseInt(e.target.value))} /></FormControl>
+                      <FormControl><Input type="number" placeholder="25000" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : parseInt(e.target.value, 10))} /></FormControl>
                       <FormMessage />
                     </FormItem>
                   )} />
@@ -1272,7 +1272,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
                   <FormField control={form.control} name="mileage" render={({ field }) => (
                     <FormItem>
                       <FormLabel>{t('sellForm.mileage')} *</FormLabel>
-                      <FormControl><Input type="number" placeholder="50000" {...field} onChange={e => field.onChange(parseInt(e.target.value))} /></FormControl>
+                      <FormControl><Input type="number" placeholder="50000" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : parseInt(e.target.value, 10))} /></FormControl>
                       <FormMessage />
                     </FormItem>
                   )} />
