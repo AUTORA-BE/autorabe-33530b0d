@@ -1202,15 +1202,47 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
               transition={{ duration: 0.3, ease: 'easeInOut' }}
               className="space-y-8"
             >
-              {/* Profile incomplete warning */}
-              {!form.watch('contact_email') && (
-                <div className="flex items-start gap-3 rounded-xl border border-amber-500/40 bg-amber-500/5 px-4 py-3 text-sm">
-                  <span className="shrink-0 text-amber-500">⚠️</span>
-                  <span className="text-foreground">
-                    Votre profil est incomplet — ajoutez votre email dans{" "}
-                    <a href="/settings" className="font-semibold text-primary underline underline-offset-2">vos paramètres</a>{" "}
-                    avant de publier une annonce.
-                  </span>
+              {/* Identité du vendeur — auto-remplie depuis le compte */}
+              {sellerIdentity && (
+                <div className="rounded-xl border border-border/60 bg-card/40 backdrop-blur-sm px-4 py-3 text-sm">
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-foreground">
+                    <span className="text-muted-foreground">Vous publiez en tant que :</span>
+                    <span className="font-semibold">{sellerIdentity.name}</span>
+                    {sellerIdentity.email && <><span className="text-muted-foreground">·</span><span>{sellerIdentity.email}</span></>}
+                    {sellerIdentity.phone && <><span className="text-muted-foreground">·</span><span>{sellerIdentity.phone}</span></>}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setOverrideContact((v) => !v)}
+                    className="mt-2 text-xs font-medium text-primary underline underline-offset-2"
+                  >
+                    {overrideContact ? 'Utiliser mes coordonnées du compte' : 'Modifier mes coordonnées (optionnel)'}
+                  </button>
+                  {overrideContact && (
+                    <div className="mt-3 grid md:grid-cols-3 gap-3">
+                      <FormField control={form.control} name="contact_name" render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nom affiché</FormLabel>
+                          <FormControl><Input placeholder={sellerIdentity.name} {...field} value={field.value ?? ''} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                      <FormField control={form.control} name="contact_email" render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email de contact</FormLabel>
+                          <FormControl><Input type="email" placeholder={sellerIdentity.email} {...field} value={field.value ?? ''} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                      <FormField control={form.control} name="contact_phone" render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Téléphone</FormLabel>
+                          <FormControl><Input placeholder={sellerIdentity.phone ?? '+32…'} {...field} value={field.value ?? ''} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )} />
+                    </div>
+                  )}
                 </div>
               )}
 
