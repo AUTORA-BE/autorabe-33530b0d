@@ -148,10 +148,33 @@ Deno.serve(async (req) => {
       );
     }
 
+    // 4b. Identité du vendeur — TOUJOURS dérivée du profil + auth côté serveur.
+    //     Les valeurs envoyées par le client ne sont prises en compte QUE si
+    //     `contact_override === true` (l'utilisateur a explicitement ouvert
+    //     "Modifier mes coordonnées"). Sinon, un client malveillant pourrait
+    //     publier sous l'identité d'un autre.
+    const { data: profileRow } = await admin
+      .from('profiles')
+      .select('display_name, garage_name, phone, user_type')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    const profileName = profileRow?.garage_name || profileRow?.display_name || user.email || 'Vendeur';
+    const profileEmail = user.email || '';
+    const profilePhone = profileRow?.phone || null;
+    const isPro = !!profileRow?.garage_name || profileRow?.user_type === 'professionnel';
+
+    const override = payload.contact_override === true;
+    const finalContactName  = (override && payload.contact_name?.trim())  ? payload.contact_name.trim()  : profileName;
+    const finalContactEmail = (override && payload.contact_email?.trim()) ? payload.contact_email.trim() : profileEmail;
+    const finalContactPhone = (override && payload.contact_phone?.trim()) ? payload.contact_phone.trim() : profilePhone;
+    const finalSellerType   = (override && payload.seller_type)           ? payload.seller_type          : (isPro ? 'professionnel' : 'particulier');
+
+    if (!finalContactEmail) {
+      return jsonResponse(req, { error: 'Email de contact introuvable — complétez votre profil avant de publier.' }, { status: 400 });
+    }
+
     // 5. Insertion via service_role (seule voie autorisée).
-    //    The live database currently stores Car-Pass with the legacy boolean
-    //    `car_pass_verified`; do not send async-verification columns unless the
-    //    migration exists, otherwise PostgREST returns PGRST204 and publishing fails.
     const { data, error } = await admin
       .from('car_listings')
       .insert({
@@ -171,9 +194,9 @@ Deno.serve(async (req) => {
         euro_norm: payload.euro_norm ?? null,
         first_registration: payload.first_registration ?? null,
         description: sanitizeText(payload.description, 5000),
-        contact_name: payload.contact_name,
-        contact_phone: payload.contact_phone ?? null,
-        contact_email: payload.contact_email,
+        contact_name: finalContactName,
+        contact_phone: finalContactPhone,
+        contact_email: finalContactEmail,
         location: payload.location ?? null,
         photos: payload.photos ?? [],
         car_pass_verified: !!payload.car_pass_url,
@@ -181,7 +204,7 @@ Deno.serve(async (req) => {
         car_pass_date: payload.car_pass_date ?? null,
         ct_valid: payload.ct_valid ?? false,
         maintenance_book_complete: payload.maintenance_book_complete ?? false,
-        seller_type: payload.seller_type ?? 'particulier',
+        seller_type: finalSellerType,
         tva_number: payload.tva_number ?? null,
         features: payload.features ?? null,
       })
