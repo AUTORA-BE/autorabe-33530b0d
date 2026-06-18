@@ -176,6 +176,17 @@ export function PhotoUploadStep({ existingPhotos, onPhotosChange, t }: PhotoUplo
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Keep a live ref of current photos so the unmount cleanup can revoke blob URLs.
+  const photosRef = useRef<PhotoItem[]>(photos);
+  useEffect(() => { photosRef.current = photos; }, [photos]);
+  useEffect(() => {
+    return () => {
+      for (const p of photosRef.current) {
+        if (p.preview.startsWith('blob:')) URL.revokeObjectURL(p.preview);
+      }
+    };
+  }, []);
+
   const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
