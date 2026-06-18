@@ -813,6 +813,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
           latitude: _lat,
           longitude: _lng,
           reference_url: _ref,
+          contact_override: _co,
           ...updatePayload
         } = listingData;
         const { error } = await supabase
