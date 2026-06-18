@@ -58,6 +58,8 @@ export async function compressImage(
 
   return new Promise((resolve, reject) => {
     const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+    const cleanup = () => URL.revokeObjectURL(objectUrl);
     img.onload = () => {
       try {
         let { width, height } = img;
