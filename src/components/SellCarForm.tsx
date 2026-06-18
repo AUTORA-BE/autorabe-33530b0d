@@ -241,6 +241,8 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
   const [isLoading, setIsLoading] = useState(!!editId);
   const [showConfetti, setShowConfetti] = useState(false);
   const [slideDirection, setSlideDirection] = useState<1 | -1>(1);
+  const [sellerIdentity, setSellerIdentity] = useState<{ name: string; email: string; phone: string | null } | null>(null);
+  const [overrideContact, setOverrideContact] = useState(false);
   const isEditMode = !!editId;
   const lastBroadcastKeyRef = useRef<string>('');
   const honeypotRef = useRef<HTMLInputElement>(null);
