@@ -7,7 +7,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
-import { lovable } from '@/integrations/lovable';
 import type { AuthState, LoginCredentials, SignupCredentials, AuthResult } from '../types/auth.types';
 
 /**
@@ -219,14 +218,15 @@ export function useAuth() {
    */
   const signInWithGoogle = useCallback(async (): Promise<AuthResult> => {
     try {
-      const result = await lovable.auth.signInWithOAuth('google', {
-        redirect_uri: window.location.origin,
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: window.location.origin },
       });
 
-      if (result.error) {
+      if (error) {
         return {
           success: false,
-          error: { type: 'unknown', message: result.error.message }
+          error: { type: 'unknown', message: error.message }
         };
       }
 
@@ -244,14 +244,15 @@ export function useAuth() {
    */
   const signInWithApple = useCallback(async (): Promise<AuthResult> => {
     try {
-      const result = await lovable.auth.signInWithOAuth('apple', {
-        redirect_uri: window.location.origin,
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'apple',
+        options: { redirectTo: window.location.origin },
       });
 
-      if (result.error) {
+      if (error) {
         return {
           success: false,
-          error: { type: 'unknown', message: result.error.message }
+          error: { type: 'unknown', message: error.message }
         };
       }
 
