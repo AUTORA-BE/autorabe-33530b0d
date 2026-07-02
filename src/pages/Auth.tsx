@@ -54,7 +54,7 @@ const Auth = () => {
   const { toast } = useToast();
   const { t, language } = useLanguage();
 
-  const { user, isLoading: authLoading, signIn, signUp, signInWithGoogle, signInWithApple, resetPassword } = useAuth();
+  const { user, isLoading: authLoading, signIn, signUp, signInWithGoogle, resetPassword } = useAuth();
   const passwordValidation = usePasswordValidation(password);
 
   const emailSchema = z.string().email(t("auth.invalidEmail"));
