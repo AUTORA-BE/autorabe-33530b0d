@@ -85,8 +85,8 @@ Pour toute question relative au traitement de vos données personnelles, vous po
       title: "4. Destinataires des données (sous-traitants)",
       body: `Vos données peuvent être transmises aux prestataires suivants, dans le strict cadre de leurs missions :
 
-**Lovable Inc.** (hébergement web et infrastructure applicative)
-San Francisco, CA, États-Unis — Données transférées aux États-Unis sur la base de clauses contractuelles types (CCT) approuvées par la Commission européenne.
+**Netlify, Inc.** (hébergement web et infrastructure applicative)
+512 2nd Street, San Francisco, CA 94107, USA — Données transférées aux États-Unis sur la base de clauses contractuelles types (CCT) approuvées par la Commission européenne.
 
 **Supabase Inc.** (base de données, authentification, stockage de fichiers)
 970 Toa Payoh North, Singapore — Données transférées aux États-Unis sur la base de CCT.
@@ -258,8 +258,8 @@ Voor vragen over de verwerking van uw persoonsgegevens kunt u contact opnemen vi
       title: "4. Ontvangers (verwerkers)",
       body: `Uw gegevens kunnen worden doorgegeven aan de volgende dienstverleners, uitsluitend in het kader van hun opdrachten :
 
-**Lovable Inc.** (webhosting en applicatie-infrastructuur)
-San Francisco, CA, Verenigde Staten — Gegevens overgedragen op basis van door de Europese Commissie goedgekeurde standaardcontractbepalingen (SCB).
+**Netlify, Inc.** (webhosting en applicatie-infrastructuur)
+512 2nd Street, San Francisco, CA 94107, USA — Gegevens overgedragen op basis van door de Europese Commissie goedgekeurde standaardcontractbepalingen (SCB).
 
 **Supabase Inc.** (database, authenticatie, bestandsopslag)
 Singapore — Gegevens overgedragen naar de VS op basis van SCB.
@@ -431,8 +431,8 @@ Bei Fragen zur Verarbeitung Ihrer personenbezogenen Daten wenden Sie sich bitte 
       title: "4. Empfänger (Auftragsverarbeiter)",
       body: `Ihre Daten können an folgende Dienstleister weitergegeben werden, ausschließlich im Rahmen ihrer Aufgaben :
 
-**Lovable Inc.** (Web-Hosting und Anwendungsinfrastruktur)
-San Francisco, CA, USA — Datenübermittlung in die USA auf Grundlage von Standardvertragsklauseln (SCC), die von der Europäischen Kommission genehmigt wurden.
+**Netlify, Inc.** (Web-Hosting und Anwendungsinfrastruktur)
+512 2nd Street, San Francisco, CA 94107, USA — Datenübermittlung in die USA auf Grundlage von Standardvertragsklauseln (SCC), die von der Europäischen Kommission genehmigt wurden.
 
 **Supabase Inc.** (Datenbank, Authentifizierung, Dateispeicherung)
 Singapur — Datenübermittlung in die USA auf Grundlage von SCC.
@@ -604,8 +604,8 @@ For any questions regarding the processing of your personal data, please contact
       title: "4. Recipients (Sub-processors)",
       body: `Your data may be shared with the following service providers, strictly within the scope of their services :
 
-**Lovable Inc.** (web hosting and application infrastructure)
-San Francisco, CA, United States — Data transferred to the US under Standard Contractual Clauses (SCCs) approved by the European Commission.
+**Netlify, Inc.** (web hosting and application infrastructure)
+512 2nd Street, San Francisco, CA 94107, USA — Data transferred to the US under Standard Contractual Clauses (SCCs) approved by the European Commission.
 
 **Supabase Inc.** (database, authentication, file storage)
 Singapore — Data transferred to the US under SCCs.

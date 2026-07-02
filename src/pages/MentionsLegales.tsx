@@ -31,10 +31,10 @@ AutoRA est une plateforme de mise en relation entre vendeurs et acheteurs de vé
         title: "2. Hébergement",
         body: `Le site AutoRA.be est hébergé et déployé par :
 
-**Lovable Inc.**
-548 Market St, Suite 75837
-San Francisco, CA 94104 — États-Unis
-Site web : https://lovable.dev
+**Netlify, Inc.**
+512 2nd Street
+San Francisco, CA 94107 — États-Unis
+Site web : https://www.netlify.com
 
 La base de données et les fonctions serverless sont gérées par :
 
@@ -123,10 +123,10 @@ AutoRA is een marktplaats voor de bemiddeling tussen verkopers en kopers van twe
         title: "2. Hosting",
         body: `De website AutoRA.be wordt gehost en uitgerold door:
 
-**Lovable Inc.**
-548 Market St, Suite 75837
-San Francisco, CA 94104 — Verenigde Staten
-Website: https://lovable.dev
+**Netlify, Inc.**
+512 2nd Street
+San Francisco, CA 94107 — Verenigde Staten
+Website: https://www.netlify.com
 
 De database en serverfuncties worden beheerd door:
 
@@ -213,10 +213,10 @@ AutoRA ist ein Marktplatz zur Vermittlung zwischen Verkäufern und Käufern von 
         title: "2. Hosting",
         body: `Die Website AutoRA.be wird gehostet und bereitgestellt von:
 
-**Lovable Inc.**
-548 Market St, Suite 75837
-San Francisco, CA 94104 — Vereinigte Staaten
-Website: https://lovable.dev
+**Netlify, Inc.**
+512 2nd Street
+San Francisco, CA 94107 — Vereinigte Staaten
+Website: https://www.netlify.com
 
 Die Datenbank und Server-Funktionen werden verwaltet von:
 
@@ -301,10 +301,10 @@ AutoRA is a marketplace connecting sellers and buyers of second-hand vehicles in
         title: "2. Hosting",
         body: `The AutoRA.be website is hosted and deployed by:
 
-**Lovable Inc.**
-548 Market St, Suite 75837
-San Francisco, CA 94104 — United States
-Website: https://lovable.dev
+**Netlify, Inc.**
+512 2nd Street
+San Francisco, CA 94107 — United States
+Website: https://www.netlify.com
 
 The database and serverless functions are managed by:
 
