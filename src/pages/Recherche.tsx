@@ -823,7 +823,7 @@ const Recherche = () => {
             transition={{ duration: 0.6, delay: 0.12 }}
             className="mx-auto mt-4 max-w-2xl text-sm font-light leading-relaxed text-muted-foreground sm:text-base"
           >
-            {subtitle(totalCount || 482)}
+            {subtitle(totalCount ?? 0)}
           </motion.p>
         </section>
 
