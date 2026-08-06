@@ -85,8 +85,10 @@ Deno.serve(async (req) => {
       if (payload[key] === undefined || payload[key] === null || payload[key] === '') {
         return jsonResponse(req, { error: `Champ obligatoire manquant: ${key}` }, { status: 400 });
       }
+    // Millésime : on accepte l'année suivante, les constructeurs commercialisent
+    // en avance. Aligné sur la contrainte car_listings_year_chk en base.
     }
-    if (typeof payload.year !== 'number' || payload.year < 1900 || payload.year > new Date().getFullYear()) {
+    if (typeof payload.year !== 'number' || payload.year < 1900 || payload.year > new Date().getFullYear() + 1) {
       return jsonResponse(req, { error: 'Année invalide' }, { status: 400 });
     }
     if (typeof payload.price !== 'number' || payload.price < 100 || payload.price > 1_000_000) {
