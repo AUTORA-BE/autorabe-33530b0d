@@ -709,6 +709,10 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
         doors: data.doors || 5,
         euro_norm: data.euro_norm || null,
         fuel_consumption: data.fuel_consumption ?? null,
+        co2: data.co2 ?? null,
+        co2_cycle: data.co2_cycle ?? null,
+        mma: data.mma ?? null,
+        puissance_cv: data.puissance_cv ?? null,
         first_registration: data.first_registration || null,
         description: data.description || null,
         // Coordonnées : en création, on n'envoie ces champs au serveur QUE si
