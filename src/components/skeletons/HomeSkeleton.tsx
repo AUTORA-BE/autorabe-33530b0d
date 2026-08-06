@@ -92,6 +92,25 @@ export const WhyAutoRaSkeleton = () => (
 
 
 
+/** Home reviews skeleton — mirrors HomeReviewsSection (header + empty card) */
+export const HomeReviewsSkeleton = () => (
+  <section className="py-12 sm:py-20">
+    <div className="container mx-auto px-5 sm:px-8">
+      <div className="max-w-2xl mb-8 sm:mb-12 space-y-3">
+        <div className="h-3 w-20 rounded skeleton-shimmer" />
+        <div className="h-8 sm:h-10 w-72 max-w-full rounded-lg skeleton-shimmer" />
+        <div className="h-4 w-full max-w-lg rounded skeleton-shimmer" />
+      </div>
+      <div className="rounded-3xl border border-border/40 bg-card/30 p-8 sm:p-12 max-w-2xl mx-auto space-y-4 flex flex-col items-center">
+        <div className="w-12 h-12 rounded-2xl skeleton-shimmer" />
+        <div className="h-6 w-56 rounded-lg skeleton-shimmer" />
+        <div className="h-4 w-full max-w-md rounded skeleton-shimmer" />
+        <div className="h-3.5 w-52 rounded skeleton-shimmer" />
+      </div>
+    </div>
+  </section>
+);
+
 /** Brand carousel skeleton — row of circles */
 export const BrandCarouselSkeleton = () => (
   <section className="py-6 sm:py-10">

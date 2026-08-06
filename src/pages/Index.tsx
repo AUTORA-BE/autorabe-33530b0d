@@ -9,6 +9,7 @@ import {
   CarouselSkeleton,
   WhyAutoRaSkeleton,
   GridSkeleton,
+  HomeReviewsSkeleton,
 } from "@/components/skeletons/HomeSkeleton";
 import { VoiceSearchSummary, type VoiceFilter } from "@/components/VoiceSearchSummary";
 import { AnimatePresence } from "framer-motion";
@@ -27,6 +28,7 @@ const ThermalBrandCarousel = lazy(() => import("@/features/search/components/The
 
 const SellCarCTA = lazy(() => import("@/components/SellCarCTA"));
 const HomeFAQ = lazy(() => import("@/components/HomeFAQ"));
+const HomeReviewsSection = lazy(() => import("@/components/HomeReviewsSection"));
 const TcoFloatingButton = lazy(() => import("@/components/TcoFloatingButton"));
 
 import { useVehicleSearch } from "@/features/listings";
@@ -214,14 +216,21 @@ const Index = () => {
           <FuelPricesSection />
         </Suspense>
 
-        {/* 7. Sell Car CTA */}
+        {/* 7. Avis utilisateurs — alimenté par la base */}
+        <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 400px" }}>
+          <Suspense fallback={<HomeReviewsSkeleton />}>
+            <HomeReviewsSection />
+          </Suspense>
+        </div>
+
+        {/* 8. Sell Car CTA */}
         <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 300px" }}>
           <Suspense fallback={null}>
             <SellCarCTA />
           </Suspense>
         </div>
 
-        {/* 8. Home FAQ */}
+        {/* 9. Home FAQ */}
         <div style={{ contentVisibility: "auto", containIntrinsicSize: "auto 600px" }}>
           <Suspense fallback={null}>
             <HomeFAQ />
