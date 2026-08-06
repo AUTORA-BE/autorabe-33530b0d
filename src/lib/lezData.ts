@@ -43,45 +43,50 @@ export interface LezResultat {
 // ─── Calendrier LEZ ──────────────────────────────────────────────────
 
 // Sources officielles : lez.brussels | lage-emissiezone.antwerpen.be | stad.gent/lez
-// Dernière vérification : mai 2026
+// Dernière vérification : 6 août 2026
 const calendarLEZ: Record<string, VilleCalendar> = {
   bruxelles: {
     // Source : lez.brussels — calendrier progressif diesel
+    // La Région bruxelloise prévoit la fin de TOUT le diesel en 2030
+    // et de TOUTE l'essence en 2035.
     diesel: {
       euro0: { statut: 'interdit' },        // interdit depuis 2018
       euro1: { statut: 'interdit' },        // interdit depuis 2018
       euro2: { statut: 'interdit' },        // interdit depuis 2018
       euro3: { statut: 'interdit' },        // interdit depuis 2019
       euro4: { statut: 'interdit' },        // interdit depuis 2020
-      euro5: { statut: 'interdit' },        // interdit depuis 2021
-      euro6: { statut: 'autorise', jusque: null },     // ⚠️ vérifier sur lez.brussels pour dates futures
-      euro6d_temp: { statut: 'autorise', jusque: null },
-      euro6d: { statut: 'autorise', jusque: null },
+      euro5: { statut: 'interdit' },        // interdit depuis le 01/01/2026 — tolérance échue le 30/06/2026
+      euro6: { statut: 'autorise', jusque: 2030 },        // fin du diesel prévue en 2030
+      euro6d_temp: { statut: 'autorise', jusque: 2030 },
+      euro6d: { statut: 'autorise', jusque: 2030 },
     },
     // Source : lez.brussels — essence (restrictions plus tardives que diesel)
     essence: {
       euro0: { statut: 'interdit' },        // interdit depuis 01/01/2025
       euro1: { statut: 'interdit' },        // interdit depuis 01/01/2025
-      euro2: { statut: 'interdit' },        // interdit depuis 01/01/2025
+      euro2: { statut: 'interdit' },        // interdit depuis le 01/01/2026
       euro3: { statut: 'autorise', jusque: 2028 }, // interdit prévu dès 01/01/2028
       euro4: { statut: 'autorise', jusque: 2030 }, // interdit prévu dès 01/01/2030
-      euro5: { statut: 'autorise', jusque: null },
-      euro6: { statut: 'autorise', jusque: null },
-      euro6d_temp: { statut: 'autorise', jusque: null },
-      euro6d: { statut: 'autorise', jusque: null },
+      euro5: { statut: 'autorise', jusque: 2035 }, // fin de l'essence prévue en 2035
+      euro6: { statut: 'autorise', jusque: 2035 },
+      euro6d_temp: { statut: 'autorise', jusque: 2035 },
+      euro6d: { statut: 'autorise', jusque: 2035 },
     },
     electric: { statut: 'autorise', jusque: null },
     hybride: { statut: 'autorise', jusque: null },
   },
   anvers: {
     // Source : lage-emissiezone.antwerpen.be
+    // Le gouvernement flamand a ANNULÉ le durcissement prévu pour 2027 :
+    // les diesels Euro 5 restent admis. Une évaluation est prévue en 2027,
+    // mais aucune interdiction n'est programmée à ce jour (vérifié 06/08/2026).
     diesel: {
       euro0: { statut: 'interdit' },        // interdit depuis 2017
       euro1: { statut: 'interdit' },        // interdit depuis 2017
       euro2: { statut: 'interdit' },        // interdit depuis 2017
       euro3: { statut: 'interdit' },        // interdit depuis 2020
       euro4: { statut: 'interdit' },        // interdit depuis 01/01/2025
-      euro5: { statut: 'autorise', jusque: 2027 }, // interdit prévu dès 2027
+      euro5: { statut: 'autorise', jusque: null }, // durcissement 2027 annulé
       euro6: { statut: 'autorise', jusque: null },
       euro6d_temp: { statut: 'autorise', jusque: null },
       euro6d: { statut: 'autorise', jusque: null },
@@ -102,28 +107,20 @@ const calendarLEZ: Record<string, VilleCalendar> = {
   },
   gand: {
     // Source : stad.gent/lez
+    // Comme à Anvers, le durcissement diesel Euro 5 prévu en 2027 a été annulé
+    // par le gouvernement flamand (évaluation prévue en 2027, sans interdiction).
     diesel: {
       euro0: { statut: 'interdit' },        // interdit depuis 2020
       euro1: { statut: 'interdit' },        // interdit depuis 2020
       euro2: { statut: 'interdit' },        // interdit depuis 2020
       euro3: { statut: 'interdit' },        // interdit depuis 2020
       euro4: { statut: 'interdit' },        // interdit depuis 01/01/2025
-      euro5: { statut: 'autorise', jusque: 2027 }, // interdit prévu dès 2027
+      euro5: { statut: 'autorise', jusque: null }, // durcissement 2027 annulé
       euro6: { statut: 'autorise', jusque: null },
       euro6d_temp: { statut: 'autorise', jusque: null },
       euro6d: { statut: 'autorise', jusque: null },
     },
-    essence: {
-      euro0: { statut: 'interdit' },        // interdit depuis 2020
-      euro1: { statut: 'autorise', jusque: null },
-      euro2: { statut: 'autorise', jusque: null },
-      euro3: { statut: 'autorise', jusque: null },
-      euro4: { statut: 'autorise', jusque: null },
-      euro5: { statut: 'autorise', jusque: null },
-      euro6: { statut: 'autorise', jusque: null },
-      euro6d_temp: { statut: 'autorise', jusque: null },
-      euro6d: { statut: 'autorise', jusque: null },
-    },
+
     electric: { statut: 'autorise', jusque: null },
     hybride: { statut: 'autorise', jusque: null },
   },
