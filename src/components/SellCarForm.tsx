@@ -807,17 +807,10 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
       };
 
       if (isEditMode && editId) {
-        // Strip fields not present on the car_listings table (handled only by the
-        // create-listing edge function on insert): fuel_consumption, latitude,
-        // longitude, reference_url.
-        const {
-          fuel_consumption: _fc,
-          latitude: _lat,
-          longitude: _lng,
-          reference_url: _ref,
-          contact_override: _co,
-          ...updatePayload
-        } = listingData;
+        // fuel_consumption, latitude, longitude et reference_url existent
+        // désormais sur car_listings — on les conserve à l'édition.
+        // Seul contact_override reste un champ de formulaire, pas une colonne.
+        const { contact_override: _co, ...updatePayload } = listingData;
         const { error } = await supabase
           .from('car_listings')
           .update(updatePayload)
