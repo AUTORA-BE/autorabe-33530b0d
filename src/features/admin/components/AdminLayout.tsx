@@ -24,6 +24,7 @@ const AdminLezAuditPage = lazy(() => import('./pages/AdminLezAuditPage'));
 const AdminDuplicatesPage = lazy(() => import('./pages/AdminDuplicatesPage'));
 const AdminPaymentsPage = lazy(() => import('./pages/AdminPaymentsPage'));
 const AdminKycPage = lazy(() => import('./pages/AdminKycPage'));
+const AdminCarPassPage = lazy(() => import('./pages/AdminCarPassPage'));
 const AdminDealersQueuePage = lazy(() => import('./pages/AdminDealersQueuePage'));
 
 function PageFallback() {
