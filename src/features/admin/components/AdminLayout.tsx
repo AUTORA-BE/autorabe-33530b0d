@@ -70,6 +70,7 @@ export default function AdminLayout() {
                 <Route path="duplicates" element={<AdminDuplicatesPage />} />
                 <Route path="payments" element={<AdminPaymentsPage />} />
                 <Route path="kyc" element={<AdminKycPage />} />
+                <Route path="car-pass" element={<AdminCarPassPage />} />
                 <Route path="dealers" element={<AdminDealersQueuePage />} />
                 <Route path="*" element={<Navigate to="/admin" replace />} />
               </Routes>
