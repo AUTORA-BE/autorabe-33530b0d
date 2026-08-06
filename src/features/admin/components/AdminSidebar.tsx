@@ -21,6 +21,7 @@ const NAV_ITEMS = [
   { title: 'Conversations', path: '/admin/conversations', icon: MessageSquare },
   { title: 'Signalements', path: '/admin/reports', icon: AlertTriangle },
   { title: 'KYC Revendeurs', path: '/admin/kyc', icon: UserCheck },
+  { title: 'Car-Pass', path: '/admin/car-pass', icon: FileCheck },
   { title: 'Validation Pros', path: '/admin/dealers', icon: BadgeCheck },
   { title: 'Statistiques', path: '/admin/stats', icon: BarChart3 },
   { title: 'Paiements', path: '/admin/payments', icon: CreditCard },
