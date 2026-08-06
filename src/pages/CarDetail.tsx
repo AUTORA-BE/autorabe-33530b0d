@@ -736,6 +736,7 @@ const CarDetail = () => {
                             power={dbListing?.power} color={dbListing?.color}
                             bodyType={dbListing?.body_type} doors={dbListing?.doors}
                             firstRegistration={dbListing?.first_registration}
+                            co2={dbListing?.co2} co2Cycle={dbListing?.co2_cycle} mma={dbListing?.mma} puissanceCv={dbListing?.puissance_cv}
                           />
                           <EquipmentSection features={dbListing?.features} />
                         </div>
@@ -756,6 +757,7 @@ const CarDetail = () => {
                             <VehicleTcoSection
                               price={car.price} fuelType={car.fuelType}
                               year={car.year} mileage={car.mileage} power={dbListing?.power}
+                              euroNorm={car.euroNorm} co2={dbListing?.co2} co2Cycle={dbListing?.co2_cycle} mma={dbListing?.mma} puissanceCv={dbListing?.puissance_cv}
                             />
                           </Suspense>
                           <Suspense fallback={<div className="h-20 rounded-2xl skeleton-shimmer" />}>
@@ -779,11 +781,11 @@ const CarDetail = () => {
                 <div className="space-y-6">
                   <ScrollReveal delay={0.05}>
                     <Suspense fallback={<div className="h-20 rounded-2xl skeleton-shimmer" />}>
-                      <VehicleTcoSection price={car.price} fuelType={car.fuelType} year={car.year} mileage={car.mileage} power={dbListing?.power} />
+                      <VehicleTcoSection price={car.price} fuelType={car.fuelType} year={car.year} mileage={car.mileage} power={dbListing?.power} euroNorm={car.euroNorm} co2={dbListing?.co2} co2Cycle={dbListing?.co2_cycle} mma={dbListing?.mma} puissanceCv={dbListing?.puissance_cv} />
                     </Suspense>
                   </ScrollReveal>
                   <ScrollReveal delay={0.05}>
-                    <BentoSpecs year={car.year} mileage={car.mileage} fuelType={car.fuelType} transmission={car.transmission} euroNorm={car.euroNorm} location={car.location} power={dbListing?.power} color={dbListing?.color} bodyType={dbListing?.body_type} doors={dbListing?.doors} firstRegistration={dbListing?.first_registration} />
+                    <BentoSpecs year={car.year} mileage={car.mileage} fuelType={car.fuelType} transmission={car.transmission} euroNorm={car.euroNorm} location={car.location} power={dbListing?.power} color={dbListing?.color} bodyType={dbListing?.body_type} doors={dbListing?.doors} firstRegistration={dbListing?.first_registration} co2={dbListing?.co2} co2Cycle={dbListing?.co2_cycle} mma={dbListing?.mma} puissanceCv={dbListing?.puissance_cv} />
                   </ScrollReveal>
                   <ScrollReveal delay={0.05}>
                     <EquipmentSection features={dbListing?.features} />
