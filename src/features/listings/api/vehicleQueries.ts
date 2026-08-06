@@ -88,10 +88,11 @@ export function mapListingToVehicleDetail(listing: VehicleListingRow): VehicleDe
 export function applySorting<T>(query: T, sortBy: VehicleSortOption): T {
   const q = query as any;
   
-  // Boosted listings first: 'none' is default/last, 'ultra'/'premium'/'standard' come first
-  // Using descending so ultra > premium > standard > none
+  // Tri par rang numérique du boost : 4 = 7 jours, 1 = 24h, 0 = aucun.
+  // NE PAS revenir à boost_level : c'est du texte, et 'none' > 'boost_*' en
+  // alphabétique, ce qui plaçait les annonces gratuites avant les payantes.
   const withBoostPriority = q
-    .order('boost_level', { ascending: false, nullsFirst: false });
+    .order('boost_rank', { ascending: false, nullsFirst: false });
   
   switch (sortBy) {
     case 'price-asc':
@@ -236,10 +237,10 @@ const PROVINCE_CITIES: Record<string, string[]> = {
 };
 
 /** Explicit columns for list queries — avoids SELECT * overhead */
-const LIST_COLUMNS = 'id,brand,model,year,price,mileage,fuel_type,transmission,euro_norm,location,photos,car_pass_verified,seller_type,boost_level,boost_expires_at' as const;
+const LIST_COLUMNS = 'id,brand,model,year,price,mileage,fuel_type,transmission,euro_norm,location,photos,car_pass_verified,seller_type,boost_level,boost_expires_at,boost_rank' as const;
 
 /** Full columns for detail queries */
-const DETAIL_COLUMNS = 'id,brand,model,year,price,mileage,fuel_type,transmission,euro_norm,location,photos,car_pass_verified,seller_type,boost_level,boost_expires_at,description,body_type,color,power,doors,features,ct_valid,maintenance_book_complete,first_registration,created_at,updated_at,status' as const;
+const DETAIL_COLUMNS = 'id,brand,model,year,price,mileage,fuel_type,transmission,euro_norm,location,photos,car_pass_verified,seller_type,boost_level,boost_expires_at,boost_rank,description,body_type,color,power,doors,features,ct_valid,maintenance_book_complete,first_registration,created_at,updated_at,status' as const;
 
 /**
  * Vehicle query functions object

@@ -701,14 +701,17 @@ const Recherche = () => {
     : language === "de" ? "AutoRA — Gebrauchtwagen-Marktplatz in Belgien"
     : "AutoRA — Marketplace de voitures d'occasion en Belgique";
 
-  const subtitle = (count: number) =>
-    language === "nl"
-      ? `Ontdek ${count.toLocaleString("fr-BE")} geverifieerde voertuigen, Car-Pass gegarandeerd en klaar om in België te rijden.`
+  const subtitle = (count: number) => {
+    const n = count.toLocaleString("fr-BE");
+    const one = count === 1;
+    return language === "nl"
+      ? `Ontdek ${n} geverifieerd${one ? "" : "e"} voertuig${one ? "" : "en"}, Car-Pass gegarandeerd en klaar om in België te rijden.`
       : language === "en"
-      ? `Discover ${count.toLocaleString("fr-BE")} verified vehicles, Car-Pass guaranteed and ready to drive in Belgium.`
+      ? `Discover ${n} verified vehicle${one ? "" : "s"}, Car-Pass guaranteed and ready to drive in Belgium.`
       : language === "de"
-      ? `Entdecken Sie ${count.toLocaleString("fr-BE")} geprüfte Fahrzeuge, Car-Pass garantiert und bereit für die Straße in Belgien.`
-      : `Découvrez ${count.toLocaleString("fr-BE")} véhicules vérifiés, garantis Car-Pass et prêts à rouler en Belgique.`;
+      ? `Entdecken Sie ${n} geprüfte${one ? "s" : ""} Fahrzeug${one ? "" : "e"}, Car-Pass garantiert und bereit für die Straße in Belgien.`
+      : `Découvrez ${n} véhicule${one ? "" : "s"} vérifié${one ? "" : "s"}, garanti${one ? "" : "s"} Car-Pass et prêt${one ? "" : "s"} à rouler en Belgique.`;
+  };
 
   const eyebrow =
     language === "nl" ? "Marktplaats · Geselecteerd"
@@ -820,7 +823,7 @@ const Recherche = () => {
             transition={{ duration: 0.6, delay: 0.12 }}
             className="mx-auto mt-4 max-w-2xl text-sm font-light leading-relaxed text-muted-foreground sm:text-base"
           >
-            {subtitle(totalCount || 482)}
+            {subtitle(totalCount ?? 0)}
           </motion.p>
         </section>
 
@@ -840,7 +843,7 @@ const Recherche = () => {
             <span className="font-semibold text-foreground">
               {(totalCount || cars.length).toLocaleString("fr-BE")}
             </span>{" "}
-            véhicules disponibles
+            {(totalCount || cars.length) === 1 ? "véhicule disponible" : "véhicules disponibles"}
           </p>
           <div className="flex items-center gap-1 rounded-full border border-foreground/10 bg-foreground/[0.04] p-1">
             <button

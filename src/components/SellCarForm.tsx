@@ -500,47 +500,6 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
     setPhotosPreviews(previews);
   }, []);
 
-  void 0; // eslint-disable-line @typescript-eslint/no-unused-vars
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
-
-    const totalPhotos = photos.length + existingPhotos.length;
-    if (totalPhotos >= MAX_PHOTOS) {
-      toast.error(`Vous ne pouvez pas ajouter plus de ${MAX_PHOTOS} photos.`);
-      return;
-    }
-
-    const newPhotos = Array.from(files).slice(0, MAX_PHOTOS - totalPhotos);
-    
-    newPhotos.forEach(file => {
-      if (file.size > MAX_PHOTO_SIZE_BYTES) {
-        toast.error(`${file.name} dépasse la taille maximale de ${MAX_PHOTO_SIZE_MB} Mo.`);
-        return;
-      }
-      
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setPhotosPreviews(prev => [...prev, e.target?.result as string]);
-      };
-      reader.readAsDataURL(file);
-      setPhotos(prev => [...prev, file]);
-    });
-  };
-
-  const removePhoto = (index: number) => {
-    setPhotos(prev => prev.filter((_, i) => i !== index));
-    setPhotosPreviews(prev => prev.filter((_, i) => i !== index));
-  };
-
-  const removeExistingPhoto = (index: number) => {
-    const photoUrl = photosPreviews[index];
-    if (existingPhotos.includes(photoUrl)) {
-      setExistingPhotos(prev => prev.filter(p => p !== photoUrl));
-    }
-    setPhotosPreviews(prev => prev.filter((_, i) => i !== index));
-  };
-
   const processCarPassFile = async (file: File) => {
     const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
     if (!allowedTypes.includes(file.type)) {
@@ -609,44 +568,6 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
     setCarPassUrl(null);
     setCarPassPreview(null);
     form.setValue('car_pass_verified', false);
-  };
-
-  const uploadPhotos = async (userId: string): Promise<string[]> => {
-    const { compressImage } = await import("@/utils/compressImage");
-    const uploadedUrls: string[] = [];
-    
-    for (const photo of photos) {
-      try {
-        const { blob, extension } = await compressImage(photo, {
-          maxDimension: 1920,
-          quality: 0.82,
-        });
-        const fileName = `${userId}/${Date.now()}-${Math.random().toString(36).substr(2, 9)}.${extension}`;
-        
-        const { error } = await supabase.storage
-          .from('car-photos')
-          .upload(fileName, blob, {
-            contentType: blob.type,
-            cacheControl: '31536000',
-          });
-        
-        if (error) {
-          console.error('Upload error:', error);
-          continue;
-        }
-        
-        const { data: urlData } = supabase.storage
-          .from('car-photos')
-          .getPublicUrl(fileName);
-        
-        uploadedUrls.push(urlData.publicUrl);
-      } catch (err) {
-        console.error('Compression/upload error:', err);
-      }
-    }
-    
-    return uploadedUrls;
-  void handlePhotoUpload; void removePhoto; void removeExistingPhoto; void uploadPhotos;
   };
 
   const uploadCarPassToStorage = async (file: File): Promise<string | null> => {
@@ -807,17 +728,10 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
       };
 
       if (isEditMode && editId) {
-        // Strip fields not present on the car_listings table (handled only by the
-        // create-listing edge function on insert): fuel_consumption, latitude,
-        // longitude, reference_url.
-        const {
-          fuel_consumption: _fc,
-          latitude: _lat,
-          longitude: _lng,
-          reference_url: _ref,
-          contact_override: _co,
-          ...updatePayload
-        } = listingData;
+        // fuel_consumption, latitude, longitude et reference_url existent
+        // désormais sur car_listings — on les conserve à l'édition.
+        // Seul contact_override reste un champ de formulaire, pas une colonne.
+        const { contact_override: _co, ...updatePayload } = listingData;
         const { error } = await supabase
           .from('car_listings')
           .update(updatePayload)

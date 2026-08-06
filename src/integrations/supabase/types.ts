@@ -245,6 +245,7 @@ export type Database = {
           body_type: string
           boost_expires_at: string | null
           boost_level: string | null
+          boost_rank: number | null
           boost_warning_sent: boolean | null
           brand: string
           car_pass_date: string | null
@@ -291,6 +292,7 @@ export type Database = {
           body_type: string
           boost_expires_at?: string | null
           boost_level?: string | null
+          boost_rank?: number | null
           boost_warning_sent?: boolean | null
           brand: string
           car_pass_date?: string | null
@@ -337,6 +339,7 @@ export type Database = {
           body_type?: string
           boost_expires_at?: string | null
           boost_level?: string | null
+          boost_rank?: number | null
           boost_warning_sent?: boolean | null
           brand?: string
           car_pass_date?: string | null
@@ -1357,6 +1360,7 @@ export type Database = {
           body_type: string | null
           boost_expires_at: string | null
           boost_level: string | null
+          boost_rank: number | null
           brand: string | null
           car_pass_date: string | null
           car_pass_status: string | null
@@ -1394,6 +1398,7 @@ export type Database = {
           body_type?: string | null
           boost_expires_at?: string | null
           boost_level?: string | null
+          boost_rank?: number | null
           brand?: string | null
           car_pass_date?: string | null
           car_pass_status?: string | null
@@ -1431,6 +1436,7 @@ export type Database = {
           body_type?: string | null
           boost_expires_at?: string | null
           boost_level?: string | null
+          boost_rank?: number | null
           brand?: string | null
           car_pass_date?: string | null
           car_pass_status?: string | null
@@ -1726,6 +1732,13 @@ export type Database = {
           year: number
         }[]
       }
+      admin_review_car_pass: {
+        Args: { _decision: string; _listing_id: string; _note?: string }
+        Returns: {
+          out_car_pass_status: string
+          out_listing_id: string
+        }[]
+      }
       check_rate_limit: {
         Args: { _key: string; _max_attempts: number; _window_seconds: number }
         Returns: boolean
@@ -1962,6 +1975,18 @@ export type Database = {
           updated_at: string
           user_id: string
           year: number
+        }[]
+      }
+      get_public_seller_identity: {
+        Args: { _user_id: string }
+        Returns: {
+          avatar_url: string
+          created_at: string
+          display_name: string
+          garage_name: string
+          is_admin: boolean
+          user_id: string
+          user_type: string
         }[]
       }
       get_public_vitrine: {
