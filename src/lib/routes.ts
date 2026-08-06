@@ -53,7 +53,12 @@ export const localizedPath = (path: string, lang: Language): string => {
   const cleaned = stripLangPrefix(path);
   if (cleaned === "" || cleaned === "/") return `/${lang}`;
   const [first, ...rest] = cleaned.replace(/^\//, "").split("/");
-  const translated = SLUG_MAP[first]?.[lang] ?? first;
+  // Le premier segment peut arriver déjà localisé (ex: "recherche" depuis un
+  // <NavLink to="/recherche">). On repasse par REVERSE_MAP pour retrouver la clé
+  // canonique, sinon SLUG_MAP[first] est undefined et le segment n'est jamais
+  // traduit — d'où des URLs bâtardes comme /nl/recherche au lieu de /nl/zoeken.
+  const canonical = REVERSE_MAP[first] ?? first;
+  const translated = SLUG_MAP[canonical]?.[lang] ?? canonical;
   const tail = rest.length ? `/${rest.join("/")}` : "";
   return `/${lang}/${translated}${tail}`;
 };

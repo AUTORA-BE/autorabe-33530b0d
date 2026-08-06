@@ -23,7 +23,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useVehicleSearch } from "@/features/listings";
 import { useFavorites } from "@/features/favorites";
-import { useLocalizedVehicleHref } from "@/lib/useLocalizedHref";
+import { useLocalizedHref, useLocalizedVehicleHref } from "@/lib/useLocalizedHref";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getAllBrands, getModelsByBrand } from "@/utils/carUtils";
 import { BUDGET_OPTIONS, EURO_NORMS } from "@/features/search/types/search.types";
@@ -659,6 +659,7 @@ const Recherche = () => {
 
   const { isFavorite, toggleFavorite } = useFavorites();
   const vehicleHref = useLocalizedVehicleHref();
+  const localizedHref = useLocalizedHref();
 
   useEffect(() => {
     if (filters.brand) getModelsByBrand(filters.brand).then(setModels);
@@ -715,6 +716,20 @@ const Recherche = () => {
     : language === "de" ? "Marktplatz · Kuratiert"
     : "Marketplace · Sélection certifiée";
 
+  // Le <title> et la <meta description> étaient figés en français sur les 4
+  // langues : Google indexait /nl/zoeken et /de/suche avec un titre FR.
+  const seoTitle =
+    language === "nl" ? "Een auto zoeken | AutoRA"
+    : language === "en" ? "Search for a car | AutoRA"
+    : language === "de" ? "Ein Auto suchen | AutoRA"
+    : "Rechercher une voiture | AutoRA";
+
+  const seoDescription =
+    language === "nl" ? "Premium catalogus van tweedehands voertuigen in België. Car-Pass gecertificeerd, LEZ geverifieerd, transparante prijs."
+    : language === "en" ? "Premium catalogue of used vehicles in Belgium. Car-Pass certified, LEZ verified, transparent pricing."
+    : language === "de" ? "Premium-Katalog für Gebrauchtwagen in Belgien. Car-Pass zertifiziert, LEZ geprüft, transparenter Preis."
+    : "Catalogue premium de véhicules d'occasion en Belgique. Car-Pass certifié, LEZ vérifiée, prix transparent.";
+
   return (
     // Force le scope "dark" sur toute la page Recherche (incluant les portails Popover/Sheet enfants)
     // pour éviter les contrastes cassés en mode Light, tant que la refonte light n'est pas faite.
@@ -730,9 +745,9 @@ const Recherche = () => {
       />
 
       <SEOHead
-        title="Rechercher une voiture | AutoRA"
-        description="Catalogue premium de véhicules d'occasion en Belgique. Car-Pass certifié, LEZ vérifiée, prix transparent."
-        url="https://autora.be/recherche"
+        title={seoTitle}
+        description={seoDescription}
+        url={`https://autora.be${localizedHref("/search")}`}
       />
       <Header />
 
