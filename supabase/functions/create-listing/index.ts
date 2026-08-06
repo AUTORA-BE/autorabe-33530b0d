@@ -34,6 +34,11 @@ interface ListingPayload {
   tva_number?: string | null;
   features?: string[] | null;
   reference_url?: string | null;
+  // Données fiscales belges (optionnelles) — nécessaires au calcul TMC/BIV
+  co2?: number | null;
+  co2_cycle?: string | null;
+  mma?: number | null;
+  puissance_cv?: number | null;
 }
 
 // Identité (contact_name/email/phone/seller_type) dérivée serveur depuis le
