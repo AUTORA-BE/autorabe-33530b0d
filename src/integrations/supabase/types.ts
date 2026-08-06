@@ -253,6 +253,8 @@ export type Database = {
           car_pass_status: string
           car_pass_url: string | null
           car_pass_verified: boolean | null
+          co2: number | null
+          co2_cycle: string | null
           color: string
           contact_email: string
           contact_name: string
@@ -273,11 +275,13 @@ export type Database = {
           longitude: number | null
           maintenance_book_complete: boolean | null
           mileage: number
+          mma: number | null
           model: string
           needs_review: boolean
           photos: string[] | null
           power: number | null
           price: number
+          puissance_cv: number | null
           reference_url: string | null
           search_vector: unknown
           seller_type: string | null
@@ -300,6 +304,8 @@ export type Database = {
           car_pass_status?: string
           car_pass_url?: string | null
           car_pass_verified?: boolean | null
+          co2?: number | null
+          co2_cycle?: string | null
           color: string
           contact_email: string
           contact_name: string
@@ -320,11 +326,13 @@ export type Database = {
           longitude?: number | null
           maintenance_book_complete?: boolean | null
           mileage: number
+          mma?: number | null
           model: string
           needs_review?: boolean
           photos?: string[] | null
           power?: number | null
           price: number
+          puissance_cv?: number | null
           reference_url?: string | null
           search_vector?: unknown
           seller_type?: string | null
@@ -347,6 +355,8 @@ export type Database = {
           car_pass_status?: string
           car_pass_url?: string | null
           car_pass_verified?: boolean | null
+          co2?: number | null
+          co2_cycle?: string | null
           color?: string
           contact_email?: string
           contact_name?: string
@@ -367,11 +377,13 @@ export type Database = {
           longitude?: number | null
           maintenance_book_complete?: boolean | null
           mileage?: number
+          mma?: number | null
           model?: string
           needs_review?: boolean
           photos?: string[] | null
           power?: number | null
           price?: number
+          puissance_cv?: number | null
           reference_url?: string | null
           search_vector?: unknown
           seller_type?: string | null
@@ -1365,6 +1377,8 @@ export type Database = {
           car_pass_date: string | null
           car_pass_status: string | null
           car_pass_verified: boolean | null
+          co2: number | null
+          co2_cycle: string | null
           color: string | null
           created_at: string | null
           ct_valid: boolean | null
@@ -1381,10 +1395,12 @@ export type Database = {
           longitude: number | null
           maintenance_book_complete: boolean | null
           mileage: number | null
+          mma: number | null
           model: string | null
           photos: string[] | null
           power: number | null
           price: number | null
+          puissance_cv: number | null
           reference_url: string | null
           seller_type: string | null
           status: string | null
@@ -1403,6 +1419,8 @@ export type Database = {
           car_pass_date?: string | null
           car_pass_status?: string | null
           car_pass_verified?: boolean | null
+          co2?: number | null
+          co2_cycle?: string | null
           color?: string | null
           created_at?: string | null
           ct_valid?: boolean | null
@@ -1419,10 +1437,12 @@ export type Database = {
           longitude?: number | null
           maintenance_book_complete?: boolean | null
           mileage?: number | null
+          mma?: number | null
           model?: string | null
           photos?: string[] | null
           power?: number | null
           price?: number | null
+          puissance_cv?: number | null
           reference_url?: string | null
           seller_type?: string | null
           status?: string | null
@@ -1441,6 +1461,8 @@ export type Database = {
           car_pass_date?: string | null
           car_pass_status?: string | null
           car_pass_verified?: boolean | null
+          co2?: number | null
+          co2_cycle?: string | null
           color?: string | null
           created_at?: string | null
           ct_valid?: boolean | null
@@ -1457,10 +1479,12 @@ export type Database = {
           longitude?: number | null
           maintenance_book_complete?: boolean | null
           mileage?: number | null
+          mma?: number | null
           model?: string | null
           photos?: string[] | null
           power?: number | null
           price?: number | null
+          puissance_cv?: number | null
           reference_url?: string | null
           seller_type?: string | null
           status?: string | null
