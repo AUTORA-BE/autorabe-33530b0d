@@ -451,6 +451,11 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
           maintenance_book_complete: data.maintenance_book_complete || false,
           seller_type: data.seller_type || 'particulier',
           tva_number: data.tva_number || undefined,
+          fuel_consumption: data.fuel_consumption ?? null,
+          co2: data.co2 ?? null,
+          co2_cycle: (data.co2_cycle as 'WLTP' | 'NEDC' | null) ?? null,
+          mma: data.mma ?? null,
+          puissance_cv: data.puissance_cv ?? null,
         });
 
         if (data.photos && data.photos.length > 0) {
