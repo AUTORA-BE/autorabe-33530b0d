@@ -148,7 +148,38 @@ export default function AdminTaxBracketsPage() {
         </p>
       </div>
 
+      <div className="rounded-lg border border-destructive/40 bg-destructive/10 p-4 space-y-2">
+        <p className="flex items-center gap-2 text-sm font-semibold text-destructive">
+          <AlertTriangle className="w-4 h-4" />
+          Ces barèmes ne sont plus utilisés par le site
+        </p>
+        <div className="text-xs text-muted-foreground space-y-1.5 leading-relaxed">
+          <p>
+            Les tables ci-dessous contiennent un barème unique fondé sur les chevaux fiscaux, copié à
+            l'identique pour les trois régions et non indexé. Il ne correspond plus au droit en vigueur :
+          </p>
+          <ul className="list-disc pl-4 space-y-0.5">
+            <li>la Wallonie a abandonné le calcul aux CV le 01/07/2025 (formule CO₂ / masse / énergie) ;</li>
+            <li>la Flandre applique la formule BIV (CO₂, norme Euro, âge) ;</li>
+            <li>Bruxelles retient le plus élevé de deux grilles (kW et CV).</li>
+          </ul>
+          <p>
+            Le calcul affiché aux utilisateurs provient désormais de <code>src/lib/belgianTax.ts</code>
+            (barèmes officiels du {new Date(BAREME_VALIDE_DEPUIS).toLocaleDateString('fr-BE')} au{' '}
+            {new Date(BAREME_VALIDE_JUSQUAU).toLocaleDateString('fr-BE')}). Ces barèmes sont indexés chaque
+            1er juillet et doivent être mis à jour dans le code.
+          </p>
+          {baremePerime() && (
+            <p className="font-semibold text-destructive">
+              Le barème du code est périmé depuis le{' '}
+              {new Date(BAREME_VALIDE_JUSQUAU).toLocaleDateString('fr-BE')} : mise à jour requise.
+            </p>
+          )}
+        </div>
+      </div>
+
       <div className="flex items-center gap-2 flex-wrap">
+
         {REGIONS.map((r) => (
           <Button
             key={r.value}
