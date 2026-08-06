@@ -9,7 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2, Save, Calculator, Euro, Percent, Calendar } from 'lucide-react';
+import { Loader2, Save, Calculator, Euro, Percent, Calendar, AlertTriangle } from 'lucide-react';
+import { BAREME_VALIDE_DEPUIS, BAREME_VALIDE_JUSQUAU, baremePerime } from '@/lib/belgianTax';
 import { useTaxBrackets, type Region, type TmcBracket, type AnnualTaxBracket, type AgeReduction } from '../../hooks/useTaxBrackets';
 
 const REGIONS: { value: Region; label: string }[] = [
