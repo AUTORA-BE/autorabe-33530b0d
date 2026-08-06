@@ -61,6 +61,16 @@ function sanitizeText(input: unknown, maxLen = 5000): string | null {
   return s || null;
 }
 
+/** Nombre borné, sinon null (aucune valeur fiscale aberrante en base). */
+function numOrNull(input: unknown, min: number, max: number): number | null {
+  const n = typeof input === 'number' ? input : Number(input);
+  if (input === null || input === undefined || !Number.isFinite(n)) return null;
+  if (n < min || n > max) return null;
+  return n;
+}
+
+
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return handlePreflight(req);
   void buildCorsHeaders;
