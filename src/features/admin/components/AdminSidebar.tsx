@@ -5,7 +5,7 @@
 
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
-  LayoutDashboard, Users, Car, AlertTriangle, ScrollText, Download, LogOut, MessageSquare, BarChart3, Fuel, Calculator, ShieldCheck, Copy, CreditCard, UserCheck, BadgeCheck,
+  LayoutDashboard, Users, Car, AlertTriangle, ScrollText, Download, LogOut, MessageSquare, BarChart3, Fuel, Calculator, ShieldCheck, Copy, CreditCard, UserCheck, BadgeCheck, FileCheck,
 } from 'lucide-react';
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupLabel, SidebarGroupContent,
