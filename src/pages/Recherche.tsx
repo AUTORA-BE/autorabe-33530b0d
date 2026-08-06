@@ -843,7 +843,7 @@ const Recherche = () => {
             <span className="font-semibold text-foreground">
               {(totalCount || cars.length).toLocaleString("fr-BE")}
             </span>{" "}
-            véhicules disponibles
+            {(totalCount || cars.length) === 1 ? "véhicule disponible" : "véhicules disponibles"}
           </p>
           <div className="flex items-center gap-1 rounded-full border border-foreground/10 bg-foreground/[0.04] p-1">
             <button
