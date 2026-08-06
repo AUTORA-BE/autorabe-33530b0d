@@ -266,13 +266,13 @@ export default function AdminCarPassPage() {
                         </p>
                       )}
                       <p className="text-xs text-muted-foreground flex items-center gap-1">
-                        {l?.seller_type === "professional" ? (
+                        {l?.seller_type === "professionnel" ? (
                           <Building2 className="w-3 h-3" />
                         ) : (
                           <User className="w-3 h-3" />
                         )}
                         {l?.contact_name ?? "Vendeur inconnu"} ·{" "}
-                        {l?.seller_type === "professional" ? "Professionnel" : "Particulier"}
+                        {l?.seller_type === "professionnel" ? "Professionnel" : "Particulier"}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         Demande du{" "}
