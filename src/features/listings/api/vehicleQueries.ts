@@ -88,10 +88,11 @@ export function mapListingToVehicleDetail(listing: VehicleListingRow): VehicleDe
 export function applySorting<T>(query: T, sortBy: VehicleSortOption): T {
   const q = query as any;
   
-  // Boosted listings first: 'none' is default/last, 'ultra'/'premium'/'standard' come first
-  // Using descending so ultra > premium > standard > none
+  // Tri par rang numérique du boost : 4 = 7 jours, 1 = 24h, 0 = aucun.
+  // NE PAS revenir à boost_level : c'est du texte, et 'none' > 'boost_*' en
+  // alphabétique, ce qui plaçait les annonces gratuites avant les payantes.
   const withBoostPriority = q
-    .order('boost_level', { ascending: false, nullsFirst: false });
+    .order('boost_rank', { ascending: false, nullsFirst: false });
   
   switch (sortBy) {
     case 'price-asc':
