@@ -109,8 +109,9 @@ const BlogArticle = () => {
               Prêt à trouver votre voiture ?
             </h2>
             <p className="text-sm text-muted-foreground mb-4">
-              Parcourez des milliers de véhicules vérifiés sur AutoRA.
+              Parcourez les véhicules vérifiés disponibles sur AutoRA.
             </p>
+
             <Link to="/recherche">
               <Button className="font-semibold">Rechercher un véhicule</Button>
             </Link>
