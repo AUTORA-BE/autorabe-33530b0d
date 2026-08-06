@@ -154,12 +154,44 @@ const SellerProfile = () => {
           if (own) resolvedProfile = own as SellerProfile;
         }
       } else if (paramUserId) {
+        // 1. Direct read — succeeds for the owner themselves and for admins.
         const { data } = await supabase
           .from("profiles")
           .select(PROFILE_COLS)
           .eq("user_id", paramUserId)
           .maybeSingle();
-        if (data) resolvedProfile = data as SellerProfile;
+        if (data) {
+          resolvedProfile = data as SellerProfile;
+        } else {
+          // 2. Anonymous visitors: `profiles` has no SELECT policy for anon.
+          // Fall back to the public identity RPC (no phone/email/BCE exposed).
+          const { data: pub } = await supabase.rpc("get_public_seller_identity", {
+            _user_id: paramUserId,
+          });
+          const row = Array.isArray(pub) ? pub[0] : pub;
+          if (row) {
+            resolvedProfile = {
+              user_id: row.user_id,
+              display_name: row.display_name ?? null,
+              avatar_url: row.avatar_url ?? null,
+              garage_name: row.garage_name ?? null,
+              phone: null,
+              postal_code: null,
+              created_at: row.created_at,
+              cover_image_url: null,
+              opening_hours: null,
+              services: null,
+              presentation: null,
+              vitrine_slug: null,
+              vitrine_cover_url: null,
+              vitrine_about: null,
+              vitrine_services: null,
+              vitrine_phone: null,
+              vitrine_email_public: null,
+              vitrine_published: false,
+            };
+          }
+        }
       }
 
       if (cancelled) return;
