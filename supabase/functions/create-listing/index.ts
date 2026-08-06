@@ -218,6 +218,11 @@ Deno.serve(async (req) => {
         seller_type: finalSellerType,
         tva_number: payload.tva_number ?? null,
         features: payload.features ?? null,
+        // Données fiscales belges — bornées côté serveur, null si hors limites
+        co2: numOrNull(payload.co2, 0, 600),
+        co2_cycle: payload.co2_cycle === 'NEDC' || payload.co2_cycle === 'WLTP' ? payload.co2_cycle : null,
+        mma: numOrNull(payload.mma, 500, 5000),
+        puissance_cv: numOrNull(payload.puissance_cv, 1, 100),
       })
       .select('id')
       .single();
