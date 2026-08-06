@@ -54,6 +54,11 @@ const sellCarSchema = z.object({
   doors: z.number().optional(),
   euro_norm: z.string().optional(),
   fuel_consumption: z.number().min(0).max(50).nullable().optional(),
+  // Données fiscales belges (optionnelles) — servent au calcul TMC/BIV
+  co2: z.number().min(0).max(600).nullable().optional(),
+  co2_cycle: z.enum(['WLTP', 'NEDC']).nullable().optional(),
+  mma: z.number().min(500).max(5000).nullable().optional(),
+  puissance_cv: z.number().min(1).max(100).nullable().optional(),
   
   first_registration: z.string().optional(),
   car_pass_date: z.string().optional(),
@@ -446,6 +451,11 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
           maintenance_book_complete: data.maintenance_book_complete || false,
           seller_type: data.seller_type || 'particulier',
           tva_number: data.tva_number || undefined,
+          fuel_consumption: data.fuel_consumption ?? null,
+          co2: data.co2 ?? null,
+          co2_cycle: (data.co2_cycle as 'WLTP' | 'NEDC' | null) ?? null,
+          mma: data.mma ?? null,
+          puissance_cv: data.puissance_cv ?? null,
         });
 
         if (data.photos && data.photos.length > 0) {
@@ -699,6 +709,10 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
         doors: data.doors || 5,
         euro_norm: data.euro_norm || null,
         fuel_consumption: data.fuel_consumption ?? null,
+        co2: data.co2 ?? null,
+        co2_cycle: data.co2_cycle ?? null,
+        mma: data.mma ?? null,
+        puissance_cv: data.puissance_cv ?? null,
         first_registration: data.first_registration || null,
         description: data.description || null,
         // Coordonnées : en création, on n'envoie ces champs au serveur QUE si
@@ -1326,6 +1340,72 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
                       <FormMessage />
                     </FormItem>
                   )} />
+
+                  {/* Données fiscales belges — optionnelles mais indispensables
+                      au calcul officiel de la TMC / BIV et de la taxe annuelle */}
+                  <FormField control={form.control} name="co2" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Émissions CO₂ (g/km)</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number" inputMode="numeric" min="0" max="600" placeholder="ex: 120"
+                          {...field}
+                          value={field.value ?? ''}
+                          onChange={e => field.onChange(e.target.value === '' ? null : parseInt(e.target.value))}
+                        />
+                      </FormControl>
+                      <p className="text-xs text-muted-foreground mt-1">Case V.7 du certificat d'immatriculation. Permet le calcul exact de la taxe.</p>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+
+                  <FormField control={form.control} name="co2_cycle" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Cycle de mesure CO₂</FormLabel>
+                      <Select onValueChange={v => field.onChange(v as 'WLTP' | 'NEDC')} value={field.value ?? undefined}>
+                        <FormControl><SelectTrigger><SelectValue placeholder="WLTP ou NEDC" /></SelectTrigger></FormControl>
+                        <SelectContent>
+                          <SelectItem value="WLTP">WLTP (depuis 2018)</SelectItem>
+                          <SelectItem value="NEDC">NEDC (avant 2018)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+
+                  <FormField control={form.control} name="mma" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Masse maximale autorisée (kg)</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number" inputMode="numeric" min="500" max="5000" placeholder="ex: 1900"
+                          {...field}
+                          value={field.value ?? ''}
+                          onChange={e => field.onChange(e.target.value === '' ? null : parseInt(e.target.value))}
+                        />
+                      </FormControl>
+                      <p className="text-xs text-muted-foreground mt-1">Case F.1 du certificat d'immatriculation.</p>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+
+                  <FormField control={form.control} name="puissance_cv" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Puissance fiscale (CV)</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number" inputMode="numeric" min="1" max="100" placeholder="ex: 11"
+                          {...field}
+                          value={field.value ?? ''}
+                          onChange={e => field.onChange(e.target.value === '' ? null : parseInt(e.target.value))}
+                        />
+                      </FormControl>
+                      <p className="text-xs text-muted-foreground mt-1">Chevaux fiscaux figurant sur votre certificat d'immatriculation.</p>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+
+
 
                 </CardContent>
               </Card>

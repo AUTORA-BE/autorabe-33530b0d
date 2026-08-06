@@ -26,6 +26,11 @@ interface BentoSpecsProps {
   doors?: number | null;
   /** First registration date (ISO YYYY-MM-DD). Displayed as MM/YYYY when present. */
   firstRegistration?: string | null;
+  /** Données fiscales belges (lecture seule) */
+  co2?: number | null;
+  co2Cycle?: string | null;
+  mma?: number | null;
+  puissanceCv?: number | null;
 }
 
 const BentoSpecs = ({
@@ -40,6 +45,10 @@ const BentoSpecs = ({
   bodyType,
   doors,
   firstRegistration,
+  co2,
+  co2Cycle,
+  mma,
+  puissanceCv,
 }: BentoSpecsProps) => {
   const formatFirstReg = (iso: string): string | null => {
     const d = new Date(iso);
@@ -74,6 +83,9 @@ const BentoSpecs = ({
   if (color) details.push({ icon: Palette, label: "Couleur", value: color });
   if (bodyType) details.push({ icon: Car, label: "Carrosserie", value: bodyType });
   if (doors) details.push({ icon: DoorOpen, label: "Portes", value: `${doors}` });
+  if (puissanceCv) details.push({ icon: Zap, label: "Puissance fiscale", value: `${puissanceCv} CV` });
+  if (co2) details.push({ icon: Leaf, label: "CO₂", value: `${co2} g/km${co2Cycle ? ` (${co2Cycle})` : ""}` });
+  if (mma) details.push({ icon: Car, label: "MMA", value: `${new Intl.NumberFormat("fr-BE").format(mma)} kg` });
   if (firstRegistration) {
     const formatted = formatFirstReg(firstRegistration);
     if (formatted) details.push({ icon: CalendarCheck, label: "1ère immat.", value: formatted });

@@ -13,13 +13,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 import {
   PRIX_CARBURANT, FACTEUR_REALITE,
-  TAXE_REGION, DEPRECIATION,
+  DEPRECIATION,
 } from "../constants/belgianData";
 import type { FuelType as TcoFuelType, Region } from "../types/tco.types";
-import {
-  useTaxBrackets, computeFiscalCV, computeAnnualTaxFromDb,
-  type AnnualTaxBracket,
-} from "@/features/admin/hooks/useTaxBrackets";
+import { calculerTaxeCirculation, calculerTMC, type ResultatTaxe, type Region as RegionFiscale } from "@/lib/belgianTax";
+import { ageDepuisAnnee, chToKw, mapCarburant, normaliserCycle } from "@/lib/belgianTaxHelpers";
+import TaxResultDisplay from "@/components/tax/TaxResultDisplay";
 
 /* ─── helpers ─── */
 
@@ -63,6 +62,11 @@ interface VehicleTcoProps {
   year: number;
   mileage: number;
   power?: number | null;
+  euroNorm?: string | null;
+  co2?: number | null;
+  co2Cycle?: string | null;
+  mma?: number | null;
+  puissanceCv?: number | null;
 }
 
 interface TcoInputs {
@@ -90,8 +94,7 @@ function computeTco(
   fuel: TcoFuelType,
   year: number,
   inputs: TcoInputs,
-  fiscalCv: number,
-  annualBrackets?: AnnualTaxBracket[],
+  taxeAnnuelle: number | null,
 ): TcoResult {
   const age = new Date().getFullYear() - year;
   const totalKm = inputs.kmPerYear * 5;
@@ -117,11 +120,10 @@ function computeTco(
   // Insurance
   const assurance = inputs.insuranceAnnual * 5;
 
-  // Tax — CV-aware via Supabase brackets, fallback to flat constant
-  const taxeAn = (annualBrackets && fiscalCv > 0)
-    ? computeAnnualTaxFromDb(annualBrackets, inputs.region, fiscalCv, fuel)
-    : (TAXE_REGION[inputs.region]?.[fuel] ?? 200);
-  const taxe = taxeAn * 5;
+  // Taxe de circulation — moteur fiscal officiel. Si le barème ne permet pas
+  // de trancher (donnée manquante ou tranche non publiée), on n'invente rien :
+  // la taxe est comptée à 0 dans le total et signalée à part.
+  const taxe = (taxeAnnuelle ?? 0) * 5;
 
   // Depreciation
   const deprec = price * (DEPRECIATION[fuel] ?? 0.45);
@@ -143,18 +145,9 @@ function computeTco(
 
 /* ─── component ─── */
 
-export default function VehicleTcoSection({ price, fuelType, year, mileage, power }: VehicleTcoProps) {
+export default function VehicleTcoSection({ price, fuelType, year, mileage, power, euroNorm, co2, co2Cycle, mma, puissanceCv }: VehicleTcoProps) {
   const [isOpen, setIsOpen] = useState(false);
   const fuel = useMemo(() => mapFuelType(fuelType), [fuelType]);
-
-  const { data: taxData } = useTaxBrackets();
-
-  // power is in HP → convert to kW → compute fiscal CV for accurate tax bracket lookup
-  const fiscalCv = useMemo(() => {
-    if (!power) return 0;
-    const kw = Math.round(power * 0.7355);
-    return computeFiscalCV(kw);
-  }, [power]);
 
   const [inputs, setInputs] = useState<TcoInputs>({
     kmPerYear: 15000,
@@ -166,9 +159,24 @@ export default function VehicleTcoSection({ price, fuelType, year, mileage, powe
     setInputs(prev => ({ ...prev, [key]: val }));
   }, []);
 
+  const vehiculeFiscal = useMemo(() => ({
+    region: inputs.region as RegionFiscale,
+    puissanceKw: chToKw(power),
+    puissanceCv: puissanceCv ?? null,
+    co2: co2 ?? null,
+    cycleCO2: normaliserCycle(co2Cycle),
+    mma: mma ?? null,
+    carburant: mapCarburant(fuelType),
+    euroNorm: euroNorm ?? null,
+    ageAnnees: ageDepuisAnnee(year),
+  }), [inputs.region, power, puissanceCv, co2, co2Cycle, mma, fuelType, euroNorm, year]);
+
+  const taxeCirculation: ResultatTaxe = useMemo(() => calculerTaxeCirculation(vehiculeFiscal), [vehiculeFiscal]);
+  const tmc: ResultatTaxe = useMemo(() => calculerTMC(vehiculeFiscal), [vehiculeFiscal]);
+
   const result = useMemo(
-    () => computeTco(price, fuel, year, inputs, fiscalCv, taxData?.annual),
-    [price, fuel, year, inputs, fiscalCv, taxData]
+    () => computeTco(price, fuel, year, inputs, taxeCirculation.montant),
+    [price, fuel, year, inputs, taxeCirculation]
   );
 
   const DONUT_COLORS = ["#3b82f6", "#f59e0b", "#f97316", "#10b981", "#8b5cf6", "#ef4444"];
@@ -346,12 +354,19 @@ export default function VehicleTcoSection({ price, fuelType, year, mileage, powe
             </div>
           </div>
 
+          {/* Fiscalité officielle */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <TaxResultDisplay titre="Taxe de circulation" suffixe=" /an" region={inputs.region as RegionFiscale} resultat={taxeCirculation} />
+            <TaxResultDisplay titre={inputs.region === "flandre" ? "BIV (une fois)" : "TMC (une fois)"} region={inputs.region as RegionFiscale} resultat={tmc} />
+          </div>
+
           {/* Disclaimer */}
           <div className="flex items-start gap-2 text-xs text-muted-foreground">
             <Info className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
             <p>
               Estimation indicative basée sur les données moyennes du marché belge 2026.
               Le coût réel peut varier selon votre profil, la couverture d'assurance et l'entretien effectif.
+              {taxeCirculation.montant === null && " La taxe de circulation n'a pas pu être calculée : elle n'est pas comptée dans ce total."}
             </p>
           </div>
         </div>

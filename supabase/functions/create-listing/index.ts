@@ -34,6 +34,11 @@ interface ListingPayload {
   tva_number?: string | null;
   features?: string[] | null;
   reference_url?: string | null;
+  // Données fiscales belges (optionnelles) — nécessaires au calcul TMC/BIV
+  co2?: number | null;
+  co2_cycle?: string | null;
+  mma?: number | null;
+  puissance_cv?: number | null;
 }
 
 // Identité (contact_name/email/phone/seller_type) dérivée serveur depuis le
@@ -55,6 +60,16 @@ function sanitizeText(input: unknown, maxLen = 5000): string | null {
     .trim();
   return s || null;
 }
+
+/** Nombre borné, sinon null (aucune valeur fiscale aberrante en base). */
+function numOrNull(input: unknown, min: number, max: number): number | null {
+  const n = typeof input === 'number' ? input : Number(input);
+  if (input === null || input === undefined || !Number.isFinite(n)) return null;
+  if (n < min || n > max) return null;
+  return n;
+}
+
+
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return handlePreflight(req);
@@ -213,6 +228,11 @@ Deno.serve(async (req) => {
         seller_type: finalSellerType,
         tva_number: payload.tva_number ?? null,
         features: payload.features ?? null,
+        // Données fiscales belges — bornées côté serveur, null si hors limites
+        co2: numOrNull(payload.co2, 0, 600),
+        co2_cycle: payload.co2_cycle === 'NEDC' || payload.co2_cycle === 'WLTP' ? payload.co2_cycle : null,
+        mma: numOrNull(payload.mma, 500, 5000),
+        puissance_cv: numOrNull(payload.puissance_cv, 1, 100),
       })
       .select('id')
       .single();

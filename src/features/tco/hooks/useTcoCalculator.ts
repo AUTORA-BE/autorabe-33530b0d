@@ -4,13 +4,11 @@ import { useState, useMemo } from 'react';
 import type { TcoFormData, TcoBreakdown, TcoAlternative, FuelType } from '../types/tco.types';
 import {
   PRIX_CARBURANT, FACTEUR_REALITE, ENTRETIEN_BASE, ASSURANCE_RC,
-  COEFF_BONUS, MULT_COUVERTURE, TAXE_REGION, DEPRECIATION, PRIMES,
+  COEFF_BONUS, MULT_COUVERTURE, DEPRECIATION, PRIMES,
   DEFAULT_CONSUMPTION,
 } from '../constants/belgianData';
-import {
-  useTaxBrackets, computeAnnualTaxFromDb,
-  type AnnualTaxBracket,
-} from '@/features/admin/hooks/useTaxBrackets';
+import { calculerTaxeCirculation, type Region as RegionFiscale } from '@/lib/belgianTax';
+import { mapCarburant, normaliserCycle } from '@/lib/belgianTaxHelpers';
 
 const DEFAULT_FORM: TcoFormData = {
   fuelType: 'essence95',
@@ -34,7 +32,23 @@ function getFuelCategory(ft: FuelType): string {
   return 'diesel';
 }
 
-function calculateBreakdown(data: TcoFormData, annualBrackets?: AnnualTaxBracket[]): TcoBreakdown {
+/**
+ * Taxe de circulation via le moteur fiscal officiel. Renvoie null quand le
+ * barème ne permet pas de trancher — on n'invente aucun montant.
+ */
+function taxeCirculationAnnuelle(data: TcoFormData): number | null {
+  return calculerTaxeCirculation({
+    region: data.region as RegionFiscale,
+    puissanceCv: data.fiscalPower || null,
+    puissanceKw: data.horsepower ? Math.round(data.horsepower * 0.7355) : null,
+    carburant: mapCarburant(data.fuelType === 'electric' ? 'electrique' : data.fuelType),
+    cycleCO2: normaliserCycle(null),
+    euroNorm: data.euroNorm ?? null,
+    ageAnnees: Math.max(0, new Date().getFullYear() - data.year),
+  }).montant;
+}
+
+function calculateBreakdown(data: TcoFormData): TcoBreakdown {
   const ageVehicule = new Date().getFullYear() - data.year;
   const totalKm = data.kmPerYear * 5;
   const fuelCat = getFuelCategory(data.fuelType);
@@ -62,9 +76,7 @@ function calculateBreakdown(data: TcoFormData, annualBrackets?: AnnualTaxBracket
   const assuranceAnnuelle = ASSURANCE_RC[data.ageProfile] * COEFF_BONUS[data.bonusMalus] * MULT_COUVERTURE[data.insuranceType];
   const totalAssurance = assuranceAnnuelle * 5;
 
-  const taxeAnnuelle = annualBrackets && data.fiscalPower > 0
-    ? computeAnnualTaxFromDb(annualBrackets, data.region, data.fiscalPower, data.fuelType)
-    : (TAXE_REGION[data.region][data.fuelType] || 200);
+  const taxeAnnuelle = taxeCirculationAnnuelle(data) ?? 0;
   const totalTaxe = taxeAnnuelle * 5;
 
   const deprec = data.price * (DEPRECIATION[data.fuelType] || 0.45);
@@ -101,15 +113,13 @@ export function useTcoCalculator() {
   const [formData, setFormData] = useState<TcoFormData>(DEFAULT_FORM);
   const [showResults, setShowResults] = useState(false);
 
-  const { data: taxData } = useTaxBrackets();
-
   const updateField = <K extends keyof TcoFormData>(key: K, value: TcoFormData[K]) => {
     setFormData(prev => ({ ...prev, [key]: value }));
   };
 
   const breakdown = useMemo(
-    () => calculateBreakdown(formData, taxData?.annual),
-    [formData, taxData]
+    () => calculateBreakdown(formData),
+    [formData]
   );
 
   const alternatives = useMemo((): TcoAlternative[] => {
@@ -122,7 +132,7 @@ export function useTcoCalculator() {
     for (const alt of altTypes) {
       if (alt.fuel === formData.fuelType) continue;
       const altData = { ...formData, fuelType: alt.fuel, consumption: DEFAULT_CONSUMPTION[alt.fuel] };
-      const altBreakdown = calculateBreakdown(altData, taxData?.annual);
+      const altBreakdown = calculateBreakdown(altData);
       alts.push({
         fuelType: alt.fuel,
         label: alt.label,
@@ -131,7 +141,7 @@ export function useTcoCalculator() {
       });
     }
     return alts.slice(0, 2);
-  }, [formData, breakdown, taxData]);
+  }, [formData, breakdown]);
 
   const nextStep = () => {
     if (step < 5) setStep(s => s + 1);
