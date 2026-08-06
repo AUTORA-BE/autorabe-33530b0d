@@ -199,7 +199,11 @@ Deno.serve(async (req) => {
         contact_email: finalContactEmail,
         location: payload.location ?? null,
         photos: payload.photos ?? [],
-        car_pass_verified: !!payload.car_pass_url,
+        // `car_pass_verified` est une colonne GÉNÉRÉE dérivée de `car_pass_status`.
+        // Déposer un document ne vaut PAS vérification : le statut passe en
+        // 'pending' et un admin doit valider via l'edge function verify-car-pass.
+        // Écrire directement dans car_pass_verified lève une erreur Postgres 428C9.
+        car_pass_status: payload.car_pass_url ? 'pending' : 'unverified',
         car_pass_url: payload.car_pass_url ?? null,
         car_pass_date: payload.car_pass_date ?? null,
         ct_valid: payload.ct_valid ?? false,
