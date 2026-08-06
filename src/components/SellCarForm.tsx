@@ -54,6 +54,11 @@ const sellCarSchema = z.object({
   doors: z.number().optional(),
   euro_norm: z.string().optional(),
   fuel_consumption: z.number().min(0).max(50).nullable().optional(),
+  // Données fiscales belges (optionnelles) — servent au calcul TMC/BIV
+  co2: z.number().min(0).max(600).nullable().optional(),
+  co2_cycle: z.enum(['WLTP', 'NEDC']).nullable().optional(),
+  mma: z.number().min(500).max(5000).nullable().optional(),
+  puissance_cv: z.number().min(1).max(100).nullable().optional(),
   
   first_registration: z.string().optional(),
   car_pass_date: z.string().optional(),
