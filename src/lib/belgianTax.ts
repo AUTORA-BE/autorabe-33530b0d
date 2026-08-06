@@ -238,7 +238,7 @@ export function calculerTMC(v: VehiculeFiscal): ResultatTaxe {
     approximatif = true;
     manquantes.push("composante air non publiée pour Euro 0 à 3 — valeur Euro 4 appliquée par prudence");
   } else {
-    cleC = euro;
+    cleC = euro!;
   }
   const c = arrondi(VLA_C_BASE[familleC][cleC] * VLA_INDEXATION_2026);
   const lc = v.ageAnnees >= 15 ? 0 : (VLA_LC[v.ageAnnees] ?? 1.0);
