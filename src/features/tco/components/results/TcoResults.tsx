@@ -8,6 +8,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { BarChart, Bar, XAxis, YAxis, Tooltip as RTooltip, ResponsiveContainer, Cell } from 'recharts';
 import type { TcoFormData, TcoBreakdown, TcoAlternative } from '../../types/tco.types';
 import { Link } from 'react-router-dom';
+import { BAREME_VALIDE_DEPUIS, BAREME_VALIDE_JUSQUAU } from '@/lib/belgianTax';
 
 interface Props {
   formData: TcoFormData;
@@ -75,9 +76,18 @@ const TcoResults = ({ breakdown, alternatives, onReset, onBack }: Props) => {
           </p>
 
           <div className="mt-6 flex flex-wrap justify-center gap-2 text-xs text-muted-foreground">
-            <span className="bg-secondary/60 px-3 py-1 rounded-full">✓ Certifié</span>
-            <span className="bg-secondary/60 px-3 py-1 rounded-full">✓ Sources SPF</span>
-            <span className="bg-secondary/60 px-3 py-1 rounded-full">✓ MAJ {new Date().toLocaleDateString('fr-BE', { month: '2-digit', year: 'numeric' })}</span>
+            <span className="bg-secondary/60 px-3 py-1 rounded-full">Estimation</span>
+            <span className="bg-secondary/60 px-3 py-1 rounded-full">
+              Barèmes fiscaux du {new Date(BAREME_VALIDE_DEPUIS).toLocaleDateString('fr-BE')} au {new Date(BAREME_VALIDE_JUSQUAU).toLocaleDateString('fr-BE')}
+            </span>
+            <a
+              href="https://finances.belgium.be/fr/particuliers/transport/taxes_vehicules"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-secondary/60 px-3 py-1 rounded-full hover:text-foreground transition-colors"
+            >
+              Sources officielles SPF Finances
+            </a>
           </div>
         </motion.div>
 
@@ -201,19 +211,19 @@ const TcoResults = ({ breakdown, alternatives, onReset, onBack }: Props) => {
             <AccordionItem value="methodology">
               <AccordionTrigger className="text-sm font-semibold">📖 Méthodologie & Sources</AccordionTrigger>
               <AccordionContent className="space-y-3 text-sm text-muted-foreground">
-                <p><strong>Carburant :</strong> SPF Économie, prix moyens BE février 2026, MAJ quotidienne.</p>
+                <p><strong>Carburant :</strong> prix moyens belges saisis dans AutoRA, mis à jour manuellement — la date de dernière mise à jour est affichée sur la page du calculateur.</p>
                 <p><strong>Entretien :</strong> Touring & VAB, tarifs garage indépendant, +5%/an d'ancienneté.</p>
                 <p><strong>Assurance :</strong> AG, Ethias, KBC – tarifs indicatifs 2026.</p>
-                <p><strong>Taxes :</strong> Calculs officiels par région (Bruxelles, Flandre, Wallonie).</p>
-                <p><strong>Dépréciation :</strong> AutoScout24 BE, 50k+ ventes analysées.</p>
+                <p><strong>Taxes :</strong> barèmes officiels par région (Bruxelles, Flandre, Wallonie), valables du {new Date(BAREME_VALIDE_DEPUIS).toLocaleDateString('fr-BE')} au {new Date(BAREME_VALIDE_JUSQUAU).toLocaleDateString('fr-BE')}.</p>
+                <p><strong>Dépréciation :</strong> courbes indicatives par type de motorisation, non issues d'un relevé de ventes AutoRA.</p>
                 <p><strong>Primes :</strong> Sites régionaux officiels, conditions exactes applicables.</p>
-                <p><strong>Marge d'erreur :</strong> ±10% taxes, ±15% entretien, ±30% assurance.</p>
+                <p><strong>Marge d'erreur :</strong> les postes entretien, assurance et dépréciation sont des ordres de grandeur, pas des mesures.</p>
               </AccordionContent>
             </AccordionItem>
           </Accordion>
 
           <p className="mt-4 text-xs text-muted-foreground italic">
-            ⚠️ Ces résultats sont des estimations avec une précision de ~90%. Vos coûts réels peuvent varier de ±10% à ±20% selon votre profil exact, votre historique de conduite et les fluctuations de prix.
+            ⚠️ Ces résultats sont des estimations. Vos coûts réels varient selon votre profil, votre usage réel et les fluctuations de prix.
           </p>
         </motion.div>
 
