@@ -120,6 +120,17 @@ const calendarLEZ: Record<string, VilleCalendar> = {
       euro6d_temp: { statut: 'autorise', jusque: null },
       euro6d: { statut: 'autorise', jusque: null },
     },
+    essence: {
+      euro0: { statut: 'interdit' },        // interdit depuis 2020
+      euro1: { statut: 'autorise', jusque: null },
+      euro2: { statut: 'autorise', jusque: null },
+      euro3: { statut: 'autorise', jusque: null },
+      euro4: { statut: 'autorise', jusque: null },
+      euro5: { statut: 'autorise', jusque: null },
+      euro6: { statut: 'autorise', jusque: null },
+      euro6d_temp: { statut: 'autorise', jusque: null },
+      euro6d: { statut: 'autorise', jusque: null },
+    },
 
     electric: { statut: 'autorise', jusque: null },
     hybride: { statut: 'autorise', jusque: null },
