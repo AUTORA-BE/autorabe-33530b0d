@@ -90,47 +90,7 @@ export const WhyAutoRaSkeleton = () => (
   </section>
 );
 
-/** Testimonials section skeleton */
-export const TestimonialsSkeleton = () => (
-  <section className="py-16 sm:py-32 relative overflow-hidden">
-    <div className="container mx-auto px-6 sm:px-8 relative">
-      {/* Header — matches TestimonialsSection */}
-      <div className="text-center max-w-xl mx-auto mb-10 sm:mb-16 space-y-4">
-        <div className="h-8 sm:h-10 w-72 mx-auto rounded-lg skeleton-shimmer" />
-        <div className="h-4 w-96 max-w-md mx-auto rounded-lg skeleton-shimmer" />
-      </div>
-      {/* 3-col cards — matches TestimonialsSection layout */}
-      <div className="flex sm:grid sm:grid-cols-3 gap-5 sm:gap-8 overflow-x-auto sm:overflow-visible scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 pb-2 sm:pb-0">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="rounded-3xl border border-border/20 bg-card/30 p-7 sm:p-9 space-y-5 flex-shrink-0 w-[300px] sm:w-auto">
-            {/* Quote icon placeholder */}
-            <div className="w-8 h-8 rounded skeleton-shimmer" />
-            {/* Stars */}
-            <div className="flex gap-0.5">
-              {[1, 2, 3, 4, 5].map((j) => (
-                <div key={j} className="w-3.5 h-3.5 rounded-sm skeleton-shimmer" />
-              ))}
-            </div>
-            {/* Quote text */}
-            <div className="space-y-2">
-              <div className="h-3.5 w-full rounded skeleton-shimmer" />
-              <div className="h-3.5 w-full rounded skeleton-shimmer" />
-              <div className="h-3.5 w-3/4 rounded skeleton-shimmer" />
-            </div>
-            {/* Author */}
-            <div className="flex items-center gap-3 pt-3">
-              <div className="w-9 h-9 rounded-full skeleton-shimmer" />
-              <div className="space-y-1.5">
-                <div className="h-4 w-24 rounded skeleton-shimmer" />
-                <div className="h-3 w-16 rounded skeleton-shimmer" />
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-);
+
 
 /** Brand carousel skeleton — row of circles */
 export const BrandCarouselSkeleton = () => (

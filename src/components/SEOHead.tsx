@@ -32,11 +32,12 @@ const SEOHead = ({
   };
 
   const defaultDescriptions: Record<string, string> = {
-    fr: "AutoRA - La marketplace automobile belge de confiance. Trouvez des milliers de véhicules vérifiés avec Car-Pass et compatibilité LEZ garantie.",
-    nl: "AutoRA - De betrouwbare Belgische automarkt. Vind duizenden geverifieerde voertuigen met Car-Pass en gegarandeerde LEZ-compatibiliteit.",
-    de: "AutoRA - Der vertrauenswürdige belgische Automarktplatz. Finden Sie Tausende verifizierte Fahrzeuge mit Car-Pass und garantierter LEZ-Kompatibilität.",
-    en: "AutoRA - The trusted Belgian car marketplace. Find thousands of verified vehicles with Car-Pass and guaranteed LEZ compatibility.",
+    fr: "AutoRA - La marketplace automobile belge. Véhicules vérifiés Car-Pass, compatibilité LEZ et simulateurs de taxes pour les trois régions.",
+    nl: "AutoRA - De Belgische automarktplaats. Voertuigen met Car-Pass-controle, LEZ-compatibiliteit en belastingsimulatoren voor de drie gewesten.",
+    de: "AutoRA - Der belgische Automarktplatz. Fahrzeuge mit Car-Pass-Prüfung, LEZ-Kompatibilität und Steuerrechner für alle drei Regionen.",
+    en: "AutoRA - The Belgian car marketplace. Car-Pass verified vehicles, LEZ compatibility and tax simulators for all three regions.",
   };
+
 
   const locales: Record<string, string> = {
     fr: "fr_BE",
