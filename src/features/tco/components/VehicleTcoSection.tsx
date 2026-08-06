@@ -13,7 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 import {
   PRIX_CARBURANT, FACTEUR_REALITE,
-  TAXE_REGION, DEPRECIATION,
+  DEPRECIATION,
 } from "../constants/belgianData";
 import type { FuelType as TcoFuelType, Region } from "../types/tco.types";
 import { calculerTaxeCirculation, calculerTMC, type ResultatTaxe, type Region as RegionFiscale } from "@/lib/belgianTax";
