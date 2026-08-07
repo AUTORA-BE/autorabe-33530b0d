@@ -121,6 +121,9 @@ input[type="number"] {
     --background: 222 30% 7%;
     --foreground: 210 20% 98%;
 
+    --search-halo: 222 47% 5%;
+    --shadow-color: 0 0% 0%;
+
     --card: 222 25% 11%;
     --card-foreground: 210 20% 98%;
 
