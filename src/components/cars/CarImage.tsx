@@ -8,6 +8,7 @@ import { memo, useState, useCallback, useRef, useEffect } from "react";
 import { Car } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 /** Tiny 1×1 transparent SVG used as a base for the blur placeholder */
 const BLUR_PLACEHOLDER =
@@ -43,6 +44,7 @@ const CarImage = memo(function CarImage({
   aspectRatio = "4/3",
   onClick,
 }: CarImageProps) {
+  const { t } = useLanguage();
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -94,7 +96,7 @@ const CarImage = memo(function CarImage({
       {showPlaceholder ? (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-muted-foreground bg-muted">
           <Car className="w-12 h-12 text-muted-foreground/40" strokeWidth={1.5} />
-          <span className="text-xs text-muted-foreground">Photo à venir</span>
+          <span className="text-xs text-muted-foreground">{t("vehicle.photoPending")}</span>
         </div>
       ) : (
         <img

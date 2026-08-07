@@ -61,7 +61,7 @@ export default function MarquesElectriques() {
         <section className="relative h-[60vh] min-h-[420px] w-full overflow-hidden">
           <img
             src="https://images.unsplash.com/photo-1617788138017-80ad40651399?w=1920&q=80"
-            alt="Voiture électrique de prestige"
+            alt="Illustration décorative — mobilité électrique (véhicule non mis en vente sur AutoRA)"
             className="absolute inset-0 w-full h-full object-cover"
             loading="eager"
             fetchPriority="high"

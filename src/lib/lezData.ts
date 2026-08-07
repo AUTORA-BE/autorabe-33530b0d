@@ -284,6 +284,7 @@ function evaluerVille(villeNom: string, villeData: VilleCalendar, carburant: str
     message: `Autorisé jusqu'en ${regle.jusque}`,
     messageDetail: 'Situation stable',
     couleur: 'green',
+    anneeInterdiction: regle.jusque,
   };
 }
 
