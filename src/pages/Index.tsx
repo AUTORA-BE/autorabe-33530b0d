@@ -114,7 +114,7 @@ const Index = () => {
       <SEOHead 
         title={language === "nl" ? "AutoRA — De Belgische automarktplaats" : "AutoRA — La marketplace automobile belge"}
         description={language === "nl" 
-          ? "AutoRA - De betrouwbare Belgische automarkt. Vind duizenden geverifieerde voertuigen met Car-Pass en gegarandeerde LEZ-compatibiliteit."
+          ? "AutoRA - De betrouwbare Belgische automarkt. Vind geverifieerde voertuigen met Car-Pass en gegarandeerde LEZ-compatibiliteit."
           : "AutoRA - La marketplace automobile belge de confiance. Véhicules vérifiés Car-Pass, conformité LEZ garantie et calcul TCO régional."}
         url="https://autora.be"
         jsonLd={[organizationSchema, websiteSchema]}
