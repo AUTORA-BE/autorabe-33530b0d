@@ -75,7 +75,7 @@ const SellCarCTA = memo(() => {
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
                     <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary" />
                   </span>
-                  {isNl ? "Vertrouwd door duizenden Belgische verkopers" : "Fait confiance par des milliers de vendeurs belges"}
+                  {isNl ? "Gratis publiceren, Car-Pass geverifieerd" : "Publication gratuite, Car-Pass vérifié"}
                 </span>
               </motion.div>
 

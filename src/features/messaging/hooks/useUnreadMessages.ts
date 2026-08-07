@@ -52,29 +52,24 @@ export function useUnreadMessages(): UseUnreadMessagesResult {
       return;
     }
 
+    let cancelled = false;
+    let inFlight = false;
+
     const fetchUnreadCount = async () => {
-      // Get all conversations where user is buyer or seller
-      const { data: conversations } = await supabase
-        .from('conversations')
-        .select('id')
-        .or(`buyer_id.eq.${userId},seller_id.eq.${userId}`);
-
-      if (!conversations || conversations.length === 0) {
-        setUnreadCount(0);
-        return;
+      // Guard against duplicated concurrent calls (StrictMode / realtime bursts)
+      if (inFlight) return;
+      inFlight = true;
+      try {
+        // Server-side count via RPC (uses auth.uid()); avoids fragile PostgREST HEAD+count queries
+        const { data, error } = await supabase.rpc('get_unread_message_count');
+        if (cancelled) return;
+        // A badge must never break navigation: fail silently to 0
+        setUnreadCount(error ? 0 : (data ?? 0));
+      } catch {
+        if (!cancelled) setUnreadCount(0);
+      } finally {
+        inFlight = false;
       }
-
-      const conversationIds = conversations.map(c => c.id);
-
-      // Count unread messages not sent by current user
-      const { count } = await supabase
-        .from('messages')
-        .select('*', { count: 'exact', head: true })
-        .in('conversation_id', conversationIds)
-        .eq('is_read', false)
-        .neq('sender_id', userId);
-
-      setUnreadCount(count || 0);
     };
 
     fetchUnreadCount();
@@ -99,6 +94,7 @@ export function useUnreadMessages(): UseUnreadMessagesResult {
       .subscribe();
 
     return () => {
+      cancelled = true;
       supabase.removeChannel(channel);
     };
   }, [userId]);

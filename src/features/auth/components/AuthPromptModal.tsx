@@ -45,7 +45,7 @@ const COPY: Record<AuthPromptReason, CopyEntry> = {
     icon: Car,
     title: "Publiez votre annonce",
     description:
-      "Connectez-vous pour vendre votre véhicule en quelques minutes et toucher des milliers d'acheteurs.",
+      "Connectez-vous pour vendre votre véhicule en quelques minutes et toucher les acheteurs belges.",
   },
   dashboard: {
     icon: Lock,

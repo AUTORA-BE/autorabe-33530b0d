@@ -2092,6 +2092,7 @@ export type Database = {
           year: number
         }[]
       }
+      get_unread_message_count: { Args: never; Returns: number }
       get_user_view_history: {
         Args: { _limit?: number }
         Returns: {
