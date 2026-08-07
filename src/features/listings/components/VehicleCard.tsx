@@ -4,7 +4,8 @@
  */
 
 import { memo, useMemo } from "react";
-import {   Heart, MapPin, Calendar, Gauge, AlertTriangle, Ban, Leaf, Info, Building2, Sparkles, Scale, Fuel, Cog, Zap, ShieldCheck } from "lucide-react";
+import {   Heart, MapPin, Calendar, Gauge, Building2, Sparkles, Scale, Fuel, Cog, Zap, ShieldCheck } from "lucide-react";
+import { lezBadgeConfig } from "../constants/lezBadge";
 import { useCompareContext } from "@/features/compare";
 import CarImage from "@/components/cars/CarImage";
 import { Badge } from "@/components/ui/badge";
