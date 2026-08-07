@@ -1,7 +1,7 @@
 /**
- * Recherche — luxury catalogue search page (pure black, glass UI).
- * Hardcoded colors only (no theme tokens) so the page renders identically
- * regardless of `dark` class state. Image is a plain <img> strictly contained
+ * Recherche — luxury catalogue search page (glass UI).
+ * Follows the active theme (light and dark) via design tokens; the ambient
+ * halo and heavy shadows are tinted through theme-aware CSS variables. Image is a plain <img> strictly contained
  * by an overflow-hidden 16:9 frame. All hooks/data flow preserved.
  * @module pages
  */
@@ -114,7 +114,7 @@ function LuxuryCarCard({
         "border border-foreground/5 bg-foreground/[0.03]",
         "transition-all duration-500 ease-out",
         "hover:-translate-y-0.5 hover:border-primary/50 hover:bg-foreground/[0.05]",
-        "hover:shadow-[0_30px_60px_-20px_rgba(0,0,0,0.7),0_0_0_1px_hsl(var(--primary)/0.18),0_0_50px_-10px_hsl(var(--primary)/0.28)]",
+        "hover:shadow-[0_30px_60px_-20px_hsl(var(--shadow-color)/0.7),0_0_0_1px_hsl(var(--primary)/0.18),0_0_50px_-10px_hsl(var(--primary)/0.28)]",
       )}
     >
       {/* Image frame — strictly contained 16:9 */}
@@ -217,7 +217,7 @@ function PillFilterBar({ filters, updateFilter, onOpenMore, shrunk }: FilterBarP
     "bg-primary/15 text-primary hover:bg-primary/20 hover:text-primary ring-1 ring-inset ring-primary/35";
 
   const popoverCls =
-    "rounded-2xl border border-foreground/10 bg-popover p-6 text-foreground shadow-[0_30px_80px_-20px_rgba(0,0,0,0.85)]";
+    "rounded-2xl border border-foreground/10 bg-popover p-6 text-foreground shadow-[0_30px_80px_-20px_hsl(var(--shadow-color)/0.85)]";
 
   return (
     <div
@@ -405,8 +405,8 @@ function MoreFiltersSheet({
         className={cn(
           "flex flex-col gap-0 border-foreground/10 bg-popover p-0 text-foreground",
           isMobile
-            ? "h-[92dvh] w-full rounded-t-3xl border-t shadow-[0_-30px_80px_-20px_rgba(0,0,0,0.7)]"
-            : "w-full border-l shadow-[-40px_0_80px_-20px_rgba(0,0,0,0.7)] sm:max-w-md",
+            ? "h-[92dvh] w-full rounded-t-3xl border-t shadow-[0_-30px_80px_-20px_hsl(var(--shadow-color)/0.7)]"
+            : "w-full border-l shadow-[-40px_0_80px_-20px_hsl(var(--shadow-color)/0.7)] sm:max-w-md",
         )}
       >
         <SheetHeader className="flex flex-row items-center justify-between space-y-0 border-b border-foreground/5 px-6 py-5">
@@ -743,7 +743,7 @@ const Recherche = () => {
         className="pointer-events-none fixed inset-0 -z-10"
         style={{
           background:
-            "radial-gradient(circle 800px at 50% 18%, hsl(var(--primary) / 0.08) 0%, transparent 55%), radial-gradient(circle 1200px at 50% 90%, rgba(2,6,23,0.6) 0%, transparent 70%)",
+            "radial-gradient(circle 800px at 50% 18%, hsl(var(--primary) / 0.08) 0%, transparent 55%), radial-gradient(circle 1200px at 50% 90%, hsl(var(--search-halo) / 0.6) 0%, transparent 70%)",
         }}
       />
 

@@ -59,6 +59,10 @@ input[type="number"] {
 
     --radius: 1rem;
 
+    /* Ambient halo + heavy shadow tint (theme-aware) */
+    --search-halo: 220 25% 92%;
+    --shadow-color: 220 20% 60%;
+
     /* Z-Index scale — single source of truth */
     --z-dropdown: 30;
     --z-sticky: 40;
@@ -116,6 +120,9 @@ input[type="number"] {
   .dark {
     --background: 222 30% 7%;
     --foreground: 210 20% 98%;
+
+    --search-halo: 222 47% 5%;
+    --shadow-color: 0 0% 0%;
 
     --card: 222 25% 11%;
     --card-foreground: 210 20% 98%;
