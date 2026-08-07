@@ -153,17 +153,31 @@ function LezGlobalAlert({ result }: { result: LezResultat }) {
   }
 
   if (global.statut === "autorise") {
+    // Une ville peut être « autorisée » tout en ayant une interdiction programmée :
+    // on reprend la date la plus proche pour ne pas affirmer « aucune restriction ».
+    const echeances = result.details
+      .filter((d) => d.anneeInterdiction != null)
+      .sort((a, b) => (a.anneeInterdiction ?? 0) - (b.anneeInterdiction ?? 0));
+    const prochaine = echeances[0];
+    const villes = echeances
+      .filter((d) => d.anneeInterdiction === prochaine?.anneeInterdiction)
+      .map((d) => d.ville.charAt(0).toUpperCase() + d.ville.slice(1))
+      .join(", ");
+
     return (
       <div className="p-4 rounded-xl mb-6 bg-primary/10 border border-primary/30">
         <p className="text-base font-semibold text-primary">
-          ✅ Véhicule autorisé dans toutes les zones LEZ belges
+          ✅ Véhicule autorisé aujourd'hui dans toutes les zones LEZ belges
         </p>
         <p className="text-sm text-primary/80 mt-1">
-          Aucune restriction prévue. Circulation libre.
+          {prochaine
+            ? `Restrictions programmées à partir de ${prochaine.anneeInterdiction} à ${villes}.`
+            : "Aucune restriction prévue. Circulation libre."}
         </p>
       </div>
     );
   }
+
 
   return null;
 }
