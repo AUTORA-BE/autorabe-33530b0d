@@ -621,5 +621,6 @@
   "homeReviews.subtitle": "Les avis publiés sur AutoRA proviennent uniquement d'utilisateurs inscrits, après un échange réel avec un vendeur.",
   "homeReviews.emptyTitle": "Les premiers avis arrivent",
   "homeReviews.emptyText": "Aucun avis n'est encore publié. Ils apparaîtront ici après les premières transactions entre acheteurs et vendeurs.",
-  "homeReviews.emptyVerified": "Chaque avis est rattaché à un compte vérifié."
+  "homeReviews.emptyVerified": "Chaque avis est rattaché à un compte vérifié.",
+  "vehicle.photoPending": "Photo à venir"
 }

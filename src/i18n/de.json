@@ -621,5 +621,6 @@
   "homeReviews.subtitle": "Bewertungen auf AutoRA stammen ausschließlich von registrierten Nutzern nach einem echten Kontakt mit einem Verkäufer.",
   "homeReviews.emptyTitle": "Die ersten Bewertungen kommen bald",
   "homeReviews.emptyText": "Es wurde noch keine Bewertung veröffentlicht. Sie erscheinen hier nach den ersten Transaktionen zwischen Käufern und Verkäufern.",
-  "homeReviews.emptyVerified": "Jede Bewertung ist mit einem verifizierten Konto verknüpft."
+  "homeReviews.emptyVerified": "Jede Bewertung ist mit einem verifizierten Konto verknüpft.",
+  "vehicle.photoPending": "Foto folgt"
 }
