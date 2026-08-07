@@ -13,8 +13,8 @@ import type {
   VehicleSortOption 
 } from '../types/vehicle.types';
 
-/** Default placeholder image for vehicles without photos */
-const DEFAULT_VEHICLE_IMAGE = 'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800&h=600&fit=crop';
+/** Local, neutral placeholder for vehicles without photos (never a real car photo) */
+import vehiclePlaceholder from '@/assets/vehicle-placeholder.svg';
 
 /** Euro norms that grant LEZ access */
 const LEZ_COMPATIBLE_NORMS = ['Euro 6d', 'Euro 6c', 'Euro 6b', 'Euro 6'];
@@ -45,8 +45,8 @@ export function mapListingToVehicle(listing: VehicleListingRow): Vehicle {
     transmission: listing.transmission,
     euroNorm: listing.euro_norm || 'Non spécifié',
     location: listing.location || 'Belgique',
-    image: listing.photos?.[0] || DEFAULT_VEHICLE_IMAGE,
-    photos: listing.photos?.length ? listing.photos : [DEFAULT_VEHICLE_IMAGE],
+    image: listing.photos?.[0] || vehiclePlaceholder,
+    photos: listing.photos?.length ? listing.photos : [vehiclePlaceholder],
     isLezCompatible,
     hasCarPass: listing.car_pass_verified || false,
     sellerType: listing.seller_type || 'particulier',
@@ -72,7 +72,7 @@ export function mapListingToVehicleDetail(listing: VehicleListingRow): VehicleDe
     power: listing.power,
     doors: listing.doors || 5,
     features: listing.features,
-    photos: listing.photos || [DEFAULT_VEHICLE_IMAGE],
+    photos: listing.photos || [vehiclePlaceholder],
     ctValid: listing.ct_valid || false,
     maintenanceBookComplete: listing.maintenance_book_complete || false,
     firstRegistration: listing.first_registration,
