@@ -46,11 +46,18 @@ function clearSearchHistory() {
   localStorage.removeItem(HISTORY_KEY);
 }
 
+/**
+ * Entrance animation for hero content.
+ * `data-hero-reveal` = safety net: CSS forces opacity:1 when JS/Framer never runs
+ * (see index.css + <noscript> in index.html). Animation unchanged when JS works.
+ */
 const fadeUp = (delay: number) => ({
+  "data-hero-reveal": "",
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
   transition: { duration: 0.7, delay, ease: [0.25, 0.1, 0.25, 1] as const },
 });
+
 
 /* ─── Fullscreen Mobile Search Modal ─── */
 interface FullscreenSearchProps {
