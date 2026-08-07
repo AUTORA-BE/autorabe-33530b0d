@@ -810,3 +810,24 @@ input[type="number"] {
     .search-shimmer::before { animation: none; opacity: 0; }
   }
 }
+
+/* ─── Hero safety net ───
+   Le contenu de la hero est animé par Framer Motion (opacity 0 → 1).
+   Si le JS ne démarre pas / est bloqué, ces règles garantissent un rendu visible.
+   Elles n'altèrent pas l'animation quand le JS fonctionne normalement. */
+@media (scripting: none) {
+  [data-hero-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+/* Filet tardif : si l'animation d'entrée n'a jamais été jouée (JS lent/en échec),
+   le contenu redevient visible après 3s. Les animations CSS priment sur le style
+   inline, mais l'animation Framer (~1s) est terminée bien avant. */
+@keyframes hero-reveal-safety { to { opacity: 1; } }
+[data-hero-reveal] {
+  animation: hero-reveal-safety 0.01s linear 3s forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-hero-reveal] { animation-delay: 0s; }
+}
