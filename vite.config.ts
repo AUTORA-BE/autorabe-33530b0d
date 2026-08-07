@@ -127,12 +127,40 @@ const pwaOptions = {
   },
 };
 
-const manualChunks = {
+const VENDOR_CHUNKS = {
   "vendor-react": ["react", "react-dom", "react-router-dom"],
   "vendor-query": ["@tanstack/react-query"],
   "vendor-motion": ["framer-motion"],
   "vendor-icons": ["lucide-react"],
   "vendor-supabase": ["@supabase/supabase-js"],
+};
+
+// Homepage sections are lazy-loaded individually, which produced dozens of
+// micro-chunks (~30 JS requests just for the home). They are grouped into a
+// single "home-sections" chunk here. Route-level splitting stays untouched.
+const HOME_SECTION_MODULES = [
+  "src/components/home/",
+  "src/components/WhyAutoRA",
+  "src/components/SellCarCTA",
+  "src/components/HomeFAQ",
+  "src/components/HomeReviewsSection",
+  "src/components/LoadMoreGrid",
+  "src/components/TcoFloatingButton",
+  "src/features/search/components/EvBrandSection",
+  "src/features/search/components/ThermalBrandCarousel",
+  "src/features/search/components/FilterPanel",
+];
+
+const manualChunks = (id) => {
+  const normalized = id.split("\\").join("/");
+  if (normalized.includes("node_modules")) {
+    for (const [chunk, deps] of Object.entries(VENDOR_CHUNKS)) {
+      if (deps.some((dep) => normalized.includes(`node_modules/${dep}/`))) return chunk;
+    }
+    return undefined;
+  }
+  if (HOME_SECTION_MODULES.some((m) => normalized.includes(m))) return "home-sections";
+  return undefined;
 };
 
 export default defineConfig({
