@@ -131,7 +131,7 @@ function FullscreenSearch({ isOpen, onClose, brands, onSearch, t }: FullscreenSe
                 type="text"
                 value={brand ? `${brand}${model ? ` ${model}` : ""}` : ""}
                 readOnly
-                placeholder={t("hero.search") || "Rechercher une voiture..."}
+                placeholder={t("hero.search") || "Rechercher"}
                 className="w-full pl-10 pr-4 py-3 rounded-2xl bg-secondary/50 text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary/20"
               />
             </div>
@@ -185,7 +185,7 @@ function FullscreenSearch({ isOpen, onClose, brands, onSearch, t }: FullscreenSe
                       onClick={() => setBrand("")}
                       className="flex items-center gap-2 text-sm text-primary font-light mb-4"
                     >
-                      ← {t("filters.brand") || "Marques"}
+                      ← {t("filters.brand") || "Marque"}
                     </button>
                     <p className="text-[10px] text-muted-foreground mb-4 uppercase tracking-[0.15em] font-light">
                       {brand} — {t("filters.model") || "Modèle"}
@@ -197,7 +197,7 @@ function FullscreenSearch({ isOpen, onClose, brands, onSearch, t }: FullscreenSe
                           !model ? "bg-primary/8 text-primary border border-primary/15" : "bg-secondary/40 text-foreground"
                         }`}
                       >
-                        {t("filters.allModels") || "Tous"}
+                        {t("filters.allModels") || "Tous les modèles"}
                       </button>
                       {models.map((m) => (
                         <button
@@ -268,7 +268,7 @@ function FullscreenSearch({ isOpen, onClose, brands, onSearch, t }: FullscreenSe
                 transition={{ duration: 0.2 }}
               >
                 <p className="text-[10px] text-muted-foreground mb-4 uppercase tracking-[0.15em] font-light">
-                  {t("filters.budget") || "Budget maximum"}
+                  {t("filters.budget") || "Budget"}
                 </p>
                 <div className="grid grid-cols-2 gap-2.5">
                   <button
@@ -516,7 +516,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
               </span>
               <span className="text-[10.5px] font-medium uppercase tracking-[0.22em] text-primary/85">
-                {t("hero.badge") || "Marketplace #1 en Belgique"}
+                {t("hero.badge") || "Marché automobile belge"}
               </span>
             </motion.div>
 
@@ -532,7 +532,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
               {...fadeUp(0.14)}
               className="text-sm sm:text-base font-light text-white/65 max-w-xl leading-relaxed"
             >
-              {t("hero.subtitle") || "Véhicules vérifiés Car-Pass · Conformité LEZ garantie · Calcul TCO régional"}
+              {t("hero.subtitle") || "Car-Pass vérifié, compatibilité LEZ et taxes calculées pour les trois régions"}
             </motion.p>
 
             {/* Trust micro-row */}
