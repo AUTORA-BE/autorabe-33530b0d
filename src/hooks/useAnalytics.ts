@@ -60,5 +60,6 @@ export function useAnalytics(): void {
       cancelled = true;
       subscription.unsubscribe();
     };
-  }, []);
+  }, [queryClient]);
 }
+
