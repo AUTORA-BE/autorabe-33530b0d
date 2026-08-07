@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { motion } from "framer-motion";
 
 interface PageTransitionProps {
@@ -17,17 +17,28 @@ const pageTransition = {
   duration: 0.28,
 };
 
-const PageTransition = ({ children }: PageTransitionProps) => (
-  <motion.div
-    variants={pageVariants}
-    initial="initial"
-    animate="animate"
-    exit="exit"
-    transition={pageTransition}
-    style={{ willChange: "opacity, transform" }}
-  >
-    {children}
-  </motion.div>
-);
+const PageTransition = ({ children }: PageTransitionProps) => {
+  // Le filet CSS de rattrapage n'est armé que tant que l'animation d'entrée
+  // n'a pas abouti. Une fois jouée, l'attribut disparaît : l'animation de
+  // sortie (AnimatePresence) n'est jamais figée à opacity: 1.
+  const [entered, setEntered] = useState(false);
+
+  return (
+    <motion.div
+      variants={pageVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      transition={pageTransition}
+      onAnimationComplete={(definition) => {
+        if (definition === "animate") setEntered(true);
+      }}
+      {...(entered ? {} : { "data-page-reveal": "" })}
+      style={{ willChange: "opacity, transform" }}
+    >
+      {children}
+    </motion.div>
+  );
+};
 
 export default PageTransition;
