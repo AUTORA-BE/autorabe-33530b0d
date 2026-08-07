@@ -151,8 +151,7 @@ const HOME_SECTION_MODULES = [
   "src/features/search/components/FilterPanel",
 ];
 
-/** @param {string} id */
-const manualChunks = (id) => {
+const manualChunks = (id: string) => {
   const normalized = id.split("\\").join("/");
   if (normalized.includes("node_modules")) {
     for (const [chunk, deps] of Object.entries(VENDOR_CHUNKS)) {
