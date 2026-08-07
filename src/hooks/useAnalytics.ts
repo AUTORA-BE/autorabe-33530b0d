@@ -5,12 +5,15 @@
  */
 import { useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { identifyUser, resetUser, trackPageview } from "@/lib/analytics";
+import { fetchUserRole, userRoleQueryKey } from "@/hooks/useUserRole";
 
 export function useAnalytics(): void {
   const { pathname, search } = useLocation();
   const lastPath = useRef<string>("");
+  const queryClient = useQueryClient();
 
   // SPA pageview
   useEffect(() => {
@@ -26,21 +29,20 @@ export function useAnalytics(): void {
 
     const loadRoleAndIdentify = async (userId: string, email?: string | null) => {
       try {
-        const { data } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", userId)
-          .maybeSingle();
-        if (cancelled) return;
-        identifyUser({
-          user_id: userId,
-          email: email ?? undefined,
-          role: data?.role ?? "private",
+        // Shared cache key: getSession() + onAuthStateChange(INITIAL_SESSION)
+        // no longer produce two identical user_roles requests.
+        const role = await queryClient.fetchQuery({
+          queryKey: userRoleQueryKey(userId),
+          queryFn: () => fetchUserRole(userId),
+          staleTime: 5 * 60 * 1000,
         });
+        if (cancelled) return;
+        identifyUser({ user_id: userId, email: email ?? undefined, role });
       } catch {
         identifyUser({ user_id: userId, email: email ?? undefined, role: "private" });
       }
     };
+
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) loadRoleAndIdentify(session.user.id, session.user.email);
