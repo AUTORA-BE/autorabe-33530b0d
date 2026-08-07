@@ -151,6 +151,7 @@ const HOME_SECTION_MODULES = [
   "src/features/search/components/FilterPanel",
 ];
 
+/** @param {string} id */
 const manualChunks = (id) => {
   const normalized = id.split("\\").join("/");
   if (normalized.includes("node_modules")) {
