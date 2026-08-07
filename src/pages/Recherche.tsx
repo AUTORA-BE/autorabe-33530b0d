@@ -11,9 +11,10 @@ import { useNavigate } from "react-router-dom";
 import { Header, Footer } from "@/shared/components";
 import SEOHead from "@/components/SEOHead";
 import {
-  ShieldCheck, Leaf, ChevronDown, SlidersHorizontal, Grid3x3, Flame,
+  ShieldCheck, ChevronDown, SlidersHorizontal, Grid3x3, Flame,
   Calendar, Gauge, X, ImageOff, Search, Store,
 } from "lucide-react";
+import { lezBadgeConfig } from "@/features/listings/constants/lezBadge";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
