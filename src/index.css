@@ -59,6 +59,10 @@ input[type="number"] {
 
     --radius: 1rem;
 
+    /* Ambient halo + heavy shadow tint (theme-aware) */
+    --search-halo: 220 25% 92%;
+    --shadow-color: 220 20% 60%;
+
     /* Z-Index scale — single source of truth */
     --z-dropdown: 30;
     --z-sticky: 40;
