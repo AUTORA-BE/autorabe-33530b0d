@@ -11,9 +11,10 @@ import { useNavigate } from "react-router-dom";
 import { Header, Footer } from "@/shared/components";
 import SEOHead from "@/components/SEOHead";
 import {
-  ShieldCheck, Leaf, ChevronDown, SlidersHorizontal, Grid3x3, Flame,
+  ShieldCheck, ChevronDown, SlidersHorizontal, Grid3x3, Flame,
   Calendar, Gauge, X, ImageOff, Search, Store,
 } from "lucide-react";
+import { lezBadgeConfig } from "@/features/listings/constants/lezBadge";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -129,9 +130,12 @@ function LuxuryCarCard({
 
         <div className="absolute left-2.5 top-2.5 z-10 flex flex-col gap-1.5">
           {car.isLezCompatible && (
-            <span className="inline-flex items-center gap-1 rounded-full border-0 bg-emerald-500/90 px-2 py-0.5 text-[10px] font-semibold text-white shadow-lg backdrop-blur-md">
-              <Leaf className="h-3 w-3" strokeWidth={2.5} />
-              LEZ OK
+            <span className={cn(
+              "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold shadow-lg backdrop-blur-md",
+              lezBadgeConfig.autorise.className,
+            )}>
+              <lezBadgeConfig.autorise.Icon className="h-3 w-3" strokeWidth={2.5} />
+              {lezBadgeConfig.autorise.text}
             </span>
           )}
           {car.hasCarPass && (

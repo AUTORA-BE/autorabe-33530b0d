@@ -4,7 +4,8 @@
  */
 
 import { memo, useMemo } from "react";
-import {   Heart, MapPin, Calendar, Gauge, AlertTriangle, Ban, Leaf, Info, Building2, Sparkles, Scale, Fuel, Cog, Zap, ShieldCheck } from "lucide-react";
+import {   Heart, MapPin, Calendar, Gauge, Building2, Sparkles, Scale, Fuel, Cog, Zap, ShieldCheck } from "lucide-react";
+import { lezBadgeConfig } from "../constants/lezBadge";
 import { useCompareContext } from "@/features/compare";
 import CarImage from "@/components/cars/CarImage";
 import { Badge } from "@/components/ui/badge";
@@ -31,13 +32,8 @@ const formatPrice = (price: number): string =>
 const mileageFormatter = new Intl.NumberFormat("fr-BE");
 const formatMileage = (km: number): string => mileageFormatter.format(km);
 
-const lezBadgeConfig = {
-  autorise: { text: "LEZ OK", className: "bg-emerald-700 text-white border-0", Icon: Leaf },
-  alerte: { text: "LEZ", className: "bg-amber-700 text-white border-0", Icon: AlertTriangle },
-  derogation_requise: { text: "Dérogation", className: "bg-amber-700 text-white border-0", Icon: AlertTriangle },
-  interdit: { text: "Interdit", className: "bg-red-700 text-white border-0", Icon: Ban },
-  inconnu: { text: "LEZ ?", className: "bg-muted text-muted-foreground border-0", Icon: Info },
-} as const;
+export { lezBadgeConfig };
+
 
 const VehicleCard = memo(function VehicleCard({
   vehicle,

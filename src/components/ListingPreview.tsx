@@ -51,10 +51,10 @@ const formatMileage = (km: number): string =>
   new Intl.NumberFormat("fr-BE").format(km);
 
 const lezBadgeConfig = {
-  autorise: { text: "LEZ OK", className: "bg-primary/90 text-primary-foreground border-0", Icon: Leaf },
-  alerte: { text: "LEZ ⚠", className: "bg-amber-500/90 text-white border-0", Icon: AlertTriangle },
-  derogation_requise: { text: "Dérogation", className: "bg-amber-500/90 text-white border-0", Icon: AlertTriangle },
-  interdit: { text: "Interdit LEZ", className: "bg-red-500/90 text-white border-0", Icon: Ban },
+  autorise: { text: "LEZ OK", className: "bg-emerald-700 text-white border-0", Icon: Leaf },
+  alerte: { text: "LEZ ⚠", className: "bg-amber-700 text-white border-0", Icon: AlertTriangle },
+  derogation_requise: { text: "Dérogation", className: "bg-amber-700 text-white border-0", Icon: AlertTriangle },
+  interdit: { text: "Interdit LEZ", className: "bg-red-700 text-white border-0", Icon: Ban },
   inconnu: { text: "LEZ ?", className: "bg-muted text-muted-foreground border-0", Icon: Info },
 } as const;
 
