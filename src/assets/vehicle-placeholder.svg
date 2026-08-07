@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600" fill="none" role="img" aria-label="Photo a venir">
+  <rect width="800" height="600" fill="#141416"/>
+  <g stroke="#6B7280" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.75">
+    <path d="M196 356h408M212 356v-34c0-9 6-17 15-19l52-13 47-42c7-6 16-10 25-10h108c9 0 18 4 25 10l47 42 52 13c9 2 15 10 15 19v34"/>
+    <path d="M300 248h200"/>
+    <circle cx="292" cy="368" r="34"/>
+    <circle cx="508" cy="368" r="34"/>
+  </g>
+  <circle cx="400" cy="300" r="230" stroke="#2A2A2E" stroke-width="4" fill="none"/>
+</svg>

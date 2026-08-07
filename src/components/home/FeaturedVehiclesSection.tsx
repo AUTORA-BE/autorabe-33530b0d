@@ -10,8 +10,9 @@ import { useFeaturedListings } from '@/hooks/useFeaturedListings';
 import { useLocalizedVehicleHref } from '@/lib/useLocalizedHref';
 import type { Vehicle } from '@/features/listings/types/vehicle.types';
 
-const FALLBACK_IMG =
-  'https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800&h=500&fit=crop';
+import vehiclePlaceholder from '@/assets/vehicle-placeholder.svg';
+
+const FALLBACK_IMG = vehiclePlaceholder;
 
 const formatPrice = (p: number) =>
   new Intl.NumberFormat('fr-BE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(p);

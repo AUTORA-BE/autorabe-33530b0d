@@ -621,5 +621,6 @@
   "homeReviews.subtitle": "Reviews on AutoRA come only from registered users, after a real exchange with a seller.",
   "homeReviews.emptyTitle": "The first reviews are on their way",
   "homeReviews.emptyText": "No review has been published yet. They will appear here after the first transactions between buyers and sellers.",
-  "homeReviews.emptyVerified": "Every review is tied to a verified account."
+  "homeReviews.emptyVerified": "Every review is tied to a verified account.",
+  "vehicle.photoPending": "Photo coming soon"
 }

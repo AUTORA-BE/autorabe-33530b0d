@@ -621,5 +621,6 @@
   "homeReviews.subtitle": "Beoordelingen op AutoRA komen uitsluitend van geregistreerde gebruikers, na een echt contact met een verkoper.",
   "homeReviews.emptyTitle": "De eerste beoordelingen komen eraan",
   "homeReviews.emptyText": "Er is nog geen enkele beoordeling gepubliceerd. Ze verschijnen hier na de eerste transacties tussen kopers en verkopers.",
-  "homeReviews.emptyVerified": "Elke beoordeling is gekoppeld aan een geverifieerd account."
+  "homeReviews.emptyVerified": "Elke beoordeling is gekoppeld aan een geverifieerd account.",
+  "vehicle.photoPending": "Foto binnenkort"
 }

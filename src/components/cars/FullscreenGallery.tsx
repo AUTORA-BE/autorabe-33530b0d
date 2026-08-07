@@ -8,6 +8,7 @@ import { createPortal } from "react-dom";
 import {  motion, AnimatePresence, type PanInfo, useMotionValue } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import vehiclePlaceholder from "@/assets/vehicle-placeholder.svg";
 
 interface FullscreenGalleryProps {
   images: string[];
@@ -203,8 +204,7 @@ const FullscreenGallery = memo(function FullscreenGallery({
               className="max-h-full max-w-full w-auto h-auto object-contain select-none pointer-events-none"
               draggable={false}
               onError={(e) => {
-                (e.currentTarget as HTMLImageElement).src =
-                  "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=800&q=60";
+                (e.currentTarget as HTMLImageElement).src = vehiclePlaceholder;
               }}
             />
           </motion.div>
