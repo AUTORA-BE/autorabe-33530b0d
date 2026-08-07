@@ -213,8 +213,12 @@ input[type="number"] {
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     letter-spacing: -0.02em;
+  }
+
+  h1 {
+    letter-spacing: -0.03em;
   }
 
   /* Smooth text rendering */
