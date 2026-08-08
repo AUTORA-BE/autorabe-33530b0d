@@ -53,7 +53,7 @@ const BottomNav = memo(function BottomNav() {
   };
 
   const sideTabs = useMemo(() => [
-    { to: "/", icon: Home, label: t("nav.home") || "Accueil", badge: 0 },
+    { to: "/", icon: Home, label: t("nav.buy") || "Accueil", badge: 0 },
     { to: user ? "/messages" : "/auth", icon: MessageCircle, label: t("nav.messages"), badge: hasUnread ? unreadCount : 0 },
     { to: user ? "/settings" : "/auth", icon: User, label: t("nav.profile") || "Profil", badge: 0 },
   ], [t, hasUnread, unreadCount, user]);

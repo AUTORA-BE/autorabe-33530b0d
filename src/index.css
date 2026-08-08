@@ -850,3 +850,10 @@ input[type="number"] {
   [data-hero-reveal],
   [data-page-reveal] { animation-delay: 0s; }
 }
+
+/* La barre flottante mobile ne doit jamais recouvrir une modale/sheet Radix
+   (Radix pose data-scroll-locked sur <body> tant qu'un overlay est ouvert). */
+body[data-scroll-locked] nav[data-hide-on-filter] {
+  opacity: 0;
+  pointer-events: none;
+}
