@@ -657,7 +657,7 @@ const CarDetail = () => {
               </motion.div>
 
               {/* Mobile floating contact bar — luxe bottom bar */}
-              <div className="lg:hidden fixed bottom-[68px] left-0 right-0 z-50 px-3 pb-1 safe-bottom">
+              <div className="lg:hidden fixed bottom-[calc(env(safe-area-inset-bottom,0px)+88px)] left-0 right-0 z-50 px-3 pb-1">
                 <motion.div
                   initial={{ y: 60, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
