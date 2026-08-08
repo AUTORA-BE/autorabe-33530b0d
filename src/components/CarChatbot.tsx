@@ -163,7 +163,7 @@ const CarChatbot = forwardRef<HTMLDivElement>(function CarChatbot(_props, ref) {
       <button
         data-hide-on-filter
         onClick={handleOpenClick}
-        style={{ bottom: 'calc(5.5rem + env(safe-area-inset-bottom, 0px))' }}
+        style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 88px)' }}
         className={`fixed right-3 lg:right-6 lg:!bottom-6 z-[60] w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-primary text-primary-foreground shadow-xl shadow-primary/40 flex items-center justify-center transition-all hover:scale-110 active:scale-95 ${
           isOpen ? "hidden" : ""
         }`}
@@ -177,7 +177,7 @@ const CarChatbot = forwardRef<HTMLDivElement>(function CarChatbot(_props, ref) {
       {isOpen && (
         <div
           className="fixed z-[70] glass-card flex flex-col overflow-hidden animate-scale-in rounded-2xl
-                     inset-x-3 bottom-[5.5rem] h-[70dvh] max-h-[640px]
+                     inset-x-3 bottom-[calc(env(safe-area-inset-bottom,0px)+88px)] h-[70dvh] max-h-[640px]
                      sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 sm:bottom-6 sm:w-[440px] sm:h-[640px] sm:max-h-[80dvh]
                      md:w-[520px] md:h-[700px] md:max-h-[82dvh]
                      lg:left-auto lg:right-6 lg:translate-x-0 lg:w-[420px] lg:h-[640px]"

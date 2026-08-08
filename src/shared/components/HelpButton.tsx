@@ -31,7 +31,7 @@ const HelpButton = () => {
       type="button"
       onClick={() => navigate("/contact")}
       aria-label={label}
-      className="fixed z-40 bottom-24 left-4 md:bottom-6 md:left-6 inline-flex items-center gap-2 rounded-full bg-card/90 backdrop-blur-md border border-border/40 text-foreground px-4 py-3 shadow-elevated hover:shadow-glow hover:border-primary/40 transition-all duration-200 hover:scale-105 active:scale-95"
+      className="fixed z-40 bottom-[calc(env(safe-area-inset-bottom,0px)+152px)] left-4 md:!bottom-6 md:left-6 inline-flex items-center gap-2 rounded-full bg-card/90 backdrop-blur-md border border-border/40 text-foreground px-4 py-3 shadow-elevated hover:shadow-glow hover:border-primary/40 transition-all duration-200 hover:scale-105 active:scale-95"
     >
       <LifeBuoy className="w-4 h-4" aria-hidden="true" />
       <span className="hidden sm:inline text-sm font-medium">{label}</span>

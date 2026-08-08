@@ -22,7 +22,7 @@ const CompareBar = () => {
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 60, opacity: 0 }}
         transition={{ type: "spring", damping: 28, stiffness: 350 }}
-        className="fixed bottom-[5.5rem] sm:bottom-6 left-1/2 -translate-x-1/2 z-[55] safe-bottom"
+        className="fixed bottom-[calc(env(safe-area-inset-bottom,0px)+112px)] sm:!bottom-6 left-1/2 -translate-x-1/2 z-[55] safe-bottom"
       >
         <div className="flex items-center gap-2 bg-card/95 backdrop-blur-xl border border-border shadow-elevated rounded-full pl-2 pr-1.5 py-1.5 sm:pl-3 sm:pr-2 sm:py-2">
           {/* Vehicle thumbnails – pill layout */}
