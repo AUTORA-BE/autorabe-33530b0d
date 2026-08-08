@@ -798,22 +798,6 @@ input[type="number"] {
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
-  /* ─── Réserve basse pour la barre flottante mobile (BottomNav) ─── */
-  /* Hauteur barre 64px + 12px de marge basse + 20px d'air = 96px */
-  .pb-bottom-nav {
-    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 96px);
-  }
-  @media (min-width: 768px) {
-    .pb-bottom-nav {
-      padding-bottom: 0;
-    }
-  }
-
-  /* Éléments flottants (chat, aide) placés AU-DESSUS de la barre en mobile */
-  .above-bottom-nav {
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 88px);
-  }
-
   /* ─── Search page : premium shimmer on featured cards ─── */
   .search-shimmer::before {
     content: "";
