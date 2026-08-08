@@ -19,7 +19,7 @@ import {
   LogOut, Crown, Globe, Moon, Sun, Search as SearchIcon,
   KeyRound, LogOut as LogoutAll, FileText, ScrollText, Mail,
   Bell as AlertBell, ChevronRight, Info, X, User as UserIcon,
-  SlidersHorizontal, Lock, CreditCard, AlertTriangle, Pencil,
+  SlidersHorizontal, Lock, CreditCard, AlertTriangle, Pencil, Warehouse,
   type LucideIcon,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -481,6 +481,7 @@ export default function Settings() {
                   {/* Mon activité */}
                   <div className={activeCategory !== "activity" ? "md:hidden" : ""}>
                     <SettingsSection title="Mon activité">
+                      <SettingsRow icon={Warehouse} tone="emerald" label="Mon Garage" description="Véhicules suivis et historique" onClick={() => navigate("/garage")} />
                       <SettingsRow icon={Car} tone="blue" label="Mes annonces" description={`${totals.listings} publiée(s)`} onClick={() => navigate("/dashboard")} />
                       <SettingsRow icon={Heart} tone="blue" label="Favoris" description={`${favoritesCount} véhicule(s)`} onClick={() => navigate("/favorites")} />
                       <SettingsRow icon={MessageCircle} tone="blue" label="Messages" onClick={() => navigate("/messages")} />

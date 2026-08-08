@@ -387,7 +387,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
   const heroRef = useRef<HTMLElement>(null);
   const { scrollY } = useScroll();
   const imgY = useTransform(scrollY, [0, 600], [0, prefersReduced ? 0 : 120]);
-  const overlayOpacity = useTransform(scrollY, [0, 500], [0.55, 0.85]);
+  const overlayOpacity = useTransform(scrollY, [0, 500], [0.7, 0.92]);
   const contentY = useTransform(scrollY, [0, 600], [0, prefersReduced ? 0 : -40]);
 
   useEffect(() => { setBrands(getAllBrands()); }, []);
@@ -487,9 +487,12 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
           />
         </motion.div>
 
-        {/* Dark gradient overlay (bottom → top, darker on scroll) */}
+        {/* Dark gradient overlay (bottom → top, darker on scroll).
+            Le haut restait quasi transparent (11 % effectifs) : le texte se noyait
+            dans la photo. On remonte le palier haut à 55 % pour un noir effectif
+            d'environ 38 % derrière la zone de titre. */}
         <motion.div
-          className="absolute inset-0 z-[1] bg-gradient-to-t from-black via-black/70 to-black/20"
+          className="absolute inset-0 z-[1] bg-gradient-to-t from-black via-black/80 to-black/55"
           style={{ opacity: overlayOpacity }}
         />
         {/* Soft vignette + brand glow on the right */}
@@ -509,28 +512,28 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
           <div className="max-w-2xl">
             <motion.div
               {...fadeUp(0)}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 mb-6"
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/45 backdrop-blur-md border border-white/25 mb-6 shadow-lg shadow-black/25"
             >
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-hero-accent opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-hero-accent" />
               </span>
-              <span className="text-[10.5px] font-medium uppercase tracking-[0.22em] text-primary/85">
+              <span className="text-[10.5px] font-semibold uppercase tracking-[0.22em] text-hero-accent">
                 {t("hero.badge") || "Marché automobile belge"}
               </span>
             </motion.div>
 
             <motion.h1
               {...fadeUp(0.08)}
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-white mb-4 sm:mb-6 leading-[1.05] tracking-tight drop-shadow-lg"
+              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-white mb-4 sm:mb-6 leading-[1.05] tracking-tight [text-shadow:0_2px_6px_rgba(0,0,0,0.55),0_8px_32px_rgba(0,0,0,0.65)]"
             >
               {t("hero.titleLine1")}<br />
-              <span className="text-primary font-light">{t("hero.titleLine2")}</span>
+              <span className="text-hero-accent font-light">{t("hero.titleLine2")}</span>
             </motion.h1>
 
             <motion.p
               {...fadeUp(0.14)}
-              className="text-sm sm:text-base font-light text-white/65 max-w-xl leading-relaxed"
+              className="text-sm sm:text-base font-light text-white/90 max-w-xl leading-relaxed [text-shadow:0_1px_8px_rgba(0,0,0,0.5)]"
             >
               {t("hero.subtitle") || "Car-Pass vérifié, compatibilité LEZ et taxes calculées pour les trois régions"}
             </motion.p>
@@ -538,20 +541,20 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
             {/* Trust micro-row */}
             <motion.div
               {...fadeUp(0.2)}
-              className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-[11px] sm:text-xs text-white/70 font-light"
+              className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs sm:text-sm text-white/90 font-light [text-shadow:0_1px_8px_rgba(0,0,0,0.5)]"
             >
               <span className="inline-flex items-center gap-1.5">
-                <ShieldCheck className="w-3.5 h-3.5 text-primary" strokeWidth={1.8} />
+                <ShieldCheck className="w-4 h-4 text-hero-accent" strokeWidth={1.8} />
                 {t("hero.trustCarpass") || "Car-Pass vérifié"}
               </span>
-              <span className="w-px h-3 bg-white/20" />
+              <span className="w-px h-3 bg-white/30" />
               <span className="inline-flex items-center gap-1.5">
-                <MapPin className="w-3.5 h-3.5 text-primary" strokeWidth={1.8} />
+                <MapPin className="w-4 h-4 text-hero-accent" strokeWidth={1.8} />
                 {t("hero.trustLez") || "LEZ Belgique"}
               </span>
-              <span className="hidden sm:inline-block w-px h-3 bg-white/20" />
+              <span className="hidden sm:inline-block w-px h-3 bg-white/30" />
               <span className="hidden sm:inline-flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-primary" strokeWidth={1.8} />
+                <Sparkles className="w-4 h-4 text-hero-accent" strokeWidth={1.8} />
                 {t("hero.trustBelgian") || "100% belge"}
               </span>
             </motion.div>
