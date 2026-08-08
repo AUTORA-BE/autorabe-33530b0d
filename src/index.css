@@ -41,6 +41,10 @@ input[type="number"] {
     --primary: 160 84% 25%;
     --primary-foreground: 0 0% 100%;
 
+    /* Accent vert clair réservé au texte posé sur la photo sombre de la hero.
+       Identique en clair et sombre : le fond derrière est toujours l'image. */
+    --hero-accent: 158 72% 62%;
+
     --secondary: 220 14% 96%;
     --secondary-foreground: 220 25% 8%;
 
@@ -132,6 +136,8 @@ input[type="number"] {
 
     --primary: 160 84% 42%;
     --primary-foreground: 222 30% 7%;
+
+    --hero-accent: 158 72% 62%;
 
     --secondary: 222 20% 16%;
     --secondary-foreground: 210 20% 98%;
@@ -843,4 +849,11 @@ input[type="number"] {
 @media (prefers-reduced-motion: reduce) {
   [data-hero-reveal],
   [data-page-reveal] { animation-delay: 0s; }
+}
+
+/* La barre flottante mobile ne doit jamais recouvrir une modale/sheet Radix
+   (Radix pose data-scroll-locked sur <body> tant qu'un overlay est ouvert). */
+body[data-scroll-locked] nav[data-hide-on-filter] {
+  opacity: 0;
+  pointer-events: none;
 }

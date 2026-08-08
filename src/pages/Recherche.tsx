@@ -25,6 +25,7 @@ import { Label } from "@/components/ui/label";
 import { useVehicleSearch } from "@/features/listings";
 import { useFavorites } from "@/features/favorites";
 import { useLocalizedHref, useLocalizedVehicleHref } from "@/lib/useLocalizedHref";
+import { OPEN_MOBILE_SEARCH_EVENT } from "@/features/listings/utils/activeFilters";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { getAllBrands, getModelsByBrand } from "@/utils/carUtils";
 import { BUDGET_OPTIONS, EURO_NORMS } from "@/features/search/types/search.types";
@@ -409,7 +410,7 @@ function MoreFiltersSheet({
         className={cn(
           "flex flex-col gap-0 border-foreground/10 bg-popover p-0 text-foreground",
           isMobile
-            ? "h-[92dvh] w-full rounded-t-3xl border-t shadow-[0_-30px_80px_-20px_hsl(var(--shadow-color)/0.7)]"
+            ? "h-[100dvh] max-h-[100dvh] w-full rounded-none border-t-0 shadow-none"
             : "w-full border-l shadow-[-40px_0_80px_-20px_hsl(var(--shadow-color)/0.7)] sm:max-w-md",
         )}
       >
@@ -425,6 +426,23 @@ function MoreFiltersSheet({
         </SheetHeader>
 
         <div className="flex-1 space-y-6 overflow-y-auto px-6 py-6">
+          {/* Recherche libre — remplace l'ancienne barre collante mobile */}
+          <div>
+            <label className={eyebrow} htmlFor="filters-search-input">Recherche libre</label>
+            <div className="relative">
+              <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-foreground/50" strokeWidth={1.8} />
+              <input
+                id="filters-search-input"
+                type="search"
+                inputMode="search"
+                value={filters.searchQuery ?? ""}
+                onChange={(e) => updateFilter("searchQuery", e.target.value)}
+                placeholder="Marque, modèle, ville…"
+                className={cn(fieldCls, "pl-10")}
+              />
+            </div>
+          </div>
+
           <div className="space-y-4">
             <div>
               <label className={eyebrow}>Marque</label>
@@ -654,7 +672,6 @@ const Recherche = () => {
   const [models, setModels] = useState<string[]>([]);
   const [shrunk, setShrunk] = useState(false);
   const brands = useMemo(() => getAllBrands(), []);
-  const mobileSearchRef = useRef<HTMLInputElement>(null);
 
   const {
     cars, isLoading, hasMore, loadMore, isLoadingMore, totalCount,
@@ -677,22 +694,12 @@ const Recherche = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Count "active" filters for the mobile toolbar badge
-  const activeFilterCount = useMemo(() => {
-    let n = 0;
-    if (filters.brand) n++;
-    if (filters.searchQuery) n++;
-    if (filters.maxPrice < 1000000) n++;
-    if (filters.kmMax < 500000) n++;
-    if (filters.fuelTypes?.length) n++;
-    if (filters.transmission) n++;
-    if (filters.color) n++;
-    if (filters.euroNorm) n++;
-    if (filters.lezOnly) n++;
-    if (filters.yearMin > 1990) n++;
-    if (filters.yearMax < CURRENT_YEAR) n++;
-    return n;
-  }, [filters]);
+  // La barre flottante mobile ouvre ce panneau (plus de barre collante).
+  useEffect(() => {
+    const open = () => setMoreFiltersOpen(true);
+    window.addEventListener(OPEN_MOBILE_SEARCH_EVENT, open);
+    return () => window.removeEventListener(OPEN_MOBILE_SEARCH_EVENT, open);
+  }, []);
 
   const handleCarClick = (id: string) => {
     const car = cars.find((c) => c.id === id);
@@ -758,52 +765,7 @@ const Recherche = () => {
       />
       <Header />
 
-      <main className="relative pt-[116px] pb-32 sm:pt-28">
-        {/* Mobile-only sticky search toolbar (input + Filters button) */}
-        <div
-          className="md:hidden sticky top-[64px] z-40 -mx-0 mb-4 border-b border-border/30 bg-background/85 px-4 py-2.5 backdrop-blur-xl"
-          role="search"
-          aria-label="Filtres de recherche"
-        >
-          <div className="flex items-center gap-2">
-            <form
-              className="relative flex-1"
-              onSubmit={(e) => {
-                e.preventDefault();
-                const v = mobileSearchRef.current?.value.trim() ?? "";
-                updateFilter("searchQuery", v);
-              }}
-            >
-              <label htmlFor="recherche-mobile-input" className="sr-only">Rechercher</label>
-              <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" strokeWidth={1.8} />
-              <input
-                ref={mobileSearchRef}
-                id="recherche-mobile-input"
-                type="search"
-                inputMode="search"
-                defaultValue={filters.searchQuery}
-                onBlur={(e) => updateFilter("searchQuery", e.target.value.trim())}
-                placeholder="Marque, modèle, ville…"
-                className="h-11 w-full rounded-2xl border border-border/40 bg-card/60 pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus-visible:border-primary/60 focus-visible:ring-2 focus-visible:ring-primary/30"
-              />
-            </form>
-            <button
-              type="button"
-              onClick={() => setMoreFiltersOpen(true)}
-              aria-label={`Ouvrir les filtres${activeFilterCount > 0 ? ` (${activeFilterCount} actifs)` : ""}`}
-              className="relative inline-flex h-11 min-w-11 items-center justify-center gap-1.5 rounded-2xl border border-border/40 bg-card/60 px-3.5 text-sm font-medium text-foreground transition active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-primary/40"
-            >
-              <SlidersHorizontal className="h-4 w-4" strokeWidth={1.8} />
-              <span>Filtres</span>
-              {activeFilterCount > 0 && (
-                <span className="ml-0.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-[10px] font-bold text-primary-foreground">
-                  {activeFilterCount}
-                </span>
-              )}
-            </button>
-          </div>
-        </div>
-
+      <main className="relative pt-24 pb-32 sm:pt-28">
         <section className="container mx-auto mb-10 px-6 text-center sm:mb-14 sm:px-8">
           <motion.p
             initial={{ opacity: 0, y: 6 }}
