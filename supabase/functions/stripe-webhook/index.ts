@@ -232,50 +232,53 @@ serve(async (req) => {
 
         // --- Subscription activation ---
         if (session.subscription && session.customer) {
-          const userId = await resolveUserId(supabaseAdmin, stripe, session.customer);
-          if (userId) {
-            const subId =
-              typeof session.subscription === "string"
-                ? session.subscription
-                : session.subscription.id;
-            const subscription = await stripe.subscriptions.retrieve(subId);
-            const productId = subscription.items.data[0]?.price?.product as string;
-            const subscriptionEnd = new Date(
-              subscription.current_period_end * 1000,
-            ).toISOString();
+          const userId = requireUserId(
+            (session.client_reference_id ??
+              (await resolveUserId(supabaseAdmin, stripe, session.customer, session.metadata))),
+            event,
+            "checkout.session.completed",
+          );
+          const subId =
+            typeof session.subscription === "string"
+              ? session.subscription
+              : session.subscription.id;
+          const subscription = await stripe.subscriptions.retrieve(subId);
+          const productId = subscription.items.data[0]?.price?.product as string;
+          const subscriptionEnd = new Date(
+            subscription.current_period_end * 1000,
+          ).toISOString();
 
-            const { error } = await supabaseAdmin
-              .from("subscriptions")
-              .upsert(
-                {
-                  user_id: userId,
-                  stripe_customer_id:
-                    typeof session.customer === "string"
-                      ? session.customer
-                      : session.customer.id,
-                  stripe_subscription_id: subId,
-                  product_id: productId,
-                  status: "active",
-                  current_period_end: subscriptionEnd,
-                  updated_at: new Date().toISOString(),
-                },
-                { onConflict: "user_id" },
-              );
-            if (error) {
-              log("error", "subscription_upsert_failed", {
-                event_id: event.id,
+          const { error } = await supabaseAdmin
+            .from("subscriptions")
+            .upsert(
+              {
                 user_id: userId,
-                error: error.message,
-              });
-            } else {
-              log("info", "subscription_activated", {
-                event_id: event.id,
-                user_id: userId,
+                stripe_customer_id:
+                  typeof session.customer === "string"
+                    ? session.customer
+                    : session.customer.id,
+                stripe_subscription_id: subId,
                 product_id: productId,
-                period_end: subscriptionEnd,
-              });
-            }
+                status: "active",
+                current_period_end: subscriptionEnd,
+                updated_at: new Date().toISOString(),
+              },
+              { onConflict: "user_id" },
+            );
+          if (error) {
+            log("error", "subscription_upsert_failed", {
+              event_id: event.id,
+              user_id: userId,
+              error: error.message,
+            });
+            throw new Error(`subscription upsert failed: ${error.message}`);
           }
+          log("info", "subscription_activated", {
+            event_id: event.id,
+            user_id: userId,
+            product_id: productId,
+            period_end: subscriptionEnd,
+          });
         }
         break;
       }
