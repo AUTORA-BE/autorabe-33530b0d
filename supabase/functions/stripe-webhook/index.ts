@@ -375,22 +375,25 @@ serve(async (req) => {
           customer_id: invoice.customer,
           amount_due: invoice.amount_due,
         });
-        const failedUserId = await resolveUserId(supabaseAdmin, stripe, invoice.customer);
-        if (failedUserId) {
-          await supabaseAdmin
-            .from("subscriptions")
-            .update({ status: "past_due", updated_at: new Date().toISOString() })
-            .eq("user_id", failedUserId);
-          log("info", "subscription_marked_past_due", {
-            event_id: event.id,
-            user_id: failedUserId,
-          });
-        }
+        const failedUserId = requireUserId(
+          await resolveUserId(supabaseAdmin, stripe, invoice.customer, invoice.metadata),
+          event,
+          "invoice.payment_failed",
+        );
+        const { error: pastDueError } = await supabaseAdmin
+          .from("subscriptions")
+          .update({ status: "past_due", updated_at: new Date().toISOString() })
+          .eq("user_id", failedUserId);
+        if (pastDueError) throw new Error(`past_due update failed: ${pastDueError.message}`);
+        log("info", "subscription_marked_past_due", {
+          event_id: event.id,
+          user_id: failedUserId,
+        });
         break;
       }
 
       // ──────────────────────────────────────────────
-      // CHARGE REFUNDED → log + mark subscription canceled if applicable
+      // CHARGE REFUNDED → log + cancel ONLY if tied to an invoice (subscription)
       // ──────────────────────────────────────────────
       case "charge.refunded": {
         const charge = event.data.object as Stripe.Charge;
@@ -398,17 +401,25 @@ serve(async (req) => {
           event_id: event.id,
           customer_id: charge.customer,
           charge_id: charge.id,
+          invoice: charge.invoice,
           amount_refunded: charge.amount_refunded,
           currency: charge.currency,
         });
-        // If a subscription is tied, mark canceled (manual review recommended)
-        const refundUserId = await resolveUserId(supabaseAdmin, stripe, charge.customer);
-        if (refundUserId) {
-          await supabaseAdmin
-            .from("subscriptions")
-            .update({ status: "canceled", updated_at: new Date().toISOString() })
-            .eq("user_id", refundUserId);
+        // A one-shot boost refund has no invoice → must NOT cancel the subscription.
+        if (!charge.invoice) {
+          log("info", "refund_skipped_no_invoice", { event_id: event.id, charge_id: charge.id });
+          break;
         }
+        const refundUserId = requireUserId(
+          await resolveUserId(supabaseAdmin, stripe, charge.customer, charge.metadata),
+          event,
+          "charge.refunded",
+        );
+        const { error: refundError } = await supabaseAdmin
+          .from("subscriptions")
+          .update({ status: "canceled", updated_at: new Date().toISOString() })
+          .eq("user_id", refundUserId);
+        if (refundError) throw new Error(`refund cancel failed: ${refundError.message}`);
         break;
       }
 
