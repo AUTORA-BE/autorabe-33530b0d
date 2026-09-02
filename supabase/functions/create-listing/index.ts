@@ -41,6 +41,18 @@ interface ListingPayload {
   puissance_cv?: number | null;
 }
 
+function validCarPassUrl(raw: unknown): string | null {
+  if (typeof raw !== 'string' || !raw.trim()) return null;
+  try {
+    const u = new URL(raw.trim());
+    if (u.protocol !== 'https:') return null;
+    const h = u.hostname.toLowerCase();
+    if (h !== 'car-pass.be' && h !== 'www.car-pass.be') return null;
+    return u.toString();
+  } catch { return null; }
+}
+
+
 // Identité (contact_name/email/phone/seller_type) dérivée serveur depuis le
 // profil — ne PAS l'inclure dans REQUIRED côté payload client.
 const REQUIRED = ['brand', 'model', 'year', 'price', 'mileage', 'fuel_type', 'transmission', 'body_type', 'color'] as const;
@@ -198,6 +210,13 @@ Deno.serve(async (req) => {
       }
     }
 
+    const carPassUrl = validCarPassUrl(payload.car_pass_url);
+    if (payload.car_pass_url && !carPassUrl) {
+      return jsonResponse(req, {
+        error: "Lien Car-Pass invalide (https://www.car-pass.be/... attendu)",
+      }, { status: 400 });
+    }
+
     const override = payload.contact_override === true;
     const finalContactName  = (override && payload.contact_name?.trim())  ? payload.contact_name.trim()  : profileName;
     const finalContactEmail = (override && payload.contact_email?.trim()) ? payload.contact_email.trim() : profileEmail;
@@ -237,8 +256,8 @@ Deno.serve(async (req) => {
         // Déposer un document ne vaut PAS vérification : le statut passe en
         // 'pending' et un admin doit valider via l'edge function verify-car-pass.
         // Écrire directement dans car_pass_verified lève une erreur Postgres 428C9.
-        car_pass_status: payload.car_pass_url ? 'pending' : 'unverified',
-        car_pass_url: payload.car_pass_url ?? null,
+        car_pass_status: carPassUrl ? 'pending' : 'unverified',
+        car_pass_url: carPassUrl,
         car_pass_date: payload.car_pass_date ?? null,
         ct_valid: payload.ct_valid ?? false,
         maintenance_book_complete: payload.maintenance_book_complete ?? false,
