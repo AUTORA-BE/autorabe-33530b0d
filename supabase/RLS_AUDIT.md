@@ -252,3 +252,19 @@ Le dossier `supabase/migrations/` avait dérivé de la base réelle (vue `car_li
 - Migration de rapatriement des 3 fonctions en `CREATE OR REPLACE`, définitions exactes issues de `pg_get_functiondef()`, **sans changement de logique**.
 
 Règle : toute modification de schéma passe désormais par une nouvelle migration postérieure à la baseline.
+
+---
+
+## Révision 2026-09-02 — durcissement RLS (migrations `20260902161349` / `20260902161651`)
+
+| Sujet | Avant | Après |
+|---|---|---|
+| `car_listings` (anon) | policy `Public can read approved listings` + GRANT colonnes | **aucun GRANT, aucune policy** → `permission denied` |
+| `car_listings_public` | vue `security_invoker = true`, exposait `tva_number` | vue **`security_definer` + `security_barrier`**, propriétaire `postgres`, colonne `tva_number` retirée, `GRANT SELECT` uniquement (anon/authenticated/service_role) |
+| `car_listings` (authenticated) | GRANT colonnes | `GRANT SELECT/UPDATE/DELETE`, RLS limitée à owner + admin |
+| `listings_within_radius` | `SECURITY INVOKER`, `search_path` mutable | `SECURITY DEFINER` + `SET search_path = public` (ne renvoie que `id` + distance d'annonces `approved`) |
+| `reject_html_payload`, `set_listing_coordinates` | `search_path` mutable | `SET search_path = public` |
+| `messages` | policy UPDATE ouverte à tout participant, GRANTs complets pour `anon` | policy UPDATE **supprimée**, `UPDATE` révoqué à `authenticated`, tous droits révoqués à `anon` |
+| Statut « lu » | `update({is_read:true})` côté client | RPC `mark_message_read(uuid)` / `mark_conversation_read(uuid)` `SECURITY DEFINER`, `search_path` figé, réservées au destinataire |
+
+**Alerte résiduelle** : `0013_rls_disabled_in_public` sur `spatial_ref_sys` (PostGIS, propriétaire `supabase_admin`). `ALTER TABLE … ENABLE ROW LEVEL SECURITY` et `REVOKE` échouent faute de privilèges — non corrigeable depuis le rôle projet.
