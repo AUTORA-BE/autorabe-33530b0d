@@ -126,13 +126,11 @@ export function ChatWindow({
       setMessages((data || []).map((row: MessageRow) => mapRow(row)));
       setIsLoading(false);
       
-      // Mark messages as read
-      await supabase
-        .from('messages')
-        .update({ is_read: true })
-        .eq('conversation_id', conversationId)
-        .neq('sender_id', currentUserId)
-        .eq('is_read', false);
+      // Mark messages as read (server-side, recipient-only RPC)
+      await supabase.rpc('mark_conversation_read', {
+        _conversation_id: conversationId,
+      });
+
     };
 
     fetchMessages();
@@ -154,13 +152,11 @@ export function ChatWindow({
           const newMessage = mapRow(payload.new as MessageRow);
           setMessages((prev) => [...prev, newMessage]);
           
-          // Mark as read if from other user
+          // Mark as read if from other user (recipient-only RPC)
           if (newMessage.senderId !== currentUserId) {
-            supabase
-              .from('messages')
-              .update({ is_read: true })
-              .eq('id', newMessage.id);
+            void supabase.rpc('mark_message_read', { _message_id: newMessage.id });
           }
+
         }
       )
       .on(

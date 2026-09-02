@@ -1447,7 +1447,6 @@ export type Database = {
           seller_type: string | null
           status: string | null
           transmission: string | null
-          tva_number: string | null
           updated_at: string | null
           user_id: string | null
           year: number | null
@@ -1489,7 +1488,6 @@ export type Database = {
           seller_type?: string | null
           status?: string | null
           transmission?: string | null
-          tva_number?: string | null
           updated_at?: string | null
           user_id?: string | null
           year?: number | null
@@ -1531,7 +1529,6 @@ export type Database = {
           seller_type?: string | null
           status?: string | null
           transmission?: string | null
-          tva_number?: string | null
           updated_at?: string | null
           user_id?: string | null
           year?: number | null
@@ -2195,6 +2192,11 @@ export type Database = {
         }[]
       }
       longtransactionsenabled: { Args: never; Returns: boolean }
+      mark_conversation_read: {
+        Args: { _conversation_id: string }
+        Returns: number
+      }
+      mark_message_read: { Args: { _message_id: string }; Returns: boolean }
       move_to_dlq: {
         Args: {
           dlq_name: string
