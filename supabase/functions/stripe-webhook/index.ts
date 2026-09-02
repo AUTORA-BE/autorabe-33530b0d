@@ -31,18 +31,75 @@ const getSupabaseAdmin = () =>
 
 type SupabaseAdmin = ReturnType<typeof getSupabaseAdmin>;
 
-/** Resolve a Stripe customer email to a Supabase user_id. */
+type Meta = Record<string, string> | null | undefined;
+
+/** Paginated lookup of a Supabase user by email (listUsers only returns one page). */
+async function findUserIdByEmail(
+  supabaseAdmin: SupabaseAdmin,
+  email: string,
+): Promise<string | null> {
+  const perPage = 200;
+  const maxPages = 50;
+  const target = email.toLowerCase();
+  for (let page = 1; page <= maxPages; page++) {
+    const { data, error } = await supabaseAdmin.auth.admin.listUsers({ page, perPage });
+    if (error) throw new Error(`listUsers failed (page ${page}): ${error.message}`);
+    const users = data?.users ?? [];
+    const match = users.find((u) => u.email?.toLowerCase() === target);
+    if (match) return match.id;
+    if (users.length < perPage) break; // incomplete page → last page
+  }
+  return null;
+}
+
+/**
+ * Resolve the Supabase user_id for a Stripe event, in cascade:
+ *  1. supabase_user_id present in the event metadata (no query)
+ *  2. subscriptions.user_id matched on stripe_customer_id
+ *  3. fallback: paginated email lookup via listUsers
+ */
 async function resolveUserId(
   supabaseAdmin: SupabaseAdmin,
   stripe: Stripe,
   customerId: string | Stripe.Customer | Stripe.DeletedCustomer | null,
+  metadata?: Meta,
 ): Promise<string | null> {
+  // 1. metadata
+  const fromMeta = metadata?.supabase_user_id;
+  if (fromMeta) return fromMeta;
+
   if (!customerId) return null;
   const id = typeof customerId === "string" ? customerId : customerId.id;
+
+  // 2. existing subscription row
+  const { data: subRow } = await supabaseAdmin
+    .from("subscriptions")
+    .select("user_id")
+    .eq("stripe_customer_id", id)
+    .maybeSingle();
+  if (subRow?.user_id) return subRow.user_id as string;
+
+  // 3. email fallback
   const customer = await stripe.customers.retrieve(id);
   if (customer.deleted || !customer.email) return null;
-  const { data } = await supabaseAdmin.auth.admin.listUsers();
-  return data?.users?.find((u) => u.email === customer.email)?.id ?? null;
+  return await findUserIdByEmail(supabaseAdmin, customer.email);
+}
+
+/** Throws a structured error when the user cannot be resolved (→ 500 → Stripe retries). */
+function requireUserId(
+  userId: string | null,
+  event: Stripe.Event,
+  context: string,
+): string {
+  if (!userId) {
+    log("error", "user_resolution_failed", {
+      event_id: event.id,
+      event_type: event.type,
+      context,
+    });
+    throw new Error(`Unable to resolve Supabase user for event ${event.id} (${context})`);
+  }
+  return userId;
 }
 
 /**
