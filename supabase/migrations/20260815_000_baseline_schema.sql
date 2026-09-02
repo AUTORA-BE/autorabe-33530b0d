@@ -1,6 +1,6 @@
 -- =====================================================================
 -- BASELINE SCHEMA — reference snapshot of the LIVE public schema
--- Generated: %Y-%m-%dT%H:%M:%SZ (pg_dump --schema-only --schema=public --no-owner)
+-- Generated: 2026-09-02T13:47:38Z (pg_dump --schema-only --schema=public --no-owner)
 --
 -- DO NOT RUN THIS FILE against an existing database and DO NOT EDIT IT.
 -- It exists only to stop the repo drifting from production: every object
