@@ -98,12 +98,23 @@ async function fetchQueue(): Promise<QueueRow[]> {
 
   let listings: ListingInfo[] = [];
   if (listingIds.length > 0) {
+    // SECURITY: contact_name has no column SELECT grant for `authenticated`.
+    // Base columns come from the table, the seller name from the admin RPC.
     const { data, error } = await sb
       .from("car_listings")
-      .select("id, brand, model, year, price, location, seller_type, contact_name, car_pass_status, car_pass_url, user_id")
+      .select("id, brand, model, year, price, location, seller_type, car_pass_status, car_pass_url, user_id")
       .in("id", listingIds);
     if (error) throw error;
-    listings = (data ?? []) as ListingInfo[];
+
+    const { data: contacts } = await sb.rpc("admin_get_listing_contacts", { _ids: listingIds });
+    const nameById = new Map(
+      ((contacts ?? []) as Array<{ id: string; contact_name: string | null }>).map((c) => [c.id, c.contact_name]),
+    );
+
+    listings = ((data ?? []) as Array<Omit<ListingInfo, "contact_name">>).map((l) => ({
+      ...l,
+      contact_name: nameById.get(l.id) ?? null,
+    }));
   }
 
   const byId = new Map(listings.map((l) => [l.id, l]));
