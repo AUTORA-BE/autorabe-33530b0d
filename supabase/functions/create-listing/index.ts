@@ -30,7 +30,7 @@ interface ListingPayload {
   car_pass_date?: string | null;
   ct_valid?: boolean;
   maintenance_book_complete?: boolean;
-  seller_type?: string;
+  
   tva_number?: string | null;
   features?: string[] | null;
   reference_url?: string | null;
