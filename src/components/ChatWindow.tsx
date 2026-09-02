@@ -126,13 +126,11 @@ export function ChatWindow({
       setMessages((data || []).map((row: MessageRow) => mapRow(row)));
       setIsLoading(false);
       
-      // Mark messages as read
-      await supabase
-        .from('messages')
-        .update({ is_read: true })
-        .eq('conversation_id', conversationId)
-        .neq('sender_id', currentUserId)
-        .eq('is_read', false);
+      // Mark messages as read (server-side, recipient-only RPC)
+      await supabase.rpc('mark_conversation_read', {
+        _conversation_id: conversationId,
+      });
+
     };
 
     fetchMessages();
