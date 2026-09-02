@@ -216,11 +216,18 @@ export function useAuth() {
   /**
    * Sign in with Google OAuth
    */
-  const signInWithGoogle = useCallback(async (): Promise<AuthResult> => {
+  const signInWithGoogle = useCallback(async (returnTo?: string): Promise<AuthResult> => {
     try {
+      // Preserve the intended destination (e.g. the OAuth consent screen) so the
+      // provider round-trip does not drop the user on the homepage.
+      const safeReturnTo = returnTo && returnTo.startsWith('/') && !returnTo.startsWith('//') ? returnTo : null;
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo: window.location.origin },
+        options: {
+          redirectTo: safeReturnTo
+            ? `${window.location.origin}/auth?returnTo=${encodeURIComponent(safeReturnTo)}`
+            : window.location.origin,
+        },
       });
 
       if (error) {

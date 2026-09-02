@@ -27,6 +27,7 @@ const HelpButton = lazy(() => import("@/shared/components/HelpButton"));
 // Lazy-loaded — reduces main bundle unused JS
 const Index = lazy(() => import("./pages/Index"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const OAuthConsent = lazy(() => import("./pages/OAuthConsent"));
 
 // Lazy-loaded pages for reduced initial bundle size
 const Auth = lazy(() => import("./pages/Auth"));
@@ -208,6 +209,7 @@ function AppPages() {
       <Route path="/uitnodiging" element={<PageTransition><Invitation /></PageTransition>} />
       <Route path="/invite" element={<PageTransition><Invitation /></PageTransition>} />
       <Route path="/einladung" element={<PageTransition><Invitation /></PageTransition>} />
+      <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
       <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />
     </Routes>
   );

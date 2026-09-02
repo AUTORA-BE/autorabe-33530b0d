@@ -216,7 +216,7 @@ const Auth = () => {
 
   const handleGoogleAuth = async () => {
     trackEvent(isLogin ? EVENTS.LOGIN_COMPLETED : EVENTS.SIGNUP_STARTED, { method: "google" });
-    const result = await signInWithGoogle();
+    const result = await signInWithGoogle(searchParams.get("returnTo") ?? undefined);
     if (!result.success && result.error) {
       toast({ title: t("auth.error"), description: result.error.message, variant: "destructive" });
     }
