@@ -1,0 +1,140 @@
+{
+  "version": 1,
+  "sdk_version": "1.0.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://jbdsjqoonpieusfvkhyo.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "autora",
+      "version": "0.1.0",
+      "title": "AutoRA"
+    },
+    "tools": [
+      {
+        "name": "search_listings",
+        "title": "Rechercher des annonces",
+        "description": "Recherche des annonces de voitures d'occasion publiées sur AutoRA.be (marché belge). Filtres optionnels : marque, modèle, carburant, prix max, année min, kilométrage max, localisation.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "brand": {
+              "type": "string",
+              "description": "Marque, ex. BMW"
+            },
+            "model": {
+              "type": "string",
+              "description": "Modèle, ex. Serie 3"
+            },
+            "fuel_type": {
+              "type": "string",
+              "description": "Carburant, ex. essence, diesel, electrique, hybride"
+            },
+            "max_price": {
+              "type": "number",
+              "description": "Prix maximum en euros"
+            },
+            "min_year": {
+              "type": "number",
+              "description": "Année de mise en circulation minimum"
+            },
+            "max_mileage": {
+              "type": "number",
+              "description": "Kilométrage maximum"
+            },
+            "location": {
+              "type": "string",
+              "description": "Ville ou région en Belgique"
+            },
+            "limit": {
+              "type": "number",
+              "description": "Nombre de résultats (défaut 20, max 50)"
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_listing",
+        "title": "Détail d'une annonce",
+        "description": "Récupère la fiche complète d'une annonce AutoRA.be à partir de son identifiant (specs, prix, Car-Pass, localisation, photos).",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Identifiant UUID de l'annonce"
+            }
+          },
+          "required": [
+            "id"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "my_listings",
+        "title": "Mes annonces",
+        "description": "Liste les annonces publiées par l'utilisateur connecté sur AutoRA.be, avec leur statut de modération (approved, pending, rejected, sold).",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "Filtre de statut : approved, pending, rejected ou sold"
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "my_favorites",
+        "title": "Mes favoris",
+        "description": "Liste les véhicules enregistrés dans le garage (favoris) de l'utilisateur connecté sur AutoRA.be.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "number",
+              "description": "Nombre de résultats (défaut 20, max 50)"
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
