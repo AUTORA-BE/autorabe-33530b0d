@@ -5,6 +5,7 @@ import Stripe from "npm:stripe@17";
 
 
 import { buildCorsHeaders, handlePreflight } from "../_shared/cors.ts";
+import { logOpsAlert } from "../_shared/opsAlert.ts";
 
 /**
  * RGPD right-to-be-forgotten endpoint.
@@ -30,8 +31,12 @@ serve(async (req) => {
 
   const log = (step: string, extra: Record<string, unknown> = {}) =>
     console.log(JSON.stringify({ level: "info", fn: "delete-account", step, ...extra }));
-  const logErr = (step: string, err: unknown, extra: Record<string, unknown> = {}) =>
-    console.error(
+  const logErr = (step: string, err: unknown, extra: Record<string, unknown> = {}) => {
+    void logOpsAlert("delete-account", `${step}: ${err instanceof Error ? err.message : String(err)}`, {
+      severity: step === "fatal" ? "critical" : "error",
+      context: { step },
+    });
+    return console.error(
       JSON.stringify({
         level: "error",
         fn: "delete-account",
@@ -40,6 +45,8 @@ serve(async (req) => {
         ...extra,
       })
     );
+  };
+
 
   try {
     const authHeader = req.headers.get("Authorization");

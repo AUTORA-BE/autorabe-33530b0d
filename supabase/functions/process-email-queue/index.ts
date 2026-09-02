@@ -1,5 +1,6 @@
 import { sendLovableEmail } from 'npm:@lovable.dev/email-js'
 import { createClient } from 'npm:@supabase/supabase-js@2'
+import { logOpsAlert } from '../_shared/opsAlert.ts'
 
 const MAX_RETRIES = 5
 const DEFAULT_BATCH_SIZE = 10
@@ -75,6 +76,15 @@ async function moveToDlq(
   })
   if (error) {
     console.error('Failed to move message to DLQ', { queue, msg_id: msg.msg_id, reason, error })
+    await logOpsAlert('process-email-queue', `Échec de mise en DLQ: ${error.message}`, {
+      severity: 'critical',
+      context: { queue, msg_id: msg.msg_id, reason: reason.slice(0, 200) },
+    })
+  } else {
+    await logOpsAlert('process-email-queue', `Message déplacé en DLQ: ${reason.slice(0, 200)}`, {
+      severity: 'warn',
+      context: { queue, msg_id: msg.msg_id },
+    })
   }
 }
 
@@ -85,6 +95,10 @@ Deno.serve(async (req) => {
 
   if (!apiKey || !supabaseUrl || !supabaseServiceKey) {
     console.error('Missing required environment variables')
+    await logOpsAlert('process-email-queue', 'Variables d\'environnement manquantes', {
+      severity: 'critical',
+      context: { step: 'boot' },
+    })
     return new Response(
       JSON.stringify({ error: 'Server configuration error' }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
@@ -145,6 +159,10 @@ Deno.serve(async (req) => {
 
     if (readError) {
       console.error('Failed to read email batch', { queue, error: readError })
+      await logOpsAlert('process-email-queue', `Lecture du lot impossible: ${readError.message}`, {
+        severity: 'error',
+        context: { queue, step: 'read_batch' },
+      })
       continue
     }
 
@@ -295,6 +313,10 @@ Deno.serve(async (req) => {
           read_ct: msg.read_ct,
           failed_attempts: failedAttempts,
           error: errorMsg,
+        })
+        await logOpsAlert('process-email-queue', `Envoi d'email échoué: ${errorMsg.slice(0, 300)}`, {
+          severity: 'error',
+          context: { queue, msg_id: msg.msg_id, failed_attempts: failedAttempts },
         })
 
         if (isRateLimited(error)) {

@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { logOpsAlert } from "../_shared/opsAlert.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -145,6 +146,10 @@ serve(async (req) => {
 
   if (!stripeKey || !webhookSecret) {
     log("error", "missing_secrets", { hasKey: !!stripeKey, hasSecret: !!webhookSecret });
+    await logOpsAlert("stripe-webhook", "Configuration Stripe manquante (clé ou secret webhook)", {
+      severity: "critical",
+      context: { hasStripeKey: !!stripeKey, hasWebhookSecret: !!webhookSecret },
+    });
     return new Response(
       JSON.stringify({ error: "Stripe configuration missing" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
@@ -165,6 +170,10 @@ serve(async (req) => {
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     log("error", "signature_verification_failed", { error: message });
+    await logOpsAlert("stripe-webhook", `Vérification de signature échouée: ${message}`, {
+      severity: "critical",
+      context: { step: "signature_verification" },
+    });
     // 400 → Stripe will mark as failed, no retry storm on bad signature
     return new Response(
       JSON.stringify({ error: `Webhook signature verification failed: ${message}` }),
@@ -433,6 +442,10 @@ serve(async (req) => {
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     log("error", "handler_exception", { event_id: event.id, type: event.type, error: message });
+    await logOpsAlert("stripe-webhook", `Exception de traitement: ${message}`, {
+      severity: "critical",
+      context: { step: "handler_exception", event_id: event.id, event_type: event.type },
+    });
     // Release the idempotency lock so Stripe retries (and manual replays) can run again.
     const { error: releaseError } = await supabaseAdmin
       .from("stripe_processed_events")

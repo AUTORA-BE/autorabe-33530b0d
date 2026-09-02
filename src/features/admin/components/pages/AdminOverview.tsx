@@ -10,6 +10,7 @@ import { Users, Car, AlertTriangle, Clock, MessageSquare, DollarSign, TrendingUp
 import { useAdminStats } from '../../hooks/useAdminStats';
 import { useAdminCharts } from '../../hooks/useAdminCharts';
 import { useAdminRealtime } from '../../hooks/useAdminRealtime';
+import { OpsAlertsCard } from '../OpsAlertsCard';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   ChartContainer,
@@ -70,6 +71,9 @@ export default function AdminOverview() {
         <h1 className="text-xl font-bold text-foreground">Vue d'ensemble</h1>
         <Badge variant="secondary" className="text-[10px]">Live</Badge>
       </div>
+
+      {/* Incidents techniques serveur */}
+      <OpsAlertsCard />
 
       {/* KPI cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
