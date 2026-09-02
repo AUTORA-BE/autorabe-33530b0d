@@ -289,35 +289,43 @@ serve(async (req) => {
       case "customer.subscription.created":
       case "customer.subscription.updated": {
         const subscription = event.data.object as Stripe.Subscription;
-        const userId = await resolveUserId(supabaseAdmin, stripe, subscription.customer);
-        if (userId) {
-          const productId = subscription.items.data[0]?.price?.product as string;
-          const subscriptionEnd = new Date(
-            subscription.current_period_end * 1000,
-          ).toISOString();
+        const userId = requireUserId(
+          await resolveUserId(
+            supabaseAdmin,
+            stripe,
+            subscription.customer,
+            subscription.metadata,
+          ),
+          event,
+          event.type,
+        );
+        const productId = subscription.items.data[0]?.price?.product as string;
+        const subscriptionEnd = new Date(
+          subscription.current_period_end * 1000,
+        ).toISOString();
 
-          await supabaseAdmin.from("subscriptions").upsert(
-            {
-              user_id: userId,
-              stripe_customer_id:
-                typeof subscription.customer === "string"
-                  ? subscription.customer
-                  : subscription.customer.id,
-              stripe_subscription_id: subscription.id,
-              product_id: productId,
-              status: subscription.status,
-              current_period_end: subscriptionEnd,
-              updated_at: new Date().toISOString(),
-            },
-            { onConflict: "user_id" },
-          );
-          log("info", "subscription_synced", {
-            event_id: event.id,
+        const { error: syncError } = await supabaseAdmin.from("subscriptions").upsert(
+          {
             user_id: userId,
+            stripe_customer_id:
+              typeof subscription.customer === "string"
+                ? subscription.customer
+                : subscription.customer.id,
             stripe_subscription_id: subscription.id,
+            product_id: productId,
             status: subscription.status,
-          });
-        }
+            current_period_end: subscriptionEnd,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "user_id" },
+        );
+        if (syncError) throw new Error(`subscription sync failed: ${syncError.message}`);
+        log("info", "subscription_synced", {
+          event_id: event.id,
+          user_id: userId,
+          stripe_subscription_id: subscription.id,
+          status: subscription.status,
+        });
         break;
       }
 
@@ -326,18 +334,26 @@ serve(async (req) => {
       // ──────────────────────────────────────────────
       case "customer.subscription.deleted": {
         const subscription = event.data.object as Stripe.Subscription;
-        const userId = await resolveUserId(supabaseAdmin, stripe, subscription.customer);
-        if (userId) {
-          await supabaseAdmin
-            .from("subscriptions")
-            .update({ status: "canceled", updated_at: new Date().toISOString() })
-            .eq("user_id", userId);
-          log("info", "subscription_canceled", {
-            event_id: event.id,
-            user_id: userId,
-            stripe_subscription_id: subscription.id,
-          });
-        }
+        const userId = requireUserId(
+          await resolveUserId(
+            supabaseAdmin,
+            stripe,
+            subscription.customer,
+            subscription.metadata,
+          ),
+          event,
+          "customer.subscription.deleted",
+        );
+        const { error: cancelError } = await supabaseAdmin
+          .from("subscriptions")
+          .update({ status: "canceled", updated_at: new Date().toISOString() })
+          .eq("user_id", userId);
+        if (cancelError) throw new Error(`subscription cancel failed: ${cancelError.message}`);
+        log("info", "subscription_canceled", {
+          event_id: event.id,
+          user_id: userId,
+          stripe_subscription_id: subscription.id,
+        });
         break;
       }
 
