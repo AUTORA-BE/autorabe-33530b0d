@@ -88,6 +88,7 @@ const CarDetail = () => {
     vitrine_published?: boolean | null;
     is_admin?: boolean | null;
   } | null>(null);
+  const [sellerKycVerified, setSellerKycVerified] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
   const [relatedCars, setRelatedCars] = useState<Car[]>([]);
@@ -633,6 +634,7 @@ const CarDetail = () => {
                   tvaNumber={undefined}
                   sellerId={sellerContact?.user_id}
                   isAdmin={!!sellerDisplay?.is_admin}
+                  kycVerified={sellerKycVerified}
                 />
 
                 {isProSeller && (sellerDisplay?.vitrine_slug || sellerContact?.user_id) && (
@@ -906,6 +908,7 @@ const CarDetail = () => {
                   tvaNumber={undefined}
                   sellerId={sellerContact?.user_id}
                   isAdmin={!!sellerDisplay?.is_admin}
+                  kycVerified={sellerKycVerified}
                 />
 
                 {/* Desktop "Vitrine Garage" link — mirrors the mobile block under the seller name */}
