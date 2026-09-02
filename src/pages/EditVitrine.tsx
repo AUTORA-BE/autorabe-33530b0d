@@ -252,7 +252,28 @@ const EditVitrine = () => {
               {/* ── Colonne gauche : Formulaire ── */}
               <div className="space-y-6">
                 <div className="rounded-2xl border border-border/50 bg-card/80 backdrop-blur-sm p-6 space-y-5">
+                  {/* Garage name — read-only (admin-managed) */}
+                  <div className="space-y-2">
+                    <Label htmlFor="vitrine-garage-name" className="text-sm font-medium">
+                      {language === "nl" ? "Garagenaam" : "Nom de garage"}
+                    </Label>
+                    <Input
+                      id="vitrine-garage-name"
+                      value={garageName ?? ""}
+                      readOnly
+                      disabled
+                      aria-describedby="vitrine-garage-name-help"
+                      placeholder={language === "nl" ? "Nog niet toegekend" : "Non défini"}
+                    />
+                    <p id="vitrine-garage-name-help" className="text-xs text-muted-foreground">
+                      {language === "nl"
+                        ? "De garagenaam wordt vastgelegd bij de validatie van uw professioneel dossier."
+                        : "Le nom de garage est défini lors de la validation de votre dossier professionnel."}
+                    </p>
+                  </div>
+
                   {/* Cover */}
+
                   <div className="space-y-2">
                     <Label htmlFor="vitrine-cover" className="text-sm font-medium">
                       {language === "nl" ? "Omslagfoto" : "Photo de couverture"}
