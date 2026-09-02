@@ -156,6 +156,19 @@ const CarDetail = () => {
         if (contact) setSellerContact(contact);
         if (display) setSellerDisplay(display);
 
+        // DSA art. 30 — la garantie légale n'est annoncée que si le KYC du pro est vérifié.
+        if (display?.user_id && display.user_type === 'professionnel') {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const { data: kyc } = await (supabase as any)
+            .from('dealer_kyc')
+            .select('status')
+            .eq('user_id', display.user_id)
+            .maybeSingle();
+          setSellerKycVerified(kyc?.status === 'verified');
+        } else {
+          setSellerKycVerified(false);
+        }
+
         // Fetch similar listings: same brand + body type, price ±30%, max 3
         const similar = await vehicleQueries.getSimilar(
           { id: dbCar.id, brand: dbCar.brand, bodyType: data?.body_type, price: dbCar.price },
