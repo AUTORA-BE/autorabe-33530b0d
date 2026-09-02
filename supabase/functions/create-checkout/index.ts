@@ -67,6 +67,9 @@ serve(async (req) => {
       payment_method_types: ["card", "bancontact", "sepa_debit"],
       success_url: `${origin}/payment-success`,
       cancel_url: `${origin}/payment-canceled`,
+      client_reference_id: user.id,
+      metadata: { supabase_user_id: user.id },
+      subscription_data: { metadata: { supabase_user_id: user.id } },
     });
 
     return new Response(JSON.stringify({ url: session.url }), {
