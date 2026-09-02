@@ -433,7 +433,18 @@ serve(async (req) => {
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     log("error", "handler_exception", { event_id: event.id, type: event.type, error: message });
-    // Return 500 → Stripe will retry. (Idempotency guard prevents double-processing.)
+    // Release the idempotency lock so Stripe retries (and manual replays) can run again.
+    const { error: releaseError } = await supabaseAdmin
+      .from("stripe_processed_events")
+      .delete()
+      .eq("event_id", event.id);
+    if (releaseError) {
+      log("error", "idempotency_release_failed", {
+        event_id: event.id,
+        error: releaseError.message,
+      });
+    }
+    // Return 500 → Stripe will retry.
     return new Response(JSON.stringify({ error: message }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
