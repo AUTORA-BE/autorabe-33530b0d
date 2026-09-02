@@ -3,4 +3,4 @@
  * @module features/search/hooks
  */
 
-export { useCarFilters } from './useCarFilters';
+export {};

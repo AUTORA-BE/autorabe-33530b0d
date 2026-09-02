@@ -8,8 +8,6 @@
 export { FilterPanel, HeroSearch, BrandCarousel } from './components';
 export type { FilterPanelProps, HeroSearchProps, BrandCarouselProps } from './components';
 
-// Hooks
-export { useCarFilters } from './hooks';
 
 // Types
 export type { BudgetOption, BelgianProvince, BrandConfig, QuickSearchParams } from './types/search.types';

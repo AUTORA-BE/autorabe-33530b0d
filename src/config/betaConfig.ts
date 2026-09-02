@@ -9,6 +9,3 @@ export const IS_BETA_MODE = true;
 
 /** Number of total early access spots for garages */
 export const EARLY_ACCESS_TOTAL_SPOTS = 100;
-
-/** Launch date */
-export const LAUNCH_DATE = '2025-04-01';
