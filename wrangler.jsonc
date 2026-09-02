@@ -1,9 +1,0 @@
-// ⚠️ DEPRECATED — not used.
-//
-// Production hosting has moved to Netlify (see netlify.toml and
-// netlify/edge-functions/og-meta.ts). This Cloudflare Wrangler config is
-// kept as an empty stub to avoid confusion; no Cloudflare Worker is ever
-// deployed for autora.be from Lovable Hosting.
-//
-// Safe to delete.
-{}
