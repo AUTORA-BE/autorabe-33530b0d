@@ -28,6 +28,10 @@ interface KycRecord {
   submitted_at: string | null;
   reviewed_at: string | null;
   reviewer_note: string | null;
+  bce_number: string | null;
+  vat_number: string | null;
+  legal_name: string | null;
+  address: string | null;
   created_at: string;
   profiles?: { display_name: string | null; garage_name: string | null };
 }
@@ -135,6 +139,13 @@ export default function AdminKycPage() {
                     Soumis le {rec.submitted_at ? format(new Date(rec.submitted_at), "d MMM yyyy HH:mm", { locale: fr }) : "—"}
                     {rec.reviewed_at && ` · Traité le ${format(new Date(rec.reviewed_at), "d MMM yyyy", { locale: fr })}`}
                   </p>
+                  {(rec.legal_name || rec.bce_number || rec.vat_number) && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {[rec.legal_name, rec.bce_number && `BCE ${rec.bce_number}`, rec.vat_number]
+                        .filter(Boolean)
+                        .join(" · ")}
+                    </p>
+                  )}
                   {rec.reviewer_note && (
                     <p className="text-xs text-muted-foreground mt-1 italic">Note : {rec.reviewer_note}</p>
                   )}
@@ -168,6 +179,16 @@ export default function AdminKycPage() {
           </DialogHeader>
 
           <div className="space-y-4">
+            <dl className="grid grid-cols-2 gap-2 text-sm rounded-lg bg-muted/50 p-3">
+              <dt className="text-muted-foreground">Raison sociale</dt>
+              <dd className="font-medium">{selected?.legal_name ?? "—"}</dd>
+              <dt className="text-muted-foreground">Numéro BCE</dt>
+              <dd className="font-medium">{selected?.bce_number ?? "—"}</dd>
+              <dt className="text-muted-foreground">Numéro de TVA</dt>
+              <dd className="font-medium">{selected?.vat_number ?? "—"}</dd>
+              <dt className="text-muted-foreground">Adresse</dt>
+              <dd className="font-medium">{selected?.address ?? "—"}</dd>
+            </dl>
             {selected?.document_path && (
               <Button variant="outline" className="w-full" onClick={() => getDocUrl(selected.document_path!)}>
                 <ExternalLink className="w-4 h-4 mr-2" />

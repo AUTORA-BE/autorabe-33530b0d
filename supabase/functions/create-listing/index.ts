@@ -181,6 +181,23 @@ Deno.serve(async (req) => {
     const profilePhone = profileRow?.phone || null;
     const isPro = !!profileRow?.garage_name || profileRow?.user_type === 'professionnel';
 
+    // 4c. DSA art. 30 — un vendeur professionnel ne peut publier qu'avec un dossier KYC vérifié.
+    if (isPro) {
+      const { data: kyc } = await admin
+        .from('dealer_kyc')
+        .select('status')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (kyc?.status !== 'verified') {
+        return jsonResponse(req, {
+          error: "Votre dossier professionnel doit être validé avant de publier.",
+          code: 'KYC_REQUIRED',
+          kycStatus: kyc?.status ?? 'missing',
+        }, { status: 403 });
+      }
+    }
+
     const override = payload.contact_override === true;
     const finalContactName  = (override && payload.contact_name?.trim())  ? payload.contact_name.trim()  : profileName;
     const finalContactEmail = (override && payload.contact_email?.trim()) ? payload.contact_email.trim() : profileEmail;

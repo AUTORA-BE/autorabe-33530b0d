@@ -10,6 +10,8 @@ interface SellerBadgeProps {
   compact?: boolean;
   sellerId?: string;
   isAdmin?: boolean;
+  /** DSA art. 30 — la garantie légale n'est affichée que si le KYC du pro est vérifié. */
+  kycVerified?: boolean;
 }
 
 const SellerBadge = ({
@@ -19,6 +21,7 @@ const SellerBadge = ({
   compact = false,
   sellerId,
   isAdmin = false,
+  kycVerified = false,
 }: SellerBadgeProps) => {
   const isProfessional = sellerType === "professionnel";
   const localized = useLocalizedHref();
@@ -90,12 +93,14 @@ const SellerBadge = ({
               TVA : {tvaNumber}
             </p>
           )}
-          <div className="flex items-start gap-2 p-3 rounded-2xl bg-primary/10 border border-primary/20">
-            <Shield className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-            <p className="text-sm text-primary font-medium">
-              Garantie légale 12 mois incluse
-            </p>
-          </div>
+          {kycVerified && (
+            <div className="flex items-start gap-2 p-3 rounded-2xl bg-primary/10 border border-primary/20">
+              <Shield className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+              <p className="text-sm text-primary font-medium">
+                Garantie légale 12 mois incluse
+              </p>
+            </div>
+          )}
         </div>
       )}
 

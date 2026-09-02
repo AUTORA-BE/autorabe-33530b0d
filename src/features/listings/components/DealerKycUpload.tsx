@@ -5,6 +5,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, ShieldCheck, ShieldAlert, Clock, Upload, RefreshCcw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -19,6 +21,10 @@ interface KycRecord {
   status: "pending" | "verified" | "rejected";
   submitted_at: string | null;
   reviewer_note: string | null;
+  bce_number: string | null;
+  vat_number: string | null;
+  legal_name: string | null;
+  address: string | null;
 }
 
 interface Props {
@@ -28,15 +34,24 @@ interface Props {
 export function DealerKycUpload({ userId }: Props) {
   const [kyc, setKyc] = useState<KycRecord | null | undefined>(undefined);
   const [uploading, setUploading] = useState(false);
+  const [legalName, setLegalName] = useState("");
+  const [bceNumber, setBceNumber] = useState("");
+  const [vatNumber, setVatNumber] = useState("");
+  const [address, setAddress] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
 
   const fetchKyc = async () => {
     const { data } = await sb
       .from("dealer_kyc")
-      .select("id, status, submitted_at, reviewer_note")
+      .select("id, status, submitted_at, reviewer_note, bce_number, vat_number, legal_name, address")
       .eq("user_id", userId)
       .maybeSingle();
-    setKyc(data as KycRecord | null);
+    const rec = data as KycRecord | null;
+    setKyc(rec);
+    setLegalName(rec?.legal_name ?? "");
+    setBceNumber(rec?.bce_number ?? "");
+    setVatNumber(rec?.vat_number ?? "");
+    setAddress(rec?.address ?? "");
   };
 
   useEffect(() => { fetchKyc(); }, [userId]);
@@ -49,6 +64,16 @@ export function DealerKycUpload({ userId }: Props) {
     }
     if (file.size > 10 * 1024 * 1024) {
       toast.error("Fichier trop volumineux (max 10 Mo)");
+      return;
+    }
+
+    const vat = vatNumber.trim().toUpperCase().replace(/[\s.]/g, "");
+    if (vat && !/^BE0[0-9]{9}$/.test(vat)) {
+      toast.error("Numéro de TVA invalide — format attendu : BE0123456789");
+      return;
+    }
+    if (!legalName.trim()) {
+      toast.error("Indiquez la raison sociale de votre entreprise.");
       return;
     }
 
@@ -66,7 +91,15 @@ export function DealerKycUpload({ userId }: Props) {
       if (kyc) {
         await sb
           .from("dealer_kyc")
-          .update({ document_path: path, status: "pending", submitted_at: new Date().toISOString() })
+          .update({
+            document_path: path,
+            status: "pending",
+            submitted_at: new Date().toISOString(),
+            legal_name: legalName.trim(),
+            bce_number: bceNumber.trim() || null,
+            vat_number: vat || null,
+            address: address.trim() || null,
+          })
           .eq("id", kyc.id);
       } else {
         await sb.from("dealer_kyc").insert({
@@ -74,6 +107,10 @@ export function DealerKycUpload({ userId }: Props) {
           document_path: path,
           status: "pending",
           submitted_at: new Date().toISOString(),
+          legal_name: legalName.trim(),
+          bce_number: bceNumber.trim() || null,
+          vat_number: vat || null,
+          address: address.trim() || null,
         });
       }
 
@@ -118,6 +155,24 @@ export function DealerKycUpload({ userId }: Props) {
           {kyc.reviewer_note && ` — ${kyc.reviewer_note}`}
         </div>
       )}
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div className="space-y-1">
+          <Label htmlFor="kyc-legal-name" className="text-xs">Raison sociale *</Label>
+          <Input id="kyc-legal-name" value={legalName} onChange={(e) => setLegalName(e.target.value)} placeholder="Garage Dupont SRL" />
+        </div>
+        <div className="space-y-1">
+          <Label htmlFor="kyc-bce" className="text-xs">Numéro BCE</Label>
+          <Input id="kyc-bce" value={bceNumber} onChange={(e) => setBceNumber(e.target.value)} placeholder="0123.456.789" />
+        </div>
+        <div className="space-y-1">
+          <Label htmlFor="kyc-vat" className="text-xs">Numéro de TVA</Label>
+          <Input id="kyc-vat" value={vatNumber} onChange={(e) => setVatNumber(e.target.value)} placeholder="BE0123456789" />
+        </div>
+        <div className="space-y-1">
+          <Label htmlFor="kyc-address" className="text-xs">Adresse du siège</Label>
+          <Input id="kyc-address" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Rue de la Loi 1, 1000 Bruxelles" />
+        </div>
+      </div>
       <input
         ref={fileRef}
         type="file"

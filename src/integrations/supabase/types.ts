@@ -629,9 +629,12 @@ export type Database = {
       }
       dealer_kyc: {
         Row: {
+          address: string | null
+          bce_number: string | null
           created_at: string
           document_path: string | null
           id: string
+          legal_name: string | null
           reviewed_at: string | null
           reviewer_id: string | null
           reviewer_note: string | null
@@ -639,11 +642,15 @@ export type Database = {
           submitted_at: string | null
           updated_at: string
           user_id: string
+          vat_number: string | null
         }
         Insert: {
+          address?: string | null
+          bce_number?: string | null
           created_at?: string
           document_path?: string | null
           id?: string
+          legal_name?: string | null
           reviewed_at?: string | null
           reviewer_id?: string | null
           reviewer_note?: string | null
@@ -651,11 +658,15 @@ export type Database = {
           submitted_at?: string | null
           updated_at?: string
           user_id: string
+          vat_number?: string | null
         }
         Update: {
+          address?: string | null
+          bce_number?: string | null
           created_at?: string
           document_path?: string | null
           id?: string
+          legal_name?: string | null
           reviewed_at?: string | null
           reviewer_id?: string | null
           reviewer_note?: string | null
@@ -663,6 +674,7 @@ export type Database = {
           submitted_at?: string | null
           updated_at?: string
           user_id?: string
+          vat_number?: string | null
         }
         Relationships: []
       }

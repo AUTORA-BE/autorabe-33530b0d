@@ -88,6 +88,7 @@ const CarDetail = () => {
     vitrine_published?: boolean | null;
     is_admin?: boolean | null;
   } | null>(null);
+  const [sellerKycVerified, setSellerKycVerified] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
   const [relatedCars, setRelatedCars] = useState<Car[]>([]);
@@ -154,6 +155,19 @@ const CarDetail = () => {
         ]);
         if (contact) setSellerContact(contact);
         if (display) setSellerDisplay(display);
+
+        // DSA art. 30 — la garantie légale n'est annoncée que si le KYC du pro est vérifié.
+        if (display?.user_id && display.user_type === 'professionnel') {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const { data: kyc } = await (supabase as any)
+            .from('dealer_kyc')
+            .select('status')
+            .eq('user_id', display.user_id)
+            .maybeSingle();
+          setSellerKycVerified(kyc?.status === 'verified');
+        } else {
+          setSellerKycVerified(false);
+        }
 
         // Fetch similar listings: same brand + body type, price ±30%, max 3
         const similar = await vehicleQueries.getSimilar(
@@ -633,6 +647,7 @@ const CarDetail = () => {
                   tvaNumber={undefined}
                   sellerId={sellerContact?.user_id}
                   isAdmin={!!sellerDisplay?.is_admin}
+                  kycVerified={sellerKycVerified}
                 />
 
                 {isProSeller && (sellerDisplay?.vitrine_slug || sellerContact?.user_id) && (
@@ -906,6 +921,7 @@ const CarDetail = () => {
                   tvaNumber={undefined}
                   sellerId={sellerContact?.user_id}
                   isAdmin={!!sellerDisplay?.is_admin}
+                  kycVerified={sellerKycVerified}
                 />
 
                 {/* Desktop "Vitrine Garage" link — mirrors the mobile block under the seller name */}
