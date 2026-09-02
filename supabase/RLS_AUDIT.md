@@ -1,6 +1,6 @@
 # RLS Audit — AutoRA.be
 
-> **Date** : 2026-05-03
+> **Date** : 2026-09-02 (révision — chiffres réalignés sur la base réelle)
 > **Status** : Pre-launch v1.0.0-beta.1
 > **Auditeur** : Lovable AI Agent
 > **Méthodologie** : revue exhaustive des policies + `supabase db lint` + tests SQL (`tests/rls.test.sql`).
@@ -11,14 +11,16 @@
 
 | Indicateur | Résultat |
 |---|---|
-| Tables totales (schéma `public`) | **27** |
-| Tables avec RLS activée | **27 / 27** ✅ |
-| Tables sans aucune policy | **0** ✅ |
+| Tables totales (schéma `public`) | **34** (33 applicatives + `spatial_ref_sys`, table système PostGIS) |
+| Tables applicatives avec RLS activée | **33 / 33** ✅ |
+| Tables sans aucune policy | **0** (hors `spatial_ref_sys`) ✅ |
+| `spatial_ref_sys` (PostGIS, référentiel géodésique public) | RLS **désactivée** — table système non modifiable, données non sensibles ⚠️ |
 | Policies `USING (true)` sur write (INSERT/UPDATE/DELETE) | **0** ✅ |
 | PII (email/téléphone) exposée à `anon` | **NON** ✅ |
 | `select('*')` côté client retournant des PII | **NON** (vue `car_listings_public` utilisée) ✅ |
-| Linter Supabase RLS warnings | **0** ✅ |
-| Linter Supabase warnings résiduels | 28 (fonctions `SECURITY DEFINER` + `pg_trgm` en `public` — **pattern intentionnel**, voir §Notes) |
+| Linter Supabase — erreurs RLS | **1** ⚠️ (`0013_rls_disabled_in_public` sur `spatial_ref_sys`, table système PostGIS — non corrigeable) |
+| Vue `car_listings_public` | `security_invoker = true` ✅ (les policies de `car_listings` s'appliquent à l'appelant) |
+| Linter Supabase warnings résiduels | 87 (fonctions `SECURITY DEFINER` exposées, extensions en `public`, 3 fonctions sans `search_path` — voir §Notes) |
 
 ---
 
@@ -53,7 +55,7 @@
 | Op | Qui | Justification |
 |----|-----|---------------|
 | SELECT | owner OR admin | Transparence GDPR + supervision |
-| INSERT | owner (`auth.uid() = user_id`) | Auto-logging côté client |
+| INSERT | **personne** (`service_role` / fonctions `SECURITY DEFINER` uniquement) | Un utilisateur ne peut plus fabriquer son propre journal d'audit |
 | UPDATE / DELETE | **personne** | Immuable |
 
 ### 4. `belgian_annual_tax_brackets` — barèmes taxe annuelle
@@ -204,15 +206,21 @@ Identique. `service_role` only (validation côté edge function `handle-email-un
 
 ---
 
-## Notes — warnings linter Supabase (28)
+## Notes — warnings linter Supabase (87 warnings + 1 erreur)
 
-Les warnings restants sont **tous intentionnels** et documentés ici :
+### `0013_rls_disabled_in_public` — `spatial_ref_sys` (1 **erreur**)
+Table système installée par PostGIS (référentiels de projection, données publiques et non personnelles). Elle appartient à l'extension : RLS ne peut pas y être activée sans droits superuser. **Non corrigeable — risque nul.** Cette erreur invalide l'ancienne affirmation « 0 warning RLS » de ce document.
+
+### `0011_function_search_path_mutable` (3 warnings)
+3 fonctions issues d'extensions n'ont pas de `search_path` figé. À revoir si des fonctions applicatives rejoignent la liste.
+
+Les warnings restants sont **intentionnels** et documentés ici :
 
 ### `0014_extension_in_public` — pg_trgm en schéma public (1 warning)
 **Justification** : utilisé par le moteur de recherche full-text (`car_listings.search_vector`, indexes GIN trigram). Migration vers `extensions` schema possible mais sans gain sécurité réel.
 **Décision** : accepté.
 
-### `0028` & `0029` — `SECURITY DEFINER` exposées (27 warnings)
+### `0028` & `0029` — `SECURITY DEFINER` exposées (81 warnings)
 Toutes les fonctions concernées sont **conçues pour être appelées par anon/auth** :
 - `has_role`, `is_user_suspended` → checks de policy (doivent bypasser RLS)
 - `get_public_listing`, `get_seller_public_listings`, `get_user_view_history`, `get_seller_contact` → endpoints RPC explicitement publics, **filtrent les colonnes sensibles** (PII jamais retournées sauf à l'auth)
@@ -232,3 +240,15 @@ Toutes les fonctions concernées sont **conçues pour être appelées par anon/a
 2. 🟡 **À faire** : programmer un cron mensuel `supabase db lint` + diff sur ce document
 3. 🟡 **À faire** : ajouter un test "smoke" anonymous → `select * from car_listings` doit échouer (RLS)
 4. 🟢 **Nice-to-have** : déplacer `pg_trgm` vers schéma `extensions` lors d'une fenêtre de maintenance
+5. 🟡 **À faire** : réduire la surface `SECURITY DEFINER` — révoquer `EXECUTE` à `anon` sur les fonctions qui n'ont pas vocation à être appelées sans session
+
+---
+
+## Dérive dépôt ↔ base
+
+Le dossier `supabase/migrations/` avait dérivé de la base réelle (vue `car_listings_public` redéfinie hors migration, fonctions `admin_review_car_pass`, `get_public_seller_identity` et `email_queue_dispatch` créées sans fichier). Correctifs :
+
+- `20260815_000_baseline_schema.sql` — **baseline de référence** : dump structurel (`pg_dump --schema-only`) du schéma `public` réel. Fichier de référence, à ne pas rejouer ni éditer.
+- Migration de rapatriement des 3 fonctions en `CREATE OR REPLACE`, définitions exactes issues de `pg_get_functiondef()`, **sans changement de logique**.
+
+Règle : toute modification de schéma passe désormais par une nouvelle migration postérieure à la baseline.
