@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { VitePWA } from "vite-plugin-pwa";
+import { prerenderOgMeta } from "./scripts/prerenderOgMeta.mjs";
 
 // IMPORTANT: this file is intentionally written in plain JavaScript syntax
 // (no `type` imports, no `: Type` annotations, no `as` casts, no generics).
@@ -164,7 +165,7 @@ const manualChunks = (id: string) => {
 };
 
 export default defineConfig({
-  plugins: [react(), componentTagger(), VitePWA(pwaOptions as Parameters<typeof VitePWA>[0])],
+  plugins: [react(), componentTagger(), VitePWA(pwaOptions as Parameters<typeof VitePWA>[0]), prerenderOgMeta()],
   server: { host: "::", port: 8080 },
   resolve: { alias: { "@": path.resolve(__dirname, "./src") } },
   build: { rollupOptions: { output: { manualChunks } } },
