@@ -948,6 +948,36 @@ export type Database = {
           },
         ]
       }
+      ops_alerts: {
+        Row: {
+          context: Json | null
+          created_at: string
+          id: string
+          message: string
+          notified_at: string | null
+          severity: string
+          source: string
+        }
+        Insert: {
+          context?: Json | null
+          created_at?: string
+          id?: string
+          message: string
+          notified_at?: string | null
+          severity?: string
+          source: string
+        }
+        Update: {
+          context?: Json | null
+          created_at?: string
+          id?: string
+          message?: string
+          notified_at?: string | null
+          severity?: string
+          source?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
