@@ -31,18 +31,75 @@ const getSupabaseAdmin = () =>
 
 type SupabaseAdmin = ReturnType<typeof getSupabaseAdmin>;
 
-/** Resolve a Stripe customer email to a Supabase user_id. */
+type Meta = Record<string, string> | null | undefined;
+
+/** Paginated lookup of a Supabase user by email (listUsers only returns one page). */
+async function findUserIdByEmail(
+  supabaseAdmin: SupabaseAdmin,
+  email: string,
+): Promise<string | null> {
+  const perPage = 200;
+  const maxPages = 50;
+  const target = email.toLowerCase();
+  for (let page = 1; page <= maxPages; page++) {
+    const { data, error } = await supabaseAdmin.auth.admin.listUsers({ page, perPage });
+    if (error) throw new Error(`listUsers failed (page ${page}): ${error.message}`);
+    const users = data?.users ?? [];
+    const match = users.find((u) => u.email?.toLowerCase() === target);
+    if (match) return match.id;
+    if (users.length < perPage) break; // incomplete page → last page
+  }
+  return null;
+}
+
+/**
+ * Resolve the Supabase user_id for a Stripe event, in cascade:
+ *  1. supabase_user_id present in the event metadata (no query)
+ *  2. subscriptions.user_id matched on stripe_customer_id
+ *  3. fallback: paginated email lookup via listUsers
+ */
 async function resolveUserId(
   supabaseAdmin: SupabaseAdmin,
   stripe: Stripe,
   customerId: string | Stripe.Customer | Stripe.DeletedCustomer | null,
+  metadata?: Meta,
 ): Promise<string | null> {
+  // 1. metadata
+  const fromMeta = metadata?.supabase_user_id;
+  if (fromMeta) return fromMeta;
+
   if (!customerId) return null;
   const id = typeof customerId === "string" ? customerId : customerId.id;
+
+  // 2. existing subscription row
+  const { data: subRow } = await supabaseAdmin
+    .from("subscriptions")
+    .select("user_id")
+    .eq("stripe_customer_id", id)
+    .maybeSingle();
+  if (subRow?.user_id) return subRow.user_id as string;
+
+  // 3. email fallback
   const customer = await stripe.customers.retrieve(id);
   if (customer.deleted || !customer.email) return null;
-  const { data } = await supabaseAdmin.auth.admin.listUsers();
-  return data?.users?.find((u) => u.email === customer.email)?.id ?? null;
+  return await findUserIdByEmail(supabaseAdmin, customer.email);
+}
+
+/** Throws a structured error when the user cannot be resolved (→ 500 → Stripe retries). */
+function requireUserId(
+  userId: string | null,
+  event: Stripe.Event,
+  context: string,
+): string {
+  if (!userId) {
+    log("error", "user_resolution_failed", {
+      event_id: event.id,
+      event_type: event.type,
+      context,
+    });
+    throw new Error(`Unable to resolve Supabase user for event ${event.id} (${context})`);
+  }
+  return userId;
 }
 
 /**
@@ -175,50 +232,53 @@ serve(async (req) => {
 
         // --- Subscription activation ---
         if (session.subscription && session.customer) {
-          const userId = await resolveUserId(supabaseAdmin, stripe, session.customer);
-          if (userId) {
-            const subId =
-              typeof session.subscription === "string"
-                ? session.subscription
-                : session.subscription.id;
-            const subscription = await stripe.subscriptions.retrieve(subId);
-            const productId = subscription.items.data[0]?.price?.product as string;
-            const subscriptionEnd = new Date(
-              subscription.current_period_end * 1000,
-            ).toISOString();
+          const userId = requireUserId(
+            (session.client_reference_id ??
+              (await resolveUserId(supabaseAdmin, stripe, session.customer, session.metadata))),
+            event,
+            "checkout.session.completed",
+          );
+          const subId =
+            typeof session.subscription === "string"
+              ? session.subscription
+              : session.subscription.id;
+          const subscription = await stripe.subscriptions.retrieve(subId);
+          const productId = subscription.items.data[0]?.price?.product as string;
+          const subscriptionEnd = new Date(
+            subscription.current_period_end * 1000,
+          ).toISOString();
 
-            const { error } = await supabaseAdmin
-              .from("subscriptions")
-              .upsert(
-                {
-                  user_id: userId,
-                  stripe_customer_id:
-                    typeof session.customer === "string"
-                      ? session.customer
-                      : session.customer.id,
-                  stripe_subscription_id: subId,
-                  product_id: productId,
-                  status: "active",
-                  current_period_end: subscriptionEnd,
-                  updated_at: new Date().toISOString(),
-                },
-                { onConflict: "user_id" },
-              );
-            if (error) {
-              log("error", "subscription_upsert_failed", {
-                event_id: event.id,
+          const { error } = await supabaseAdmin
+            .from("subscriptions")
+            .upsert(
+              {
                 user_id: userId,
-                error: error.message,
-              });
-            } else {
-              log("info", "subscription_activated", {
-                event_id: event.id,
-                user_id: userId,
+                stripe_customer_id:
+                  typeof session.customer === "string"
+                    ? session.customer
+                    : session.customer.id,
+                stripe_subscription_id: subId,
                 product_id: productId,
-                period_end: subscriptionEnd,
-              });
-            }
+                status: "active",
+                current_period_end: subscriptionEnd,
+                updated_at: new Date().toISOString(),
+              },
+              { onConflict: "user_id" },
+            );
+          if (error) {
+            log("error", "subscription_upsert_failed", {
+              event_id: event.id,
+              user_id: userId,
+              error: error.message,
+            });
+            throw new Error(`subscription upsert failed: ${error.message}`);
           }
+          log("info", "subscription_activated", {
+            event_id: event.id,
+            user_id: userId,
+            product_id: productId,
+            period_end: subscriptionEnd,
+          });
         }
         break;
       }
@@ -229,35 +289,43 @@ serve(async (req) => {
       case "customer.subscription.created":
       case "customer.subscription.updated": {
         const subscription = event.data.object as Stripe.Subscription;
-        const userId = await resolveUserId(supabaseAdmin, stripe, subscription.customer);
-        if (userId) {
-          const productId = subscription.items.data[0]?.price?.product as string;
-          const subscriptionEnd = new Date(
-            subscription.current_period_end * 1000,
-          ).toISOString();
+        const userId = requireUserId(
+          await resolveUserId(
+            supabaseAdmin,
+            stripe,
+            subscription.customer,
+            subscription.metadata,
+          ),
+          event,
+          event.type,
+        );
+        const productId = subscription.items.data[0]?.price?.product as string;
+        const subscriptionEnd = new Date(
+          subscription.current_period_end * 1000,
+        ).toISOString();
 
-          await supabaseAdmin.from("subscriptions").upsert(
-            {
-              user_id: userId,
-              stripe_customer_id:
-                typeof subscription.customer === "string"
-                  ? subscription.customer
-                  : subscription.customer.id,
-              stripe_subscription_id: subscription.id,
-              product_id: productId,
-              status: subscription.status,
-              current_period_end: subscriptionEnd,
-              updated_at: new Date().toISOString(),
-            },
-            { onConflict: "user_id" },
-          );
-          log("info", "subscription_synced", {
-            event_id: event.id,
+        const { error: syncError } = await supabaseAdmin.from("subscriptions").upsert(
+          {
             user_id: userId,
+            stripe_customer_id:
+              typeof subscription.customer === "string"
+                ? subscription.customer
+                : subscription.customer.id,
             stripe_subscription_id: subscription.id,
+            product_id: productId,
             status: subscription.status,
-          });
-        }
+            current_period_end: subscriptionEnd,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "user_id" },
+        );
+        if (syncError) throw new Error(`subscription sync failed: ${syncError.message}`);
+        log("info", "subscription_synced", {
+          event_id: event.id,
+          user_id: userId,
+          stripe_subscription_id: subscription.id,
+          status: subscription.status,
+        });
         break;
       }
 
@@ -266,18 +334,26 @@ serve(async (req) => {
       // ──────────────────────────────────────────────
       case "customer.subscription.deleted": {
         const subscription = event.data.object as Stripe.Subscription;
-        const userId = await resolveUserId(supabaseAdmin, stripe, subscription.customer);
-        if (userId) {
-          await supabaseAdmin
-            .from("subscriptions")
-            .update({ status: "canceled", updated_at: new Date().toISOString() })
-            .eq("user_id", userId);
-          log("info", "subscription_canceled", {
-            event_id: event.id,
-            user_id: userId,
-            stripe_subscription_id: subscription.id,
-          });
-        }
+        const userId = requireUserId(
+          await resolveUserId(
+            supabaseAdmin,
+            stripe,
+            subscription.customer,
+            subscription.metadata,
+          ),
+          event,
+          "customer.subscription.deleted",
+        );
+        const { error: cancelError } = await supabaseAdmin
+          .from("subscriptions")
+          .update({ status: "canceled", updated_at: new Date().toISOString() })
+          .eq("user_id", userId);
+        if (cancelError) throw new Error(`subscription cancel failed: ${cancelError.message}`);
+        log("info", "subscription_canceled", {
+          event_id: event.id,
+          user_id: userId,
+          stripe_subscription_id: subscription.id,
+        });
         break;
       }
 
@@ -299,22 +375,25 @@ serve(async (req) => {
           customer_id: invoice.customer,
           amount_due: invoice.amount_due,
         });
-        const failedUserId = await resolveUserId(supabaseAdmin, stripe, invoice.customer);
-        if (failedUserId) {
-          await supabaseAdmin
-            .from("subscriptions")
-            .update({ status: "past_due", updated_at: new Date().toISOString() })
-            .eq("user_id", failedUserId);
-          log("info", "subscription_marked_past_due", {
-            event_id: event.id,
-            user_id: failedUserId,
-          });
-        }
+        const failedUserId = requireUserId(
+          await resolveUserId(supabaseAdmin, stripe, invoice.customer, invoice.metadata),
+          event,
+          "invoice.payment_failed",
+        );
+        const { error: pastDueError } = await supabaseAdmin
+          .from("subscriptions")
+          .update({ status: "past_due", updated_at: new Date().toISOString() })
+          .eq("user_id", failedUserId);
+        if (pastDueError) throw new Error(`past_due update failed: ${pastDueError.message}`);
+        log("info", "subscription_marked_past_due", {
+          event_id: event.id,
+          user_id: failedUserId,
+        });
         break;
       }
 
       // ──────────────────────────────────────────────
-      // CHARGE REFUNDED → log + mark subscription canceled if applicable
+      // CHARGE REFUNDED → log + cancel ONLY if tied to an invoice (subscription)
       // ──────────────────────────────────────────────
       case "charge.refunded": {
         const charge = event.data.object as Stripe.Charge;
@@ -322,17 +401,25 @@ serve(async (req) => {
           event_id: event.id,
           customer_id: charge.customer,
           charge_id: charge.id,
+          invoice: charge.invoice,
           amount_refunded: charge.amount_refunded,
           currency: charge.currency,
         });
-        // If a subscription is tied, mark canceled (manual review recommended)
-        const refundUserId = await resolveUserId(supabaseAdmin, stripe, charge.customer);
-        if (refundUserId) {
-          await supabaseAdmin
-            .from("subscriptions")
-            .update({ status: "canceled", updated_at: new Date().toISOString() })
-            .eq("user_id", refundUserId);
+        // A one-shot boost refund has no invoice → must NOT cancel the subscription.
+        if (!charge.invoice) {
+          log("info", "refund_skipped_no_invoice", { event_id: event.id, charge_id: charge.id });
+          break;
         }
+        const refundUserId = requireUserId(
+          await resolveUserId(supabaseAdmin, stripe, charge.customer, charge.metadata),
+          event,
+          "charge.refunded",
+        );
+        const { error: refundError } = await supabaseAdmin
+          .from("subscriptions")
+          .update({ status: "canceled", updated_at: new Date().toISOString() })
+          .eq("user_id", refundUserId);
+        if (refundError) throw new Error(`refund cancel failed: ${refundError.message}`);
         break;
       }
 
@@ -346,7 +433,18 @@ serve(async (req) => {
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     log("error", "handler_exception", { event_id: event.id, type: event.type, error: message });
-    // Return 500 → Stripe will retry. (Idempotency guard prevents double-processing.)
+    // Release the idempotency lock so Stripe retries (and manual replays) can run again.
+    const { error: releaseError } = await supabaseAdmin
+      .from("stripe_processed_events")
+      .delete()
+      .eq("event_id", event.id);
+    if (releaseError) {
+      log("error", "idempotency_release_failed", {
+        event_id: event.id,
+        error: releaseError.message,
+      });
+    }
+    // Return 500 → Stripe will retry.
     return new Response(JSON.stringify({ error: message }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

@@ -92,11 +92,13 @@ serve(async (req) => {
       payment_method_types: ["card", "bancontact", "sepa_debit"],
       success_url: `${origin}/dashboard?boost_success=true&listing=${listingId}&tier=${boostTier}`,
       cancel_url: `${origin}/dashboard?boost_canceled=true`,
+      client_reference_id: user.id,
       metadata: {
         listing_id: listingId,
         boost_level: boostConfig.level,
         boost_hours: String(boostConfig.hours),
         user_id: user.id,
+        supabase_user_id: user.id,
       },
     });
 
