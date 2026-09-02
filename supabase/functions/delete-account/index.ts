@@ -45,6 +45,8 @@ serve(async (req) => {
         ...extra,
       })
     );
+  };
+
 
   try {
     const authHeader = req.headers.get("Authorization");
