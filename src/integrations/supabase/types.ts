@@ -1444,9 +1444,9 @@ export type Database = {
           fuel_consumption?: number | null
           fuel_type?: string | null
           id?: string | null
-          latitude?: number | null
+          latitude?: never
           location?: string | null
-          longitude?: number | null
+          longitude?: never
           maintenance_book_complete?: boolean | null
           mileage?: number | null
           mma?: number | null
@@ -1486,9 +1486,9 @@ export type Database = {
           fuel_consumption?: number | null
           fuel_type?: string | null
           id?: string | null
-          latitude?: number | null
+          latitude?: never
           location?: string | null
-          longitude?: number | null
+          longitude?: never
           maintenance_book_complete?: boolean | null
           mileage?: number | null
           mma?: number | null
