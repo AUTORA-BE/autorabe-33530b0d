@@ -193,8 +193,24 @@ Deno.serve(async (req) => {
     const profilePhone = profileRow?.phone || null;
     const isPro = !!profileRow?.garage_name || profileRow?.user_type === 'professionnel';
 
+    const carPassUrl = validCarPassUrl(payload.car_pass_url);
+    if (payload.car_pass_url && !carPassUrl) {
+      return jsonResponse(req, {
+        error: "Lien Car-Pass invalide (https://www.car-pass.be/... attendu)",
+      }, { status: 400 });
+    }
+
+    // `contact_override` ne couvre QUE nom / email / téléphone.
+    // Le type de vendeur est TOUJOURS dérivé du profil serveur : sinon un
+    // particulier pourrait publier en « professionnel » sans passer le KYC.
+    const override = payload.contact_override === true;
+    const finalContactName  = (override && payload.contact_name?.trim())  ? payload.contact_name.trim()  : profileName;
+    const finalContactEmail = (override && payload.contact_email?.trim()) ? payload.contact_email.trim() : profileEmail;
+    const finalContactPhone = (override && payload.contact_phone?.trim()) ? payload.contact_phone.trim() : profilePhone;
+    const finalSellerType   = isPro ? 'professionnel' : 'particulier';
+
     // 4c. DSA art. 30 — un vendeur professionnel ne peut publier qu'avec un dossier KYC vérifié.
-    if (isPro) {
+    if (finalSellerType === 'professionnel') {
       const { data: kyc } = await admin
         .from('dealer_kyc')
         .select('status')
@@ -209,19 +225,6 @@ Deno.serve(async (req) => {
         }, { status: 403 });
       }
     }
-
-    const carPassUrl = validCarPassUrl(payload.car_pass_url);
-    if (payload.car_pass_url && !carPassUrl) {
-      return jsonResponse(req, {
-        error: "Lien Car-Pass invalide (https://www.car-pass.be/... attendu)",
-      }, { status: 400 });
-    }
-
-    const override = payload.contact_override === true;
-    const finalContactName  = (override && payload.contact_name?.trim())  ? payload.contact_name.trim()  : profileName;
-    const finalContactEmail = (override && payload.contact_email?.trim()) ? payload.contact_email.trim() : profileEmail;
-    const finalContactPhone = (override && payload.contact_phone?.trim()) ? payload.contact_phone.trim() : profilePhone;
-    const finalSellerType   = (override && payload.seller_type)           ? payload.seller_type          : (isPro ? 'professionnel' : 'particulier');
 
     if (!finalContactEmail) {
       return jsonResponse(req, { error: 'Email de contact introuvable — complétez votre profil avant de publier.' }, { status: 400 });
