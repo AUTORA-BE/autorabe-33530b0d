@@ -607,8 +607,8 @@ const SellerProfile = () => {
                                   if (name === "AbortError") return;
                                   // Permission/NotAllowed on iOS → fallback clipboard
                                   if (navigator.clipboard?.writeText) {
-                                    if (navigator.clipboard.writeText(url).then(notifyCopied).catch(() => {
-                                      legacyCopy()) notifyCopied(); else notifyFail();
+                                    navigator.clipboard.writeText(url).then(notifyCopied).catch(() => {
+                                      if (legacyCopy()) notifyCopied(); else notifyFail();
                                     });
                                   } else {
                                     if (legacyCopy()) notifyCopied(); else notifyFail();
@@ -623,8 +623,8 @@ const SellerProfile = () => {
 
                           // 2) Clipboard fallback — try async then legacy (both inside this gesture tick)
                           if (navigator.clipboard?.writeText) {
-                            if (navigator.clipboard.writeText(url).then(notifyCopied).catch(() => {
-                              legacyCopy()) notifyCopied(); else notifyFail();
+                            navigator.clipboard.writeText(url).then(notifyCopied).catch(() => {
+                              if (legacyCopy()) notifyCopied(); else notifyFail();
                             });
                           } else {
                             if (legacyCopy()) notifyCopied(); else notifyFail();
