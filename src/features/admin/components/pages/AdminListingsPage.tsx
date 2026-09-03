@@ -19,6 +19,7 @@ import { Link } from 'react-router-dom';
 import { format, formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { useAdminListings } from '../../hooks/useAdminListings';
+import { BoostAdminDialog } from '../BoostAdminDialog';
 import { useListingHistory } from '../../hooks/useListingHistory';
 import { exportData } from '../../utils/exportData';
 import type { ExportFormat } from '../../types/admin.types';
@@ -47,6 +48,7 @@ export default function AdminListingsPage() {
   const [rejectDialog, setRejectDialog] = useState<{ open: boolean; listingId: string | null }>({ open: false, listingId: null });
   const [rejectReason, setRejectReason] = useState('');
   const [detailListing, setDetailListing] = useState<AdminListing | null>(null);
+  const [boostListing, setBoostListing] = useState<AdminListing | null>(null);
 
   const { data: history = [], isLoading: historyLoading } = useListingHistory(detailListing?.id ?? null);
 
@@ -131,7 +133,7 @@ export default function AdminListingsPage() {
                     <Badge className={`text-[9px] px-1.5 ${STATUS_COLORS[listing.status || 'pending'] || ''}`}>
                       {listing.status}
                     </Badge>
-                    {listing.boost_level && (
+                    {listing.boost_level && listing.boost_level !== 'none' && (
                       listing.boost_expires_at && new Date(listing.boost_expires_at) > new Date() ? (
                         <Badge className="text-[9px] px-1.5 bg-amber-500/15 text-amber-600 border border-amber-500/30 hover:bg-amber-500/20">
                           <Zap className="h-2.5 w-2.5 mr-1" />
@@ -150,6 +152,9 @@ export default function AdminListingsPage() {
                   </p>
                 </div>
                 <div className="flex gap-1 flex-shrink-0" onClick={e => e.stopPropagation()}>
+                  <Button size="icon" variant="ghost" className="h-7 w-7 text-amber-500" onClick={() => setBoostListing(listing)} disabled={isActing} aria-label="Gérer le boost">
+                    <Zap className="h-3.5 w-3.5" />
+                  </Button>
                   {listing.status === 'pending' && (
                     <>
                       <Button size="icon" variant="ghost" className="h-7 w-7 text-emerald-500" onClick={() => approve(listing.id)} disabled={isActing}>
@@ -416,6 +421,8 @@ export default function AdminListingsPage() {
           )}
         </SheetContent>
       </Sheet>
+
+      <BoostAdminDialog listing={boostListing} open={!!boostListing} onOpenChange={(o) => { if (!o) setBoostListing(null); }} />
     </div>
   );
 }

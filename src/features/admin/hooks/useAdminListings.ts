@@ -136,7 +136,34 @@ export function useAdminListings() {
     onError: (e: Error) => toast.error(e.message || 'Approbation en lot impossible'),
   });
 
+  const setBoostMutation = useMutation({
+    mutationFn: async ({ id, level }: { id: string; level: string | null }) => {
+      const HOURS: Record<string, number> = {
+        boost_24h: 24,
+        boost_48h: 48,
+        boost_72h: 72,
+        boost_7d: 168,
+      };
+      const payload = level
+        ? {
+            boost_level: level,
+            boost_expires_at: new Date(Date.now() + (HOURS[level] ?? 24) * 3600_000).toISOString(),
+            boost_warning_sent: false,
+          }
+        : { boost_level: 'none', boost_expires_at: null, boost_warning_sent: false };
+      const { error } = await supabase.from('car_listings').update(payload).eq('id', id);
+      if (error) throw error;
+      await logAction('boost_set', id, { level });
+    },
+    onSuccess: (_d, vars) => {
+      qc.invalidateQueries({ queryKey: ['admin', 'listings'] });
+      toast.success(vars.level ? 'Boost appliqué ✓' : 'Boost retiré');
+    },
+    onError: (e: Error) => toast.error(e.message || 'Modification du boost impossible'),
+  });
+
   return {
+
     ...query,
     approve: approveMutation.mutate,
     reject: rejectMutation.mutate,
@@ -144,12 +171,15 @@ export function useAdminListings() {
     markSold: markSoldMutation.mutate,
     reactivate: reactivateMutation.mutate,
     bulkApprove: bulkApproveMutation.mutate,
+    setBoost: setBoostMutation.mutate,
     isActing:
       approveMutation.isPending ||
       rejectMutation.isPending ||
       deleteMutation.isPending ||
       markSoldMutation.isPending ||
       reactivateMutation.isPending ||
+      setBoostMutation.isPending ||
       bulkApproveMutation.isPending,
+
   };
 }

@@ -27,6 +27,9 @@ import { fr } from "date-fns/locale";
 import { SUBSCRIPTION_TIERS } from "@/features/subscription/constants/tiers";
 import { UserContactCard } from "../UserContactCard";
 import { useAdminListings } from "../../hooks/useAdminListings";
+import { BoostAdminDialog } from "../BoostAdminDialog";
+import { Button } from "@/components/ui/button";
+import type { AdminListing } from "../../types/admin.types";
 
 function planLabel(productId: string | null, status: string): string {
   if (!productId || status !== "active") return "Gratuit";
@@ -73,6 +76,7 @@ export default function AdminPaymentsPage() {
   const [evtSearch, setEvtSearch] = useState("");
   const [boostSearch, setBoostSearch] = useState("");
   const [detailUserId, setDetailUserId] = useState<string | null>(null);
+  const [boostListing, setBoostListing] = useState<AdminListing | null>(null);
   const { data: listings = [], isLoading: boostsLoading } = useAdminListings();
 
   const { data: subs = [], isLoading: subsLoading } = useQuery({
@@ -132,7 +136,7 @@ export default function AdminPaymentsPage() {
 
   const now = Date.now();
   const boosted = (listings || [])
-    .filter((l) => l.boost_level !== null && l.boost_level !== undefined)
+    .filter((l) => l.boost_level && l.boost_level !== "none")
     .sort((a, b) => {
       const ta = a.boost_expires_at ? new Date(a.boost_expires_at).getTime() : 0;
       const tb = b.boost_expires_at ? new Date(b.boost_expires_at).getTime() : 0;
@@ -349,6 +353,9 @@ export default function AdminPaymentsPage() {
                         </Badge>
                       </div>
                       <div className="flex items-center gap-3 text-[10px] text-muted-foreground flex-shrink-0">
+                        <Button size="sm" variant="outline" className="h-7" onClick={() => setBoostListing(l)}>
+                          <Zap className="h-3 w-3 mr-1" />Gérer
+                        </Button>
                         <span>
                           {exp
                             ? format(exp, "dd MMM yyyy HH:mm", { locale: fr })
@@ -370,6 +377,8 @@ export default function AdminPaymentsPage() {
           )}
         </TabsContent>
       </Tabs>
+
+      <BoostAdminDialog listing={boostListing} open={!!boostListing} onOpenChange={(o) => { if (!o) setBoostListing(null); }} />
 
       <UserContactCard
         userId={detailUserId}
