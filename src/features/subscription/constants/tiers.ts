@@ -19,6 +19,10 @@ export interface SubscriptionTier {
   product_id: string;
   price: number;
   maxListings: number | null;
+  /** Annonces créables sur 30 jours glissants (null = illimité) */
+  maxListingsPerMonth: number | null;
+  /** Achetable en self-serve. false = accordé manuellement après devis. */
+  purchasable: boolean;
   features: string[];
   popular?: boolean;
   category: 'particulier' | 'professionnel';
