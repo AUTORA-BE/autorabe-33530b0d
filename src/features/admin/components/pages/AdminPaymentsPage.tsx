@@ -299,6 +299,76 @@ export default function AdminPaymentsPage() {
             </div>
           )}
         </TabsContent>
+
+        {/* BOOSTS */}
+        <TabsContent value="boosts" className="space-y-3 mt-4">
+          <div className="relative">
+            <Search className="h-3.5 w-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Rechercher par marque, modèle ou niveau de boost..."
+              value={boostSearch}
+              onChange={(e) => setBoostSearch(e.target.value)}
+              className="pl-8"
+            />
+          </div>
+
+          {boostsLoading ? (
+            <div className="flex justify-center py-8">
+              <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            </div>
+          ) : filteredBoosts.length === 0 ? (
+            <p className="text-center text-sm text-muted-foreground py-8">
+              Aucun boost
+            </p>
+          ) : (
+            <div className="space-y-1.5">
+              {filteredBoosts.map((l) => {
+                const exp = l.boost_expires_at ? new Date(l.boost_expires_at) : null;
+                const isActive = !!exp && exp.getTime() > now;
+                return (
+                  <Card key={l.id} className="border-border">
+                    <CardContent className="p-3 flex flex-col sm:flex-row sm:items-center gap-2">
+                      <div className="flex items-center gap-2 flex-1 min-w-0">
+                        <Zap
+                          className={`h-3.5 w-3.5 flex-shrink-0 ${isActive ? "text-amber-500" : "text-muted-foreground"}`}
+                        />
+                        <span className="text-sm font-medium truncate">
+                          {l.brand} {l.model} {l.year}
+                        </span>
+                        <Badge
+                          variant="outline"
+                          className="text-[10px] flex-shrink-0 border-amber-500/40 text-amber-600"
+                        >
+                          {l.boost_level}
+                        </Badge>
+                        <Badge
+                          variant={isActive ? "default" : "secondary"}
+                          className="text-[10px] flex-shrink-0"
+                        >
+                          {isActive ? "Actif" : "Expiré"}
+                        </Badge>
+                      </div>
+                      <div className="flex items-center gap-3 text-[10px] text-muted-foreground flex-shrink-0">
+                        <span>
+                          {exp
+                            ? format(exp, "dd MMM yyyy HH:mm", { locale: fr })
+                            : "—"}
+                        </span>
+                        <span>
+                          {exp
+                            ? isActive
+                              ? `dans ${formatDistanceToNow(exp, { locale: fr })}`
+                              : `il y a ${formatDistanceToNow(exp, { locale: fr })}`
+                            : "—"}
+                        </span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
+        </TabsContent>
       </Tabs>
 
       <UserContactCard
