@@ -145,6 +145,66 @@ Deno.serve(async (req) => {
       );
     }
 
+    // 3c. Quotas de palier — source de vérité : public.subscriptions.
+    //     Les admins ne sont pas soumis aux quotas.
+    const { data: isAdmin } = await admin.rpc('has_role', {
+      _user_id: user.id,
+      _role: 'admin',
+    });
+
+    if (!isAdmin) {
+      const FREE = { sim: 3, month: 5 };
+      const LIMITS: Record<string, { sim: number | null; month: number | null }> = {
+        'prod_VBzrk30V0HDldQ': { sim: 5, month: 12 },       // Particulier 25€
+        'prod_UKno1VUDM4yfzP': { sim: 10, month: 30 },      // Pro Garage
+        'prod_UKo0UuUbuB5vdq': { sim: null, month: null },  // Premium
+      };
+
+      const { data: sub } = await admin
+        .from('subscriptions')
+        .select('product_id, current_period_end')
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .maybeSingle();
+
+      const subActive = sub?.product_id &&
+        (!sub.current_period_end || new Date(sub.current_period_end) > new Date());
+      const limits = subActive ? (LIMITS[sub!.product_id!] ?? FREE) : FREE;
+
+      if (limits.sim !== null) {
+        const { count } = await admin
+          .from('car_listings')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', user.id)
+          .in('status', ['pending', 'approved']);
+
+        if ((count ?? 0) >= limits.sim) {
+          return jsonResponse(req, {
+            error: `Vous avez atteint vos ${limits.sim} annonces simultanées.`,
+            code: 'LISTING_LIMIT_SIMULTANEOUS',
+            max: limits.sim,
+          }, { status: 403 });
+        }
+      }
+
+      if (limits.month !== null) {
+        const monthSince = new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString();
+        const { count } = await admin
+          .from('car_listings')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', user.id)
+          .gte('created_at', monthSince);
+
+        if ((count ?? 0) >= limits.month) {
+          return jsonResponse(req, {
+            error: `Vous avez atteint ${limits.month} annonces ce mois-ci.`,
+            code: 'LISTING_LIMIT_MONTHLY',
+            max: limits.month,
+          }, { status: 403 });
+        }
+      }
+    }
+
     // 4. Anti-doublon
     const kmMin = Math.max(0, payload.mileage - 500);
     const kmMax = payload.mileage + 500;
