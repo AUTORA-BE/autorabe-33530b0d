@@ -14,9 +14,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
 import { SidebarTrigger } from '@/components/ui/sidebar';
-import { Search, Check, X, Trash2, Download, Loader2, CheckCheck, History, Clock, AlertTriangle, Pencil, BadgeCheck, RotateCcw } from 'lucide-react';
+import { Search, Check, X, Trash2, Download, Loader2, CheckCheck, History, Clock, AlertTriangle, Pencil, BadgeCheck, RotateCcw, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { format } from 'date-fns';
+import { format, formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { useAdminListings } from '../../hooks/useAdminListings';
 import { useListingHistory } from '../../hooks/useListingHistory';
