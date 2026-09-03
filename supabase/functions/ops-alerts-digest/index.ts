@@ -1,9 +1,11 @@
 /**
  * Cron horaire : envoie un unique email récapitulatif des incidents
  * `ops_alerts` non encore notifiés, puis les marque comme notifiés.
- * Réutilise l'infrastructure email existante (send-transactional-email).
+ * Envoi via l'API email managée de Lovable.
  */
 import { createClient } from 'npm:@supabase/supabase-js@2'
+import { sendTemplateEmailLogged } from '../_shared/sendTemplateEmailLogged.ts'
+
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
