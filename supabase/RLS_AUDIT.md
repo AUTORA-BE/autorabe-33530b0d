@@ -111,7 +111,7 @@ Identique. **Public en lecture justifié**.
 Identique à `email_send_log`. `service_role` only.
 
 ### 13. `email_unsubscribe_tokens` — tokens unsubscribe
-Identique. `service_role` only (validation côté edge function `handle-email-unsubscribe`).
+Identique. `service_role` only. Le désabonnement est désormais géré par l'API email managée de Lovable ; les événements sont reçus par l'edge function `handle-email-events`.
 
 ### 14. `favorites` — favoris véhicules
 | Op | Qui | Justification |
@@ -183,7 +183,7 @@ Identique. `service_role` only (validation côté edge function `handle-email-un
 | DELETE | personne | Conservation historique paiements |
 
 ### 24. `suppressed_emails` — bounce/complaint list (RGPD)
-`service_role` only — alimenté par webhook Resend `handle-email-suppression`.
+`service_role` only — alimenté par l'edge function `handle-email-events` (bounce / complaint / unsubscribe de l'API email managée de Lovable).
 
 ### 25. `user_alerts` — alertes véhicule personnalisées
 | Op | Qui | Justification |
