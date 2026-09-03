@@ -19,6 +19,7 @@ import { Link } from 'react-router-dom';
 import { format, formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { useAdminListings } from '../../hooks/useAdminListings';
+import { BoostAdminDialog } from '../BoostAdminDialog';
 import { useListingHistory } from '../../hooks/useListingHistory';
 import { exportData } from '../../utils/exportData';
 import type { ExportFormat } from '../../types/admin.types';
@@ -420,6 +421,8 @@ export default function AdminListingsPage() {
           )}
         </SheetContent>
       </Sheet>
+
+      <BoostAdminDialog listing={boostListing} open={!!boostListing} onOpenChange={(o) => { if (!o) setBoostListing(null); }} />
     </div>
   );
 }
