@@ -50,6 +50,8 @@ export interface AdminListing {
   description: string | null;
   euro_norm: string | null;
   boost_level: string | null;
+  boost_expires_at: string | null;
+  boost_rank: number | null;
   body_type?: string | null;
   color?: string | null;
   power?: number | null;
