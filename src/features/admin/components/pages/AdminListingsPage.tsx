@@ -47,6 +47,7 @@ export default function AdminListingsPage() {
   const [rejectDialog, setRejectDialog] = useState<{ open: boolean; listingId: string | null }>({ open: false, listingId: null });
   const [rejectReason, setRejectReason] = useState('');
   const [detailListing, setDetailListing] = useState<AdminListing | null>(null);
+  const [boostListing, setBoostListing] = useState<AdminListing | null>(null);
 
   const { data: history = [], isLoading: historyLoading } = useListingHistory(detailListing?.id ?? null);
 
