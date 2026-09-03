@@ -191,20 +191,16 @@ export default function AdminDealersQueuePage() {
       // For reliability, fetch from auth via RPC is unavailable here. We pass user_id and the
       // edge fn already requires recipientEmail. Easiest: read profile.display_name (often the email
       // in our project). To stay safe, we attempt a lookup on car_listings first.
-      const email = await resolveUserEmail(row.user_id);
-      if (email) {
-        supabase.functions.invoke('send-transactional-email', {
-          body: {
-            templateName: 'dealer-approved',
-            recipientEmail: email,
-            idempotencyKey: `dealer-approved-${row.id}`,
-            templateData: {
-              name: row.display_name ?? undefined,
-              garageName: row.garage_name_snapshot ?? undefined,
-            },
-          },
-        }).catch(() => {});
-      }
+      supabase.functions.invoke('notify-dealer-decision', {
+        body: {
+          userId: row.user_id,
+          queueId: row.id,
+          decision: 'approved',
+          name: row.display_name ?? undefined,
+          garageName: row.garage_name_snapshot ?? undefined,
+        },
+      }).catch(() => {});
+
 
       toast({ title: 'Compte validé', description: 'L’utilisateur sera notifié par email.' });
       await load();
