@@ -132,7 +132,7 @@ export default function AdminPaymentsPage() {
 
   const now = Date.now();
   const boosted = (listings || [])
-    .filter((l) => l.boost_level !== null && l.boost_level !== undefined)
+    .filter((l) => l.boost_level && l.boost_level !== "none")
     .sort((a, b) => {
       const ta = a.boost_expires_at ? new Date(a.boost_expires_at).getTime() : 0;
       const tb = b.boost_expires_at ? new Date(b.boost_expires_at).getTime() : 0;
