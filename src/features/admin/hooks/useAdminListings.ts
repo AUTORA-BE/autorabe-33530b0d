@@ -171,12 +171,15 @@ export function useAdminListings() {
     markSold: markSoldMutation.mutate,
     reactivate: reactivateMutation.mutate,
     bulkApprove: bulkApproveMutation.mutate,
+    setBoost: setBoostMutation.mutate,
     isActing:
       approveMutation.isPending ||
       rejectMutation.isPending ||
       deleteMutation.isPending ||
       markSoldMutation.isPending ||
       reactivateMutation.isPending ||
+      setBoostMutation.isPending ||
       bulkApproveMutation.isPending,
+
   };
 }
