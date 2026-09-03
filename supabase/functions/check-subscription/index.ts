@@ -64,6 +64,16 @@ serve(async (req) => {
 
     if (customers.data.length === 0) {
       logStep("No Stripe customer found");
+      const granted = await manualGrant(supabaseClient, user.id);
+      if (granted) {
+        logStep("Manual grant found", { product_id: granted.product_id });
+        return new Response(JSON.stringify({
+          subscribed: true,
+          product_id: granted.product_id,
+          subscription_end: granted.current_period_end,
+          source: "manual",
+        }), { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 });
+      }
       return new Response(JSON.stringify({ subscribed: false }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
