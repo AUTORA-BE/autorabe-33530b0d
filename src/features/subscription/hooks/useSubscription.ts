@@ -97,6 +97,13 @@ export function useSubscription() {
   }, [checkSubscription]);
 
   const createCheckout = useCallback(async (priceId: string) => {
+    const allowed = Object.values(SUBSCRIPTION_TIERS)
+      .filter((t) => t.purchasable)
+      .map((t) => t.price_id);
+    if (!allowed.includes(priceId)) {
+      throw new Error("Cette offre n'est pas disponible à l'achat en ligne.");
+    }
+
     const { data, error } = await supabase.functions.invoke('create-checkout', {
       body: { priceId },
     });

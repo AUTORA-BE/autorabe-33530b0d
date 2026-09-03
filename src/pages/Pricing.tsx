@@ -46,21 +46,24 @@ const PARTICULIER_CARDS: TierCard[] = [
     icon: <User className="h-5 w-5" />,
     cta: 'free',
   },
-  {
-    key: 'particulier',
-    name: 'Particulier',
-    subtitle: 'Vendeurs réguliers',
-    price: '25€',
-    priceSuffix: '/mois',
-    features: SUBSCRIPTION_TIERS.particulier.features,
-    accent: 'border-primary ring-2 ring-primary/20',
-    icon: <Zap className="h-5 w-5" />,
-    badge: 'Populaire',
-    badgeColor: 'bg-primary text-primary-foreground',
-    cta: 'subscribe',
-    priceId: SUBSCRIPTION_TIERS.particulier.price_id,
-    slug: 'particulier',
-  },
+  // Dérivé du modèle : disparaît automatiquement si le palier devient non achetable.
+  ...(SUBSCRIPTION_TIERS.particulier.purchasable
+    ? [{
+        key: 'particulier',
+        name: SUBSCRIPTION_TIERS.particulier.name,
+        subtitle: 'Vendeurs réguliers',
+        price: `${SUBSCRIPTION_TIERS.particulier.price}€`,
+        priceSuffix: '/mois',
+        features: SUBSCRIPTION_TIERS.particulier.features,
+        accent: 'border-primary ring-2 ring-primary/20',
+        icon: <Zap className="h-5 w-5" />,
+        badge: 'Populaire',
+        badgeColor: 'bg-primary text-primary-foreground',
+        cta: 'subscribe' as const,
+        priceId: SUBSCRIPTION_TIERS.particulier.price_id,
+        slug: SUBSCRIPTION_TIERS.particulier.slug,
+      }]
+    : []),
 ];
 
 /** Everything a garage / pro gets — bundled, priced on quote. */

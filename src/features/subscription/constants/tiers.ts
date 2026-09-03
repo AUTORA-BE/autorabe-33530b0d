@@ -2,14 +2,13 @@
  * Subscription tier definitions mapped to Stripe product/price IDs
  * @module features/subscription/constants
  *
- * Tier structure:
- * - Particulier Gratuit: 0€ (3 annonces/mois, puis 10€/annonce)
- * - Particulier Boost: 20€/mo (10 annonces/mois, puis 10€/annonce)
- * - Pro Garage: 50€/mo (10 annonces/mois, badge Vérifié)
- * - Premium: 250€/mo (illimité, badge Premium, support 24/7)
- * - BOSS: Sur mesure (concessions multiples)
+ * Offre réelle :
+ * - Particulier Gratuit : 0€ — 3 annonces simultanées, 5 par mois
+ * - Particulier : 25€/mois — 5 annonces simultanées, 12 par mois, dashboard
+ * - Pro Garage / Premium : sur devis, activation manuelle par un admin
  *
- * Pro, Premium & BOSS require TVA number + appointment verification.
+ * Seul le palier `particulier` est achetable en self-serve (`purchasable: true`).
+ * Pro & Premium exigent un numéro de TVA et une vérification (rendez-vous).
  */
 
 export interface SubscriptionTier {
