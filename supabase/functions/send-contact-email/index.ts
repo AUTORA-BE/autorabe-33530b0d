@@ -5,6 +5,8 @@ import { buildCorsHeaders, handlePreflight } from "../_shared/cors.ts";
 import { sendTemplateEmailLogged } from "../_shared/sendTemplateEmailLogged.ts";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
+/** Boîte de réception des demandes de contact / devis pro. Repli sur la valeur historique. */
+const CONTACT_INBOX = Deno.env.get("CONTACT_INBOX") ?? "autoracontact@gmail.com";
 
 
 
@@ -165,7 +167,7 @@ const handler = async (req: Request): Promise<Response> => {
     `;
 
     await sendEmail(
-      ["autoracontact@gmail.com"],
+      [CONTACT_INBOX],
       `[Contact AutoRA] ${safeSubject}`,
       notificationHtml,
       email

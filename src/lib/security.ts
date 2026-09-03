@@ -47,6 +47,7 @@ export function sanitizeInput(input: string, maxLength = 1000): string {
     input
       .trim()
       // Remove null bytes and control characters (except newlines/tabs)
+      // eslint-disable-next-line no-control-regex -- caractères de contrôle ciblés volontairement (assainissement d'entrée)
       .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
       // Normalize whitespace
       .replace(/\s+/g, ' ')
@@ -64,6 +65,7 @@ export function sanitizeMultilineInput(input: string, maxLength = 5000): string 
     input
       .trim()
       // Remove null bytes and control characters (keep newlines/tabs)
+      // eslint-disable-next-line no-control-regex -- caractères de contrôle ciblés volontairement (assainissement d'entrée)
       .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '')
       // Normalize multiple newlines to max 2
       .replace(/\n{3,}/g, '\n\n')

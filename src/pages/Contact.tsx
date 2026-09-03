@@ -42,7 +42,6 @@ const RATE_LIMIT_MS = 60_000;
 const PRO_QUOTE_SUBJECT = "Demande de devis — offre professionnelle";
 
 const Contact = () => {
-  const {  } = useLanguage();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [lastSubmitTime, setLastSubmitTime] = useState(0);

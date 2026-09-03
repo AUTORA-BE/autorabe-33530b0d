@@ -45,7 +45,6 @@ const VehicleCard = memo(function VehicleCard({
   favoriteCount,
 }: VehicleCardProps) {
   const { addToCompare, removeFromCompare: removeCompare, isInCompare } = useCompareContext();
-  const {  } = useLanguage();
   const lezResult = calculerStatutLEZ(vehicle.fuelType, vehicle.euroNorm);
   const lezConfig = lezBadgeConfig[lezResult.global.statut];
 
@@ -63,7 +62,7 @@ const VehicleCard = memo(function VehicleCard({
 
   const handleCompareClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    isInCompare(vehicle.id) ? removeCompare(vehicle.id) : addToCompare(vehicle);
+    if (isInCompare(vehicle.id)) removeCompare(vehicle.id); else addToCompare(vehicle);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

@@ -256,6 +256,33 @@ serve(async (req) => {
           const productId = subscription.items.data[0]?.price?.product as string;
           const subscriptionEnd = periodEndISO(subscription);
 
+          // Un accès accordé manuellement par un admin (pas de stripe_subscription_id)
+          // va être écrasé par l'abonnement payant : on alerte sans bloquer.
+          const { data: existingSub } = await supabaseAdmin
+            .from("subscriptions")
+            .select("product_id, stripe_subscription_id")
+            .eq("user_id", userId)
+            .maybeSingle();
+
+          if (
+            existingSub &&
+            existingSub.stripe_subscription_id === null &&
+            existingSub.product_id !== productId
+          ) {
+            await logOpsAlert(
+              "stripe-webhook",
+              "Accès manuel écrasé par un abonnement Stripe payant",
+              {
+                severity: "warn",
+                context: {
+                  event_id: event.id,
+                  previous_product_id: existingSub.product_id ?? "null",
+                  new_product_id: productId,
+                },
+              },
+            );
+          }
+
           const { error } = await supabaseAdmin
             .from("subscriptions")
             .upsert(

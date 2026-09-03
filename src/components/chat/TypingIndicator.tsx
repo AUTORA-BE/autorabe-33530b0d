@@ -1,7 +1,6 @@
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export function TypingIndicator() {
-  const {  } = useLanguage();
   
   return (
     <div className="flex justify-start">

@@ -157,7 +157,6 @@ const RATE_LIMIT_MS = 60_000;
 
 // ─── Page Component ───────────────────────────────────────────
 const Services = () => {
-  const {  } = useLanguage();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [lastSubmitTime, setLastSubmitTime] = useState(0);
