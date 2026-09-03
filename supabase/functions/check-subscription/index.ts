@@ -5,6 +5,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 
 
 import { buildCorsHeaders, handlePreflight } from "../_shared/cors.ts";
+import { periodEndISO } from "../_shared/stripePeriod.ts";
 
 const logStep = (step: string, details?: unknown) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
@@ -63,7 +64,7 @@ serve(async (req) => {
 
     if (hasActiveSub) {
       const subscription = subscriptions.data[0];
-      subscriptionEnd = new Date(subscription.current_period_end * 1000).toISOString();
+      subscriptionEnd = periodEndISO(subscription);
       productId = subscription.items.data[0].price.product as string;
       logStep("Active subscription found", { productId, subscriptionEnd });
     } else {
