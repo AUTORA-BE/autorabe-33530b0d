@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { buildCorsHeaders, handlePreflight } from "../_shared/cors.ts";
+import { sendTemplateEmailLogged } from "../_shared/sendTemplateEmailLogged.ts";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 
@@ -214,6 +215,12 @@ const handler = async (req: Request): Promise<Response> => {
     );
 
     console.log("Confirmation email sent");
+
+    // Confirmation applicative (email managé)
+    await sendTemplateEmailLogged("contact-confirmation", email, {
+      idempotencyKey: `contact-confirm-${crypto.randomUUID()}`,
+      templateData: { name, subject },
+    });
 
     // Persist message to DB for admin review (best-effort, never blocks the response)
     try {
