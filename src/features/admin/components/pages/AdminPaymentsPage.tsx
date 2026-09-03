@@ -20,11 +20,13 @@ import {
   XCircle,
   Clock,
   Search,
+  Zap,
 } from "lucide-react";
-import { format } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { SUBSCRIPTION_TIERS } from "@/features/subscription/constants/tiers";
 import { UserContactCard } from "../UserContactCard";
+import { useAdminListings } from "../../hooks/useAdminListings";
 
 function planLabel(productId: string | null, status: string): string {
   if (!productId || status !== "active") return "Gratuit";
