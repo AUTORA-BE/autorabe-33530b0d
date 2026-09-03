@@ -20,11 +20,13 @@ import {
   XCircle,
   Clock,
   Search,
+  Zap,
 } from "lucide-react";
-import { format } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { SUBSCRIPTION_TIERS } from "@/features/subscription/constants/tiers";
 import { UserContactCard } from "../UserContactCard";
+import { useAdminListings } from "../../hooks/useAdminListings";
 
 function planLabel(productId: string | null, status: string): string {
   if (!productId || status !== "active") return "Gratuit";
@@ -69,7 +71,9 @@ function StatusIcon({ status }: { status: string }) {
 export default function AdminPaymentsPage() {
   const [subSearch, setSubSearch] = useState("");
   const [evtSearch, setEvtSearch] = useState("");
+  const [boostSearch, setBoostSearch] = useState("");
   const [detailUserId, setDetailUserId] = useState<string | null>(null);
+  const { data: listings = [], isLoading: boostsLoading } = useAdminListings();
 
   const { data: subs = [], isLoading: subsLoading } = useQuery({
     queryKey: ["admin", "subscriptions"],
@@ -126,6 +130,31 @@ export default function AdminPaymentsPage() {
     (s) => s.status === "active" || s.status === "trialing"
   ).length;
 
+  const now = Date.now();
+  const boosted = (listings || [])
+    .filter((l) => l.boost_level !== null && l.boost_level !== undefined)
+    .sort((a, b) => {
+      const ta = a.boost_expires_at ? new Date(a.boost_expires_at).getTime() : 0;
+      const tb = b.boost_expires_at ? new Date(b.boost_expires_at).getTime() : 0;
+      const aActive = ta > now ? 1 : 0;
+      const bActive = tb > now ? 1 : 0;
+      if (aActive !== bActive) return bActive - aActive;
+      return tb - ta;
+    });
+
+  const filteredBoosts = boosted.filter((l) => {
+    if (!boostSearch) return true;
+    const q = boostSearch.toLowerCase();
+    return (
+      `${l.brand} ${l.model} ${l.year}`.toLowerCase().includes(q) ||
+      (l.boost_level || "").toLowerCase().includes(q)
+    );
+  });
+
+  const activeBoosts = boosted.filter(
+    (l) => l.boost_expires_at && new Date(l.boost_expires_at).getTime() > now
+  ).length;
+
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 flex-wrap">
@@ -136,6 +165,9 @@ export default function AdminPaymentsPage() {
           {activeCount} actifs
         </Badge>
         <Badge variant="outline">{events.length} events</Badge>
+        <Badge variant="outline" className="border-amber-500/40 text-amber-600">
+          {activeBoosts} boosts actifs
+        </Badge>
       </div>
 
       <Tabs defaultValue="subscriptions" className="w-full">
@@ -147,6 +179,10 @@ export default function AdminPaymentsPage() {
           <TabsTrigger value="events">
             <Webhook className="h-3.5 w-3.5 mr-1.5" />
             Webhook events ({events.length})
+          </TabsTrigger>
+          <TabsTrigger value="boosts">
+            <Zap className="h-3.5 w-3.5 mr-1.5" />
+            Boosts ({boosted.length})
           </TabsTrigger>
         </TabsList>
 
@@ -260,6 +296,76 @@ export default function AdminPaymentsPage() {
                   </CardContent>
                 </Card>
               ))}
+            </div>
+          )}
+        </TabsContent>
+
+        {/* BOOSTS */}
+        <TabsContent value="boosts" className="space-y-3 mt-4">
+          <div className="relative">
+            <Search className="h-3.5 w-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Rechercher par marque, modèle ou niveau de boost..."
+              value={boostSearch}
+              onChange={(e) => setBoostSearch(e.target.value)}
+              className="pl-8"
+            />
+          </div>
+
+          {boostsLoading ? (
+            <div className="flex justify-center py-8">
+              <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            </div>
+          ) : filteredBoosts.length === 0 ? (
+            <p className="text-center text-sm text-muted-foreground py-8">
+              Aucun boost
+            </p>
+          ) : (
+            <div className="space-y-1.5">
+              {filteredBoosts.map((l) => {
+                const exp = l.boost_expires_at ? new Date(l.boost_expires_at) : null;
+                const isActive = !!exp && exp.getTime() > now;
+                return (
+                  <Card key={l.id} className="border-border">
+                    <CardContent className="p-3 flex flex-col sm:flex-row sm:items-center gap-2">
+                      <div className="flex items-center gap-2 flex-1 min-w-0">
+                        <Zap
+                          className={`h-3.5 w-3.5 flex-shrink-0 ${isActive ? "text-amber-500" : "text-muted-foreground"}`}
+                        />
+                        <span className="text-sm font-medium truncate">
+                          {l.brand} {l.model} {l.year}
+                        </span>
+                        <Badge
+                          variant="outline"
+                          className="text-[10px] flex-shrink-0 border-amber-500/40 text-amber-600"
+                        >
+                          {l.boost_level}
+                        </Badge>
+                        <Badge
+                          variant={isActive ? "default" : "secondary"}
+                          className="text-[10px] flex-shrink-0"
+                        >
+                          {isActive ? "Actif" : "Expiré"}
+                        </Badge>
+                      </div>
+                      <div className="flex items-center gap-3 text-[10px] text-muted-foreground flex-shrink-0">
+                        <span>
+                          {exp
+                            ? format(exp, "dd MMM yyyy HH:mm", { locale: fr })
+                            : "—"}
+                        </span>
+                        <span>
+                          {exp
+                            ? isActive
+                              ? `dans ${formatDistanceToNow(exp, { locale: fr })}`
+                              : `il y a ${formatDistanceToNow(exp, { locale: fr })}`
+                            : "—"}
+                        </span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           )}
         </TabsContent>

@@ -1773,7 +1773,9 @@ export type Database = {
       admin_list_listings_with_contacts: {
         Args: { _limit?: number }
         Returns: {
+          boost_expires_at: string
           boost_level: string
+          boost_rank: number
           brand: string
           contact_email: string
           contact_name: string
