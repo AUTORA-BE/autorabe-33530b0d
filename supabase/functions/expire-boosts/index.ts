@@ -7,6 +7,13 @@ import { buildCorsHeaders, handlePreflight } from "../_shared/cors.ts";
 
 const APP_URL = "https://autora.be";
 
+const BOOST_LABELS: Record<string, string> = {
+  boost_24h: "24 heures",
+  boost_48h: "48 heures",
+  boost_72h: "72 heures",
+  boost_7d: "7 jours",
+};
+
 function buildEmailShell(badgeColor: string, badgeText: string, bodyContent: string): string {
   return `
     <!DOCTYPE html>
@@ -87,7 +94,7 @@ Deno.serve(async (req) => {
       // Send pre-expiration emails
       const warnPromises = warningListings!.map(async (listing) => {
         const vehicleName = `${listing.brand} ${listing.model} (${listing.year})`;
-        const boostLabel = listing.boost_level === "ultra" ? "Ultra" : "Premium";
+        const boostLabel = BOOST_LABELS[listing.boost_level] ?? listing.boost_level;
         const expiresAt = new Date(listing.boost_expires_at);
         const hoursLeft = Math.max(1, Math.round((expiresAt.getTime() - now.getTime()) / (1000 * 60 * 60)));
 
@@ -157,7 +164,7 @@ Deno.serve(async (req) => {
       // Send expiry emails
       const expiryPromises = expiredListings!.map(async (listing) => {
         const vehicleName = `${listing.brand} ${listing.model} (${listing.year})`;
-        const boostLabel = listing.boost_level === "ultra" ? "Ultra" : "Premium";
+        const boostLabel = BOOST_LABELS[listing.boost_level] ?? listing.boost_level;
 
         try {
           // Skip suppressed recipients (GDPR opt-out compliance)
