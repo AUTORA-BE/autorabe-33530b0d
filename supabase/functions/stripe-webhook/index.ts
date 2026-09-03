@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { logOpsAlert } from "../_shared/opsAlert.ts";
+import { periodEndISO } from "../_shared/stripePeriod.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -253,9 +254,7 @@ serve(async (req) => {
               : session.subscription.id;
           const subscription = await stripe.subscriptions.retrieve(subId);
           const productId = subscription.items.data[0]?.price?.product as string;
-          const subscriptionEnd = new Date(
-            subscription.current_period_end * 1000,
-          ).toISOString();
+          const subscriptionEnd = periodEndISO(subscription);
 
           const { error } = await supabaseAdmin
             .from("subscriptions")
@@ -309,9 +308,7 @@ serve(async (req) => {
           event.type,
         );
         const productId = subscription.items.data[0]?.price?.product as string;
-        const subscriptionEnd = new Date(
-          subscription.current_period_end * 1000,
-        ).toISOString();
+        const subscriptionEnd = periodEndISO(subscription);
 
         const { error: syncError } = await supabaseAdmin.from("subscriptions").upsert(
           {
