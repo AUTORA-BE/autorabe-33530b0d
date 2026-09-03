@@ -10,6 +10,7 @@ import { useAuth } from '@/features/auth/hooks/useAuth';
 import { IS_BETA_MODE } from '@/config/betaConfig';
 import {
   FREE_PARTICULIER_LIMIT,
+  FREE_LISTINGS_PER_MONTH,
   FREE_MESSAGE_LIMIT,
   FREE_MAX_PHOTOS,
   SUBSCRIPTION_TIERS,
@@ -19,6 +20,8 @@ import {
 export interface FeatureAccess {
   /** Max simultaneous listings (null = unlimited) */
   maxListings: number | null;
+  /** Max listings creatable per rolling 30 days (null = unlimited) */
+  maxListingsPerMonth: number | null;
   /** Daily message limit (null = unlimited) */
   messageLimitPerDay: number | null;
   /** Max photos per listing */
@@ -55,6 +58,7 @@ export function useFeatureAccess(): FeatureAccess {
       const proTier = SUBSCRIPTION_TIERS.pro;
       return {
         maxListings: proTier.maxListings,
+        maxListingsPerMonth: proTier.maxListingsPerMonth,
         messageLimitPerDay: proTier.messageLimitPerDay,
         maxPhotos: proTier.maxPhotos,
         hasDashboard: proTier.hasDashboard,
@@ -73,6 +77,7 @@ export function useFeatureAccess(): FeatureAccess {
       const premiumTier = SUBSCRIPTION_TIERS.premium;
       return {
         maxListings: premiumTier.maxListings,
+        maxListingsPerMonth: premiumTier.maxListingsPerMonth,
         messageLimitPerDay: premiumTier.messageLimitPerDay,
         maxPhotos: premiumTier.maxPhotos,
         hasDashboard: premiumTier.hasDashboard,
@@ -89,6 +94,7 @@ export function useFeatureAccess(): FeatureAccess {
     if (isLoading) {
       return {
         maxListings: FREE_PARTICULIER_LIMIT,
+        maxListingsPerMonth: FREE_LISTINGS_PER_MONTH,
         messageLimitPerDay: FREE_MESSAGE_LIMIT,
         maxPhotos: FREE_MAX_PHOTOS,
         hasDashboard: false,
@@ -105,6 +111,7 @@ export function useFeatureAccess(): FeatureAccess {
     if (!subscribed || !tier) {
       return {
         maxListings: FREE_PARTICULIER_LIMIT,
+        maxListingsPerMonth: FREE_LISTINGS_PER_MONTH,
         messageLimitPerDay: FREE_MESSAGE_LIMIT,
         maxPhotos: FREE_MAX_PHOTOS,
         hasDashboard: false,
@@ -120,6 +127,7 @@ export function useFeatureAccess(): FeatureAccess {
 
     return {
       maxListings: tier.maxListings,
+      maxListingsPerMonth: tier.maxListingsPerMonth,
       messageLimitPerDay: tier.messageLimitPerDay,
       maxPhotos: tier.maxPhotos,
       hasDashboard: tier.hasDashboard,
