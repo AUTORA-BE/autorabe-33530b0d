@@ -131,7 +131,7 @@ export default function AdminListingsPage() {
                     <Badge className={`text-[9px] px-1.5 ${STATUS_COLORS[listing.status || 'pending'] || ''}`}>
                       {listing.status}
                     </Badge>
-                    {listing.boost_level && (
+                    {listing.boost_level && listing.boost_level !== 'none' && (
                       listing.boost_expires_at && new Date(listing.boost_expires_at) > new Date() ? (
                         <Badge className="text-[9px] px-1.5 bg-amber-500/15 text-amber-600 border border-amber-500/30 hover:bg-amber-500/20">
                           <Zap className="h-2.5 w-2.5 mr-1" />
