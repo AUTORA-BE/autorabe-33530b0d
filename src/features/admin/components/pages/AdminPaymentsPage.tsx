@@ -128,6 +128,31 @@ export default function AdminPaymentsPage() {
     (s) => s.status === "active" || s.status === "trialing"
   ).length;
 
+  const now = Date.now();
+  const boosted = (listings || [])
+    .filter((l) => l.boost_level !== null && l.boost_level !== undefined)
+    .sort((a, b) => {
+      const ta = a.boost_expires_at ? new Date(a.boost_expires_at).getTime() : 0;
+      const tb = b.boost_expires_at ? new Date(b.boost_expires_at).getTime() : 0;
+      const aActive = ta > now ? 1 : 0;
+      const bActive = tb > now ? 1 : 0;
+      if (aActive !== bActive) return bActive - aActive;
+      return tb - ta;
+    });
+
+  const filteredBoosts = boosted.filter((l) => {
+    if (!boostSearch) return true;
+    const q = boostSearch.toLowerCase();
+    return (
+      `${l.brand} ${l.model} ${l.year}`.toLowerCase().includes(q) ||
+      (l.boost_level || "").toLowerCase().includes(q)
+    );
+  });
+
+  const activeBoosts = boosted.filter(
+    (l) => l.boost_expires_at && new Date(l.boost_expires_at).getTime() > now
+  ).length;
+
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 flex-wrap">
@@ -138,6 +163,9 @@ export default function AdminPaymentsPage() {
           {activeCount} actifs
         </Badge>
         <Badge variant="outline">{events.length} events</Badge>
+        <Badge variant="outline" className="border-amber-500/40 text-amber-600">
+          {activeBoosts} boosts actifs
+        </Badge>
       </div>
 
       <Tabs defaultValue="subscriptions" className="w-full">
@@ -149,6 +177,10 @@ export default function AdminPaymentsPage() {
           <TabsTrigger value="events">
             <Webhook className="h-3.5 w-3.5 mr-1.5" />
             Webhook events ({events.length})
+          </TabsTrigger>
+          <TabsTrigger value="boosts">
+            <Zap className="h-3.5 w-3.5 mr-1.5" />
+            Boosts ({boosted.length})
           </TabsTrigger>
         </TabsList>
 
