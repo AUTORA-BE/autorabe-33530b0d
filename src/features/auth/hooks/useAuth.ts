@@ -114,35 +114,12 @@ export function useAuth() {
       // (SECURITY DEFINER) using raw_user_meta_data, since the session isn't
       // available immediately after signup when email confirmation is required.
       if (signUpData.user) {
-        if (isPro) {
-          // Notify admin (fire-and-forget)
-          supabase.functions.invoke('send-transactional-email', {
-            body: {
-              templateName: 'new-dealer-signup',
-              recipientEmail: 'autoracontact@gmail.com',
-              idempotencyKey: `dealer-signup-${signUpData.user.id}`,
-              templateData: {
-                fullName: credentials.fullName,
-                email: credentials.email,
-                phone: credentials.phone,
-                garageName: credentials.garageName,
-                bceNumber: credentials.bceNumber,
-                postalCode: credentials.postalCode,
-              },
-            },
-          }).catch(() => {});
-        }
-
-        // Welcome email for every new user (fire-and-forget)
-        supabase.functions.invoke('send-transactional-email', {
-          body: {
-            templateName: 'welcome',
-            recipientEmail: credentials.email,
-            idempotencyKey: `welcome-${signUpData.user.id}`,
-            templateData: { name: credentials.fullName },
-          },
+        // Emails d'inscription (bienvenue + alerte pro) envoyés côté serveur.
+        supabase.functions.invoke('notify-signup', {
+          body: { userId: signUpData.user.id },
         }).catch(() => {});
       }
+
 
       return { success: true };
     } catch (error) {

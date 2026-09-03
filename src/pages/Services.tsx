@@ -188,19 +188,8 @@ const Services = () => {
         },
       });
 
-      // Confirmation email to the user
-      const quoteId = crypto.randomUUID();
-      await supabase.functions.invoke("send-transactional-email", {
-        body: {
-          templateName: "contact-confirmation",
-          recipientEmail: data.email,
-          idempotencyKey: `quote-confirm-${quoteId}`,
-          templateData: {
-            name: data.name,
-            subject: `Demande de devis — ${selectedService?.title}`,
-          },
-        },
-      });
+      // La confirmation au demandeur est envoyée côté serveur par la fonction ci-dessus.
+
 
       setIsSuccess(true);
       form.reset();

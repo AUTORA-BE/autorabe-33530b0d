@@ -3,6 +3,8 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 
 
 import { buildCorsHeaders, handlePreflight } from "../_shared/cors.ts";
+import { sendTemplateEmailLogged } from "../_shared/sendTemplateEmailLogged.ts";
+
 
 interface NotifySellerRequest {
   conversationId: string;
@@ -134,14 +136,11 @@ Deno.serve(async (req) => {
     // Cap message preview length
     const messagePreview = String(lastMsg.content).slice(0, 300);
 
-    await supabaseAdmin.functions.invoke("send-transactional-email", {
-      body: {
-        templateName: "seller-notification",
-        recipientEmail: recipientData.user.email,
-        idempotencyKey: `seller-notify-${conversationId}-${Date.now()}`,
-        templateData: { vehicleName, messagePreview, senderName },
-      },
+    await sendTemplateEmailLogged("seller-notification", recipientData.user.email, {
+      idempotencyKey: `seller-notify-${conversationId}-${Date.now()}`,
+      templateData: { vehicleName, messagePreview, senderName },
     });
+
 
     return new Response(JSON.stringify({ success: true }), {
       status: 200,

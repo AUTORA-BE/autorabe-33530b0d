@@ -1,9 +1,11 @@
 /**
  * Cron horaire : envoie un unique email récapitulatif des incidents
  * `ops_alerts` non encore notifiés, puis les marque comme notifiés.
- * Réutilise l'infrastructure email existante (send-transactional-email).
+ * Envoi via l'API email managée de Lovable.
  */
 import { createClient } from 'npm:@supabase/supabase-js@2'
+import { sendTemplateEmailLogged } from '../_shared/sendTemplateEmailLogged.ts'
+
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -48,26 +50,26 @@ Deno.serve(async (req) => {
 
   const critical = alerts.filter((a) => a.severity === 'critical').length
 
-  const { error: sendError } = await admin.functions.invoke('send-transactional-email', {
-    body: {
-      templateName: 'ops-alert-digest',
-      templateData: {
-        total: alerts.length,
-        critical,
-        alerts: alerts.slice(0, 20).map((a) => ({
-          source: a.source,
-          severity: a.severity,
-          message: a.message,
-          created_at: new Date(a.created_at as string).toISOString().replace('T', ' ').slice(0, 16),
-        })),
-      },
+  const digestKey = `ops-digest-${new Date().toISOString().slice(0, 13)}`
+  const result = await sendTemplateEmailLogged('ops-alert-digest', 'autoracontact@gmail.com', {
+    idempotencyKey: digestKey,
+    templateData: {
+      total: alerts.length,
+      critical,
+      alerts: alerts.slice(0, 20).map((a) => ({
+        source: a.source,
+        severity: a.severity,
+        message: a.message,
+        created_at: new Date(a.created_at as string).toISOString().replace('T', ' ').slice(0, 16),
+      })),
     },
   })
 
-  if (sendError) {
-    console.error('ops-alerts-digest: send failed', sendError.message)
+  if (!result.sent && result.reason === 'send_failed') {
+    console.error('ops-alerts-digest: send failed')
     return json({ error: 'send_failed' }, 500)
   }
+
 
   const { error: markError } = await admin
     .from('ops_alerts')
