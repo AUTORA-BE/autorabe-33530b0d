@@ -35,14 +35,15 @@ export function brokeredPreviewStorage() {
     new Promise((resolve) => {
       const requestId = newId();
       let done = false;
-      let timer: ReturnType<typeof setTimeout>;
-      const finish = (r: { ok: boolean; value?: string | null } | null) => {
+      // Déclaration hoistée : `timer` est défini avant `finish` sans réassignation.
+      function finish(r: { ok: boolean; value?: string | null } | null) {
         if (done) return;
         done = true;
         clearTimeout(timer);
         window.removeEventListener('message', onMessage);
         resolve(r);
-      };
+      }
+      const timer = setTimeout(() => finish(null), TIMEOUT);
       const onMessage = (e: MessageEvent) => {
         if (editorOrigins.indexOf(e.origin) < 0) return;
         const d = e.data;
