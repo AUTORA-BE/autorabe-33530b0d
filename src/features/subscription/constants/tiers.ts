@@ -19,6 +19,10 @@ export interface SubscriptionTier {
   product_id: string;
   price: number;
   maxListings: number | null;
+  /** Annonces créables sur 30 jours glissants (null = illimité) */
+  maxListingsPerMonth: number | null;
+  /** Achetable en self-serve. false = accordé manuellement après devis. */
+  purchasable: boolean;
   features: string[];
   popular?: boolean;
   category: 'particulier' | 'professionnel';
@@ -52,29 +56,34 @@ export const FREE_MAX_PHOTOS = 5;
 /** Extra listing cost for tiers with a cap */
 export const EXTRA_LISTING_PRICE = 10;
 
+/** Free tier rolling 30-day listing creation limit */
+export const FREE_LISTINGS_PER_MONTH = 5;
+
 export const SUBSCRIPTION_TIERS: Record<string, SubscriptionTier> = {
-  boost: {
-    name: 'Particulier Boost',
-    slug: 'boost',
-    price_id: 'price_1TMBobFyYvJx8HZKkD5EbQpY',
-    product_id: 'prod_UKrX4ZTLz0ITfq',
-    price: 20,
-    maxListings: 10,
+  particulier: {
+    name: 'Particulier',
+    slug: 'particulier',
+    price_id: 'price_1UBbsGFyYvJx8HZKFZhyy1Sj',
+    product_id: 'prod_VBzrk30V0HDldQ',
+    price: 25,
+    maxListings: 5,
+    maxListingsPerMonth: 12,
     category: 'particulier',
     requiresTva: false,
     requiresAppointment: false,
     badge: null,
-    maxPhotos: 10,
-    messageLimitPerDay: null,
+    maxPhotos: 30,
+    messageLimitPerDay: 100,
     hasDashboard: true,
     showAds: false,
-    extraListingPrice: EXTRA_LISTING_PRICE,
+    extraListingPrice: null,
+    purchasable: true,
     features: [
-      '10 annonces/mois (puis 10€/annonce)',
-      'Messagerie illimitée',
+      '5 annonces simultanées',
+      '12 annonces par mois',
+      'Jusqu\'à 30 photos par annonce',
+      'Messagerie étendue (100 messages/jour)',
       'Dashboard avec statistiques',
-      'Recherche et comparaison avancées',
-      'Jusqu\'à 10 photos par annonce',
       'Sans publicité',
     ],
   },
@@ -85,6 +94,7 @@ export const SUBSCRIPTION_TIERS: Record<string, SubscriptionTier> = {
     product_id: 'prod_UKno1VUDM4yfzP',
     price: 50,
     maxListings: 10,
+    maxListingsPerMonth: 30,
     popular: true,
     category: 'professionnel',
     requiresTva: true,
@@ -94,9 +104,11 @@ export const SUBSCRIPTION_TIERS: Record<string, SubscriptionTier> = {
     messageLimitPerDay: null,
     hasDashboard: true,
     showAds: false,
-    extraListingPrice: EXTRA_LISTING_PRICE,
+    extraListingPrice: null,
+    purchasable: false,
     features: [
-      '10 annonces/mois (puis 10€/annonce)',
+      '10 annonces simultanées',
+      '30 annonces par mois',
       'Badge "Vendeur Vérifié"',
       'Dashboard simple',
       'Messagerie illimitée',
@@ -112,6 +124,7 @@ export const SUBSCRIPTION_TIERS: Record<string, SubscriptionTier> = {
     product_id: 'prod_UKo0UuUbuB5vdq',
     price: 250,
     maxListings: null,
+    maxListingsPerMonth: null,
     category: 'professionnel',
     requiresTva: true,
     requiresAppointment: true,
@@ -121,6 +134,7 @@ export const SUBSCRIPTION_TIERS: Record<string, SubscriptionTier> = {
     hasDashboard: true,
     showAds: false,
     extraListingPrice: null,
+    purchasable: false,
     features: [
       'Annonces illimitées',
       'Alertes "Bon Plan"',
@@ -139,9 +153,9 @@ export const SUBSCRIPTION_TIERS: Record<string, SubscriptionTier> = {
  * Helper to get the free tier feature list
  */
 export const FREE_TIER_FEATURES = [
-  `${FREE_PARTICULIER_LIMIT} annonces/mois (puis 10€/annonce)`,
-  'Dashboard simple',
-  'Messagerie limitée (5 messages/jour)',
-  'Recherche et comparaison',
+  `${FREE_PARTICULIER_LIMIT} annonces simultanées`,
+  `${FREE_LISTINGS_PER_MONTH} annonces par mois`,
   `Jusqu'à ${FREE_MAX_PHOTOS} photos par annonce`,
+  `Messagerie limitée (${FREE_MESSAGE_LIMIT} messages/jour)`,
+  'Recherche et comparaison',
 ];

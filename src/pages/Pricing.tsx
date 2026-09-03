@@ -47,19 +47,19 @@ const PARTICULIER_CARDS: TierCard[] = [
     cta: 'free',
   },
   {
-    key: 'boost',
-    name: 'Boost',
+    key: 'particulier',
+    name: 'Particulier',
     subtitle: 'Vendeurs réguliers',
-    price: '20€',
+    price: '25€',
     priceSuffix: '/mois',
-    features: SUBSCRIPTION_TIERS.boost.features,
+    features: SUBSCRIPTION_TIERS.particulier.features,
     accent: 'border-primary ring-2 ring-primary/20',
     icon: <Zap className="h-5 w-5" />,
     badge: 'Populaire',
     badgeColor: 'bg-primary text-primary-foreground',
     cta: 'subscribe',
-    priceId: SUBSCRIPTION_TIERS.boost.price_id,
-    slug: 'boost',
+    priceId: SUBSCRIPTION_TIERS.particulier.price_id,
+    slug: 'particulier',
   },
 ];
 
@@ -144,7 +144,7 @@ export default function Pricing() {
     <div className="page-gradient">
       <SEOHead
         title="Tarifs vendeurs — Particuliers & Garages"
-        description="Particuliers : vendez gratuitement ou passez en Boost (20€/mois). Garages & professionnels : une offre sur mesure adaptée à votre volume. Demandez votre devis sur AutoRA."
+        description="Particuliers : vendez gratuitement ou passez à l'abonnement Particulier (25€/mois). Garages & professionnels : une offre sur mesure adaptée à votre volume. Demandez votre devis sur AutoRA."
         url="https://autora.be/pricing"
       />
       <Header />
