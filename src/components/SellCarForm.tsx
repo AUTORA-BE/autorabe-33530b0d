@@ -778,17 +778,29 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
           // on error.context as a Response).
           let serverMsg: string | null = null;
           let serverCode: string | null = null;
+          let serverMax: number | null = null;
           try {
             const ctx = (error as { context?: Response }).context;
             if (ctx && typeof ctx.clone === 'function') {
               const body = await ctx.clone().json();
               serverMsg = body?.error ?? null;
               serverCode = body?.code ?? null;
+              serverMax = typeof body?.max === 'number' ? body.max : null;
             }
           } catch { /* ignore parse failure */ }
 
           if (serverCode === 'RATE_LIMIT_EXCEEDED') {
             toast.error('Limite atteinte : 10 annonces par jour. Réessayez demain.');
+          } else if (serverCode === 'LISTING_LIMIT_SIMULTANEOUS') {
+            toast.error(
+              `Vous avez atteint vos ${serverMax ?? ''} annonces simultanées. Marquez une annonce comme vendue ou passez à l'offre Particulier.`,
+              { duration: 8000, action: { label: 'Voir les offres', onClick: () => navigate('/pricing') } },
+            );
+          } else if (serverCode === 'LISTING_LIMIT_MONTHLY') {
+            toast.error(
+              `Vous avez atteint ${serverMax ?? ''} annonces ce mois-ci. Ce volume relève d'une offre professionnelle.`,
+              { duration: 8000, action: { label: 'Demander un devis', onClick: () => navigate('/contact?sujet=devis-pro') } },
+            );
           } else if (serverCode === 'DUPLICATE_LISTING') {
             toast.error('Une annonce identique existe déjà. Modifiez-la depuis votre tableau de bord.');
           } else if (serverMsg) {
