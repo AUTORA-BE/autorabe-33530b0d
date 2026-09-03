@@ -85,7 +85,9 @@ export function useListingLimit() {
         .from('car_listings')
         .select('*', { count: 'exact', head: true })
         .eq('user_id', user.id)
-        .gte('created_at', thirtyDaysAgoISO());
+        .gte('created_at', thirtyDaysAgoISO())
+        // Une annonce rejetée par un admin ne consomme pas le quota mensuel.
+        .neq('status', 'rejected');
 
       const activeCount = count ?? 0;
       const monthCount = created ?? 0;
