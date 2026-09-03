@@ -150,6 +150,9 @@ export default function AdminListingsPage() {
                   </p>
                 </div>
                 <div className="flex gap-1 flex-shrink-0" onClick={e => e.stopPropagation()}>
+                  <Button size="icon" variant="ghost" className="h-7 w-7 text-amber-500" onClick={() => setBoostListing(listing)} disabled={isActing} aria-label="Gérer le boost">
+                    <Zap className="h-3.5 w-3.5" />
+                  </Button>
                   {listing.status === 'pending' && (
                     <>
                       <Button size="icon" variant="ghost" className="h-7 w-7 text-emerald-500" onClick={() => approve(listing.id)} disabled={isActing}>
