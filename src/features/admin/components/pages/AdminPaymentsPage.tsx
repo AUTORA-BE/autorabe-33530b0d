@@ -71,7 +71,9 @@ function StatusIcon({ status }: { status: string }) {
 export default function AdminPaymentsPage() {
   const [subSearch, setSubSearch] = useState("");
   const [evtSearch, setEvtSearch] = useState("");
+  const [boostSearch, setBoostSearch] = useState("");
   const [detailUserId, setDetailUserId] = useState<string | null>(null);
+  const { data: listings = [], isLoading: boostsLoading } = useAdminListings();
 
   const { data: subs = [], isLoading: subsLoading } = useQuery({
     queryKey: ["admin", "subscriptions"],
