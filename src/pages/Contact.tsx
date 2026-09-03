@@ -1,4 +1,5 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Honeypot, isHoneypotTriggered } from "@/components/Honeypot";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Mail, Send, Clock, CheckCircle, MessageSquare } from "lucide-react";
+import { Mail, Send, Clock, CheckCircle, MessageSquare, Building2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -38,22 +39,32 @@ type ContactFormData = z.infer<typeof contactSchema>;
 
 const RATE_LIMIT_MS = 60_000;
 
+const PRO_QUOTE_SUBJECT = "Demande de devis — offre professionnelle";
+
 const Contact = () => {
   const {  } = useLanguage();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [lastSubmitTime, setLastSubmitTime] = useState(0);
   const honeypotRef = useRef<HTMLInputElement>(null);
+  const [searchParams] = useSearchParams();
+  const isProQuote = searchParams.get("sujet") === "devis-pro";
 
   const form = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
     defaultValues: {
       name: "",
       email: "",
-      subject: "",
+      subject: isProQuote ? PRO_QUOTE_SUBJECT : "",
       message: "",
     },
   });
+
+  useEffect(() => {
+    if (isProQuote && !form.getValues("subject")) {
+      form.setValue("subject", PRO_QUOTE_SUBJECT);
+    }
+  }, [isProQuote, form]);
 
   const onSubmit = async (data: ContactFormData) => {
     // Honeypot: silently "succeed" for bots without hitting the backend
@@ -220,6 +231,20 @@ const Contact = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
+                  {isProQuote && (
+                    <div className="mb-6 flex items-start gap-3 rounded-xl border border-primary/30 bg-primary/5 p-4">
+                      <Building2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
+                      <div>
+                        <p className="text-sm font-semibold text-foreground">
+                          Demande de devis — offre professionnelle
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          Décrivez votre activité et votre volume d'annonces : un responsable
+                          AutoRA revient vers vous sous 24h avec une proposition sur mesure.
+                        </p>
+                      </div>
+                    </div>
+                  )}
                   <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                       <Honeypot ref={honeypotRef} />
