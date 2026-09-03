@@ -12,6 +12,27 @@ const logStep = (step: string, details?: unknown) => {
   console.log(`[CHECK-SUBSCRIPTION] ${step}${detailsStr}`);
 };
 
+/** Accès accordé manuellement (après devis) : lu depuis la table subscriptions. */
+async function manualGrant(
+  // deno-lint-ignore no-explicit-any
+  admin: any,
+  userId: string,
+): Promise<{ product_id: string; current_period_end: string | null } | null> {
+  const { data } = await admin
+    .from("subscriptions")
+    .select("product_id, current_period_end")
+    .eq("user_id", userId)
+    .eq("status", "active")
+    .not("product_id", "is", null)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (!data?.product_id) return null;
+  if (data.current_period_end && new Date(data.current_period_end) <= new Date()) return null;
+  return data;
+}
+
 serve(async (req) => {
   const corsHeaders = buildCorsHeaders(req);
   if (req.method === 'OPTIONS') return handlePreflight(req);
