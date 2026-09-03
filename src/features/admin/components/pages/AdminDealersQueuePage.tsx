@@ -256,20 +256,16 @@ export default function AdminDealersQueuePage() {
         meta: { reason_length: reason.length },
       });
 
-      const email = await resolveUserEmail(rejectTarget.user_id);
-      if (email) {
-        supabase.functions.invoke('send-transactional-email', {
-          body: {
-            templateName: 'dealer-rejected',
-            recipientEmail: email,
-            idempotencyKey: `dealer-rejected-${rejectTarget.id}`,
-            templateData: {
-              name: rejectTarget.display_name ?? undefined,
-              reason,
-            },
-          },
-        }).catch(() => {});
-      }
+      supabase.functions.invoke('notify-dealer-decision', {
+        body: {
+          userId: rejectTarget.user_id,
+          queueId: rejectTarget.id,
+          decision: 'rejected',
+          name: rejectTarget.display_name ?? undefined,
+          reason,
+        },
+      }).catch(() => {});
+
 
       toast({ title: 'Demande refusée', description: 'L’utilisateur a été notifié.' });
       setRejectTarget(null);
