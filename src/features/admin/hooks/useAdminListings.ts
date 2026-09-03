@@ -31,27 +31,15 @@ async function logAction(actionType: string, targetId: string, metadata?: Record
 }
 
 async function sendListingStatusEmail(listing: { id: string; contact_email?: string; contact_name?: string; brand?: string; model?: string; year?: number }, status: 'approved' | 'rejected', reason?: string) {
-  if (!listing.contact_email) return;
   try {
-    await supabase.functions.invoke('send-transactional-email', {
-      body: {
-        templateName: 'listing-status',
-        recipientEmail: listing.contact_email,
-        idempotencyKey: `listing-status-${listing.id}-${status}`,
-        templateData: {
-          contactName: listing.contact_name || undefined,
-          brand: listing.brand || undefined,
-          model: listing.model || undefined,
-          year: listing.year?.toString() || undefined,
-          status,
-          reason: reason || undefined,
-        },
-      },
+    await supabase.functions.invoke('notify-listing-review', {
+      body: { listingId: listing.id, status, reason: reason || undefined },
     });
   } catch (e) {
     console.error('Failed to send listing status email:', e);
   }
 }
+
 
 export function useAdminListings() {
   const qc = useQueryClient();
