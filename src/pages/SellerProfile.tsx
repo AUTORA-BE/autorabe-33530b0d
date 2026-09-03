@@ -607,11 +607,11 @@ const SellerProfile = () => {
                                   if (name === "AbortError") return;
                                   // Permission/NotAllowed on iOS → fallback clipboard
                                   if (navigator.clipboard?.writeText) {
-                                    navigator.clipboard.writeText(url).then(notifyCopied).catch(() => {
-                                      legacyCopy() ? notifyCopied() : notifyFail();
+                                    if (navigator.clipboard.writeText(url).then(notifyCopied).catch(() => {
+                                      legacyCopy()) notifyCopied(); else notifyFail();
                                     });
                                   } else {
-                                    legacyCopy() ? notifyCopied() : notifyFail();
+                                    if (legacyCopy()) notifyCopied(); else notifyFail();
                                   }
                                 });
                               }
@@ -623,11 +623,11 @@ const SellerProfile = () => {
 
                           // 2) Clipboard fallback — try async then legacy (both inside this gesture tick)
                           if (navigator.clipboard?.writeText) {
-                            navigator.clipboard.writeText(url).then(notifyCopied).catch(() => {
-                              legacyCopy() ? notifyCopied() : notifyFail();
+                            if (navigator.clipboard.writeText(url).then(notifyCopied).catch(() => {
+                              legacyCopy()) notifyCopied(); else notifyFail();
                             });
                           } else {
-                            legacyCopy() ? notifyCopied() : notifyFail();
+                            if (legacyCopy()) notifyCopied(); else notifyFail();
                           }
                         }}
                       >
@@ -1294,11 +1294,11 @@ function EditVitrineDialog({ open, onOpenChange, userId, garageName, vitrineSlug
                     p.catch((err: unknown) => {
                       if ((err as DOMException)?.name === "AbortError") return;
                       if (navigator.clipboard?.writeText) {
-                        navigator.clipboard.writeText(shareUrl).then(notifyCopied).catch(() => {
-                          legacyCopy() ? notifyCopied() : notifyFail();
+                        if (navigator.clipboard.writeText(shareUrl).then(notifyCopied).catch(() => {
+                          legacyCopy()) notifyCopied(); else notifyFail();
                         });
                       } else {
-                        legacyCopy() ? notifyCopied() : notifyFail();
+                        if (legacyCopy()) notifyCopied(); else notifyFail();
                       }
                     });
                   }
@@ -1307,11 +1307,11 @@ function EditVitrineDialog({ open, onOpenChange, userId, garageName, vitrineSlug
               }
 
               if (navigator.clipboard?.writeText) {
-                navigator.clipboard.writeText(shareUrl).then(notifyCopied).catch(() => {
-                  legacyCopy() ? notifyCopied() : notifyFail();
+                if (navigator.clipboard.writeText(shareUrl).then(notifyCopied).catch(() => {
+                  legacyCopy()) notifyCopied(); else notifyFail();
                 });
               } else {
-                legacyCopy() ? notifyCopied() : notifyFail();
+                if (legacyCopy()) notifyCopied(); else notifyFail();
               }
             };
 

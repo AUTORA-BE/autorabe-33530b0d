@@ -7,6 +7,6 @@ import {
   defaultVehicleFilters 
 } from "@/features/listings/types/vehicle.types";
 
-export interface CarFilters extends VehicleFilters {}
+export type CarFilters = VehicleFilters;
 
 export const defaultFilters: CarFilters = defaultVehicleFilters;
