@@ -144,7 +144,7 @@ export default function Pricing() {
     <div className="page-gradient">
       <SEOHead
         title="Tarifs vendeurs — Particuliers & Garages"
-        description="Particuliers : vendez gratuitement ou passez en Boost (20€/mois). Garages & professionnels : une offre sur mesure adaptée à votre volume. Demandez votre devis sur AutoRA."
+        description="Particuliers : vendez gratuitement ou passez à l'abonnement Particulier (25€/mois). Garages & professionnels : une offre sur mesure adaptée à votre volume. Demandez votre devis sur AutoRA."
         url="https://autora.be/pricing"
       />
       <Header />
