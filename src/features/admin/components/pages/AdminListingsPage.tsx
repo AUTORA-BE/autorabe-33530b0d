@@ -126,11 +126,24 @@ export default function AdminListingsPage() {
                   <div className="h-12 w-16 rounded-lg bg-muted flex-shrink-0" />
                 )}
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 flex-wrap">
                     <p className="text-sm font-medium truncate">{listing.brand} {listing.model}</p>
                     <Badge className={`text-[9px] px-1.5 ${STATUS_COLORS[listing.status || 'pending'] || ''}`}>
                       {listing.status}
                     </Badge>
+                    {listing.boost_level && (
+                      listing.boost_expires_at && new Date(listing.boost_expires_at) > new Date() ? (
+                        <Badge className="text-[9px] px-1.5 bg-amber-500/15 text-amber-600 border border-amber-500/30 hover:bg-amber-500/20">
+                          <Zap className="h-2.5 w-2.5 mr-1" />
+                          {listing.boost_level} · {formatDistanceToNow(new Date(listing.boost_expires_at), { locale: fr })}
+                        </Badge>
+                      ) : (
+                        <Badge variant="secondary" className="text-[9px] px-1.5">
+                          <Zap className="h-2.5 w-2.5 mr-1" />
+                          Boost expiré
+                        </Badge>
+                      )
+                    )}
                   </div>
                   <p className="text-[10px] text-muted-foreground">
                     {listing.year} · {listing.mileage?.toLocaleString()} km · €{listing.price?.toLocaleString()} · {listing.contact_name}
