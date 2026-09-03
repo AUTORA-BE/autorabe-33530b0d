@@ -1294,8 +1294,8 @@ function EditVitrineDialog({ open, onOpenChange, userId, garageName, vitrineSlug
                     p.catch((err: unknown) => {
                       if ((err as DOMException)?.name === "AbortError") return;
                       if (navigator.clipboard?.writeText) {
-                        if (navigator.clipboard.writeText(shareUrl).then(notifyCopied).catch(() => {
-                          legacyCopy()) notifyCopied(); else notifyFail();
+                        navigator.clipboard.writeText(shareUrl).then(notifyCopied).catch(() => {
+                          if (legacyCopy()) notifyCopied(); else notifyFail();
                         });
                       } else {
                         if (legacyCopy()) notifyCopied(); else notifyFail();
@@ -1307,8 +1307,8 @@ function EditVitrineDialog({ open, onOpenChange, userId, garageName, vitrineSlug
               }
 
               if (navigator.clipboard?.writeText) {
-                if (navigator.clipboard.writeText(shareUrl).then(notifyCopied).catch(() => {
-                  legacyCopy()) notifyCopied(); else notifyFail();
+                navigator.clipboard.writeText(shareUrl).then(notifyCopied).catch(() => {
+                  if (legacyCopy()) notifyCopied(); else notifyFail();
                 });
               } else {
                 if (legacyCopy()) notifyCopied(); else notifyFail();
