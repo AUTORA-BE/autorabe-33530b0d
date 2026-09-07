@@ -47,7 +47,7 @@ async function fetchAllListings(): Promise<Listing[]> {
   const { data, error } = await supabase
     .rpc('admin_list_listings_with_contacts', { _limit: 2000 });
   if (error) throw error;
-  return ((data ?? []) as Listing[]).filter(l => l.status === 'pending' || l.status === 'approved');
+  return ((data ?? []) as Listing[]).filter(l => l.status === LISTING_STATUS_PENDING || l.status === 'approved');
 }
 
 /** Group listings by brand+model+year, then cluster by km within ±KM_TOLERANCE */

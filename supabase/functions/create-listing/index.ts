@@ -176,7 +176,7 @@ Deno.serve(async (req) => {
           .from('car_listings')
           .select('*', { count: 'exact', head: true })
           .eq('user_id', user.id)
-          .in('status', ['pending', 'approved']);
+          .in('status', [LISTING_STATUS_PENDING, 'approved']);
 
         if ((count ?? 0) >= limits.sim) {
           return jsonResponse(req, {
@@ -221,7 +221,7 @@ Deno.serve(async (req) => {
       .eq('year', payload.year)
       .gte('mileage', kmMin)
       .lte('mileage', kmMax)
-      .in('status', ['pending', 'approved'])
+      .in('status', [LISTING_STATUS_PENDING, 'approved'])
       .gte('created_at', since)
       .limit(1);
 
@@ -297,7 +297,7 @@ Deno.serve(async (req) => {
       .from('car_listings')
       .insert({
         user_id: user.id,
-        status: 'pending',
+        status: LISTING_STATUS_PENDING,
         brand: payload.brand,
         model: payload.model,
         year: payload.year,

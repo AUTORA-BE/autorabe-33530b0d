@@ -230,7 +230,7 @@ export default function SellerDashboard() {
   const statusCounts = useMemo(() => ({
     all: listings.length,
     approved: listings.filter((l: SellerListing) => l.status === "approved").length,
-    pending: listings.filter((l: SellerListing) => l.status === "pending").length,
+    pending: countPendingListings(listings as SellerListing[]),
     rejected: listings.filter((l: SellerListing) => l.status === "rejected").length,
     sold: listings.filter((l: SellerListing) => l.status === "sold").length,
     archived: 0,
@@ -444,7 +444,7 @@ export default function SellerDashboard() {
               <TabsTrigger value="approved" className="rounded-lg text-xs data-[state=active]:bg-background data-[state=active]:shadow-sm">
                 {t("dashboard.published")} ({statusCounts.approved})
               </TabsTrigger>
-              <TabsTrigger value="pending" className="rounded-lg text-xs data-[state=active]:bg-background data-[state=active]:shadow-sm">
+              <TabsTrigger value={LISTING_STATUS_PENDING} className="rounded-lg text-xs data-[state=active]:bg-background data-[state=active]:shadow-sm">
                 {t("dashboard.pending")} ({statusCounts.pending})
               </TabsTrigger>
               <TabsTrigger value="sold" className="rounded-lg text-xs data-[state=active]:bg-background data-[state=active]:shadow-sm">
@@ -453,7 +453,7 @@ export default function SellerDashboard() {
             </TabsList>
           </div>
 
-          {["all", "approved", "pending", "rejected", "sold"].map((tab) => (
+          {["all", "approved", LISTING_STATUS_PENDING, "rejected", "sold"].map((tab) => (
             <TabsContent key={tab} value={tab} className="mt-0">
               {isLoading ? (
                 <div className="space-y-3">

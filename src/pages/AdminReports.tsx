@@ -162,8 +162,8 @@ const AdminReports = () => {
         .rpc('admin_list_listings_with_contacts', { _limit: 500 });
 
       if (error) throw error;
-      const pending = (data || []).filter((d: any) => d.status === 'pending');
-      setPendingListings(pending.map((d: any) => ({ ...d, status: d.status ?? 'pending' })));
+      const pending = (data || []).filter((d: any) => d.status === LISTING_STATUS_PENDING);
+      setPendingListings(pending.map((d: any) => ({ ...d, status: d.status ?? LISTING_STATUS_PENDING })));
     } catch (error) {
       console.error("Error fetching pending listings:", error);
     } finally {

@@ -24,7 +24,7 @@ export function useAdminRealtime() {
           qc.invalidateQueries({ queryKey: ['admin', 'charts'] });
           if (payload.eventType === 'INSERT') {
             const rec = payload.new as { status?: string };
-            if (rec.status === 'pending') {
+            if (rec.status === LISTING_STATUS_PENDING) {
               toast.info('📋 Nouvelle annonce en attente de modération', { duration: 5000 });
             }
           }

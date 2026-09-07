@@ -2,6 +2,7 @@
  * Hook for fetching admin dashboard statistics
  * @module features/admin/hooks
  */
+import { countPendingListings } from '@/features/listings/constants/listingStatus';
 
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -27,7 +28,7 @@ async function fetchDashboardStats(): Promise<DashboardStats> {
   return {
     totalUsers: profilesData.length,
     totalListings: listingsData.length,
-    pendingListings: listingsData.filter(l => l.status === 'pending').length,
+    pendingListings: countPendingListings(listingsData),
     approvedListings: listingsData.filter(l => l.status === 'approved').length,
     pendingReports: reportsData.filter(r => r.status === 'pending').length,
     totalReports: reportsData.length,

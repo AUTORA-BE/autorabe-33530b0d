@@ -76,7 +76,7 @@ export function useListingLimit() {
         .from('car_listings')
         .select('*', { count: 'exact', head: true })
         .eq('user_id', user.id)
-        .in('status', ['pending', 'approved']);
+        .in('status', [LISTING_STATUS_PENDING, 'approved']);
 
       if (error) throw error;
 
