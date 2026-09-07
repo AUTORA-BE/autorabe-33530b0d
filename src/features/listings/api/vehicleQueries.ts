@@ -134,11 +134,17 @@ export function applyFilters<T>(query: T, filters: VehicleFilters): T {
     q = q.ilike('model', filters.model);
   }
 
+  // Bornes numériques : on compare TOUJOURS à `defaultVehicleFilters`, jamais à
+  // un nombre écrit ici. Les deux ont déjà divergé une fois (seuils 200000/2010
+  // face à des défauts 1000000/1900) et c'est invisible : la requête ne renvoie
+  // aucune erreur, elle renvoie simplement trop de résultats.
+  const d = defaultVehicleFilters;
+
   // Price filter
-  if (filters.minPrice > 0) {
+  if (filters.minPrice > d.minPrice) {
     q = q.gte('price', filters.minPrice);
   }
-  if (filters.maxPrice < 200000) {
+  if (filters.maxPrice < d.maxPrice) {
     q = q.lte('price', filters.maxPrice);
   }
 
@@ -162,20 +168,21 @@ export function applyFilters<T>(query: T, filters: VehicleFilters): T {
   }
 
   // Year filter
-  if (filters.yearMin > 2010) {
+  if (filters.yearMin > d.yearMin) {
     q = q.gte('year', filters.yearMin);
   }
-  if (filters.yearMax < new Date().getFullYear() + 1) {
+  if (filters.yearMax < d.yearMax) {
     q = q.lte('year', filters.yearMax);
   }
 
   // Kilometer filter
-  if (filters.kmMin > 0) {
+  if (filters.kmMin > d.kmMin) {
     q = q.gte('mileage', filters.kmMin);
   }
-  if (filters.kmMax < 200000) {
+  if (filters.kmMax < d.kmMax) {
     q = q.lte('mileage', filters.kmMax);
   }
+
 
   // LEZ filter - Euro 6+ or electric
   if (filters.lezOnly) {
