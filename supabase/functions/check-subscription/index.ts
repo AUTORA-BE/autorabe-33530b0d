@@ -6,6 +6,35 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 
 import { buildCorsHeaders, handlePreflight } from "../_shared/cors.ts";
 import { periodEndISO } from "../_shared/stripePeriod.ts";
+import { logOpsAlert } from "../_shared/opsAlert.ts";
+
+/** Slugs de paliers connus (miroir de src/features/subscription/constants/tiers.ts). */
+const KNOWN_SLUGS = ["particulier", "pro", "premium"] as const;
+
+/**
+ * Résout une valeur (identifiant produit Stripe OU slug déjà stocké) vers un slug de palier.
+ * Les identifiants produit Stripe sont propres au mode (test/live) : ils viennent
+ * exclusivement des variables d'environnement.
+ */
+async function resolveTierSlug(value: string | null): Promise<string | null> {
+  if (!value) return null;
+  if ((KNOWN_SLUGS as readonly string[]).includes(value)) return value;
+
+  const map: Record<string, string | undefined> = {
+    particulier: Deno.env.get("STRIPE_PRODUCT_PARTICULIER"),
+    pro: Deno.env.get("STRIPE_PRODUCT_PRO"),
+    premium: Deno.env.get("STRIPE_PRODUCT_PREMIUM"),
+  };
+  for (const [slug, productId] of Object.entries(map)) {
+    if (productId && productId === value) return slug;
+  }
+
+  await logOpsAlert("check-subscription", "Produit Stripe non résolu vers un palier", {
+    severity: "warn",
+    context: { unresolved_product_id: value },
+  });
+  return null;
+}
 
 const logStep = (step: string, details?: unknown) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
@@ -66,10 +95,12 @@ serve(async (req) => {
       logStep("No Stripe customer found");
       const granted = await manualGrant(supabaseClient, user.id);
       if (granted) {
-        logStep("Manual grant found", { product_id: granted.product_id });
+        const tierSlug = await resolveTierSlug(granted.product_id);
+        logStep("Manual grant found", { product_id: granted.product_id, tier_slug: tierSlug });
         return new Response(JSON.stringify({
           subscribed: true,
           product_id: granted.product_id,
+          tier_slug: tierSlug,
           subscription_end: granted.current_period_end,
           source: "manual",
         }), { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 });
@@ -102,19 +133,24 @@ serve(async (req) => {
       logStep("No active subscription");
       const granted = await manualGrant(supabaseClient, user.id);
       if (granted) {
-        logStep("Manual grant found", { product_id: granted.product_id });
+        const tierSlug = await resolveTierSlug(granted.product_id);
+        logStep("Manual grant found", { product_id: granted.product_id, tier_slug: tierSlug });
         return new Response(JSON.stringify({
           subscribed: true,
           product_id: granted.product_id,
+          tier_slug: tierSlug,
           subscription_end: granted.current_period_end,
           source: "manual",
         }), { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 });
       }
     }
 
+    const tierSlug = await resolveTierSlug(productId);
+
     return new Response(JSON.stringify({
       subscribed: hasActiveSub,
       product_id: productId,
+      tier_slug: tierSlug,
       subscription_end: subscriptionEnd,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
