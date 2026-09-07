@@ -5,28 +5,13 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 
 
 import { buildCorsHeaders, handlePreflight } from "../_shared/cors.ts";
+import { logOpsAlert } from "../_shared/opsAlert.ts";
 
-const BOOST_PRICES: Record<string, { price_id: string; level: string; hours: number }> = {
-  boost_24h: {
-    price_id: "price_1TMBroFyYvJx8HZKFXbGsYW6",
-    level: "boost_24h",
-    hours: 24,
-  },
-  boost_48h: {
-    price_id: "price_1TMBsFFyYvJx8HZK5ETOWM6Y",
-    level: "boost_48h",
-    hours: 48,
-  },
-  boost_72h: {
-    price_id: "price_1TMBspFyYvJx8HZKYEFZlqrM",
-    level: "boost_72h",
-    hours: 72,
-  },
-  boost_7d: {
-    price_id: "price_1TMBt6FyYvJx8HZKdcEkN3FQ",
-    level: "boost_7d",
-    hours: 168,
-  },
+const BOOST_PRICES: Record<string, { env_var: string; level: string; hours: number }> = {
+  boost_24h: { env_var: "STRIPE_PRICE_BOOST_24H", level: "boost_24h", hours: 24 },
+  boost_48h: { env_var: "STRIPE_PRICE_BOOST_48H", level: "boost_48h", hours: 48 },
+  boost_72h: { env_var: "STRIPE_PRICE_BOOST_72H", level: "boost_72h", hours: 72 },
+  boost_7d: { env_var: "STRIPE_PRICE_BOOST_7D", level: "boost_7d", hours: 168 },
 };
 
 serve(async (req) => {
@@ -50,6 +35,19 @@ serve(async (req) => {
 
     const boostConfig = BOOST_PRICES[boostTier];
     if (!boostConfig) throw new Error("Invalid boost tier");
+
+    // Aucune valeur de repli : un prix manquant doit échouer bruyamment.
+    const boostPriceId = (Deno.env.get(boostConfig.env_var) ?? "").trim();
+    if (!boostPriceId) {
+      await logOpsAlert("create-boost-checkout", `Variable de prix manquante: ${boostConfig.env_var}`, {
+        severity: "critical",
+        context: { boost_tier: boostTier, missing_env: boostConfig.env_var },
+      });
+      return new Response(JSON.stringify({ error: "Configuration de prix manquante" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 500,
+      });
+    }
 
     // ── Ownership check: caller must own the listing being boosted ──
     const supabaseAdminCheck = createClient(
@@ -87,7 +85,7 @@ serve(async (req) => {
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       customer_email: customerId ? undefined : user.email,
-      line_items: [{ price: boostConfig.price_id, quantity: 1 }],
+      line_items: [{ price: boostPriceId, quantity: 1 }],
       mode: "payment",
       payment_method_types: ["card", "bancontact", "sepa_debit"],
       success_url: `${origin}/dashboard?boost_success=true&listing=${listingId}&tier=${boostTier}`,

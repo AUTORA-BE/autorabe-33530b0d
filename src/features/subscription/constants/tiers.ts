@@ -1,5 +1,8 @@
 /**
- * Subscription tier definitions mapped to Stripe product/price IDs
+ * Subscription tier definitions (affichage & limites applicatives).
+ *
+ * Aucun identifiant de prix Stripe ici : les prix sont résolus côté serveur
+ * (edge function `create-checkout`) à partir de variables d'environnement.
  * @module features/subscription/constants
  *
  * Offre réelle :
@@ -14,7 +17,6 @@
 export interface SubscriptionTier {
   name: string;
   slug: string;
-  price_id: string;
   product_id: string;
   price: number;
   maxListings: number | null;
@@ -62,7 +64,6 @@ export const SUBSCRIPTION_TIERS: Record<string, SubscriptionTier> = {
   particulier: {
     name: 'Particulier',
     slug: 'particulier',
-    price_id: 'price_1UBbsGFyYvJx8HZKFZhyy1Sj',
     product_id: 'prod_VBzrk30V0HDldQ',
     price: 25,
     maxListings: 5,
@@ -89,7 +90,6 @@ export const SUBSCRIPTION_TIERS: Record<string, SubscriptionTier> = {
   pro: {
     name: 'Pro Garage',
     slug: 'pro',
-    price_id: 'price_1TM8CrFyYvJx8HZKEnPfyuAW',
     product_id: 'prod_UKno1VUDM4yfzP',
     price: 50,
     maxListings: 10,
@@ -119,7 +119,6 @@ export const SUBSCRIPTION_TIERS: Record<string, SubscriptionTier> = {
   premium: {
     name: 'Premium',
     slug: 'premium',
-    price_id: 'price_1TM8OVFyYvJx8HZKsANQJFDl',
     product_id: 'prod_UKo0UuUbuB5vdq',
     price: 250,
     maxListings: null,
