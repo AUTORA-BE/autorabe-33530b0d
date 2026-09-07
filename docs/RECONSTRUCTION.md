@@ -188,6 +188,38 @@ irrécupérables.
 C'est `scripts/backup-storage.mjs` qui s'en charge, et il doit être **lancé
 manuellement** (rien ne le déclenche automatiquement).
 
+Il accepte **deux modes d'authentification**.
+
+#### Mode B — compte administrateur (mode normal pour ce projet)
+
+La clé `service_role` est gérée par Lovable Cloud et **n'est pas accessible**
+au propriétaire du projet : c'est donc ce mode qu'il faut utiliser ici.
+
+```bash
+SUPABASE_URL="https://<ref>.supabase.co" \
+SUPABASE_PUBLISHABLE_KEY="<clé publique du frontend>" \
+AUTORA_EMAIL="<compte administrateur>" \
+BACKUP_DIR="./storage-backup" \
+node scripts/backup-storage.mjs
+```
+
+Le mot de passe est **demandé à l'écran en saisie masquée** : rien ne s'affiche,
+rien n'atterrit dans l'historique du shell, rien n'est écrit sur disque.
+(`AUTORA_PASSWORD` est accepté en repli, mais déconseillé.)
+
+Ce mode fonctionne parce que les policies RLS de `storage.objects` accordent
+déjà aux administrateurs la lecture des buckets privés (`Admins can read all
+car-pass`, `Admins read all KYC docs`, `Admins read all chat images`), et que
+les buckets publics sont lisibles par le rôle `public`.
+
+**Limite connue — `vitrine-covers`** n'a **aucune policy admin**. En mode B, un
+administrateur n'y voit que ses propres fichiers et ceux des vitrines publiées.
+Le bucket est vide aujourd'hui, donc sans conséquence. S'il se remplit un jour :
+soit ajouter une policy admin en lecture, soit repasser en mode A. Cette
+décision n'a volontairement pas été prise.
+
+#### Mode A — clé `service_role` (projet Supabase autogéré)
+
 ```bash
 SUPABASE_URL="https://<ref>.supabase.co" \
 SUPABASE_SERVICE_ROLE_KEY="<service_role>" \
@@ -195,8 +227,18 @@ BACKUP_DIR="./storage-backup" \
 node scripts/backup-storage.mjs
 ```
 
-- Parcourt **tous** les buckets, publics et privés (la clé `service_role` est
-  indispensable pour lire `car-pass`, `dealer-kyc`, `vitrine-covers`).
+Accès total, RLS contournée. Utilisable seulement là où la clé est disponible.
+
+#### Dans les deux cas
+
+- Le mode retenu est affiché au démarrage et enregistré dans le manifeste
+  (`mode: "service_role" | "admin_account"`).
+- Les **8 buckets sont listés explicitement** dans le script, alignés sur
+  `bootstrap-storage.mjs` : `listBuckets()` renverrait une liste **vide** en
+  mode B (`storage.buckets` n'a aucune policy RLS), et la sauvegarde paraîtrait
+  réussie alors qu'elle n'aurait rien copié.
+- Le récapitulatif final donne le **détail par bucket** (nom + nombre de
+  fichiers), pour qu'un écart saute aux yeux.
 - Descente récursive dans les sous-dossiers par identifiant utilisateur.
 - Structure reproduite à l'identique : `<BACKUP_DIR>/<bucket>/<chemin>`.
 - **Reprise** : un fichier déjà présent localement avec la même taille est
