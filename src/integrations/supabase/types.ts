@@ -1809,6 +1809,10 @@ export type Database = {
         Returns: boolean
       }
       clear_user_view_history: { Args: never; Returns: number }
+      delete_email: {
+        Args: { message_id: number; queue_name: string }
+        Returns: boolean
+      }
       disablelongtransactions: { Args: never; Returns: string }
       dropgeometrycolumn:
         | {
@@ -1841,6 +1845,10 @@ export type Database = {
         | { Args: { schema_name: string; table_name: string }; Returns: string }
         | { Args: { table_name: string }; Returns: string }
       enablelongtransactions: { Args: never; Returns: string }
+      enqueue_email: {
+        Args: { payload: Json; queue_name: string }
+        Returns: number
+      }
       equals: { Args: { geom1: unknown; geom2: unknown }; Returns: boolean }
       generate_unique_vitrine_slug: {
         Args: { _desired: string; _user_id: string }
@@ -2190,6 +2198,15 @@ export type Database = {
         Returns: number
       }
       mark_message_read: { Args: { _message_id: string }; Returns: boolean }
+      move_to_dlq: {
+        Args: {
+          dlq_name: string
+          message_id: number
+          payload: Json
+          source_queue: string
+        }
+        Returns: number
+      }
       populate_geometry_columns:
         | { Args: { tbl_oid: unknown; use_typmod?: boolean }; Returns: number }
         | { Args: { use_typmod?: boolean }; Returns: string }
@@ -2230,6 +2247,14 @@ export type Database = {
       }
       postgis_version: { Args: never; Returns: string }
       postgis_wagyu_version: { Args: never; Returns: string }
+      read_email_batch: {
+        Args: { batch_size: number; queue_name: string; vt: number }
+        Returns: {
+          message: Json
+          msg_id: number
+          read_ct: number
+        }[]
+      }
       search_public_vitrines: {
         Args: { _city?: string; _limit?: number; _q?: string }
         Returns: {
