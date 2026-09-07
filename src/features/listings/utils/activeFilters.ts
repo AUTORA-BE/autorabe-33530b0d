@@ -14,10 +14,9 @@ export function countActiveFilters(filters: VehicleFilters): number {
   if (filters.brand) n++;
   if (filters.model) n++;
   if (filters.location) n++;
-  if (filters.minPrice > d.minPrice) n++;
-  if (filters.maxPrice < d.maxPrice) n++;
-  if (filters.kmMin > d.kmMin) n++;
-  if (filters.kmMax < d.kmMax) n++;
+  // Un intervalle (prix, année, km) compte pour un seul filtre : l'utilisateur ne manipule qu'un seul contrôle.
+  if (filters.minPrice > d.minPrice || filters.maxPrice < d.maxPrice) n++;
+  if (filters.kmMin > d.kmMin || filters.kmMax < d.kmMax) n++;
   if (filters.fuelTypes?.length) n++;
   if (filters.transmission) n++;
   if (filters.color) n++;
