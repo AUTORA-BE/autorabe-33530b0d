@@ -2,6 +2,23 @@ import { Helmet } from "react-helmet-async";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { organizationSchema, websiteSchema } from "@/lib/seoSchemas";
 
+/**
+ * Product metadata for marketplace unfurls (Facebook / LinkedIn) — merged in
+ * from the former `components/seo/VehicleSEO.tsx`, which is now deleted.
+ */
+export interface SEOProduct {
+  /** Listing id, used as product:retailer_item_id */
+  id: string;
+  price: number;
+  brand?: string;
+  /** Alt text for og:image / twitter:image */
+  imageAlt?: string;
+  /** Extra gallery images (max 4 emitted, hero first) */
+  images?: string[];
+  /** City / region — refines geo.placename */
+  location?: string;
+}
+
 interface SEOHeadProps {
   title?: string;
   description?: string;
@@ -11,6 +28,8 @@ interface SEOHeadProps {
   noIndex?: boolean;
   /** JSON-LD structured data object(s) — rendered as <script type="application/ld+json"> */
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  /** Emit product:* OG tags + LCP preload of the hero image. */
+  product?: SEOProduct;
 }
 
 const SEOHead = ({
@@ -21,7 +40,9 @@ const SEOHead = ({
   type = "website",
   noIndex = false,
   jsonLd,
+  product,
 }: SEOHeadProps) => {
+
   const { language } = useLanguage();
 
   const defaultTitles: Record<string, string> = {
