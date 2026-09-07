@@ -28,6 +28,7 @@ import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { useFavorites } from "@/features/favorites";
 import { useSubscription } from "@/features/subscription";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { usePaymentsEnabled } from "@/hooks/usePaymentsEnabled";
 import { useSellerListings } from "@/features/listings/hooks/useSellerListings";
 import { useLocalStorage } from "@/shared/hooks";
 import {
