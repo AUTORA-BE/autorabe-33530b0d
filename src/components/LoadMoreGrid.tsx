@@ -1,6 +1,8 @@
 import { useEffect, useRef, useCallback, useMemo } from "react";
 import { CarCard, type Car } from "@/features/listings";
-import {  SlidersHorizontal, ChevronDown, AlertCircle, RefreshCw, Share2, Sparkles } from "lucide-react";
+import {  SlidersHorizontal, ChevronDown, AlertCircle, RefreshCw, Share2, Sparkles, Car as CarIcon } from "lucide-react";
+import { Link } from "react-router-dom";
+
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
@@ -165,8 +167,15 @@ const LoadMoreGrid = ({
     noVehiclesDesc: language === "nl" 
       ? "Wijzig uw zoekcriteria om overeenkomende voertuigen te vinden." 
       : "Modifiez vos critères de recherche pour trouver des véhicules correspondants.",
+    clearFilters: language === "nl" ? "Filters wissen" : "Effacer les filtres",
+    emptyCatalog: language === "nl" ? "Nog geen advertenties geplaatst" : "Aucune annonce publiée pour le moment",
+    emptyCatalogDesc: language === "nl"
+      ? "Wees de eerste: plaats uw voertuig op AutoRA."
+      : "Soyez le premier : déposez votre véhicule sur AutoRA.",
+    sellCta: language === "nl" ? "Mijn auto verkopen" : "Déposer mon annonce",
     loadMore: language === "nl" ? "Meer laden" : "Charger plus",
     loading: language === "nl" ? "Laden..." : "Chargement...",
+
   };
 
   // Error state - inline since ErrorState component was removed
@@ -345,7 +354,8 @@ const LoadMoreGrid = ({
             )}
           </div>
         </>
-      ) : (
+      ) : activeFiltersCount > 0 ? (
+        /* Des filtres sont actifs : le catalogue peut contenir des annonces. */
         <div className="text-center py-16 sm:py-20">
           <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-6 rounded-full bg-secondary flex items-center justify-center">
             <SlidersHorizontal className="w-6 h-6 sm:w-8 sm:h-8 text-muted-foreground" />
@@ -356,14 +366,34 @@ const LoadMoreGrid = ({
           <p className="text-muted-foreground max-w-md mx-auto text-sm sm:text-base px-4 mb-6">
             {texts.noVehiclesDesc}
           </p>
-          {activeFiltersCount > 0 && onResetFilters && (
+          {onResetFilters && (
             <Button onClick={onResetFilters} variant="outline" className="gap-2">
               <RefreshCw className="w-4 h-4" />
-              {language === "nl" ? "Filters resetten" : "Réinitialiser les filtres"}
+              {texts.clearFilters}
             </Button>
           )}
         </div>
+      ) : (
+        /* Aucun filtre actif : le catalogue lui-même est vide. */
+        <div className="text-center py-16 sm:py-20">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-6 rounded-full bg-secondary flex items-center justify-center">
+            <CarIcon className="w-6 h-6 sm:w-8 sm:h-8 text-muted-foreground" />
+          </div>
+          <h3 className="font-display text-lg sm:text-xl font-bold text-foreground mb-2">
+            {texts.emptyCatalog}
+          </h3>
+          <p className="text-muted-foreground max-w-md mx-auto text-sm sm:text-base px-4 mb-6">
+            {texts.emptyCatalogDesc}
+          </p>
+          <Button asChild className="gap-2">
+            <Link to="/sell">
+              <Sparkles className="w-4 h-4" />
+              {texts.sellCta}
+            </Link>
+          </Button>
+        </div>
       )}
+
     </div>
   );
 };

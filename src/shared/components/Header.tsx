@@ -4,11 +4,12 @@
  * @module shared/components
  */
 
-import { Menu, Heart, MessageCircle, GitCompareArrows, Sun, Moon, Bell, Search } from "lucide-react";
+import { Menu, Heart, MessageCircle, GitCompareArrows, Sun, Moon, Bell } from "lucide-react";
 import autoraLogo from "@/assets/autora-logo.png";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
 import { supabase } from "@/integrations/supabase/client";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import { useToast } from "@/hooks/use-toast";
@@ -30,10 +31,8 @@ const Header = () => {
   const [userProfile, setUserProfile] = useState<{ avatar_url: string | null; display_name: string | null } | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
-  // Pill "Rechercher" visible UNIQUEMENT sur la page d'accueil (root + locales)
-  const isHomePage = /^\/(fr|nl|de|en)?\/?$/.test(location.pathname);
   const { toast } = useToast();
+
   const { unreadCount, hasUnread } = useUnreadMessages();
   const { compareCount } = useCompareContext();
   const { favoritesCount } = useFavorites();
@@ -163,40 +162,10 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Mobile-only premium "Rechercher" pill button — visible UNIQUEMENT sur la page d'accueil */}
-        {isHomePage && (
-        <div
-          className={`lg:hidden overflow-hidden transition-all duration-300 ease-out ${
-            scrolled ? "max-h-0 opacity-0 mt-0" : "max-h-14 opacity-100 mt-1.5"
-          }`}
-        >
-          <button
-            type="button"
-            onClick={() => navigate("/recherche")}
-            aria-label="Rechercher une voiture"
-            className="group relative w-full h-11 rounded-full overflow-hidden
-                       bg-card/35 backdrop-blur-xl
-                       border border-primary/25 ring-1 ring-inset ring-white/5
-                       shadow-[0_4px_24px_-8px_hsl(var(--primary)/0.25)]
-                       hover:border-primary/60 active:scale-[0.98]
-                       transition-all duration-300
-                       hover:shadow-[0_0_28px_-4px_hsl(var(--primary)/0.55),inset_0_1px_0_0_hsl(var(--primary)/0.15)]
-                       focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
-          >
-            {/* Glow sweep on hover */}
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 -translate-x-full
-                         bg-gradient-to-r from-transparent via-primary/25 to-transparent
-                         group-hover:translate-x-full transition-transform duration-[1100ms] ease-out"
-            />
-            <span className="relative flex items-center justify-center gap-2 text-[13px] font-medium tracking-wide text-foreground">
-              <Search className="w-4 h-4 text-primary drop-shadow-[0_0_6px_hsl(var(--primary)/0.6)]" strokeWidth={2.2} />
-              <span>Rechercher</span>
-            </span>
-          </button>
-        </div>
-        )}
+        {/* Pastille mobile « Rechercher » retirée : elle n'apparaissait que sur
+            l'accueil, où le hero contient déjà un champ de recherche et la barre
+            de navigation basse une entrée « Rechercher ». */}
+
 
         {/* Mobile Menu (now a drawer — renders via portal-like AnimatePresence) */}
         <MobileMenu
