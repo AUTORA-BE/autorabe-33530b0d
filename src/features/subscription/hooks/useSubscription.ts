@@ -96,16 +96,14 @@ export function useSubscription() {
     };
   }, [checkSubscription]);
 
-  const createCheckout = useCallback(async (priceId: string) => {
-    const allowed = Object.values(SUBSCRIPTION_TIERS)
-      .filter((t) => t.purchasable)
-      .map((t) => t.price_id);
-    if (!allowed.includes(priceId)) {
-      throw new Error("Cette offre n'est pas disponible à l'achat en ligne.");
-    }
-
+  /**
+   * Lance un checkout d'abonnement.
+   * @param plan Clé de plan (ex. "particulier"). Le prix Stripe est résolu
+   *   exclusivement côté serveur : le client ne connaît aucun identifiant de prix.
+   */
+  const createCheckout = useCallback(async (plan: string) => {
     const { data, error } = await supabase.functions.invoke('create-checkout', {
-      body: { priceId },
+      body: { plan },
     });
     if (error) throw error;
     if (data?.url) {

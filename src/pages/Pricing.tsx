@@ -29,7 +29,8 @@ interface TierCard {
   badge?: string;
   badgeColor?: string;
   cta: 'subscribe' | 'free';
-  priceId?: string;
+  /** Clé de plan envoyée à l'edge function (aucun identifiant Stripe côté client). */
+  plan?: string;
   slug?: string;
 }
 
@@ -60,7 +61,7 @@ const PARTICULIER_CARDS: TierCard[] = [
         badge: 'Populaire',
         badgeColor: 'bg-primary text-primary-foreground',
         cta: 'subscribe' as const,
-        priceId: SUBSCRIPTION_TIERS.particulier.price_id,
+        plan: SUBSCRIPTION_TIERS.particulier.slug,
         slug: SUBSCRIPTION_TIERS.particulier.slug,
       }]
     : []),
@@ -104,9 +105,9 @@ export default function Pricing() {
     }
   }, [searchParams, toast, checkSubscription]);
 
-  const handleSubscribe = async (priceId: string) => {
+  const handleSubscribe = async (plan: string) => {
     if (!isAuthenticated) { navigate('/auth'); return; }
-    try { await createCheckout(priceId); } catch {
+    try { await createCheckout(plan); } catch {
       toast({ title: 'Erreur', description: 'Impossible de lancer le paiement.', variant: 'destructive' });
     }
   };
@@ -137,7 +138,7 @@ export default function Pricing() {
     }
 
     return (
-      <Button className="w-full rounded-xl h-12 font-semibold" onClick={() => handleSubscribe(card.priceId!)} disabled={isLoading}>
+      <Button className="w-full rounded-xl h-12 font-semibold" onClick={() => handleSubscribe(card.plan!)} disabled={isLoading}>
         {isLoading ? 'Chargement...' : "S'abonner"} {!isLoading && <ArrowRight className="h-4 w-4 ml-2" />}
       </Button>
     );
