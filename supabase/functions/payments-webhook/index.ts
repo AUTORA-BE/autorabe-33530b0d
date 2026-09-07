@@ -80,6 +80,24 @@ async function upsertSubscription(
     ? subscription.customer
     : subscription.customer?.id;
 
+  // Correction 3 : alerter si l'on écrase un accès offert manuellement (sans bloquer).
+  const { data: existing } = await getSupabase()
+    .from("subscriptions")
+    .select("product_id,stripe_subscription_id")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (existing && !existing.stripe_subscription_id && existing.product_id !== tierSlug) {
+    await logOpsAlert("payments-webhook", "Abonnement payant écrasant un accès offert", {
+      severity: "warn",
+      context: {
+        user_id: userId,
+        previous_tier: String(existing.product_id ?? ""),
+        new_tier: String(tierSlug ?? ""),
+      },
+    });
+  }
+
   const { error } = await getSupabase().from("subscriptions").upsert(
     {
       user_id: userId,
@@ -95,6 +113,7 @@ async function upsertSubscription(
   if (error) throw new Error(`subscription upsert failed: ${error.message}`);
   log("info", "subscription_synced", { user_id: userId, tier: tierSlug, status: subscription.status });
 }
+
 
 // deno-lint-ignore no-explicit-any
 async function activateBoost(session: any) {
@@ -122,8 +141,8 @@ async function activateBoost(session: any) {
   log("info", "boost_activated", { listing_id: listingId, boost_level: boostLevel });
 }
 
-async function handleWebhook(req: Request, env: StripeEnv) {
-  const event = await verifyWebhook(req, env);
+// deno-lint-ignore no-explicit-any
+async function processEvent(event: any, env: StripeEnv) {
   const stripe = createStripeClient(env);
   // deno-lint-ignore no-explicit-any
   const object = event.data.object as any;
@@ -156,6 +175,31 @@ async function handleWebhook(req: Request, env: StripeEnv) {
   }
 }
 
+/** Vrai si l'événement a déjà été traité avec succès. */
+async function alreadyProcessed(eventId: string): Promise<boolean> {
+  const { data, error } = await getSupabase()
+    .from("stripe_processed_events")
+    .select("id")
+    .eq("event_id", eventId)
+    .maybeSingle();
+  if (error) {
+    // En cas d'échec de lecture, on préfère retraiter (écritures idempotentes).
+    log("warn", "idempotency_check_failed", { error: error.message });
+    return false;
+  }
+  return Boolean(data);
+}
+
+/** Pose le marqueur d'idempotence — uniquement après un traitement réussi. */
+async function markProcessed(eventId: string, eventType: string) {
+  const { error } = await getSupabase()
+    .from("stripe_processed_events")
+    .insert({ event_id: eventId, event_type: eventType, payload_summary: { type: eventType } });
+  if (error && error.code !== "23505") {
+    log("warn", "idempotency_mark_failed", { error: error.message });
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method !== "POST") return new Response("Method not allowed", { status: 405 });
 
@@ -168,14 +212,47 @@ Deno.serve(async (req) => {
     });
   }
 
+  // 1) Signature : échec permanent → 400, pas de rejeu.
+  // deno-lint-ignore no-explicit-any
+  let event: any;
   try {
-    await handleWebhook(req, rawEnv);
+    event = await verifyWebhook(req, rawEnv);
+  } catch (e) {
+    log("error", "signature_verification_failed", {
+      error: e instanceof Error ? e.message : String(e),
+    });
+    return new Response("Webhook error", { status: 400 });
+  }
+
+  const eventId = String(event?.id ?? "");
+  const eventType = String(event?.type ?? "");
+
+  // 2) Traitement : toute erreur est considérée transitoire → 500, Stripe réessaie.
+  try {
+    if (eventId && await alreadyProcessed(eventId)) {
+      log("info", "duplicate_event_ignored", { event_id: eventId, type: eventType });
+      return new Response(JSON.stringify({ received: true, duplicate: true }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    await processEvent(event, rawEnv);
+
+    if (eventId) await markProcessed(eventId, eventType);
+
     return new Response(JSON.stringify({ received: true }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
   } catch (e) {
-    log("error", "webhook_error", { error: e instanceof Error ? e.message : String(e) });
-    return new Response("Webhook error", { status: 400 });
+    const message = e instanceof Error ? e.message : String(e);
+    log("error", "webhook_processing_error", { event_id: eventId, type: eventType, error: message });
+    await logOpsAlert("payments-webhook", `Échec de traitement d'un événement de paiement: ${message}`, {
+      severity: "critical",
+      context: { event_id: eventId, event_type: eventType },
+    });
+    return new Response("Webhook processing error", { status: 500 });
   }
 });
+
