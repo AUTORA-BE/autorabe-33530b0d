@@ -79,12 +79,18 @@
       })();
     </script>
     
-    <title>AutoRA — Voiture occasion Belgique, Car-Pass &amp; LEZ</title>
+    <!-- NEUTRAL FALLBACKS ONLY.
+         Everything page-specific (title, description, og:*, twitter:*,
+         canonical, hreflang) is emitted by SEOHead (react-helmet-async), and
+         rewritten at build time for vehicle pages by scripts/prerenderOgMeta.mjs.
+         Do not add page-specific values here — a crawler reads the first
+         occurrence and would get the generic one. -->
+    <title>AutoRA — Marketplace automobile belge</title>
     <!-- Canonical is emitted per-route by SEOHead (react-helmet-async) -->
     <meta name="google-site-verification" content="4zy4ZUSEXVNLs4nZ_8sGQdUABjSx03FaoUAX7Op5gms" />
-    <meta name="description" content="AutoRA — Marketplace auto belge. Voitures d&#39;occasion avec Car-Pass vérifié et compatibilité LEZ garantie. Calculateur TCO et fiscalité intégrés.">
+    <meta name="description" content="AutoRA, la marketplace automobile belge : annonces de voitures d&#39;occasion, informations Car-Pass et LEZ, calculateurs de taxes et de coût total.">
     <meta name="author" content="AutoRA" />
-    <meta name="keywords" content="voiture occasion belgique, tweedehands auto belgië, gebrauchtwagen belgien, used cars belgium, car-pass, LEZ Bruxelles, LEZ Anvers, LEZ Gand, taxe mise circulation, TMC, fiscalité auto belgique, calculateur TCO, autoscout, 2ememain auto" />
+
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="googlebot" content="index, follow" />
     <meta name="geo.region" content="BE" />
