@@ -68,7 +68,9 @@ const sellCarSchema = z.object({
   contact_name: z.string().optional(),
   contact_phone: z.string().optional(),
   contact_email: z.string().email("Adresse email invalide").optional().or(z.literal("")),
-  location: z.string().optional(),
+  // trim() : le champ est du texte libre saisi à la main — sans nettoyage on
+  // enregistre des valeurs du type "Namur " qui polluent filtres et URLs.
+  location: z.string().trim().optional(),
   car_pass_verified: z.boolean().optional(),
   ct_valid: z.boolean().optional(),
   maintenance_book_complete: z.boolean().optional(),
