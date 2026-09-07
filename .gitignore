@@ -27,3 +27,6 @@ dist-ssr
 .env
 .env.local
 .env.*.local
+
+# Sauvegardes de stockage (contiennent des données personnelles : KYC, Car-Pass)
+storage-backup/
