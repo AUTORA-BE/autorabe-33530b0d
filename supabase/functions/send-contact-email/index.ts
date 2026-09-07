@@ -3,8 +3,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { buildCorsHeaders, handlePreflight } from "../_shared/cors.ts";
 import { sendTemplateEmailLogged } from "../_shared/sendTemplateEmailLogged.ts";
+import { logOpsAlert } from "../_shared/opsAlert.ts";
 
-const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 /** Boîte de réception des demandes de contact / devis pro. Repli sur la valeur historique. */
 const CONTACT_INBOX = Deno.env.get("CONTACT_INBOX") ?? "autoracontact@gmail.com";
 
@@ -15,30 +15,6 @@ interface ContactFormData {
   email: string;
   subject: string;
   message: string;
-}
-
-async function sendEmail(to: string[], subject: string, html: string, replyTo?: string) {
-  const res = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${RESEND_API_KEY}`,
-    },
-    body: JSON.stringify({
-      from: "AutoRA <noreply@autora.be>",
-      to,
-      subject,
-      html,
-      ...(replyTo && { reply_to: replyTo }),
-    }),
-  });
-
-  if (!res.ok) {
-    const error = await res.text();
-    throw new Error(`Failed to send email: ${error}`);
-  }
-
-  return res.json();
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -120,103 +96,19 @@ const handler = async (req: Request): Promise<Response> => {
     const safeSubject = escapeHtml(subject);
     const safeMessage = escapeHtml(message);
 
-    // Send notification email to AutoRA team
-    const notificationHtml = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="utf-8">
-        <style>
-          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; padding: 30px; border-radius: 12px 12px 0 0; }
-          .content { background: #f9fafb; padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px; }
-          .field { margin-bottom: 20px; }
-          .label { font-weight: 600; color: #6366f1; margin-bottom: 5px; }
-          .value { background: white; padding: 12px; border-radius: 8px; border: 1px solid #e5e7eb; }
-          .message-box { background: white; padding: 20px; border-radius: 8px; border: 1px solid #e5e7eb; white-space: pre-wrap; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <h1 style="margin: 0;">Nouveau message de contact</h1>
-            <p style="margin: 10px 0 0 0; opacity: 0.9;">Via le formulaire AutoRA</p>
-          </div>
-          <div class="content">
-            <div class="field">
-              <div class="label">Nom</div>
-              <div class="value">${safeName}</div>
-            </div>
-            <div class="field">
-              <div class="label">Email</div>
-              <div class="value"><a href="mailto:${safeEmail}">${safeEmail}</a></div>
-            </div>
-            <div class="field">
-              <div class="label">Sujet</div>
-              <div class="value">${safeSubject}</div>
-            </div>
-            <div class="field">
-              <div class="label">Message</div>
-              <div class="message-box">${safeMessage.replace(/\n/g, '<br>')}</div>
-            </div>
-          </div>
-        </div>
-      </body>
-      </html>
-    `;
+    // Notification interne (email managé, destinataire fixe défini par le gabarit)
+    const inboxResult = await sendTemplateEmailLogged("contact-inbox", CONTACT_INBOX, {
+      idempotencyKey: `contact-inbox-${crypto.randomUUID()}`,
+      replyTo: email,
+      templateData: { name, email, subject, message },
+    });
 
-    await sendEmail(
-      [CONTACT_INBOX],
-      `[Contact AutoRA] ${safeSubject}`,
-      notificationHtml,
-      email
-    );
-
-    console.log("Notification email sent");
-
-    // Send confirmation email to the user
-    const confirmationHtml = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="utf-8">
-        <style>
-          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; padding: 30px; border-radius: 12px 12px 0 0; text-align: center; }
-          .content { background: #f9fafb; padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px; }
-          .footer { text-align: center; margin-top: 20px; color: #6b7280; font-size: 14px; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <h1 style="margin: 0;">Merci de nous avoir contacté !</h1>
-          </div>
-          <div class="content">
-            <p>Bonjour ${safeName},</p>
-            <p>Nous avons bien reçu votre message concernant "<strong>${safeSubject}</strong>".</p>
-            <p>Notre équipe traitera votre demande dans les plus brefs délais. Nous nous efforçons de répondre sous 24 heures ouvrées.</p>
-            <p>En attendant, n'hésitez pas à consulter notre <a href="https://autora.be/faq">FAQ</a> qui pourrait répondre à certaines de vos questions.</p>
-            <p>Cordialement,<br><strong>L'équipe AutoRA</strong></p>
-          </div>
-          <div class="footer">
-            <p>AutoRA - La marketplace automobile belge de confiance</p>
-            <p>Rue de la Loi 1, 1000 Bruxelles, Belgique</p>
-          </div>
-        </div>
-      </body>
-      </html>
-    `;
-
-    await sendEmail(
-      [email],
-      "Nous avons bien reçu votre message - AutoRA",
-      confirmationHtml
-    );
-
-    console.log("Confirmation email sent");
+    if (!inboxResult.sent && inboxResult.reason === "send_failed") {
+      await logOpsAlert("send-contact-email", "Envoi du message de contact vers la boîte interne échoué", {
+        severity: "error",
+        context: { hasUser: Boolean(userId) },
+      });
+    }
 
     // Confirmation applicative (email managé)
     await sendTemplateEmailLogged("contact-confirmation", email, {
