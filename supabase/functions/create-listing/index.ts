@@ -3,6 +3,10 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { buildCorsHeaders, handlePreflight, jsonResponse } from '../_shared/cors.ts';
 
+/** Unique état d'attente d'une annonce — doit rester aligné avec
+ *  src/features/listings/constants/listingStatus.ts et la contrainte SQL. */
+const LISTING_STATUS_PENDING = 'pending_review';
+
 interface ListingPayload {
   brand: string;
   model: string;

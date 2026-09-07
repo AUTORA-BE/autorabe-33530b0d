@@ -14,6 +14,7 @@ import {
   SUBSCRIPTION_TIERS,
 } from '../constants/tiers';
 import { IS_BETA_MODE } from '@/config/betaConfig';
+import { LISTING_STATUS_PENDING } from '@/features/listings/constants/listingStatus';
 
 interface ListingLimitState {
   isLoading: boolean;

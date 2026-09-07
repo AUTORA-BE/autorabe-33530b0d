@@ -15,6 +15,7 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
+import { LISTING_STATUS_PENDING } from '@/features/listings/constants/listingStatus';
 
 const KM_TOLERANCE = 500;
 

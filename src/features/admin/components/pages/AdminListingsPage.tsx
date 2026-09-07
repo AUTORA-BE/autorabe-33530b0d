@@ -24,6 +24,7 @@ import { useListingHistory } from '../../hooks/useListingHistory';
 import { exportData } from '../../utils/exportData';
 import type { ExportFormat } from '../../types/admin.types';
 import type { AdminListing } from '../../types/admin.types';
+import { LISTING_STATUS_PENDING } from '@/features/listings/constants/listingStatus';
 
 const STATUS_COLORS: Record<string, string> = {
   pending_review: 'bg-amber-500/10 text-amber-500',

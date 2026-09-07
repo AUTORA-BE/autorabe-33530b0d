@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { countPendingListings } from '@/features/listings/constants/listingStatus';
 
 interface DashboardStats {
   totalUsers: number;

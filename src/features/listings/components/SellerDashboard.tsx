@@ -68,6 +68,7 @@ import { useSellerListings } from "../hooks/useSellerListings";
 import BoostDialog from "./BoostDialog";
 import { usePaymentsEnabled } from "@/hooks/usePaymentsEnabled";
 import type { SellerListing, StatusFilter, ChartPeriod } from "../types/sellerDashboard.types";
+import { countPendingListings, LISTING_STATUS_PENDING } from '@/features/listings/constants/listingStatus';
 
 // Animation variants
 const containerVariants = {
