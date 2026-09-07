@@ -79,7 +79,25 @@ d'une reconstruction) :
 - `chat-images` était public : **corrigé**, le bucket est désormais privé et
   les pièces jointes sont affichées via des URLs signées (1 h).
 
+### 2 bis. Restauration des fichiers de stockage
+
+`bootstrap-storage.mjs` recrée les **contenants vides**. Leur **contenu** doit
+être re-téléversé depuis la sauvegarde locale produite par
+`scripts/backup-storage.mjs` (voir « Sauvegardes et restauration » plus bas) :
+
+```bash
+# structure de la sauvegarde : <BACKUP_DIR>/<bucket>/<chemin d'origine>
+for bucket in "$BACKUP_DIR"/*/; do
+  name="$(basename "$bucket")"
+  supabase storage cp -r "$bucket" "ss:///$name" --experimental
+done
+```
+
+Vérifier ensuite que le nombre de fichiers par bucket correspond au
+`manifest.json` de la sauvegarde.
+
 ### 3. Secrets
+
 
 Secrets des edge functions à renseigner :
 
@@ -135,3 +153,59 @@ Puis, côté application :
 4. envoyer une image en messagerie → écrit dans `chat-images` ;
 5. lancer un parcours KYC professionnel → écrit dans `dealer-kyc` ;
 6. vérifier le sitemap et les balises OG sur une fiche véhicule.
+
+---
+
+## Sauvegardes et restauration
+
+Deux moitiés bien distinctes, avec deux mécanismes différents. Ne pas supposer
+que l'une couvre l'autre.
+
+### Base de données — couverte automatiquement
+
+Supabase réalise des **sauvegardes quotidiennes automatiques** de la base.
+Restauration en un clic depuis le dashboard (Database → Backups →
+« Restore to this backup »).
+
+- Cette opération **écrase la base actuelle** : tout ce qui a été écrit depuis
+  la sauvegarde est perdu.
+- Le projet est **inaccessible pendant l'opération**.
+- C'est un outil de **dernier recours**, pas d'exploration. Pour inspecter un
+  état passé, restaurer sur un projet jetable.
+- Rétention observée : **environ 9 jours**.
+
+### Fichiers de stockage — NON couverts
+
+Documentation Supabase, textuellement : *« Database backups do not include
+objects you store via the Storage API, as the database only includes metadata
+about these objects. »*
+
+Une restauration rend donc les tables, les annonces, les comptes et la
+définition des buckets — **mais pas les fichiers**. Sans copie, les photos de
+véhicules, Car-Pass, documents KYC et pièces jointes de messagerie sont
+irrécupérables.
+
+C'est `scripts/backup-storage.mjs` qui s'en charge, et il doit être **lancé
+manuellement** (rien ne le déclenche automatiquement).
+
+```bash
+SUPABASE_URL="https://<ref>.supabase.co" \
+SUPABASE_SERVICE_ROLE_KEY="<service_role>" \
+BACKUP_DIR="./storage-backup" \
+node scripts/backup-storage.mjs
+```
+
+- Parcourt **tous** les buckets, publics et privés (la clé `service_role` est
+  indispensable pour lire `car-pass`, `dealer-kyc`, `vitrine-covers`).
+- Descente récursive dans les sous-dossiers par identifiant utilisateur.
+- Structure reproduite à l'identique : `<BACKUP_DIR>/<bucket>/<chemin>`.
+- **Reprise** : un fichier déjà présent localement avec la même taille est
+  ignoré ; relancer le script ne retélécharge pas tout.
+- Écrit `<BACKUP_DIR>/manifest.json` (date, bucket, chemin, taille, type) pour
+  vérifier plus tard qu'une sauvegarde est complète.
+- Sort en **code non nul** si un fichier a échoué (détectable en cron / CI).
+
+Le dossier de sauvegarde contient des **données personnelles** (documents
+d'identité, Car-Pass) : le stocker chiffré et ne jamais le committer.
+
+Volume de référence : ~144 fichiers, ~43 Mo — dont 128 photos de véhicules.
