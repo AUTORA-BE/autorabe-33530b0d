@@ -102,15 +102,29 @@ const SEOHead = ({
       <meta property="og:description" content={fullDescription} />
       <meta property="og:type" content={type} />
       <meta property="og:image" content={image} />
+      {product?.images?.filter((img) => img !== image).slice(0, 3).map((img, i) => (
+        <meta key={`og-img-${i}`} property="og:image" content={img} />
+      ))}
+      {product?.imageAlt && <meta property="og:image:alt" content={product.imageAlt} />}
       <meta property="og:url" content={canonicalUrl} />
       <meta property="og:site_name" content="AutoRA" />
       <meta property="og:locale" content={locale} />
-      
+
+      {/* Product OG (Facebook + LinkedIn product unfurls) */}
+      {product && <meta property="product:price:amount" content={String(product.price)} />}
+      {product && <meta property="product:price:currency" content="EUR" />}
+      {product && <meta property="product:availability" content="in stock" />}
+      {product && <meta property="product:condition" content="used" />}
+      {product && <meta property="product:retailer_item_id" content={product.id} />}
+      {product?.brand && <meta property="product:brand" content={product.brand} />}
+
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={fullDescription} />
       <meta name="twitter:image" content={image} />
+      {product?.imageAlt && <meta name="twitter:image:alt" content={product.imageAlt} />}
+
       
       {/* Canonical */}
       <link rel="canonical" href={canonicalUrl} />
