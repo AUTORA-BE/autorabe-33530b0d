@@ -87,7 +87,6 @@ Deno.serve(async (req) => {
 
     const listing = report.car_listings as { brand: string; model: string; year: number } | null;
     const vehicleName = listing ? `${listing.brand} ${listing.model} (${listing.year})` : "annonce signalée";
-    const isActioned = body.outcome === "actioned";
 
     const result = await sendTemplateEmailLogged("report-reviewed", reporterEmail, {
       idempotencyKey: `report-reviewed-${body.report_id}`,
