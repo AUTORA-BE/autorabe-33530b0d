@@ -157,26 +157,7 @@ export function useVehicleSearch(options: UseVehicleSearchOptions = {}) {
   }, []);
 
   // ── Derived ───────────────────────────────────────────────────────
-  const activeFiltersCount = useMemo(() => {
-    let count = 0;
-    if (filters.searchQuery) count++;
-    if (filters.brand) count++;
-    if (filters.model) count++;
-    if (filters.minPrice > 0 || filters.maxPrice < 1000000) count++;
-    if (filters.fuelTypes.length > 0) count++;
-    if (filters.transmission) count++;
-    if (filters.euroNorm) count++;
-    if (filters.yearMin > 1900 || filters.yearMax < new Date().getFullYear() + 1) count++;
-    if (filters.kmMin > 0 || filters.kmMax < 500000) count++;
-    if (filters.lezOnly) count++;
-    if (filters.sellerTypeFilter) count++;
-    if (filters.bodyType) count++;
-    if (filters.color) count++;
-    if (filters.province) count++;
-    if (filters.features && filters.features.length > 0) count++;
-    if (filters.maxDistanceKm !== null && filters.userLat !== null) count++;
-    return count;
-  }, [filters]);
+  const activeFiltersCount = useMemo(() => countActiveFilters(filters), [filters]);
 
   // ── Return (backward-compatible with both old hooks) ──────────────
   return {
