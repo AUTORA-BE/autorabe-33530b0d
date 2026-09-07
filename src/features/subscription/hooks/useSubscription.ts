@@ -7,6 +7,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { SUBSCRIPTION_TIERS, type SubscriptionTier } from '../constants/tiers';
 import { getStripeEnvironment } from '@/lib/stripe';
+import { usePaymentsEnabled } from '@/hooks/usePaymentsEnabled';
 
 interface SubscriptionState {
   isLoading: boolean;
@@ -20,6 +21,8 @@ interface SubscriptionState {
  * Hook to check and manage the current user's Stripe subscription
  */
 export function useSubscription() {
+  // Source de vérité unique : la variable serveur, via `payments-status`.
+  const paymentsOn = usePaymentsEnabled();
   const [state, setState] = useState<SubscriptionState>({
     isLoading: true,
     subscribed: false,
@@ -100,6 +103,8 @@ export function useSubscription() {
   }, [checkSubscription]);
 
   const openCustomerPortal = useCallback(async () => {
+    // Paiements fermés côté serveur : le portail n'a rien à gérer.
+    if (!paymentsOn) return;
     const { data, error } = await supabase.functions.invoke('customer-portal', {
       body: { environment: getStripeEnvironment(), returnUrl: window.location.href },
     });
@@ -107,10 +112,11 @@ export function useSubscription() {
     if (data?.url) {
       window.open(data.url, '_blank');
     }
-  }, []);
+  }, [paymentsOn]);
 
   return {
     ...state,
+    paymentsEnabled: paymentsOn,
     checkSubscription,
     openCustomerPortal,
   };
