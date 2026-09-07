@@ -568,7 +568,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
         {/* ── Floating marketplace action cards — bottom of hero ──
              Mobile: pb-36 leaves breathing room above the BottomNav (~68px + safe-bottom)
              so the search bar isn't visually "eaten" by the nav and feels properly centered. */}
-        <div className="container mx-auto px-6 sm:px-10 relative z-10 pb-36 sm:pb-14">
+        <div className="container mx-auto px-6 sm:px-10 relative z-10 pb-28 sm:pb-14">
           {isMobile ? (
             <motion.button
               {...fadeUp(0.25)}

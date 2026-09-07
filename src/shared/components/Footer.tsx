@@ -58,7 +58,11 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="relative overflow-hidden mt-12 sm:mt-20 border-t border-border/10 pb-[calc(env(safe-area-inset-bottom,0px)+96px)] md:pb-0">
+    {/* Marge basse mobile : dégage la barre de navigation (~68px) ET la pile de
+        boutons flottants (aide à 152px + hauteur), pour que le copyright ne
+        passe jamais sous un bouton. */}
+    <footer className="relative overflow-hidden mt-12 sm:mt-20 border-t border-border/10 pb-[calc(env(safe-area-inset-bottom,0px)+216px)] md:pb-0">
+
       {/* Seamless background — inherits page gradient, no color jump */}
       <div className="absolute inset-0 bg-background" />
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/[0.02] to-transparent pointer-events-none" />
