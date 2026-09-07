@@ -1,6 +1,6 @@
 import { useEffect, useRef, useCallback, useMemo } from "react";
 import { CarCard, type Car } from "@/features/listings";
-import {  SlidersHorizontal, ChevronDown, AlertCircle, RefreshCw, Share2, Sparkles, Car } from "lucide-react";
+import {  SlidersHorizontal, ChevronDown, AlertCircle, RefreshCw, Share2, Sparkles, Car as CarIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -377,7 +377,7 @@ const LoadMoreGrid = ({
         /* Aucun filtre actif : le catalogue lui-même est vide. */
         <div className="text-center py-16 sm:py-20">
           <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-6 rounded-full bg-secondary flex items-center justify-center">
-            <Car className="w-6 h-6 sm:w-8 sm:h-8 text-muted-foreground" />
+            <CarIcon className="w-6 h-6 sm:w-8 sm:h-8 text-muted-foreground" />
           </div>
           <h3 className="font-display text-lg sm:text-xl font-bold text-foreground mb-2">
             {texts.emptyCatalog}
