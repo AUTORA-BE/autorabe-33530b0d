@@ -5,6 +5,16 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 
 
 import { buildCorsHeaders, handlePreflight } from "../_shared/cors.ts";
+import { logOpsAlert } from "../_shared/opsAlert.ts";
+
+/**
+ * Plans achetables en self-serve, résolus côté serveur uniquement.
+ * Le client n'envoie qu'une clé de plan : jamais d'identifiant de prix Stripe.
+ * Pro Garage et Premium sont sur devis (activation manuelle par un admin).
+ */
+const PLAN_ENV_VARS: Record<string, string> = {
+  particulier: "STRIPE_PRICE_PARTICULIER",
+};
 
 serve(async (req) => {
   const corsHeaders = buildCorsHeaders(req);
@@ -22,20 +32,26 @@ serve(async (req) => {
     const user = data.user;
     if (!user?.email) throw new Error("User not authenticated or email not available");
 
-    const { priceId } = await req.json();
-    if (!priceId) throw new Error("Price ID is required");
+    const { plan } = await req.json();
 
-    // Seul abonnement récurrent vendu en self-serve sur le site.
-    // Pro Garage et Premium sont exclusivement sur devis : ils sont activés
-    // manuellement par un admin via la table `subscriptions`, jamais achetés ici.
-    // Les boosts d'annonce ont leur propre fonction (`create-boost-checkout`).
-    const ALLOWED_PRICE_IDS = new Set<string>([
-      "price_1UBbsGFyYvJx8HZKFZhyy1Sj", // Particulier €25/mois
-    ]);
-    if (typeof priceId !== "string" || !ALLOWED_PRICE_IDS.has(priceId)) {
-      return new Response(JSON.stringify({ error: "Invalid price" }), {
+    const envVar = typeof plan === "string" ? PLAN_ENV_VARS[plan] : undefined;
+    if (!envVar) {
+      return new Response(JSON.stringify({ error: "Invalid plan" }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 400,
+      });
+    }
+
+    // Aucune valeur de repli : un prix manquant doit échouer bruyamment.
+    const priceId = (Deno.env.get(envVar) ?? "").trim();
+    if (!priceId) {
+      await logOpsAlert("create-checkout", `Variable de prix manquante: ${envVar}`, {
+        severity: "critical",
+        context: { plan, missing_env: envVar },
+      });
+      return new Response(JSON.stringify({ error: "Configuration de prix manquante" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 500,
       });
     }
 
