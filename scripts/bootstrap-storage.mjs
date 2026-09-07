@@ -99,12 +99,11 @@ const BUCKETS = [
     allowedMimeTypes: ['image/jpeg'],
   },
   {
-    // ⚠ ANOMALIE CONNUE — REPRODUITE VOLONTAIREMENT
-    // Bucket PUBLIC alors qu'il contient des pièces jointes de messagerie
-    // privée. Point identifié comme à corriger (passage en privé + URLs
-    // signées), mais l'état actuel est reproduit fidèlement ici.
+    // PRIVÉ — pièces jointes de messagerie privée. L'anomalie « bucket public »
+    // a été corrigée : les policies (propriétaire + admin) sont désormais
+    // effectives et l'affichage passe par des URLs signées (1 h).
     id: 'chat-images',
-    public: true,
+    public: false,
     fileSizeLimit: 5 * MB, // 5242880
     allowedMimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
   },

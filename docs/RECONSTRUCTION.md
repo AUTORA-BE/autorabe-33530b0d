@@ -66,7 +66,7 @@ jamais un bucket déjà existant.
 | `brand-logos`    | public | 1 MB     | svg, png, webp                    |
 | `car-pass`       | privé  | 10 MB    | pdf, jpeg, png                    |
 | `car-photos`     | public | 1 octet  | jpeg — voir anomalies             |
-| `chat-images`    | public | 5 MB     | jpeg, png, webp, gif — voir anomalies |
+| `chat-images`    | privé  | 5 MB     | jpeg, png, webp, gif              |
 | `dealer-kyc`     | privé  | 10 MB    | jpeg, png, webp, pdf              |
 | `vehicle-photos` | public | 10 MB    | jpeg, png, webp                   |
 | `vitrine-covers` | privé  | 5 MB     | jpeg, png, webp                   |
@@ -76,8 +76,8 @@ d'une reconstruction) :
 - `car-photos` a une limite de **1 octet** : plus rien ne peut y être déposé,
   alors qu'il contient encore 8 fichiers référencés par la purge RGPD de
   l'edge function `delete-account`.
-- `chat-images` est **public** alors qu'il contient des pièces jointes de
-  messagerie privée.
+- `chat-images` était public : **corrigé**, le bucket est désormais privé et
+  les pièces jointes sont affichées via des URLs signées (1 h).
 
 ### 3. Secrets
 
