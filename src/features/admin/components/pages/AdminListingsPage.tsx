@@ -140,8 +140,9 @@ export default function AdminListingsPage() {
                   <div className="flex items-center gap-1.5 flex-wrap">
                     <p className="text-sm font-medium truncate">{listing.brand} {listing.model}</p>
                     <Badge className={`text-[9px] px-1.5 ${STATUS_COLORS[listing.status || 'pending'] || ''}`}>
-                      {listing.status}
+                      {STATUS_LABELS[listing.status || 'pending'] || listing.status}
                     </Badge>
+
                     {listing.boost_level && listing.boost_level !== 'none' && (
                       listing.boost_expires_at && new Date(listing.boost_expires_at) > new Date() ? (
                         <Badge className="text-[9px] px-1.5 bg-amber-500/15 text-amber-600 border border-amber-500/30 hover:bg-amber-500/20">
@@ -160,24 +161,35 @@ export default function AdminListingsPage() {
                     {listing.year} · {listing.mileage?.toLocaleString()} km · €{listing.price?.toLocaleString()} · {listing.contact_name}
                   </p>
                 </div>
-                <div className="flex gap-1 flex-shrink-0" onClick={e => e.stopPropagation()}>
+                <div className="flex items-center gap-1 flex-shrink-0" onClick={e => e.stopPropagation()}>
+                  {/* Sur une annonce en attente, la publication est l'action
+                      dominante : bouton plein et libellé explicite. Boost,
+                      rejet et suppression restent secondaires (ghost). */}
+                  {listing.status === 'pending' && (
+                    <Button
+                      size="sm"
+                      className="h-8 px-2.5 gap-1.5 bg-emerald-600 text-white hover:bg-emerald-500 shadow-sm"
+                      onClick={() => approve(listing.id)}
+                      disabled={isActing}
+                    >
+                      <Check className="h-3.5 w-3.5" />
+                      <span className="text-[11px] font-medium hidden sm:inline">Approuver et publier</span>
+                      <span className="text-[11px] font-medium sm:hidden">Publier</span>
+                    </Button>
+                  )}
                   <Button size="icon" variant="ghost" className="h-7 w-7 text-amber-500" onClick={() => setBoostListing(listing)} disabled={isActing} aria-label="Gérer le boost">
                     <Zap className="h-3.5 w-3.5" />
                   </Button>
                   {listing.status === 'pending' && (
-                    <>
-                      <Button size="icon" variant="ghost" className="h-7 w-7 text-emerald-500" onClick={() => approve(listing.id)} disabled={isActing}>
-                        <Check className="h-3.5 w-3.5" />
-                      </Button>
-                      <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={() => openRejectDialog(listing.id)} disabled={isActing}>
-                        <X className="h-3.5 w-3.5" />
-                      </Button>
-                    </>
+                    <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={() => openRejectDialog(listing.id)} disabled={isActing} aria-label="Rejeter l'annonce">
+                      <X className="h-3.5 w-3.5" />
+                    </Button>
                   )}
-                  <Button size="icon" variant="ghost" className="h-7 w-7 text-muted-foreground" onClick={() => { if (window.confirm('Supprimer ?')) remove(listing.id); }} disabled={isActing}>
+                  <Button size="icon" variant="ghost" className="h-7 w-7 text-muted-foreground" onClick={() => { if (window.confirm('Supprimer ?')) remove(listing.id); }} disabled={isActing} aria-label="Supprimer l'annonce">
                     <Trash2 className="h-3.5 w-3.5" />
                   </Button>
                 </div>
+
               </CardContent>
             </Card>
           ))}
