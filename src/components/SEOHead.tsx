@@ -2,6 +2,23 @@ import { Helmet } from "react-helmet-async";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { organizationSchema, websiteSchema } from "@/lib/seoSchemas";
 
+/**
+ * Product metadata for marketplace unfurls (Facebook / LinkedIn) — merged in
+ * from the former `components/seo/VehicleSEO.tsx`, which is now deleted.
+ */
+export interface SEOProduct {
+  /** Listing id, used as product:retailer_item_id */
+  id: string;
+  price: number;
+  brand?: string;
+  /** Alt text for og:image / twitter:image */
+  imageAlt?: string;
+  /** Extra gallery images (max 4 emitted, hero first) */
+  images?: string[];
+  /** City / region — refines geo.placename */
+  location?: string;
+}
+
 interface SEOHeadProps {
   title?: string;
   description?: string;
@@ -11,6 +28,8 @@ interface SEOHeadProps {
   noIndex?: boolean;
   /** JSON-LD structured data object(s) — rendered as <script type="application/ld+json"> */
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  /** Emit product:* OG tags + LCP preload of the hero image. */
+  product?: SEOProduct;
 }
 
 const SEOHead = ({
@@ -21,7 +40,9 @@ const SEOHead = ({
   type = "website",
   noIndex = false,
   jsonLd,
+  product,
 }: SEOHeadProps) => {
+
   const { language } = useLanguage();
 
   const defaultTitles: Record<string, string> = {
@@ -81,15 +102,29 @@ const SEOHead = ({
       <meta property="og:description" content={fullDescription} />
       <meta property="og:type" content={type} />
       <meta property="og:image" content={image} />
+      {product?.images?.filter((img) => img !== image).slice(0, 3).map((img, i) => (
+        <meta key={`og-img-${i}`} property="og:image" content={img} />
+      ))}
+      {product?.imageAlt && <meta property="og:image:alt" content={product.imageAlt} />}
       <meta property="og:url" content={canonicalUrl} />
       <meta property="og:site_name" content="AutoRA" />
       <meta property="og:locale" content={locale} />
-      
+
+      {/* Product OG (Facebook + LinkedIn product unfurls) */}
+      {product && <meta property="product:price:amount" content={String(product.price)} />}
+      {product && <meta property="product:price:currency" content="EUR" />}
+      {product && <meta property="product:availability" content="in stock" />}
+      {product && <meta property="product:condition" content="used" />}
+      {product && <meta property="product:retailer_item_id" content={product.id} />}
+      {product?.brand && <meta property="product:brand" content={product.brand} />}
+
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={fullDescription} />
       <meta name="twitter:image" content={image} />
+      {product?.imageAlt && <meta name="twitter:image:alt" content={product.imageAlt} />}
+
       
       {/* Canonical */}
       <link rel="canonical" href={canonicalUrl} />
@@ -122,9 +157,13 @@ const SEOHead = ({
 
       {/* Geo-targeting meta (legacy but still parsed by some bots) */}
       <meta name="geo.region" content="BE" />
-      <meta name="geo.placename" content="Belgium" />
+      <meta name="geo.placename" content={product?.location || "Belgium"} />
       <meta name="ICBM" content="50.8503, 4.3517" />
       <meta name="DC.coverage" content="Belgium" />
+
+      {/* LCP preload of the hero image on product pages */}
+      {product && image && <link rel="preload" as="image" href={image} />}
+
 
       {/* JSON-LD Structured Data */}
       {jsonLdItems.map((item, i) => (
