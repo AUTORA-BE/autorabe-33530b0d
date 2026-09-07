@@ -42,6 +42,25 @@ export async function logOpsAlert(
     if (!url || !serviceKey) return
 
     const admin = createClient(url, serviceKey, { auth: { persistSession: false } })
+
+    // Garde-fou anti-inondation : au-delà du seuil horaire pour cette source, on n'insère plus.
+    // Si le comptage échoue, on insère quand même (ne jamais perdre une alerte).
+    const since = new Date(Date.now() - 3_600_000).toISOString()
+    const { count, error: countError } = await admin
+      .from('ops_alerts')
+      .select('id', { count: 'exact', head: true })
+      .eq('source', source)
+      .gte('created_at', since)
+
+    if (!countError && typeof count === 'number' && count >= MAX_ALERTS_PER_SOURCE_PER_HOUR) {
+      console.warn('logOpsAlert rate-limited', {
+        source,
+        count,
+        limit: MAX_ALERTS_PER_SOURCE_PER_HOUR,
+      })
+      return
+    }
+
     await admin.from('ops_alerts').insert({
       source,
       severity: options?.severity ?? 'error',
