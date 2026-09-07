@@ -83,19 +83,6 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
-    // Escape HTML to prevent XSS
-    const escapeHtml = (str: string) => 
-      str.replace(/&/g, '&amp;')
-         .replace(/</g, '&lt;')
-         .replace(/>/g, '&gt;')
-         .replace(/"/g, '&quot;')
-         .replace(/'/g, '&#039;');
-
-    const safeName = escapeHtml(name);
-    const safeEmail = escapeHtml(email);
-    const safeSubject = escapeHtml(subject);
-    const safeMessage = escapeHtml(message);
-
     // Notification interne (email managé, destinataire fixe défini par le gabarit)
     const inboxResult = await sendTemplateEmailLogged("contact-inbox", CONTACT_INBOX, {
       idempotencyKey: `contact-inbox-${crypto.randomUUID()}`,
