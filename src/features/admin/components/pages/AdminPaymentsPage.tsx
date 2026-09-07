@@ -24,7 +24,7 @@ import {
 } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
-import { SUBSCRIPTION_TIERS } from "@/features/subscription/constants/tiers";
+import { resolveTier } from "@/features/subscription/constants/tiers";
 import { UserContactCard } from "../UserContactCard";
 import { useAdminListings } from "../../hooks/useAdminListings";
 import { BoostAdminDialog } from "../BoostAdminDialog";
@@ -33,7 +33,7 @@ import type { AdminListing } from "../../types/admin.types";
 
 function planLabel(productId: string | null, status: string): string {
   if (!productId || status !== "active") return "Gratuit";
-  const t = Object.values(SUBSCRIPTION_TIERS).find(x => x.product_id === productId);
+  const t = resolveTier(productId);
   return t ? t.name : "Inconnu";
 }
 

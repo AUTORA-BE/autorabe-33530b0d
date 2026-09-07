@@ -10,5 +10,7 @@ export {
   FREE_TIER_FEATURES,
   EXTRA_LISTING_PRICE,
   FREE_LISTINGS_PER_MONTH,
+  resolveTier,
 } from './constants/tiers';
 export type { SubscriptionTier } from './constants/tiers';
+
