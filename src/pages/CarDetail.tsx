@@ -281,6 +281,7 @@ const CarDetail = () => {
   if (!car) {
     return (
       <div className="page-gradient">
+        <SEOHead noIndex title="Véhicule non trouvé" />
         <Header />
         <main className="container mx-auto px-6 py-32 text-center">
           <motion.div {...fadeUp(0)}>
@@ -455,7 +456,7 @@ const CarDetail = () => {
     <div className="page-gradient">
       <SEOHead 
         title={`${car.brand} ${car.model} ${car.year} — ${formatPrice(car.price)}`}
-        description={`${car.brand} ${car.model} ${car.year} • ${formatPrice(car.price)} • ${formatMileage(car.mileage)} km • ${car.fuelType} • ${car.location}. Annonce vérifiée sur AutoRA.be.`}
+        description={`${car.brand} ${car.model} ${car.year} • ${formatPrice(car.price)} • ${formatMileage(car.mileage)} • ${car.fuelType} • ${car.location}. Annonce vérifiée sur AutoRA.be.`}
         image={car.image}
         url={`https://autora.be/car/${id}`}
         type="product"

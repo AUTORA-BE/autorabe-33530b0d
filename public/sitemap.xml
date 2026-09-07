@@ -13,4 +13,9 @@
          (b) generate the vehicle sitemaps statically at build time.
        Until then, vehicle listings will be discovered organically by Googlebot
        via internal links from the homepage and /recherche. -->
+  <!-- Vehicle sitemap: generated at build time by scripts/prerenderOgMeta.mjs
+       from approved listings (dist/sitemap-vehicles.xml). -->
+  <sitemap>
+    <loc>https://autora.be/sitemap-vehicles.xml</loc>
+  </sitemap>
 </sitemapindex>
