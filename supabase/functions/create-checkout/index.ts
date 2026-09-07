@@ -86,7 +86,12 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("[create-checkout] Error:", error instanceof Error ? error.message : error);
+    const message = error instanceof Error ? error.message : String(error);
+    console.error("[create-checkout] Error:", message);
+    await logOpsAlert("create-checkout", message, {
+      severity: "critical",
+      context: { plan: requestedPlan, environment: requestedEnv },
+    });
     return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
