@@ -19,7 +19,7 @@ import { fr } from 'date-fns/locale';
 import { z } from 'zod';
 import { useAdminUsers } from '../../hooks/useAdminUsers';
 import { exportData } from '../../utils/exportData';
-import { SUBSCRIPTION_TIERS } from '@/features/subscription/constants/tiers';
+import { SUBSCRIPTION_TIERS, resolveTier } from '@/features/subscription/constants/tiers';
 import { UserContactCard } from '../UserContactCard';
 import { belgianPhoneSchema, belgianPostalSchema, belgianVatSchema, displayNameSchema } from '@/lib/validation/belgian';
 import type { ExportFormat } from '../../types/admin.types';
