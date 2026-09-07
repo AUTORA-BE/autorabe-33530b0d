@@ -1,58 +1,63 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "npm:@supabase/supabase-js@2";
 
-
-
 import { buildCorsHeaders, handlePreflight } from "../_shared/cors.ts";
+import { createStripeClient, parseEnv, resolveOrCreateCustomer } from "../_shared/stripe.ts";
 
 serve(async (req) => {
   const corsHeaders = buildCorsHeaders(req);
-  if (req.method === 'OPTIONS') return handlePreflight(req);
+  if (req.method === "OPTIONS") return handlePreflight(req);
 
   try {
-    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
-    if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
-
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-      { auth: { persistSession: false } }
+      { auth: { persistSession: false } },
     );
 
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) throw new Error("No authorization header provided");
-
-    const token = authHeader.replace("Bearer ", "");
+    const token = (req.headers.get("Authorization") ?? "").replace("Bearer ", "");
     const { data: userData, error: userError } = await supabaseClient.auth.getUser(token);
-    if (userError) throw new Error(`Authentication error: ${userError.message}`);
-    const user = userData.user;
-    if (!user?.email) throw new Error("User not authenticated or email not available");
-
-    const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
-    const customers = await stripe.customers.list({ email: user.email, limit: 1 });
-    if (customers.data.length === 0) {
-      throw new Error("No Stripe customer found for this user");
+    const user = userData?.user;
+    if (userError || !user?.email) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
-    const ALLOWED_ORIGINS = ["https://autora.be", "https://www.autora.be", "https://autorabe.lovable.app"];
+    const { environment, returnUrl } = await req.json().catch(() => ({}));
+    const env = parseEnv(environment);
+
+    const stripe = createStripeClient(env);
+    const customerId = await resolveOrCreateCustomer(stripe, {
+      email: user.email,
+      userId: user.id,
+    });
+
+    const ALLOWED_ORIGINS = [
+      "https://autora.be",
+      "https://www.autora.be",
+      "https://autorabe.lovable.app",
+    ];
     const rawOrigin = req.headers.get("origin") || "";
     const origin = ALLOWED_ORIGINS.includes(rawOrigin) ? rawOrigin : "https://autora.be";
+
     const portalSession = await stripe.billingPortal.sessions.create({
-      customer: customers.data[0].id,
-      return_url: `${origin}/pricing`,
+      customer: customerId,
+      return_url: typeof returnUrl === "string" && /^https?:\/\//.test(returnUrl)
+        ? returnUrl
+        : `${origin}/pricing`,
     });
 
     return new Response(JSON.stringify({ url: portalSession.url }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    console.error("[customer-portal] Error:", message);
+    console.error("[customer-portal] Error:", error instanceof Error ? error.message : error);
     return new Response(JSON.stringify({ error: "Internal server error" }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
 });

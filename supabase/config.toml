@@ -29,7 +29,7 @@ project_id = "jbdsjqoonpieusfvkhyo"
     verify_jwt = false
   [functions.send-push-notification]
     verify_jwt = false
-  [functions.stripe-webhook]
+  [functions.payments-webhook]
     verify_jwt = false
   [functions.preview-transactional-email]
     verify_jwt = false

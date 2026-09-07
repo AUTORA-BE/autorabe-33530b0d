@@ -19,6 +19,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { BOOST_TIERS } from "../constants/boostTiers";
+import { CheckoutDialog } from "@/components/payments/CheckoutDialog";
 
 interface BoostDialogProps {
   open: boolean;
@@ -69,26 +70,11 @@ export default function BoostDialog({ open, onOpenChange, listingId, listingName
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
-  const handleBoost = async () => {
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
+
+  const handleBoost = () => {
     if (!selectedTier) return;
-    setIsLoading(true);
-
-    try {
-      const { data, error } = await supabase.functions.invoke("create-boost-checkout", {
-        body: { boostTier: selectedTier, listingId },
-      });
-
-      if (error) throw error;
-
-      if (data?.url) {
-        window.open(data.url, "_blank");
-        onOpenChange(false);
-      }
-    } catch (err: any) {
-      toast.error(err.message || "Erreur lors de l'activation du boost");
-    } finally {
-      setIsLoading(false);
-    }
+    setCheckoutOpen(true);
   };
 
   const handleClose = (value: boolean) => {
@@ -187,6 +173,21 @@ export default function BoostDialog({ open, onOpenChange, listingId, listingName
           )}
         </AnimatePresence>
       </DialogContent>
+
+      {selectedTier && (
+        <CheckoutDialog
+          open={checkoutOpen}
+          onOpenChange={(value) => {
+            setCheckoutOpen(value);
+            if (!value) onOpenChange(false);
+          }}
+          functionName="create-boost-checkout"
+          priceId={selectedTier}
+          listingId={listingId}
+          title="Booster votre annonce"
+          returnUrl={`${window.location.origin}/dashboard?boost=success`}
+        />
+      )}
     </Dialog>
   );
 }
