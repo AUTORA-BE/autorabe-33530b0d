@@ -5,6 +5,7 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
+import { defaultVehicleFilters } from '../types/vehicle.types';
 import type { 
   Vehicle, 
   VehicleDetail, 
