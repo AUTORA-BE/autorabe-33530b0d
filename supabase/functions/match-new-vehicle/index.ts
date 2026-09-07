@@ -236,40 +236,60 @@ Deno.serve(async (req) => {
         })
         .eq("id", alert.id);
 
-      // Send email if enabled
-      if (alert.notify_email && resendApiKey) {
+      // Send email if enabled — through the managed send path (verified sender,
+      // server-side suppression, retries and email_send_log journalling).
+      if (alert.notify_email) {
         // Get user email
         const { data: userData } = await supabase.auth.admin.getUserById(alert.user_id);
         const userEmail = userData?.user?.email;
 
         if (userEmail) {
-          try {
-            // Skip suppressed recipients (GDPR opt-out compliance)
-            const { data: suppressed } = await supabase
-              .from("suppressed_emails")
-              .select("id")
-              .eq("email", userEmail.toLowerCase())
-              .maybeSingle();
-            if (suppressed) {
-              console.log(`Skipping suppressed recipient: ${userEmail}`);
-              continue;
-            }
+          // No manual `suppressed_emails` lookup here: suppression is enforced
+          // server-side by the managed API, which reports it as
+          // { sent: false, reason: 'recipient_suppressed' } — a normal outcome.
+          const result = await sendTemplateEmailLogged(TEMPLATE_NAME, userEmail, {
+            idempotencyKey: `${TEMPLATE_NAME}-${alert.id}-${vehicle.id}`,
+            templateData: {
+              alertName: alert.name,
+              brand: vehicle.brand,
+              model: vehicle.model,
+              price: vehicle.price,
+              priceFormatted: new Intl.NumberFormat("fr-BE", {
+                style: "currency",
+                currency: "EUR",
+                maximumFractionDigits: 0,
+              }).format(vehicle.price),
+              mileageFormatted: new Intl.NumberFormat("fr-BE").format(vehicle.mileage),
+              year: vehicle.year,
+              fuelType: vehicle.fuel_type,
+              carPassVerified: vehicle.car_pass_verified ?? false,
+              location: vehicle.location ?? "",
+              imageUrl: vehicle.photos?.[0] ?? "",
+              vehicleUrl: `${siteUrl}/car/${vehicle.id}`,
+              score,
+            },
+          });
 
-            await fetch("https://api.resend.com/emails", {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${resendApiKey}`,
-                "Content-Type": "application/json",
+          if (result.sent) {
+            console.log(`[match-new-vehicle] alert email sent for alert ${alert.id}`);
+          } else if (result.reason === "recipient_suppressed") {
+            // Expected: the recipient opted out. Not an error.
+            console.log(`[match-new-vehicle] recipient suppressed for alert ${alert.id}`);
+          } else {
+            // A real send failure must never pass unnoticed again.
+            await logOpsAlert(
+              "match-new-vehicle",
+              `Envoi de l'alerte échoué (gabarit ${TEMPLATE_NAME})`,
+              {
+                severity: "error",
+                context: {
+                  template: TEMPLATE_NAME,
+                  alert_id: alert.id,
+                  listing_id: vehicle.id,
+                  reason: result.reason,
+                },
               },
-              body: JSON.stringify({
-                from: "AutoRA <onboarding@resend.dev>",
-                to: userEmail,
-                subject: `🚗 Nouveau : ${vehicle.brand} ${vehicle.model} à ${new Intl.NumberFormat("fr-BE").format(vehicle.price)}€`,
-                html: generateEmailHTML(alert.name, vehicle, score, siteUrl),
-              }),
-            });
-          } catch (emailError) {
-            console.error("Email send error:", emailError);
+            );
           }
         }
       }
