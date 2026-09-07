@@ -5,6 +5,8 @@
 
 import { memo, useEffect, useRef, type JSX } from "react";
 import { SlidersHorizontal, ChevronDown, ChevronLeft, ChevronRight, Flame } from "lucide-react";
+import { Link } from "react-router-dom";
+
 import VehicleCard from "./VehicleCard";
 import { useLanguage } from "@/contexts/LanguageContext";
 import type { Vehicle, VehicleSortOption } from "../types/vehicle.types";
@@ -103,8 +105,16 @@ const VehicleGrid = memo(function VehicleGrid({
       : language === "en" 
         ? "Modify your search criteria to find matching vehicles." 
         : "Modifiez vos critères de recherche pour trouver des véhicules correspondants.",
+    emptyCatalog: language === "nl" ? "Nog geen advertenties geplaatst" : language === "en" ? "No listings published yet" : "Aucune annonce publiée pour le moment",
+    emptyCatalogDesc: language === "nl"
+      ? "Wees de eerste: plaats uw voertuig op AutoRA."
+      : language === "en"
+        ? "Be the first: list your vehicle on AutoRA."
+        : "Soyez le premier : déposez votre véhicule sur AutoRA.",
+    sellCta: language === "nl" ? "Mijn auto verkopen" : language === "en" ? "List my car" : "Déposer mon annonce",
     prev: language === "nl" ? "Vorige" : language === "en" ? "Previous" : "Précédent",
     next: language === "nl" ? "Volgende" : language === "en" ? "Next" : "Suivant",
+
   };
 
   /**
@@ -235,13 +245,22 @@ const VehicleGrid = memo(function VehicleGrid({
             <SlidersHorizontal className="w-6 h-6 sm:w-8 sm:h-8 text-muted-foreground" aria-hidden="true" />
           </div>
           <h3 className="font-display text-lg sm:text-xl font-bold text-foreground mb-2">
-            {labels.noResults}
+            {activeFiltersCount > 0 ? labels.noResults : labels.emptyCatalog}
           </h3>
           <p className="text-muted-foreground max-w-md mx-auto text-sm sm:text-base px-4">
-            {labels.noResultsDesc}
+            {activeFiltersCount > 0 ? labels.noResultsDesc : labels.emptyCatalogDesc}
           </p>
+          {activeFiltersCount === 0 && (
+            <Link
+              to="/sell"
+              className="mt-6 inline-flex items-center justify-center rounded-xl bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:brightness-110"
+            >
+              {labels.sellCta}
+            </Link>
+          )}
         </div>
       )}
+
 
       {/* Pagination */}
       {totalPages > 1 && (
