@@ -9,6 +9,9 @@ import { createClient } from 'npm:@supabase/supabase-js@2'
 
 export type OpsSeverity = 'warn' | 'error' | 'critical'
 
+/** Nombre maximum d'alertes insérées par `source` sur une fenêtre glissante d'une heure. */
+const MAX_ALERTS_PER_SOURCE_PER_HOUR = 20
+
 /** Retire les clés potentiellement sensibles du contexte, par sécurité. */
 const FORBIDDEN_KEYS = /email|token|key|secret|password|phone|authorization|content/i
 

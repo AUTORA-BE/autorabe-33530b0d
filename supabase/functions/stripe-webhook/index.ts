@@ -160,11 +160,20 @@ serve(async (req) => {
   const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
   const supabaseAdmin = getSupabaseAdmin();
 
+  const body = await req.text();
+  const signature = req.headers.get("stripe-signature");
+
+  // Pas d'en-tête → scanner/sonde, pas un incident : aucune alerte ops.
+  if (!signature) {
+    log("warn", "missing_signature_header", { ip_hint: "unauthenticated_probe" });
+    return new Response(
+      JSON.stringify({ error: "Bad request" }),
+      { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
+  }
+
   let event: Stripe.Event;
   try {
-    const body = await req.text();
-    const signature = req.headers.get("stripe-signature");
-    if (!signature) throw new Error("Missing stripe-signature header");
     // ✅ ASYNC verification — required in Deno (uses Web Crypto, no Node 'crypto' module)
     event = await stripe.webhooks.constructEventAsync(body, signature, webhookSecret);
     log("info", "signature_verified", { event_id: event.id, type: event.type });
