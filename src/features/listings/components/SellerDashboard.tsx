@@ -606,17 +606,19 @@ export default function SellerDashboard() {
                                   <CheckCircle2 className="w-4 h-4" />
                                   {t("dashboard.markAsSold") || "Marquer comme vendu"}
                                 </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setListingToBoost(listing);
-                                    setBoostDialogOpen(true);
-                                  }}
-                                  className="gap-2 cursor-pointer text-amber-600 focus:text-amber-600"
-                                >
-                                  <Rocket className="w-4 h-4" />
-                                  {t("boost.boost") || "Booster cette annonce"}
-                                </DropdownMenuItem>
+                                {paymentsEnabled() && (
+                                  <DropdownMenuItem
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setListingToBoost(listing);
+                                      setBoostDialogOpen(true);
+                                    }}
+                                    className="gap-2 cursor-pointer text-amber-600 focus:text-amber-600"
+                                  >
+                                    <Rocket className="w-4 h-4" />
+                                    {t("boost.boost") || "Booster cette annonce"}
+                                  </DropdownMenuItem>
+                                )}
                               </>
                             )}
                             <DropdownMenuSeparator />

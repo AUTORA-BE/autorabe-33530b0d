@@ -1,8 +1,10 @@
 import { Info } from "lucide-react";
 import { isTestMode } from "@/lib/stripe";
+import { paymentsEnabled } from "@/lib/payments";
 
 /** Bandeau affiché tant que les paiements tournent en environnement de test. */
 export function PaymentTestModeBanner() {
+  if (!paymentsEnabled()) return null;
   if (!isTestMode()) return null;
 
   return (
