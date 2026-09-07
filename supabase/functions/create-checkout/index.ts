@@ -37,6 +37,8 @@ serve(async (req) => {
     }
 
     const { priceId, returnUrl, environment } = await req.json();
+    requestedPlan = typeof priceId === "string" ? priceId : "invalid";
+    requestedEnv = typeof environment === "string" ? environment : "invalid";
     const env = parseEnv(environment);
 
     if (typeof priceId !== "string" || !SUBSCRIPTION_PRICES[priceId]) {
