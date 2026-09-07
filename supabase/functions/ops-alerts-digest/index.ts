@@ -24,13 +24,20 @@ Deno.serve(async (req) => {
   const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
 
-  // Interne uniquement (cron / service_role).
+  const admin = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false } })
+
+  // Interne uniquement : clé service_role, ou jeton cron partagé stocké dans le
+  // coffre de la base (source unique, aucune valeur littérale dans le SQL du cron).
   const callerToken = (req.headers.get('Authorization') || '').replace('Bearer ', '').trim()
-  if (!serviceKey || callerToken !== serviceKey) {
+  let authorized = Boolean(serviceKey) && callerToken === serviceKey
+  if (!authorized && callerToken) {
+    const { data: ok } = await admin.rpc('verify_cron_token', { p_token: callerToken })
+    authorized = ok === true
+  }
+  if (!authorized) {
     return json({ error: 'Unauthorized' }, 401)
   }
 
-  const admin = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false } })
 
   const { data: alerts, error } = await admin
     .from('ops_alerts')
