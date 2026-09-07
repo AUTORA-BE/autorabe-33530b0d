@@ -15,6 +15,7 @@ import { useSubscription, SUBSCRIPTION_TIERS, FREE_TIER_FEATURES } from '@/featu
 import { useAuth } from '@/features/auth';
 import { useToast } from '@/hooks/use-toast';
 import SEOHead from '@/components/SEOHead';
+import { CheckoutDialog } from '@/components/payments/CheckoutDialog';
 import { motion } from 'framer-motion';
 
 interface TierCard {
@@ -89,11 +90,11 @@ export default function Pricing() {
     tier: currentTier,
     subscriptionEnd,
     isLoading,
-    createCheckout,
     openCustomerPortal,
     checkSubscription,
   } = useSubscription();
   const [quoteModal, setQuoteModal] = useState(false);
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
 
   useEffect(() => {
     if (searchParams.get('success') === 'true') {
@@ -105,11 +106,9 @@ export default function Pricing() {
     }
   }, [searchParams, toast, checkSubscription]);
 
-  const handleSubscribe = async (plan: string) => {
+  const handleSubscribe = (_plan: string) => {
     if (!isAuthenticated) { navigate('/auth'); return; }
-    try { await createCheckout(plan); } catch {
-      toast({ title: 'Erreur', description: 'Impossible de lancer le paiement.', variant: 'destructive' });
-    }
+    setCheckoutOpen(true);
   };
 
   const handleManage = async () => {
@@ -404,6 +403,17 @@ export default function Pricing() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <CheckoutDialog
+        open={checkoutOpen}
+        onOpenChange={(value) => {
+          setCheckoutOpen(value);
+          if (!value) checkSubscription();
+        }}
+        functionName="create-checkout"
+        priceId="particulier_monthly"
+        title="Abonnement Particulier — 25 €/mois"
+        returnUrl={`${window.location.origin}/pricing?success=true`}
+      />
     </div>
   );
 }
