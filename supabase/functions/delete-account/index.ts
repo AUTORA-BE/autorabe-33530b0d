@@ -130,6 +130,10 @@ serve(async (req) => {
     await supabase.from("messages").delete().eq("sender_id", userId);
 
     // ─── 3. Delete user-owned rows in parallel ──────────────────────────
+    // NOTE: since the FK migration, every table below is ON DELETE CASCADE from
+    // auth.users, so these explicit deletes are redundant. They are kept on
+    // purpose as a safety net: they run first, they are idempotent, and they
+    // make the deletion scope readable without knowing the schema.
     await Promise.all([
       supabase
         .from("conversations")
