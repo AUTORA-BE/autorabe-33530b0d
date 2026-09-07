@@ -20,6 +20,7 @@ import type {
 import { defaultVehicleFilters } from '../types/vehicle.types';
 import { useDebounce } from '@/shared/hooks/useDebounce';
 import { useFiltersUrlSync } from './useFiltersUrlSync';
+import { countActiveFilters } from '../utils/activeFilters';
 
 /** @deprecated Utilisez vehicleKeys à la place */
 // const _VEHICLE_QUERY_KEY = 'vehicles';
