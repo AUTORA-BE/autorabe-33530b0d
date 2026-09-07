@@ -66,7 +66,7 @@ import { fr, nl, enGB } from "date-fns/locale";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSellerListings } from "../hooks/useSellerListings";
 import BoostDialog from "./BoostDialog";
-import { paymentsEnabled } from "@/lib/payments";
+import { usePaymentsEnabled } from "@/hooks/usePaymentsEnabled";
 import type { SellerListing, StatusFilter, ChartPeriod } from "../types/sellerDashboard.types";
 
 // Animation variants
@@ -207,6 +207,7 @@ export default function SellerDashboard() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [listingToDelete, setListingToDelete] = useState<SellerListing | null>(null);
+  const paymentsOn = usePaymentsEnabled();
   const [boostDialogOpen, setBoostDialogOpen] = useState(false);
   const [listingToBoost, setListingToBoost] = useState<SellerListing | null>(null);
 
@@ -607,7 +608,7 @@ export default function SellerDashboard() {
                                   <CheckCircle2 className="w-4 h-4" />
                                   {t("dashboard.markAsSold") || "Marquer comme vendu"}
                                 </DropdownMenuItem>
-                                {paymentsEnabled() && (
+                                {paymentsOn && (
                                   <DropdownMenuItem
                                     onClick={(e) => {
                                       e.stopPropagation();
@@ -679,7 +680,7 @@ export default function SellerDashboard() {
       </AlertDialog>
 
       {/* Boost Dialog */}
-      {listingToBoost && paymentsEnabled() && (
+      {listingToBoost && paymentsOn && (
         <BoostDialog
           open={boostDialogOpen}
           onOpenChange={setBoostDialogOpen}

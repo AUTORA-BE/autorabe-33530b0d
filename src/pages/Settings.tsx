@@ -28,6 +28,7 @@ import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { useFavorites } from "@/features/favorites";
 import { useSubscription } from "@/features/subscription";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { usePaymentsEnabled } from "@/hooks/usePaymentsEnabled";
 import { useSellerListings } from "@/features/listings/hooks/useSellerListings";
 import { useLocalStorage } from "@/shared/hooks";
 import {
@@ -83,6 +84,7 @@ export default function Settings() {
   ];
 
   const { subscribed, tier, openCustomerPortal } = useSubscription();
+  const paymentsOn = usePaymentsEnabled();
   const isAdmin = useIsAdmin(user?.id);
   const { favoritesCount } = useFavorites();
   const { totals } = useSellerListings();
@@ -256,7 +258,10 @@ export default function Settings() {
       { id: "push", section: "Notifications", label: "Notifications push", action: () => {}, keywords: ["mobile"] },
       { id: "cookies", section: "Confidentialité", label: "Préférences cookies", action: handleResetCookies, keywords: ["rgpd", "tracking"] },
       { id: "export", section: "Confidentialité", label: "Exporter mes données", description: "RGPD", action: handleExport, keywords: ["rgpd", "download"] },
-      { id: "sub", section: "Abonnement", label: subscribed ? "Gérer mon abonnement" : "Passer Premium", action: subscribed ? openCustomerPortal : () => navigate("/pricing") },
+      // Portail client masqué tant que les paiements sont fermés côté serveur.
+      ...(subscribed && !paymentsOn
+        ? []
+        : [{ id: "sub", section: "Abonnement", label: subscribed ? "Gérer mon abonnement" : "Passer Premium", action: subscribed ? openCustomerPortal : () => navigate("/pricing") }]),
       { id: "cgu", section: "À propos", label: "Conditions d'utilisation", action: () => navigate("/cgu") },
       { id: "privacy", section: "À propos", label: "Confidentialité", action: () => navigate("/confidentialite") },
       { id: "contact", section: "À propos", label: "Contacter le support", action: () => navigate("/contact") },
@@ -264,7 +269,7 @@ export default function Settings() {
       { id: "logout", section: "Zone danger", label: "Se déconnecter", action: handleSignOut },
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, subscribed, navigate]);
+  }, [user, subscribed, paymentsOn, navigate]);
 
   const searchResults = useSettingsSearch(searchEntries, search);
   const isSearching = search.trim().length > 0;
@@ -661,7 +666,9 @@ export default function Settings() {
                       {subscribed && tier ? (
                         <>
                           <SettingsRow icon={Crown} tone="gold" label="Plan actuel" description={tier.name} noChevron />
-                          <SettingsRow icon={Crown} tone="gold" label="Gérer mon abonnement" onClick={openCustomerPortal} />
+                          {paymentsOn && (
+                            <SettingsRow icon={Crown} tone="gold" label="Gérer mon abonnement" onClick={openCustomerPortal} />
+                          )}
                         </>
                       ) : (
                         <SettingsRow icon={Crown} tone="gold" label="Passer Premium" description="Boostez vos annonces" onClick={() => navigate("/pricing")} />

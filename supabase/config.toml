@@ -45,3 +45,5 @@ project_id = "jbdsjqoonpieusfvkhyo"
     verify_jwt = false
   [functions.notify-dealer-decision]
     verify_jwt = false
+  [functions.payments-status]
+    verify_jwt = false

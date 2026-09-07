@@ -20,6 +20,7 @@ import { toast } from "sonner";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { BOOST_TIERS } from "../constants/boostTiers";
 import { CheckoutDialog } from "@/components/payments/CheckoutDialog";
+import { usePaymentsEnabled } from "@/hooks/usePaymentsEnabled";
 
 interface BoostDialogProps {
   open: boolean;
@@ -66,6 +67,7 @@ function BoostSuccessAnimation() {
 }
 
 export default function BoostDialog({ open, onOpenChange, listingId, listingName }: BoostDialogProps) {
+  const paymentsOn = usePaymentsEnabled();
   const [selectedTier, setSelectedTier] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -73,7 +75,7 @@ export default function BoostDialog({ open, onOpenChange, listingId, listingName
   const [checkoutOpen, setCheckoutOpen] = useState(false);
 
   const handleBoost = () => {
-    if (!selectedTier) return;
+    if (!selectedTier || !paymentsOn) return;
     setCheckoutOpen(true);
   };
 
@@ -125,10 +127,13 @@ export default function BoostDialog({ open, onOpenChange, listingId, listingName
                         <div className="flex items-center gap-2 mb-1">
                           <span className="text-lg">{tier.icon}</span>
                           <span className="font-semibold text-foreground">{tier.name}</span>
-                          {tier.popular && (
+                          {tier.popular && paymentsOn && (
                             <Badge className="text-xs bg-amber-500/10 text-amber-600 border-amber-500/20">
                               Populaire
                             </Badge>
+                          )}
+                          {!paymentsOn && (
+                            <Badge variant="secondary" className="text-xs">Bientôt</Badge>
                           )}
                         </div>
                         <ul className="space-y-1">
@@ -162,19 +167,29 @@ export default function BoostDialog({ open, onOpenChange, listingId, listingName
                 <Button variant="outline" className="flex-1 rounded-xl" onClick={() => handleClose(false)} disabled={isLoading}>
                   Annuler
                 </Button>
-                <Button className="flex-1 rounded-xl gap-2" onClick={handleBoost} disabled={!selectedTier || isLoading}>
+                <Button
+                  className="flex-1 rounded-xl gap-2"
+                  onClick={handleBoost}
+                  disabled={!paymentsOn || !selectedTier || isLoading}
+                >
                   {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Rocket className="w-4 h-4" />}
-                  {selected ? `Payer ${selected.price}€` : 'Sélectionnez une option'}
+                  {!paymentsOn
+                    ? 'Bientôt disponible'
+                    : selected ? `Payer ${selected.price}€` : 'Sélectionnez une option'}
                 </Button>
               </div>
 
-              <p className="text-xs text-muted-foreground text-center mt-3">Paiement sécurisé par Stripe 🔒</p>
+              <p className="text-xs text-muted-foreground text-center mt-3">
+                {paymentsOn
+                  ? 'Paiement sécurisé par Stripe 🔒'
+                  : 'AutoRA est gratuit pour le moment. La mise en avant des annonces arrivera prochainement.'}
+              </p>
             </motion.div>
           )}
         </AnimatePresence>
       </DialogContent>
 
-      {selectedTier && (
+      {selectedTier && paymentsOn && (
         <CheckoutDialog
           open={checkoutOpen}
           onOpenChange={(value) => {

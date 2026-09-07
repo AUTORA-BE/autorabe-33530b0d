@@ -16,7 +16,7 @@ import { useAuth } from '@/features/auth';
 import { useToast } from '@/hooks/use-toast';
 import SEOHead from '@/components/SEOHead';
 import { CheckoutDialog } from '@/components/payments/CheckoutDialog';
-import { paymentsEnabled } from '@/lib/payments';
+import { usePaymentsEnabled } from '@/hooks/usePaymentsEnabled';
 import { motion } from 'framer-motion';
 
 interface TierCard {
@@ -94,6 +94,7 @@ export default function Pricing() {
     openCustomerPortal,
     checkSubscription,
   } = useSubscription();
+  const paymentsOn = usePaymentsEnabled();
   const [quoteModal, setQuoteModal] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
 
@@ -122,6 +123,8 @@ export default function Pricing() {
     const isCurrentPlan = currentTier?.slug === card.slug;
 
     if (isCurrentPlan) {
+      // Portail client : masqué tant que les paiements sont fermés côté serveur.
+      if (!paymentsOn) return null;
       return (
         <Button variant="outline" className="w-full rounded-xl h-12" onClick={handleManage}>
           <Settings className="h-4 w-4 mr-2" /> Gérer mon plan
@@ -137,11 +140,11 @@ export default function Pricing() {
       );
     }
 
-    if (!paymentsEnabled()) {
+    if (!paymentsOn) {
       return (
-        <div className="w-full rounded-xl h-12 flex items-center justify-center border border-dashed border-border text-sm text-muted-foreground text-center px-3">
+        <Button className="w-full rounded-xl h-12 font-semibold" disabled>
           Bientôt disponible
-        </div>
+        </Button>
       );
     }
 
@@ -199,10 +202,12 @@ export default function Pricing() {
                   Renouvellement le {new Date(subscriptionEnd).toLocaleDateString('fr-BE')}
                 </p>
               )}
-              <Button variant="outline" size="sm" className="mt-3 rounded-xl" onClick={handleManage}>
-                <Settings className="h-4 w-4 mr-2" />
-                Gérer mon abonnement
-              </Button>
+              {paymentsOn && (
+                <Button variant="outline" size="sm" className="mt-3 rounded-xl" onClick={handleManage}>
+                  <Settings className="h-4 w-4 mr-2" />
+                  Gérer mon abonnement
+                </Button>
+              )}
             </motion.div>
           )}
 
@@ -228,6 +233,11 @@ export default function Pricing() {
                       <Badge className={`${card.badgeColor} gap-1 shadow-sm`}>
                         <Star className="h-3 w-3" /> {card.badge}
                       </Badge>
+                    </div>
+                  )}
+                  {!paymentsOn && card.cta === 'subscribe' && (
+                    <div className="absolute top-3 right-3">
+                      <Badge variant="secondary" className="text-[10px]">Bientôt</Badge>
                     </div>
                   )}
                   {isCurrentPlan && (
@@ -267,10 +277,10 @@ export default function Pricing() {
             })}
           </div>
 
-          {!paymentsEnabled() && (
+          {!paymentsOn && (
             <p className="text-center text-sm text-muted-foreground -mt-10 mb-16 max-w-xl mx-auto">
-              Les offres payantes arrivent prochainement. Pour l'instant, la publication
-              d'annonces sur AutoRA est entièrement gratuite.
+              AutoRA est gratuit pour le moment. La mise en avant des annonces
+              arrivera prochainement.
             </p>
           )}
 
@@ -349,7 +359,7 @@ export default function Pricing() {
             transition={{ delay: 0.6 }}
             className="flex flex-wrap justify-center gap-8 mt-14 text-muted-foreground text-sm"
           >
-            {paymentsEnabled() && (
+            {paymentsOn && (
               <div className="flex items-center gap-2">
                 <Shield className="h-4 w-4" />
                 Paiement sécurisé par Stripe
@@ -421,7 +431,7 @@ export default function Pricing() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      {paymentsEnabled() && (
+      {paymentsOn && (
       <CheckoutDialog
         open={checkoutOpen}
         onOpenChange={(value) => {
