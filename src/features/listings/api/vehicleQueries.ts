@@ -271,10 +271,16 @@ export const vehicleQueries = {
       }
     }
 
-    // Only request count on first page; subsequent pages skip it to avoid
-    // a full COUNT scan on every "load more" call. Use 'planned' (planner
-    // estimate) which is much faster than 'exact' on large filtered sets.
-    const countMode = page === 0 ? 'planned' : undefined;
+    // Comptage demandé sur la première page uniquement ; les pages suivantes
+    // s'en passent (le remplissage de page suffit à déduire `hasMore`).
+    //
+    // NE PAS revenir à 'planned' : un comptage estimé ne doit jamais piloter
+    // la pagination. L'estimation du planificateur Postgres vient des
+    // statistiques de table (ANALYZE) et peut être très inférieure au réel —
+    // elle pilotait `hasMore`, donc une estimation basse faisait disparaître
+    // le bouton « voir plus » et rendait des annonces inatteignables, sans
+    // aucune erreur. Le coût d'un COUNT exact est sans commune mesure.
+    const countMode = page === 0 ? 'exact' : undefined;
     let query = applyFilters(
       supabase.from('car_listings_public').select(LIST_COLUMNS, countMode ? { count: countMode } : undefined),
       filters

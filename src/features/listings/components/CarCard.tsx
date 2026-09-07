@@ -57,15 +57,19 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
   const getAltText = () => {
     const yearText = car.year;
     const mileageFormatted = new Intl.NumberFormat(language === "nl" ? "nl-BE" : "fr-BE").format(car.mileage);
+    // La localisation est explicitement étiquetée : un code postal nu
+    // ("5100") ne doit jamais se lire comme un montant.
+    const place = formatLocation(car.location);
+    const base = `${car.brand} ${car.model} ${yearText} - ${mileageFormatted} km - ${car.fuelType}`;
     switch (language) {
       case "nl":
-        return `${car.brand} ${car.model} ${yearText} - ${mileageFormatted} km - ${car.fuelType} - Te koop in ${car.location}`;
+        return `${base}${place ? ` - Locatie: ${place}` : ""}`;
       case "de":
-        return `${car.brand} ${car.model} ${yearText} - ${mileageFormatted} km - ${car.fuelType} - Zu verkaufen in ${car.location}`;
+        return `${base}${place ? ` - Standort: ${place}` : ""}`;
       case "en":
-        return `${car.brand} ${car.model} ${yearText} - ${mileageFormatted} km - ${car.fuelType} - For sale in ${car.location}`;
+        return `${base}${place ? ` - Location: ${place}` : ""}`;
       default:
-        return `${car.brand} ${car.model} ${yearText} - ${mileageFormatted} km - ${car.fuelType} - À vendre à ${car.location}`;
+        return `${base}${place ? ` - Localisation : ${place}` : ""}`;
     }
   };
 
