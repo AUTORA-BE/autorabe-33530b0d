@@ -135,13 +135,18 @@ async function fetchListings(supabaseUrl, anonKey) {
   return res.json();
 }
 
-export function prerenderOgMeta() {
+/**
+ * @param {{ supabaseUrl?: string, anonKey?: string }} [options]
+ *   Values come from `loadEnv()` in vite.config.ts — Vite never populates
+ *   process.env with VITE_* variables, so they must be injected explicitly.
+ */
+export function prerenderOgMeta(options = {}) {
   return {
     name: "autora-prerender-og-meta",
     apply: "build",
     async closeBundle() {
-      const supabaseUrl = process.env.VITE_SUPABASE_URL;
-      const anonKey = process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+      const supabaseUrl = options.supabaseUrl || process.env.VITE_SUPABASE_URL;
+      const anonKey = options.anonKey || process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
       if (!supabaseUrl || !anonKey) {
         this.warn("[og-prerender] Supabase env missing — skipped.");
         return;
@@ -166,6 +171,7 @@ export function prerenderOgMeta() {
       }
 
       let count = 0;
+      const sitemapUrls = [];
       for (const v of listings) {
         if (!v?.id || !v.brand || !v.model) continue;
         const html = renderHtml(base, v);
@@ -175,9 +181,28 @@ export function prerenderOgMeta() {
           await fs.mkdir(dir, { recursive: true });
           await fs.writeFile(path.join(dir, "index.html"), html, "utf8");
         }
+        sitemapUrls.push(`${SITE_ORIGIN}/car/${slug}`);
         count += 1;
       }
-      this.info?.(`[og-prerender] ${count} listing preview pages generated.`);
+
+      // Vehicle sitemap, built from the very same fetch (no second query).
+      const sitemap = [
+        `<?xml version="1.0" encoding="UTF-8"?>`,
+        `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`,
+        ...sitemapUrls.map(
+          (loc) =>
+            `  <url>\n    <loc>${esc(loc)}</loc>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`,
+        ),
+        `</urlset>`,
+      ].join("\n");
+      await fs.writeFile(path.join(outDir, "sitemap-vehicles.xml"), sitemap, "utf8");
+
+      // console.log so the count is visible in CI/build output (this.info is
+      // filtered out at the default Vite log level).
+      console.log(
+        `[og-prerender] ${count} listing preview pages generated (dist/car/<slug>/index.html) — sitemap-vehicles.xml: ${sitemapUrls.length} URLs.`,
+      );
+
     },
   };
 }
