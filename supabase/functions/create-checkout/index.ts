@@ -16,6 +16,15 @@ serve(async (req) => {
     });
   }
 
+  // Interrupteur global — défaut fermé : tout ce qui n'est pas exactement "true" désactive.
+  if ((Deno.env.get("PAYMENTS_ENABLED") ?? "").trim() !== "true") {
+    return new Response(
+      JSON.stringify({ error: "Les paiements sont temporairement indisponibles." }),
+      { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
+  }
+
+
   let requestedPlan = "unknown";
   let requestedEnv = "unknown";
 

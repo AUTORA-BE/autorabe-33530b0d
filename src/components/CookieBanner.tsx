@@ -1,6 +1,7 @@
 /**
  * RGPD-compliant cookie consent banner
- * Real gating via src/lib/consent.ts — Plausible is only loaded after accept.
+ * Real gating via src/lib/consent.ts. Audience measurement uses Cloudflare Web
+ * Analytics (cookieless), so no third-party script is injected.
  * @module components/CookieBanner
  */
 

@@ -9,18 +9,18 @@ const content = {
     sections: [
       {
         title: "1. Éditeur du site",
-        body: `**Dénomination** : AutoRA.be (ci-après « AutoRA »)
-**Statut** : Plateforme en phase bêta — pré-lancement public
-**Responsable de la publication** : Alperen Gursever
+        body: `**Dénomination du service** : AutoRA.be (ci-après « AutoRA »)
+**Éditeur** : Alperen Gursever, personne physique
+**Statut** : AutoRA n'est pas exploité par une société. L'éditeur n'est pas inscrit à la Banque-Carrefour des Entreprises et n'est pas assujetti à la TVA. Aucun numéro d'entreprise ni numéro de TVA n'est donc applicable à ce jour.
 **Adresse de contact** : autoracontact@gmail.com
 **Email** : autoracontact@gmail.com
 
-⚠️ **Phase bêta — Activité non commerciale**
+⚠️ **Service actuellement gratuit**
 
-AutoRA est actuellement mis à disposition à des fins d'évaluation et de pré-lancement public. Pendant cette phase :
+À ce jour, AutoRA fonctionne comme une place de marché gratuite :
 
 — Aucune transaction commerciale n'est réalisée par la plateforme elle-même.
-— Aucun paiement n'est traité par AutoRA. L'inscription et l'utilisation sont gratuites.
+— Aucun paiement n'est traité ni encaissé par AutoRA. L'inscription et l'utilisation sont gratuites.
 — Les éventuelles transactions entre utilisateurs se déroulent directement entre eux, hors plateforme.
 
 
@@ -31,10 +31,12 @@ AutoRA est une plateforme de mise en relation entre vendeurs et acheteurs de vé
         title: "2. Hébergement",
         body: `Le site AutoRA.be est hébergé et déployé par :
 
-**Netlify, Inc.**
-512 2nd Street
-San Francisco, CA 94107 — États-Unis
-Site web : https://www.netlify.com
+**Lovable Labs Incorporated** (hébergement et déploiement de l'application)
+Site web : https://lovable.dev
+
+**Cloudflare, Inc.** (réseau de diffusion, protection et mesure d'audience)
+101 Townsend St, San Francisco, CA 94107 — États-Unis
+Site web : https://www.cloudflare.com
 
 La base de données et les fonctions serverless sont gérées par :
 
@@ -73,7 +75,7 @@ La création de liens hypertextes pointant vers le site AutoRA.be est soumise à
         title: "6. Droit applicable et juridiction",
         body: `Les présentes mentions légales sont régies par le droit belge.
 
-En cas de litige relatif à l'interprétation ou à l'exécution des présentes, et à défaut de résolution amiable, les tribunaux compétents seront ceux du ressort de l'arrondissement judiciaire du domicile de l'éditeur, Belgique, sauf disposition légale impérative contraire. L'arrondissement précis sera mentionné lors de l'inscription définitive de l'éditeur à la BCE.
+En cas de litige relatif à l'interprétation ou à l'exécution des présentes, et à défaut de résolution amiable, les tribunaux compétents seront ceux du ressort de l'arrondissement judiciaire du domicile de l'éditeur, Belgique, sauf disposition légale impérative contraire.
 
 Pour les litiges de consommation, le consommateur belge peut également recourir au service de médiation pour le consommateur : https://www.mediationconsommateur.be ou à la plateforme européenne de règlement en ligne des litiges (RLL) : https://ec.europa.eu/consumers/odr`,
       },
@@ -103,18 +105,18 @@ Les autorités belges (SPF Économie, APD, autorités judiciaires) peuvent adres
     sections: [
       {
         title: "1. Uitgever van de website",
-        body: `**Naam** : AutoRA.be (hierna « AutoRA »)
-**Status** : Platform in bètafase — publieke pre-lancering
-**Verantwoordelijke voor de publicatie** : Alperen Gursever
+        body: `**Naam van de dienst** : AutoRA.be (hierna « AutoRA »)
+**Uitgever** : Alperen Gursever, natuurlijke persoon
+**Status** : AutoRA wordt niet geëxploiteerd door een vennootschap. De uitgever is niet ingeschreven bij de Kruispuntbank van Ondernemingen en is niet btw-plichtig. Er is dus geen ondernemings- of btw-nummer van toepassing.
 **Contactadres** : autoracontact@gmail.com
 **E-mail** : autoracontact@gmail.com
 
-⚠️ **Bètafase — Niet-commerciële activiteit**
+⚠️ **Dienst momenteel gratis**
 
-AutoRA wordt momenteel beschikbaar gesteld voor evaluatie en publieke pre-lancering. Tijdens deze fase :
+AutoRA werkt vandaag als een gratis marktplaats :
 
 — Er worden geen commerciële transacties uitgevoerd door het platform zelf.
-— Geen enkele betaling wordt door AutoRA verwerkt. Inschrijving en gebruik zijn gratis.
+— Geen enkele betaling wordt door AutoRA verwerkt of geïnd. Inschrijving en gebruik zijn gratis.
 — Eventuele transacties tussen gebruikers verlopen rechtstreeks tussen hen, buiten het platform.
 
 AutoRA is een marktplaats voor de bemiddeling tussen verkopers en kopers van tweedehandse voertuigen in België. Het platform neemt niet deel aan transacties tussen particulieren en is geen partij bij koopovereenkomsten tussen gebruikers.`,
@@ -123,10 +125,12 @@ AutoRA is een marktplaats voor de bemiddeling tussen verkopers en kopers van twe
         title: "2. Hosting",
         body: `De website AutoRA.be wordt gehost en uitgerold door:
 
-**Netlify, Inc.**
-512 2nd Street
-San Francisco, CA 94107 — Verenigde Staten
-Website: https://www.netlify.com
+**Lovable Labs Incorporated** (hosting en uitrol van de applicatie)
+Website: https://lovable.dev
+
+**Cloudflare, Inc.** (CDN, beveiliging en publieksmeting)
+101 Townsend St, San Francisco, CA 94107 — Verenigde Staten
+Website: https://www.cloudflare.com
 
 De database en serverfuncties worden beheerd door:
 
@@ -163,7 +167,7 @@ Het plaatsen van hyperlinks naar de website AutoRA.be vereist de voorafgaande sc
         title: "6. Toepasselijk recht en bevoegde rechtbank",
         body: `Deze wettelijke vermeldingen worden beheerst door het Belgisch recht.
 
-Bij geschillen zijn de rechtbanken bevoegd van het gerechtelijk arrondissement van de woonplaats van de uitgever, België, behoudens dwingende wettelijke bepalingen. Het precieze arrondissement zal worden vermeld bij de definitieve inschrijving van de uitgever bij de KBO.
+Bij geschillen zijn de rechtbanken bevoegd van het gerechtelijk arrondissement van de woonplaats van de uitgever, België, behoudens dwingende wettelijke bepalingen.
 
 Voor consumentengeschillen kan de Belgische consument ook een klacht indienen bij de Consumentenombudsdienst: https://www.consumentenombudsdienst.be of via het Europees platform voor onlinegeschillenbeslechting: https://ec.europa.eu/consumers/odr`,
       },
@@ -193,18 +197,18 @@ De Belgische autoriteiten (FOD Economie, GBA, gerechtelijke autoriteiten) kunnen
     sections: [
       {
         title: "1. Herausgeber der Website",
-        body: `**Name** : AutoRA.be (nachfolgend „AutoRA")
-**Status** : Plattform in der Beta-Phase — öffentlicher Pre-Launch
-**Verantwortlicher für die Veröffentlichung** : Alperen Gursever
+        body: `**Name des Dienstes** : AutoRA.be (nachfolgend „AutoRA")
+**Herausgeber** : Alperen Gursever, natürliche Person
+**Status** : AutoRA wird nicht von einer Gesellschaft betrieben. Der Herausgeber ist nicht bei der Zentralen Datenbank der Unternehmen eingetragen und nicht mehrwertsteuerpflichtig. Es gibt daher weder eine Unternehmensnummer noch eine USt-IdNr.
 **Kontaktadresse** : autoracontact@gmail.com
 **E-Mail** : autoracontact@gmail.com
 
-⚠️ **Beta-Phase — Nicht-kommerzielle Tätigkeit**
+⚠️ **Dienst derzeit kostenlos**
 
-AutoRA wird derzeit zu Evaluierungs- und öffentlichen Pre-Launch-Zwecken zur Verfügung gestellt. Während dieser Phase :
+AutoRA wird heute als kostenloser Marktplatz betrieben :
 
 — Es werden keine kommerziellen Transaktionen über die Plattform selbst abgewickelt.
-— Es werden keine Zahlungen von AutoRA verarbeitet. Registrierung und Nutzung sind kostenlos.
+— Es werden keine Zahlungen von AutoRA verarbeitet oder eingezogen. Registrierung und Nutzung sind kostenlos.
 — Eventuelle Transaktionen zwischen Nutzern finden direkt zwischen ihnen außerhalb der Plattform statt.
 
 AutoRA ist ein Marktplatz zur Vermittlung zwischen Verkäufern und Käufern von Gebrauchtfahrzeugen in Belgien. Die Plattform ist nicht an Transaktionen zwischen Privatpersonen beteiligt und ist keine Vertragspartei der zwischen Nutzern abgeschlossenen Kaufverträge.`,
@@ -213,10 +217,12 @@ AutoRA ist ein Marktplatz zur Vermittlung zwischen Verkäufern und Käufern von 
         title: "2. Hosting",
         body: `Die Website AutoRA.be wird gehostet und bereitgestellt von:
 
-**Netlify, Inc.**
-512 2nd Street
-San Francisco, CA 94107 — Vereinigte Staaten
-Website: https://www.netlify.com
+**Lovable Labs Incorporated** (Hosting und Bereitstellung der Anwendung)
+Website: https://lovable.dev
+
+**Cloudflare, Inc.** (CDN, Sicherheit und Reichweitenmessung)
+101 Townsend St, San Francisco, CA 94107 — Vereinigte Staaten
+Website: https://www.cloudflare.com
 
 Die Datenbank und Server-Funktionen werden verwaltet von:
 
@@ -251,7 +257,7 @@ Das Setzen von Hyperlinks zur Website AutoRA.be erfordert die vorherige schriftl
         title: "6. Anwendbares Recht und Gerichtsstand",
         body: `Dieses Impressum unterliegt belgischem Recht.
 
-Bei Streitigkeiten sind die Gerichte des Gerichtsbezirks des Wohnsitzes des Herausgebers, Belgien, zuständig, vorbehaltlich zwingender gesetzlicher Bestimmungen. Der genaue Gerichtsbezirk wird bei der endgültigen Eintragung des Herausgebers bei der ZUD (BCE/KBO) angegeben.
+Bei Streitigkeiten sind die Gerichte des Gerichtsbezirks des Wohnsitzes des Herausgebers, Belgien, zuständig, vorbehaltlich zwingender gesetzlicher Bestimmungen.
 
 Verbraucher können Beschwerden auch beim belgischen Verbraucherschlichtungsdienst einreichen: https://www.mediationconsommateur.be oder über die europäische Online-Streitbeilegungsplattform: https://ec.europa.eu/consumers/odr`,
       },
@@ -281,18 +287,18 @@ Die belgischen Behörden (FÖD Wirtschaft, APD, Justizbehörden) können ihre of
     sections: [
       {
         title: "1. Website Publisher",
-        body: `**Name** : AutoRA.be (hereinafter "AutoRA")
-**Status** : Platform in beta phase — public pre-launch
-**Publication director** : Alperen Gursever
+        body: `**Service name** : AutoRA.be (hereinafter "AutoRA")
+**Publisher** : Alperen Gursever, natural person
+**Status** : AutoRA is not operated by a company. The publisher is not registered with the Belgian Crossroads Bank for Enterprises and is not VAT-registered. No enterprise number or VAT number is therefore applicable.
 **Contact address** : autoracontact@gmail.com
 **Email** : autoracontact@gmail.com
 
-⚠️ **Beta phase — Non-commercial activity**
+⚠️ **Service currently free of charge**
 
-AutoRA is currently made available for evaluation and public pre-launch purposes. During this phase :
+AutoRA currently operates as a free marketplace :
 
 — No commercial transactions are carried out by the platform itself.
-— No payment is processed by AutoRA. Registration and use are free of charge.
+— No payment is processed or collected by AutoRA. Registration and use are free of charge.
 — Any transactions between users take place directly between them, outside the platform.
 
 AutoRA is a marketplace connecting sellers and buyers of second-hand vehicles in Belgium. The platform does not take part in transactions between individuals and is not a party to sale contracts concluded between users.`,
@@ -301,10 +307,12 @@ AutoRA is a marketplace connecting sellers and buyers of second-hand vehicles in
         title: "2. Hosting",
         body: `The AutoRA.be website is hosted and deployed by:
 
-**Netlify, Inc.**
-512 2nd Street
-San Francisco, CA 94107 — United States
-Website: https://www.netlify.com
+**Lovable Labs Incorporated** (application hosting and deployment)
+Website: https://lovable.dev
+
+**Cloudflare, Inc.** (CDN, security and audience measurement)
+101 Townsend St, San Francisco, CA 94107 — United States
+Website: https://www.cloudflare.com
 
 The database and serverless functions are managed by:
 
@@ -339,7 +347,7 @@ Creating hyperlinks to the AutoRA.be website requires the prior written consent 
         title: "6. Applicable Law and Jurisdiction",
         body: `This legal notice is governed by Belgian law.
 
-In the event of a dispute, the courts of the judicial district of the publisher's domicile, Belgium, shall have jurisdiction, subject to mandatory legal provisions. The exact district will be specified upon the publisher's final registration with the Crossroads Bank for Enterprises (BCE/KBO).
+In the event of a dispute, the courts of the judicial district of the publisher's domicile, Belgium, shall have jurisdiction, subject to mandatory legal provisions.
 
 Consumers may also lodge complaints with the Belgian Consumer Mediation Service: https://www.mediationconsommateur.be or via the European online dispute resolution platform: https://ec.europa.eu/consumers/odr`,
       },
@@ -373,10 +381,10 @@ const MentionsLegales = () => {
   const t = content[lang];
 
   const lastUpdated: Record<string, string> = {
-    fr: "Dernière mise à jour : mai 2026",
-    nl: "Laatste update: mei 2026",
-    de: "Letzte Aktualisierung: Mai 2026",
-    en: "Last updated: May 2026",
+    fr: "Dernière mise à jour : septembre 2026",
+    nl: "Laatste update: september 2026",
+    de: "Letzte Aktualisierung: September 2026",
+    en: "Last updated: September 2026",
   };
 
   // C5 — Highlight [...] placeholders that contain a "to be filled" marker so

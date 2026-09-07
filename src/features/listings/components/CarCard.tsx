@@ -219,11 +219,11 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
                 <TooltipTrigger asChild>
                   <Badge className="bg-primary/90 text-primary-foreground border-0 backdrop-blur-md shadow-lg text-[10px] font-semibold px-2 py-0.5 cursor-help">
                     <CheckCircle className="w-3 h-3 mr-1" />
-                    Vérifié par AutoRa
+                    Car-Pass fourni
                   </Badge>
                 </TooltipTrigger>
                 <TooltipContent side="bottom" className="max-w-xs text-xs leading-relaxed">
-                  L'équipe AutoRa vérifie manuellement chaque certificat Car-Pass fourni par le vendeur avant publication. Contrôle indépendant — pas d'auto-validation.
+Le vendeur a joint un document Car-Pass à cette annonce. AutoRA ne certifie pas son authenticité : vérifiez toujours le certificat auprès de Car-Pass avant l'achat.
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>

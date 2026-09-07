@@ -66,6 +66,7 @@ import { fr, nl, enGB } from "date-fns/locale";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSellerListings } from "../hooks/useSellerListings";
 import BoostDialog from "./BoostDialog";
+import { paymentsEnabled } from "@/lib/payments";
 import type { SellerListing, StatusFilter, ChartPeriod } from "../types/sellerDashboard.types";
 
 // Animation variants
@@ -606,17 +607,19 @@ export default function SellerDashboard() {
                                   <CheckCircle2 className="w-4 h-4" />
                                   {t("dashboard.markAsSold") || "Marquer comme vendu"}
                                 </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setListingToBoost(listing);
-                                    setBoostDialogOpen(true);
-                                  }}
-                                  className="gap-2 cursor-pointer text-amber-600 focus:text-amber-600"
-                                >
-                                  <Rocket className="w-4 h-4" />
-                                  {t("boost.boost") || "Booster cette annonce"}
-                                </DropdownMenuItem>
+                                {paymentsEnabled() && (
+                                  <DropdownMenuItem
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setListingToBoost(listing);
+                                      setBoostDialogOpen(true);
+                                    }}
+                                    className="gap-2 cursor-pointer text-amber-600 focus:text-amber-600"
+                                  >
+                                    <Rocket className="w-4 h-4" />
+                                    {t("boost.boost") || "Booster cette annonce"}
+                                  </DropdownMenuItem>
+                                )}
                               </>
                             )}
                             <DropdownMenuSeparator />
@@ -676,7 +679,7 @@ export default function SellerDashboard() {
       </AlertDialog>
 
       {/* Boost Dialog */}
-      {listingToBoost && (
+      {listingToBoost && paymentsEnabled() && (
         <BoostDialog
           open={boostDialogOpen}
           onOpenChange={setBoostDialogOpen}
