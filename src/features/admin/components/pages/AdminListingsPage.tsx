@@ -267,8 +267,35 @@ export default function AdminListingsPage() {
                 </a>
               </div>
 
+              {/* Annonce en attente : bandeau d'état + action de publication
+                  dominante, placés AVANT les actions secondaires. */}
+              {detailListing.status === 'pending' && (
+                <div className="mt-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3">
+                  <p className="text-xs font-medium text-amber-600">En attente de publication</p>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">
+                    Cette annonce n'est pas visible par les acheteurs tant qu'elle n'est pas approuvée.
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <Button
+                      size="sm"
+                      className="flex-1 min-w-[180px] bg-emerald-600 text-white hover:bg-emerald-500 shadow-sm"
+                      disabled={isActing}
+                      onClick={() => approve(detailListing.id)}
+                    >
+                      <Check className="h-4 w-4 mr-1.5" />
+                      Approuver et publier
+                    </Button>
+                    <Button size="sm" variant="ghost" className="text-destructive" disabled={isActing} onClick={() => openRejectDialog(detailListing.id)}>
+                      <X className="h-3.5 w-3.5 mr-1.5" />
+                      Rejeter
+                    </Button>
+                  </div>
+                </div>
+              )}
+
               {/* Quick admin actions */}
               <div className="mt-3 flex flex-wrap gap-2">
+
                 <Button asChild size="sm" variant="outline">
                   <Link to={`/sell?edit=${detailListing.id}`}>
                     <Pencil className="h-3.5 w-3.5 mr-1.5" />
