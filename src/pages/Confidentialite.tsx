@@ -51,8 +51,7 @@ Pour toute question relative au traitement de vos données personnelles, vous po
 — Requêtes de recherche effectuées sur la Plateforme
 
 **2.4 Données de transaction**
-— Historique des abonnements et paiements (via Stripe)
-— Identifiants de transaction Stripe (nous ne stockons jamais les numéros de carte bancaire)
+— Aucune. AutoRA est actuellement une place de marché gratuite : aucun paiement n'est traité ni encaissé par la Plateforme, et aucune donnée bancaire n'est collectée.
 
 **2.5 Données de communication**
 — Messages échangés entre utilisateurs via le système de messagerie interne
@@ -65,7 +64,6 @@ Pour toute question relative au traitement de vos données personnelles, vous po
 **Exécution du contrat (art. 6.1.b RGPD)**
 — Création et gestion de votre compte utilisateur
 — Publication et gestion de vos annonces
-— Traitement des paiements et abonnements
 — Envoi de notifications relatives à vos annonces et messages
 
 **Intérêt légitime (art. 6.1.f RGPD)**
@@ -85,14 +83,14 @@ Pour toute question relative au traitement de vos données personnelles, vous po
       title: "4. Destinataires des données (sous-traitants)",
       body: `Vos données peuvent être transmises aux prestataires suivants, dans le strict cadre de leurs missions :
 
-**Netlify, Inc.** (hébergement web et infrastructure applicative)
-512 2nd Street, San Francisco, CA 94107, USA — Données transférées aux États-Unis sur la base de clauses contractuelles types (CCT) approuvées par la Commission européenne.
+**Lovable Labs Incorporated** (hébergement et déploiement de l'application)
+États-Unis — Données transférées sur la base de clauses contractuelles types (CCT) approuvées par la Commission européenne.
+
+**Cloudflare, Inc.** (réseau de diffusion, protection anti-abus et mesure d'audience sans cookie)
+101 Townsend St, San Francisco, CA 94107, USA — Données transférées aux États-Unis sur la base de CCT.
 
 **Supabase Inc.** (base de données, authentification, stockage de fichiers)
 970 Toa Payoh North, Singapore — Données transférées aux États-Unis sur la base de CCT.
-
-**Stripe, Inc.** (traitement des paiements — carte, Bancontact, SEPA)
-354 Oyster Point Blvd, South San Francisco, CA, États-Unis — Données transférées aux États-Unis sur la base de CCT. Stripe est certifié PCI DSS niveau 1.
 
 **Resend, Inc.** (envoi d'emails transactionnels)
 États-Unis — Données transférées sur la base de CCT. Seuls les emails nécessaires au fonctionnement du service sont transmis.
@@ -163,9 +161,6 @@ Site web : [https://www.autoriteprotectiondonnees.be](https://www.autoriteprotec
 **Cookies analytiques** (soumis à consentement)
 — Cloudflare Web Analytics : mesure d'audience anonyme, sans cookie, sans identifiant persistant. Aucune donnée personnelle identifiable n'est collectée.
 
-**Cookies de paiement** (chargés uniquement sur les pages de paiement)
-— Stripe.js : prévention de la fraude (chargé après affichage d'une page de paiement)
-
 Vous pouvez gérer vos préférences à tout moment via le lien « Paramètres cookies » en bas de page ou dans notre [politique de cookies](https://autora.be/cookies).`,
     },
     {
@@ -224,8 +219,7 @@ Voor vragen over de verwerking van uw persoonsgegevens kunt u contact opnemen vi
 — Zoekopdrachten op het Platform
 
 **2.4 Transactiegegevens**
-— Abonnements- en betalingsgeschiedenis (via Stripe)
-— Stripe-transactie-ID's (wij slaan nooit creditcardnummers op)
+— Geen. AutoRA is momenteel een gratis marktplaats : er worden geen betalingen verwerkt of geïnd door het Platform en er worden geen bankgegevens verzameld.
 
 **2.5 Communicatiegegevens**
 — Berichten uitgewisseld via het interne berichtensysteem
@@ -258,14 +252,14 @@ Voor vragen over de verwerking van uw persoonsgegevens kunt u contact opnemen vi
       title: "4. Ontvangers (verwerkers)",
       body: `Uw gegevens kunnen worden doorgegeven aan de volgende dienstverleners, uitsluitend in het kader van hun opdrachten :
 
-**Netlify, Inc.** (webhosting en applicatie-infrastructuur)
-512 2nd Street, San Francisco, CA 94107, USA — Gegevens overgedragen op basis van door de Europese Commissie goedgekeurde standaardcontractbepalingen (SCB).
+**Lovable Labs Incorporated** (hosting en uitrol van de applicatie)
+VS — Gegevens overgedragen op basis van door de Europese Commissie goedgekeurde standaardcontractbepalingen (SCB).
+
+**Cloudflare, Inc.** (CDN, misbruikbescherming en cookievrije publieksmeting)
+101 Townsend St, San Francisco, CA 94107, USA — Gegevens overgedragen op basis van SCB.
 
 **Supabase Inc.** (database, authenticatie, bestandsopslag)
 Singapore — Gegevens overgedragen naar de VS op basis van SCB.
-
-**Stripe, Inc.** (betalingsverwerking — kaart, Bancontact, SEPA)
-South San Francisco, CA, VS — Gegevens overgedragen op basis van SCB. Stripe is PCI DSS niveau 1 gecertificeerd.
 
 **Resend, Inc.** (verzending van transactionele e-mails)
 VS — Gegevens overgedragen op basis van SCB. Alleen e-mails die noodzakelijk zijn voor de dienstverlening worden doorgegeven.
@@ -336,9 +330,6 @@ Website : [https://www.gegevensbeschermingsautoriteit.be](https://www.gegevensbe
 **Analytische cookies** (met toestemming)
 — Cloudflare Web Analytics : geanonimiseerde publieksanalyse, cookievrij, zonder persistente identifier. Er worden geen identificeerbare persoonsgegevens verzameld.
 
-**Betalingscookies** (alleen geladen op betalingspagina's)
-— Stripe.js : fraudepreventie
-
 U kunt uw voorkeuren beheren via de link « Cookie-instellingen » onderaan de pagina of in ons [cookiebeleid](https://autora.be/cookies).`,
     },
     {
@@ -397,8 +388,7 @@ Bei Fragen zur Verarbeitung Ihrer personenbezogenen Daten wenden Sie sich bitte 
 — Suchanfragen auf der Plattform
 
 **2.4 Transaktionsdaten**
-— Abonnement- und Zahlungsverlauf (über Stripe)
-— Stripe-Transaktions-IDs (Kreditkartennummern werden niemals gespeichert)
+— Keine. AutoRA ist derzeit ein kostenloser Marktplatz : es werden keine Zahlungen verarbeitet oder eingezogen und keine Bankdaten erhoben.
 
 **2.5 Kommunikationsdaten**
 — Über das interne Nachrichtensystem ausgetauschte Nachrichten
@@ -431,14 +421,14 @@ Bei Fragen zur Verarbeitung Ihrer personenbezogenen Daten wenden Sie sich bitte 
       title: "4. Empfänger (Auftragsverarbeiter)",
       body: `Ihre Daten können an folgende Dienstleister weitergegeben werden, ausschließlich im Rahmen ihrer Aufgaben :
 
-**Netlify, Inc.** (Web-Hosting und Anwendungsinfrastruktur)
-512 2nd Street, San Francisco, CA 94107, USA — Datenübermittlung in die USA auf Grundlage von Standardvertragsklauseln (SCC), die von der Europäischen Kommission genehmigt wurden.
+**Lovable Labs Incorporated** (Hosting und Bereitstellung der Anwendung)
+USA — Datenübermittlung auf Grundlage von Standardvertragsklauseln (SCC), die von der Europäischen Kommission genehmigt wurden.
+
+**Cloudflare, Inc.** (CDN, Missbrauchsschutz und cookielose Reichweitenmessung)
+101 Townsend St, San Francisco, CA 94107, USA — Datenübermittlung auf Grundlage von SCC.
 
 **Supabase Inc.** (Datenbank, Authentifizierung, Dateispeicherung)
 Singapur — Datenübermittlung in die USA auf Grundlage von SCC.
-
-**Stripe, Inc.** (Zahlungsabwicklung — Karte, Bancontact, SEPA)
-South San Francisco, CA, USA — Datenübermittlung auf Grundlage von SCC. Stripe ist PCI DSS Level 1 zertifiziert.
 
 **Resend, Inc.** (Versand transaktionaler E-Mails)
 USA — Datenübermittlung auf Grundlage von SCC. Nur für den Dienst notwendige E-Mails werden übermittelt.
@@ -509,9 +499,6 @@ Website : [https://www.autoriteprotectiondonnees.be](https://www.autoriteprotect
 **Analyse-Cookies** (mit Einwilligung)
 — Cloudflare Web Analytics : anonymisierte Reichweitenmessung, cookielos, ohne persistente Kennungen. Es werden keine identifizierbaren personenbezogenen Daten erfasst.
 
-**Zahlungs-Cookies** (nur auf Zahlungsseiten geladen)
-— Stripe.js : Betrugsprävention
-
 Sie können Ihre Einstellungen jederzeit über den Link « Cookie-Einstellungen » am Seitenende oder in unserer [Cookie-Richtlinie](https://autora.be/cookies) verwalten.`,
     },
     {
@@ -570,8 +557,7 @@ For any questions regarding the processing of your personal data, please contact
 — Search queries made on the Platform
 
 **2.4 Transaction data**
-— Subscription and payment history (via Stripe)
-— Stripe transaction identifiers (credit card numbers are never stored)
+— None. AutoRA currently operates as a free marketplace: no payment is processed or collected by the Platform, and no banking data is collected.
 
 **2.5 Communication data**
 — Messages exchanged via the internal messaging system
@@ -604,14 +590,14 @@ For any questions regarding the processing of your personal data, please contact
       title: "4. Recipients (Sub-processors)",
       body: `Your data may be shared with the following service providers, strictly within the scope of their services :
 
-**Netlify, Inc.** (web hosting and application infrastructure)
-512 2nd Street, San Francisco, CA 94107, USA — Data transferred to the US under Standard Contractual Clauses (SCCs) approved by the European Commission.
+**Lovable Labs Incorporated** (application hosting and deployment)
+United States — Data transferred under Standard Contractual Clauses (SCCs) approved by the European Commission.
+
+**Cloudflare, Inc.** (CDN, abuse protection and cookieless audience measurement)
+101 Townsend St, San Francisco, CA 94107, USA — Data transferred under SCCs.
 
 **Supabase Inc.** (database, authentication, file storage)
 Singapore — Data transferred to the US under SCCs.
-
-**Stripe, Inc.** (payment processing — card, Bancontact, SEPA)
-South San Francisco, CA, United States — Data transferred under SCCs. Stripe is PCI DSS Level 1 certified.
 
 **Resend, Inc.** (transactional email delivery)
 United States — Data transferred under SCCs. Only emails necessary for the service are transmitted.
@@ -681,9 +667,6 @@ Website : [https://www.autoriteprotectiondonnees.be](https://www.autoriteprotect
 
 **Analytics cookies** (subject to consent)
 — Cloudflare Web Analytics : anonymous audience measurement, cookieless, no persistent identifiers. No identifiable personal data is collected.
-
-**Payment cookies** (loaded only on payment pages)
-— Stripe.js : fraud prevention
 
 You can manage your preferences at any time via the « Cookie settings » link at the bottom of the page or in our [cookie policy](https://autora.be/cookies).`,
     },
