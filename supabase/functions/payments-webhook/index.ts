@@ -80,6 +80,24 @@ async function upsertSubscription(
     ? subscription.customer
     : subscription.customer?.id;
 
+  // Correction 3 : alerter si l'on écrase un accès offert manuellement (sans bloquer).
+  const { data: existing } = await getSupabase()
+    .from("subscriptions")
+    .select("product_id,stripe_subscription_id")
+    .eq("user_id", userId)
+    .maybeSingle();
+
+  if (existing && !existing.stripe_subscription_id && existing.product_id !== tierSlug) {
+    await logOpsAlert("payments-webhook", "Abonnement payant écrasant un accès offert", {
+      severity: "warn",
+      context: {
+        user_id: userId,
+        previous_tier: String(existing.product_id ?? ""),
+        new_tier: String(tierSlug ?? ""),
+      },
+    });
+  }
+
   const { error } = await getSupabase().from("subscriptions").upsert(
     {
       user_id: userId,
@@ -95,6 +113,7 @@ async function upsertSubscription(
   if (error) throw new Error(`subscription upsert failed: ${error.message}`);
   log("info", "subscription_synced", { user_id: userId, tier: tierSlug, status: subscription.status });
 }
+
 
 // deno-lint-ignore no-explicit-any
 async function activateBoost(session: any) {
