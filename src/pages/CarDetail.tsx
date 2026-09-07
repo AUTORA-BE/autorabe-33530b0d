@@ -465,7 +465,7 @@ const CarDetail = () => {
           price: car.price,
           brand: car.brand,
           imageAlt: `${car.brand} ${car.model} ${car.year}`,
-          images: car.images,
+          images,
           location: car.location,
         }}
 
