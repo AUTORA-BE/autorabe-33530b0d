@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <!-- Security Headers
          Note: HSTS (Strict-Transport-Security) cannot be set via <meta> per spec —
-         it is enforced via the HTTP response header in public/_headers (Lovable Cloud / Netlify).
+         it is enforced via the HTTP response header in public/_headers (Lovable / Cloudflare).
          CSP: 'unsafe-eval' removed (production builds of Recharts/Framer Motion don't need it).
          'unsafe-inline' on script-src kept for the inline anti-FOUC theme script
          in <head>. To harden further, replace with a sha256-<hash> for that script. -->
@@ -118,7 +118,7 @@
        Pages project → Metrics/Analytics → Web Analytics → enable.
        Cloudflare then auto-injects the beacon at the edge — no script needed
        here. The CSP above already allows static.cloudflareinsights.com /
-       cloudflareinsights.com. (Plausible was removed.)
+       cloudflareinsights.com (Cloudflare Web Analytics, cookieless).
        If you prefer the manual beacon instead of auto-injection, paste:
        <script defer src="https://static.cloudflareinsights.com/beacon.min.js"
                data-cf-beacon='{"token":"YOUR_TOKEN"}'></script> -->
