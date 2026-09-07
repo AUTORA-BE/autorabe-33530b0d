@@ -22,8 +22,7 @@ export function countActiveFilters(filters: VehicleFilters): number {
   if (filters.color) n++;
   if (filters.euroNorm) n++;
   if (filters.lezOnly) n++;
-  if (filters.yearMin > d.yearMin) n++;
-  if (filters.yearMax < d.yearMax) n++;
+  if (filters.yearMin > d.yearMin || filters.yearMax < d.yearMax) n++;
   if (filters.sellerTypeFilter) n++;
   if (filters.bodyType) n++;
   if (filters.province) n++;
