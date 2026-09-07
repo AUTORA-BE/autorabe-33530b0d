@@ -460,6 +460,15 @@ const CarDetail = () => {
         image={car.image}
         url={`https://autora.be/car/${id}`}
         type="product"
+        product={{
+          id: id!,
+          price: car.price,
+          brand: car.brand,
+          imageAlt: `${car.brand} ${car.model} ${car.year}`,
+          images: car.images,
+          location: car.location,
+        }}
+
         jsonLd={[
           vehicleSchema({
             id: id!,
