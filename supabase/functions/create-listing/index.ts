@@ -3,6 +3,10 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { buildCorsHeaders, handlePreflight, jsonResponse } from '../_shared/cors.ts';
 
+/** Unique état d'attente d'une annonce — doit rester aligné avec
+ *  src/features/listings/constants/listingStatus.ts et la contrainte SQL. */
+const LISTING_STATUS_PENDING = 'pending_review';
+
 interface ListingPayload {
   brand: string;
   model: string;
@@ -176,7 +180,7 @@ Deno.serve(async (req) => {
           .from('car_listings')
           .select('*', { count: 'exact', head: true })
           .eq('user_id', user.id)
-          .in('status', ['pending', 'approved']);
+          .in('status', [LISTING_STATUS_PENDING, 'approved']);
 
         if ((count ?? 0) >= limits.sim) {
           return jsonResponse(req, {
@@ -221,7 +225,7 @@ Deno.serve(async (req) => {
       .eq('year', payload.year)
       .gte('mileage', kmMin)
       .lte('mileage', kmMax)
-      .in('status', ['pending', 'approved'])
+      .in('status', [LISTING_STATUS_PENDING, 'approved'])
       .gte('created_at', since)
       .limit(1);
 
@@ -297,7 +301,7 @@ Deno.serve(async (req) => {
       .from('car_listings')
       .insert({
         user_id: user.id,
-        status: 'pending',
+        status: LISTING_STATUS_PENDING,
         brand: payload.brand,
         model: payload.model,
         year: payload.year,

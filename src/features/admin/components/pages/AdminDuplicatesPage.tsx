@@ -15,6 +15,7 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
+import { LISTING_STATUS_PENDING } from '@/features/listings/constants/listingStatus';
 
 const KM_TOLERANCE = 500;
 
@@ -47,7 +48,7 @@ async function fetchAllListings(): Promise<Listing[]> {
   const { data, error } = await supabase
     .rpc('admin_list_listings_with_contacts', { _limit: 2000 });
   if (error) throw error;
-  return ((data ?? []) as Listing[]).filter(l => l.status === 'pending' || l.status === 'approved');
+  return ((data ?? []) as Listing[]).filter(l => l.status === LISTING_STATUS_PENDING || l.status === 'approved');
 }
 
 /** Group listings by brand+model+year, then cluster by km within ±KM_TOLERANCE */

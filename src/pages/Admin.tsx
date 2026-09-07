@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { countPendingListings } from '@/features/listings/constants/listingStatus';
 
 interface DashboardStats {
   totalUsers: number;
@@ -66,7 +67,7 @@ export default function Admin() {
     setStats({
       totalUsers: profilesData.length,
       totalListings: listingsData.length,
-      pendingListings: listingsData.filter((l: any) => l.status === "pending").length,
+      pendingListings: countPendingListings(listingsData as { status?: string | null }[]),
       approvedListings: listingsData.filter((l: any) => l.status === "approved").length,
       pendingReports: reportsData.filter((r: any) => r.status === "pending").length,
       totalReports: reportsData.length,

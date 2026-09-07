@@ -61,7 +61,7 @@ async function fetchSellerListings(userId: string): Promise<{
     model: l.model,
     year: l.year,
     price: l.price,
-    status: (l.status || "pending") as SellerListing["status"],
+    status: (l.status || LISTING_STATUS_PENDING) as SellerListing["status"],
     photo: l.photos?.[0] || null,
     views: viewsCounts[l.id] || 0,
     messages: messagesCounts[l.id] || 0,
@@ -136,6 +136,7 @@ async function fetchDailyStats(userId: string, days: ChartPeriod, locale: Locale
 
 // Import locale type
 import type { Locale } from "date-fns";
+import { LISTING_STATUS_PENDING } from '@/features/listings/constants/listingStatus';
 
 /**
  * Custom hook for seller dashboard data and actions

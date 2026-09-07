@@ -18,7 +18,7 @@ export interface SellerListing {
   /** Price in EUR */
   price: number;
   /** Listing status */
-  status: 'approved' | 'pending' | 'rejected' | 'sold';
+  status: 'approved' | 'pending_review' | 'rejected' | 'sold';
   /** Primary photo URL */
   photo: string | null;
   /** Total views count */
@@ -65,7 +65,7 @@ export interface DailyStats {
 /**
  * Status filter options
  */
-export type StatusFilter = 'all' | 'approved' | 'pending' | 'rejected' | 'sold';
+export type StatusFilter = 'all' | 'approved' | 'pending_review' | 'rejected' | 'sold';
 
 /**
  * Chart period options

@@ -14,6 +14,7 @@ import {
   SUBSCRIPTION_TIERS,
 } from '../constants/tiers';
 import { IS_BETA_MODE } from '@/config/betaConfig';
+import { LISTING_STATUS_PENDING } from '@/features/listings/constants/listingStatus';
 
 interface ListingLimitState {
   isLoading: boolean;
@@ -76,7 +77,7 @@ export function useListingLimit() {
         .from('car_listings')
         .select('*', { count: 'exact', head: true })
         .eq('user_id', user.id)
-        .in('status', ['pending', 'approved']);
+        .in('status', [LISTING_STATUS_PENDING, 'approved']);
 
       if (error) throw error;
 

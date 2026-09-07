@@ -24,9 +24,10 @@ import { useListingHistory } from '../../hooks/useListingHistory';
 import { exportData } from '../../utils/exportData';
 import type { ExportFormat } from '../../types/admin.types';
 import type { AdminListing } from '../../types/admin.types';
+import { LISTING_STATUS_PENDING } from '@/features/listings/constants/listingStatus';
 
 const STATUS_COLORS: Record<string, string> = {
-  pending: 'bg-amber-500/10 text-amber-500',
+  pending_review: 'bg-amber-500/10 text-amber-500',
   approved: 'bg-emerald-500/10 text-emerald-500',
   rejected: 'bg-destructive/10 text-destructive',
   sold: 'bg-sky-500/10 text-sky-500',
@@ -34,7 +35,7 @@ const STATUS_COLORS: Record<string, string> = {
 
 /** Libellés explicites : « pending » se lisait comme un simple état technique. */
 const STATUS_LABELS: Record<string, string> = {
-  pending: 'En attente de publication',
+  pending_review: 'En attente de publication',
   approved: 'Publiée',
   rejected: 'Rejetée',
   sold: 'Vendue',
@@ -68,7 +69,7 @@ export default function AdminListingsPage() {
     return l.brand.toLowerCase().includes(q) || l.model.toLowerCase().includes(q) || l.contact_name.toLowerCase().includes(q);
   });
 
-  const pendingIds = filtered.filter(l => l.status === 'pending').map(l => l.id);
+  const pendingIds = filtered.filter(l => l.status === LISTING_STATUS_PENDING).map(l => l.id);
 
   const handleExport = (fmt: ExportFormat) => {
     exportData(filtered.map(l => ({
@@ -116,7 +117,7 @@ export default function AdminListingsPage() {
           <SelectTrigger className="w-36"><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Tous</SelectItem>
-            <SelectItem value="pending">En attente</SelectItem>
+            <SelectItem value={LISTING_STATUS_PENDING}>En attente</SelectItem>
             <SelectItem value="approved">Approuvées</SelectItem>
             <SelectItem value="sold">Vendues</SelectItem>
             <SelectItem value="rejected">Rejetées</SelectItem>
@@ -139,8 +140,8 @@ export default function AdminListingsPage() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5 flex-wrap">
                     <p className="text-sm font-medium truncate">{listing.brand} {listing.model}</p>
-                    <Badge className={`text-[9px] px-1.5 ${STATUS_COLORS[listing.status || 'pending'] || ''}`}>
-                      {STATUS_LABELS[listing.status || 'pending'] || listing.status}
+                    <Badge className={`text-[9px] px-1.5 ${STATUS_COLORS[listing.status || LISTING_STATUS_PENDING] || ''}`}>
+                      {STATUS_LABELS[listing.status || LISTING_STATUS_PENDING] || listing.status}
                     </Badge>
 
                     {listing.boost_level && listing.boost_level !== 'none' && (
@@ -165,7 +166,7 @@ export default function AdminListingsPage() {
                   {/* Sur une annonce en attente, la publication est l'action
                       dominante : bouton plein et libellé explicite. Boost,
                       rejet et suppression restent secondaires (ghost). */}
-                  {listing.status === 'pending' && (
+                  {listing.status === LISTING_STATUS_PENDING && (
                     <Button
                       size="sm"
                       className="h-8 px-2.5 gap-1.5 bg-emerald-600 text-white hover:bg-emerald-500 shadow-sm"
@@ -180,11 +181,13 @@ export default function AdminListingsPage() {
                   <Button size="icon" variant="ghost" className="h-7 w-7 text-amber-500" onClick={() => setBoostListing(listing)} disabled={isActing} aria-label="Gérer le boost">
                     <Zap className="h-3.5 w-3.5" />
                   </Button>
-                  {listing.status === 'pending' && (
-                    <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={() => openRejectDialog(listing.id)} disabled={isActing} aria-label="Rejeter l'annonce">
+                  {listing.status === LISTING_STATUS_PENDING && (
+                    <Button size="sm" variant="ghost" className="h-8 px-2 gap-1.5 text-destructive hover:text-destructive" onClick={() => openRejectDialog(listing.id)} disabled={isActing}>
                       <X className="h-3.5 w-3.5" />
+                      <span className="text-[11px] font-medium">Rejeter</span>
                     </Button>
                   )}
+
                   <Button size="icon" variant="ghost" className="h-7 w-7 text-muted-foreground" onClick={() => { if (window.confirm('Supprimer ?')) remove(listing.id); }} disabled={isActing} aria-label="Supprimer l'annonce">
                     <Trash2 className="h-3.5 w-3.5" />
                   </Button>
@@ -232,7 +235,7 @@ export default function AdminListingsPage() {
               <SheetHeader>
                 <SheetTitle className="flex items-center gap-2 flex-wrap">
                   {detailListing.brand} {detailListing.model} {detailListing.year}
-                  <Badge className={`text-[10px] ${STATUS_COLORS[detailListing.status || 'pending'] || ''}`}>
+                  <Badge className={`text-[10px] ${STATUS_COLORS[detailListing.status || LISTING_STATUS_PENDING] || ''}`}>
                     {detailListing.status}
                   </Badge>
                 </SheetTitle>
@@ -269,7 +272,7 @@ export default function AdminListingsPage() {
 
               {/* Annonce en attente : bandeau d'état + action de publication
                   dominante, placés AVANT les actions secondaires. */}
-              {detailListing.status === 'pending' && (
+              {detailListing.status === LISTING_STATUS_PENDING && (
                 <div className="mt-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3">
                   <p className="text-xs font-medium text-amber-600">En attente de publication</p>
                   <p className="text-[11px] text-muted-foreground mt-0.5">
