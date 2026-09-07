@@ -79,7 +79,25 @@ d'une reconstruction) :
 - `chat-images` était public : **corrigé**, le bucket est désormais privé et
   les pièces jointes sont affichées via des URLs signées (1 h).
 
+### 2 bis. Restauration des fichiers de stockage
+
+`bootstrap-storage.mjs` recrée les **contenants vides**. Leur **contenu** doit
+être re-téléversé depuis la sauvegarde locale produite par
+`scripts/backup-storage.mjs` (voir « Sauvegardes et restauration » plus bas) :
+
+```bash
+# structure de la sauvegarde : <BACKUP_DIR>/<bucket>/<chemin d'origine>
+for bucket in "$BACKUP_DIR"/*/; do
+  name="$(basename "$bucket")"
+  supabase storage cp -r "$bucket" "ss:///$name" --experimental
+done
+```
+
+Vérifier ensuite que le nombre de fichiers par bucket correspond au
+`manifest.json` de la sauvegarde.
+
 ### 3. Secrets
+
 
 Secrets des edge functions à renseigner :
 
