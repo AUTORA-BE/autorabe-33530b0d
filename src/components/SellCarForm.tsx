@@ -25,6 +25,7 @@ import { useListingLimit } from '@/features/subscription';
 import { useAutoSaveDraft } from '@/features/listings/hooks/useAutoSaveDraft';
 import { useLocalizedHref } from '@/lib/useLocalizedHref';
 import { trackEvent, EVENTS } from '@/lib/analytics';
+import { normalizeLocation } from '@/features/listings/utils/location';
 
 const ConfettiCanvas = lazy(() => import('@/components/ConfettiCanvas'));
 
@@ -68,7 +69,9 @@ const sellCarSchema = z.object({
   contact_name: z.string().optional(),
   contact_phone: z.string().optional(),
   contact_email: z.string().email("Adresse email invalide").optional().or(z.literal("")),
-  location: z.string().optional(),
+  // trim() : le champ est du texte libre saisi à la main — sans nettoyage on
+  // enregistre des valeurs du type "Namur " qui polluent filtres et URLs.
+  location: z.string().trim().optional(),
   car_pass_verified: z.boolean().optional(),
   ct_valid: z.boolean().optional(),
   maintenance_book_complete: z.boolean().optional(),
@@ -445,7 +448,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
           contact_name: data.contact_name,
           contact_phone: data.contact_phone || undefined,
           contact_email: data.contact_email,
-          location: data.location || undefined,
+          location: normalizeLocation(data.location) || undefined,
           car_pass_verified: data.car_pass_verified || false,
           ct_valid: data.ct_valid || false,
           maintenance_book_complete: data.maintenance_book_complete || false,
@@ -724,7 +727,7 @@ export function SellCarForm({ editId, onFormDataChange }: SellCarFormProps) {
         contact_name: isEditMode ? data.contact_name : (overrideContact ? (data.contact_name || undefined) : undefined),
         contact_phone: isEditMode ? (data.contact_phone || null) : (overrideContact ? (data.contact_phone || undefined) : undefined),
         contact_email: isEditMode ? data.contact_email : (overrideContact ? (data.contact_email || undefined) : undefined),
-        location: data.location || null,
+        location: normalizeLocation(data.location) || null,
         latitude,
         longitude,
         photos: allPhotoUrls,

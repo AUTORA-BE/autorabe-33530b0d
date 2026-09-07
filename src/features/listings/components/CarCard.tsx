@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import type { Vehicle } from "../types/vehicle.types";
 import { computeMatchScore } from "@/features/tco/utils/matchScore";
 import type { BuyerProfile } from "@/features/tco/hooks/useBuyerProfile";
+import { formatLocation } from "../utils/location";
 
 export interface CarCardProps {
   car: Vehicle;
@@ -57,15 +58,19 @@ const CarCard = memo(forwardRef<HTMLElement, CarCardProps>(({ car, isFavorite = 
   const getAltText = () => {
     const yearText = car.year;
     const mileageFormatted = new Intl.NumberFormat(language === "nl" ? "nl-BE" : "fr-BE").format(car.mileage);
+    // La localisation est explicitement étiquetée : un code postal nu
+    // ("5100") ne doit jamais se lire comme un montant.
+    const place = formatLocation(car.location);
+    const base = `${car.brand} ${car.model} ${yearText} - ${mileageFormatted} km - ${car.fuelType}`;
     switch (language) {
       case "nl":
-        return `${car.brand} ${car.model} ${yearText} - ${mileageFormatted} km - ${car.fuelType} - Te koop in ${car.location}`;
+        return `${base}${place ? ` - Locatie: ${place}` : ""}`;
       case "de":
-        return `${car.brand} ${car.model} ${yearText} - ${mileageFormatted} km - ${car.fuelType} - Zu verkaufen in ${car.location}`;
+        return `${base}${place ? ` - Standort: ${place}` : ""}`;
       case "en":
-        return `${car.brand} ${car.model} ${yearText} - ${mileageFormatted} km - ${car.fuelType} - For sale in ${car.location}`;
+        return `${base}${place ? ` - Location: ${place}` : ""}`;
       default:
-        return `${car.brand} ${car.model} ${yearText} - ${mileageFormatted} km - ${car.fuelType} - À vendre à ${car.location}`;
+        return `${base}${place ? ` - Localisation : ${place}` : ""}`;
     }
   };
 
@@ -262,7 +267,7 @@ Le vendeur a joint un document Car-Pass à cette annonce. AutoRA ne certifie pas
         </div>
         <p className="flex items-center gap-1 text-sm text-muted-foreground mb-4">
           <MapPin className="w-3 h-3" />
-          {car.location}
+          {formatLocation(car.location)}
         </p>
         <div className="flex flex-wrap gap-2 mt-auto pt-2">
           <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-2xl bg-secondary text-sm text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-colors duration-300">

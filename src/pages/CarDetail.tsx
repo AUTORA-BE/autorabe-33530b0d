@@ -45,6 +45,7 @@ import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useLocalizedVehicleHref } from "@/lib/useLocalizedHref";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { formatLocation } from "@/features/listings/utils/location";
 const VehicleTcoSection = lazy(() => import("@/features/tco/components/VehicleTcoSection"));
 const FiscalAdvisorCard = lazy(() => import("@/components/FiscalAdvisorCard"));
 
@@ -624,7 +625,7 @@ const CarDetail = () => {
                     </h1>
                     <p className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5">
                       <MapPin className="w-3 h-3 flex-shrink-0" strokeWidth={1.5} />
-                      <span className="truncate">{car.location}</span>
+                      <span className="truncate">{formatLocation(car.location)}</span>
                     </p>
                   </div>
                   <div className="flex gap-1.5 flex-shrink-0">
@@ -851,7 +852,7 @@ const CarDetail = () => {
                     </h1>
                     <p className="text-muted-foreground flex items-center gap-1.5 mt-1.5 text-sm">
                       <MapPin className="w-4 h-4" />
-                      {car.location}
+                      {formatLocation(car.location)}
                     </p>
                   </div>
                   <div className="flex gap-2">

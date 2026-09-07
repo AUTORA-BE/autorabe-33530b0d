@@ -15,6 +15,7 @@ import { calculerStatutLEZ } from "@/lib/lezData";
 import type { Vehicle } from "../types/vehicle.types";
 import { computeMatchScore } from "@/features/tco/utils/matchScore";
 import type { BuyerProfile } from "@/features/tco/hooks/useBuyerProfile";
+import { formatLocation } from "../utils/location";
 
 export interface VehicleCardProps {
   vehicle: Vehicle;
@@ -218,7 +219,7 @@ const VehicleCard = memo(function VehicleCard({
         {vehicle.location && (
           <div className="flex items-center gap-1 text-muted-foreground text-[11px] mb-2">
             <MapPin className="w-3 h-3 flex-shrink-0" strokeWidth={1.5} />
-            <span className="line-clamp-1">{vehicle.location}</span>
+            <span className="line-clamp-1">{formatLocation(vehicle.location)}</span>
           </div>
         )}
 

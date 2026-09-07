@@ -6,6 +6,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { defaultVehicleFilters } from '../types/vehicle.types';
+import { buildProvinceLocationFilter, normalizeLocation } from '../utils/location';
 import type { 
   Vehicle, 
   VehicleDetail, 
@@ -45,7 +46,7 @@ export function mapListingToVehicle(listing: VehicleListingRow): Vehicle {
     fuelType: listing.fuel_type,
     transmission: listing.transmission,
     euroNorm: listing.euro_norm || 'Non spécifié',
-    location: listing.location || 'Belgique',
+    location: normalizeLocation(listing.location) || 'Belgique',
     image: listing.photos?.[0] || vehiclePlaceholder,
     photos: listing.photos?.length ? listing.photos : [vehiclePlaceholder],
     isLezCompatible,
@@ -205,11 +206,11 @@ export function applyFilters<T>(query: T, filters: VehicleFilters): T {
     q = q.ilike('color', filters.color);
   }
 
-  // Province filter — matches against the free-text `location` column
+  // Province filter — matches against the free-text `location` column.
+  // Tolère les deux formes réellement présentes en base : nom de commune
+  // ("Namur") ET code postal belge ("5000", "5100 Jambes").
   if (filters.province) {
-    const cities = PROVINCE_CITIES[filters.province] || [filters.province];
-    const conditions = cities.map((c) => `location.ilike.%${c}%`).join(',');
-    q = q.or(conditions);
+    q = q.or(buildProvinceLocationFilter(filters.province));
   }
 
   // Free-text city filter (typed by user)
@@ -226,23 +227,6 @@ export function applyFilters<T>(query: T, filters: VehicleFilters): T {
   return q as T;
 }
 
-/**
- * Mapping province ID → list of representative cities/keywords
- * Used to filter the free-text `location` column server-side.
- */
-const PROVINCE_CITIES: Record<string, string[]> = {
-  bruxelles: ['bruxelles', 'brussel', 'brussels', 'ixelles', 'uccle', 'schaerbeek', 'anderlecht', 'molenbeek', 'etterbeek', 'forest', 'jette', 'woluwe', 'evere', 'auderghem'],
-  anvers: ['anvers', 'antwerpen', 'antwerp', 'malines', 'mechelen', 'turnhout', 'lierre', 'lier', 'geel', 'mortsel'],
-  'brabant-flamand': ['louvain', 'leuven', 'vilvorde', 'vilvoorde', 'hal', 'halle', 'tirlemont', 'tienen', 'diest', 'aerschot', 'aarschot'],
-  'brabant-wallon': ['wavre', 'nivelles', 'ottignies', 'louvain-la-neuve', 'jodoigne', 'tubize', 'braine-l\'alleud', 'rixensart', 'genappe'],
-  'flandre-occidentale': ['bruges', 'brugge', 'courtrai', 'kortrijk', 'ostende', 'oostende', 'roulers', 'roeselare', 'ypres', 'ieper', 'furnes', 'veurne', 'menin', 'menen'],
-  'flandre-orientale': ['gand', 'gent', 'alost', 'aalst', 'saint-nicolas', 'sint-niklaas', 'termonde', 'dendermonde', 'audenarde', 'oudenaarde', 'renaix', 'ronse', 'eeklo'],
-  hainaut: ['mons', 'charleroi', 'tournai', 'la louvière', 'la louviere', 'mouscron', 'soignies', 'ath', 'binche', 'thuin', 'chimay'],
-  liege: ['liège', 'liege', 'verviers', 'huy', 'seraing', 'herstal', 'spa', 'eupen', 'malmedy', 'waremme', 'visé', 'vise'],
-  limbourg: ['hasselt', 'genk', 'tongres', 'tongeren', 'saint-trond', 'sint-truiden', 'bilzen', 'lommel', 'maaseik', 'beringen'],
-  luxembourg: ['arlon', 'bastogne', 'marche-en-famenne', 'neufchâteau', 'neufchateau', 'virton', 'durbuy', 'libramont', 'saint-hubert'],
-  namur: ['namur', 'dinant', 'philippeville', 'gembloux', 'andenne', 'ciney', 'rochefort', 'florennes'],
-};
 
 /** Explicit columns for list queries — avoids SELECT * overhead */
 const LIST_COLUMNS = 'id,brand,model,year,price,mileage,fuel_type,transmission,euro_norm,location,photos,car_pass_verified,seller_type,boost_level,boost_expires_at,boost_rank' as const;
@@ -287,10 +271,16 @@ export const vehicleQueries = {
       }
     }
 
-    // Only request count on first page; subsequent pages skip it to avoid
-    // a full COUNT scan on every "load more" call. Use 'planned' (planner
-    // estimate) which is much faster than 'exact' on large filtered sets.
-    const countMode = page === 0 ? 'planned' : undefined;
+    // Comptage demandé sur la première page uniquement ; les pages suivantes
+    // s'en passent (le remplissage de page suffit à déduire `hasMore`).
+    //
+    // NE PAS revenir à 'planned' : un comptage estimé ne doit jamais piloter
+    // la pagination. L'estimation du planificateur Postgres vient des
+    // statistiques de table (ANALYZE) et peut être très inférieure au réel —
+    // elle pilotait `hasMore`, donc une estimation basse faisait disparaître
+    // le bouton « voir plus » et rendait des annonces inatteignables, sans
+    // aucune erreur. Le coût d'un COUNT exact est sans commune mesure.
+    const countMode = page === 0 ? 'exact' : undefined;
     let query = applyFilters(
       supabase.from('car_listings_public').select(LIST_COLUMNS, countMode ? { count: countMode } : undefined),
       filters

@@ -11,7 +11,7 @@ function makeQuery() {
     lte: (col: string, val: unknown) => (calls.push({ op: 'lte', col, val }), q),
     eq: () => q,
     ilike: () => q,
-    or: () => q,
+    or: (val: unknown) => (calls.push({ op: 'or', col: '_or', val }), q),
     contains: () => q,
   };
   return q;
@@ -46,5 +46,26 @@ describe('applyFilters — bornes numériques', () => {
 
   it("n'applique rien sur mileage au défaut", () => {
     expect(run({}).filter((c) => c.col === 'mileage')).toHaveLength(0);
+  });
+});
+
+describe('applyFilters — filtre par province', () => {
+  const orValue = (province: string) =>
+    String(run({ province }).find((c) => c.op === 'or')?.val ?? '');
+
+  it('accepte les codes postaux en plus des communes (Namur → 5000/5100)', () => {
+    const f = orValue('namur');
+    expect(f).toContain('location.ilike.%namur%');
+    expect(f).toContain('location.like.5___*');
+  });
+
+  it('accepte les deux blocs postaux du Hainaut', () => {
+    const f = orValue('hainaut');
+    expect(f).toContain('location.like.60__*');
+    expect(f).toContain('location.like.70__*');
+  });
+
+  it("n'applique aucun or() sans province", () => {
+    expect(run({}).filter((c) => c.op === 'or')).toHaveLength(0);
   });
 });
