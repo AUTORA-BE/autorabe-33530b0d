@@ -14,7 +14,7 @@ import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { SUBSCRIPTION_TIERS } from '@/features/subscription/constants/tiers';
+import { resolveTier } from '@/features/subscription/constants/tiers';
 
 export interface UserContactInfo {
   user_id: string;
@@ -37,7 +37,7 @@ export interface UserContactInfo {
 
 function planLabel(productId: string | null, status: string | null) {
   if (!productId || status !== 'active') return 'Gratuit';
-  const tier = Object.values(SUBSCRIPTION_TIERS).find(t => t.product_id === productId);
+  const tier = resolveTier(productId);
   return tier ? tier.name : 'Inconnu';
 }
 

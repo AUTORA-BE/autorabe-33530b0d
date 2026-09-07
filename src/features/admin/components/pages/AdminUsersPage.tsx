@@ -51,12 +51,12 @@ const profileSchema = z
 
 type ProfileErrors = Partial<Record<'display_name' | 'phone' | 'postal_code' | 'garage_name' | 'bce_number' | 'user_type', string>>;
 
-/** Map product_id → tier info */
+/** Map valeur stockée (slug ou product_id hérité) → tier info */
 function getTierInfo(productId: string | null, status: string | null) {
   if (!productId || status !== 'active') {
     return { label: 'Gratuit', color: 'bg-muted text-muted-foreground' };
   }
-  const tier = Object.values(SUBSCRIPTION_TIERS).find(t => t.product_id === productId);
+  const tier = resolveTier(productId);
   if (!tier) return { label: 'Inconnu', color: 'bg-muted text-muted-foreground' };
   if (tier.slug === 'premium') return { label: 'Premium', color: 'bg-emerald-500/15 text-emerald-700 border-emerald-500/30' };
   if (tier.slug === 'pro') return { label: 'Pro', color: 'bg-blue-500/15 text-blue-700 border-blue-500/30' };
@@ -295,7 +295,7 @@ export default function AdminUsersPage() {
                 <SelectContent>
                   <SelectItem value="free">Gratuit</SelectItem>
                   {Object.values(SUBSCRIPTION_TIERS).map(t => (
-                    <SelectItem key={t.product_id} value={t.product_id}>{t.name} — {t.price}€/mois</SelectItem>
+                    <SelectItem key={t.slug} value={t.slug}>{t.name} — {t.price}€/mois</SelectItem>
                   ))}
                 </SelectContent>
               </Select>

@@ -17,6 +17,12 @@
 export interface SubscriptionTier {
   name: string;
   slug: string;
+  /**
+   * VALEUR HÉRITÉE — identifiant produit Stripe du mode test.
+   * Conservée uniquement pour résoudre les lignes `subscriptions.product_id`
+   * déjà en base au format Stripe. Ne doit servir à AUCUNE décision côté client :
+   * la résolution se fait par slug (voir `resolveTier`).
+   */
   product_id: string;
   price: number;
   maxListings: number | null;
@@ -157,3 +163,13 @@ export const FREE_TIER_FEATURES = [
   `Messagerie limitée (${FREE_MESSAGE_LIMIT} messages/jour)`,
   'Recherche et comparaison',
 ];
+
+/**
+ * Résout une valeur stockée (slug moderne ou identifiant produit Stripe hérité)
+ * vers son palier. Renvoie `null` si aucune correspondance.
+ */
+export function resolveTier(value: string | null | undefined): SubscriptionTier | null {
+  if (!value) return null;
+  if (SUBSCRIPTION_TIERS[value]) return SUBSCRIPTION_TIERS[value];
+  return Object.values(SUBSCRIPTION_TIERS).find((t) => t.product_id === value) ?? null;
+}
