@@ -16,6 +16,7 @@ import { useAuth } from '@/features/auth';
 import { useToast } from '@/hooks/use-toast';
 import SEOHead from '@/components/SEOHead';
 import { CheckoutDialog } from '@/components/payments/CheckoutDialog';
+import { paymentsEnabled } from '@/lib/payments';
 import { motion } from 'framer-motion';
 
 interface TierCard {
@@ -133,6 +134,14 @@ export default function Pricing() {
         <Button variant="outline" className="w-full rounded-xl h-12" onClick={() => navigate('/sell')}>
           Commencer gratuitement <ArrowRight className="h-4 w-4 ml-2" />
         </Button>
+      );
+    }
+
+    if (!paymentsEnabled()) {
+      return (
+        <div className="w-full rounded-xl h-12 flex items-center justify-center border border-dashed border-border text-sm text-muted-foreground text-center px-3">
+          Bientôt disponible
+        </div>
       );
     }
 
@@ -258,6 +267,13 @@ export default function Pricing() {
             })}
           </div>
 
+          {!paymentsEnabled() && (
+            <p className="text-center text-sm text-muted-foreground -mt-10 mb-16 max-w-xl mx-auto">
+              Les offres payantes arrivent prochainement. Pour l'instant, la publication
+              d'annonces sur AutoRA est entièrement gratuite.
+            </p>
+          )}
+
           {/* ─── GARAGES & PROS — single sales-led card ─── */}
           <div className="mb-6 text-center">
             <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
@@ -333,13 +349,15 @@ export default function Pricing() {
             transition={{ delay: 0.6 }}
             className="flex flex-wrap justify-center gap-8 mt-14 text-muted-foreground text-sm"
           >
-            <div className="flex items-center gap-2">
-              <Shield className="h-4 w-4" />
-              Paiement sécurisé par Stripe
-            </div>
+            {paymentsEnabled() && (
+              <div className="flex items-center gap-2">
+                <Shield className="h-4 w-4" />
+                Paiement sécurisé par Stripe
+              </div>
+            )}
             <div className="flex items-center gap-2">
               <Check className="h-4 w-4" />
-              Annulez à tout moment
+              Sans engagement
             </div>
             <div className="flex items-center gap-2">
               <Zap className="h-4 w-4" />
@@ -403,6 +421,7 @@ export default function Pricing() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      {paymentsEnabled() && (
       <CheckoutDialog
         open={checkoutOpen}
         onOpenChange={(value) => {
@@ -414,6 +433,7 @@ export default function Pricing() {
         title="Abonnement Particulier — 25 €/mois"
         returnUrl={`${window.location.origin}/pricing?success=true`}
       />
+      )}
     </div>
   );
 }
