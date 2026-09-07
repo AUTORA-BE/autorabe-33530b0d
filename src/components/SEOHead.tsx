@@ -157,9 +157,13 @@ const SEOHead = ({
 
       {/* Geo-targeting meta (legacy but still parsed by some bots) */}
       <meta name="geo.region" content="BE" />
-      <meta name="geo.placename" content="Belgium" />
+      <meta name="geo.placename" content={product?.location || "Belgium"} />
       <meta name="ICBM" content="50.8503, 4.3517" />
       <meta name="DC.coverage" content="Belgium" />
+
+      {/* LCP preload of the hero image on product pages */}
+      {product && image && <link rel="preload" as="image" href={image} />}
+
 
       {/* JSON-LD Structured Data */}
       {jsonLdItems.map((item, i) => (
