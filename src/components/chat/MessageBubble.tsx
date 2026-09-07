@@ -40,6 +40,33 @@ export function MessageBubble({
 }: MessageBubbleProps) {
   const { language } = useLanguage();
   const [isImageOpen, setIsImageOpen] = useState(false);
+  // Deux formats acceptés : ancienne URL publique complète (http…) utilisée
+  // telle quelle, ou chemin d'objet dans le bucket privé → URL signée 1 h.
+  const [resolvedImageUrl, setResolvedImageUrl] = useState<string | undefined>(
+    imageUrl?.startsWith('http') ? imageUrl : undefined
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!imageUrl) {
+      setResolvedImageUrl(undefined);
+      return;
+    }
+    if (imageUrl.startsWith('http')) {
+      setResolvedImageUrl(imageUrl);
+      return;
+    }
+    void supabase.storage
+      .from('chat-images')
+      .createSignedUrl(imageUrl, 3600)
+      .then(({ data }) => {
+        if (!cancelled) setResolvedImageUrl(data?.signedUrl);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [imageUrl]);
+
 
   const getLocale = () => {
     switch (language) {
