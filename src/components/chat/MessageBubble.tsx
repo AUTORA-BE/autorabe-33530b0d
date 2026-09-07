@@ -158,10 +158,10 @@ export function MessageBubble({
           )}
           
           {/* Image */}
-          {imageUrl && (
+          {resolvedImageUrl && (
             <div className="mb-2">
               <img 
-                src={imageUrl} 
+                src={resolvedImageUrl} 
                 alt="Image partagée" 
                 className="rounded-lg max-w-full cursor-pointer hover:opacity-90 transition-opacity"
                 onClick={() => setIsImageOpen(true)}
@@ -209,7 +209,7 @@ export function MessageBubble({
       <Dialog open={isImageOpen} onOpenChange={setIsImageOpen}>
         <DialogContent className="max-w-4xl p-0 bg-transparent border-none">
           <img 
-            src={imageUrl} 
+            src={resolvedImageUrl} 
             alt="Image partagée" 
             className="w-full h-auto rounded-lg"
           />
