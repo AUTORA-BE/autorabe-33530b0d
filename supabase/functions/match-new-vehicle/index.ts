@@ -98,46 +98,8 @@ function calculateMatchScore(vehicle: VehiclePayload, filters: AlertFilters): nu
   return maxScore > 0 ? Math.round((score / maxScore) * 100) : 0;
 }
 
-function generateEmailHTML(alertName: string, vehicle: VehiclePayload, score: number, siteUrl: string): string {
-  const priceFormatted = new Intl.NumberFormat("fr-BE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(vehicle.price);
-  const mileageFormatted = new Intl.NumberFormat("fr-BE").format(vehicle.mileage);
-  const imageUrl = vehicle.photos?.[0] || "";
-  const vehicleUrl = `${siteUrl}/car/${vehicle.id}`;
-
-  return `<!DOCTYPE html>
-<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#f4f4f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-<div style="max-width:600px;margin:0 auto;padding:20px;">
-  <div style="background:#0d9488;padding:24px;border-radius:16px 16px 0 0;text-align:center;">
-    <h1 style="color:white;margin:0;font-size:24px;">🚗 AutoRA.be</h1>
-    <p style="color:rgba(255,255,255,0.9);margin:8px 0 0;">Nouvelle annonce pour "${alertName}"</p>
-  </div>
-  <div style="background:white;padding:24px;border-radius:0 0 16px 16px;">
-    <div style="background:#f0fdfa;border:1px solid #99f6e4;border-radius:12px;padding:16px;margin-bottom:20px;text-align:center;">
-      <span style="font-size:32px;font-weight:bold;color:#0d9488;">${score}%</span>
-      <p style="margin:4px 0 0;color:#0f766e;font-size:14px;">Correspondance avec vos critères</p>
-    </div>
-    ${imageUrl ? `<img src="${imageUrl}" alt="${vehicle.brand} ${vehicle.model}" style="width:100%;border-radius:12px;margin-bottom:16px;max-height:300px;object-fit:cover;" />` : ""}
-    <h2 style="margin:0 0 4px;font-size:20px;color:#18181b;">${vehicle.brand} ${vehicle.model}</h2>
-    <p style="font-size:24px;font-weight:bold;color:#0d9488;margin:0 0 12px;">${priceFormatted}</p>
-    <p style="color:#71717a;font-size:14px;margin:0 0 20px;">
-      📅 ${vehicle.year} &bull; 🛣️ ${mileageFormatted} km &bull; ⛽ ${vehicle.fuel_type}
-      ${vehicle.car_pass_verified ? " &bull; ✅ Car-Pass" : ""}
-      ${vehicle.location ? ` &bull; 📍 ${vehicle.location}` : ""}
-    </p>
-    <a href="${vehicleUrl}" style="display:block;background:#0d9488;color:white;text-decoration:none;padding:14px 24px;border-radius:12px;text-align:center;font-weight:600;font-size:16px;">
-      Voir l'annonce →
-    </a>
-    <p style="color:#a1a1aa;font-size:12px;text-align:center;margin:20px 0 0;">
-      💡 Les bonnes affaires partent vite ! Contactez le vendeur rapidement.
-    </p>
-  </div>
-  <p style="color:#a1a1aa;font-size:11px;text-align:center;margin:16px 0 0;">
-    Vous recevez cet email car vous avez créé une alerte sur AutoRA.be
-  </p>
-</div>
-</body></html>`;
-}
+/** Gabarit React Email enregistré dans `_shared/transactional-email-templates/registry.ts`. */
+const TEMPLATE_NAME = "alert-match";
 
 Deno.serve(async (req) => {
   const corsHeaders = buildCorsHeaders(req);
@@ -206,7 +168,6 @@ Deno.serve(async (req) => {
       });
     }
 
-    const resendApiKey = Deno.env.get("RESEND_API_KEY");
     const siteUrl = Deno.env.get("SUPABASE_URL")?.replace(".supabase.co", "")
       ? "https://auto-belgium.lovable.app"
       : "https://auto-belgium.lovable.app";
