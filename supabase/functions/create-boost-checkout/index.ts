@@ -37,6 +37,8 @@ serve(async (req) => {
     }
 
     const { priceId, listingId, returnUrl, environment } = await req.json();
+    requestedTier = typeof priceId === "string" ? priceId : "invalid";
+    requestedEnv = typeof environment === "string" ? environment : "invalid";
     const env = parseEnv(environment);
 
     const boostConfig = typeof priceId === "string" ? BOOST_PRICES[priceId] : undefined;
