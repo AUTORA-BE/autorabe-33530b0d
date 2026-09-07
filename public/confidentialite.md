@@ -11,7 +11,7 @@ AutoRA.be — autoracontact@gmail.com
 - Données de compte : nom, email, mot de passe (haché)
 - Données d'annonces : informations véhicule, photos, localisation
 - Données de navigation : pages visitées, actions (avec consentement)
-- Données de paiement : gérées exclusivement par Stripe (non stockées par AutoRA)
+- Données de paiement : aucune — AutoRA est actuellement une place de marché gratuite et ne traite aucun paiement
 
 ## Bases légales (RGPD art. 6)
 
@@ -23,15 +23,14 @@ AutoRA.be — autoracontact@gmail.com
 ## Durée de conservation
 
 - Données de compte : durée de la relation + 3 ans
-- Données de paiement : 10 ans (obligation comptable)
-- Cookies analytics : 13 mois maximum
+- Mesure d'audience : sans cookie ni identifiant persistant
 
 ## Sous-traitants
 
+- Lovable (hébergement de l'application) — USA (clauses contractuelles types)
 - Supabase (base de données) — UE + USA (clauses contractuelles types)
-- Stripe (paiement) — USA (Privacy Shield / SCC)
 - Resend (emails) — USA (SCC)
-- Cloudflare (CDN) — USA (SCC)
+- Cloudflare (CDN et mesure d'audience sans cookie) — USA (SCC)
 
 ## Vos droits
 

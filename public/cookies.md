@@ -8,11 +8,11 @@ Texte complet : https://autora.be/cookies
 - Session d'authentification Supabase
 - Préférences de langue
 
-### Analytics (consentement requis)
-- Plausible Analytics — respecte la vie privée, sans cookie tiers, conforme RGPD
+### Mesure d'audience (consentement requis)
+- Cloudflare Web Analytics — mesure d'audience anonyme, sans cookie et sans identifiant persistant, conforme RGPD
 
-### Paiement (consentement requis)
-- Stripe — gestion sécurisée des paiements
+### Paiement
+- Aucun. AutoRA est actuellement une place de marché gratuite : aucun paiement n'est traité par la Plateforme et aucun cookie de paiement n'est déposé.
 
 ## Gestion du consentement
 
@@ -20,7 +20,7 @@ Une bannière de consentement s'affiche lors de votre première visite. Vous pou
 
 ## Durée
 
-Les cookies analytics expirent après 13 mois maximum.
+La mesure d'audience ne dépose aucun cookie. Les cookies essentiels (session, préférences) expirent au plus tard après 13 mois.
 
 ## Texte complet
 

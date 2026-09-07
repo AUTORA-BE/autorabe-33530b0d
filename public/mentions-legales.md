@@ -4,15 +4,18 @@ Texte complet : https://autora.be/mentions-legales
 
 ## Éditeur du site
 
-AutoRA.be
+AutoRA.be — édité par Alperen Gursever, personne physique.
+L'éditeur n'est pas inscrit à la Banque-Carrefour des Entreprises et n'est pas assujetti à la TVA : aucun numéro d'entreprise ni numéro de TVA n'est applicable à ce jour.
 Email : autoracontact@gmail.com
 Site : https://autora.be
 Marché : Belgique
 
+AutoRA est actuellement une place de marché gratuite : aucun paiement n'est traité ni encaissé par la plateforme.
+
 ## Hébergement
 
-Lovable Cloud — https://lovable.dev
-Cloudflare CDN — https://cloudflare.com
+Lovable — https://lovable.dev (hébergement et déploiement de l'application)
+Cloudflare — https://cloudflare.com (CDN, protection et mesure d'audience sans cookie)
 
 ## Base de données
 
