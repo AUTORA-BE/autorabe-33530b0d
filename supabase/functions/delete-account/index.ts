@@ -130,6 +130,10 @@ serve(async (req) => {
     await supabase.from("messages").delete().eq("sender_id", userId);
 
     // ─── 3. Delete user-owned rows in parallel ──────────────────────────
+    // NOTE: since the FK migration, every table below is ON DELETE CASCADE from
+    // auth.users, so these explicit deletes are redundant. They are kept on
+    // purpose as a safety net: they run first, they are idempotent, and they
+    // make the deletion scope readable without knowing the schema.
     await Promise.all([
       supabase
         .from("conversations")
@@ -212,7 +216,96 @@ serve(async (req) => {
       logErr("chat_images_cleanup", e);
     }
 
-    // ─── 7. Profile + auth user (final) ─────────────────────────────────
+    // ─── 7. dealer-kyc bucket (identity documents) ──────────────────────
+    // CRITICAL ORDER: dealer_kyc.user_id is ON DELETE CASCADE, so the row —
+    // and with it document_path — vanishes the moment the auth user is
+    // deleted. The path MUST be read and the file removed BEFORE
+    // auth.admin.deleteUser, otherwise the ID document becomes an
+    // unreachable orphan in the bucket.
+    try {
+      const { data: kycRows } = await supabase
+        .from("dealer_kyc")
+        .select("document_path")
+        .eq("user_id", userId);
+
+      const kycPaths = (kycRows ?? [])
+        .map((r: { document_path: string | null }) => r.document_path)
+        .filter((p): p is string => typeof p === "string" && p.length > 0)
+        .map((p) => p.replace(/^.*dealer-kyc\//, ""));
+
+      if (kycPaths.length) {
+        await supabase.storage.from("dealer-kyc").remove(kycPaths);
+        log("dealer_kyc_docs_removed", { count: kycPaths.length });
+      }
+    } catch (e) {
+      logErr("dealer_kyc_docs_cleanup", e);
+    }
+
+    // Defensive sweep: files uploaded under <userId>/ but never recorded in DB
+    try {
+      const { data: kycFiles } = await supabase.storage
+        .from("dealer-kyc")
+        .list(userId, { limit: 1000 });
+      if (kycFiles && kycFiles.length > 0) {
+        await supabase.storage
+          .from("dealer-kyc")
+          .remove(kycFiles.map((f: { name: string }) => `${userId}/${f.name}`));
+      }
+    } catch (e) {
+      logErr("dealer_kyc_prefix_cleanup", e);
+    }
+
+    // ─── 8. vitrine-covers bucket (prefix sweep) ────────────────────────
+    try {
+      const { data: coverFiles } = await supabase.storage
+        .from("vitrine-covers")
+        .list(userId, { limit: 1000 });
+      if (coverFiles && coverFiles.length > 0) {
+        await supabase.storage
+          .from("vitrine-covers")
+          .remove(coverFiles.map((f: { name: string }) => `${userId}/${f.name}`));
+      }
+    } catch (e) {
+      logErr("vitrine_covers_cleanup", e);
+    }
+
+    // ─── 9. car-pass bucket (prefix sweep) ──────────────────────────────
+    // Complements step 4, which only removes Car-Pass files referenced by a
+    // listing URL. This catches files uploaded without (or detached from) a
+    // listing.
+    try {
+      const { data: passFiles } = await supabase.storage
+        .from("car-pass")
+        .list(userId, { limit: 1000 });
+      if (passFiles && passFiles.length > 0) {
+        await supabase.storage
+          .from("car-pass")
+          .remove(passFiles.map((f: { name: string }) => `${userId}/${f.name}`));
+      }
+    } catch (e) {
+      logErr("car_pass_prefix_cleanup", e);
+    }
+
+    // ─── 10. Email tables holding plaintext addresses (no user_id, no FK) ─
+    if (userEmail) {
+      try {
+        await supabase.from("email_send_log").delete().eq("recipient_email", userEmail);
+      } catch (e) {
+        logErr("email_send_log_cleanup", e);
+      }
+      try {
+        await supabase.from("email_unsubscribe_tokens").delete().eq("email", userEmail);
+      } catch (e) {
+        logErr("email_unsubscribe_tokens_cleanup", e);
+      }
+    }
+
+    // DELIBERATE: `suppressed_emails` is NOT cleaned here, and must not be.
+    // It is the do-not-contact list (bounces, complaints, unsubscribes).
+    // Deleting the row would allow the address to be emailed again — the exact
+    // opposite of what the person asked for. Do not "fix" this.
+
+    // ─── 11. Profile + auth user (final) ────────────────────────────────
     await supabase.from("profiles").delete().eq("user_id", userId);
 
     const { error: deleteError } = await supabase.auth.admin.deleteUser(userId);
