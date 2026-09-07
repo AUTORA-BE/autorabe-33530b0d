@@ -97,19 +97,9 @@ export function onConsentChange(listener: Listener): () => void {
 }
 
 // ============================================================================
-// Analytics loader — NO-OP.
+// Analytics — Cloudflare Web Analytics.
 // ----------------------------------------------------------------------------
-// AutoRA migrated from Plausible to Cloudflare Web Analytics, which is
-// cookieless and loaded at the edge / via a single beacon in index.html.
-// There is therefore no client-side script to inject anymore.
-//
-// `loadPlausibleIfAllowed` is intentionally kept (as a no-op) so that its two
-// call sites — main.tsx boot + onConsentChange — keep working untouched.
-// The legacy `trackEvent()` calls scattered across the app also keep working:
-// analytics.ts guards them with `window.plausible?.(…)`, which is a harmless
-// no-op now that `window.plausible` is never defined.
+// La mesure d'audience est assurée par Cloudflare Web Analytics : sans cookie,
+// sans identifiant persistant, chargée en périphérie. Il n'y a donc aucun script
+// analytics à injecter côté client, et rien à charger après consentement.
 // ============================================================================
-
-export function loadPlausibleIfAllowed(): void {
-  /* no-op — Cloudflare Web Analytics needs no client-side loader */
-}

@@ -2,7 +2,7 @@
  * Global React Error Boundary — production grade
  * - Structured JSON logging (consistent shape with edge functions)
  * - Captures unhandled promise rejections (window-level)
- * - Plausible "Error" custom event for at-a-glance observability
+ * - Custom "Error" analytics event for at-a-glance observability
  * - Elite Green fallback UI: retry / reload / home
  * - i18n: reads localStorage/URL to pick the right locale (no Router/Context dependency)
  *
@@ -74,7 +74,7 @@ const logError = (
   // eslint-disable-next-line no-console
   console.error(JSON.stringify(payload));
 
-  // Plausible custom event (no-op if not loaded)
+  // Custom analytics event (no-op if no analytics script is loaded)
   if (typeof window !== "undefined" && typeof window.plausible === "function") {
     try {
       window.plausible("Error", {

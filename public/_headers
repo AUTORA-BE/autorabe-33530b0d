@@ -28,7 +28,7 @@
 /index.html
   Cache-Control: public, max-age=0, must-revalidate
 
-# Security headers (applied to all routes by Lovable Cloud / Netlify-style hosting)
+# Security headers (applied to all routes by the hosting layer: Lovable / Cloudflare)
 /*
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
   X-Content-Type-Options: nosniff

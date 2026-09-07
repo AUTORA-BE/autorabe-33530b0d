@@ -1,5 +1,6 @@
 /**
- * Plausible Analytics wrapper
+ * Analytics wrapper (legacy Plausible-shaped API, currently a no-op:
+ * audience measurement is handled by cookieless Cloudflare Web Analytics)
  * - RGPD: no-op until user has accepted analytics cookies (see consent.ts)
  * - No-op in dev / preview / iframe to keep dashboards clean
  * - Custom props (user_id, role, email) auto-injected on every event
@@ -46,7 +47,7 @@ declare global {
 
 /**
  * Track a custom event. Props are merged with current user context.
- * Use snake_case event names to match the Plausible dashboard convention.
+ * Use snake_case event names.
  */
 export function trackEvent(name: string, props: Props = {}): void {
   if (isTrackingDisabled()) return;
