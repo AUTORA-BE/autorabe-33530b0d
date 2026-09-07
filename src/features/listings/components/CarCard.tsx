@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import type { Vehicle } from "../types/vehicle.types";
 import { computeMatchScore } from "@/features/tco/utils/matchScore";
 import type { BuyerProfile } from "@/features/tco/hooks/useBuyerProfile";
+import { formatLocation } from "../utils/location";
 
 export interface CarCardProps {
   car: Vehicle;
@@ -266,7 +267,7 @@ Le vendeur a joint un document Car-Pass à cette annonce. AutoRA ne certifie pas
         </div>
         <p className="flex items-center gap-1 text-sm text-muted-foreground mb-4">
           <MapPin className="w-3 h-3" />
-          {car.location}
+          {formatLocation(car.location)}
         </p>
         <div className="flex flex-wrap gap-2 mt-auto pt-2">
           <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-2xl bg-secondary text-sm text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-colors duration-300">
