@@ -66,6 +66,7 @@ import { fr, nl, enGB } from "date-fns/locale";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSellerListings } from "../hooks/useSellerListings";
 import BoostDialog from "./BoostDialog";
+import { paymentsEnabled } from "@/lib/payments";
 import type { SellerListing, StatusFilter, ChartPeriod } from "../types/sellerDashboard.types";
 
 // Animation variants
@@ -678,7 +679,7 @@ export default function SellerDashboard() {
       </AlertDialog>
 
       {/* Boost Dialog */}
-      {listingToBoost && (
+      {listingToBoost && paymentsEnabled() && (
         <BoostDialog
           open={boostDialogOpen}
           onOpenChange={setBoostDialogOpen}
