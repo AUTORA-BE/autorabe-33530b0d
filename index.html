@@ -79,12 +79,18 @@
       })();
     </script>
     
-    <title>AutoRA — Voiture occasion Belgique, Car-Pass &amp; LEZ</title>
+    <!-- NEUTRAL FALLBACKS ONLY.
+         Everything page-specific (title, description, og:*, twitter:*,
+         canonical, hreflang) is emitted by SEOHead (react-helmet-async), and
+         rewritten at build time for vehicle pages by scripts/prerenderOgMeta.mjs.
+         Do not add page-specific values here — a crawler reads the first
+         occurrence and would get the generic one. -->
+    <title>AutoRA — Marketplace automobile belge</title>
     <!-- Canonical is emitted per-route by SEOHead (react-helmet-async) -->
     <meta name="google-site-verification" content="4zy4ZUSEXVNLs4nZ_8sGQdUABjSx03FaoUAX7Op5gms" />
-    <meta name="description" content="AutoRA — Marketplace auto belge. Voitures d&#39;occasion avec Car-Pass vérifié et compatibilité LEZ garantie. Calculateur TCO et fiscalité intégrés.">
+    <meta name="description" content="AutoRA, la marketplace automobile belge : annonces de voitures d&#39;occasion, informations Car-Pass et LEZ, calculateurs de taxes et de coût total.">
     <meta name="author" content="AutoRA" />
-    <meta name="keywords" content="voiture occasion belgique, tweedehands auto belgië, gebrauchtwagen belgien, used cars belgium, car-pass, LEZ Bruxelles, LEZ Anvers, LEZ Gand, taxe mise circulation, TMC, fiscalité auto belgique, calculateur TCO, autoscout, 2ememain auto" />
+
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="googlebot" content="index, follow" />
     <meta name="geo.region" content="BE" />
@@ -100,12 +106,10 @@
     <meta property="og:locale:alternate" content="en_GB" />
     <!-- og:url, og:image, og:title, og:description and twitter equivalents are emitted per-route by SEOHead -->
 
+    <!-- hreflang alternates (incl. a single x-default) are emitted per-route by
+         SEOHead — kept out of here to avoid contradictory duplicates. -->
 
-    <link rel="alternate" hreflang="fr-BE" href="https://autora.be/fr" />
-    <link rel="alternate" hreflang="nl-BE" href="https://autora.be/nl" />
-    <link rel="alternate" hreflang="de-BE" href="https://autora.be/de" />
-    <link rel="alternate" hreflang="en" href="https://autora.be/en" />
-    <link rel="alternate" hreflang="x-default" href="https://autora.be/" />
+
 
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   
@@ -138,15 +142,17 @@
   
   
   
-  <!-- og:title, og:description, twitter:title, twitter:description set per-route via SEOHead -->
+  <!-- Neutral social fallbacks (single set). Page-specific values come from
+       SEOHead at runtime and from the build-time prerender for vehicles. -->
 
-  <meta property="og:title" content="AutoRA — Voiture occasion Belgique, Car-Pass &amp; LEZ">
-  <meta name="twitter:title" content="AutoRA — Voiture occasion Belgique, Car-Pass &amp; LEZ">
-  <meta property="og:description" content="AutoRA — Marketplace auto belge. Voitures d&#39;occasion avec Car-Pass vérifié et compatibilité LEZ garantie. Calculateur TCO et fiscalité intégrés.">
-  <meta name="twitter:description" content="AutoRA — Marketplace auto belge. Voitures d&#39;occasion avec Car-Pass vérifié et compatibilité LEZ garantie. Calculateur TCO et fiscalité intégrés.">
+  <meta property="og:title" content="AutoRA — Marketplace automobile belge">
+  <meta name="twitter:title" content="AutoRA — Marketplace automobile belge">
+  <meta property="og:description" content="AutoRA, la marketplace automobile belge : annonces de voitures d&#39;occasion, informations Car-Pass et LEZ, calculateurs de taxes et de coût total.">
+  <meta name="twitter:description" content="AutoRA, la marketplace automobile belge : annonces de voitures d&#39;occasion, informations Car-Pass et LEZ, calculateurs de taxes et de coût total.">
   <meta property="og:image" content="https://autora.be/og-image.jpg">
   <meta name="twitter:image" content="https://autora.be/og-image.jpg">
   <meta name="twitter:card" content="summary_large_image">
+
 <noscript><style>[data-hero-reveal],[data-page-reveal]{opacity:1!important;transform:none!important}</style></noscript>
 </head>
 
