@@ -6,6 +6,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { SUBSCRIPTION_TIERS, type SubscriptionTier } from '../constants/tiers';
+import { getStripeEnvironment } from '@/lib/stripe';
 
 interface SubscriptionState {
   isLoading: boolean;
@@ -35,7 +36,9 @@ export function useSubscription() {
         return;
       }
 
-      const { data, error } = await supabase.functions.invoke('check-subscription');
+      const { data, error } = await supabase.functions.invoke('check-subscription', {
+        body: { environment: getStripeEnvironment() },
+      });
       if (error) throw error;
 
       // Résolution par slug de palier : aucun identifiant Stripe n'est comparé côté client.
@@ -96,23 +99,10 @@ export function useSubscription() {
     };
   }, [checkSubscription]);
 
-  /**
-   * Lance un checkout d'abonnement.
-   * @param plan Clé de plan (ex. "particulier"). Le prix Stripe est résolu
-   *   exclusivement côté serveur : le client ne connaît aucun identifiant de prix.
-   */
-  const createCheckout = useCallback(async (plan: string) => {
-    const { data, error } = await supabase.functions.invoke('create-checkout', {
-      body: { plan },
-    });
-    if (error) throw error;
-    if (data?.url) {
-      window.open(data.url, '_blank');
-    }
-  }, []);
-
   const openCustomerPortal = useCallback(async () => {
-    const { data, error } = await supabase.functions.invoke('customer-portal');
+    const { data, error } = await supabase.functions.invoke('customer-portal', {
+      body: { environment: getStripeEnvironment(), returnUrl: window.location.href },
+    });
     if (error) throw error;
     if (data?.url) {
       window.open(data.url, '_blank');
@@ -122,7 +112,6 @@ export function useSubscription() {
   return {
     ...state,
     checkSubscription,
-    createCheckout,
     openCustomerPortal,
   };
 }
