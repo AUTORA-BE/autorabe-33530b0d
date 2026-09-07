@@ -3,6 +3,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 
 import { buildCorsHeaders, handlePreflight } from "../_shared/cors.ts";
+import { sendTemplateEmailLogged } from "../_shared/sendTemplateEmailLogged.ts";
+import { logOpsAlert } from "../_shared/opsAlert.ts";
 
 interface VehiclePayload {
   id: string;
