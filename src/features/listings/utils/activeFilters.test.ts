@@ -22,6 +22,19 @@ describe("countActiveFilters", () => {
     expect(countActiveFilters({ ...defaultVehicleFilters, maxDistanceKm: 50 })).toBe(0);
   });
 
+  it("compte chaque intervalle comme un seul filtre", () => {
+    const d = defaultVehicleFilters;
+    expect(countActiveFilters({ ...d, minPrice: 5000 })).toBe(1);
+    expect(countActiveFilters({ ...d, maxPrice: 25000 })).toBe(1);
+    expect(countActiveFilters({ ...d, minPrice: 5000, maxPrice: 25000 })).toBe(1);
+    expect(countActiveFilters({ ...d, yearMin: 2015 })).toBe(1);
+    expect(countActiveFilters({ ...d, yearMax: 2020 })).toBe(1);
+    expect(countActiveFilters({ ...d, yearMin: 2015, yearMax: 2020 })).toBe(1);
+    expect(countActiveFilters({ ...d, kmMin: 1000 })).toBe(1);
+    expect(countActiveFilters({ ...d, kmMax: 100000 })).toBe(1);
+    expect(countActiveFilters({ ...d, kmMin: 1000, kmMax: 100000 })).toBe(1);
+  });
+
   it("cumule plusieurs filtres", () => {
     expect(
       countActiveFilters({
@@ -30,6 +43,19 @@ describe("countActiveFilters", () => {
         maxPrice: 25000,
         kmMax: 100000,
         bodyType: "suv",
+      }),
+    ).toBe(4);
+  });
+
+  it("compte un cas combiné avec fourchettes", () => {
+    expect(
+      countActiveFilters({
+        ...defaultVehicleFilters,
+        brand: "BMW",
+        minPrice: 5000,
+        maxPrice: 25000,
+        yearMin: 2015,
+        kmMax: 100000,
       }),
     ).toBe(4);
   });
