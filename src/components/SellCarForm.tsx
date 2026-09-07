@@ -25,6 +25,7 @@ import { useListingLimit } from '@/features/subscription';
 import { useAutoSaveDraft } from '@/features/listings/hooks/useAutoSaveDraft';
 import { useLocalizedHref } from '@/lib/useLocalizedHref';
 import { trackEvent, EVENTS } from '@/lib/analytics';
+import { normalizeLocation } from '@/features/listings/utils/location';
 
 const ConfettiCanvas = lazy(() => import('@/components/ConfettiCanvas'));
 
