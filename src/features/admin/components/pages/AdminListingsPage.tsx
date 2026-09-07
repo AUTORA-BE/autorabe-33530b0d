@@ -32,6 +32,15 @@ const STATUS_COLORS: Record<string, string> = {
   sold: 'bg-sky-500/10 text-sky-500',
 };
 
+/** Libellés explicites : « pending » se lisait comme un simple état technique. */
+const STATUS_LABELS: Record<string, string> = {
+  pending: 'En attente de publication',
+  approved: 'Publiée',
+  rejected: 'Rejetée',
+  sold: 'Vendue',
+};
+
+
 const ACTION_LABELS: Record<string, string> = {
   approve_listing: 'Approuvée',
   reject_listing: 'Rejetée',
