@@ -38,9 +38,9 @@ export function useSubscription() {
       const { data, error } = await supabase.functions.invoke('check-subscription');
       if (error) throw error;
 
-      const tier = Object.values(SUBSCRIPTION_TIERS).find(
-        (t) => t.product_id === data.product_id
-      ) ?? null;
+      // Résolution par slug de palier : aucun identifiant Stripe n'est comparé côté client.
+      const tier = data.tier_slug ? SUBSCRIPTION_TIERS[data.tier_slug] ?? null : null;
+
 
       setState({
         isLoading: false,
