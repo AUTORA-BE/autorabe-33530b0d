@@ -16,6 +16,7 @@ export function countActiveFilters(filters: VehicleFilters): number {
   if (filters.location) n++;
   if (filters.minPrice > d.minPrice) n++;
   if (filters.maxPrice < d.maxPrice) n++;
+  if (filters.kmMin > d.kmMin) n++;
   if (filters.kmMax < d.kmMax) n++;
   if (filters.fuelTypes?.length) n++;
   if (filters.transmission) n++;
@@ -24,6 +25,11 @@ export function countActiveFilters(filters: VehicleFilters): number {
   if (filters.lezOnly) n++;
   if (filters.yearMin > d.yearMin) n++;
   if (filters.yearMax < d.yearMax) n++;
+  if (filters.sellerTypeFilter) n++;
+  if (filters.bodyType) n++;
+  if (filters.province) n++;
+  if (filters.features?.length) n++;
+  if (filters.maxDistanceKm !== d.maxDistanceKm && filters.userLat !== d.userLat) n++;
   return n;
 }
 
