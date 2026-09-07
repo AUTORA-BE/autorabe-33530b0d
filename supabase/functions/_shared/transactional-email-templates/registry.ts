@@ -17,6 +17,7 @@ import { template as newDealerSignup } from './new-dealer-signup.tsx'
 import { template as dealerApproved } from './dealer-approved.tsx'
 import { template as dealerRejected } from './dealer-rejected.tsx'
 import { template as opsAlertDigest } from './ops-alert-digest.tsx'
+import { template as alertMatch } from './alert-match.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'contact-confirmation': contactConfirmation,
@@ -27,4 +28,5 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'dealer-approved': dealerApproved,
   'dealer-rejected': dealerRejected,
   'ops-alert-digest': opsAlertDigest,
+  'alert-match': alertMatch,
 }

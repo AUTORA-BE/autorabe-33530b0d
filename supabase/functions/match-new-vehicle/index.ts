@@ -3,6 +3,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 
 import { buildCorsHeaders, handlePreflight } from "../_shared/cors.ts";
+import { sendTemplateEmailLogged } from "../_shared/sendTemplateEmailLogged.ts";
+import { logOpsAlert } from "../_shared/opsAlert.ts";
 
 interface VehiclePayload {
   id: string;
@@ -96,46 +98,8 @@ function calculateMatchScore(vehicle: VehiclePayload, filters: AlertFilters): nu
   return maxScore > 0 ? Math.round((score / maxScore) * 100) : 0;
 }
 
-function generateEmailHTML(alertName: string, vehicle: VehiclePayload, score: number, siteUrl: string): string {
-  const priceFormatted = new Intl.NumberFormat("fr-BE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(vehicle.price);
-  const mileageFormatted = new Intl.NumberFormat("fr-BE").format(vehicle.mileage);
-  const imageUrl = vehicle.photos?.[0] || "";
-  const vehicleUrl = `${siteUrl}/car/${vehicle.id}`;
-
-  return `<!DOCTYPE html>
-<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#f4f4f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-<div style="max-width:600px;margin:0 auto;padding:20px;">
-  <div style="background:#0d9488;padding:24px;border-radius:16px 16px 0 0;text-align:center;">
-    <h1 style="color:white;margin:0;font-size:24px;">🚗 AutoRA.be</h1>
-    <p style="color:rgba(255,255,255,0.9);margin:8px 0 0;">Nouvelle annonce pour "${alertName}"</p>
-  </div>
-  <div style="background:white;padding:24px;border-radius:0 0 16px 16px;">
-    <div style="background:#f0fdfa;border:1px solid #99f6e4;border-radius:12px;padding:16px;margin-bottom:20px;text-align:center;">
-      <span style="font-size:32px;font-weight:bold;color:#0d9488;">${score}%</span>
-      <p style="margin:4px 0 0;color:#0f766e;font-size:14px;">Correspondance avec vos critères</p>
-    </div>
-    ${imageUrl ? `<img src="${imageUrl}" alt="${vehicle.brand} ${vehicle.model}" style="width:100%;border-radius:12px;margin-bottom:16px;max-height:300px;object-fit:cover;" />` : ""}
-    <h2 style="margin:0 0 4px;font-size:20px;color:#18181b;">${vehicle.brand} ${vehicle.model}</h2>
-    <p style="font-size:24px;font-weight:bold;color:#0d9488;margin:0 0 12px;">${priceFormatted}</p>
-    <p style="color:#71717a;font-size:14px;margin:0 0 20px;">
-      📅 ${vehicle.year} &bull; 🛣️ ${mileageFormatted} km &bull; ⛽ ${vehicle.fuel_type}
-      ${vehicle.car_pass_verified ? " &bull; ✅ Car-Pass" : ""}
-      ${vehicle.location ? ` &bull; 📍 ${vehicle.location}` : ""}
-    </p>
-    <a href="${vehicleUrl}" style="display:block;background:#0d9488;color:white;text-decoration:none;padding:14px 24px;border-radius:12px;text-align:center;font-weight:600;font-size:16px;">
-      Voir l'annonce →
-    </a>
-    <p style="color:#a1a1aa;font-size:12px;text-align:center;margin:20px 0 0;">
-      💡 Les bonnes affaires partent vite ! Contactez le vendeur rapidement.
-    </p>
-  </div>
-  <p style="color:#a1a1aa;font-size:11px;text-align:center;margin:16px 0 0;">
-    Vous recevez cet email car vous avez créé une alerte sur AutoRA.be
-  </p>
-</div>
-</body></html>`;
-}
+/** Gabarit React Email enregistré dans `_shared/transactional-email-templates/registry.ts`. */
+const TEMPLATE_NAME = "alert-match";
 
 Deno.serve(async (req) => {
   const corsHeaders = buildCorsHeaders(req);
@@ -204,7 +168,6 @@ Deno.serve(async (req) => {
       });
     }
 
-    const resendApiKey = Deno.env.get("RESEND_API_KEY");
     const siteUrl = Deno.env.get("SUPABASE_URL")?.replace(".supabase.co", "")
       ? "https://auto-belgium.lovable.app"
       : "https://auto-belgium.lovable.app";
@@ -234,40 +197,60 @@ Deno.serve(async (req) => {
         })
         .eq("id", alert.id);
 
-      // Send email if enabled
-      if (alert.notify_email && resendApiKey) {
+      // Send email if enabled — through the managed send path (verified sender,
+      // server-side suppression, retries and email_send_log journalling).
+      if (alert.notify_email) {
         // Get user email
         const { data: userData } = await supabase.auth.admin.getUserById(alert.user_id);
         const userEmail = userData?.user?.email;
 
         if (userEmail) {
-          try {
-            // Skip suppressed recipients (GDPR opt-out compliance)
-            const { data: suppressed } = await supabase
-              .from("suppressed_emails")
-              .select("id")
-              .eq("email", userEmail.toLowerCase())
-              .maybeSingle();
-            if (suppressed) {
-              console.log(`Skipping suppressed recipient: ${userEmail}`);
-              continue;
-            }
+          // No manual `suppressed_emails` lookup here: suppression is enforced
+          // server-side by the managed API, which reports it as
+          // { sent: false, reason: 'recipient_suppressed' } — a normal outcome.
+          const result = await sendTemplateEmailLogged(TEMPLATE_NAME, userEmail, {
+            idempotencyKey: `${TEMPLATE_NAME}-${alert.id}-${vehicle.id}`,
+            templateData: {
+              alertName: alert.name,
+              brand: vehicle.brand,
+              model: vehicle.model,
+              price: vehicle.price,
+              priceFormatted: new Intl.NumberFormat("fr-BE", {
+                style: "currency",
+                currency: "EUR",
+                maximumFractionDigits: 0,
+              }).format(vehicle.price),
+              mileageFormatted: new Intl.NumberFormat("fr-BE").format(vehicle.mileage),
+              year: vehicle.year,
+              fuelType: vehicle.fuel_type,
+              carPassVerified: vehicle.car_pass_verified ?? false,
+              location: vehicle.location ?? "",
+              imageUrl: vehicle.photos?.[0] ?? "",
+              vehicleUrl: `${siteUrl}/car/${vehicle.id}`,
+              score,
+            },
+          });
 
-            await fetch("https://api.resend.com/emails", {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${resendApiKey}`,
-                "Content-Type": "application/json",
+          if (result.sent) {
+            console.log(`[match-new-vehicle] alert email sent for alert ${alert.id}`);
+          } else if (result.reason === "recipient_suppressed") {
+            // Expected: the recipient opted out. Not an error.
+            console.log(`[match-new-vehicle] recipient suppressed for alert ${alert.id}`);
+          } else {
+            // A real send failure must never pass unnoticed again.
+            await logOpsAlert(
+              "match-new-vehicle",
+              `Envoi de l'alerte échoué (gabarit ${TEMPLATE_NAME})`,
+              {
+                severity: "error",
+                context: {
+                  template: TEMPLATE_NAME,
+                  alert_id: alert.id,
+                  listing_id: vehicle.id,
+                  reason: result.reason,
+                },
               },
-              body: JSON.stringify({
-                from: "AutoRA <onboarding@resend.dev>",
-                to: userEmail,
-                subject: `🚗 Nouveau : ${vehicle.brand} ${vehicle.model} à ${new Intl.NumberFormat("fr-BE").format(vehicle.price)}€`,
-                html: generateEmailHTML(alert.name, vehicle, score, siteUrl),
-              }),
-            });
-          } catch (emailError) {
-            console.error("Email send error:", emailError);
+            );
           }
         }
       }

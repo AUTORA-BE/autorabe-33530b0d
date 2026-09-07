@@ -38,7 +38,7 @@ Mark each item ✅ before deploying to production.
 ## 4. Email (Resend)
 
 - [ ] **Domain verified** — `autora.be` DNS records (SPF, DKIM, DMARC) added and verified in Resend dashboard
-- [ ] **From address** — All emails sent from `noreply@autora.be` (not `onboarding@resend.dev`)
+- [ ] **From address** — All emails sent from the verified sender subdomain (`notify.autora.be`), never a sandbox test address
 - [ ] **RESEND_API_KEY** — Production key set in Supabase secrets
 - [ ] **Email templates** — Alert notification, listing status, contact reply tested end-to-end
 
