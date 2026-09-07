@@ -12,5 +12,5 @@ export {
   FREE_LISTINGS_PER_MONTH,
   resolveTier,
 } from './constants/tiers';
-export type { SubscriptionTier   resolveTier,
-} from './constants/tiers';
+export type { SubscriptionTier } from './constants/tiers';
+
