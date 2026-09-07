@@ -4,6 +4,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { buildCorsHeaders, handlePreflight } from "../_shared/cors.ts";
 import { createStripeClient, parseEnv, resolveOrCreateCustomer } from "../_shared/stripe.ts";
 import { SUBSCRIPTION_PRICES } from "../_shared/catalog.ts";
+import { logOpsAlert } from "../_shared/opsAlert.ts";
 
 serve(async (req) => {
   const corsHeaders = buildCorsHeaders(req);
