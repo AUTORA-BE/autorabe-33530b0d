@@ -16,6 +16,9 @@ serve(async (req) => {
     });
   }
 
+  let requestedTier = "unknown";
+  let requestedEnv = "unknown";
+
   try {
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
