@@ -182,10 +182,12 @@ export default function AdminListingsPage() {
                     <Zap className="h-3.5 w-3.5" />
                   </Button>
                   {listing.status === LISTING_STATUS_PENDING && (
-                    <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={() => openRejectDialog(listing.id)} disabled={isActing} aria-label="Rejeter l'annonce">
+                    <Button size="sm" variant="ghost" className="h-8 px-2 gap-1.5 text-destructive hover:text-destructive" onClick={() => openRejectDialog(listing.id)} disabled={isActing}>
                       <X className="h-3.5 w-3.5" />
+                      <span className="text-[11px] font-medium">Rejeter</span>
                     </Button>
                   )}
+
                   <Button size="icon" variant="ghost" className="h-7 w-7 text-muted-foreground" onClick={() => { if (window.confirm('Supprimer ?')) remove(listing.id); }} disabled={isActing} aria-label="Supprimer l'annonce">
                     <Trash2 className="h-3.5 w-3.5" />
                   </Button>
