@@ -53,11 +53,9 @@ export function MessageInput({ onSend, onTyping, disabled = false, currentUserId
 
         if (uploadError) throw uploadError;
 
-        const { data: { publicUrl } } = supabase.storage
-          .from('chat-images')
-          .getPublicUrl(fileName);
-
-        imageUrl = publicUrl;
+        // Le bucket chat-images est privé : on stocke le CHEMIN de l'objet,
+        // jamais une URL publique. L'affichage signe l'URL à la volée.
+        imageUrl = fileName;
       } catch (error) {
         console.error('Error uploading image:', error);
         notificationError();
