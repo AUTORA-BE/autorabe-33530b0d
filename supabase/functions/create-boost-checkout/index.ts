@@ -114,10 +114,12 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error(
-      "[create-boost-checkout] Error:",
-      error instanceof Error ? error.message : error,
-    );
+    const message = error instanceof Error ? error.message : String(error);
+    console.error("[create-boost-checkout] Error:", message);
+    await logOpsAlert("create-boost-checkout", message, {
+      severity: "critical",
+      context: { boost_tier: requestedTier, environment: requestedEnv },
+    });
     return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
