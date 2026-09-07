@@ -50,21 +50,29 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return handlePreflight(req);
 
   try {
-    // ── Service-role guard: only internal callers (cron / scheduler) ──
+    // ── Internal-caller guard: service role key, or the shared cron token
+    //    stored in the database vault (single source, no literal in the cron SQL) ──
     const authHeader = req.headers.get("Authorization") || "";
     const token = authHeader.replace("Bearer ", "").trim();
     const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
-    if (!token || token !== serviceRoleKey) {
+
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      serviceRoleKey
+    );
+
+    let authorized = Boolean(token) && token === serviceRoleKey;
+    if (!authorized && token) {
+      const { data: ok } = await supabase.rpc("verify_cron_token", { p_token: token });
+      authorized = ok === true;
+    }
+    if (!authorized) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      serviceRoleKey
-    );
     const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
     const now = new Date();
     const in24h = new Date(now.getTime() + 24 * 60 * 60 * 1000);

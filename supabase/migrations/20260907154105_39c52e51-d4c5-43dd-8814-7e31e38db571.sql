@@ -1,0 +1,1 @@
+drop function if exists public.__set_cron_vault_secret(text);
