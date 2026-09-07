@@ -1,10 +1,10 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { Resend } from "https://esm.sh/resend@2.0.0";
 
 import { buildCorsHeaders, handlePreflight } from "../_shared/cors.ts";
+import { sendTemplateEmailLogged } from "../_shared/sendTemplateEmailLogged.ts";
+import { logOpsAlert } from "../_shared/opsAlert.ts";
 
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
 
 
@@ -83,72 +83,29 @@ const handler = async (req: Request): Promise<Response> => {
       });
     }
 
-    const isApproved = status === "approved";
-    const vehicleName = `${listing.brand} ${listing.model} (${listing.year})`;
-    const subject = isApproved
-      ? `✅ Votre annonce ${vehicleName} a été approuvée !`
-      : `❌ Votre annonce ${vehicleName} n'a pas été approuvée`;
+    const result = await sendTemplateEmailLogged("listing-status", listing.contact_email, {
+      idempotencyKey: `listing-status-${listingId}-${status}`,
+      templateData: {
+        contactName: listing.contact_name ?? "",
+        brand: listing.brand,
+        model: listing.model,
+        year: String(listing.year ?? ""),
+        status,
+      },
+    });
 
-    const statusColor = isApproved ? "#22c55e" : "#ef4444";
-    const statusIcon = isApproved ? "✅" : "❌";
-    const statusText = isApproved ? "Approuvée" : "Refusée";
-
-    const approvedMessage = `
-      <p>Bonne nouvelle ! Votre annonce pour <strong>${vehicleName}</strong> a été vérifiée et approuvée par notre équipe.</p>
-      <p>Elle est désormais <strong>visible par tous les acheteurs</strong> sur AutoRA.</p>
-    `;
-    const rejectedMessage = `
-      <p>Nous avons examiné votre annonce pour <strong>${vehicleName}</strong> et malheureusement, elle n'a pas pu être approuvée.</p>
-      <p>Cela peut être dû à des informations manquantes, des photos inadéquates ou un non-respect de nos conditions d'utilisation.</p>
-      <p>Vous pouvez modifier votre annonce et la soumettre à nouveau depuis votre tableau de bord.</p>
-    `;
-
-    const appUrl = "https://autora.be";
-
-    // Skip suppressed recipients (GDPR opt-out compliance)
-    const { data: suppressed } = await supabaseAdmin
-      .from("suppressed_emails")
-      .select("id")
-      .eq("email", listing.contact_email.toLowerCase())
-      .maybeSingle();
-    if (suppressed) {
-      console.log(`Skipping suppressed recipient: ${listing.contact_email}`);
-      return new Response(JSON.stringify({ success: true, skipped: "suppressed" }), {
-        status: 200,
+    if (!result.sent && result.reason === "send_failed") {
+      await logOpsAlert("notify-listing-status", "Envoi de la notification de statut d'annonce échoué", {
+        severity: "error",
+        context: { listingId, status },
+      });
+      return new Response(JSON.stringify({ error: "Email send failed" }), {
+        status: 500,
         headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
 
-    const emailResponse = await resend.emails.send({
-      from: "AutoRA <noreply@autora.be>",
-      to: [listing.contact_email],
-      subject,
-      html: `<!DOCTYPE html><html><head><meta charset="utf-8"></head>
-        <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; background: #f0f0f0;">
-          <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
-            <h1 style="color: #fff; margin: 0; font-size: 24px;">🚗 AutoRA</h1>
-            <p style="color: #94a3b8; margin: 8px 0 0; font-size: 14px;">Notification d'annonce</p>
-          </div>
-          <div style="background: #ffffff; padding: 30px; border-radius: 0 0 12px 12px;">
-            <div style="text-align: center; margin-bottom: 24px;">
-              <span style="display: inline-block; background: ${statusColor}15; color: ${statusColor}; padding: 8px 20px; border-radius: 20px; font-weight: 600;">${statusIcon} Annonce ${statusText}</span>
-            </div>
-            <p>Bonjour ${listing.contact_name ?? ""},</p>
-            ${isApproved ? approvedMessage : rejectedMessage}
-            <div style="background: #f8fafc; padding: 16px 20px; border-radius: 8px; border-left: 4px solid ${statusColor}; margin: 24px 0;">
-              <p style="margin: 0; font-size: 14px; color: #64748b;">Véhicule concerné</p>
-              <p style="margin: 4px 0 0; font-weight: 600; color: #1e293b;">${vehicleName}</p>
-            </div>
-            <div style="text-align: center; margin-top: 28px;">
-              <a href="${appUrl}/dashboard" style="display: inline-block; background: #3b82f6; color: #fff; padding: 12px 32px; text-decoration: none; border-radius: 8px; font-weight: 500;">
-                ${isApproved ? "Voir mon tableau de bord" : "Modifier mon annonce"}
-              </a>
-            </div>
-          </div>
-        </body></html>`,
-    });
-
-    return new Response(JSON.stringify({ success: true, emailResponse }), {
+    return new Response(JSON.stringify({ success: true, skipped: result.sent ? undefined : "suppressed" }), {
       status: 200,
       headers: { "Content-Type": "application/json", ...corsHeaders },
     });

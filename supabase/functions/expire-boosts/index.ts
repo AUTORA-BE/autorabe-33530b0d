@@ -1,11 +1,8 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { Resend } from "https://esm.sh/resend@2.0.0";
-
-
 
 import { buildCorsHeaders, handlePreflight } from "../_shared/cors.ts";
-
-const APP_URL = "https://autora.be";
+import { sendTemplateEmailLogged } from "../_shared/sendTemplateEmailLogged.ts";
+import { logOpsAlert } from "../_shared/opsAlert.ts";
 
 const BOOST_LABELS: Record<string, string> = {
   boost_24h: "24 heures",
@@ -13,37 +10,6 @@ const BOOST_LABELS: Record<string, string> = {
   boost_72h: "72 heures",
   boost_7d: "7 jours",
 };
-
-function buildEmailShell(badgeColor: string, badgeText: string, bodyContent: string): string {
-  return `
-    <!DOCTYPE html>
-    <html>
-      <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      </head>
-      <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; background: #f0f0f0;">
-        <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
-          <h1 style="color: #fff; margin: 0; font-size: 24px;">🚗 AutoRA</h1>
-          <p style="color: #94a3b8; margin: 8px 0 0; font-size: 14px;">Notification de boost</p>
-        </div>
-        <div style="background: #ffffff; padding: 30px; border-radius: 0 0 12px 12px;">
-          <div style="text-align: center; margin-bottom: 24px;">
-            <span style="display: inline-block; background: ${badgeColor}15; color: ${badgeColor}; padding: 8px 20px; border-radius: 20px; font-weight: 600; font-size: 16px;">
-              ${badgeText}
-            </span>
-          </div>
-          ${bodyContent}
-          <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
-          <p style="color: #94a3b8; font-size: 12px; margin-bottom: 0; text-align: center;">
-            Cet email a été envoyé automatiquement par AutoRA.<br>
-            Vous recevez cet email car vous avez activé un boost sur votre annonce.
-          </p>
-        </div>
-      </body>
-    </html>
-  `;
-}
 
 Deno.serve(async (req) => {
   const corsHeaders = buildCorsHeaders(req);
@@ -73,7 +39,6 @@ Deno.serve(async (req) => {
       });
     }
 
-    const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
     const now = new Date();
     const in24h = new Date(now.getTime() + 24 * 60 * 60 * 1000);
 
@@ -106,43 +71,23 @@ Deno.serve(async (req) => {
         const expiresAt = new Date(listing.boost_expires_at);
         const hoursLeft = Math.max(1, Math.round((expiresAt.getTime() - now.getTime()) / (1000 * 60 * 60)));
 
-        try {
-          // Skip suppressed recipients (GDPR opt-out compliance)
-          const { data: suppressed } = await supabase
-            .from("suppressed_emails")
-            .select("id")
-            .eq("email", listing.contact_email.toLowerCase())
-            .maybeSingle();
-          if (suppressed) {
-            console.log(`Skipping suppressed recipient: ${listing.contact_email}`);
-            return;
-          }
+        const result = await sendTemplateEmailLogged("boost-status", listing.contact_email, {
+          idempotencyKey: `boost-warning-${listing.id}-${listing.boost_expires_at}`,
+          templateData: {
+            contactName: listing.contact_name,
+            vehicleName,
+            brandModel: `${listing.brand} ${listing.model}`,
+            boostLabel,
+            variant: "warning",
+            hoursLeft,
+          },
+        });
 
-          await resend.emails.send({
-            from: "AutoRA <noreply@autora.be>",
-            to: [listing.contact_email],
-            subject: `⏳ Votre boost ${boostLabel} expire dans ${hoursLeft}h — ${listing.brand} ${listing.model}`,
-            html: buildEmailShell("#e67e22", `⏳ Expire dans ~${hoursLeft}h`, `
-              <p>Bonjour ${listing.contact_name},</p>
-              <p>Votre boost <strong>${boostLabel}</strong> pour <strong>${vehicleName}</strong> expire dans environ <strong>${hoursLeft} heure${hoursLeft > 1 ? "s" : ""}</strong>.</p>
-              <p>Après expiration, votre annonce ne sera plus mise en avant dans les résultats de recherche.</p>
-
-              <div style="background: #fff7ed; padding: 16px 20px; border-radius: 8px; border-left: 4px solid #f97316; margin: 24px 0;">
-                <p style="margin: 0; font-size: 14px; color: #9a3412; font-weight: 600;">💡 Conseil</p>
-                <p style="margin: 8px 0 0; font-size: 14px; color: #7c2d12;">Renouvelez votre boost avant l'expiration pour ne pas perdre votre avantage de visibilité !</p>
-              </div>
-
-              <div style="text-align: center; margin-top: 28px;">
-                <a href="${APP_URL}/dashboard" 
-                   style="display: inline-block; background: linear-gradient(135deg, #f97316, #ea580c); color: #fff; padding: 14px 36px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
-                  🚀 Renouveler maintenant
-                </a>
-              </div>
-            `),
+        if (!result.sent && result.reason === "send_failed") {
+          await logOpsAlert("expire-boosts", "Envoi de l'avertissement d'expiration de boost échoué", {
+            severity: "error",
+            context: { listingId: listing.id, variant: "warning" },
           });
-          console.log(`Warning email sent to ${listing.contact_email} for ${vehicleName}`);
-        } catch (emailErr) {
-          console.error(`Failed warning email for ${listing.id}:`, emailErr);
         }
       });
       await Promise.allSettled(warnPromises);
@@ -174,44 +119,22 @@ Deno.serve(async (req) => {
         const vehicleName = `${listing.brand} ${listing.model} (${listing.year})`;
         const boostLabel = BOOST_LABELS[listing.boost_level] ?? listing.boost_level;
 
-        try {
-          // Skip suppressed recipients (GDPR opt-out compliance)
-          const { data: suppressed } = await supabase
-            .from("suppressed_emails")
-            .select("id")
-            .eq("email", listing.contact_email.toLowerCase())
-            .maybeSingle();
-          if (suppressed) {
-            console.log(`Skipping suppressed recipient: ${listing.contact_email}`);
-            return;
-          }
+        const result = await sendTemplateEmailLogged("boost-status", listing.contact_email, {
+          idempotencyKey: `boost-expired-${listing.id}-${now.toISOString().slice(0, 10)}`,
+          templateData: {
+            contactName: listing.contact_name,
+            vehicleName,
+            brandModel: `${listing.brand} ${listing.model}`,
+            boostLabel,
+            variant: "expired",
+          },
+        });
 
-          await resend.emails.send({
-            from: "AutoRA <noreply@autora.be>",
-            to: [listing.contact_email],
-            subject: `🚀 Votre boost ${boostLabel} pour ${listing.brand} ${listing.model} a expiré`,
-            html: buildEmailShell("#d97706", `⏰ Boost ${boostLabel} expiré`, `
-              <p>Bonjour ${listing.contact_name},</p>
-              <p>Votre boost <strong>${boostLabel}</strong> pour <strong>${vehicleName}</strong> vient d'expirer. Votre annonce n'apparaît plus en priorité dans les résultats de recherche.</p>
-
-              <div style="background: #fffbeb; padding: 16px 20px; border-radius: 8px; border-left: 4px solid #f59e0b; margin: 24px 0;">
-                <p style="margin: 0; font-size: 14px; color: #92400e; font-weight: 600;">📊 Saviez-vous ?</p>
-                <p style="margin: 8px 0 0; font-size: 14px; color: #78350f;">Les annonces boostées reçoivent en moyenne <strong>3x plus de vues</strong> et <strong>2x plus de messages</strong> que les annonces standard.</p>
-              </div>
-
-              <p>Renouvelez votre boost dès maintenant pour maintenir la visibilité de votre annonce !</p>
-
-              <div style="text-align: center; margin-top: 28px;">
-                <a href="${APP_URL}/dashboard" 
-                   style="display: inline-block; background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; padding: 14px 36px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
-                  🚀 Renouveler mon boost
-                </a>
-              </div>
-            `),
+        if (!result.sent && result.reason === "send_failed") {
+          await logOpsAlert("expire-boosts", "Envoi de la notification d'expiration de boost échoué", {
+            severity: "error",
+            context: { listingId: listing.id, variant: "expired" },
           });
-          console.log(`Expiry email sent to ${listing.contact_email} for ${vehicleName}`);
-        } catch (emailErr) {
-          console.error(`Failed expiry email for ${listing.id}:`, emailErr);
         }
       });
       await Promise.allSettled(expiryPromises);
