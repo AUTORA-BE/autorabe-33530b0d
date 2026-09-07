@@ -468,7 +468,7 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
     <>
       <section
         ref={heroRef}
-        className="relative flex flex-col justify-end overflow-hidden min-h-[88vh] sm:min-h-[92vh]"
+        className="relative flex flex-col justify-end overflow-hidden min-h-[86svh] sm:min-h-[92vh]"
         style={{ contain: "layout style" }}
       >
         {/* ── Immersive background photo with parallax ── */}
@@ -478,9 +478,11 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
         >
           <img
             src="/hero-marketplace.jpg"
+            srcSet="/hero-marketplace-828.jpg 828w, /hero-marketplace.jpg 1280w"
+            sizes="(max-width: 640px) 100vw, 1280px"
             alt=""
-            width={1920}
-            height={1080}
+            width={1280}
+            height={720}
             fetchPriority="high"
             decoding="async"
             className="w-full h-[115%] object-cover object-center"
@@ -488,13 +490,14 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
         </motion.div>
 
         {/* Dark gradient overlay (bottom → top, darker on scroll).
-            Le haut restait quasi transparent (11 % effectifs) : le texte se noyait
-            dans la photo. On remonte le palier haut à 55 % pour un noir effectif
-            d'environ 38 % derrière la zone de titre. */}
+            Le bas reste très sombre pour la lisibilité du titre et de la barre
+            de recherche ; le haut est laissé plus clair pour que la voiture
+            se lise comme une image d'accroche et non comme un fond résiduel. */}
         <motion.div
-          className="absolute inset-0 z-[1] bg-gradient-to-t from-black via-black/80 to-black/55"
+          className="absolute inset-0 z-[1] bg-gradient-to-t from-black via-black/75 to-black/35"
           style={{ opacity: overlayOpacity }}
         />
+
         {/* Soft vignette + brand glow on the right */}
         <div
           className="absolute inset-0 z-[1] pointer-events-none"
@@ -507,8 +510,9 @@ const HeroSearch = memo(function HeroSearch({ onSearch }: HeroSearchProps) {
         {/* ── Editorial title (left-aligned, white) ── */}
         <motion.div
           style={{ y: contentY }}
-          className="container mx-auto px-6 sm:px-10 relative z-10 pb-32 sm:pb-44 pt-24 sm:pt-32"
+          className="container mx-auto px-6 sm:px-10 relative z-10 pb-6 sm:pb-44 pt-20 sm:pt-32"
         >
+
           <div className="max-w-2xl">
             <motion.div
               {...fadeUp(0)}
