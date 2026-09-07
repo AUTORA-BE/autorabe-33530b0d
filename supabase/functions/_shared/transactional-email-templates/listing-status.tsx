@@ -35,7 +35,7 @@ const statusConfig = {
     color: 'hsl(142, 71%, 45%)',
     message: 'Votre annonce est désormais visible par tous les acheteurs sur AutoRA. Vous pouvez la retrouver dans votre espace vendeur.',
     cta: 'Voir mon espace vendeur',
-    ctaUrl: 'https://autora.be/seller-dashboard',
+    ctaUrl: 'https://autora.be/dashboard',
   },
   rejected: {
     emoji: '❌',
@@ -44,7 +44,7 @@ const statusConfig = {
     color: 'hsl(0, 84%, 60%)',
     message: 'Après vérification, votre annonce ne respecte pas nos critères de publication. Vous pouvez la modifier et la soumettre à nouveau.',
     cta: 'Modifier mon annonce',
-    ctaUrl: 'https://autora.be/seller-dashboard',
+    ctaUrl: 'https://autora.be/dashboard',
   },
 }
 
