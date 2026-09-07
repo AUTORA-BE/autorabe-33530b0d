@@ -35,10 +35,12 @@ const NotFound = () => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background">
       <SEOHead
+        noIndex
         title={`404 — ${texts.title}`}
         description={texts.subtitle}
         url={`https://autora.be${location.pathname}`}
       />
+
       <motion.div
         className="text-center px-6 max-w-lg w-full"
         initial={{ opacity: 0, y: 24 }}
