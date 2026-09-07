@@ -330,19 +330,8 @@ export default function AdminListingsPage() {
                   </Button>
                 )}
 
-                {detailListing.status === 'pending' && (
-                  <>
-                    <Button size="sm" variant="default" disabled={isActing} onClick={() => approve(detailListing.id)}>
-                      <Check className="h-3.5 w-3.5 mr-1.5" />
-                      Approuver
-                    </Button>
-                    <Button size="sm" variant="destructive" disabled={isActing} onClick={() => openRejectDialog(detailListing.id)}>
-                      <X className="h-3.5 w-3.5 mr-1.5" />
-                      Rejeter
-                    </Button>
-                  </>
-                )}
               </div>
+
 
               {/* All specs */}
               <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
