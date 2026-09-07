@@ -4,6 +4,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { buildCorsHeaders, handlePreflight } from "../_shared/cors.ts";
 import { createStripeClient, parseEnv, resolveOrCreateCustomer } from "../_shared/stripe.ts";
 import { SUBSCRIPTION_PRICES } from "../_shared/catalog.ts";
+import { logOpsAlert } from "../_shared/opsAlert.ts";
 
 serve(async (req) => {
   const corsHeaders = buildCorsHeaders(req);
@@ -14,6 +15,9 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
+
+  let requestedPlan = "unknown";
+  let requestedEnv = "unknown";
 
   try {
     const supabaseClient = createClient(
@@ -33,6 +37,8 @@ serve(async (req) => {
     }
 
     const { priceId, returnUrl, environment } = await req.json();
+    requestedPlan = typeof priceId === "string" ? priceId : "invalid";
+    requestedEnv = typeof environment === "string" ? environment : "invalid";
     const env = parseEnv(environment);
 
     if (typeof priceId !== "string" || !SUBSCRIPTION_PRICES[priceId]) {
@@ -61,7 +67,7 @@ serve(async (req) => {
     const session = await stripe.checkout.sessions.create({
       line_items: [{ price: stripePrice.id, quantity: 1 }],
       mode: "subscription",
-      ui_mode: "embedded",
+      ui_mode: "embedded_page",
       return_url: returnUrl,
       customer: customerId,
       managed_payments: { enabled: true },
@@ -80,7 +86,12 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("[create-checkout] Error:", error instanceof Error ? error.message : error);
+    const message = error instanceof Error ? error.message : String(error);
+    console.error("[create-checkout] Error:", message);
+    await logOpsAlert("create-checkout", message, {
+      severity: "critical",
+      context: { plan: requestedPlan, environment: requestedEnv },
+    });
     return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

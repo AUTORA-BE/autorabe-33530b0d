@@ -4,6 +4,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 import { buildCorsHeaders, handlePreflight } from "../_shared/cors.ts";
 import { createStripeClient, parseEnv, resolveOrCreateCustomer } from "../_shared/stripe.ts";
 import { BOOST_PRICES } from "../_shared/catalog.ts";
+import { logOpsAlert } from "../_shared/opsAlert.ts";
 
 serve(async (req) => {
   const corsHeaders = buildCorsHeaders(req);
@@ -14,6 +15,9 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
+
+  let requestedTier = "unknown";
+  let requestedEnv = "unknown";
 
   try {
     const supabaseAdmin = createClient(
@@ -33,6 +37,8 @@ serve(async (req) => {
     }
 
     const { priceId, listingId, returnUrl, environment } = await req.json();
+    requestedTier = typeof priceId === "string" ? priceId : "invalid";
+    requestedEnv = typeof environment === "string" ? environment : "invalid";
     const env = parseEnv(environment);
 
     const boostConfig = typeof priceId === "string" ? BOOST_PRICES[priceId] : undefined;
@@ -88,7 +94,7 @@ serve(async (req) => {
     const session = await stripe.checkout.sessions.create({
       line_items: [{ price: stripePrice.id, quantity: 1 }],
       mode: "payment",
-      ui_mode: "embedded",
+      ui_mode: "embedded_page",
       return_url: returnUrl,
       customer: customerId,
       managed_payments: { enabled: true },
@@ -108,10 +114,12 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error(
-      "[create-boost-checkout] Error:",
-      error instanceof Error ? error.message : error,
-    );
+    const message = error instanceof Error ? error.message : String(error);
+    console.error("[create-boost-checkout] Error:", message);
+    await logOpsAlert("create-boost-checkout", message, {
+      severity: "critical",
+      context: { boost_tier: requestedTier, environment: requestedEnv },
+    });
     return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
