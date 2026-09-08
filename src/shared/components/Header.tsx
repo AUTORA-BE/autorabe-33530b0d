@@ -24,6 +24,7 @@ import MobileMenu from "./MobileMenu";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useAutoPromptPush } from "@/hooks/useAutoPromptPush";
 import { useLocalizedHref } from "@/lib/useLocalizedHref";
+import { BETA_BANNER_EVENT, BETA_BANNER_ID } from "@/components/BetaBanner";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
