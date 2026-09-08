@@ -49,6 +49,46 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Décalage sous le bandeau bêta : mesuré, jamais codé en dur.
+  // Tant que le bandeau est visible à l'écran, le header se pose sur son bas ;
+  // dès qu'il a défilé hors-champ (ou a été fermé), le header revient à top: 0.
+  useEffect(() => {
+    let frame = 0;
+    const measure = () => {
+      frame = 0;
+      const el = document.getElementById(BETA_BANNER_ID);
+      const next = el ? Math.max(0, Math.round(el.getBoundingClientRect().bottom)) : 0;
+      setBannerOffset((prev) => (prev === next ? prev : next));
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(measure);
+    };
+
+    measure();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    window.addEventListener(BETA_BANNER_EVENT, schedule);
+    const ro = new ResizeObserver(schedule);
+    const el = document.getElementById(BETA_BANNER_ID);
+    if (el) ro.observe(el);
+    // Le bandeau est chargé en lazy : on re-observe quand il apparaît.
+    const mo = new MutationObserver(() => {
+      const node = document.getElementById(BETA_BANNER_ID);
+      if (node) ro.observe(node);
+      schedule();
+    });
+    mo.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener(BETA_BANNER_EVENT, schedule);
+      ro.disconnect();
+      mo.disconnect();
+    };
+  }, []);
+
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => setUser(session?.user ?? null)
