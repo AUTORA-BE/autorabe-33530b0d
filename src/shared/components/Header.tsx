@@ -31,6 +31,7 @@ const Header = () => {
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [userProfile, setUserProfile] = useState<{ avatar_url: string | null; display_name: string | null } | null>(null);
   const [scrolled, setScrolled] = useState(false);
+  const [bannerOffset, setBannerOffset] = useState(0);
   const navigate = useNavigate();
   const { toast } = useToast();
 
