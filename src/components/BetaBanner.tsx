@@ -16,6 +16,11 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 const STORAGE_KEY = "autora_beta_banner_dismissed_v1";
 
+/** Événement écouté par le Header pour recalculer son décalage haut. */
+export const BETA_BANNER_EVENT = "autora:beta-banner-change";
+/** Identifiant DOM utilisé par le Header pour mesurer le bandeau. */
+export const BETA_BANNER_ID = "beta-banner";
+
 const messages = {
   fr: {
     text: "Phase bêta — l'inscription est gratuite, aucun paiement n'est traité. Vos retours nous aident à améliorer AutoRa avant le lancement officiel.",
@@ -51,6 +56,12 @@ export default function BetaBanner() {
     }
   }, []);
 
+  // Le header (position: fixed) se cale sous ce bandeau : il doit être
+  // notifié à chaque apparition/disparition/changement de hauteur.
+  useEffect(() => {
+    window.dispatchEvent(new Event(BETA_BANNER_EVENT));
+  }, [dismissed, language]);
+
   const handleDismiss = () => {
     setDismissed(true);
     try {
@@ -69,9 +80,11 @@ export default function BetaBanner() {
 
   return (
     <div
+      id={BETA_BANNER_ID}
       role="status"
       aria-live="polite"
       className="w-full bg-amber-500/10 border-b border-amber-600/30 text-amber-800 dark:text-amber-300"
+      style={{ paddingTop: "var(--safe-area-top, env(safe-area-inset-top, 0px))" }}
     >
       <div className="container mx-auto px-4 py-2 flex items-center gap-3">
         <Sparkles className="h-4 w-4 shrink-0 opacity-80" aria-hidden="true" />

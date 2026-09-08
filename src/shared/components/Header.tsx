@@ -24,12 +24,14 @@ import MobileMenu from "./MobileMenu";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useAutoPromptPush } from "@/hooks/useAutoPromptPush";
 import { useLocalizedHref } from "@/lib/useLocalizedHref";
+import { BETA_BANNER_EVENT, BETA_BANNER_ID } from "@/components/BetaBanner";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [userProfile, setUserProfile] = useState<{ avatar_url: string | null; display_name: string | null } | null>(null);
   const [scrolled, setScrolled] = useState(false);
+  const [bannerOffset, setBannerOffset] = useState(0);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -47,6 +49,46 @@ const Header = () => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Décalage sous le bandeau bêta : mesuré, jamais codé en dur.
+  // Tant que le bandeau est visible à l'écran, le header se pose sur son bas ;
+  // dès qu'il a défilé hors-champ (ou a été fermé), le header revient à top: 0.
+  useEffect(() => {
+    let frame = 0;
+    const measure = () => {
+      frame = 0;
+      const el = document.getElementById(BETA_BANNER_ID);
+      const next = el ? Math.max(0, Math.round(el.getBoundingClientRect().bottom)) : 0;
+      setBannerOffset((prev) => (prev === next ? prev : next));
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(measure);
+    };
+
+    measure();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    window.addEventListener(BETA_BANNER_EVENT, schedule);
+    const ro = new ResizeObserver(schedule);
+    const el = document.getElementById(BETA_BANNER_ID);
+    if (el) ro.observe(el);
+    // Le bandeau est chargé en lazy : on re-observe quand il apparaît.
+    const mo = new MutationObserver(() => {
+      const node = document.getElementById(BETA_BANNER_ID);
+      if (node) ro.observe(node);
+      schedule();
+    });
+    mo.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener(BETA_BANNER_EVENT, schedule);
+      ro.disconnect();
+      mo.disconnect();
+    };
   }, []);
 
   useEffect(() => {
@@ -77,12 +119,17 @@ const Header = () => {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 text-foreground ${
+      className={`fixed left-0 right-0 transition-colors duration-300 text-foreground ${
         scrolled
           ? "bg-background/85 dark:bg-background/95 backdrop-blur-xl border-b border-border/40 shadow-sm"
           : "bg-background/70 dark:bg-background/90 backdrop-blur-md border-b border-border/40 shadow-[0_2px_12px_-6px_hsl(var(--foreground)/0.15)]"
       }`}
-      style={{ paddingTop: 'var(--safe-area-top, env(safe-area-inset-top, 0px))' }}
+      style={{
+        top: bannerOffset,
+        zIndex: 'var(--z-header, 50)',
+        // L'encoche est déjà absorbée par le bandeau quand il est visible.
+        paddingTop: bannerOffset > 0 ? 0 : 'var(--safe-area-top, env(safe-area-inset-top, 0px))',
+      }}
     >
       <div className={`container mx-auto px-4 sm:px-6 transition-all duration-300 ${scrolled ? "py-1 sm:py-2" : "py-1.5 sm:py-3"}`}>
         <div className="flex items-center justify-between gap-2">
