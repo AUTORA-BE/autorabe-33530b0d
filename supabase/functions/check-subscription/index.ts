@@ -2,15 +2,34 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 import { buildCorsHeaders, handlePreflight } from "../_shared/cors.ts";
-import { createStripeClient, parseEnv } from "../_shared/stripe.ts";
-import { tierSlugFromPriceKey } from "../_shared/catalog.ts";
+import { createStripeClient, type StripeEnv } from "../_shared/stripe.ts";
+import { tierSlugFromPriceKey, tierSlugFromStoredProduct } from "../_shared/catalog.ts";
 
-/** Paliers accordés manuellement en base (offres pro/premium sur devis). */
-const KNOWN_SLUGS = new Set(["particulier", "pro", "premium"]);
+/** Même condition exacte que `payments-status` : défaut fermé. */
+const paymentsEnabled = () => (Deno.env.get("PAYMENTS_ENABLED") ?? "").trim() === "true";
+
+/** `environment` absent ou invalide ne doit jamais lever : repli sur "sandbox". */
+function safeEnv(value: unknown): StripeEnv {
+  return value === "live" ? "live" : "sandbox";
+}
+
+const EMPTY = {
+  subscribed: false,
+  product_id: null,
+  tier_slug: null,
+  subscription_end: null,
+  source: "none",
+};
 
 serve(async (req) => {
   const corsHeaders = buildCorsHeaders(req);
   if (req.method === "OPTIONS") return handlePreflight(req);
+
+  const respond = (body: unknown, status = 200) =>
+    new Response(JSON.stringify(body), {
+      status,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
 
   const supabaseAdmin = createClient(
     Deno.env.get("SUPABASE_URL") ?? "",
@@ -23,16 +42,13 @@ serve(async (req) => {
     const { data: userData, error: userError } = await supabaseAdmin.auth.getUser(token);
     const user = userData?.user;
     if (userError || !user?.email) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return respond({ error: "Unauthorized" }, 401);
     }
 
-    const { environment } = await req.json().catch(() => ({}));
-    const env = parseEnv(environment);
+    const body = await req.json().catch(() => ({}));
+    const env = safeEnv((body as { environment?: unknown })?.environment);
 
-    /** Repli : abonnement accordé manuellement, enregistré en base. */
+    /** Repli : abonnement accordé manuellement, enregistré en base. Aucun appel réseau. */
     const manualGrant = async () => {
       const { data: row } = await supabaseAdmin
         .from("subscriptions")
@@ -47,89 +63,74 @@ serve(async (req) => {
         (!row.current_period_end || new Date(String(row.current_period_end)) > new Date());
 
       if (!active) return null;
-      const slug = KNOWN_SLUGS.has(String(row!.product_id)) ? String(row!.product_id) : null;
       return {
         subscribed: true,
         product_id: row!.product_id,
-        tier_slug: slug,
+        // Résout aussi bien un slug moderne qu'un `prod_…` Stripe hérité.
+        tier_slug: tierSlugFromStoredProduct(row!.product_id as string | null),
         subscription_end: row!.current_period_end,
         source: "manual",
       };
     };
 
-    const stripe = createStripeClient(env);
-    const customers = await stripe.customers.search({
-      query: `metadata['userId']:'${user.id}'`,
-      limit: 1,
-    });
-    let customerId = customers.data[0]?.id;
-    if (!customerId) {
-      const byEmail = await stripe.customers.list({ email: user.email, limit: 1 });
-      customerId = byEmail.data[0]?.id;
+    // 1) La base d'abord : elle ne dépend d'aucune clé ni d'aucun service externe.
+    const manual = await manualGrant();
+
+    // 2) Stripe uniquement si les paiements sont ouverts, et jamais fatal.
+    if (paymentsEnabled()) {
+      try {
+        const stripe = createStripeClient(env);
+        const customers = await stripe.customers.search({
+          query: `metadata['userId']:'${user.id}'`,
+          limit: 1,
+        });
+        let customerId = customers.data[0]?.id;
+        if (!customerId) {
+          const byEmail = await stripe.customers.list({ email: user.email, limit: 1 });
+          customerId = byEmail.data[0]?.id;
+        }
+
+        if (customerId) {
+          const subs = await stripe.subscriptions.list({
+            customer: customerId,
+            status: "active",
+            limit: 1,
+          });
+          if (subs.data.length) {
+            const subscription = subs.data[0];
+            const item = subscription.items.data[0];
+            // deno-lint-ignore no-explicit-any
+            const price = item?.price as any;
+            const lookupKey = price?.lookup_key ?? price?.metadata?.lovable_external_id ?? null;
+            // deno-lint-ignore no-explicit-any
+            const periodEnd = (item as any)?.current_period_end ??
+              // deno-lint-ignore no-explicit-any
+              (subscription as any).current_period_end;
+
+            return respond({
+              subscribed: true,
+              product_id: typeof price?.product === "string"
+                ? price.product
+                : price?.product?.id ?? null,
+              tier_slug: tierSlugFromPriceKey(lookupKey),
+              subscription_end: periodEnd ? new Date(periodEnd * 1000).toISOString() : null,
+              source: "stripe",
+            });
+          }
+        }
+      } catch (stripeError) {
+        // Panne ou clé absente : on dégrade vers le repli manuel, jamais de 500.
+        console.error(
+          "[check-subscription] Stripe unavailable:",
+          stripeError instanceof Error ? stripeError.message : stripeError,
+        );
+      }
     }
 
-    if (!customerId) {
-      const manual = await manualGrant();
-      return new Response(
-        JSON.stringify(
-          manual ?? {
-            subscribed: false,
-            product_id: null,
-            tier_slug: null,
-            subscription_end: null,
-            source: "stripe",
-          },
-        ),
-        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
-    }
-
-    const subs = await stripe.subscriptions.list({
-      customer: customerId,
-      status: "active",
-      limit: 1,
-    });
-
-    if (!subs.data.length) {
-      const manual = await manualGrant();
-      return new Response(
-        JSON.stringify(
-          manual ?? {
-            subscribed: false,
-            product_id: null,
-            tier_slug: null,
-            subscription_end: null,
-            source: "stripe",
-          },
-        ),
-        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
-    }
-
-    const subscription = subs.data[0];
-    const item = subscription.items.data[0];
-    // deno-lint-ignore no-explicit-any
-    const price = item?.price as any;
-    const lookupKey = price?.lookup_key ?? price?.metadata?.lovable_external_id ?? null;
-    const tierSlug = tierSlugFromPriceKey(lookupKey);
-    // deno-lint-ignore no-explicit-any
-    const periodEnd = (item as any)?.current_period_end ?? (subscription as any).current_period_end;
-
-    return new Response(
-      JSON.stringify({
-        subscribed: true,
-        product_id: typeof price?.product === "string" ? price.product : price?.product?.id ?? null,
-        tier_slug: tierSlug,
-        subscription_end: periodEnd ? new Date(periodEnd * 1000).toISOString() : null,
-        source: "stripe",
-      }),
-      { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-    );
+    return respond(manual ?? EMPTY);
   } catch (error) {
+    // Dernier filet : un utilisateur authentifié ne doit jamais recevoir un 500.
     console.error("[check-subscription] Error:", error instanceof Error ? error.message : error);
-    return new Response(JSON.stringify({ error: "Internal server error" }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return respond(EMPTY);
   }
 });

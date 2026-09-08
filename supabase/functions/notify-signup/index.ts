@@ -7,6 +7,7 @@
  */
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { sendTemplateEmailLogged } from '../_shared/sendTemplateEmailLogged.ts'
+import { logOpsAlert } from '../_shared/opsAlert.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -52,13 +53,23 @@ Deno.serve(async (req) => {
     return json({ error: 'Account is not eligible' }, 403)
   }
 
-  const { data: profile } = await admin
+  // `user_type` est la colonne réelle de public.profiles (valeur FR : 'professionnel').
+  const { data: profile, error: profileError } = await admin
     .from('profiles')
-    .select('display_name, garage_name, bce_number, phone, postal_code, seller_type')
+    .select('display_name, garage_name, bce_number, phone, postal_code, user_type')
     .eq('user_id', userId)
     .maybeSingle()
 
-  const isPro = profile?.seller_type === 'professional' || Boolean(profile?.garage_name)
+  if (profileError || !profile) {
+    // Un profil introuvable ne doit plus passer inaperçu : l'email de bienvenue
+    // partirait sans nom et l'alerte pro ne serait jamais déclenchée.
+    await logOpsAlert('notify-signup', 'Profil introuvable ou illisible à l\'inscription', {
+      severity: 'error',
+      context: { userId, code: profileError?.code ?? 'not_found' },
+    })
+  }
+
+  const isPro = profile?.user_type === 'professionnel' || Boolean(profile?.garage_name)
 
   if (isPro) {
     // Alerte interne (destinataire fixe défini par le template)

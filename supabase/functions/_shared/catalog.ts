@@ -21,3 +21,24 @@ export function tierSlugFromPriceKey(key: string | null | undefined): string | n
   if (!key) return null;
   return SUBSCRIPTION_PRICES[key] ?? null;
 }
+
+/** Slugs de palier applicatifs (octrois manuels compris). */
+export const TIER_SLUGS = ["particulier", "pro", "premium"] as const;
+
+/**
+ * Identifiants produit Stripe hérités → slug de palier.
+ * Certaines lignes de `subscriptions` créées avant l'adoption des slugs
+ * portent encore un `prod_…`. Source : `src/features/subscription/constants/tiers.ts`.
+ */
+export const LEGACY_PRODUCT_TIERS: Record<string, string> = {
+  prod_VBzrk30V0HDldQ: "particulier",
+  prod_UKno1VUDM4yfzP: "pro",
+  prod_UKo0UuUbuB5vdq: "premium",
+};
+
+/** Résout une valeur stockée (slug moderne ou `prod_…` hérité) vers un slug de palier. */
+export function tierSlugFromStoredProduct(value: string | null | undefined): string | null {
+  if (!value) return null;
+  if ((TIER_SLUGS as readonly string[]).includes(value)) return value;
+  return LEGACY_PRODUCT_TIERS[value] ?? null;
+}
