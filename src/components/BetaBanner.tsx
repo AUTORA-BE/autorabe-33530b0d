@@ -51,6 +51,12 @@ export default function BetaBanner() {
     }
   }, []);
 
+  // Le header (position: fixed) se cale sous ce bandeau : il doit être
+  // notifié à chaque apparition/disparition/changement de hauteur.
+  useEffect(() => {
+    window.dispatchEvent(new Event(BETA_BANNER_EVENT));
+  }, [dismissed, language]);
+
   const handleDismiss = () => {
     setDismissed(true);
     try {
