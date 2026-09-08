@@ -34,7 +34,10 @@ const PageTransition = ({ children }: PageTransitionProps) => {
         if (definition === "animate") setEntered(true);
       }}
       {...(entered ? {} : { "data-page-reveal": "" })}
-      style={{ willChange: "opacity, transform" }}
+      // NE PAS ajouter will-change/transform/filter/contain ici : ce div est un
+      // ancêtre du header `position: fixed`. Toute propriété créant un bloc
+      // conteneur ferait défiler le header avec la page. Framer Motion gère
+      // will-change lui-même pendant l'animation.
     >
       {children}
     </motion.div>
