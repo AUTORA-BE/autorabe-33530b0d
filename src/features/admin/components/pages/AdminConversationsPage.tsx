@@ -3,7 +3,40 @@
  * @module features/admin/components/pages
  */
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+
+/**
+ * Le bucket chat-images est privé : les messages stockent le CHEMIN de l'objet.
+ * L'affichage passe par une URL signée (jamais getPublicUrl).
+ */
+function SignedChatImage({ path }: { path: string }) {
+  const [url, setUrl] = useState<string | undefined>(
+    path.startsWith('http') ? path : undefined
+  );
+
+  useEffect(() => {
+    if (path.startsWith('http')) return;
+    let cancelled = false;
+    void supabase.storage
+      .from('chat-images')
+      .createSignedUrl(path, 3600)
+      .then(({ data }) => {
+        if (!cancelled) setUrl(data?.signedUrl);
+      });
+    return () => { cancelled = true; };
+  }, [path]);
+
+  if (!url) return null;
+  return (
+    <img
+      src={url}
+      alt="Pièce jointe"
+      className="mt-1.5 rounded max-h-32 object-cover"
+      loading="lazy"
+    />
+  );
+}
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
