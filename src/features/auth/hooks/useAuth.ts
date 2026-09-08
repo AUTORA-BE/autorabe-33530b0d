@@ -115,9 +115,13 @@ export function useAuth() {
       // available immediately after signup when email confirmation is required.
       if (signUpData.user) {
         // Emails d'inscription (bienvenue + alerte pro) envoyés côté serveur.
-        supabase.functions.invoke('notify-signup', {
-          body: { userId: signUpData.user.id },
-        }).catch(() => {});
+        // L'échec ne bloque pas l'inscription, mais ne doit plus être silencieux.
+        supabase.functions
+          .invoke('notify-signup', { body: { userId: signUpData.user.id } })
+          .then(({ error: notifyError }) => {
+            if (notifyError) console.error('[notify-signup] invoke failed', notifyError.message);
+          })
+          .catch((e) => console.error('[notify-signup] invoke threw', e));
       }
 
 

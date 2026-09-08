@@ -5,7 +5,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { SUBSCRIPTION_TIERS, type SubscriptionTier } from '../constants/tiers';
+import { resolveTier, type SubscriptionTier } from '../constants/tiers';
 import { getStripeEnvironment } from '@/lib/stripe';
 import { usePaymentsEnabled } from '@/hooks/usePaymentsEnabled';
 
@@ -44,8 +44,10 @@ export function useSubscription() {
       });
       if (error) throw error;
 
-      // Résolution par slug de palier : aucun identifiant Stripe n'est comparé côté client.
-      const tier = data.tier_slug ? SUBSCRIPTION_TIERS[data.tier_slug] ?? null : null;
+      // Résolution par slug, avec repli sur le `product_id` (identifiant Stripe hérité)
+      // quand le serveur ne renvoie pas de slug.
+      const tier = resolveTier(data.tier_slug) ?? resolveTier(data.product_id);
+
 
 
       setState({
