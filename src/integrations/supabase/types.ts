@@ -1804,6 +1804,7 @@ export type Database = {
           out_listing_id: string
         }[]
       }
+      can_read_chat_image: { Args: { _object_name: string }; Returns: boolean }
       check_rate_limit: {
         Args: { _key: string; _max_attempts: number; _window_seconds: number }
         Returns: boolean

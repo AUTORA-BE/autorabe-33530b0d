@@ -289,6 +289,73 @@ BEGIN
 END $$;
 
 -- ============================================================================
+-- TEST 21 — Anon PEUT lire les avis des annonces approuvées (via la vue
+--            publique car_listings_public), et RIEN d'autre.
+-- ============================================================================
+SELECT pg_temp.as_anon();
+DO $$
+DECLARE visibles int; attendus int; total int;
+BEGIN
+  SELECT count(*) INTO visibles FROM public.reviews;
+  SELECT count(*) INTO attendus
+    FROM public.reviews r
+    WHERE EXISTS (SELECT 1 FROM public.car_listings_public p WHERE p.id = r.car_listing_id);
+  SELECT count(*) INTO total FROM public.reviews r
+    WHERE NOT EXISTS (SELECT 1 FROM public.car_listings_public p WHERE p.id = r.car_listing_id);
+  IF visibles = attendus THEN
+    RAISE NOTICE 'PASS  | T21 anon→reviews approuvées visibles (rows=%)', visibles;
+  ELSE
+    RAISE EXCEPTION 'FAIL  | T21 anon→reviews : % visibles, % attendus', visibles, attendus;
+  END IF;
+  IF total = 0 THEN
+    RAISE NOTICE 'PASS  | T21b anon→aucun avis d''annonce non approuvée';
+  ELSE
+    RAISE EXCEPTION 'FAIL  | T21b anon voit % avis hors annonces approuvées', total;
+  END IF;
+END $$;
+
+-- ============================================================================
+-- TEST 22 — chat-images : seuls les deux participants d'une conversation
+--            peuvent lire l'objet ; un tiers connecté ne le peut pas.
+-- ============================================================================
+DO $$
+DECLARE obj text; b uuid; s uuid; tiers uuid;
+BEGIN
+  SELECT m.image_url, c.buyer_id, c.seller_id INTO obj, b, s
+    FROM public.messages m JOIN public.conversations c ON c.id = m.conversation_id
+    WHERE m.image_url IS NOT NULL LIMIT 1;
+  IF obj IS NULL THEN
+    RAISE NOTICE 'SKIP  | T22 aucune image en base';
+    RETURN;
+  END IF;
+  SELECT id INTO tiers FROM auth.users WHERE id NOT IN (b, s) LIMIT 1;
+
+  PERFORM pg_temp.as_user(b);
+  IF NOT public.can_read_chat_image(obj) THEN
+    RAISE EXCEPTION 'FAIL  | T22 acheteur ne peut pas lire son image';
+  END IF;
+  PERFORM pg_temp.as_user(s);
+  IF NOT public.can_read_chat_image(obj) THEN
+    RAISE EXCEPTION 'FAIL  | T22 vendeur ne peut pas lire son image';
+  END IF;
+  RAISE NOTICE 'PASS  | T22 les deux participants lisent l''image';
+
+  IF tiers IS NOT NULL THEN
+    PERFORM pg_temp.as_user(tiers);
+    IF public.can_read_chat_image(obj) THEN
+      RAISE EXCEPTION 'FAIL  | T22b un tiers connecté lit l''image';
+    END IF;
+    RAISE NOTICE 'PASS  | T22b un tiers connecté ne lit pas l''image';
+  END IF;
+
+  PERFORM pg_temp.as_anon();
+  IF public.can_read_chat_image(obj) THEN
+    RAISE EXCEPTION 'FAIL  | T22c un anonyme lit l''image';
+  END IF;
+  RAISE NOTICE 'PASS  | T22c un anonyme ne lit pas l''image';
+END $$;
+
+-- ============================================================================
 -- ROLLBACK : ces tests sont read-mostly, on annule par sécurité
 -- ============================================================================
 ROLLBACK;
