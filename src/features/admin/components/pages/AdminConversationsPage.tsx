@@ -249,12 +249,7 @@ function ConversationDetailDialog({
                   </div>
                   <p className="text-xs text-foreground/80">{msg.content}</p>
                   {msg.image_url && (
-                    <img
-                      src={msg.image_url}
-                      alt="Pièce jointe"
-                      className="mt-1.5 rounded max-h-32 object-cover"
-                      loading="lazy"
-                    />
+                    <SignedChatImage path={msg.image_url} />
                   )}
                 </div>
               ))}
