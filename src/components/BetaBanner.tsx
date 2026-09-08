@@ -16,6 +16,11 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 const STORAGE_KEY = "autora_beta_banner_dismissed_v1";
 
+/** Événement écouté par le Header pour recalculer son décalage haut. */
+export const BETA_BANNER_EVENT = "autora:beta-banner-change";
+/** Identifiant DOM utilisé par le Header pour mesurer le bandeau. */
+export const BETA_BANNER_ID = "beta-banner";
+
 const messages = {
   fr: {
     text: "Phase bêta — l'inscription est gratuite, aucun paiement n'est traité. Vos retours nous aident à améliorer AutoRa avant le lancement officiel.",
