@@ -112,3 +112,108 @@ describe("cas limites", () => {
     expect(auditLezFlag({ fuelType: "Essence", euroNorm: "Euro 3", storedFlag: true })).toBeNull();
   });
 });
+
+describe("électrique, hydrogène et hybride — exemptés dans les 3 villes", () => {
+  const normes = ["Euro 0", "Euro 4", "Euro 6d", "", "Non spécifié"];
+  const exemptes = ["Électrique", "Electric", "Hydrogène", "Waterstof", "Hybride", "Hybride rechargeable"];
+
+  for (const carburant of exemptes) {
+    it(`${carburant} : autorisé à Bruxelles, Anvers et Gand quelle que soit la norme`, () => {
+      for (const norme of normes) {
+        expect({ norme, statuts: statutParVille(carburant, norme) }).toEqual({
+          norme,
+          statuts: { bruxelles: "autorise", anvers: "autorise", gand: "autorise" },
+        });
+        expect({ norme, compatible: isLezCompatible(carburant, norme) }).toEqual({ norme, compatible: true });
+      }
+    });
+  }
+});
+
+// Ce que la carte affiche : message, couleur et compte à rebours. Les échéances
+// sont relatives à l'année figée en tête de fichier (2026).
+describe("badges LEZ : message, couleur et échéance", () => {
+  const detail = (carburant: string, norme: string, ville: string) =>
+    calculerStatutLEZ(carburant, norme).details.find((d) => d.ville === ville)!;
+
+  it("Bruxelles, essence Euro 3 : interdite dès 2028 → orange, « Plus que 2 ans »", () => {
+    expect(detail("Essence", "Euro 3", "bruxelles")).toEqual({
+      ville: "bruxelles",
+      statut: "alerte",
+      message: "Interdit dès 2028",
+      messageDetail: "Plus que 2 ans",
+      couleur: "orange",
+      anneesRestantes: 2,
+      anneeInterdiction: 2028,
+    });
+  });
+
+  it("Bruxelles, diesel Euro 6 : fin du diesel en 2030 → orange, 4 ans restants", () => {
+    expect(detail("Diesel", "Euro 6", "bruxelles")).toMatchObject({
+      statut: "alerte",
+      couleur: "orange",
+      anneesRestantes: 4,
+      anneeInterdiction: 2030,
+    });
+  });
+
+  it("Bruxelles, essence Euro 5 : échéance 2035 à plus de 5 ans → vert, « Situation stable »", () => {
+    expect(detail("Essence", "Euro 5", "bruxelles")).toEqual({
+      ville: "bruxelles",
+      statut: "autorise",
+      message: "Autorisé jusqu'en 2035",
+      messageDetail: "Situation stable",
+      couleur: "green",
+      anneeInterdiction: 2035,
+    });
+  });
+
+  it("Anvers, diesel Euro 5 : aucune échéance programmée → vert, sans année", () => {
+    expect(detail("Diesel", "Euro 5", "anvers")).toEqual({
+      ville: "anvers",
+      statut: "autorise",
+      message: "Autorisé",
+      messageDetail: "Aucune restriction prévue",
+      couleur: "green",
+    });
+  });
+
+  it("Bruxelles, diesel Euro 4 : rouge, sans échéance à afficher", () => {
+    expect(detail("Diesel", "Euro 4", "bruxelles")).toEqual({
+      ville: "bruxelles",
+      statut: "interdit",
+      message: "Interdit",
+      messageDetail: "Circulation interdite",
+      couleur: "red",
+    });
+  });
+
+  it("norme illisible → gris « Vérification requise » dans les 3 villes", () => {
+    const { global, details } = calculerStatutLEZ("Diesel", "Non spécifié");
+    expect(details.map((d) => d.statut)).toEqual(["inconnu", "inconnu", "inconnu"]);
+    expect(global).toMatchObject({
+      statut: "inconnu",
+      couleur: "gray",
+      message: "Vérification requise",
+      // La norme est écartée avant d'être cherchée dans le calendrier : le
+      // message « Norme inconnue » ne sert qu'aux normes absentes du calendrier.
+      messageDetail: "Norme ou carburant non spécifié",
+    });
+  });
+
+  it("carburant non reconnu → gris, même avec une norme valide", () => {
+    expect(statutParVille("Bois", "Euro 6")).toEqual({
+      bruxelles: "inconnu",
+      anvers: "inconnu",
+      gand: "inconnu",
+    });
+    expect(calculerStatutLEZ("Bois", "Euro 6").global.messageDetail).toBe("Norme ou carburant non spécifié");
+  });
+
+  it("le verdict global retient la ville la plus restrictive", () => {
+    // Diesel Euro 5 : interdit à Bruxelles, autorisé à Anvers et Gand.
+    expect(calculerStatutLEZ("Diesel", "Euro 5").global.ville).toBe("bruxelles");
+    // Essence Euro 3 : alerte à Bruxelles (2028), autorisé sans limite ailleurs.
+    expect(calculerStatutLEZ("Essence", "Euro 3").global.ville).toBe("bruxelles");
+  });
+});

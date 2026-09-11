@@ -6,7 +6,8 @@ import tseslint from "typescript-eslint";
 
 export default tseslint.config(
   // previewAuthStorage.ts est auto-généré par Lovable (toute retouche manuelle est écrasée) : exclu du lint.
-  { ignores: ["dist", "supabase/functions/**", "src/integrations/supabase/previewAuthStorage.ts"] },
+  // coverage/ : rapport HTML généré par `vitest run --coverage` (jamais commité).
+  { ignores: ["dist", "coverage", "supabase/functions/**", "src/integrations/supabase/previewAuthStorage.ts"] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ["**/*.{ts,tsx}"],
