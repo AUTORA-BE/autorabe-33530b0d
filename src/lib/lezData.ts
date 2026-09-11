@@ -43,7 +43,15 @@ export interface LezResultat {
 // ─── Calendrier LEZ ──────────────────────────────────────────────────
 
 // Sources officielles : lez.brussels | lage-emissiezone.antwerpen.be | stad.gent/lez
-// Dernière vérification : 6 août 2026
+// Dernière vérification complète : 6 août 2026.
+// Règles EN VIGUEUR revérifiées le 11/09/2026 (les échéances futures, non) :
+//  - lez.brussels : depuis le 01/01/2026, diesel Euro 5 et essence Euro 2 n'ont
+//    plus accès (suite à l'arrêt de la Cour constitutionnelle du 11/09/2025 sur
+//    le report à 2027) ; période de transition terminée le 30/06/2026. Gaz (GPL,
+//    GNC, GNL) = essence ; électrique et hydrogène exemptés.
+//  - stad.gent (tableau des conditions d'accès) : accès libre dès le diesel
+//    Euro 5 et l'essence Euro 2 ; LPG/CNG/LNG = colonne essence ; électrique et
+//    hydrogène hors LEZ. Anvers applique le même cadre flamand.
 const calendarLEZ: Record<string, VilleCalendar> = {
   bruxelles: {
     // Source : lez.brussels — calendrier progressif diesel
@@ -77,16 +85,17 @@ const calendarLEZ: Record<string, VilleCalendar> = {
   },
   anvers: {
     // Source : lage-emissiezone.antwerpen.be
-    // Le gouvernement flamand a ANNULÉ le durcissement prévu pour 2027 :
-    // les diesels Euro 5 restent admis. Une évaluation est prévue en 2027,
-    // mais aucune interdiction n'est programmée à ce jour (vérifié 06/08/2026).
+    // Le gouvernement flamand a RETIRÉ le durcissement prévu au 01/01/2026
+    // (décision définitive du 28/11/2025) : diesel Euro 5 et essence Euro 2
+    // restent admis. La qualité de l'air sera évaluée en 2027 ; aucune
+    // interdiction n'est programmée à ce jour (revérifié le 11/09/2026).
     diesel: {
       euro0: { statut: 'interdit' },        // interdit depuis 2017
       euro1: { statut: 'interdit' },        // interdit depuis 2017
       euro2: { statut: 'interdit' },        // interdit depuis 2017
       euro3: { statut: 'interdit' },        // interdit depuis 2020
       euro4: { statut: 'interdit' },        // interdit depuis 01/01/2025
-      euro5: { statut: 'autorise', jusque: null }, // durcissement 2027 annulé
+      euro5: { statut: 'autorise', jusque: null }, // durcissement du 01/01/2026 retiré
       euro6: { statut: 'autorise', jusque: null },
       euro6d_temp: { statut: 'autorise', jusque: null },
       euro6d: { statut: 'autorise', jusque: null },
@@ -107,22 +116,22 @@ const calendarLEZ: Record<string, VilleCalendar> = {
   },
   gand: {
     // Source : stad.gent/lez
-    // Comme à Anvers, le durcissement diesel Euro 5 prévu en 2027 a été annulé
-    // par le gouvernement flamand (évaluation prévue en 2027, sans interdiction).
+    // Comme à Anvers, le durcissement prévu au 01/01/2026 a été retiré par le
+    // gouvernement flamand le 28/11/2025 (évaluation en 2027, sans interdiction).
     diesel: {
       euro0: { statut: 'interdit' },        // interdit depuis 2020
       euro1: { statut: 'interdit' },        // interdit depuis 2020
       euro2: { statut: 'interdit' },        // interdit depuis 2020
       euro3: { statut: 'interdit' },        // interdit depuis 2020
       euro4: { statut: 'interdit' },        // interdit depuis 01/01/2025
-      euro5: { statut: 'autorise', jusque: null }, // durcissement 2027 annulé
+      euro5: { statut: 'autorise', jusque: null }, // durcissement du 01/01/2026 retiré
       euro6: { statut: 'autorise', jusque: null },
       euro6d_temp: { statut: 'autorise', jusque: null },
       euro6d: { statut: 'autorise', jusque: null },
     },
     essence: {
       euro0: { statut: 'interdit' },        // interdit depuis 2020
-      euro1: { statut: 'autorise', jusque: null },
+      euro1: { statut: 'interdit' },        // pass LEZ obligatoire (stad.gent, vérifié 11/09/2026)
       euro2: { statut: 'autorise', jusque: null },
       euro3: { statut: 'autorise', jusque: null },
       euro4: { statut: 'autorise', jusque: null },
@@ -171,7 +180,12 @@ function normaliserCarburant(fuelType: string): 'diesel' | 'essence' | 'electric
 
   if (fuel.includes('diesel')) return 'diesel';
   if (fuel.includes('essence') || fuel.includes('benzine')) return 'essence';
+  // Gaz (GPL/LPG, GNC/CNG, GNL/LNG) : même calendrier que l'essence
+  // (lez.brussels ; colonne « Benzine/LPG/CNG en LNG » de stad.gent).
+  if (/\b(gpl|lpg|gnc|cng|gnl|lng)\b/.test(fuel)) return 'essence';
   if (fuel.includes('lectrique') || fuel.includes('electric')) return 'electric';
+  // Hydrogène : exempté comme l'électrique (lez.brussels ; stad.gent).
+  if (fuel.includes('hydrog') || fuel.includes('waterstof')) return 'electric';
   if (fuel.includes('hybride') || fuel.includes('hybrid')) return 'hybride';
 
   return null;
@@ -318,21 +332,22 @@ export function calculerStatutLEZ(fuelType: string, euroNorm: string): LezResult
 }
 
 /**
- * Vérifie si un véhicule est compatible LEZ (au moins 1 ville l'autorise sans dérogation).
- * Règle simple : Euro 6+ (essence ou diesel), électrique ou hybride → compatible.
+ * « Compatible LEZ » = peut circuler AUJOURD'HUI, sans dérogation ni pass, dans
+ * les TROIS LEZ (Bruxelles, Anvers, Gand).
+ *
+ * Source unique : le calendrier ci-dessus, via calculerStatutLEZ. C'est le même
+ * verdict global que les badges des cartes : « LEZ OK » ou « LEZ 20xx » →
+ * compatible ; « Interdit », « Dérogation » ou « LEZ ? » → non compatible.
+ * Les deux API ne peuvent donc plus se contredire.
+ *
+ * Exemple : un diesel Euro 5 est admis à Anvers et à Gand mais interdit à
+ * Bruxelles → non compatible (badge « Interdit ») ; le détail ville par ville
+ * reste disponible dans calculerStatutLEZ(...).details.
  */
 export function isLezCompatible(fuelType: string | null | undefined, euroNorm: string | null | undefined): boolean {
   if (!fuelType) return false;
-  const fuel = normaliserCarburant(fuelType);
-  if (fuel === 'electric' || fuel === 'hybride') return true;
-  if (!euroNorm) return false;
-  const norm = normaliserNormeEuro(euroNorm);
-  if (!norm) return false;
-  // Euro 6 et variantes = compatibles partout
-  if (norm === 'euro6' || norm === 'euro6d' || norm === 'euro6d_temp') return true;
-  // Euro 4/5 essence = compatibles (pas diesel à Bruxelles)
-  if (fuel === 'essence' && (norm === 'euro4' || norm === 'euro5')) return true;
-  return false;
+  const { global } = calculerStatutLEZ(fuelType, euroNorm ?? '');
+  return global.statut === 'autorise' || global.statut === 'alerte';
 }
 
 /**
@@ -351,7 +366,7 @@ export function auditLezFlag(params: {
     expected,
     actual,
     reason: expected
-      ? "Marquée non-LEZ alors qu'Euro 6+ ou électrique/hybride"
-      : "Marquée LEZ alors que la norme Euro est insuffisante",
+      ? "Marquée non-LEZ alors que le calendrier l'autorise dans les 3 villes"
+      : "Marquée LEZ alors qu'au moins une ville l'interdit (ou norme/carburant inconnu)",
   };
 }
