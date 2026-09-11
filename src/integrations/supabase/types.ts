@@ -1810,6 +1810,7 @@ export type Database = {
         Returns: boolean
       }
       clear_user_view_history: { Args: never; Returns: number }
+      daily_message_limit: { Args: { _user_id: string }; Returns: number }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
@@ -1954,6 +1955,14 @@ export type Database = {
       }
       geomfromewkt: { Args: { "": string }; Returns: unknown }
       get_active_cities_count: { Args: never; Returns: number }
+      get_daily_message_quota: {
+        Args: never
+        Returns: {
+          limit_per_day: number
+          remaining: number
+          used: number
+        }[]
+      }
       get_favorite_counts: {
         Args: { listing_ids: string[] }
         Returns: {
