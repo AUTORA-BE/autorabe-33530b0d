@@ -130,9 +130,12 @@ function computeTco(
   // Depreciation
   const deprec = price * (DEPRECIATION[fuel] ?? 0.45);
 
+  // Coût de possession sur 5 ans = perte de valeur + utilisation, comme le
+  // calculateur TCO. Le prix d'achat n'est PAS additionné : la dépréciation en
+  // est la part perdue, additionner les deux la comptait deux fois.
   const total = taxe === null
-    ? price + carburant + entretien + assurance + deprec
-    : price + carburant + entretien + assurance + taxe + deprec;
+    ? carburant + entretien + assurance + deprec
+    : carburant + entretien + assurance + taxe + deprec;
 
   return {
     prixAchat: price,
@@ -186,7 +189,6 @@ export default function VehicleTcoSection({ price, fuelType, year, mileage, powe
   const DONUT_COLORS = ["#3b82f6", "#f59e0b", "#f97316", "#10b981", "#8b5cf6", "#ef4444"];
 
   const breakdownItems = [
-    { label: "Prix d'achat", value: result.prixAchat, icon: FileText, color: "text-blue-500", fill: DONUT_COLORS[0] },
     { label: "Carburant (5 ans)", value: result.carburant, icon: Fuel, color: "text-amber-500", fill: DONUT_COLORS[1] },
     { label: "Entretien (5 ans)", value: result.entretien, icon: Wrench, color: "text-orange-500", fill: DONUT_COLORS[2] },
     { label: "Assurance (5 ans)", value: result.assurance, icon: Shield, color: "text-emerald-500", fill: DONUT_COLORS[3] },
@@ -220,7 +222,7 @@ export default function VehicleTcoSection({ price, fuelType, year, mileage, powe
               💰 Coût total sur 5 ans
             </h2>
             <p className="text-sm text-muted-foreground">
-              Calculez le véritable coût de cette voiture (achat + utilisation)
+              Calculez le véritable coût de cette voiture (perte de valeur + utilisation)
             </p>
           </div>
         </div>
@@ -383,6 +385,7 @@ export default function VehicleTcoSection({ price, fuelType, year, mileage, powe
             <p>
               Estimation indicative basée sur les données moyennes du marché belge 2026.
               Le coût réel peut varier selon votre profil, la couverture d'assurance et l'entretien effectif.
+              {` Le prix d'achat (${eur(result.prixAchat)}) n'est pas additionné : seule sa perte de valeur estimée sur 5 ans (${eur(result.depreciation)}) est comptée, le reste étant récupéré à la revente.`}
               {taxeCirculation.montant === null && " La taxe de circulation n'a pas pu être calculée : elle n'est pas comptée dans ce total."}
             </p>
           </div>
