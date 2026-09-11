@@ -245,9 +245,10 @@ const TcoResults = ({ breakdown, alternatives, onReset, onBack }: Props) => {
                 <p><strong>Carburant :</strong> prix moyens belges saisis dans AutoRA, mis à jour manuellement — la date de dernière mise à jour est affichée sur la page du calculateur.</p>
                 <p><strong>Entretien :</strong> Touring & VAB, tarifs garage indépendant, +5%/an d'ancienneté.</p>
                 <p><strong>Assurance :</strong> AG, Ethias, KBC – tarifs indicatifs 2026.</p>
-                <p><strong>Taxes :</strong> barèmes officiels par région (Bruxelles, Flandre, Wallonie), valables du {new Date(BAREME_VALIDE_DEPUIS).toLocaleDateString('fr-BE')} au {new Date(BAREME_VALIDE_JUSQUAU).toLocaleDateString('fr-BE')}.</p>
+                <p><strong>Taxe de circulation :</strong> barème officiel valable du {new Date(BAREME_VALIDE_DEPUIS).toLocaleDateString('fr-BE')} au {new Date(BAREME_VALIDE_JUSQUAU).toLocaleDateString('fr-BE')}. Quand il n'est pas encore intégré pour votre véhicule, la taxe est signalée « non calculée » et n'est pas comptée. La TMC, payée une fois à l'immatriculation, n'est pas incluse.</p>
                 <p><strong>Dépréciation :</strong> courbes indicatives par type de motorisation, non issues d'un relevé de ventes AutoRA.</p>
-                <p><strong>Primes :</strong> Sites régionaux officiels, conditions exactes applicables.</p>
+                {/* PRIMES (belgianData.ts) est vide : mettre ce texte à jour si des primes y sont ajoutées. */}
+                <p><strong>Primes régionales :</strong> aucune n'est intégrée au calcul à ce jour.</p>
                 <p><strong>Marge d'erreur :</strong> les postes entretien, assurance et dépréciation sont des ordres de grandeur, pas des mesures.</p>
               </AccordionContent>
             </AccordionItem>
