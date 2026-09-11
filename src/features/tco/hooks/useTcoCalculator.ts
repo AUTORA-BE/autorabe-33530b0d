@@ -7,10 +7,10 @@ import {
   COEFF_BONUS, MULT_COUVERTURE, DEPRECIATION, PRIMES,
   DEFAULT_CONSUMPTION,
 } from '../constants/belgianData';
-import { calculerTaxeCirculation, type Region as RegionFiscale } from '@/lib/belgianTax';
+import { calculerTaxeCirculation, type Region as RegionFiscale, type ResultatTaxe } from '@/lib/belgianTax';
 import { mapCarburant, normaliserCycle } from '@/lib/belgianTaxHelpers';
 
-const DEFAULT_FORM: TcoFormData = {
+export const DEFAULT_FORM: TcoFormData = {
   fuelType: 'essence95',
   price: 25000,
   year: 2022,
@@ -33,10 +33,10 @@ function getFuelCategory(ft: FuelType): string {
 }
 
 /**
- * Taxe de circulation via le moteur fiscal officiel. Renvoie null quand le
- * barème ne permet pas de trancher — on n'invente aucun montant.
+ * Taxe de circulation via le moteur fiscal officiel. `montant` vaut null quand
+ * le barème ne permet pas de trancher — on n'invente aucun montant.
  */
-function taxeCirculationAnnuelle(data: TcoFormData): number | null {
+function taxeCirculation(data: TcoFormData): ResultatTaxe {
   return calculerTaxeCirculation({
     region: data.region as RegionFiscale,
     puissanceCv: data.fiscalPower || null,
@@ -45,10 +45,17 @@ function taxeCirculationAnnuelle(data: TcoFormData): number | null {
     cycleCO2: normaliserCycle(null),
     euroNorm: data.euroNorm ?? null,
     ageAnnees: Math.max(0, new Date().getFullYear() - data.year),
-  }).montant;
+  });
 }
 
-function calculateBreakdown(data: TcoFormData): TcoBreakdown {
+/** Motif d'un montant null, repris tel quel du moteur fiscal (source unique). */
+function motifNonCalcul(resultat: ResultatTaxe): string {
+  return resultat.donneesManquantes.length > 0
+    ? resultat.donneesManquantes.join(' · ')
+    : 'barème non disponible pour ce véhicule';
+}
+
+export function calculateBreakdown(data: TcoFormData): TcoBreakdown {
   const ageVehicule = new Date().getFullYear() - data.year;
   const totalKm = data.kmPerYear * 5;
   const fuelCat = getFuelCategory(data.fuelType);
@@ -76,14 +83,20 @@ function calculateBreakdown(data: TcoFormData): TcoBreakdown {
   const assuranceAnnuelle = ASSURANCE_RC[data.ageProfile] * COEFF_BONUS[data.bonusMalus] * MULT_COUVERTURE[data.insuranceType];
   const totalAssurance = assuranceAnnuelle * 5;
 
-  const taxeAnnuelle = taxeCirculationAnnuelle(data) ?? 0;
-  const totalTaxe = taxeAnnuelle * 5;
+  // Taxe de circulation : quand le moteur fiscal ne tranche pas (null), elle est
+  // EXCLUE du total et signalée « non calculée » — jamais comptée comme 0 €.
+  const taxe = taxeCirculation(data);
+  const taxeAnnuelle = taxe.montant;
+  const totalTaxe = taxeAnnuelle === null ? null : taxeAnnuelle * 5;
 
   const deprec = data.price * (DEPRECIATION[data.fuelType] || 0.45);
 
   const prime = PRIMES[data.region]?.[data.fuelType] || 0;
 
-  const total = deprec + carburant + totalEntretien + totalAssurance + totalTaxe - prime;
+  const totalHorsTaxe = deprec + carburant + totalEntretien + totalAssurance - prime;
+  const total = totalTaxe === null
+    ? totalHorsTaxe
+    : deprec + carburant + totalEntretien + totalAssurance + totalTaxe - prime;
   const mensuel = Math.round(total / 60);
 
   return {
@@ -91,10 +104,12 @@ function calculateBreakdown(data: TcoFormData): TcoBreakdown {
     carburant: Math.round(carburant),
     entretien: Math.round(totalEntretien),
     assurance: Math.round(totalAssurance),
-    taxe: Math.round(totalTaxe),
+    taxe: totalTaxe === null ? null : Math.round(totalTaxe),
+    motifTaxeNonCalculee: taxeAnnuelle === null ? motifNonCalcul(taxe) : null,
     depreciation: Math.round(deprec),
     prime: Math.round(prime),
     total: Math.round(total),
+    totalHorsTaxe: Math.round(totalHorsTaxe),
     mensuel,
     details: {
       consoReelle: Math.round(consoReelle * 10) / 10,
@@ -103,9 +118,39 @@ function calculateBreakdown(data: TcoFormData): TcoBreakdown {
       facteurRealite: facteur,
       assuranceAnnuelle: Math.round(assuranceAnnuelle),
       entretienAnnuel: Math.round(entretienAnnuel),
-      taxeAnnuelle: Math.round(taxeAnnuelle),
+      taxeAnnuelle: taxeAnnuelle === null ? null : Math.round(taxeAnnuelle),
     },
   };
+}
+
+/**
+ * Alternatives de motorisation. L'économie compare des totaux à base égale :
+ * si la taxe de circulation n'est pas calculée d'un côté au moins, les deux
+ * totaux sont comparés hors taxe de circulation (et c'est signalé).
+ */
+export function calculateAlternatives(formData: TcoFormData, breakdown: TcoBreakdown): TcoAlternative[] {
+  const alts: TcoAlternative[] = [];
+  const altTypes: { fuel: FuelType; label: string }[] = [
+    { fuel: 'electric', label: 'Électrique équivalent' },
+    { fuel: 'essence95', label: 'Essence 95 équivalent' },
+    { fuel: 'diesel', label: 'Diesel équivalent' },
+  ];
+  for (const alt of altTypes) {
+    if (alt.fuel === formData.fuelType) continue;
+    const altData = { ...formData, fuelType: alt.fuel, consumption: DEFAULT_CONSUMPTION[alt.fuel] };
+    const altBreakdown = calculateBreakdown(altData);
+    const economieHorsTaxe = breakdown.taxe === null || altBreakdown.taxe === null;
+    alts.push({
+      fuelType: alt.fuel,
+      label: alt.label,
+      breakdown: altBreakdown,
+      economie: economieHorsTaxe
+        ? breakdown.totalHorsTaxe - altBreakdown.totalHorsTaxe
+        : breakdown.total - altBreakdown.total,
+      economieHorsTaxe,
+    });
+  }
+  return alts.slice(0, 2);
 }
 
 export function useTcoCalculator() {
@@ -122,26 +167,10 @@ export function useTcoCalculator() {
     [formData]
   );
 
-  const alternatives = useMemo((): TcoAlternative[] => {
-    const alts: TcoAlternative[] = [];
-    const altTypes: { fuel: FuelType; label: string }[] = [
-      { fuel: 'electric', label: 'Électrique équivalent' },
-      { fuel: 'essence95', label: 'Essence 95 équivalent' },
-      { fuel: 'diesel', label: 'Diesel équivalent' },
-    ];
-    for (const alt of altTypes) {
-      if (alt.fuel === formData.fuelType) continue;
-      const altData = { ...formData, fuelType: alt.fuel, consumption: DEFAULT_CONSUMPTION[alt.fuel] };
-      const altBreakdown = calculateBreakdown(altData);
-      alts.push({
-        fuelType: alt.fuel,
-        label: alt.label,
-        breakdown: altBreakdown,
-        economie: breakdown.total - altBreakdown.total,
-      });
-    }
-    return alts.slice(0, 2);
-  }, [formData, breakdown]);
+  const alternatives = useMemo(
+    (): TcoAlternative[] => calculateAlternatives(formData, breakdown),
+    [formData, breakdown]
+  );
 
   const nextStep = () => {
     if (step < 5) setStep(s => s + 1);

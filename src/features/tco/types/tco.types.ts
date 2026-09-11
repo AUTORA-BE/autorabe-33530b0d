@@ -29,10 +29,20 @@ export interface TcoBreakdown {
   carburant: number;
   entretien: number;
   assurance: number;
-  taxe: number;
+  /**
+   * Taxe de circulation sur 5 ans. `null` = non calculée (le moteur fiscal ne
+   * tranche pas pour ce véhicule) : elle est alors EXCLUE de `total`, jamais
+   * comptée comme 0 €.
+   */
+  taxe: number | null;
+  /** Motif du non-calcul, formulé par le moteur fiscal. `null` si la taxe est calculée. */
+  motifTaxeNonCalculee: string | null;
   depreciation: number;
   prime: number;
+  /** Coût total sur 5 ans — hors taxe de circulation quand `taxe` est null. */
   total: number;
+  /** Coût total sur 5 ans sans la taxe de circulation (comparaisons à base égale). */
+  totalHorsTaxe: number;
   mensuel: number;
   details: {
     consoReelle: number;
@@ -41,7 +51,8 @@ export interface TcoBreakdown {
     facteurRealite: number;
     assuranceAnnuelle: number;
     entretienAnnuel: number;
-    taxeAnnuelle: number;
+    /** `null` = taxe de circulation non calculée (voir `motifTaxeNonCalculee`). */
+    taxeAnnuelle: number | null;
   };
 }
 
@@ -50,4 +61,9 @@ export interface TcoAlternative {
   label: string;
   breakdown: TcoBreakdown;
   economie: number;
+  /**
+   * true quand la taxe de circulation n'est pas calculée d'un côté au moins :
+   * l'économie est alors comparée hors taxe de circulation des deux côtés.
+   */
+  economieHorsTaxe: boolean;
 }

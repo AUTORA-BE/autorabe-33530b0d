@@ -80,7 +80,8 @@ interface TcoResult {
   carburant: number;
   entretien: number;
   assurance: number;
-  taxe: number;
+  /** null = taxe de circulation non calculée : exclue du total, jamais affichée 0 €. */
+  taxe: number | null;
   depreciation: number;
   total: number;
   mensuel: number;
@@ -122,20 +123,23 @@ function computeTco(
 
   // Taxe de circulation — moteur fiscal officiel. Si le barème ne permet pas
   // de trancher (donnée manquante ou tranche non publiée), on n'invente rien :
-  // la taxe est comptée à 0 dans le total et signalée à part.
-  const taxe = (taxeAnnuelle ?? 0) * 5;
+  // la taxe est EXCLUE du total (affiché « hors taxe de circulation ») et
+  // signalée « non calculée » — jamais présentée comme 0 €.
+  const taxe = taxeAnnuelle === null ? null : taxeAnnuelle * 5;
 
   // Depreciation
   const deprec = price * (DEPRECIATION[fuel] ?? 0.45);
 
-  const total = price + carburant + entretien + assurance + taxe + deprec;
+  const total = taxe === null
+    ? price + carburant + entretien + assurance + deprec
+    : price + carburant + entretien + assurance + taxe + deprec;
 
   return {
     prixAchat: price,
     carburant: Math.round(carburant),
     entretien: Math.round(entretien),
     assurance: Math.round(assurance),
-    taxe: Math.round(taxe),
+    taxe: taxe === null ? null : Math.round(taxe),
     depreciation: Math.round(deprec),
     total: Math.round(total),
     mensuel: Math.round(total / 60),
@@ -190,7 +194,10 @@ export default function VehicleTcoSection({ price, fuelType, year, mileage, powe
     { label: "Dépréciation estimée", value: result.depreciation, icon: TrendingDown, color: "text-red-500", fill: DONUT_COLORS[5] },
   ];
 
-  const donutData = breakdownItems.map(item => ({ name: item.label, value: item.value, fill: item.fill }));
+  // Taxe non calculée : pas de part dans le donut (elle n'est pas dans le total).
+  const donutData = breakdownItems.flatMap(item =>
+    item.value === null ? [] : [{ name: item.label, value: item.value, fill: item.fill }]
+  );
 
   const fuelLabel = {
     diesel: "Diesel", essence95: "Essence", essence98: "Essence 98",
@@ -222,6 +229,9 @@ export default function VehicleTcoSection({ price, fuelType, year, mileage, powe
           {!isOpen && (
             <span className="hidden sm:inline text-lg font-bold text-foreground">
               {eur(result.total)}
+              {result.taxe === null && (
+                <span className="ml-1 text-xs font-normal text-muted-foreground">hors taxe de circulation</span>
+              )}
             </span>
           )}
           {isOpen ? (
@@ -308,6 +318,9 @@ export default function VehicleTcoSection({ price, fuelType, year, mileage, powe
               <p className="text-sm text-primary font-medium">
                 soit {eur(result.mensuel)}/mois
               </p>
+              {result.taxe === null && (
+                <p className="text-xs text-muted-foreground">hors taxe de circulation (non calculée)</p>
+              )}
             </div>
 
             {/* Donut chart */}
@@ -339,14 +352,18 @@ export default function VehicleTcoSection({ price, fuelType, year, mileage, powe
             {/* Breakdown */}
             <div className="space-y-2">
               {breakdownItems.map((item) => {
-                const pct = (item.value / result.total) * 100;
+                const pct = item.value === null ? null : (item.value / result.total) * 100;
                 return (
                   <div key={item.label} className="flex items-center gap-2 text-sm">
                     <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.fill }} />
                     <span className="flex-1 text-muted-foreground truncate">{item.label}</span>
-                    <span className="font-medium text-foreground tabular-nums">{eur(item.value)}</span>
+                    {item.value === null ? (
+                      <span className="text-xs italic text-muted-foreground">non calculée</span>
+                    ) : (
+                      <span className="font-medium text-foreground tabular-nums">{eur(item.value)}</span>
+                    )}
                     <span className="text-xs text-muted-foreground w-10 text-right tabular-nums">
-                      {pct.toFixed(0)}%
+                      {pct === null ? "—" : `${pct.toFixed(0)}%`}
                     </span>
                   </div>
                 );

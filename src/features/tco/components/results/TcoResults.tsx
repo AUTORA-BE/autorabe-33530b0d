@@ -36,17 +36,22 @@ function CountUp({ target, duration = 2000 }: { target: number; duration?: numbe
 
 const CHART_COLORS = ['hsl(142,71%,45%)', 'hsl(217,91%,60%)', 'hsl(262,83%,58%)', 'hsl(25,95%,53%)', 'hsl(0,84%,60%)', 'hsl(47,96%,53%)'];
 
+// `value: null` = poste non calculé (taxe de circulation) : jamais affiché « 0 € ».
 const breakdownItems = (b: TcoBreakdown) => [
-  { key: 'carburant', label: 'Carburant', icon: Fuel, value: b.carburant, color: CHART_COLORS[0], annual: Math.round(b.carburant / 5) },
-  { key: 'entretien', label: 'Entretien', icon: Wrench, value: b.entretien, color: CHART_COLORS[1], annual: Math.round(b.entretien / 5) },
-  { key: 'assurance', label: 'Assurance', icon: Shield, value: b.assurance, color: CHART_COLORS[2], annual: Math.round(b.assurance / 5) },
-  { key: 'taxe', label: 'Taxe circulation', icon: Landmark, value: b.taxe, color: CHART_COLORS[3], annual: Math.round(b.taxe / 5) },
-  { key: 'depreciation', label: 'Dépréciation', icon: TrendingDown, value: b.depreciation, color: CHART_COLORS[4], annual: Math.round(b.depreciation / 5) },
+  { key: 'carburant', label: 'Carburant', icon: Fuel, value: b.carburant, color: CHART_COLORS[0] },
+  { key: 'entretien', label: 'Entretien', icon: Wrench, value: b.entretien, color: CHART_COLORS[1] },
+  { key: 'assurance', label: 'Assurance', icon: Shield, value: b.assurance, color: CHART_COLORS[2] },
+  { key: 'taxe', label: 'Taxe circulation', icon: Landmark, value: b.taxe, color: CHART_COLORS[3] },
+  { key: 'depreciation', label: 'Dépréciation', icon: TrendingDown, value: b.depreciation, color: CHART_COLORS[4] },
 ];
 
 const TcoResults = ({ breakdown, alternatives, onReset, onBack }: Props) => {
-  const chartData = breakdownItems(breakdown).map(i => ({ name: i.label, value: i.value }));
-  if (breakdown.prime > 0) chartData.push({ name: 'Prime', value: -breakdown.prime });
+  const taxeNonCalculee = breakdown.taxe === null;
+  // Un poste non calculé n'a pas de barre : il n'est pas dans le total.
+  const chartData = breakdownItems(breakdown).flatMap(i =>
+    i.value === null ? [] : [{ name: i.label, value: i.value, color: i.color }]
+  );
+  if (breakdown.prime > 0) chartData.push({ name: 'Prime', value: -breakdown.prime, color: CHART_COLORS[5] });
 
   return (
     <section className="min-h-screen pt-28 pb-20 px-4">
@@ -67,13 +72,20 @@ const TcoResults = ({ breakdown, alternatives, onReset, onBack }: Props) => {
             <CheckCircle className="w-8 h-8 text-primary" />
           </motion.div>
 
-          <p className="text-sm text-muted-foreground mb-2">Coût total sur 5 ans</p>
+          <p className="text-sm text-muted-foreground mb-2">
+            Coût total sur 5 ans{taxeNonCalculee && ', hors taxe de circulation'}
+          </p>
           <h2 className="text-5xl sm:text-6xl font-display font-bold text-foreground">
             <CountUp target={breakdown.total} /> €
           </h2>
           <p className="mt-3 text-lg text-muted-foreground">
             soit <span className="font-semibold text-foreground">{breakdown.mensuel} €/mois</span>
           </p>
+          {taxeNonCalculee && (
+            <p className="mt-3 mx-auto max-w-xl text-sm text-muted-foreground">
+              ⚠️ Taxe de circulation non calculée ({breakdown.motifTaxeNonCalculee}) : elle n'est pas comptée dans ce total.
+            </p>
+          )}
 
           <div className="mt-6 flex flex-wrap justify-center gap-2 text-xs text-muted-foreground">
             <span className="bg-secondary/60 px-3 py-1 rounded-full">Estimation</span>
@@ -105,8 +117,8 @@ const TcoResults = ({ breakdown, alternatives, onReset, onBack }: Props) => {
               <YAxis type="category" dataKey="name" tick={{ fontSize: 12 }} />
               <RTooltip formatter={(v: number) => `${v.toLocaleString('fr-BE')} €`} />
               <Bar dataKey="value" radius={[0, 6, 6, 0]}>
-                {chartData.map((_, i) => (
-                  <Cell key={i} fill={i < CHART_COLORS.length ? CHART_COLORS[i] : CHART_COLORS[0]} />
+                {chartData.map((entry, i) => (
+                  <Cell key={i} fill={entry.color} />
                 ))}
               </Bar>
             </BarChart>
@@ -117,7 +129,7 @@ const TcoResults = ({ breakdown, alternatives, onReset, onBack }: Props) => {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-8">
           {breakdownItems(breakdown).map((item, i) => {
             const Icon = item.icon;
-            const pct = Math.round((item.value / breakdown.total) * 100);
+            const pct = item.value === null ? null : Math.round((item.value / breakdown.total) * 100);
             return (
               <motion.div
                 key={item.key}
@@ -132,22 +144,31 @@ const TcoResults = ({ breakdown, alternatives, onReset, onBack }: Props) => {
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-foreground">{item.label}</p>
-                    <p className="text-xs text-muted-foreground">{pct}% du total</p>
+                    <p className="text-xs text-muted-foreground">{pct === null ? 'Non comptée dans le total' : `${pct}% du total`}</p>
                   </div>
                 </div>
-                <p className="text-2xl font-bold text-foreground">{item.value.toLocaleString('fr-BE')} €</p>
-                <p className="text-xs text-muted-foreground">~{item.annual.toLocaleString('fr-BE')} €/an</p>
+                {item.value === null ? (
+                  <>
+                    <p className="text-lg font-semibold text-foreground">Non calculée</p>
+                    <p className="text-xs text-muted-foreground">{breakdown.motifTaxeNonCalculee}</p>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-2xl font-bold text-foreground">{item.value.toLocaleString('fr-BE')} €</p>
+                    <p className="text-xs text-muted-foreground">~{Math.round(item.value / 5).toLocaleString('fr-BE')} €/an</p>
 
-                {/* Progress bar */}
-                <div className="mt-3 h-1.5 rounded-full bg-secondary overflow-hidden">
-                  <motion.div
-                    className="h-full rounded-full"
-                    style={{ background: item.color }}
-                    initial={{ width: 0 }}
-                    animate={{ width: `${pct}%` }}
-                    transition={{ delay: 0.8 + i * 0.1, duration: 0.6 }}
-                  />
-                </div>
+                    {/* Progress bar */}
+                    <div className="mt-3 h-1.5 rounded-full bg-secondary overflow-hidden">
+                      <motion.div
+                        className="h-full rounded-full"
+                        style={{ background: item.color }}
+                        initial={{ width: 0 }}
+                        animate={{ width: `${pct}%` }}
+                        transition={{ delay: 0.8 + i * 0.1, duration: 0.6 }}
+                      />
+                    </div>
+                  </>
+                )}
               </motion.div>
             );
           })}
@@ -186,11 +207,21 @@ const TcoResults = ({ breakdown, alternatives, onReset, onBack }: Props) => {
                 <div key={alt.fuelType} className="rounded-2xl border border-border/50 bg-card/80 backdrop-blur-xl p-5">
                   <p className="font-semibold text-foreground mb-1">{alt.label}</p>
                   <p className="text-2xl font-bold text-foreground">{alt.breakdown.total.toLocaleString('fr-BE')} €</p>
+                  {alt.breakdown.taxe === null ? (
+                    <p className="text-xs text-muted-foreground">hors taxe de circulation (non calculée)</p>
+                  ) : alt.economieHorsTaxe ? (
+                    <p className="text-xs text-muted-foreground">
+                      dont {alt.breakdown.taxe.toLocaleString('fr-BE')} € de taxe de circulation, exclue de la comparaison
+                    </p>
+                  ) : null}
                   <p className="text-sm mt-1">
                     {alt.economie > 0 ? (
                       <span className="text-primary font-semibold">Économie de {alt.economie.toLocaleString('fr-BE')} €</span>
                     ) : (
                       <span className="text-red-500 font-semibold">Surcoût de {Math.abs(alt.economie).toLocaleString('fr-BE')} €</span>
+                    )}
+                    {alt.economieHorsTaxe && (
+                      <span className="text-xs text-muted-foreground"> (hors taxe de circulation)</span>
                     )}
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">{alt.breakdown.mensuel} €/mois sur 5 ans</p>
