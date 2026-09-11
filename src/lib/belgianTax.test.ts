@@ -52,9 +52,27 @@ describe("BIV Flandre — formule CO2 / Euronorme / age", () => {
     const r = calculerTMC({ ...base, region: "flandre", co2: 100, euroNorm: "Euro 6" });
     expect(r.detail.join(" ")).toContain("28.54");
   });
-  it("annule la taxe au-dela de 15 ans", () => {
+  // Bornes legales verifiees le 11/09/2026 sur vlaanderen.be (Vlaamse Belastingdienst)
+  it("ne tombe jamais a 0 : minimum legal de 58,16 EUR au-dela de 15 ans, signale approximatif", () => {
     const r = calculerTMC({ ...base, region: "flandre", co2: 180, euroNorm: "Euro 5", ageAnnees: 16 });
-    expect(r.montant).toBe(0);
+    expect(r.montant).toBe(58.16);
+    expect(r.approximatif).toBe(true);
+  });
+  it("applique le minimum legal a une neuve peu emettrice, sans la signaler approximative", () => {
+    const r = calculerTMC({ ...base, region: "flandre", co2: 60, euroNorm: "Euro 6" });
+    expect(r.montant).toBe(58.16);
+    expect(r.approximatif).toBe(false);
+  });
+  it("plafonne au maximum legal de 14 539,31 EUR", () => {
+    const r = calculerTMC({ ...base, region: "flandre", co2: 300, euroNorm: "Euro 6" });
+    expect(r.montant).toBe(14539.31);
+  });
+  it("signale approximatif des 5 ans (table d age et formule avant 2021 non alignees)", () => {
+    const avant = calculerTMC({ ...base, region: "flandre", co2: 130, euroNorm: "Euro 6", ageAnnees: 4 });
+    const apres = calculerTMC({ ...base, region: "flandre", co2: 130, euroNorm: "Euro 6", ageAnnees: 5 });
+    expect(avant.approximatif).toBe(false);
+    expect(apres.approximatif).toBe(true);
+    expect(apres.donneesManquantes.join(" ")).toContain("simulateur officiel");
   });
   it("signale l approximation pour les normes Euro 0 a 3", () => {
     const r = calculerTMC({ ...base, region: "flandre", co2: 180, euroNorm: "Euro 3" });

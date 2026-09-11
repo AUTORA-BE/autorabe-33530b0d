@@ -14,6 +14,10 @@
  * auprès d'Autogids / Moniteur Automobile (mise à jour 01/07/2026), du SPW
  * Finances et de MyTax / Bruxelles Fiscalité.
  *
+ * Flandre, revérifié le 11/09/2026 sur vlaanderen.be (Vlaamse Belastingdienst) :
+ * bornes légales de la BIV et forfait des électriques ; la table d'âge reprise
+ * d'Autogids diffère de la table officielle (voir VLA_LC).
+ *
  * ⚠️ CES BARÈMES SONT INDEXÉS CHAQUE 1er JUILLET.
  */
 
@@ -116,11 +120,41 @@ const VLA_C_BASE: Record<"diesel" | "autre", Record<string, number>> = {
   autre:  { euro4: 22.93,  euro5: 20.61,  euro6: 20.61 },
 };
 
+/**
+ * Correction d'âge LC.
+ * ⚠️ ÉCART CONNU avec la table officielle de la Vlaamse Belastingdienst
+ * (vlaanderen.be, « Verkeersbelastingen voor personenwagens », vérifiée le
+ * 11/09/2026) : 100, 90, 80, 70, 60, 50, 40, 30, 20 %, puis 10 % au-delà de
+ * 107 mois — la LC ne tombe JAMAIS à 0. Cette table-ci n'est pas remplacée
+ * seule : pour une voiture mise en circulation avant 2021, la formule officielle
+ * est aussi différente (NEDC : ((CO₂ × f + x) / 246)⁶, x augmentant de 4,5 g/km
+ * par an depuis 2013) et n'est pas encore intégrée ; corriger la LC sans elle
+ * éloignerait certains montants du montant officiel. Les deux vont ensemble
+ * (lot dédié). En attendant, tout montant à partir de 5 ans est « approximatif ».
+ */
 const VLA_LC: Record<number, number> = {
   0: 1.00, 1: 0.90, 2: 0.80, 3: 0.70, 4: 0.60, 5: 0.54, 6: 0.48, 7: 0.42,
   8: 0.36, 9: 0.30, 10: 0.24, 11: 0.18, 12: 0.12, 13: 0.06, 14: 0.01,
 };
 
+/** Âge à partir duquel VLA_LC (et la formule) s'écartent du barème officiel. */
+const VLA_AGE_ECART_BAREME = 5;
+
+/**
+ * Bornes légales de la BIV (véhicules non leasés), vlaanderen.be, vérifiées le
+ * 11/09/2026 : « De belasting op de inverkeerstelling kan niet minder bedragen
+ * dan 41,99 euro (niet-geïndexeerd tarief) », soit 58,16 € depuis le 01/07/2026 ;
+ * maximum 10 000 € non indexé, soit 14 539,31 € depuis le 01/07/2026.
+ * Indexées chaque 1er juillet.
+ */
+const VLA_MINIMUM = 58.16;
+const VLA_MAXIMUM = 14539.31;
+
+/**
+ * Électrique ou hydrogène inscrit depuis le 01/01/2026 : forfait de 61,50 €
+ * « niet te indexeren » (vlaanderen.be, vérifié le 11/09/2026). Ce forfait
+ * n'est PAS le minimum légal des thermiques (VLA_MINIMUM).
+ */
 const VLA_MINIMUM_EV = 61.50;
 
 function normaliserEuro(euroNorm?: string | null): "euro4" | "euro5" | "euro6" | "inferieur" | null {
@@ -249,10 +283,24 @@ export function calculerTMC(v: VehiculeFiscal): ResultatTaxe {
   detail.push(`Correction d'âge LC : ${lc}`);
 
   const coeur = Math.pow((v.co2! * f * VLA_Q) / 246, 6) * 4500;
-  const montant = arrondi((coeur + c) * lc);
+  const calcule = arrondi((coeur + c) * lc);
   detail.push(`BIV = ( ((${v.co2} × ${f} × ${VLA_Q}) / 246)⁶ × 4500 + ${c} ) × ${lc}`);
 
-  return { montant: Math.max(0, montant), detail, donneesManquantes: manquantes, approximatif, source };
+  let montant = calcule;
+  if (calcule < VLA_MINIMUM) {
+    montant = VLA_MINIMUM;
+    detail.push(`Minimum légal flamand appliqué : ${VLA_MINIMUM} € (calcul : ${calcule} €)`);
+  } else if (calcule > VLA_MAXIMUM) {
+    montant = VLA_MAXIMUM;
+    detail.push(`Maximum légal flamand appliqué : ${VLA_MAXIMUM} € (calcul : ${calcule} €)`);
+  }
+
+  if (v.ageAnnees >= VLA_AGE_ECART_BAREME) {
+    approximatif = true;
+    manquantes.push("5 ans ou plus : calcul simplifié (correction d'âge et formule d'avant 2021 pas encore alignées sur le barème officiel), montant indicatif à confirmer sur le simulateur officiel");
+  }
+
+  return { montant, detail, donneesManquantes: manquantes, approximatif, source };
 }
 
 export const TC_MINIMUM = 107.18;
