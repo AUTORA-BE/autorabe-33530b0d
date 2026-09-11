@@ -12,7 +12,14 @@ export {
   useConversations,
   useMessageNotifications,
 } from './hooks';
-export { useMessageLimit } from './hooks/useMessageLimit';
+export {
+  useMessageLimit,
+  isDailyLimitError,
+  MESSAGE_QUOTA_KEY,
+  DAILY_MESSAGE_LIMIT_ERROR,
+  DAILY_MESSAGE_LIMIT_CODE,
+} from './hooks/useMessageLimit';
+export type { MessageQuota } from './hooks/useMessageLimit';
 
 // Types
 export type {

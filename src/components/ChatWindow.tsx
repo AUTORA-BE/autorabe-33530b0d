@@ -9,7 +9,14 @@ import { ChatHeader } from './chat/ChatHeader';
 import { MessageBubble } from './chat/MessageBubble';
 import { MessageInput } from './chat/MessageInput';
 import { TypingIndicator } from './chat/TypingIndicator';
-import { useTypingIndicator } from '@/features/messaging';
+import { useQueryClient } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
+import {
+  useTypingIndicator,
+  useMessageLimit,
+  isDailyLimitError,
+  MESSAGE_QUOTA_KEY,
+} from '@/features/messaging';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { toast } from 'sonner';
 import type { Message, MessageRow, ConversationDetails } from '@/features/messaging/types/messaging.types';
@@ -38,6 +45,15 @@ export function ChatWindow({
   showBackButton = false,
 }: ChatWindowProps) {
   const { t } = useLanguage();
+  const queryClient = useQueryClient();
+  // Plafond quotidien : applique par le serveur, seulement affiche ici.
+  const { canSendMessage, remaining, limit } = useMessageLimit();
+  const refreshQuota = useCallback(
+    () => queryClient.invalidateQueries({ queryKey: MESSAGE_QUOTA_KEY }),
+    [queryClient]
+  );
+  // `t` retombe deja sur le francais puis sur la cle : pas de repli en dur ici.
+  const limitReachedText = t('messages.dailyLimitReached');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   
@@ -190,6 +206,12 @@ export function ChatWindow({
   const handleSend = async (content: string, imageUrl?: string, replyToId?: string) => {
     if (!content.trim() && !imageUrl) return;
 
+    // Court-circuit d'affichage : le refus qui compte est celui du serveur.
+    if (!canSendMessage) {
+      toast.error(limitReachedText);
+      return;
+    }
+
     const { error } = await supabase.from('messages').insert({
       conversation_id: conversationId,
       sender_id: currentUserId,
@@ -199,10 +221,18 @@ export function ChatWindow({
     });
 
     if (error) {
+      // Refus du plafond quotidien : ce n'est pas une panne, on le dit clairement.
+      if (isDailyLimitError(error)) {
+        void refreshQuota();
+        toast.error(limitReachedText);
+        return;
+      }
       console.error('Error sending message:', error);
       toast.error(t('messages.sendError') || "Erreur lors de l'envoi");
       return;
     }
+
+    void refreshQuota();
 
     trackEvent(EVENTS.MESSAGE_SENT, {
       conversation_id: conversationId,
@@ -322,10 +352,26 @@ export function ChatWindow({
         <div ref={messagesEndRef} />
       </div>
 
+      {/* Plafond quotidien — affiche uniquement quand un plafond existe */}
+      {limit !== null && !canSendMessage && (
+        <div className="px-4 py-2 border-t border-destructive/30 bg-destructive/10 text-sm text-destructive">
+          {limitReachedText}{' '}
+          <Link to="/pricing" className="font-medium underline">
+            {t('messages.dailyLimitUpgrade')}
+          </Link>
+        </div>
+      )}
+      {limit !== null && canSendMessage && remaining !== null && remaining <= 2 && (
+        <div className="px-4 py-1.5 border-t bg-secondary/40 text-xs text-muted-foreground">
+          {t('messages.dailyLimitRemaining')} {remaining} / {limit}
+        </div>
+      )}
+
       {/* Input */}
       <MessageInput
         onSend={handleSend}
         onTyping={handleTyping}
+        disabled={!canSendMessage}
         currentUserId={currentUserId}
         replyTo={replyTo}
         onCancelReply={() => setReplyTo(null)}
