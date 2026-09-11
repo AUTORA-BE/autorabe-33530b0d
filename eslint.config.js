@@ -5,7 +5,8 @@ import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["dist", "supabase/functions/**"] },
+  // previewAuthStorage.ts est auto-généré par Lovable (toute retouche manuelle est écrasée) : exclu du lint.
+  { ignores: ["dist", "supabase/functions/**", "src/integrations/supabase/previewAuthStorage.ts"] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ["**/*.{ts,tsx}"],
