@@ -84,18 +84,68 @@ export function mapListingToVehicleDetail(listing: VehicleListingRow): VehicleDe
   };
 }
 
+/** Ce dont on a besoin d'une requête Supabase pour la trier. */
+interface RequeteTriable {
+  order(column: string, options?: { ascending?: boolean; nullsFirst?: boolean }): RequeteTriable;
+}
+
+/**
+ * Colonne qui porte la priorité des annonces payantes.
+ *
+ * `boost_rank` est une colonne GÉNÉRÉE depuis `boost_level` (7 jours = 4,
+ * 72 h = 3, 48 h = 2, 24 h = 1, aucun = 0). Elle existe précisément parce que
+ * `boost_level` est du TEXTE : en ordre décroissant, 'none' passe avant
+ * 'boost_*' ('n' > 'b'), donc trier sur `boost_level` sert les annonces
+ * gratuites en premier — l'inverse exact de ce que le vendeur a payé.
+ *
+ * NE JAMAIS trier sur `boost_level`. `boostPriority.test.ts` fige la règle.
+ */
+export const BOOST_ORDER_COLUMN = 'boost_rank';
+
+/**
+ * Priorité des annonces boostées, appliquée AVANT tout autre critère.
+ *
+ * Toute requête de liste doit passer par ici : c'est le seul endroit où la
+ * colonne de tri des boosts est nommée, donc le seul endroit à corriger.
+ */
+export function applyBoostPriority<T>(query: T): T {
+  return (query as unknown as RequeteTriable)
+    .order(BOOST_ORDER_COLUMN, { ascending: false, nullsFirst: false }) as unknown as T;
+}
+
+/**
+ * Tri des classements « populaires » (favoris, vues, interactions).
+ *
+ * Le classement définitif est recalculé côté client, mais l'ordre SQL décide
+ * QUELLES annonces entrent dans la page : sans priorité de boost ici, une
+ * annonce payante peut ne jamais atteindre la première page, et le tri client
+ * n'a alors plus rien à remonter.
+ */
+export function applyPopularitySorting<T>(query: T): T {
+  return (applyBoostPriority(query) as unknown as RequeteTriable)
+    .order('created_at', { ascending: false }) as unknown as T;
+}
+
+/** Tris dont le classement définitif est recalculé côté client. */
+export const POPULARITY_SORTS: readonly VehicleSortOption[] = ['favorites', 'views', 'interactions'];
+
+/** Ce tri passe-t-il par `applyPopularitySorting` plutôt que par `applySorting` ? */
+export const isPopularitySort = (sortBy: VehicleSortOption): boolean =>
+  POPULARITY_SORTS.includes(sortBy);
+
+/** Tri de la pagination par curseur : boosts d'abord, puis (created_at, id). */
+export function applyCursorSorting<T>(query: T): T {
+  return (applyBoostPriority(query) as unknown as RequeteTriable)
+    .order('created_at', { ascending: false })
+    .order('id', { ascending: false }) as unknown as T;
+}
+
 /**
  * Applies sort order to a Supabase query
  */
 export function applySorting<T>(query: T, sortBy: VehicleSortOption): T {
-  const q = query as any;
-  
-  // Tri par rang numérique du boost : 4 = 7 jours, 1 = 24h, 0 = aucun.
-  // NE PAS revenir à boost_level : c'est du texte, et 'none' > 'boost_*' en
-  // alphabétique, ce qui plaçait les annonces gratuites avant les payantes.
-  const withBoostPriority = q
-    .order('boost_rank', { ascending: false, nullsFirst: false });
-  
+  const withBoostPriority = applyBoostPriority(query) as any;
+
   switch (sortBy) {
     case 'price-asc':
       return withBoostPriority.order('price', { ascending: true }).order('id', { ascending: true });
@@ -249,7 +299,7 @@ export const vehicleQueries = {
     sortBy: VehicleSortOption = 'recent',
     page: number = 0
   ): Promise<{ vehicles: Vehicle[]; total: number; hasMore: boolean }> {
-    const isPopularitySort = ['favorites', 'views', 'interactions'].includes(sortBy);
+    const parPopularite = isPopularitySort(sortBy);
 
     // Distance filter: fetch IDs within radius first, then apply as .in() constraint
     const hasDistanceFilter =
@@ -291,10 +341,10 @@ export const vehicleQueries = {
       query = query.in('id', distanceIds);
     }
     
-    if (isPopularitySort) {
-      // For popularity sorts: always boost first, then we'll re-sort by popularity
-      query = query.order('boost_level', { ascending: false, nullsFirst: false });
-      query = query.order('created_at', { ascending: false });
+    if (parPopularite) {
+      // Boosts d'abord, puis date : le classement par popularité est recalculé
+      // plus bas, mais c'est cet ordre SQL qui choisit les annonces de la page.
+      query = applyPopularitySorting(query);
     } else {
       query = applySorting(query, sortBy);
     }
@@ -307,7 +357,7 @@ export const vehicleQueries = {
     let vehicles = (data || []).map((row) => mapListingToVehicle(row as unknown as VehicleListingRow));
 
     // For popularity sorts, fetch counts and re-sort
-    if (isPopularitySort && vehicles.length > 0) {
+    if (parPopularite && vehicles.length > 0) {
       const ids = vehicles.map(v => v.id);
       const { data: popData } = await supabase.rpc('get_listing_popularity', {
         listing_ids: ids,
@@ -398,11 +448,7 @@ export const vehicleQueries = {
       );
     }
 
-    query = query
-      .order('boost_level', { ascending: false, nullsFirst: false })
-      .order('created_at', { ascending: false })
-      .order('id', { ascending: false })
-      .limit(pageSize);
+    query = applyCursorSorting(query).limit(pageSize);
 
     const { data, error } = await query;
     if (error) throw new Error(error.message);
