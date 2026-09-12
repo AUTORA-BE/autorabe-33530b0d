@@ -106,22 +106,26 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return handlePreflight(req);
 
   try {
-    // Validate that the caller is using the service_role key
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
+    // Interne uniquement : clé service_role, ou jeton cron partagé stocké dans le
+    // coffre de la base (même convention que `ops-alerts-digest`). Le client admin
+    // est créé avant le contrôle, car la vérification du jeton partagé l'utilise.
+    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      serviceRoleKey,
+      { auth: { persistSession: false } },
+    );
+
+    const callerToken = (req.headers.get("Authorization") || "").replace("Bearer ", "").trim();
+    
+    let authorized = Boolean(serviceRoleKey) && callerToken === serviceRoleKey;
+    if (!authorized && callerToken) {
+      const { data: ok } = await supabase.rpc("verify_cron_token", { p_token: callerToken });
+      authorized = ok === true;
+    }
+    if (!authorized) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    const token = authHeader.replace("Bearer ", "");
-    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    
-    // Only allow service_role key (internal calls only)
-    if (token !== serviceRoleKey) {
-      return new Response(JSON.stringify({ error: "Forbidden" }), {
-        status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
@@ -133,11 +137,6 @@ Deno.serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
-
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      serviceRoleKey
-    );
 
     // Validate that the vehicle actually exists in the database
     const { data: realVehicle, error: vehicleError } = await supabase
