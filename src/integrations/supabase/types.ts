@@ -1804,6 +1804,15 @@ export type Database = {
           out_listing_id: string
         }[]
       }
+      apply_paid_boost: {
+        Args: {
+          p_hours: number
+          p_level: string
+          p_listing_id: string
+          p_session_id: string
+        }
+        Returns: Json
+      }
       can_read_chat_image: { Args: { _object_name: string }; Returns: boolean }
       check_rate_limit: {
         Args: { _key: string; _max_attempts: number; _window_seconds: number }
