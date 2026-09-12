@@ -47,3 +47,5 @@ project_id = "jbdsjqoonpieusfvkhyo"
     verify_jwt = false
   [functions.payments-status]
     verify_jwt = false
+  [functions.reconcile-boosts]
+    verify_jwt = false

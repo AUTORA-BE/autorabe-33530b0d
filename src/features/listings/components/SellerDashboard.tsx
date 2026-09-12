@@ -65,6 +65,8 @@ import { format } from "date-fns";
 import { fr, nl, enGB } from "date-fns/locale";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSellerListings } from "../hooks/useSellerListings";
+import { useBoostReconciliation } from "../hooks/useBoostReconciliation";
+import { toast } from "sonner";
 import BoostDialog from "./BoostDialog";
 import { usePaymentsEnabled } from "@/hooks/usePaymentsEnabled";
 import type { SellerListing, StatusFilter, ChartPeriod } from "../types/sellerDashboard.types";
@@ -226,6 +228,20 @@ export default function SellerDashboard() {
     markAsSold,
     refetch,
   } = useSellerListings(chartPeriod, getDateLocale());
+
+  // Un boost payé dont le webhook a été perdu n'apparaît nulle part : on le
+  // rattrape à l'ouverture du dashboard, là où le vendeur constaterait le manque.
+  useBoostReconciliation({
+    actif: paymentsOn,
+    onApplique: ({ applied }) => {
+      refetch();
+      toast.success(
+        applied > 1
+          ? `${applied} mises en avant payées ont été activées.`
+          : "Votre mise en avant payée a été activée.",
+      );
+    },
+  });
 
   // Status counts
   const statusCounts = useMemo(() => ({
