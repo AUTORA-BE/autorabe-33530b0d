@@ -15,9 +15,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ArrowLeft, Bell, Zap, Calendar } from "lucide-react";
-import { useCreateAlert } from "@/features/alerts";
+import { ArrowLeft, Bell, Zap } from "lucide-react";
+import {
+  ALERT_FREQUENCY_OPTIONS,
+  DEFAULT_ALERT_FREQUENCY,
+  DELIVERED_ALERT_FREQUENCIES,
+  useCreateAlert,
+} from "@/features/alerts";
 import SEOHead from "@/components/SEOHead";
 
 const BRANDS = [
@@ -43,7 +47,9 @@ const alertSchema = z.object({
   fuel_types: z.array(z.string()).optional(),
   lez_compatible: z.boolean().optional(),
   carpass_verified: z.boolean().optional(),
-  frequency: z.enum(["instant", "daily", "weekly"]),
+  // Seules les fréquences réellement traitées par match-new-vehicle sont
+  // acceptées ici (voir features/alerts/constants/alertFrequency.ts).
+  frequency: z.enum(DELIVERED_ALERT_FREQUENCIES),
 });
 
 type AlertFormData = z.infer<typeof alertSchema>;
@@ -63,7 +69,7 @@ export default function CreerAlerte() {
   } = useForm<AlertFormData>({
     resolver: zodResolver(alertSchema),
     defaultValues: {
-      frequency: "instant",
+      frequency: DEFAULT_ALERT_FREQUENCY,
       fuel_types: [],
       lez_compatible: false,
       carpass_verified: false,
@@ -257,47 +263,26 @@ export default function CreerAlerte() {
               </div>
             </div>
 
-            {/* Notification frequency */}
+            {/* Notification — seules les fréquences réellement traitées par
+                l'edge function match-new-vehicle sont proposées. Le digest
+                quotidien / hebdomadaire n'existe pas côté serveur : lire
+                features/alerts/constants/alertFrequency.ts avant d'en rajouter. */}
             <div className="rounded-2xl border border-border bg-card p-4">
-              <p className="font-semibold text-sm text-foreground mb-3">🔔 Fréquence</p>
-              <Controller
-                name="frequency"
-                control={control}
-                render={({ field }) => (
-                  <RadioGroup
-                    value={field.value}
-                    onValueChange={field.onChange}
-                    className="space-y-2"
+              <p className="font-semibold text-sm text-foreground mb-3">🔔 Notification</p>
+              <div className="space-y-2">
+                {ALERT_FREQUENCY_OPTIONS.map(({ value, title, desc }) => (
+                  <div
+                    key={value}
+                    className="flex items-center gap-3 p-3 rounded-xl border border-primary bg-primary/5"
                   >
-                    {[
-                      { value: "instant", icon: Zap, title: "Instantané", desc: "Dès qu'une annonce correspond", recommended: true },
-                      { value: "daily", icon: Calendar, title: "Quotidien", desc: "Un résumé par jour" },
-                      { value: "weekly", icon: Calendar, title: "Hebdomadaire", desc: "Un résumé par semaine" },
-                    ].map(({ value, icon: Icon, title, desc, recommended }) => (
-                      <label
-                        key={value}
-                        className={`flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${
-                          field.value === value
-                            ? "border-primary bg-primary/5"
-                            : "border-border hover:border-primary/30"
-                        }`}
-                      >
-                        <RadioGroupItem value={value} className="shrink-0" />
-                        <Icon className="w-4 h-4 text-primary shrink-0" />
-                        <div className="flex-1 min-w-0">
-                          <p className="font-medium text-sm text-foreground">
-                            {title}
-                            {recommended && (
-                              <span className="ml-1.5 text-[10px] text-primary font-normal">recommandé</span>
-                            )}
-                          </p>
-                          <p className="text-[11px] text-muted-foreground">{desc}</p>
-                        </div>
-                      </label>
-                    ))}
-                  </RadioGroup>
-                )}
-              />
+                    <Zap className="w-4 h-4 text-primary shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-sm text-foreground">{title}</p>
+                      <p className="text-[11px] text-muted-foreground">{desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Actions — full width on mobile */}
