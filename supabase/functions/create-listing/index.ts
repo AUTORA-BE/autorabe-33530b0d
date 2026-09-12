@@ -2,6 +2,7 @@
 // Seul point d'entrée pour insérer dans car_listings depuis l'app AutoRA
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { buildCorsHeaders, handlePreflight, jsonResponse } from '../_shared/cors.ts';
+import { listingQuotaFor } from '../_shared/catalog.ts';
 
 /** Unique état d'attente d'une annonce — doit rester aligné avec
  *  src/features/listings/constants/listingStatus.ts et la contrainte SQL. */
@@ -157,23 +158,19 @@ Deno.serve(async (req) => {
     });
 
     if (!isAdmin) {
-      const FREE = { sim: 3, month: 5 };
-      const LIMITS: Record<string, { sim: number | null; month: number | null }> = {
-        'prod_VBzrk30V0HDldQ': { sim: 5, month: 12 },       // Particulier 25€
-        'prod_UKno1VUDM4yfzP': { sim: 10, month: 30 },      // Pro Garage
-        'prod_UKo0UuUbuB5vdq': { sim: null, month: null },  // Premium
-      };
-
+      // Quota issu du catalogue serveur partagé : product_id peut être un slug
+      // (ce qu'écrit payments-webhook) ou un prod_… hérité, et les statuts
+      // trialing / past_due comptent comme actifs, comme dans check-subscription.
       const { data: sub } = await admin
         .from('subscriptions')
-        .select('product_id, current_period_end')
+        .select('product_id, status, current_period_end')
         .eq('user_id', user.id)
-        .eq('status', 'active')
+        .order('created_at', { ascending: false })
+        .limit(1)
         .maybeSingle();
 
-      const subActive = sub?.product_id &&
-        (!sub.current_period_end || new Date(sub.current_period_end) > new Date());
-      const limits = subActive ? (LIMITS[sub!.product_id!] ?? FREE) : FREE;
+      const quota = listingQuotaFor(sub);
+      const limits = { sim: quota.simultaneous, month: quota.perMonth };
 
       if (limits.sim !== null) {
         const { count } = await admin

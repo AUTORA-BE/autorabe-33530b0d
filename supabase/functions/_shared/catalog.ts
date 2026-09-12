@@ -42,3 +42,55 @@ export function tierSlugFromStoredProduct(value: string | null | undefined): str
   if ((TIER_SLUGS as readonly string[]).includes(value)) return value;
   return LEGACY_PRODUCT_TIERS[value] ?? null;
 }
+
+/**
+ * Statuts Stripe qui valent « abonnement en cours ».
+ * Même liste que `check-subscription` : un essai ou un impayé récent garde
+ * l'accès payant, sinon un abonné en essai retomberait sur le palier gratuit.
+ */
+export const ACTIVE_SUBSCRIPTION_STATUSES = ["active", "trialing", "past_due"];
+
+/** Quotas d'annonces d'un palier (`null` = illimité). */
+export interface ListingQuota {
+  simultaneous: number | null;
+  perMonth: number | null;
+}
+
+/** Palier gratuit : aucun abonnement en cours. Source : `FREE_PARTICULIER_LIMIT` / `FREE_LISTINGS_PER_MONTH`. */
+export const FREE_LISTING_QUOTA: ListingQuota = { simultaneous: 3, perMonth: 5 };
+
+/**
+ * Quotas par slug de palier.
+ * Source : `src/features/subscription/constants/tiers.ts` (`maxListings`,
+ * `maxListingsPerMonth`). Figé par `src/features/subscription/listingQuota.test.ts`.
+ */
+export const LISTING_QUOTAS: Record<string, ListingQuota> = {
+  particulier: { simultaneous: 5, perMonth: 12 },
+  pro: { simultaneous: 10, perMonth: 30 },
+  premium: { simultaneous: null, perMonth: null },
+};
+
+/** Ligne de `public.subscriptions` utile au calcul du quota. */
+export interface SubscriptionRow {
+  product_id?: string | null;
+  status?: string | null;
+  current_period_end?: string | null;
+}
+
+/**
+ * Quotas d'annonces applicables à une ligne `subscriptions`.
+ *
+ * `product_id` peut être un slug moderne (ce qu'écrit `payments-webhook`) ou un
+ * `prod_…` Stripe hérité : les deux sont résolus. Tout le reste — ligne absente,
+ * statut inactif, période terminée, palier inconnu — retombe sur le gratuit.
+ */
+export function listingQuotaFor(row: SubscriptionRow | null | undefined): ListingQuota {
+  if (!row?.status || !ACTIVE_SUBSCRIPTION_STATUSES.includes(row.status)) {
+    return FREE_LISTING_QUOTA;
+  }
+  if (row.current_period_end && new Date(row.current_period_end) <= new Date()) {
+    return FREE_LISTING_QUOTA;
+  }
+  const slug = tierSlugFromStoredProduct(row.product_id);
+  return (slug ? LISTING_QUOTAS[slug] : undefined) ?? FREE_LISTING_QUOTA;
+}
